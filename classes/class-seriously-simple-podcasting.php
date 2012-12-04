@@ -17,6 +17,9 @@ class SeriouslySimplePodcasting {
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
 		$this->token = 'podcast';
 
+		$this->load_plugin_textdomain();
+		add_action( 'init', array( &$this, 'load_localisation' ), 0 );
+
 		add_action('init', array( &$this , 'register_post_type' ) );
 
 		// Use custom templates
@@ -50,19 +53,19 @@ class SeriouslySimplePodcasting {
 	public function register_post_type() {
  
 		$labels = array(
-			'name' => _x( 'Podcasts', 'post type general name' ),
-			'singular_name' => _x( 'Podcast', 'post type singular name' ),
-			'add_new' => _x( 'Add New', $this->token ),
-			'add_new_item' => sprintf( __( 'Add New %s' ), __( 'Episode' ) ),
-			'edit_item' => sprintf( __( 'Edit %s' ), __( 'Episode' ) ),
-			'new_item' => sprintf( __( 'New %s' ), __( 'Episode' ) ),
-			'all_items' => sprintf( __( 'All %s' ), __( 'Episodes' ) ),
-			'view_item' => sprintf( __( 'View %s' ), __( 'Episode' ) ),
-			'search_items' => sprintf( __( 'Search %a' ), __( 'Episodes' ) ),
-			'not_found' =>  sprintf( __( 'No %s Found' ), __( 'Episodes' ) ),
-			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash' ), __( 'Episodes' ) ),
+			'name' => _x( 'Podcast', 'post type general name' , 'ss-podcasting' ),
+			'singular_name' => _x( 'Podcast', 'post type singular name' , 'ss-podcasting' ),
+			'add_new' => _x( 'Add New', $this->token , 'ss-podcasting' ),
+			'add_new_item' => sprintf( __( 'Add New %s' , 'ss-podcasting' ), __( 'Episode' , 'ss-podcasting' ) ),
+			'edit_item' => sprintf( __( 'Edit %s' , 'ss-podcasting' ), __( 'Episode' , 'ss-podcasting' ) ),
+			'new_item' => sprintf( __( 'New %s' , 'ss-podcasting' ), __( 'Episode' , 'ss-podcasting' ) ),
+			'all_items' => sprintf( __( 'All %s' , 'ss-podcasting' ), __( 'Episodes' , 'ss-podcasting' ) ),
+			'view_item' => sprintf( __( 'View %s' , 'ss-podcasting' ), __( 'Episode' , 'ss-podcasting' ) ),
+			'search_items' => sprintf( __( 'Search %a' , 'ss-podcasting' ), __( 'Episodes' , 'ss-podcasting' ) ),
+			'not_found' =>  sprintf( __( 'No %s Found' , 'ss-podcasting' ), __( 'Episodes' , 'ss-podcasting' ) ),
+			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash' , 'ss-podcasting' ), __( 'Episodes' , 'ss-podcasting' ) ),
 			'parent_item_colon' => '',
-			'menu_name' => __( 'Podcasts' )
+			'menu_name' => __( 'Podcast' , 'ss-podcasting' )
 
 		);
 		$args = array(
@@ -122,7 +125,7 @@ class SeriouslySimplePodcasting {
 	}
 
 	public function register_custom_column_headings ( $defaults ) {
-		$new_columns = array( 'series' => __( 'Series' ) , 'image' => __( 'Image' ) );
+		$new_columns = array( 'series' => __( 'Series' , 'ss-podcasting' ) , 'image' => __( 'Image' , 'ss-podcasting' ) );
 		
 		$last_item = '';
 
@@ -150,24 +153,24 @@ class SeriouslySimplePodcasting {
 
 	  $messages[$this->token] = array(
 	    0 => '', // Unused. Messages start at index 1.
-	    1 => sprintf( __( 'Podcast updated. %sView podcast%s.' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-	    2 => __( 'Custom field updated.' ),
-	    3 => __( 'Custom field deleted.' ),
-	    4 => __( 'Podcast updated.' ),
+	    1 => sprintf( __( 'Podcast updated. %sView podcast%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+	    2 => __( 'Custom field updated.' , 'ss-podcasting' ),
+	    3 => __( 'Custom field deleted.' , 'ss-podcasting' ),
+	    4 => __( 'Podcast updated.' , 'ss-podcasting' ),
 	    /* translators: %s: date and time of the revision */
-	    5 => isset($_GET['revision']) ? sprintf( __( 'Podcast restored to revision from %s.' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-	    6 => sprintf( __( 'Podcast published. %sView podcast%s.' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-	    7 => __('Podcast saved.'),
-	    8 => sprintf( __( 'Podcast submitted. %sPreview podcast%s.' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
-	    9 => sprintf( __( 'Podcast scheduled for: %1$s. %2$sPreview podcast%3$s.' ), '<strong>' . date_i18n( __( 'M j, Y @ G:i' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink($post_ID) ) . '">', '</a>' ),
-	    10 => sprintf( __( 'Podcast draft updated. %sPreview podcast%s.' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+	    5 => isset($_GET['revision']) ? sprintf( __( 'Podcast restored to revision from %s.' , 'ss-podcasting' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+	    6 => sprintf( __( 'Podcast published. %sView podcast%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+	    7 => __( 'Podcast saved.' , 'ss-podcasting' ),
+	    8 => sprintf( __( 'Podcast submitted. %sPreview podcast%s.' , 'ss-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+	    9 => sprintf( __( 'Podcast scheduled for: %1$s. %2$sPreview podcast%3$s.' , 'ss-podcasting' ), '<strong>' . date_i18n( __( 'M j, Y @ G:i' , 'ss-podcasting' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink($post_ID) ) . '">', '</a>' ),
+	    10 => sprintf( __( 'Podcast draft updated. %sPreview podcast%s.' , 'ss-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 	  );
 
 	  return $messages;
 	}
 
 	public function meta_box_setup () {		
-		add_meta_box( 'episode-data', __( 'Episode Details' ), array( &$this, 'meta_box_content' ), $this->token, 'normal', 'high' );
+		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( &$this, 'meta_box_content' ), $this->token, 'normal', 'high' );
 	}
 
 	public function meta_box_content() {
@@ -192,7 +195,7 @@ class SeriouslySimplePodcasting {
 				}
 
 				if( $k == 'enclosure' ) {
-					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input id="upload_file_button" type="button" class="button" value="'. __( 'Upload File' ) . '" /></td></tr>' . "\n";
+					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input id="upload_file_button" type="button" class="button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" /></td></tr>' . "\n";
 					$html .= '<tr valign="top"><th scope="row">&nbsp;</th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 					$html .= '</td><tr/>' . "\n";
@@ -252,7 +255,7 @@ class SeriouslySimplePodcasting {
 
 	public function enter_title_here( $title ) {
 		if ( get_post_type() == $this->token ) {
-			$title = __( 'Enter the episode title here' );
+			$title = __( 'Enter the episode title here' , 'ss-podcasting' );
 		}
 		return $title;
 	}
@@ -279,16 +282,16 @@ class SeriouslySimplePodcasting {
 		$fields = array();
 
 		$fields['enclosure'] = array(
-		    'name' => __( 'Audio file' ),
-		    'description' => __( 'Upload the podcast audio file (usually in MP3 format). If the file is hosted on another server simply paste the URL in this box.' ),
+		    'name' => __( 'Audio file' , 'ss-podcasting' ),
+		    'description' => __( 'Upload the podcast audio file (usually in MP3 format). If the file is hosted on another server simply paste the URL in this box.' , 'ss-podcasting' ),
 		    'type' => 'url',
 		    'default' => '',
 		    'section' => 'info'
 		);
 
 		$fields['duration'] = array(
-		    'name' => __( 'Duration' ),
-		    'description' => __( 'Duration of audio file as it will be displayed on the site (usually in \'MM:SS\' format).' ),
+		    'name' => __( 'Duration' , 'ss-podcasting' ),
+		    'description' => __( 'Duration of audio file as it will be displayed on the site (usually in \'MM:SS\' format).' , 'ss-podcasting' ),
 		    'type' => 'text',
 		    'default' => '',
 		    'section' => 'info'
@@ -498,6 +501,18 @@ class SeriouslySimplePodcasting {
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
 	}
 
+	public function load_localisation () {
+		load_plugin_textdomain( 'ss-podcasting', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+	}
+
+	public function load_plugin_textdomain () {
+	    $domain = 'ss-podcasting';
+	    // The "plugin_locale" filter is also used in load_plugin_textdomain()
+	    $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
+	 
+	    load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
+	    load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->file ) ) . '/lang/' );
+	}
 	
     public function register_widget_area() {
 

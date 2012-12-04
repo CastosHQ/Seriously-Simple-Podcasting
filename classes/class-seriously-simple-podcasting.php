@@ -344,20 +344,23 @@ class SeriouslySimplePodcasting {
 
 	}
 
-	protected function get_file_size( $url ){
-	     $ch = curl_init( $url );
+	protected function get_file_size( $url = false ) {
 
-	     curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-	     curl_setopt($ch, CURLOPT_HEADER, TRUE);
-	     curl_setopt($ch, CURLOPT_NOBODY, TRUE);
+		if( $url ) {
 
-	     $data = curl_exec($ch);
-	     $size = curl_getinfo($ch, CURLINFO_CONTENT_LENGTH_DOWNLOAD);
-	     $size = $this->format_bytes($size);
+			$data = wp_remote_head( $url );
 
-	     curl_close($ch);
+			if( isset( $data['headers']['content-length'] ) ) {
 
-	     return $size;
+				$size = $this->format_bytes( $data['headers']['content-length'] );
+
+				return $size;
+
+			}
+
+		}
+
+		return false;
 	}
 
 	protected function format_bytes($size, $precision = 2) {

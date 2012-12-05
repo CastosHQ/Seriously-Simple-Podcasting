@@ -23,7 +23,7 @@ class SeriouslySimplePodcasting {
 		add_action('init', array( &$this , 'register_post_type' ) );
 
 		// Use built-in templates if selected
-		$option = get_option('ss_podcasting_use_templates');
+		$option = get_option( 'ss_podcasting_use_templates' );
 		if( $option && $option == 'on' ) {
 			add_action( 'template_redirect' , array( &$this , 'page_templates' ) , 10 );
 			add_action( 'widgets_init', array( &$this , 'register_widget_area' ) );
@@ -71,6 +71,14 @@ class SeriouslySimplePodcasting {
 			'menu_name' => __( 'Podcast' , 'ss-podcasting' )
 
 		);
+
+		$slug = __( 'podcast' , 'ss-podcasting' );
+		$custom_slug = get_option( 'ss_podcasting_slug' );
+		if( $custom_slug && strlen( $custom_slug ) > 0 && $custom_slug != '' ) {
+			$slug = $custom_slug;
+		}
+
+
 		$args = array(
 			'labels' => $labels,
 			'public' => true,
@@ -78,7 +86,7 @@ class SeriouslySimplePodcasting {
 			'show_ui' => true,
 			'show_in_menu' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => 'podcast' ),
+			'rewrite' => array( 'slug' => $slug ),
 			'capability_type' => 'post',
 			'has_archive' => true,
 			'hierarchical' => false,
@@ -86,6 +94,7 @@ class SeriouslySimplePodcasting {
 			'menu_position' => 5, 
 			'menu_icon' => ''
 		);
+
 		register_post_type( $this->token, $args );
 	        
         register_taxonomy( 'series', array( $this->token ), array( 'hierarchical' => true, 'label' => 'Series', 'singular_label' => 'Series', 'rewrite' => true));

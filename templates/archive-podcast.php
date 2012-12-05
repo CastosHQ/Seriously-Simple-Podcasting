@@ -16,7 +16,7 @@ get_header(); ?>
 
 			<?php if ( have_posts() ) : ?>
 				<header>
-					<h1><?php _e( 'Podcast' ); ?></h1>
+					<h1><?php _e( 'Podcast' , 'ss-podcasting' ); ?></h1>
 				</header>
 
 				<section>

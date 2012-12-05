@@ -22,10 +22,13 @@ class SeriouslySimplePodcasting {
 
 		add_action('init', array( &$this , 'register_post_type' ) );
 
-		// Use custom templates
-		add_action( 'template_redirect' , array( &$this , 'page_templates' ) , 1 );
-		add_action( 'widgets_init', array( &$this , 'register_widget_area' ) );
-		add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+		// Use built-in templates if selected
+		$option = get_option('ss_podcasting_use_templates');
+		if( $option && $option == 'on' ) {
+			add_action( 'template_redirect' , array( &$this , 'page_templates' ) , 10 );
+			add_action( 'widgets_init', array( &$this , 'register_widget_area' ) );
+			add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+		}
 
 		add_filter( 'the_content', array( &$this , 'meta_data' ) );
 
@@ -479,7 +482,7 @@ class SeriouslySimplePodcasting {
 		$response = '';
 
 		if ( has_post_thumbnail( $id ) ) {
-			// If not a string or an array, and not an integer, default to 150x9999.
+			// If not a string or an array, and not an integer, default to 200x9999.
 			if ( is_int( $size ) || ( 0 < intval( $size ) ) ) {
 				$size = array( intval( $size ), intval( $size ) );
 			} elseif ( ! is_string( $size ) && ! is_array( $size ) ) {
@@ -493,7 +496,7 @@ class SeriouslySimplePodcasting {
 
 	public function register_image_sizes () {
 		if ( function_exists( 'add_image_size' ) ) { 
-			add_image_size( 'podcast-thumbnail', 150, 9999 ); // 200 pixels wide (and unlimited height)
+			add_image_size( 'podcast-thumbnail', 200, 9999 ); // 200 pixels wide (and unlimited height)
 		}
 	}
 

@@ -76,7 +76,7 @@ foreach( $terms as $term ) {
 
 			<div class="widget series_episodes">
 
-				<h3>Series: <?php echo $series; ?></h3>
+				<h3><?php _e( 'Series:' , 'ss-podcasting' ); ?> <?php echo $series; ?></h3>
 
 				<ul>
 					<?php foreach( $qry->posts as $episode ) {

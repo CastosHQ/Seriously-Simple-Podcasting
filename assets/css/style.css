@@ -4,21 +4,15 @@
 
 .podcast_archive .podcast_episode {
 	display: block;
-	width: 25%;
+	width: 23%;
 	float: left;
 	text-align: center;
+	margin-right: 2%;
 }
 
 .podcast_archive .podcast_episode .podcast_meta {
 	font-style: italic;
 	font-size: 60%;
-}
-
-.podcast_archive .podcast_episode img {
-	border-radius: 10px;
-	-webkit-border-radius: 10px;
-	-moz-border-radius: 10px;
-	-o-border-radius: 10px;
 }
 
 .podcast_template .podcast_left {
@@ -36,7 +30,7 @@
 }
 
 .podcast_template .podcast_image {
-	padding: 0 20px 20px 0;
+	margin: 0 20px 20px 0;
 }
 
 .podcast_template .podcast_meta {

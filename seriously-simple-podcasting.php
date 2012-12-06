@@ -18,6 +18,8 @@
  * http://mediaelementjs.com/
 */
 
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 require_once( 'classes/class-seriously-simple-podcasting.php' );
 
 global $ss_podcasting;

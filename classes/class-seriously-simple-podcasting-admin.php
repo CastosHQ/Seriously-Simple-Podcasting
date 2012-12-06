@@ -79,8 +79,6 @@ class SeriouslySimplePodcasting_Admin {
 
 	public function settings_page() {
 
-		$settings = get_option('ss_podcasting_allow_download');
-
 		echo '<div class="wrap">
 				<div class="icon32" id="ss_podcasting-icon"><br/></div>
 				<h2>Seriously Simple Podcasting</h2>

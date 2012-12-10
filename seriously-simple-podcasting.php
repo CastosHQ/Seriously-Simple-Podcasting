@@ -18,7 +18,7 @@
  * http://mediaelementjs.com/
 */
 
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 require_once( 'classes/class-seriously-simple-podcasting.php' );
 
@@ -29,5 +29,16 @@ if( is_admin() ) {
 	require_once( 'classes/class-seriously-simple-podcasting-admin.php' );
 	$ss_podcasting_admin = new SeriouslySimplePodcasting_Admin( __FILE__ );
 }
+
+/**
+ * TO DO:
+ *
+ * Add RSS feed link
+ * Add iTunes RSS feed link
+ * Add user options for feed details (category, etc.)
+ * Create widget to display podcast series
+ * Create widget to display podcast episodes from a selected series
+ * 
+ */
 
 ?>

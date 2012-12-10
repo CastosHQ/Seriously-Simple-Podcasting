@@ -10,9 +10,7 @@ class SeriouslySimplePodcasting_Admin {
 		$this->file = $file;
 
 		add_action( 'admin_init' , array( &$this , 'register_settings' ) );
-
 		add_action( 'admin_menu' , array( &$this , 'add_menu_item' ) );
-
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ) , array( &$this , 'add_settings_link' ) );
 
 	}
@@ -78,6 +76,8 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function settings_page() {
+
+		$settings = get_option('ss_podcasting_allow_download');
 
 		echo '<div class="wrap">
 				<div class="icon32" id="ss_podcasting-icon"><br/></div>

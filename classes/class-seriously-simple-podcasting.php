@@ -381,7 +381,6 @@ class SeriouslySimplePodcasting {
 	protected function format_bytes($size, $precision = 2) {
 	    $base = log($size) / log(1024);
 	    $suffixes = array('', 'k', 'M', 'G', 'T');   
-
 	    return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
 	}
 
@@ -529,8 +528,10 @@ class SeriouslySimplePodcasting {
     public function register_widget_area() {
 
         register_sidebar( array(
-            'name' => 'Podcast sidebar',
+            'name' => __( 'Podcast sidebar' , 'ss-podcasting' ),
             'id' => 'podcast_sidebar',
+            'description' => __( 'Sidebar used on the podcast pages if you are using the plugin\'s built-in templates.' , 'ss-podcasting' ),
+            'class' => 'podcast_sidebar',
             'before_widget' => '<div class="widget">',
             'after_widget' => '</div>',
             'before_title' => '<h3>',

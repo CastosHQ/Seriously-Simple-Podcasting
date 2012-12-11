@@ -20,6 +20,8 @@ It comes with built-in templates, widget and shortcode so you can display your p
 
 Simply upload the plugin and you're good to go. By going to Settings > Podcast you can set a few simple settings to make your podcast more unique and manageable.
 
+Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file.
+
 == Installation ==
 
 Installing "Seriously Simple Podcasting" can be done either by searching for "Seriously Simple Podcasting" via the "Plugins > Add New" screen in your WordPress dashboard, or by using the following steps:
@@ -38,6 +40,7 @@ You can opt to use the plugins built-in templates - they will ensure that your p
 == Screenshots ==
 
 1. The plugin settings screen within the WordPress admin.
+2. The extra info that you need to add to each podcast episode.
 
 == Changelog ==
 

@@ -3,7 +3,7 @@ msgstr ""
 "Project-Id-Version: Seriously Simple Podcasting v1.0.0\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2012-12-04 09:53:19+0000\n"
+"PO-Revision-Date: 2012-12-11 12:32:04+0000\n"
 "Last-Translator: hugh <hlashbrooke@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -19,197 +19,270 @@ msgstr ""
 "X-Poedit-SearchPath-0: .\n"
 "X-Textdomain-Support: yes"
 
-#: classes/class-seriously-simple-podcasting.php:56
+#: classes/class-seriously-simple-podcasting.php:59
 #@ ss-podcasting
 msgctxt "post type general name"
 msgid "Podcast"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:57
+#: classes/class-seriously-simple-podcasting.php:60
 #@ ss-podcasting
 msgctxt "post type singular name"
 msgid "Podcast"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:59
+#: classes/class-seriously-simple-podcasting.php:62
 #, php-format
 #@ ss-podcasting
 msgid "Add New %s"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:59
-#: classes/class-seriously-simple-podcasting.php:60
-#: classes/class-seriously-simple-podcasting.php:61
+#: classes/class-seriously-simple-podcasting.php:62
 #: classes/class-seriously-simple-podcasting.php:63
+#: classes/class-seriously-simple-podcasting.php:64
+#: classes/class-seriously-simple-podcasting.php:66
 #@ ss-podcasting
 msgid "Episode"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:60
+#: classes/class-seriously-simple-podcasting.php:63
 #, php-format
 #@ ss-podcasting
 msgid "Edit %s"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:61
+#: classes/class-seriously-simple-podcasting.php:64
 #, php-format
 #@ ss-podcasting
 msgid "New %s"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:62
+#: classes/class-seriously-simple-podcasting.php:65
 #, php-format
 #@ ss-podcasting
 msgid "All %s"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:62
-#: classes/class-seriously-simple-podcasting.php:64
 #: classes/class-seriously-simple-podcasting.php:65
-#: classes/class-seriously-simple-podcasting.php:66
+#: classes/class-seriously-simple-podcasting.php:67
+#: classes/class-seriously-simple-podcasting.php:68
+#: classes/class-seriously-simple-podcasting.php:69
 #@ ss-podcasting
 msgid "Episodes"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:63
+#: classes/class-seriously-simple-podcasting.php:66
 #, php-format
 #@ ss-podcasting
 msgid "View %s"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:64
+#: classes/class-seriously-simple-podcasting.php:67
 #, php-format
 #@ ss-podcasting
 msgid "Search %a"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:65
+#: classes/class-seriously-simple-podcasting.php:68
 #, php-format
 #@ ss-podcasting
 msgid "No %s Found"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:66
+#: classes/class-seriously-simple-podcasting.php:69
 #, php-format
 #@ ss-podcasting
 msgid "No %s Found In Trash"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:68
-#: templates/archive-podcast.php:19
+#: classes/class-seriously-simple-podcasting-widget.php:43
+#: classes/class-seriously-simple-podcasting.php:71
+#: templates/archive-podcast.php:22
+#@ ss-podcast
 #@ ss-podcasting
 msgid "Podcast"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:128
+#: classes/class-seriously-simple-podcasting.php:140
 #@ ss-podcasting
 msgid "Series"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:128
+#: classes/class-seriously-simple-podcasting.php:140
 #@ ss-podcasting
 msgid "Image"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:156
+#: classes/class-seriously-simple-podcasting.php:168
 #, php-format
 #@ ss-podcasting
 msgid "Podcast updated. %sView podcast%s."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:157
+#: classes/class-seriously-simple-podcasting.php:169
 #@ ss-podcasting
 msgid "Custom field updated."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:158
+#: classes/class-seriously-simple-podcasting.php:170
 #@ ss-podcasting
 msgid "Custom field deleted."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:159
+#: classes/class-seriously-simple-podcasting.php:171
 #@ ss-podcasting
 msgid "Podcast updated."
 msgstr ""
 
 #. translators: %s: date and time of the revision
-#: classes/class-seriously-simple-podcasting.php:161
+#: classes/class-seriously-simple-podcasting.php:173
 #, php-format
 #@ ss-podcasting
 msgid "Podcast restored to revision from %s."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:162
+#: classes/class-seriously-simple-podcasting.php:174
 #, php-format
 #@ ss-podcasting
 msgid "Podcast published. %sView podcast%s."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:163
+#: classes/class-seriously-simple-podcasting.php:175
 #@ ss-podcasting
 msgid "Podcast saved."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:164
+#: classes/class-seriously-simple-podcasting.php:176
 #, php-format
 #@ ss-podcasting
 msgid "Podcast submitted. %sPreview podcast%s."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:165
+#: classes/class-seriously-simple-podcasting.php:177
 #, php-format
 #@ ss-podcasting
 msgid "Podcast scheduled for: %1$s. %2$sPreview podcast%3$s."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:165
+#: classes/class-seriously-simple-podcasting.php:177
 #@ ss-podcasting
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:166
+#: classes/class-seriously-simple-podcasting.php:178
 #, php-format
 #@ ss-podcasting
 msgid "Podcast draft updated. %sPreview podcast%s."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:173
+#: classes/class-seriously-simple-podcasting.php:185
 #@ ss-podcasting
 msgid "Episode Details"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:198
+#: classes/class-seriously-simple-podcasting.php:210
 #@ ss-podcasting
 msgid "Upload File"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:258
+#: classes/class-seriously-simple-podcasting.php:270
 #@ ss-podcasting
 msgid "Enter the episode title here"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:285
+#: classes/class-seriously-simple-podcasting.php:297
 #@ ss-podcasting
 msgid "Audio file"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:286
+#: classes/class-seriously-simple-podcasting.php:298
 #@ ss-podcasting
 msgid "Upload the podcast audio file (usually in MP3 format). If the file is hosted on another server simply paste the URL in this box."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:293
+#: classes/class-seriously-simple-podcasting.php:305
 #@ ss-podcasting
 msgid "Duration"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:294
+#: classes/class-seriously-simple-podcasting.php:306
 #@ ss-podcasting
 msgid "Duration of audio file as it will be displayed on the site (usually in 'MM:SS' format)."
 msgstr ""
 
-#: templates/single-podcast.php:79
+#: templates/single-podcast.php:95
 #@ ss-podcasting
 msgid "Series:"
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting-admin.php:62
+#: classes/class-seriously-simple-podcasting.php:75
+#@ ss-podcasting
+msgid "podcast"
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting-widget.php:41
+#@ ss-podcast
+msgid "Display a list of your podcast series or episodes from a selecte series."
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting-widget.php:131
+#@ ss-podcast
+msgid "Title (optional):"
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting-widget.php:136
+#@ ss-podcast
+msgid "Content:"
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting-widget.php:145
+#@ ss-podcast
+msgid "Series to display:"
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting-widget.php:151
+#@ ss-podcast
+msgid "Required if content is set to show episodes from selected series."
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting-widget.php:163
+#@ ss-podcast
+msgid "All Series"
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting-widget.php:164
+#@ ss-podcast
+msgid "Episodes from Selected Series"
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting.php:600
+#@ ss-podcasting
+msgid "Podcast sidebar"
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting.php:602
+#@ ss-podcasting
+msgid "Sidebar used on the podcast pages if you are using the plugin's built-in templates."
+msgstr ""
+
+#: seriously-simple-podcasting-template.php:96
+#@ ss-podcasting
+msgid "Duration: "
+msgstr ""
+
+#: seriously-simple-podcasting-template.php:125
+#@ ss-podcasting
+msgid " episodes"
+msgstr ""
+
+#: templates/archive-podcast.php:26
+#@ ss-podcasting
+msgid "Podcast RSS feed"
+msgstr ""
+
+#: templates/archive-podcast.php:26
+#@ ss-podcasting
+msgid "iTunes podcast feed"
 msgstr ""
 

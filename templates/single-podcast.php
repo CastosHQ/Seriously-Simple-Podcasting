@@ -8,7 +8,7 @@
  * @since 1.0.0
  */
 
-global $ss_podcasting;
+global $ss_podcasting, $wp_query;
 
 get_header(); ?>
 
@@ -21,6 +21,8 @@ foreach( $terms as $term ) {
 	$series = $term->name;
 	break;
 }
+
+$post = get_post( $id );
 ?>
 
 
@@ -29,17 +31,17 @@ foreach( $terms as $term ) {
 	<div class="podcast_left">
 
 		<header>
-			<h1><?php the_title(); ?></h1>
+			<h1><?php echo $post->post_title; ?></h1>
 		</header>
 
 		<div class="podcast_content">
 
 			<section>
 
-				<?php if( has_post_thumbnail() ) { ?>
-					<?php $img = wp_get_attachment_image_src( get_post_thumbnail_id() ); ?>
-					<a href="<?php echo $img[0]; ?>" title="<?php the_title(); ?>">
-						<?php the_post_thumbnail( 'podcast-thumbnail' , array( 'class' => 'podcast_image' , 'align' => 'left' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
+				<?php if( has_post_thumbnail( $id ) ) { ?>
+					<?php $img = wp_get_attachment_image_src( get_post_thumbnail_id( $id ) ); ?>
+					<a href="<?php echo $img[0]; ?>" title="<?php echo $post->post_title; ?>">
+						<?php echo get_the_post_thumbnail( $id , 'podcast-thumbnail' , array( 'class' => 'podcast_image' , 'align' => 'left' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
 					</a>
 				<?php } ?>
 
@@ -50,7 +52,21 @@ foreach( $terms as $term ) {
 					<br/><br/>
 				<?php } ?>
 
-				<?php the_content(); ?>
+				<?php
+				
+				$file = get_post_meta( $id , 'enclosure' , true );
+				$duration = get_post_meta( $id , 'duration' , true );
+				$size = $ss_podcasting->get_file_size( $file );
+
+				$meta = '<div class="podcast_meta"><aside>';
+				if( $file && strlen( $file ) > 0 ) { $meta .= '<a href="' . esc_url( $file ) . '" title="' . $post->post_title . ' ">Download file</a>'; }
+				if( $duration && strlen( $duration ) > 0 ) { if( $file && strlen( $file ) > 0 ) { $meta .= ' | '; } $meta .= 'Duration: ' . $duration; }
+				if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= 'Size: ' . $size; }
+				$meta .= '</aside></div>';
+
+				echo $meta . wpautop( $post->post_content );
+
+				?>
 
 			<section>
 

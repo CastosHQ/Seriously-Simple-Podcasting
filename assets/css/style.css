@@ -2,6 +2,10 @@
 	width: 100%;
 }
 
+.podcast_archive .podcast_subscribe {
+	margin: 10px 0;
+}
+
 .podcast_archive .podcast_episode {
 	display: block;
 	width: 23%;

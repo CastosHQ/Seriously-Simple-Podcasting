@@ -23,8 +23,8 @@ class SeriouslySimplePodcasting {
 		add_action('init', array( &$this , 'register_post_type' ) );
 
 		// Use built-in templates if selected
-		$option = get_option( 'ss_podcasting_use_templates' );
-		if( $option && $option == 'on' ) {
+		$template_option = get_option( 'ss_podcasting_use_templates' );
+		if( ( $template_option && $template_option == 'on' ) ) {
 			add_action( 'template_redirect' , array( &$this , 'page_templates' ) , 10 );
 			add_action( 'widgets_init', array( &$this , 'register_widget_area' ) );
 			add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
@@ -86,12 +86,12 @@ class SeriouslySimplePodcasting {
 			'show_ui' => true,
 			'show_in_menu' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => $slug ),
+			'rewrite' => array( 'slug' => $slug , 'feeds' => true ),
 			'capability_type' => 'post',
 			'has_archive' => true,
 			'hierarchical' => false,
-			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ), 
-			'menu_position' => 5, 
+			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ),
+			'menu_position' => 5,
 			'menu_icon' => ''
 		);
 
@@ -359,7 +359,7 @@ class SeriouslySimplePodcasting {
 
 	}
 
-	protected function get_file_size( $url = false ) {
+	public function get_file_size( $url = false ) {
 
 		if( $url ) {
 
@@ -502,6 +502,75 @@ class SeriouslySimplePodcasting {
 		return $response;
 	}
 
+	/**
+	 * Get podcast
+	 * @param  string/array $args Arguments to be passed to the query.
+	 * @since  1.0.0
+	 * @return array/boolean      Array if true, boolean if false.
+	 */
+	public function get_podcast( $args = '' ) {
+		$defaults = array(
+			'title' => '',
+			'content' => 'series',
+			'series' => ''
+		);
+		
+		$args = wp_parse_args( $args, $defaults );
+		
+		// Allow themes/plugins to filter here.
+		$args = apply_filters( 'podcast_get_args', $args );
+		
+		if( $args['content'] == 'episodes' ) {
+
+			// The Query Arguments.
+			$query_args = array();
+			$query_args['post_type'] = 'podcast';
+			$query_args['posts_per_page'] = -1;
+			$query_args['suppress_filters'] = 0;
+			
+			if ( $args['series'] != '' ) {
+				$query_args[ 'series' ] = $args[ 'series' ];
+			}
+			
+			// The Query.
+			$query = get_posts( $query_args );
+
+			// The Display.
+			if ( ! is_wp_error( $query ) && is_array( $query ) && count( $query ) > 0 ) {
+				foreach ( $query as $k => $v ) {
+					// Get the URL.
+					$query[$k]->url = get_permalink( $v->ID );
+				}
+			} else {
+				$query = false;
+			}
+
+		} else {
+
+			$terms = get_terms( 'series' );
+
+			if( count( $terms ) > 0) {
+				foreach ( $terms as $term ) {
+					$query[ $term->term_id ]->title = $term->name;
+		    		$query[ $term->term_id ]->url = get_term_link( $term );
+		    		$posts = get_posts( array(
+		    			'post_type' => 'podcast',
+		    			'posts_per_page' => -1,
+		    			'series' => $term->slug
+		    			)
+		    		);
+		    		$count = count( $posts );
+		    		$query[ $term->term_id ]->count = $count;
+			    }
+			}
+
+		}
+
+		$query[ 'content' ] = $args[ 'content' ];
+		
+		return $query;
+	}
+
 	public function register_image_sizes () {
 		if ( function_exists( 'add_image_size' ) ) { 
 			add_image_size( 'podcast-thumbnail', 200, 9999 ); // 200 pixels wide (and unlimited height)
@@ -540,6 +609,5 @@ class SeriouslySimplePodcasting {
         );
 
     }
-    
 
 }

@@ -40,7 +40,7 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 == Screenshots ==
 
 1. The plugin settings screen within the WordPress admin.
-2. The small amount of info that you need to add to each podcast episode.
+2. The only info that you need to add to each podcast episode.
 
 == Changelog ==
 

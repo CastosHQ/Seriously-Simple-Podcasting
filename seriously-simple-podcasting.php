@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.0.0
+ * Version: 1.0.1
  * Plugin URI: http://www.hughlashbrooke.com
  * Description: A simple and easy to use podcasting plugin for WordPress.
  * Author: Hugh Lashbrooke
@@ -34,18 +34,5 @@ if( is_admin() ) {
 
 require_once( 'seriously-simple-podcasting-functions.php' );
 require_once( 'classes/class-seriously-simple-podcasting-widget.php' );
-
-
-/**
- * TO DO:
- *
- * Create widget to display podcast series
- * Create widget to display podcast episodes from a selected series
- *
- * Text: Title
- * Select: Series/Episodes
- * Select: Series list
- * 
- */
 
 ?>

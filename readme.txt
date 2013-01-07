@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/
 Tags: podcast, audio, rss, feed, itunes
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -46,11 +46,19 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 
 == Changelog ==
 
+= 1.0.1 =
+* 2013-01-06
+* Fixing bug that broke media uploader in WordPress 3.5
+
 = 1.0.0 =
 * 2012-12-13
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.0.1 =
+* 2013-01-06
+* Fixing bug that broke media uploader in WordPress 3.5
 
 = 1.0.0 =
 * 2012-12-13

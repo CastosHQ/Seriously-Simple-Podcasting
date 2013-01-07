@@ -279,7 +279,7 @@ class SeriouslySimplePodcasting {
 		wp_enqueue_style( 'ss_podcasting-admin' );
 
 		// Admin JS
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' , 'media-upload' , 'thickbox' ), '1.0.0' );
+		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' , 'media-upload' , 'thickbox' ), '1.0.1' );
 
 		// JS & CSS for media uploader
 		wp_enqueue_script( 'jquery' );

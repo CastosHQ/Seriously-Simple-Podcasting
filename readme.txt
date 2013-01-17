@@ -16,7 +16,9 @@ An incredibly easy-to-use podcasting plugin.
 
 It comes with built-in templates, widget and shortcode so you can display your podcast however you like. It also has easy subscribe links for iTunes listeners and standard RSS subscribers.
 
-Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/
+Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/.
+
+UPGRADE NOTICE: Users upgrading to v1.1 must please take note of the feed URL changes (for iTunes feeds and standard RSS feeds). You will find the new feed URLs on the Settings > Podcast page.
 
 == Usage ==
 

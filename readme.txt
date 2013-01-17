@@ -54,7 +54,7 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 * Massive improvements to both iTunes & standard RSS feeds (including new feed URLs)
 * Audio duration is now calculated automatically
 * Added 'keywords' taxonomy to episodes
-* General peformance enhancements
+* General performance enhancements
 * Enhanced localisation support
 
 = 1.0.1 =

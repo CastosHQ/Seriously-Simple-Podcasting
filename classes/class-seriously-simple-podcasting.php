@@ -51,6 +51,14 @@ class SeriouslySimplePodcasting {
 		add_action( 'after_setup_theme', array( &$this , 'ensure_post_thumbnails_support' ) );
 		add_action( 'after_setup_theme', array( &$this , 'register_image_sizes' ) );
 
+		// Handle RSS template
+		if( isset( $_GET['feed'] ) ) {
+			switch( $_GET['feed'] ) {
+				case 'podcast': add_action( 'init' , array( &$this , 'feed_template_podcast' ) , 10 ); break;
+				case 'itunes': add_action( 'init' , array( &$this , 'feed_template_itunes' ) , 10 ); break;
+			}
+		}
+
 	}
 
 	public function register_post_type() {
@@ -97,7 +105,8 @@ class SeriouslySimplePodcasting {
 
 		register_post_type( $this->token, $args );
 	        
-        register_taxonomy( 'series', array( $this->token ), array( 'hierarchical' => true, 'label' => 'Series', 'singular_label' => 'Series', 'rewrite' => true));
+        register_taxonomy( 'series', array( $this->token ), array( 'hierarchical' => true , 'label' => 'Series' , 'singular_label' => 'Series' , 'rewrite' => true) );
+        register_taxonomy( 'keywords', array( $this->token ), array( 'hierarchical' => false , 'label' => 'Keywords' , 'singular_label' => 'Keyword' , 'rewrite' => true) );
 	}
 
 	public function register_custom_columns ( $column_name, $id ) {
@@ -174,7 +183,7 @@ class SeriouslySimplePodcasting {
 	    6 => sprintf( __( 'Podcast published. %sView podcast%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 	    7 => __( 'Podcast saved.' , 'ss-podcasting' ),
 	    8 => sprintf( __( 'Podcast submitted. %sPreview podcast%s.' , 'ss-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
-	    9 => sprintf( __( 'Podcast scheduled for: %1$s. %2$sPreview podcast%3$s.' , 'ss-podcasting' ), '<strong>' . date_i18n( __( 'M j, Y @ G:i' , 'ss-podcasting' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink($post_ID) ) . '">', '</a>' ),
+	    9 => sprintf( __( 'Podcast scheduled for: %1$s. %2$sPreview podcast%3$s.' , 'ss-podcasting' ), '<strong>' . date_i18n( __( 'M j, Y @ G:i' , 'ss-podcasting' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 	    10 => sprintf( __( 'Podcast draft updated. %sPreview podcast%s.' , 'ss-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 	  );
 
@@ -207,14 +216,18 @@ class SeriouslySimplePodcasting {
 				}
 
 				if( $k == 'enclosure' ) {
-					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input id="upload_file_button" type="button" class="button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" /></td></tr>' . "\n";
-					$html .= '<tr valign="top"><th scope="row">&nbsp;</th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
+					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input id="upload_file_button" type="button" class="button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" /> <input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 					$html .= '</td><tr/>' . "\n";
 				} else {
-					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
-					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-					$html .= '</td><tr/>' . "\n";
+					if( $v['type'] == 'checkbox' ) {
+						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td><input name="' . esc_attr( $k ) . '" type="checkbox" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span class="description">' . $v['description'] . '</span></label>' . "\n";
+						$html .= '</td><tr/>' . "\n";
+					} else {
+						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
+						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
+						$html .= '</td><tr/>' . "\n";
+					}
 				}
 			}
 
@@ -245,24 +258,47 @@ class SeriouslySimplePodcasting {
 		
 		$field_data = $this->get_custom_fields_settings();
 		$fields = array_keys( $field_data );
-		
+		echo '<pre>';print_r($_POST);echo '</pre>';
 		foreach ( $fields as $f ) {
-		
-			${$f} = strip_tags(trim($_POST[$f]));
+			
+			if( isset( $_POST[$f] ) ) {
+				${$f} = strip_tags( trim( $_POST[$f] ) );
+			}
 
 			// Escape the URLs.
 			if ( 'url' == $field_data[$f]['type'] ) {
 				${$f} = esc_url( ${$f} );
 			}
+
+			if( $f == 'enclosure' ) { $enclosure = ${$f}; }
 			
-			if ( get_post_meta( $post_id, $f ) == '' ) { 
-				add_post_meta( $post_id, $f, ${$f}, true ); 
-			} elseif( ${$f} != get_post_meta( $post_id, $f, true ) ) { 
-				update_post_meta( $post_id, $f, ${$f} );
-			} elseif ( ${$f} == '' ) { 
-				delete_post_meta( $post_id, $f, get_post_meta( $post_id, $f, true ) );
-			}	
+			if ( ${$f} == '' ) { 
+				delete_post_meta( $post_id , $f , get_post_meta( $post_id , $f , true ) );
+			} else {
+				update_post_meta( $post_id , $f , ${$f} );
+			}
 		}
+
+		if( isset( $enclosure ) && strlen( $enclosure ) > 0 ) {
+
+			// Get file Duration
+			if ( get_post_meta( $post_id , 'duration' , true ) == '' ) {
+				$duration = $this->get_file_duration( $enclosure );
+				if( $duration ) {
+					update_post_meta( $post_id , 'duration' , $duration );
+				}
+			}
+
+			// Get file size
+			if ( get_post_meta( $post_id , 'filesize' , true ) == '' ) {
+				$filesize = $this->get_file_size( $enclosure );
+				if( $filesize ) {
+					update_post_meta( $post_id , 'filesize' , $filesize );
+				}
+			}
+
+		}
+
 	}
 
 	public function enter_title_here( $title ) {
@@ -294,17 +330,33 @@ class SeriouslySimplePodcasting {
 		$fields = array();
 
 		$fields['enclosure'] = array(
-		    'name' => __( 'Audio file' , 'ss-podcasting' ),
-		    'description' => __( 'Upload the podcast audio file (usually in MP3 format). If the file is hosted on another server simply paste the URL in this box.' , 'ss-podcasting' ),
+		    'name' => __( 'Audio file:' , 'ss-podcasting' ),
+		    'description' => __( 'Upload the podcast audio file (usually in MP3 format). If the file is hosted on another server simply paste the URL into this box.' , 'ss-podcasting' ),
 		    'type' => 'url',
 		    'default' => '',
 		    'section' => 'info'
 		);
 
 		$fields['duration'] = array(
-		    'name' => __( 'Duration' , 'ss-podcasting' ),
-		    'description' => __( 'Duration of audio file as it will be displayed on the site (usually in \'MM:SS\' format).' , 'ss-podcasting' ),
+		    'name' => __( 'Duration:' , 'ss-podcasting' ),
+		    'description' => __( 'Duration of audio file as it will be displayed on the site. <b>This will be calculated automatically if possible - fill in a value here to override the automatic calculation.</b> This will ONLY work for files uploaded to this server - if a value is not calculated then you can fill in your own data. Leave the field blank to force a recalculation.' , 'ss-podcasting' ),
 		    'type' => 'text',
+		    'default' => '',
+		    'section' => 'info'
+		);
+
+		$fields['filesize'] = array(
+		    'name' => __( 'File size:' , 'ss-podcasting' ),
+		    'description' => __( 'Size of the audio file as it will be displayed on the site. <b>This will be calculated automatically if possible - fill in a value here to override the automatic calculation.</b> If a value is not calculated then you can fill in your own data. Leave the field blank to force a recalculation.' , 'ss-podcasting' ),
+		    'type' => 'text',
+		    'default' => '',
+		    'section' => 'info'
+		);
+
+		$fields['explicit'] = array(
+		    'name' => __( 'Explicit:' , 'ss-podcasting' ),
+		    'description' => __( 'Mark whether this episode is explicit or not.' , 'ss-podcasting' ),
+		    'type' => 'checkbox',
 		    'default' => '',
 		    'section' => 'info'
 		);
@@ -345,10 +397,10 @@ class SeriouslySimplePodcasting {
 			$duration = get_post_meta( $id , 'duration' , true );
 			$size = $this->get_file_size( $file );
 
-			$meta = '<div class="podcast_meta"><aside>';
-			if( $file && strlen( $file ) > 0 ) { $meta .= '<a href="' . esc_url( $file ) . '" title="' . get_the_title() . ' ">Download file</a>'; }
-			if( $duration && strlen( $duration ) > 0 ) { if( $file && strlen( $file ) > 0 ) { $meta .= ' | '; } $meta .= 'Duration: ' . $duration; }
-			if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= 'Size: ' . $size; }
+			$meta = '<div class="' . esc_attr( 'podcast_meta' ) . '"><aside>';
+			if( $file && strlen( $file ) > 0 ) { $meta .= '<a href="' . esc_url( $file ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
+			if( $duration && strlen( $duration ) > 0 ) { if( $file && strlen( $file ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
+			if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
 			$meta .= '</aside></div>';
 
 			$content = $meta . $content;
@@ -359,11 +411,11 @@ class SeriouslySimplePodcasting {
 
 	}
 
-	public function get_file_size( $url = false ) {
+	public function get_file_size( $file = false ) {
 
-		if( $url ) {
+		if( $file ) {
 
-			$data = wp_remote_head( $url );
+			$data = wp_remote_head( $file );
 
 			if( isset( $data['headers']['content-length'] ) ) {
 
@@ -378,10 +430,56 @@ class SeriouslySimplePodcasting {
 		return false;
 	}
 
-	protected function format_bytes($size, $precision = 2) {
-	    $base = log($size) / log(1024);
-	    $suffixes = array('', 'k', 'M', 'G', 'T');   
-	    return round(pow(1024, $base - floor($base)), $precision) . $suffixes[floor($base)];
+	public function get_file_duration( $file ) {
+
+		/*
+		 * Uses getid3 class for calculation audio duration
+		 * 
+		 * http://www.getid3.org/
+		*/
+
+		if( $file ) {
+
+			require_once( $this->assets_dir . '/getid3/getid3.php' );
+
+			$getid3 = new getid3();
+				
+			// Identify file by root path and not URL (required for getID3 class)
+			$site_url = trailingslashit( site_url() );
+			$site_root = trailingslashit( ABSPATH );
+			$file = str_replace( $site_url , $site_root , $file );
+
+			$info = $getid3->analyze( $file );
+
+			$duration = false;
+
+			if( isset( $info['playtime_string'] ) && strlen( $info['playtime_string'] ) > 0 ) {
+				$duration = $info['playtime_string'];
+			} else {
+				if( isset( $info['playtime_seconds'] ) && strlen( $info['playtime_seconds'] ) > 0 ) {
+					$duration = gmdate( 'H:i:s' , $info['playtime_seconds'] );
+				}
+			}
+			
+			return $duration;
+
+		}
+
+		return false;
+	}
+
+	protected function format_bytes( $size , $precision = 2 ) {
+
+		if( $size ) {
+		    
+		    $base = log ( $size ) / log( 1024 );
+		    $suffixes = array( '' , 'k' , 'M' , 'G' , 'T' );
+		    $bytes = round( pow( 1024 , $base - floor( $base ) ) , $precision ) . $suffixes[ floor( $base ) ];
+
+		    return $bytes;
+		}
+
+		return false;
 	}
 
 	public function audio_player( $src = false ) {
@@ -609,5 +707,15 @@ class SeriouslySimplePodcasting {
         );
 
     }
+
+    public function feed_template_podcast() {
+	    require( $this->template_path . 'feed-podcast.php' );
+	    exit;
+	}
+
+	public function feed_template_itunes() {
+	    require( $this->template_path . 'feed-itunes.php' );
+	    exit;
+	}
 
 }

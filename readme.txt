@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/
 Tags: podcast, audio, rss, feed, itunes
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 1.0.1
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ Podcast audio files can be uploaded directly into WordPress or hosted on any oth
 Installing "Seriously Simple Podcasting" can be done either by searching for "Seriously Simple Podcasting" via the "Plugins > Add New" screen in your WordPress dashboard, or by using the following steps:
 
 1. Download the plugin via WordPress.org
-1. Upload the ZIP file through the "Plugins > Add New > Upload" screen in your WordPress dashboard
+1. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard
 1. Activate the plugin through the 'Plugins' menu in WordPress
 1. Customise the plugin from its settings page
 
@@ -42,9 +42,18 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 == Screenshots ==
 
 1. The plugin settings screen within the WordPress admin.
-2. The only info that you need to add to each podcast episode.
+2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.1 =
+* 2013-01-17
+* A lot settings for the podcast feed details have been added
+* Massive improvements to both iTunes & standard RSS feeds (including new feed URLs)
+* Audio duration is now calculated automatically
+* Added 'keywords' taxonomy to episodes
+* General peformance enhancements
+* Enhanced localisation support
 
 = 1.0.1 =
 * 2013-01-06
@@ -55,6 +64,13 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.1 =
+* 2013-01-17
+* Settings page has been updated with podcast feed settings
+* Feed URLs have changed - see settings page for new URL formats
+* Extra options have been added to individual episodes
+* Added 'keywords' taxonomy to episodes for better tagging
 
 = 1.0.1 =
 * 2013-01-06

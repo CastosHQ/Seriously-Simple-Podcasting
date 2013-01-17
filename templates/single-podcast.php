@@ -56,7 +56,7 @@ $post = get_post( $id );
 				
 				$file = get_post_meta( $id , 'enclosure' , true );
 				$duration = get_post_meta( $id , 'duration' , true );
-				$size = $ss_podcasting->get_file_size( $file );
+				$size = get_post_meta( $id , 'filesize' , true );
 
 				$meta = '<div class="podcast_meta"><aside>';
 				if( $file && strlen( $file ) > 0 ) { $meta .= '<a href="' . esc_url( $file ) . '" title="' . $post->post_title . ' ">Download file</a>'; }

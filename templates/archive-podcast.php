@@ -16,14 +16,18 @@ get_header(); ?>
 
 			<?php if ( have_posts() ) : ?>
 
-				<?php $feed_link = get_post_type_archive_feed_link( 'podcast' ); ?>
+				<?php
+				$rss_url = trailingslashit( get_bloginfo( 'url' ) ) . '?feed=podcast';
+				$itunes_url = trailingslashit( get_bloginfo( 'url' ) ) . '?feed=itunes';
+				$itunes_url = str_replace( array( 'http:' , 'https:' ) , 'itpc:' , $itunes_url );
+				?>
 
 				<header>
 					<h1><?php _e( 'Podcast' , 'ss-podcasting' ); ?></h1>
 				</header>
 
 				<section class="podcast_subscribe">
-					Subscribe: <a href="<?php echo $feed_link; ?>" title="<?php _e( 'Podcast RSS feed' , 'ss-podcasting' ); ?>">RSS</a> | <a href="<?php echo str_replace( array( 'http' , 'https' ) , 'itpc' , $feed_link ); ?>" title="<?php _e( 'iTunes podcast feed' , 'ss-podcasting' ); ?>">iTunes</a>
+					Subscribe: <a href="<?php echo $rss_url; ?>" title="<?php _e( 'Standard podcast RSS feed' , 'ss-podcasting' ); ?>">RSS</a> | <a href="<?php echo $itunes_url; ?>" title="<?php _e( 'iTunes podcast feed' , 'ss-podcasting' ); ?>">iTunes</a>
 				</section>
 
 				<section>

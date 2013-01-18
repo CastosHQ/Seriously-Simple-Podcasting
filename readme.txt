@@ -49,12 +49,12 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 == Changelog ==
 
 = 1.1.1 =
-* 2013-01-06
+* 2013-01-18
 * Adding file MIME type to feed RSS
 
 = 1.1 =
 * 2013-01-17
-* A lot settings for the podcast feed details have been added
+* A lot of settings for the podcast feed details have been added
 * Massive improvements to both iTunes & standard RSS feeds (including new feed URLs)
 * Audio duration is now calculated automatically
 * Added 'keywords' taxonomy to episodes
@@ -72,7 +72,7 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 == Upgrade Notice ==
 
 = 1.1.1 =
-* 2013-01-06
+* 2013-01-18
 * Adding file MIME type to feed RSS
 
 = 1.1 =

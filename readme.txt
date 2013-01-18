@@ -48,6 +48,10 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 
 == Changelog ==
 
+= 1.1.1 =
+* 2013-01-06
+* Adding file MIME type to feed RSS
+
 = 1.1 =
 * 2013-01-17
 * A lot settings for the podcast feed details have been added
@@ -66,6 +70,10 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.1.1 =
+* 2013-01-06
+* Adding file MIME type to feed RSS
 
 = 1.1 =
 * 2013-01-17

@@ -5,6 +5,8 @@
  * @package WordPress
  */
 
+global $ss_podcasting;
+
 error_reporting(0);
 
 // Get podcast data
@@ -64,10 +66,22 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	}
 	$qry = new WP_Query( $args );
 	?>
-	<?php while( $qry->have_posts()) : $qry->the_post(); ?>
+	<?php while( $qry->have_posts()) : $qry->the_post();
+
+		//Enclosure
+		$enclosure = get_post_meta( get_the_ID() , 'enclosure' , true );
+		
+		// Episode duration
+		$duration = get_post_meta( get_the_ID() , 'duration' , true );
+
+		//File MIME type
+		$mime_type = $ss_podcasting->get_file_mimetype( $enclosure );
+
+	?>
 	<item>
 		<title><?php the_title_rss() ?></title>
 		<link><?php the_permalink_rss() ?></link>
+		<?php if( $series ) { ?><category><?php echo $series; ?></category><?php } ?>
 		<pubDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_post_time('Y-m-d H:i:s', true), false); ?></pubDate>
 		<dc:creator><?php the_author() ?></dc:creator>
 		<guid isPermaLink="false"><?php the_guid(); ?></guid>
@@ -78,7 +92,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	<?php else : ?>
 		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded>
 	<?php endif; ?>
-	<enclosure url="<?php echo get_post_meta( get_the_ID() , 'enclosure' , true ); ?>" length="<?php echo get_post_meta( get_the_ID() , 'duration' , true ); ?>" type=""/>
+	<enclosure url="<?php echo $enclosure; ?>" length="<?php echo $duration; ?>" type="<?php echo $mime_type; ?>"/>
 	<?php do_action('rss2_item'); ?>
 	</item>
 	<?php endwhile; ?>

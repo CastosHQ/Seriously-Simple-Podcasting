@@ -482,6 +482,25 @@ class SeriouslySimplePodcasting {
 		return false;
 	}
 
+	public function get_file_mimetype( $file = false ) {
+
+		if( $file ) {
+
+			// Identify file by root path and not URL
+			$site_url = trailingslashit( site_url() );
+			$site_root = trailingslashit( ABSPATH );
+			$file_path = str_replace( $site_url , $site_root , $file );
+
+			$mime_type = mime_content_type( $file_path );
+
+			return $mime_type;
+
+		}
+
+		return false;
+
+	}
+
 	public function audio_player( $src = false ) {
 
 		/*

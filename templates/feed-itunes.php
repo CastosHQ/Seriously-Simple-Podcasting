@@ -5,6 +5,8 @@
  * @package WordPress
  */
 
+global $ss_podcasting;
+
 error_reporting(0);
 
 // Get podcast data
@@ -122,8 +124,15 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	$qry = new WP_Query( $args );
 	
 	while( $qry->have_posts()) : $qry->the_post();
+
+		//Enclosure
+		$enclosure = get_post_meta( get_the_ID() , 'enclosure' , true );
+		
 		// Episode duration
 		$duration = get_post_meta( get_the_ID() , 'duration' , true );
+
+		//File MIME type
+		$mime_type = $ss_podcasting->get_file_mimetype( $enclosure );
 
 		// Explicit flag
 		$ep_explicit = get_post_meta( get_the_ID() , 'explicit' , true );
@@ -172,7 +181,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	<?php else : ?>
 		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded>
 	<?php endif; ?>
-		<enclosure url="<?php echo get_post_meta( get_the_ID() , 'enclosure' , true ); ?>" length="<?php echo $duration; ?>" type=""/>
+		<enclosure url="<?php echo $enclosure; ?>" length="<?php echo $duration; ?>" type="<?php echo $mime_type; ?>"/>
 		<itunes:explicit><?php echo $explicit_flag; ?></itunes:explicit>
 		<itunes:duration><?php echo $duration; ?></itunes:duration>
 		<itunes:author><?php the_author(); ?></itunes:author>

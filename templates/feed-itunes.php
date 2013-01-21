@@ -105,8 +105,8 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	<itunes:explicit><?php echo $explicit; ?></itunes:explicit>
 	<?php if( $image ) { ?><itunes:image href="<?php echo $image; ?>" /><?php } ?>
 	<?php if( $category ) { ?>
-	<itunes:category text="<?php echo urlencode( $category ); ?>">
-		<?php if( $subcategory ) { ?><itunes:category text="<?php echo urlencode( $subcategory ); ?>"/><?php } ?>
+	<itunes:category text="<?php echo htmlspecialchars( $category ); ?>">
+		<?php if( $subcategory ) { ?><itunes:category text="<?php echo htmlspecialchars( $subcategory ); ?>" /><?php } ?>
 	</itunes:category>
 	<?php } ?>
 	<sy:updatePeriod><?php echo apply_filters( 'rss_update_period', 'hourly' ); ?></sy:updatePeriod>

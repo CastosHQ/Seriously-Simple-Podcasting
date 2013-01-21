@@ -30,6 +30,11 @@ if( ! $copyright || strlen( $copyright ) == 0 || $copyright == '' ) {
 	$copyright = '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' );
 }
 
+$category = get_option( 'ss_podcasting_data_category' );
+if( ! $category || strlen( $category ) == 0 || $category == '' ) {
+	$category = false;
+}
+
 header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
 
 echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
@@ -81,7 +86,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	<item>
 		<title><?php the_title_rss() ?></title>
 		<link><?php the_permalink_rss() ?></link>
-		<?php if( $series ) { ?><category><?php echo $series; ?></category><?php } ?>
+		<?php if( $category ) { ?><category><?php echo htmlspecialchars( $category ); ?></category><?php } ?>
 		<pubDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_post_time('Y-m-d H:i:s', true), false); ?></pubDate>
 		<dc:creator><?php the_author() ?></dc:creator>
 		<guid isPermaLink="false"><?php the_guid(); ?></guid>

@@ -6,12 +6,14 @@ class SeriouslySimplePodcasting_Admin {
 	private $file;
 	private $assets_dir;
 	private $assets_url;
+	private $site_url;
 
 	public function __construct( $file ) {
 		$this->dir = dirname( $file );
 		$this->file = $file;
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
+		$this->site_url = trailingslashit( site_url() );
 
 		add_action( 'admin_init' , array( &$this , 'register_settings' ) );
 		add_action( 'admin_menu' , array( &$this , 'add_menu_item' ) );
@@ -72,7 +74,7 @@ class SeriouslySimplePodcasting_Admin {
 		// Add feed info fields
 		add_settings_field( 'ss_podcasting_feed_standard' , __( 'Standard RSS feed:' , 'ss-podcasting' ) , array( &$this , 'feed_standard' )  , 'ss_podcasting' , 'feed_info' );
 		add_settings_field( 'ss_podcasting_feed_standard_series' , __( 'Standard RSS feed (specific series):' , 'ss-podcasting' ) , array( &$this , 'feed_standard_series' )  , 'ss_podcasting' , 'feed_info' );
-		add_settings_field( 'ss_podcasting_feed_itunes' , __( 'iTunes feed:' ) , array( &$this , 'feed_itunes' , 'ss-podcasting' )  , 'ss_podcasting' , 'feed_info' );
+		add_settings_field( 'ss_podcasting_feed_itunes' , __( 'iTunes feed:' , 'ss-podcasting' ) , array( &$this , 'feed_itunes' )  , 'ss_podcasting' , 'feed_info' );
 		add_settings_field( 'ss_podcasting_feed_itunes_series' , __( 'iTunes feed (specific series):' , 'ss-podcasting' ) , array( &$this , 'feed_itunes_series' )  , 'ss_podcasting' , 'feed_info' );
 
 		// Register settings fields
@@ -294,22 +296,22 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function feed_standard() {
-		$rss_url = trailingslashit( get_bloginfo( 'url' ) ) . '?feed=podcast';
+		$rss_url = $this->site_url . '?feed=podcast';
 		echo $rss_url;
 	}
 
 	public function feed_standard_series() {
-		$rss_url = trailingslashit( get_bloginfo( 'url' ) ) . '?feed=podcast&series=series-slug';
+		$rss_url = $this->site_url . '?feed=podcast&series=series-slug';
 		echo $rss_url;
 	}
 
 	public function feed_itunes() {
-		$rss_url = trailingslashit( get_bloginfo( 'url' ) ) . '?feed=itunes';
+		$rss_url = $this->site_url . '?feed=itunes';
 		echo $rss_url;
 	}
 
 	public function feed_itunes_series() {
-		$rss_url = trailingslashit( get_bloginfo( 'url' ) ) . '?feed=itunes&series=series-slug';
+		$rss_url = $this->site_url . '?feed=itunes&series=series-slug';
 		echo $rss_url;
 	}
 

@@ -258,7 +258,7 @@ class SeriouslySimplePodcasting {
 		
 		$field_data = $this->get_custom_fields_settings();
 		$fields = array_keys( $field_data );
-		echo '<pre>';print_r($_POST);echo '</pre>';
+		
 		foreach ( $fields as $f ) {
 			
 			if( isset( $_POST[$f] ) ) {

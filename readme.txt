@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/
 Tags: podcast, audio, rss, feed, itunes
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,11 +18,11 @@ It comes with built-in templates, widget and shortcode so you can display your p
 
 Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/.
 
-UPGRADE NOTICE: Users upgrading to v1.1 must please take note of the feed URL changes (for iTunes feeds and standard RSS feeds). You will find the new feed URLs on the Settings > Podcast page.
+UPGRADE NOTICE: Users upgrading from v1.0.x must please take note of the feed URL changes (for iTunes feeds and standard RSS feeds). You will find the new feed URLs on the Settings > Podcast page.
 
 == Usage ==
 
-Simply upload the plugin and you're good to go. By going to Settings > Podcast you can set a few simple settings to make your podcast more unique and manageable.
+Simply upload the plugin and you're good to go. Go to Podcast > Add New to ass new episodes and go to Settings > Podcast to change a few simple settings in order to make your podcast more unique and manageable.
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file.
 
@@ -37,7 +37,7 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 == Frequently Asked Questions ==
 
-= The podcast episode and archive pages just look like my default blog pages. =
+= Why do the podcast episode and archive pages just look like my default blog pages? =
 
 On the plugin's settings page you can opt to use the plugins built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them.
 
@@ -47,6 +47,11 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.1.2 =
+* 2013-01-21
+* Removing PHP errors
+* Fixing XML encoding of category names
 
 = 1.1.1 =
 * 2013-01-18
@@ -70,6 +75,11 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.1.2 =
+* 2013-01-21
+* Removing PHP errors
+* Fixing XML encoding of category names
 
 = 1.1.1 =
 * 2013-01-18

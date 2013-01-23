@@ -501,6 +501,24 @@ class SeriouslySimplePodcasting {
 
 	}
 
+	public function format_duration( $duration = false ) {
+
+		$length = false;
+		
+		if( $duration ) {
+			sscanf( $duration , "%d:%d:%d" , $hours , $minutes , $seconds );
+			$length = isset( $seconds ) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
+
+			if( ! $length ) {
+				$length = (int) $duration;
+			}
+
+			return $length;
+		}
+
+		return 0;
+	}
+
 	public function audio_player( $src = false ) {
 
 		/*

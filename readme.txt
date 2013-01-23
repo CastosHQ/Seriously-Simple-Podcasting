@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/
 Tags: podcast, audio, rss, feed, itunes
 Requires at least: 3.0
 Tested up to: 3.5
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ UPGRADE NOTICE: Users upgrading from v1.0.x must please take note of the feed UR
 
 == Usage ==
 
-Simply upload the plugin and you're good to go. Go to Podcast > Add New to ass new episodes and go to Settings > Podcast to change a few simple settings in order to make your podcast more unique and manageable.
+Simply upload the plugin and you're good to go. Go to Podcast > Add New to add new episodes and go to Settings > Podcast to change a few simple settings in order to make your podcast more unique and manageable.
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file.
 
@@ -47,6 +47,10 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.1.3 =
+* 2013-01-23
+* Fixing some feed validaton errors and warnings
 
 = 1.1.2 =
 * 2013-01-21
@@ -75,6 +79,10 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.1.3 =
+* 2013-01-23
+* Fixing some feed validaton errors and warnings
 
 = 1.1.2 =
 * 2013-01-21

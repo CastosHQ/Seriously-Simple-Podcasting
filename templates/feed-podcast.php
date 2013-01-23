@@ -1,6 +1,6 @@
 <?php
 /**
- * Podcats feed template
+ * Podcast standard RSS feed template
  *
  * @package WordPress
  */
@@ -53,14 +53,10 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	<title><?php echo $title; ?></title>
 	<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
 	<link><?php bloginfo_rss('url') ?></link>
-	<description><?php echo $description; ?></description>
+	<description><?php echo htmlspecialchars( $description ); ?></description>
 	<lastBuildDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_lastpostmodified('GMT'), false); ?></lastBuildDate>
-	<language><?php echo $language; ?></language>
-	<copyright><?php echo $copyright; ?></copyright>
-	<sy:updatePeriod><?php echo apply_filters( 'rss_update_period', 'hourly' ); ?></sy:updatePeriod>
-	<sy:updateFrequency><?php echo apply_filters( 'rss_update_frequency', '1' ); ?></sy:updateFrequency>
-	<?php do_action('rss2_head'); ?>
-	<?php
+	<language><?php echo htmlspecialchars( $language ); ?></language>
+	<copyright><?php echo htmlspecialchars( $copyright ); ?></copyright><?php
 	// Fetch podcast episodes
 	$args = array(
 		'post_type' => 'podcast',
@@ -71,13 +67,14 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	}
 	$qry = new WP_Query( $args );
 	?>
-	<?php while( $qry->have_posts()) : $qry->the_post();
+	<?php if( $qry->have_posts() ) : while( $qry->have_posts() ) : $qry->the_post();
 
 		//Enclosure
 		$enclosure = get_post_meta( get_the_ID() , 'enclosure' , true );
 		
 		// Episode duration
 		$duration = get_post_meta( get_the_ID() , 'duration' , true );
+		$length = $ss_podcasting->format_duration( $duration );
 
 		//File MIME type
 		$mime_type = $ss_podcasting->get_file_mimetype( $enclosure );
@@ -87,19 +84,14 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		<title><?php the_title_rss() ?></title>
 		<link><?php the_permalink_rss() ?></link>
 		<?php if( $category ) { ?><category><?php echo htmlspecialchars( $category ); ?></category><?php } ?>
-		<pubDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_post_time('Y-m-d H:i:s', true), false); ?></pubDate>
+		<pubDate><?php echo mysql2date( 'D, d M Y H:i:s +0000' , get_post_time( 'Y-m-d H:i:s' , true ) , false ); ?></pubDate>
 		<dc:creator><?php the_author() ?></dc:creator>
 		<guid isPermaLink="false"><?php the_guid(); ?></guid>
-		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
-	<?php $content = get_the_content_feed('rss2'); ?>
-	<?php if ( strlen( $content ) > 0 ) : ?>
-		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
-	<?php else : ?>
-		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded>
-	<?php endif; ?>
-	<enclosure url="<?php echo $enclosure; ?>" length="<?php echo $duration; ?>" type="<?php echo $mime_type; ?>"/>
-	<?php do_action('rss2_item'); ?>
-	</item>
-	<?php endwhile; ?>
+		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description><?php $content = get_the_content_feed('rss2');
+		if ( strlen( $content ) > 0 ) : ?>
+		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded><?php else : ?>
+		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded><?php endif; ?>
+	<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $length ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"/>
+	</item><?php endwhile; endif; ?>
 </channel>
 </rss>

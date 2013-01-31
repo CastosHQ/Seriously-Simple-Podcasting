@@ -482,18 +482,20 @@ class SeriouslySimplePodcasting {
 		return false;
 	}
 
-	public function get_file_mimetype( $file = false ) {
+	public function get_attachment_mimetype( $attachment = false ) {
 
-		if( $file ) {
+		if( $attachment ) {
+		    global $wpdb;
 
-			// Identify file by root path and not URL
-			$site_url = trailingslashit( site_url() );
-			$site_root = trailingslashit( ABSPATH );
-			$file_path = str_replace( $site_url , $site_root , $file );
+		    $prefix = $wpdb->prefix;
 
-			$mime_type = mime_content_type( $file_path );
+		    $attachment = $wpdb->get_col($wpdb->prepare( 'SELECT ID FROM ' . $prefix . 'posts' . ' WHERE guid="' . $attachment . '";' ) );
 
-			return $mime_type;
+		    $id = $attachment[0];
+
+		    $mime_type = get_post_mime_type( $id );
+
+		    return $mime_type;
 
 		}
 

@@ -77,7 +77,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		$length = $ss_podcasting->format_duration( $duration );
 
 		//File MIME type
-		$mime_type = $ss_podcasting->get_file_mimetype( $enclosure );
+		$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
 
 	?>
 	<item>

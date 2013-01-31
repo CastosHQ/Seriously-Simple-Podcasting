@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -48,6 +48,10 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 
 == Changelog ==
 
+= 1.1.4 =
+* 2013-02-10
+* Switching to using WordPress MIME type detection
+
 = 1.1.3 =
 * 2013-01-23
 * Fixing some feed validaton errors and warnings
@@ -79,6 +83,10 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.1.4 =
+* 2013-02-10
+* Switching to using WordPress MIME type detection
 
 = 1.1.3 =
 * 2013-01-23

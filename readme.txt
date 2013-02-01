@@ -50,7 +50,8 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 
 = 1.1.4 =
 * 2013-02-10
-* Switching to using WordPress MIME type detection
+* Switching to using WordPress' built-in MIME type detection
+* Improving feed tag layout
 
 = 1.1.3 =
 * 2013-01-23
@@ -86,7 +87,8 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 
 = 1.1.4 =
 * 2013-02-10
-* Switching to using WordPress MIME type detection
+* Switching to using WordPress' built-in MIME type detection
+* Improving feed tag layout
 
 = 1.1.3 =
 * 2013-01-23

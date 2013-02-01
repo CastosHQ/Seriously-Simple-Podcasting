@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting v1.1.2\n"
+"Project-Id-Version: Seriously Simple Podcasting v1.1.4\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-01-21 05:43:42+0000\n"
+"PO-Revision-Date: 2013-02-01 08:56:30+0000\n"
 "Last-Translator: hugh <hlashbrooke@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -240,12 +240,12 @@ msgstr ""
 msgid "Episodes from Selected Series"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:717
+#: classes/class-seriously-simple-podcasting.php:737
 #@ ss-podcasting
 msgid "Podcast sidebar"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:719
+#: classes/class-seriously-simple-podcasting.php:739
 #@ ss-podcasting
 msgid "Sidebar used on the podcast pages if you are using the plugin's built-in templates."
 msgstr ""

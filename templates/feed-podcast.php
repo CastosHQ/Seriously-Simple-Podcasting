@@ -56,7 +56,8 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	<description><?php echo htmlspecialchars( $description ); ?></description>
 	<lastBuildDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_lastpostmodified('GMT'), false); ?></lastBuildDate>
 	<language><?php echo htmlspecialchars( $language ); ?></language>
-	<copyright><?php echo htmlspecialchars( $copyright ); ?></copyright><?php
+	<copyright><?php echo htmlspecialchars( $copyright ); ?></copyright>
+	<?php
 	// Fetch podcast episodes
 	$args = array(
 		'post_type' => 'podcast',
@@ -91,7 +92,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		if ( strlen( $content ) > 0 ) : ?>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded><?php else : ?>
 		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded><?php endif; ?>
-	<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $length ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"/>
+		<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $length ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"></enclosure>
 	</item><?php endwhile; endif; ?>
 </channel>
 </rss>

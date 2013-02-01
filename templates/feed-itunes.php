@@ -102,11 +102,17 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		<itunes:name><?php echo htmlspecialchars( $owner_name ); ?></itunes:name>
 		<itunes:email><?php echo htmlspecialchars( $owner_email ); ?></itunes:email>
 	</itunes:owner>
-	<itunes:explicit><?php echo htmlspecialchars( $explicit ); ?></itunes:explicit><?php if( $image ) { ?>
-	<itunes:image href="<?php echo $image; ?>" /><?php } ?><?php if( $category ) { ?>
-	<itunes:category text="<?php echo htmlspecialchars( $category ); ?>"><?php if( $subcategory ) { ?>
-		<itunes:category text="<?php echo htmlspecialchars( $subcategory ); ?>" /><?php } ?>
-	</itunes:category><?php }
+	<itunes:explicit><?php echo htmlspecialchars( $explicit ); ?></itunes:explicit>
+	<?php if( $image ) { ?>
+	<itunes:image href="<?php echo $image; ?>"></itunes:image>
+	<?php } ?>
+	<?php if( $category ) { ?>
+	<itunes:category text="<?php echo htmlspecialchars( $category ); ?>">
+		<?php if( $subcategory ) { ?>
+		<itunes:category text="<?php echo htmlspecialchars( $subcategory ); ?>"></itunes:category>
+		<?php } ?>
+	</itunes:category>
+	<?php }
 
 	// Fetch podcast episodes
 	$args = array(
@@ -173,7 +179,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		if ( strlen( $content ) > 0 ) : ?>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded><?php else : ?>
 		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded><?php endif; ?>
-		<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $length ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"/>
+		<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $length ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo htmlspecialchars( $explicit_flag ); ?></itunes:explicit>
 		<itunes:duration><?php echo htmlspecialchars( $duration ); ?></itunes:duration>
 		<itunes:author><?php htmlspecialchars( the_author() ); ?></itunes:author>

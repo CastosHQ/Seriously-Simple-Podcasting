@@ -58,6 +58,7 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 * 2013-02-12
 * Moved settings page to be a sub-page of the Podcast menu
 * Added setting for redirecting podcast feed to new URL
+* Added episode meta data to start of episode excerpt
 * Fixed file size info & episode descriptions in feeds
 * Improved enclosure file size detection
 * Improved code commenting to make some features more clear
@@ -105,6 +106,7 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 * 2013-02-12
 * Moved settings page to be a sub-page of the Podcast menu
 * Added setting for redirecting podcast feed to new URL
+* Added episode meta data to start of episode excerpt
 * Fixed file size info & episode descriptions in feeds
 * Improved enclosure file size detection
 * Improved code commenting to make some features more clear

@@ -33,7 +33,10 @@ class SeriouslySimplePodcasting {
 		}
 
 		// Add meta data to start of podcast content
-		add_filter( 'the_content', array( &$this , 'meta_data' ) );
+		add_filter( 'the_content', array( &$this , 'content_meta_data' ) );
+
+		// Add meta data to start of podcast excerpt
+		add_filter( 'the_excerpt', array( &$this , 'content_meta_data' ) );
 
 		
 		if ( is_admin() ) {
@@ -397,9 +400,9 @@ class SeriouslySimplePodcasting {
 
 	}
 
-	public function meta_data( $content ) {
+	public function content_meta_data( $content ) {
 
-		if( get_post_type() == 'podcast' && ( is_feed() || is_single() ) ) {
+		if( ( get_post_type() == 'podcast' && ( is_feed() || is_single() ) ) || is_post_type_archive( 'podcast' ) ) {
 			
 			$id = get_the_ID();
 
@@ -434,7 +437,7 @@ class SeriouslySimplePodcasting {
 			if( isset( $data['headers']['content-length'] ) ) {
 
 				$raw = $data['headers']['content-length'];
-				$formatted = $this->format_bytes( $size );
+				$formatted = $this->format_bytes( $raw );
 
 				$size = array(
 					'raw' => $raw,

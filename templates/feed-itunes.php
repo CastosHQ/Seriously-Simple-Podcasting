@@ -9,6 +9,25 @@ global $ss_podcasting;
 
 error_reporting(0);
 
+// If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
+$redirect = get_option( 'ss_podcasting_redirect_feed' );
+if( $redirect && $redirect == 'on' ) {
+
+	$new_feed_url = get_option( 'ss_podcasting_new_feed_url' );
+	$update_date = get_option( 'ss_podcasting_redirect_feed_date' );
+
+	if( ( $update_date && strlen( $update_date ) > 0 && $update_date != '' ) && ( $new_feed_url && strlen( $new_feed_url ) > 0 && $new_feed_url != '' ) ) {
+		$redirect_date = strtotime( '+2 days' , $update_date );
+		$current_date = time();
+
+		if( $current_date > $redirect_date ) {
+			header ( 'HTTP/1.1 301 Moved Permanently' );
+			header ( 'Location: ' . $new_feed_url );
+			exit;
+		}
+	}
+}
+
 // Get podcast data
 $title = get_option( 'ss_podcasting_data_title' );
 if( ! $title || strlen( $title ) == 0 || $title == '' ) {
@@ -112,6 +131,9 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		<itunes:category text="<?php echo htmlspecialchars( $subcategory ); ?>"></itunes:category>
 		<?php } ?>
 	</itunes:category>
+	<?php } ?>
+	<?php if( isset( $new_feed_url ) && strlen( $new_feed_url ) > 0 && $new_feed_url != '' ) { ?>
+	<itunes:new-feed-url><?php echo $new_feed_url; ?></itunes:new-feed-url>
 	<?php }
 
 	// Fetch podcast episodes
@@ -127,15 +149,24 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	if( $qry->have_posts() ) :
 		while( $qry->have_posts()) : $qry->the_post();
 
-		//Enclosure
+		// Enclosure (audio file)
 		$enclosure = get_post_meta( get_the_ID() , 'enclosure' , true );
 		
 		// Episode duration
 		$duration = get_post_meta( get_the_ID() , 'duration' , true );
-		$length = $ss_podcasting->format_duration( $duration );
+		
+		// File size
+		$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
+		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
+			$size = $ss_podcasting->get_file_size( $enclosure );
+			$size = $size['raw'];
+		}
 
-		//File MIME type
+		// File MIME type (default to MP3 to ensure that the is always a value for this)
 		$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
+		if( ! $mime_type || strlen( $mime_type ) == 0 || $mime_type == '' ) {
+			$mime_type = 'audio/mpeg';
+		}
 
 		// Explicit flag
 		$ep_explicit = get_post_meta( get_the_ID() , 'explicit' , true );
@@ -169,21 +200,29 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 				}
 			}
 		}
+
+		// Episode author
+		$author = htmlspecialchars( get_the_author() );
+
+		// Episode content
+		$content = get_the_content_feed( 'rss2' );
+
 	?>
 	<item>
 		<title><?php the_title_rss(); ?></title>
 		<link><?php the_permalink_rss(); ?></link>
 		<pubDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_post_time('Y-m-d H:i:s', true), false); ?></pubDate>
 		<guid isPermaLink="false"><?php the_guid(); ?></guid>
-		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description><?php $content = get_the_content_feed('rss2');
-		if ( strlen( $content ) > 0 ) : ?>
-		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded><?php else : ?>
-		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded><?php endif; ?>
-		<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $length ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"></enclosure>
+		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
+		<?php if ( strlen( $content ) > 0 ) : ?>
+		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
+		<itunes:summary><![CDATA[<?php echo $content; ?>]]></itunes:summary><?php else : ?>
+		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded>
+		<itunes:summary><![CDATA[<?php the_excerpt_rss(); ?>]]></itunes:summary><?php endif; ?>
+		<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $size ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo htmlspecialchars( $explicit_flag ); ?></itunes:explicit>
 		<itunes:duration><?php echo htmlspecialchars( $duration ); ?></itunes:duration>
-		<itunes:author><?php htmlspecialchars( the_author() ); ?></itunes:author>
-		<itunes:summary><![CDATA[<?php the_excerpt_rss(); ?>]]></itunes:summary><?php if( $keywords ) { ?>
+		<itunes:author><?php echo $author; ?></itunes:author><?php if( $keywords ) { ?>
 		<itunes:keywords><?php echo htmlspecialchars( $keywords ); ?></itunes:keywords><?php } ?>
 	</item><?php endwhile; endif; ?>
 </channel>

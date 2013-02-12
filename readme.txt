@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.1.4
+Stable tag: 1.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,13 +18,15 @@ It comes with built-in templates, widget and shortcode so you can display your p
 
 Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/.
 
-UPGRADE NOTICE: Users upgrading from v1.0.x must please take note of the feed URL changes (for iTunes feeds and standard RSS feeds). You will find the new feed URLs on the Settings > Podcast page.
+UPGRADE NOTICE: Users upgrading from v1.1.x must please take note of the change in location of the settings page - you will now find it at Podcast > Settings.
 
 == Usage ==
 
-Simply upload the plugin and you're good to go. Go to Podcast > Add New to add new episodes and go to Settings > Podcast to change a few simple settings in order to make your podcast more unique and manageable.
+Simply upload the plugin and you're good to go. Go to Podcast > Add New to add new episodes and go to Podcast > Settings to customise and describe your podcast.
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file.
+
+UPGRADE NOTICE: Users upgrading from v1.1.x must please take note of the change in location of the settings page - you will now find it at Podcast > Settings (as opposed Settings > Podcast).
 
 == Installation ==
 
@@ -37,9 +39,13 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 == Frequently Asked Questions ==
 
+= I've installed the plugin and added episodes, but where do I find all of it on my website? =
+
+Your podcast page will always be available from this URL on your site: http://www.example.com/?post_type=podcast, but if you go to the plugin's settings page (Podcast > Settings) you can specify a URL slug that will make your podcast URLs more attractive - once you have saved your slug, the podcast archive page URL will be formatted like this: http://www.example.com/your-slug.
+
 = Why do the podcast episode and archive pages just look like my default blog pages? =
 
-On the plugin's settings page you can opt to use the plugins built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them.
+On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them.
 
 == Screenshots ==
 
@@ -48,8 +54,18 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 
 == Changelog ==
 
+= 1.2 =
+* 2013-02-12
+* Moved settings page to be a sub-page of the Podcast menu
+* Added setting for redirecting podcast feed to new URL
+* Fixed file size info & episode descriptions in feeds
+* Improved enclosure file size detection
+* Improved code commenting to make some features more clear
+* Improved script loading in dashboard to improve performance on all admin pages
+* Improved FAQ list
+
 = 1.1.4 =
-* 2013-02-10
+* 2013-02-07
 * Switching to using WordPress' built-in MIME type detection
 * Improving feed tag layout
 
@@ -85,8 +101,18 @@ On the plugin's settings page you can opt to use the plugins built-in templates 
 
 == Upgrade Notice ==
 
+= 1.2 =
+* 2013-02-12
+* Moved settings page to be a sub-page of the Podcast menu
+* Added setting for redirecting podcast feed to new URL
+* Fixed file size info & episode descriptions in feeds
+* Improved enclosure file size detection
+* Improved code commenting to make some features more clear
+* Improved script loading in dashboard to improve performance on all admin pages
+* Improved FAQ list
+
 = 1.1.4 =
-* 2013-02-10
+* 2013-02-07
 * Switching to using WordPress' built-in MIME type detection
 * Improving feed tag layout
 

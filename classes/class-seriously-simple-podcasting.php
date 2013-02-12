@@ -17,9 +17,11 @@ class SeriouslySimplePodcasting {
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
 		$this->token = 'podcast';
 
+		// Handle localisation
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( &$this, 'load_localisation' ), 0 );
 
+		// Regsiter 'podcast' post type
 		add_action('init', array( &$this , 'register_post_type' ) );
 
 		// Use built-in templates if selected
@@ -30,18 +32,21 @@ class SeriouslySimplePodcasting {
 			add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
 		}
 
+		// Add meta data to start of podcast content
 		add_filter( 'the_content', array( &$this , 'meta_data' ) );
 
+		
 		if ( is_admin() ) {
 			global $pagenow;
 
-			add_action( 'admin_menu', array( &$this, 'meta_box_setup' ), 20 );
-			add_action( 'save_post', array( &$this, 'meta_box_save' ) );
-			add_filter( 'enter_title_here', array( &$this, 'enter_title_here' ) );
-			add_filter( 'post_updated_messages', array( &$this, 'updated_messages' ) );
-			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_scripts' ), 10 );
-
-			if ( $pagenow == 'edit.php' && isset( $_GET['post_type'] ) && esc_attr( $_GET['post_type'] ) == $this->token ) {
+			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_styles' ), 10 );
+			
+			if ( in_array( $pagenow , array( 'edit.php' , 'post-new.php' ) ) && isset( $_GET['post_type'] ) && $_GET['post_type'] == $this->token ) {
+				add_action( 'admin_menu', array( &$this, 'meta_box_setup' ), 20 );
+				add_action( 'save_post', array( &$this, 'meta_box_save' ) );
+				add_filter( 'enter_title_here', array( &$this, 'enter_title_here' ) );
+				add_filter( 'post_updated_messages', array( &$this, 'updated_messages' ) );
+				add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_scripts' ), 10 );
 				add_filter( 'manage_edit-' . $this->token . '_columns', array( &$this, 'register_custom_column_headings' ), 10, 1 );
 				add_action( 'manage_posts_custom_column', array( &$this, 'register_custom_columns' ), 10, 2 );
 			}
@@ -293,7 +298,8 @@ class SeriouslySimplePodcasting {
 			if ( get_post_meta( $post_id , 'filesize' , true ) == '' ) {
 				$filesize = $this->get_file_size( $enclosure );
 				if( $filesize ) {
-					update_post_meta( $post_id , 'filesize' , $filesize );
+					update_post_meta( $post_id , 'filesize' , $filesize['formatted'] );
+					update_post_meta( $post_id , 'filesize_raw' , $filesize['raw'] );
 				}
 			}
 
@@ -308,11 +314,15 @@ class SeriouslySimplePodcasting {
 		return $title;
 	}
 
-	public function enqueue_admin_scripts () {
+	public function enqueue_admin_styles () {
 
 		// Admin CSS
 		wp_register_style( 'ss_podcasting-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), '1.0.0' );
 		wp_enqueue_style( 'ss_podcasting-admin' );
+
+	}
+
+	public function enqueue_admin_scripts () {
 
 		// Admin JS
 		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' , 'media-upload' , 'thickbox' ), '1.0.1' );
@@ -395,7 +405,11 @@ class SeriouslySimplePodcasting {
 
 			$file = get_post_meta( $id , 'enclosure' , true );
 			$duration = get_post_meta( $id , 'duration' , true );
-			$size = $this->get_file_size( $file );
+			$size = get_post_meta( $id , 'filesize' , true );
+			if( ! $size || strlen( $size ) == 0 || $size == '' ) {
+				$size = $this->get_file_size( $file );
+				$size = $size['formatted'];
+			}
 
 			$meta = '<div class="' . esc_attr( 'podcast_meta' ) . '"><aside>';
 			if( $file && strlen( $file ) > 0 ) { $meta .= '<a href="' . esc_url( $file ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
@@ -419,7 +433,13 @@ class SeriouslySimplePodcasting {
 
 			if( isset( $data['headers']['content-length'] ) ) {
 
-				$size = $this->format_bytes( $data['headers']['content-length'] );
+				$raw = $data['headers']['content-length'];
+				$formatted = $this->format_bytes( $size );
+
+				$size = array(
+					'raw' => $raw,
+					'formatted' => $formatted
+				);
 
 				return $size;
 

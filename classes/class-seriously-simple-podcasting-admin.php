@@ -7,6 +7,7 @@ class SeriouslySimplePodcasting_Admin {
 	private $assets_dir;
 	private $assets_url;
 	private $site_url;
+	private $token;
 
 	public function __construct( $file ) {
 		$this->dir = dirname( $file );
@@ -14,21 +15,34 @@ class SeriouslySimplePodcasting_Admin {
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
 		$this->site_url = trailingslashit( site_url() );
+		$this->token = 'podcast';
 
+		// Register podcast settings
 		add_action( 'admin_init' , array( &$this , 'register_settings' ) );
+
+		// Add settings page to menu
 		add_action( 'admin_menu' , array( &$this , 'add_menu_item' ) );
+
+		// Add settings link to plugins page
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ) , array( &$this , 'add_settings_link' ) );
 
-		add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_scripts' ), 10 );
+		// Load scripts for settings page
+		global $pagenow;
+		if ( $pagenow == 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $this->token ) {
+			add_action( 'admin_enqueue_scripts' , array( &$this, 'enqueue_admin_scripts' ) , 10 );
+		}
+
+		// Mark date on which feed redirection was activated
+		add_action( 'update_option' , array( &$this, 'mark_feed_redirect_date' ) , 10 , 3 );
 
 	}
 
 	public function add_menu_item() {
-		add_options_page('Seriously Simple Podcasting', 'Podcast', 'manage_options', 'ss_podcasting', array( &$this , 'settings_page' ) );
+		add_submenu_page( 'edit.php?post_type=podcast' , 'Podcast Settings' , 'Settings', 'manage_options' , 'settings' , array( &$this , 'settings_page' ) );
 	}
 
 	public function add_settings_link( $links ) {
-		$settings_link = '<a href="options-general.php?page=ss_podcasting">Settings</a>';
+		$settings_link = '<a href="edit.php?post_type=podcast&page=settings">Settings</a>';
   		array_push( $links, $settings_link );
   		return $links;
 	}
@@ -52,7 +66,8 @@ class SeriouslySimplePodcasting_Admin {
 		// Add settings section
 		add_settings_section( 'main_settings' , __( 'Customise your podcast' , 'ss-podcasting' ) , array( &$this , 'main_settings' ) , 'ss_podcasting' );
 		add_settings_section( 'podcast_data' , __( 'Describe your podcast' , 'ss-podcasting' ) , array( &$this , 'podcast_data' ) , 'ss_podcasting' );
-		add_settings_section( 'feed_info' , __( 'Get your feed URLs' , 'ss-podcasting' ) , array( &$this , 'feed_info' ) , 'ss_podcasting' );
+		add_settings_section( 'feed_info' , __( 'Share your podcast' , 'ss-podcasting' ) , array( &$this , 'feed_info' ) , 'ss_podcasting' );
+		add_settings_section( 'redirect_settings' , __( 'Redirect your podcast' , 'ss-podcasting' ) , array( &$this , 'redirect_settings' ) , 'ss_podcasting' );
 
 		// Add settings fields
 		add_settings_field( 'ss_podcasting_use_templates' , __( 'Use built-in plugin templates:' , 'ss-podcasting' ) , array( &$this , 'use_templates_field' )  , 'ss_podcasting' , 'main_settings' );
@@ -77,6 +92,10 @@ class SeriouslySimplePodcasting_Admin {
 		add_settings_field( 'ss_podcasting_feed_itunes' , __( 'iTunes feed:' , 'ss-podcasting' ) , array( &$this , 'feed_itunes' )  , 'ss_podcasting' , 'feed_info' );
 		add_settings_field( 'ss_podcasting_feed_itunes_series' , __( 'iTunes feed (specific series):' , 'ss-podcasting' ) , array( &$this , 'feed_itunes_series' )  , 'ss_podcasting' , 'feed_info' );
 
+		// Add redirect settings fields
+		add_settings_field( 'ss_podcasting_redirect_feed' , __( 'Redirect podcast feed to new URL:' , 'ss-podcasting' ) , array( &$this , 'redirect_feed' )  , 'ss_podcasting' , 'redirect_settings' );
+		add_settings_field( 'ss_podcasting_new_feed_url' , __( 'New podcast URL:' , 'ss-podcasting' ) , array( &$this , 'new_feed_url' )  , 'ss_podcasting' , 'redirect_settings' );
+
 		// Register settings fields
 		register_setting( 'ss_podcasting' , 'ss_podcasting_use_templates' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_slug' , array( &$this , 'validate_slug' ) );
@@ -95,13 +114,19 @@ class SeriouslySimplePodcasting_Admin {
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_copyright' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_explicit' );
 
+		// Register redirect settings fields
+		register_setting( 'ss_podcasting' , 'ss_podcasting_redirect_feed' );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_new_feed_url' );
+
 	}
 
-	public function main_settings() { echo '<p>' . __( 'Just a few simple settings to make your podcast work the way you want it to work.' , 'ss-podcasting' ) . '</p>'; }
+	public function main_settings() { echo '<p>' . __( 'These are a few simple settings to make your podcast work the way you want it to work.' , 'ss-podcasting' ) . '</p>'; }
 
 	public function podcast_data() { echo '<p>' . sprintf( __( 'This data will be used in the RSS feed for your podcast so your listeners will know more about it before they subscribe.%sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.' , 'ss-podcasting' ) , '<br/><em>' ) . '</em></p>'; }
 
-	public function feed_info() { echo '<p>' . __( 'Use these URLs for your podcast RSS feed. If you are submitting your podcast to iTunes make sure to use the correct URL.' , 'ss-podcasting' ) . '</p>'; }
+	public function feed_info() { echo '<p>' . __( 'Use these URLs to share and publish your podcast RSS feed. If you are submitting your podcast to iTunes make sure to use the correct URL.' , 'ss-podcasting' ) . '</p>'; }
+
+	public function redirect_settings() { echo '<p>' . sprintf( __( 'Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active.%sThis is also useful if you syndicate your podcast through a third-party service (such as Feedburner).' , 'ss-podcasting' ) , '<br/><em>' ) . '</em></p>'; }
 
 	public function use_templates_field() {
 
@@ -134,6 +159,44 @@ class SeriouslySimplePodcasting_Admin {
 			$slug = urlencode( strtolower( str_replace( ' ' , '-' , $slug ) ) );
 		}
 		return $slug;
+	}
+
+	public function redirect_feed() {
+
+		$option = get_option('ss_podcasting_redirect_feed');
+
+		$data = '';
+		if( $option && $option == 'on' ) {
+			$data = $option;
+		}
+
+		echo '<input id="redirect_feed" type="checkbox" name="ss_podcasting_redirect_feed" ' . checked( 'on' , $data , false ) . ' />
+				<label for="redirect_feed"><span class="description">' . sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform iTunes that your podcast has moved and in 48 hours from the time that you save this option it will permanently redirect your iTunes feed to the new URL (as per iTunes\' requirements). Your standard RSS feed address will be redirected immediately.' , 'ss-podcasting' ) , '<br/>' ) . '</span></label>';
+
+	}
+
+	public function mark_feed_redirect_date( $option , $old_value , $new_value ) {
+		
+		if( $option == 'ss_podcasting_redirect_feed' ) {
+			if( $new_value && $new_value == 'on' ) {
+				$date = time();
+				update_option( 'ss_podcasting_redirect_feed_date' , $date );
+			}
+		}
+
+	}
+
+	public function new_feed_url() {
+
+		$option = get_option('ss_podcasting_new_feed_url');
+
+		$data = '';
+		if( $option && strlen( $option ) > 0 && $option != '' ) {
+			$data = $option;
+		}
+
+		echo '<input id="new_feed_url" type="text" name="ss_podcasting_new_feed_url" value="' . $data . '"/>
+				<label for="new_feed_url"><span class="description">' . __( 'Your podcast feed\'s new URL.' , 'ss-podcasting' ) . '</span></label>';
 	}
 
 	public function data_title() {
@@ -187,7 +250,7 @@ class SeriouslySimplePodcasting_Admin {
 		}
 
 		echo '<input id="data_category" type="text" name="ss_podcasting_data_category" value="' . $data . '"/>
-				<label for="data_category"><span class="description">' . sprintf( __( 'Your podcast\'s category - use one of the first-tier categories from %1$sthis list%2$s.' , 'ss-podcasting' ) , '<a href="' . esc_url( 'http://www.apple.com/itunes/podcasts/specs.html#categories' ) . '" target="' . esc_attr( '_blank' ) . '">' , '<a>' ) . '</span></label>';
+				<label for="data_category"><span class="description">' . sprintf( __( 'Your podcast\'s category - use one of the first-tier categories from %1$sthis list%2$s.' , 'ss-podcasting' ) , '<a href="' . esc_url( 'http://www.apple.com/itunes/podcasts/specs.html#categories' ) . '" target="' . esc_attr( '_blank' ) . '">' , '</a>' ) . '</span></label>';
 	}
 
 	public function data_subcategory() {
@@ -200,7 +263,7 @@ class SeriouslySimplePodcasting_Admin {
 		}
 
 		echo '<input id="data_subcategory" type="text" name="ss_podcasting_data_subcategory" value="' . $data . '"/>
-				<label for="data_subcategory"><span class="description">' . sprintf( __( 'Your podcast\'s sub-category - use one of the second-tier categories from %1$sthis list%2$s.' , 'ss-podcasting' ) , '<a href="' . esc_url( 'http://www.apple.com/itunes/podcasts/specs.html#categories' ) . '" target="' . esc_attr( '_blank' ) . '">' , '<a>' ) . '</span></label>';
+				<label for="data_subcategory"><span class="description">' . sprintf( __( 'Your podcast\'s sub-category - use one of the second-tier categories from %1$sthis list%2$s (must be a sub-category of your selected primary category).' , 'ss-podcasting' ) , '<a href="' . esc_url( 'http://www.apple.com/itunes/podcasts/specs.html#categories' ) . '" target="' . esc_attr( '_blank' ) . '">' , '</a>' ) . '</span></label>';
 	}
 
 	public function data_description() {
@@ -321,7 +384,7 @@ class SeriouslySimplePodcasting_Admin {
 
 		echo '<div class="wrap">
 				<div class="icon32" id="ss_podcasting-icon"><br/></div>
-				<h2>Seriously Simple Podcasting</h2>
+				<h2>Podcast Settings</h2>
 				<form method="post" action="options.php" enctype="multipart/form-data">';
 
 				settings_fields( 'ss_podcasting' );

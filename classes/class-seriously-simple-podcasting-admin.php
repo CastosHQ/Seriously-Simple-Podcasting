@@ -27,10 +27,7 @@ class SeriouslySimplePodcasting_Admin {
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ) , array( &$this , 'add_settings_link' ) );
 
 		// Load scripts for settings page
-		global $pagenow;
-		if ( $pagenow == 'edit.php' && isset( $_GET['post_type'] ) && $_GET['post_type'] == $this->token ) {
-			add_action( 'admin_enqueue_scripts' , array( &$this, 'enqueue_admin_scripts' ) , 10 );
-		}
+		add_action( 'admin_enqueue_scripts' , array( &$this, 'enqueue_admin_scripts' ) , 10 );
 
 		// Mark date on which feed redirection was activated
 		add_action( 'update_option' , array( &$this, 'mark_feed_redirect_date' ) , 10 , 3 );

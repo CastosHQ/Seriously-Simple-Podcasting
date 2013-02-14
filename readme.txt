@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.2.1
+Stable tag: 1.2.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -54,10 +54,13 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 
 == Changelog ==
 
+= 1.2.2 =
+* 2013-02-14
+* Removed conflicts with other plugins that prevented some admin pages from loading
+
 = 1.2.1 =
 * 2013-02-13
 * Fixed critical bug that was preventing episode data from being added
-* Removed potential conflicts with other plugins
 
 = 1.2 =
 * 2013-02-12
@@ -107,10 +110,13 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 
 == Upgrade Notice ==
 
+= 1.2.2 =
+* 2013-02-14
+* Removed conflicts with other plugins that prevented some admin pages from loading
+
 = 1.2.1 =
 * 2013-02-13
 * Fixed critical bug that was preventing eipsode data from being added
-* Removed potential conflicts with other plugins
 
 = 1.2 =
 * 2013-02-12

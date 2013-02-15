@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.2.2
+Stable tag: 1.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -53,6 +53,13 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.3 =
+* 2013-02-15
+* Added option to pass your feed through Feedburner (or similar service)
+* Added RSS meta tags to site header
+* Added option to show podcast episodes in main query loop on home page along with blog posts
+* Unified feed templates, so only one feed is used for all podcasting services (ensured backward compatibility for existing feed URLs)
 
 = 1.2.2 =
 * 2013-02-14
@@ -109,6 +116,13 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.3 =
+* 2013-02-15
+* Added option to pass your feed through Feedburner (or similar service)
+* Added RSS meta tags to site header
+* Added option to show podcast episodes in main query loop on home page along with blog posts
+* Unified feed templates, so only one feed is used for all podcasting services
 
 = 1.2.2 =
 * 2013-02-14

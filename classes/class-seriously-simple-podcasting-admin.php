@@ -69,6 +69,8 @@ class SeriouslySimplePodcasting_Admin {
 		// Add settings fields
 		add_settings_field( 'ss_podcasting_use_templates' , __( 'Use built-in plugin templates:' , 'ss-podcasting' ) , array( &$this , 'use_templates_field' )  , 'ss_podcasting' , 'main_settings' );
 		add_settings_field( 'ss_podcasting_slug' , __( 'URL slug for podcast pages:' , 'ss-podcasting' ) , array( &$this , 'slug_field' )  , 'ss_podcasting' , 'main_settings' );
+		add_settings_field( 'ss_podcasting_feed_url' , __( 'URL for your podcast:' , 'ss-podcasting' ) , array( &$this , 'feed_url_field' )  , 'ss_podcasting' , 'main_settings' );
+		add_settings_field( 'ss_podcasting_include_in_main_query' , __( 'Include podcast episodes in home page blog listing:' , 'ss-podcasting' ) , array( &$this , 'include_in_main_query' )  , 'ss_podcasting' , 'main_settings' );
 
 		// Add data fields
 		add_settings_field( 'ss_podcasting_data_title' , __( 'Title:' , 'ss-podcasting' ) , array( &$this , 'data_title' )  , 'ss_podcasting' , 'podcast_data' );
@@ -86,8 +88,6 @@ class SeriouslySimplePodcasting_Admin {
 		// Add feed info fields
 		add_settings_field( 'ss_podcasting_feed_standard' , __( 'Standard RSS feed:' , 'ss-podcasting' ) , array( &$this , 'feed_standard' )  , 'ss_podcasting' , 'feed_info' );
 		add_settings_field( 'ss_podcasting_feed_standard_series' , __( 'Standard RSS feed (specific series):' , 'ss-podcasting' ) , array( &$this , 'feed_standard_series' )  , 'ss_podcasting' , 'feed_info' );
-		add_settings_field( 'ss_podcasting_feed_itunes' , __( 'iTunes feed:' , 'ss-podcasting' ) , array( &$this , 'feed_itunes' )  , 'ss_podcasting' , 'feed_info' );
-		add_settings_field( 'ss_podcasting_feed_itunes_series' , __( 'iTunes feed (specific series):' , 'ss-podcasting' ) , array( &$this , 'feed_itunes_series' )  , 'ss_podcasting' , 'feed_info' );
 
 		// Add redirect settings fields
 		add_settings_field( 'ss_podcasting_redirect_feed' , __( 'Redirect podcast feed to new URL:' , 'ss-podcasting' ) , array( &$this , 'redirect_feed' )  , 'ss_podcasting' , 'redirect_settings' );
@@ -96,6 +96,8 @@ class SeriouslySimplePodcasting_Admin {
 		// Register settings fields
 		register_setting( 'ss_podcasting' , 'ss_podcasting_use_templates' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_slug' , array( &$this , 'validate_slug' ) );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_feed_url' );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_include_in_main_query' );
 
 		// Register data fields
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_title' );
@@ -121,9 +123,9 @@ class SeriouslySimplePodcasting_Admin {
 
 	public function podcast_data() { echo '<p>' . sprintf( __( 'This data will be used in the RSS feed for your podcast so your listeners will know more about it before they subscribe.%sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.' , 'ss-podcasting' ) , '<br/><em>' ) . '</em></p>'; }
 
-	public function feed_info() { echo '<p>' . __( 'Use these URLs to share and publish your podcast RSS feed. If you are submitting your podcast to iTunes make sure to use the correct URL.' , 'ss-podcasting' ) . '</p>'; }
+	public function feed_info() { echo '<p>' . __( 'Use these URLs to share and publish your podcast RSS feed. These URLs will work with any podcasting service (including iTunes).' , 'ss-podcasting' ) . '</p>'; }
 
-	public function redirect_settings() { echo '<p>' . sprintf( __( 'Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active.%sThis is also useful if you syndicate your podcast through a third-party service (such as Feedburner).' , 'ss-podcasting' ) , '<br/><em>' ) . '</em></p>'; }
+	public function redirect_settings() { echo '<p>' . __( 'Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active.' , 'ss-podcasting' ) . '</p>'; }
 
 	public function use_templates_field() {
 
@@ -142,13 +144,15 @@ class SeriouslySimplePodcasting_Admin {
 
 		$option = get_option('ss_podcasting_slug');
 
-		$slug = 'podcast';
+		$data = 'podcast';
 		if( $option && strlen( $option ) > 0 && $option != '' ) {
-			$slug = $option;
+			$data = $option;
 		}
 
-		echo '<input id="slug" type="text" name="ss_podcasting_slug" value="' . $slug . '"/>
-				<label for="slug"><span class="description">' . sprintf( __( 'Provide a custom URL slug for the podcast archive and single pages. You must re-save your %1$spermalinks%2$s after changing this setting.' , 'ss-podcasting' ) , '<a href="' . esc_attr( 'options-permalink.php' ) . '">' , '</a>' ) . '</span></label>';
+		$default_url = trailingslashit( get_site_url() ) . '?post_type=podcast';
+
+		echo '<input id="slug" type="text" name="ss_podcasting_slug" value="' . $data . '"/>
+				<label for="slug"><span class="description">' . sprintf( __( 'Provide a custom URL slug for the podcast archive and single pages. You must re-save your %1$spermalinks%2$s after changing this setting. No matter what you put here your podcast will always be visible at %3$s.' , 'ss-podcasting' ) , '<a href="' . esc_attr( 'options-permalink.php' ) . '">' , '</a>' , '<a href="' . esc_url( $default_url ) . '">' . $default_url . '</a>' ) . '</span></label>';
 	}
 
 	public function validate_slug( $slug ) {
@@ -156,6 +160,33 @@ class SeriouslySimplePodcasting_Admin {
 			$slug = urlencode( strtolower( str_replace( ' ' , '-' , $slug ) ) );
 		}
 		return $slug;
+	}
+
+	public function feed_url_field() {
+
+		$option = get_option('ss_podcasting_feed_url');
+
+		$data = '';
+		if( $option && strlen( $option ) > 0 && $option != '' ) {
+			$data = $option;
+		}
+
+		echo '<input id="feed_url" type="text" name="ss_podcasting_feed_url" value="' . $data . '"/>
+				<label for="feed_url"><span class="description">' . __( 'If you are using Feedburner (or a similar service) to syndicate your podcast feed you can insert the URL here, otherwise this must be left blank.' , 'ss-podcasting' ) . '</span></label>';
+
+	}
+
+	public function include_in_main_query() {
+
+		$option = get_option('ss_podcasting_include_in_main_query');
+
+		$checked = '';
+		if( $option && $option == 'on' ){
+			$checked = 'checked="checked"';
+		}
+
+		echo '<input id="include_in_main_query" type="checkbox" name="ss_podcasting_include_in_main_query" ' . $checked . '/>
+				<label for="include_in_main_query"><span class="description">' . __( 'This setting may behave differently in each theme, so test it carefully after activation - it will add the \'podcast\' post type to your site\'s main query so that your podcast episodes appear on your home page along with your blog posts.' , 'ss-podcasting' ) . '</span></label>';
 	}
 
 	public function redirect_feed() {
@@ -168,7 +199,7 @@ class SeriouslySimplePodcasting_Admin {
 		}
 
 		echo '<input id="redirect_feed" type="checkbox" name="ss_podcasting_redirect_feed" ' . checked( 'on' , $data , false ) . ' />
-				<label for="redirect_feed"><span class="description">' . sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform iTunes that your podcast has moved and in 48 hours from the time that you save this option it will permanently redirect your iTunes feed to the new URL (as per iTunes\' requirements). Your standard RSS feed address will be redirected immediately.' , 'ss-podcasting' ) , '<br/>' ) . '</span></label>';
+				<label for="redirect_feed"><span class="description">' . sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have save this option it will permanently redirect your RSS feed to the new URL.' , 'ss-podcasting' ) , '<br/>' ) . '</span></label>';
 
 	}
 
@@ -362,16 +393,6 @@ class SeriouslySimplePodcasting_Admin {
 
 	public function feed_standard_series() {
 		$rss_url = $this->site_url . '?feed=podcast&series=series-slug';
-		echo $rss_url;
-	}
-
-	public function feed_itunes() {
-		$rss_url = $this->site_url . '?feed=itunes';
-		echo $rss_url;
-	}
-
-	public function feed_itunes_series() {
-		$rss_url = $this->site_url . '?feed=itunes&series=series-slug';
 		echo $rss_url;
 	}
 

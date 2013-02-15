@@ -38,6 +38,14 @@ class SeriouslySimplePodcasting {
 		// Add meta data to start of podcast excerpt
 		add_filter( 'the_excerpt', array( &$this , 'content_meta_data' ) );
 
+		// Add RSS meta tag to site header
+		add_action( 'wp_head' , array( &$this , 'rss_meta_tag' ) );
+
+		// Add podcast episode to main query loop if setting is activated
+		$include_in_main_query = get_option('ss_podcasting_include_in_main_query');
+		if( $include_in_main_query && $include_in_main_query == 'on' ) {
+			add_filter( 'pre_get_posts' , array( &$this , 'add_to_home_query' ) );
+		}
 		
 		if ( is_admin() ) {
 
@@ -52,14 +60,15 @@ class SeriouslySimplePodcasting {
 
 		}
 
+		// Add podcast image size
 		add_action( 'after_setup_theme', array( &$this , 'ensure_post_thumbnails_support' ) );
 		add_action( 'after_setup_theme', array( &$this , 'register_image_sizes' ) );
 
 		// Handle RSS template
 		if( isset( $_GET['feed'] ) ) {
 			switch( $_GET['feed'] ) {
-				case 'podcast': add_action( 'init' , array( &$this , 'feed_template_podcast' ) , 10 ); break;
-				case 'itunes': add_action( 'init' , array( &$this , 'feed_template_itunes' ) , 10 ); break;
+				case 'podcast': add_action( 'init' , array( &$this , 'feed_template' ) , 10 ); break;
+				case 'itunes': add_action( 'init' , array( &$this , 'feed_template' ) , 10 ); break; // Backward compatibility
 			}
 		}
 
@@ -396,6 +405,19 @@ class SeriouslySimplePodcasting {
 
 	}
 
+	public function rss_meta_tag() {
+
+		$custom_feed_url = get_option('ss_podcasting_feed_url');
+		$feed_url = trailingslashit( get_site_url() ) . '?feed=podcast';
+		if( $custom_feed_url && strlen( $custom_feed_url ) > 0 && $custom_feed_url != '' ) {
+			$feed_url = $custom_feed_url;
+		}
+
+		$html = '<link rel="alternate" type="application/rss+xml" title="Podcast RSS feed" href="' . esc_url( $feed_url ) . '" />';
+
+		echo $html;
+	}
+
 	public function content_meta_data( $content ) {
 
 		if( ( get_post_type() == 'podcast' && ( is_feed() || is_single() ) ) || is_post_type_archive( 'podcast' ) ) {
@@ -422,6 +444,18 @@ class SeriouslySimplePodcasting {
 
 		return $content;
 
+	}
+
+	public function add_to_home_query( $query ) {
+
+		if ( ! is_admin() ) {
+
+			if ( $query->is_home() && $query->is_main_query() ) {
+				$query->set( 'post_type', array( 'post' , 'podcast' ) );
+			}
+			
+
+		}
 	}
 
 	public function get_file_size( $file = false ) {
@@ -766,13 +800,8 @@ class SeriouslySimplePodcasting {
 
     }
 
-    public function feed_template_podcast() {
+    public function feed_template() {
 	    require( $this->template_path . 'feed-podcast.php' );
-	    exit;
-	}
-
-	public function feed_template_itunes() {
-	    require( $this->template_path . 'feed-itunes.php' );
 	    exit;
 	}
 

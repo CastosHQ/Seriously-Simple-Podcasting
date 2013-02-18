@@ -35,11 +35,11 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function add_menu_item() {
-		add_submenu_page( 'edit.php?post_type=podcast' , 'Podcast Settings' , 'Settings', 'manage_options' , 'settings' , array( &$this , 'settings_page' ) );
+		add_submenu_page( 'edit.php?post_type=podcast' , 'Podcast Settings' , 'Settings', 'manage_options' , 'podcast_settings' , array( &$this , 'settings_page' ) );
 	}
 
 	public function add_settings_link( $links ) {
-		$settings_link = '<a href="edit.php?post_type=podcast&page=settings">Settings</a>';
+		$settings_link = '<a href="edit.php?post_type=podcast&page=podcast_settings">Settings</a>';
   		array_push( $links, $settings_link );
   		return $links;
 	}

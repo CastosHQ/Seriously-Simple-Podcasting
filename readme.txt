@@ -26,7 +26,7 @@ Simply upload the plugin and you're good to go. Go to Podcast > Add New to add n
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file.
 
-UPGRADE NOTICE: Users upgrading from v1.1.x must please take note of the change in location of the settings page - you will now find it at Podcast > Settings (as opposed Settings > Podcast).
+UPGRADE NOTICE: Users upgrading from v1.1.x must please take note of the change in location of the settings page - you will now find it at Podcast > Settings.
 
 == Installation ==
 
@@ -55,11 +55,12 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 == Changelog ==
 
 = 1.3 =
-* 2013-02-15
-* Added option to pass your feed through Feedburner (or similar service)
+* 2013-02-16
+* Added option to syndicate your feed through Feedburner (or similar service)
 * Added RSS meta tags to site header
 * Added option to show podcast episodes in main query loop on home page along with blog posts
 * Unified feed templates, so only one feed is used for all podcasting services (ensured backward compatibility for existing feed URLs)
+* Changed podcast settings page URL (menu link is still in same place though)
 
 = 1.2.2 =
 * 2013-02-14
@@ -118,11 +119,12 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 == Upgrade Notice ==
 
 = 1.3 =
-* 2013-02-15
-* Added option to pass your feed through Feedburner (or similar service)
+* 2013-02-16
+* Added option to syndicate your feed through Feedburner (or similar service)
 * Added RSS meta tags to site header
 * Added option to show podcast episodes in main query loop on home page along with blog posts
 * Unified feed templates, so only one feed is used for all podcasting services
+* Changed podcast settings page URL (menu link is still in same place though)
 
 = 1.2.2 =
 * 2013-02-14

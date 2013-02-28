@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.3
+Stable tag: 1.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,15 +18,11 @@ It comes with built-in templates, widget and shortcode so you can display your p
 
 Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/.
 
-UPGRADE NOTICE: Users upgrading from v1.1.x must please take note of the change in location of the settings page - you will now find it at Podcast > Settings.
-
 == Usage ==
 
 Simply upload the plugin and you're good to go. Go to Podcast > Add New to add new episodes and go to Podcast > Settings to customise and describe your podcast.
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file.
-
-UPGRADE NOTICE: Users upgrading from v1.1.x must please take note of the change in location of the settings page - you will now find it at Podcast > Settings.
 
 == Installation ==
 
@@ -45,7 +41,17 @@ Your podcast page will always be available from this URL on your site: http://ww
 
 = Why do the podcast episode and archive pages just look like my default blog pages? =
 
-On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them.
+On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them. To do this, disable the use of the built-in templates and copy the 'archive-podcast.php' and 'single-podcast.php' files from the plugin's 'templates' directory and paste them in your theme's root folder - from ther eyou can edit them to display the content however you wish.
+
+= Why don't I see the media player when I view the individual episode pages? =
+
+There could be a few reasons for this:
+
+1. Your episode audio file is reference to folder and not a specific file
+1. The audio file is password protected
+1. Your site is running on an IP address and not a domain name.
+
+If any of these are true for you then that will be the reason that the media player is not showing on your podcast episodes.
 
 == Screenshots ==
 
@@ -53,6 +59,13 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.3.1 =
+* 2013-02-28
+* Added comments capability to podcast episodes
+* Removed HTML tags from feed description/summary
+* Improved MIME type recognition
+* Improved plugin FAQ
 
 = 1.3 =
 * 2013-02-16
@@ -117,6 +130,13 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.3.1 =
+* 2013-02-28
+* Added comments capability to podcast episodes
+* Removed HTML tags from feed description/summary
+* Improved MIME type recognition
+* Improved plugin FAQ
 
 = 1.3 =
 * 2013-02-16

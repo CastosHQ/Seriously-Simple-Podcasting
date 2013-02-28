@@ -111,7 +111,7 @@ class SeriouslySimplePodcasting {
 			'capability_type' => 'post',
 			'has_archive' => true,
 			'hierarchical' => false,
-			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' ),
+			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes' , 'comments' ),
 			'menu_position' => 5,
 			'menu_icon' => ''
 		);
@@ -544,11 +544,13 @@ class SeriouslySimplePodcasting {
 
 		    $attachment = $wpdb->get_col($wpdb->prepare( 'SELECT ID FROM ' . $prefix . 'posts' . ' WHERE guid="' . $attachment . '";' ) );
 
-		    $id = $attachment[0];
+		    if( $attachment[0] ) {
+			    $id = $attachment[0];
 
-		    $mime_type = get_post_mime_type( $id );
+			    $mime_type = get_post_mime_type( $id );
 
-		    return $mime_type;
+			    return $mime_type;
+			}
 
 		}
 

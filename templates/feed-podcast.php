@@ -162,13 +162,13 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 			$size = $size['raw'];
 		}
 
-		// File MIME type (default to MP3 to ensure that the is always a value for this)
+		// File MIME type (default to MP3 to ensure that there is always a value for this)
 		$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
 		if( ! $mime_type || strlen( $mime_type ) == 0 || $mime_type == '' ) {
 			$mime_type = 'audio/mpeg';
 		}
 
-		// Explicit flag
+		// Episode explicit flag
 		$ep_explicit = get_post_meta( get_the_ID() , 'explicit' , true );
 		if( $ep_explicit && $ep_explicit == 'on' ) {
 			$explicit_flag = 'Yes';
@@ -205,7 +205,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		$author = htmlspecialchars( get_the_author() );
 
 		// Episode content
-		$content = get_the_content_feed( 'rss2' );
+		$content = strip_tags( get_the_content_feed( 'rss2' ) );
 
 	?>
 	<item>

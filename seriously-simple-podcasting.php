@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.3
+ * Version: 1.3.1
  * Plugin URI: http://www.hughlashbrooke.com
  * Description: An incredibly easy-to-use podcasting plugin.
  * Author: Hugh Lashbrooke

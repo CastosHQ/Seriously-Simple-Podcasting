@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting v1.3.1\n"
+"Project-Id-Version: Seriously Simple Podcasting v1.3.3\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-02-28 09:30:47+0000\n"
+"PO-Revision-Date: 2013-03-09 07:25:12+0000\n"
 "Last-Translator: hugh <hlashbrooke@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -191,7 +191,7 @@ msgstr ""
 msgid "Enter the episode title here"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:437
+#: classes/class-seriously-simple-podcasting.php:442
 #@ ss-podcasting
 msgid "Duration"
 msgstr ""
@@ -241,12 +241,12 @@ msgstr ""
 msgid "Episodes from Selected Series"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:792
+#: classes/class-seriously-simple-podcasting.php:797
 #@ ss-podcasting
 msgid "Podcast sidebar"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:794
+#: classes/class-seriously-simple-podcasting.php:799
 #@ ss-podcasting
 msgid "Sidebar used on the podcast pages if you are using the plugin's built-in templates."
 msgstr ""
@@ -471,12 +471,12 @@ msgstr ""
 msgid "Mark whether this episode is explicit or not."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:436
+#: classes/class-seriously-simple-podcasting.php:441
 #@ ss-podcasting
 msgid "Download file"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:438
+#: classes/class-seriously-simple-podcasting.php:443
 #@ ss-podcasting
 msgid "Size"
 msgstr ""

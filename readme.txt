@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.3.1
+Stable tag: 1.3.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,14 @@ If any of these are true for you then that will be the reason that the media pla
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.3.3 =
+* 2013-03-09
+* Added 'author' and 'custom fields' to podcast episode edit page
+
+= 1.3.2 =
+* 2013-03-08
+* Added media player to podcast meta data for display when built-in templates are not being used
 
 = 1.3.1 =
 * 2013-02-28
@@ -130,6 +138,14 @@ If any of these are true for you then that will be the reason that the media pla
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.3.3 =
+* 2013-03-09
+* Added 'author' and 'custom fields' to podcast episode edit page
+
+= 1.3.2 =
+* 2013-03-08
+* Added media player to podcast meta data for display when built-in templates are not being used
 
 = 1.3.1 =
 * 2013-02-28

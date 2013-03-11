@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.3.3
+Stable tag: 1.3.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,10 @@ If any of these are true for you then that will be the reason that the media pla
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.3.4 =
+* 2013-03-11
+* Fixed issue where site subtitle was being displayed in author field in feed
 
 = 1.3.3 =
 * 2013-03-09
@@ -138,6 +142,10 @@ If any of these are true for you then that will be the reason that the media pla
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.3.4 =
+* 2013-03-11
+* Fixed issue where site subtitle was being displayed in author field in feed
 
 = 1.3.3 =
 * 2013-03-09

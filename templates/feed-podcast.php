@@ -54,7 +54,7 @@ if( ! $subtitle || strlen( $subtitle ) == 0 || $subtitle == '' ) {
 	$subtitle = get_bloginfo( 'description' );
 }
 
-$author = get_option( 'ss_podcasting_data_subtitle' );
+$author = get_option( 'ss_podcasting_data_author' );
 if( ! $author || strlen( $author ) == 0 || $author == '' ) {
 	$author = get_bloginfo( 'name' );
 }

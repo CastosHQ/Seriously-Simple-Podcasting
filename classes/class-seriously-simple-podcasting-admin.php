@@ -112,7 +112,7 @@ class SeriouslySimplePodcasting_Admin {
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_author' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_category' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_subcategory' );
-		register_setting( 'ss_podcasting' , 'ss_podcasting_data_description' );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_data_description' , array( &$this , 'validate_description' ) );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_image' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_owner_name' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_owner_email' );
@@ -319,7 +319,16 @@ class SeriouslySimplePodcasting_Admin {
 		}
 
 		echo '<textarea id="data_description" rows="5" cols="50" name="ss_podcasting_data_description">' . $data . '</textarea><br/>
-				<label for="data_description"><span class="description">' . __( 'A description/summary of your podcast - defaults to your site\'s tag line.' , 'ss-podcasting' ) . '</span></label>';
+				<label for="data_description"><span class="description">' . __( 'A description/summary of your podcast - defaults to your site\'s tag line. No HTML allowed.' , 'ss-podcasting' ) . '</span></label>';
+	}
+
+	public function validate_description( $description ) {
+
+		if( $description && strlen( $description ) > 0 && $description != '' ) {
+			$description = strip_tags( $description );
+		}
+
+		return $description;
 	}
 	
 	public function data_image() {
@@ -464,6 +473,7 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function validate_message( $message ) {
+
 		if( $message && strlen( $message ) > 0 && $message != '' ) {
 			
 			$allowed = array(
@@ -480,6 +490,7 @@ class SeriouslySimplePodcasting_Admin {
 
 			$message = wp_kses( $message , $allowed );
 		}
+
 		return $message;
 	}
 

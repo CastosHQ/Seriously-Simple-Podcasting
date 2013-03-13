@@ -28,9 +28,7 @@ Podcast audio files can be uploaded directly into WordPress or hosted on any oth
 
 == Upcoming Features ==
 
-Massively improved widget
-User documentation
-Improved layout of settings page
+Massively improved widget | User documentation | Improved layout of settings page | Gather and provide listener stats
 
 If you have any other feature requests, please post them on the support forum and I will do what I can to help you out.
 
@@ -83,6 +81,7 @@ Once you have saved a password for your podcast feed you will not see the passwo
 * [USABILITY] Simplified field descriptions on settings page
 * [FIX] Fixed series feed URLs (please take note of changes on podcast settings page)
 * [FIX] Fixed a few typos on the settings page
+* [UPDATE] Added validation to podcast description field
 * [UPDATE] Updated localisation strings
 * [UPDATE] Updated plugin FAQ
 * [UPDATE] Added 'Upcoming Features' list
@@ -179,6 +178,7 @@ Once you have saved a password for your podcast feed you will not see the passwo
 * [USABILITY] Simplified field descriptions on settings page
 * [FIX] Fixed series feed URLs (please take note of changes on podcast settings page)
 * [FIX] Fixed a few typos on the settings page
+* [UPDATE] Added validation to podcast description field
 * [UPDATE] Updated localisation strings
 * [UPDATE] Updated plugin FAQ
 * [UPDATE] Added 'Upcoming Features' list

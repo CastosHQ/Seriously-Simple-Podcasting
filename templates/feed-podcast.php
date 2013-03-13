@@ -7,7 +7,49 @@
 
 global $ss_podcasting;
 
-error_reporting(0);
+// Check if feed is password protected
+$protection = get_option('ss_podcasting_protect_feed');
+
+if( $protection && $protection == 'on' ) {
+
+	$give_access = false;
+
+	$message_option = get_option('ss_podcasting_protection_no_access_message');
+	$message = __( 'You are not permitted to view this podcast feed.' , 'ss-podcasting' );
+	if( $message_option && strlen( $message_option ) > 0 && $message_option != '' ) {
+		$message = $message_option;
+	}
+
+	$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
+
+	// Request password and give access if correct
+	if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) && ! isset( $_SERVER['PHP_AUTH_PW'] ) ) {
+	    $give_access = false;
+	} else {
+		$username = get_option('ss_podcasting_protection_username');
+		$password = get_option('ss_podcasting_protection_password');
+
+		if( $_SERVER['PHP_AUTH_USER'] == $username ) {
+			if( md5( $_SERVER['PHP_AUTH_PW'] ) == $password ) {
+				$give_access = true;
+			}
+		}
+	}
+
+	if( ! $give_access ) {
+		header('WWW-Authenticate: Basic realm="Podcast Feed"');
+	    header('HTTP/1.0 401 Unauthorized');
+		die( $no_access_message );
+	}
+}
+
+// Hide all errors
+error_reporting( 0 );
+
+// Action hook for plugins/themes to intercept template
+// Any add_action( 'do_feed_podcast' ) calls must be made before the 'template_redirect' hook
+// If you are still going to load this template after using this hook then you must not output any data
+do_action( 'do_feed_podcast' );
 
 // If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
 $redirect = get_option( 'ss_podcasting_redirect_feed' );
@@ -141,8 +183,8 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		'post_type' => 'podcast',
 		'post_status' => 'publish'
 	);
-	if( isset( $_GET['series'] ) && strlen( $_GET['series'] ) > 0 ) {
-		$args['series'] = $_GET['series'];
+	if( isset( $_GET['podcast_series'] ) && strlen( $_GET['podcast_series'] ) > 0 ) {
+		$args['series'] = esc_attr( $_GET['podcast_series'] );
 	}
 	$qry = new WP_Query( $args );
 	

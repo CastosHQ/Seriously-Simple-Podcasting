@@ -15,6 +15,7 @@ class SeriouslySimplePodcasting {
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
+		$this->site_url = trailingslashit( site_url() );
 		$this->token = 'podcast';
 
 		// Handle localisation
@@ -57,6 +58,8 @@ class SeriouslySimplePodcasting {
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_scripts' ), 10 );
 			add_filter( 'manage_edit-' . $this->token . '_columns', array( &$this, 'register_custom_column_headings' ), 10, 1 );
 			add_action( 'manage_posts_custom_column', array( &$this, 'register_custom_columns' ), 10, 2 );
+			add_filter( 'manage_edit-series_columns' , array( &$this , 'edit_series_columns' ) );
+            add_filter( 'manage_series_custom_column' , array( &$this , 'add_series_columns' ) , 1 , 3 );
 
 		}
 
@@ -67,8 +70,8 @@ class SeriouslySimplePodcasting {
 		// Handle RSS template
 		if( isset( $_GET['feed'] ) ) {
 			switch( $_GET['feed'] ) {
-				case 'podcast': add_action( 'init' , array( &$this , 'feed_template' ) , 10 ); break;
-				case 'itunes': add_action( 'init' , array( &$this , 'feed_template' ) , 10 ); break; // Backward compatibility
+				case 'podcast': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 100 ); break;
+				case 'itunes': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 100 ); break; // Backward compatibility
 			}
 		}
 
@@ -181,6 +184,31 @@ class SeriouslySimplePodcasting {
 		
 		return $defaults;
 	}
+
+	public function edit_series_columns( $columns ) {
+
+        unset( $columns['description'] );
+        unset( $columns['posts'] );
+
+        $columns['series_feed_url'] = __( 'Series feed URL' , 'ss-podcasting' );
+        $columns['posts'] = __( 'Episodes' , 'ss-podcasting' );
+        
+        return $columns;
+    }
+
+    public function add_series_columns( $column_data , $column_name , $term_id ) {
+
+        switch ( $column_name ) {
+            case 'series_feed_url':
+            	$series = get_term( $term_id, 'series' );
+            	$series_slug = $series->slug;
+            	$feed_url = $this->site_url . '?feed=podcast&podcast_series=' . $series_slug;
+                $column_data = '<a href="' . $feed_url . '" target="_blank">' . $feed_url . '</a>';
+            break;
+        }
+
+        return $column_data; 
+    }
 
 	public function updated_messages ( $messages ) {
 	  global $post, $post_ID;

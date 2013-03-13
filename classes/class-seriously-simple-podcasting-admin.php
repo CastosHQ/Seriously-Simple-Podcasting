@@ -65,6 +65,7 @@ class SeriouslySimplePodcasting_Admin {
 		add_settings_section( 'podcast_data' , __( 'Describe your podcast' , 'ss-podcasting' ) , array( &$this , 'podcast_data' ) , 'ss_podcasting' );
 		add_settings_section( 'feed_info' , __( 'Share your podcast' , 'ss-podcasting' ) , array( &$this , 'feed_info' ) , 'ss_podcasting' );
 		add_settings_section( 'redirect_settings' , __( 'Redirect your podcast' , 'ss-podcasting' ) , array( &$this , 'redirect_settings' ) , 'ss_podcasting' );
+		add_settings_section( 'protection_settings' , __( 'Protect your podcast' , 'ss-podcasting' ) , array( &$this , 'protection_settings' ) , 'ss_podcasting' );
 
 		// Add settings fields
 		add_settings_field( 'ss_podcasting_use_templates' , __( 'Use built-in plugin templates:' , 'ss-podcasting' ) , array( &$this , 'use_templates_field' )  , 'ss_podcasting' , 'main_settings' );
@@ -86,12 +87,18 @@ class SeriouslySimplePodcasting_Admin {
 		add_settings_field( 'ss_podcasting_data_explicit' , __( 'Explicit:' , 'ss-podcasting' ) , array( &$this , 'data_explicit' )  , 'ss_podcasting' , 'podcast_data' );
 
 		// Add feed info fields
-		add_settings_field( 'ss_podcasting_feed_standard' , __( 'Standard RSS feed:' , 'ss-podcasting' ) , array( &$this , 'feed_standard' )  , 'ss_podcasting' , 'feed_info' );
-		add_settings_field( 'ss_podcasting_feed_standard_series' , __( 'Standard RSS feed (specific series):' , 'ss-podcasting' ) , array( &$this , 'feed_standard_series' )  , 'ss_podcasting' , 'feed_info' );
+		add_settings_field( 'ss_podcasting_feed_standard' , __( 'Complete feed:' , 'ss-podcasting' ) , array( &$this , 'feed_standard' )  , 'ss_podcasting' , 'feed_info' );
+		add_settings_field( 'ss_podcasting_feed_standard_series' , __( 'Feed for a specific series:' , 'ss-podcasting' ) , array( &$this , 'feed_standard_series' )  , 'ss_podcasting' , 'feed_info' );
 
 		// Add redirect settings fields
 		add_settings_field( 'ss_podcasting_redirect_feed' , __( 'Redirect podcast feed to new URL:' , 'ss-podcasting' ) , array( &$this , 'redirect_feed' )  , 'ss_podcasting' , 'redirect_settings' );
 		add_settings_field( 'ss_podcasting_new_feed_url' , __( 'New podcast URL:' , 'ss-podcasting' ) , array( &$this , 'new_feed_url' )  , 'ss_podcasting' , 'redirect_settings' );
+
+		// Add protection settings fields
+		add_settings_field( 'ss_podcasting_protect_feed' , __( 'Password protect your podcast feed:' , 'ss-podcasting' ) , array( &$this , 'protect_feed' )  , 'ss_podcasting' , 'protection_settings' );
+		add_settings_field( 'ss_podcasting_protection_username' , __( 'Username:' , 'ss-podcasting' ) , array( &$this , 'protection_username' )  , 'ss_podcasting' , 'protection_settings' );
+		add_settings_field( 'ss_podcasting_protection_password' , __( 'Password:' , 'ss-podcasting' ) , array( &$this , 'protection_password' )  , 'ss_podcasting' , 'protection_settings' );
+		add_settings_field( 'ss_podcasting_protection_no_access_message' , __( 'No access message:' , 'ss-podcasting' ) , array( &$this , 'protection_no_access_message' )  , 'ss_podcasting' , 'protection_settings' );
 
 		// Register settings fields
 		register_setting( 'ss_podcasting' , 'ss_podcasting_use_templates' );
@@ -117,15 +124,23 @@ class SeriouslySimplePodcasting_Admin {
 		register_setting( 'ss_podcasting' , 'ss_podcasting_redirect_feed' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_new_feed_url' );
 
+		// Register protection settings fields
+		register_setting( 'ss_podcasting' , 'ss_podcasting_protect_feed' );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_username' );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_password' , array( &$this , 'encode_password' ) );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_no_access_message' , array( &$this , 'validate_message' ) );
+
 	}
 
 	public function main_settings() { echo '<p>' . __( 'These are a few simple settings to make your podcast work the way you want it to work.' , 'ss-podcasting' ) . '</p>'; }
 
-	public function podcast_data() { echo '<p>' . sprintf( __( 'This data will be used in the RSS feed for your podcast so your listeners will know more about it before they subscribe.%sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.' , 'ss-podcasting' ) , '<br/><em>' ) . '</em></p>'; }
+	public function podcast_data() { echo '<p>' . sprintf( __( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe.%sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.' , 'ss-podcasting' ) , '<br/><em>' ) . '</em></p>'; }
 
-	public function feed_info() { echo '<p>' . __( 'Use these URLs to share and publish your podcast RSS feed. These URLs will work with any podcasting service (including iTunes).' , 'ss-podcasting' ) . '</p>'; }
+	public function feed_info() { echo '<p>' . __( 'Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes).' , 'ss-podcasting' ) . '</p>'; }
 
 	public function redirect_settings() { echo '<p>' . __( 'Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active.' , 'ss-podcasting' ) . '</p>'; }
+
+	public function protection_settings() { echo '<p>' . __( 'Change these settings to ensure that your podcast feed remains private. This will block feed readers (including iTunes) from accessing your feed.' , 'ss-podcasting' ) . '</p>'; }
 
 	public function use_templates_field() {
 
@@ -199,7 +214,7 @@ class SeriouslySimplePodcasting_Admin {
 		}
 
 		echo '<input id="redirect_feed" type="checkbox" name="ss_podcasting_redirect_feed" ' . checked( 'on' , $data , false ) . ' />
-				<label for="redirect_feed"><span class="description">' . sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have save this option it will permanently redirect your RSS feed to the new URL.' , 'ss-podcasting' ) , '<br/>' ) . '</span></label>';
+				<label for="redirect_feed"><span class="description">' . sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.' , 'ss-podcasting' ) , '<br/>' ) . '</span></label>';
 
 	}
 
@@ -386,13 +401,95 @@ class SeriouslySimplePodcasting_Admin {
 
 	}
 
+	public function protect_feed() {
+
+		$option = get_option('ss_podcasting_protect_feed');
+
+		$data = '';
+		if( $option && $option == 'on' ) {
+			$data = $option;
+		}
+
+		echo '<input id="protect_feed" type="checkbox" name="ss_podcasting_protect_feed" ' . checked( 'on' , $data , false ) . ' />
+				<label for="protect_feed"><span class="description">' . __( 'Mark if you would like to password protect your podcast feed - you can set the username and password below.' , 'ss-podcasting' ) . '</span></label>';
+
+	}
+
+	public function protection_username() {
+
+		$option = get_option('ss_podcasting_protection_username');
+
+		$data = '';
+		if( $option && strlen( $option ) > 0 && $option != '' ) {
+			$data = $option;
+		}
+
+		echo '<input id="protection_username" type="text" name="ss_podcasting_protection_username" value="' . $data . '"/>
+				<label for="protection_username"><span class="description">' . __( 'Login username for your podcast feed.' , 'ss-podcasting' ) . '</span></label>';
+
+	}
+
+	public function protection_password() {
+		
+		echo '<input id="protection_password" type="text" name="ss_podcasting_protection_password" value=""/>
+				<label for="protection_password"><span class="description">' . __( 'Login password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again. If you leave this field blank than the password will not be updated.' , 'ss-podcasting' ) . '</span></label>';
+
+	}
+
+	public function encode_password( $password ) {
+
+		$option = get_option('ss_podcasting_protection_password');
+
+		if( $password && strlen( $password ) > 0 && $password != '' ) {
+			$password = md5( $password );
+		} else {
+			$password = $option;
+		}
+
+		return $password;
+	}
+
+	public function protection_no_access_message() {
+
+		$option = get_option('ss_podcasting_protection_no_access_message');
+
+		$data = __( 'You are not permitted to view this podcast feed.' , 'ss-podcasting' );
+		if( $option && strlen( $option ) > 0 && $option != '' ) {
+			$data = $option;
+		}
+
+		echo '<textarea rows="2" cols="50" id="protection_no_access_message" name="ss_podcasting_protection_no_access_message">' . $data . '</textarea><br/>
+				<label for="protection_no_access_message"><span class="description">' . __( 'This will be the message displayed to people who are not allowed access to your podcast feed. Limited HTML allowed.' , 'ss-podcasting' ) . '</span></label>';
+
+	}
+
+	public function validate_message( $message ) {
+		if( $message && strlen( $message ) > 0 && $message != '' ) {
+			
+			$allowed = array(
+			    'a' => array(
+			        'href' => array(),
+			        'title' => array(),
+			        'target' => array()
+			    ),
+			    'br' => array(),
+			    'em' => array(),
+			    'strong' => array(),
+			    'p' => array()
+			);
+
+			$message = wp_kses( $message , $allowed );
+		}
+		return $message;
+	}
+
 	public function feed_standard() {
 		$rss_url = $this->site_url . '?feed=podcast';
 		echo $rss_url;
 	}
 
 	public function feed_standard_series() {
-		$rss_url = $this->site_url . '?feed=podcast&series=series-slug';
+		$rss_url = $this->site_url . '?feed=podcast&podcast_series=series-slug';
 		echo $rss_url;
 	}
 

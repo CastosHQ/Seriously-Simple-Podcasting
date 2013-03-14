@@ -8,11 +8,11 @@ Stable tag: 1.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-An incredibly easy-to-use podcasting plugin.
+Podcasting done right.
 
 == Description ==
 
-"Seriously Simple Podcasting" is a simple and easy-to-use podcasting solution for WordPress. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+"Seriously Simple Podcasting" is a simple and easy-to-use podcasting solution for WordPress. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content. Quite simply, it is podcasting done right.
 
 It comes with built-in templates, widget and shortcode so you can display your podcast however you like. It also has easy subscribe links for iTunes listeners and standard RSS subscribers.
 
@@ -28,7 +28,7 @@ Podcast audio files can be uploaded directly into WordPress or hosted on any oth
 
 == Upcoming Features ==
 
-Massively improved widget | User documentation | Improved layout of settings page | Gather and provide listener stats
+Massively improved widget | User documentation | Improved layout of settings page
 
 If you have any other feature requests, please post them on the support forum and I will do what I can to help you out.
 

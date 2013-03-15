@@ -114,6 +114,8 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$template = $tpl;
 					$i++;
 
+					$class = 'podcast';
+
 					$title = $series->title;
 					if ( true == $args['link_title'] ) {
 						$title = '<a href="' . esc_url( $series->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';

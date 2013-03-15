@@ -426,7 +426,7 @@ class SeriouslySimplePodcasting {
 		}
 
 		// Podcast archive template
-		if( is_post_type_archive( 'podcast' ) ) {
+		if( is_archive() && is_tax( 'series' ) ) {
 			include( $this->template_path . 'archive-podcast.php' );
 			exit;
 		}

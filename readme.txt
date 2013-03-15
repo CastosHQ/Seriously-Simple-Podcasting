@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.4
+Stable tag: 1.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,11 @@ Once you have saved a password for your podcast feed you will not see the passwo
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.4.1 =
+* 2013-03-15
+* [UPDATE] Streamlined settings page and AJAXified content display
+* [FIX] Fixed built-in archive page template
 
 = 1.4 =
 * 2013-03-13

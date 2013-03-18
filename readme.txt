@@ -73,8 +73,8 @@ Once you have saved a password for your podcast feed you will not see the passwo
 == Changelog ==
 
 = 1.4.1 =
-* 2013-03-15
-* [UPDATE] Streamlined settings page and AJAXified content display
+* 2013-03-18
+* [UPDATE] Restructured & streamlined settings page
 * [FIX] Fixed built-in archive page template
 
 = 1.4 =
@@ -173,6 +173,11 @@ Once you have saved a password for your podcast feed you will not see the passwo
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.4.1 =
+* 2013-03-18
+* [UPDATE] Restructured & streamlined settings page
+* [FIX] Fixed built-in archive page template
 
 = 1.4 =
 * 2013-03-13

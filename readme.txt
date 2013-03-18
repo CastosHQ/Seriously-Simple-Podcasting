@@ -18,7 +18,7 @@ It comes with built-in templates, widget and shortcode so you can display your p
 
 Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/.
 
-UPGRADE NOTICE: Users upgrading to v1.4 please take note of the changed feed URLs for specific series.
+UPGRADE NOTICE: Users upgrading to v1.4.x please take note of the changed feed URLs for specific series.
 
 == Usage ==
 

@@ -26,12 +26,6 @@ Simply upload the plugin and you're good to go. Go to Podcast > Add New to add n
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file.
 
-== Upcoming Features ==
-
-Massively improved widget | User documentation | Improved layout of settings page
-
-If you have any other feature requests, please post them on the support forum and I will do what I can to help you out.
-
 == Installation ==
 
 Installing "Seriously Simple Podcasting" can be done either by searching for "Seriously Simple Podcasting" via the "Plugins > Add New" screen in your WordPress dashboard, or by using the following steps:

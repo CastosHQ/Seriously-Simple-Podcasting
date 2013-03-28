@@ -18,13 +18,15 @@ It comes with built-in templates, widget and shortcode so you can display your p
 
 Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/.
 
-UPGRADE NOTICE: Users upgrading to v1.4.x please take note of the changed feed URLs for specific series.
+CONTRIBUTE ON GITHUB: https://github.com/hlashbrooke/Seriously-Simple-Podcasting
+
+UPGRADE NOTICE: Users upgrading to v1.4.x please take note of the changed feed URLs for individual series.
 
 == Usage ==
 
-Simply upload the plugin and you're good to go. Go to Podcast > Add New to add new episodes and go to Podcast > Settings to customise and describe your podcast.
+Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add new episodes and go to "Podcast > Settings" to customise and describe your podcast.
 
-Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file.
+Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. Please note that episode lengths can only be calculated for files that are hosted on the same server as the website.
 
 == Installation ==
 
@@ -33,7 +35,7 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 1. Download the plugin via WordPress.org
 1. Upload the ZIP file through the 'Plugins > Add New > Upload' screen in your WordPress dashboard
 1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Customise the plugin from its settings page
+1. Customise the plugin from the 'Podcast > Settings' page
 
 == Frequently Asked Questions ==
 
@@ -43,7 +45,7 @@ Your podcast page will always be available from this URL on your site: http://ww
 
 = Why do the podcast episode and archive pages just look like my default blog pages? =
 
-On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them. To do this, disable the use of the built-in templates and copy the 'archive-podcast.php' and 'single-podcast.php' files from the plugin's 'templates' directory and paste them in your theme's root folder - from ther eyou can edit them to display the content however you wish.
+On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them. To do this, disable the use of the built-in templates and copy the 'archive-podcast.php' and 'single-podcast.php' files from the plugin's 'templates' directory and paste them in your theme's root folder - from there you can edit them to display the content however you wish.
 
 = Why don't I see the media player when I view the individual episode pages? =
 
@@ -53,11 +55,25 @@ There could be a few reasons for this:
 1. The audio file is password protected
 1. Your site is running on an IP address and not a domain name.
 
-If any of these are true for you then that will be the reason that the media player is not showing on your podcast episodes.
+If any of these are true for you then that will most likely be the reason that the media player is not showing on your podcast episodes.
 
 = My feed password does not seem to be saving - what gives? =
 
 Once you have saved a password for your podcast feed you will not see the password on screen again - this is because it is encoded and stored securely. You can enter a different password at any time, but if you save the settings page and you do not want to change the password then simply leave the password field blank and it will not be updated.
+
+= Why does my podcast feed return a 404 error when I check it in a feed validator? =
+
+This will happen if you have 0 posts or 0 podcast episodes on your site. It is a known issue with WordPress and future versions of the plugin will work around it. However, the only solution for now is to add at least one post and at least one episode to your site.
+
+= Where can I find documentation/support for this plugin? =
+
+There is currently no documentation for this plugin, but you can post questions on the support forum here: http://wordpress.org/support/plugin/seriously-simple-podcasting - I will respond to topics as I have time to do so, but I can make no guarantees of my availability. Before posting anything on the support forum, please update to the latest version of the plugin.
+
+= I have an idea for this plugin - how can I make it known? =
+
+If you have an idea for the plugin, feel free to post on the support forum here: http://wordpress.org/support/plugin/seriously-simple-podcasting.
+
+If you would like to contribute to the code then you can fork the GitHub repo here: https://github.com/hlashbrooke/Seriously-Simple-Podcasting - your pull requests will be reviewed and merged if they fit into the goals for this plugin. All contributors will be given credit where it is due.
 
 == Screenshots ==
 
@@ -70,6 +86,7 @@ Once you have saved a password for your podcast feed you will not see the passwo
 * 2013-03-18
 * [UPDATE] Restructured & streamlined settings page
 * [FIX] Fixed built-in archive page template
+* [UPDATE] Updated FAQs to reflect recent support queries
 
 = 1.4 =
 * 2013-03-13
@@ -172,6 +189,7 @@ Once you have saved a password for your podcast feed you will not see the passwo
 * 2013-03-18
 * [UPDATE] Restructured & streamlined settings page
 * [FIX] Fixed built-in archive page template
+* [UPDATE] Updated FAQs to reflect recent support queries
 
 = 1.4 =
 * 2013-03-13

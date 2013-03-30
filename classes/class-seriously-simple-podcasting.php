@@ -68,7 +68,11 @@ class SeriouslySimplePodcasting {
 		add_action( 'after_setup_theme', array( &$this , 'register_image_sizes' ) );
 
 		// Handle RSS template
-		if( isset( $_GET['feed'] ) ) {
+		if( is_podcast_feed() ) {
+
+			// Prevent feed from returning a 404 error when no posts are present on site
+			add_action( 'template_redirect' , array( &$this , 'prevent_feed_404' ) , 10 );
+
 			switch( $_GET['feed'] ) {
 				case 'podcast': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 100 ); break;
 				case 'itunes': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 100 ); break; // Backward compatibility
@@ -448,7 +452,7 @@ class SeriouslySimplePodcasting {
 
 	public function content_meta_data( $content ) {
 
-		if( ( get_post_type() == 'podcast' && ( is_feed() || is_single() ) ) || is_post_type_archive( 'podcast' ) ) {
+		if( ( ( get_post_type() == 'podcast' && is_single() ) || is_post_type_archive( 'podcast' ) ) && ! is_podcast_feed() ) {
 			
 			$id = get_the_ID();
 
@@ -461,6 +465,7 @@ class SeriouslySimplePodcasting {
 			}
 
 			$meta = '';
+
 			if( is_single() ) {
 				$meta .= $this->audio_player( $file );
 			}
@@ -833,6 +838,16 @@ class SeriouslySimplePodcasting {
         	)
         );
 
+    }
+
+    public function prevent_feed_404() {
+    	global $wp_query;
+
+    	if( is_podcast_feed() ) {
+    		status_header( 200 );
+			$wp_query->is_404 = false;
+    	}
+    	
     }
 
     public function feed_template() {

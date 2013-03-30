@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.4.1
+ * Version: 1.4.2
  * Plugin URI: http://wordpress.org/extend/plugins/seriously-simple-podcasting/
  * Description: Podcasting done right.
  * Author: Hugh Lashbrooke
@@ -22,6 +22,7 @@
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+require_once( 'seriously-simple-podcasting-functions.php' );
 require_once( 'classes/class-seriously-simple-podcasting.php' );
 
 global $ss_podcasting;
@@ -32,7 +33,6 @@ if( is_admin() ) {
 	$ss_podcasting_admin = new SeriouslySimplePodcasting_Admin( __FILE__ );
 }
 
-require_once( 'seriously-simple-podcasting-functions.php' );
 require_once( 'classes/class-seriously-simple-podcasting-widget.php' );
 
 ?>

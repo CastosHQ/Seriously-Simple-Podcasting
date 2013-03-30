@@ -1,10 +1,24 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
+if( ! function_exists( 'is_podcast_feed' ) ) {
+	/**
+	 * Check if current page is podcast feed
+	 * @since  1.4.2
+	 * @return boolean True if current page is podcast feed
+	 */
+	function is_podcast_feed() {
+		if( isset( $_GET['feed'] ) && $_GET['feed'] == 'podcast' ) {
+			return true;
+		}
+		return false;
+	}
+}
+
 if ( ! function_exists( 'ss_get_podcast' ) ) {
 	/**
 	 * Wrapper function to get the podcast episodes from the SeriouslySimplePodcasting class.
-	 * @param  string/array $args  Arguments.
+	 * @param  string/array $args  Arguments
 	 * @since  1.0.0
 	 * @return array/boolean       Array if true, boolean if false.
 	 */
@@ -16,7 +30,6 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 
 /**
  * Enable the usage of do_action( 'get_podcast' ) to display podcast within a theme/plugin.
- *
  * @since  1.0.0
  */
 add_action( 'get_podcast', 'podcast_get' );
@@ -24,7 +37,7 @@ add_action( 'get_podcast', 'podcast_get' );
 if ( ! function_exists( 'ss_podcast' ) ) {
 	/**
 	 * Display or return HTML-formatted podcast data.
-	 * @param  string/array $args  Arguments.
+	 * @param  string/array $args Arguments
 	 * @since  1.0.0
 	 * @return string
 	 */

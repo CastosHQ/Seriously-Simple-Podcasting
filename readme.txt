@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.4.2
+Stable tag: 1.4.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -72,10 +72,14 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 == Screenshots ==
 
-1. The plugin settings screen within the WordPress admin (it has been slightly modified from this since v1.3).
+1. The plugin settings screen within the WordPress admin.
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.4.3 =
+* 2013-04-07
+* [UPDATE] Adding new plugin branding to WordPress admin - no new features are included in this update
 
 = 1.4.2 =
 * 2013-03-30
@@ -186,6 +190,9 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.4.3 =
+* This update adds the new plugin branding to the WordPress admin - no new features are included.
 
 = 1.4.2 =
 * [UPDATE] Added work around for WordPress bug that causes 404 error on feed when site has no posts

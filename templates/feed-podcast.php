@@ -204,6 +204,10 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 			$size = $size['raw'];
 		}
 
+		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
+			$size = 1;
+		}
+
 		// File MIME type (default to MP3 to ensure that there is always a value for this)
 		$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
 		if( ! $mime_type || strlen( $mime_type ) == 0 || $mime_type == '' ) {

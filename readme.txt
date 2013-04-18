@@ -53,7 +53,8 @@ There could be a few reasons for this:
 
 1. Your episode audio file is reference to folder and not a specific file
 1. The audio file is password protected
-1. Your site is running on an IP address and not a domain name.
+1. Your site is running on an IP address and not a domain name
+1. You have one of these plugins installed & activated on your site: 'WP Audio Player' or 'MediaElement.js - HTML5 Video & Audio Player'
 
 If any of these are true for you then that will most likely be the reason that the media player is not showing on your podcast episodes.
 
@@ -80,6 +81,7 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 = 1.4.3 =
 * 2013-04-07
 * [UPDATE] Adding new plugin branding to WordPress admin - no new features are included in this update
+* [UPDATE] Updated the plugin FAQ
 
 = 1.4.2 =
 * 2013-03-30

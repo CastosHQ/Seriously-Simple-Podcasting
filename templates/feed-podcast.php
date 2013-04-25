@@ -175,7 +175,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	</itunes:category>
 	<?php } ?>
 	<?php if( isset( $new_feed_url ) && strlen( $new_feed_url ) > 0 && $new_feed_url != '' ) { ?>
-	<itunes:new-feed-url><?php echo $new_feed_url; ?></itunes:new-feed-url>
+	<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 	<?php }
 
 	// Fetch podcast episodes
@@ -201,7 +201,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
 		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
 			$size = $ss_podcasting->get_file_size( $enclosure );
-			$size = $size['raw'];
+			$size = esc_html( $size['raw'] );
 		}
 
 		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
@@ -227,7 +227,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		$series = false;
 		if( $series_list && count( $series_list ) > 0 ) {
 			foreach( $series_list as $s ) {
-				$series = $s->name;
+				$series = esc_html( $s->name );
 				break;
 			}
 		}
@@ -239,19 +239,20 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 			$c = 0;
 			foreach( $keyword_list as $k ) {
 				if( $c == 0 ) {
-					$keywords = $k->name;
+					$keywords = esc_html( $k->name );
 					++$c;
 				} else {
-					$keywords .= ', ' . $k->name;
+					$keywords .= ', ' . esc_html( $k->name );
 				}
 			}
 		}
 
 		// Episode author
-		$author = htmlspecialchars( get_the_author() );
+		$author = htmlspecialchars( esc_html( get_the_author() ) );
 
 		// Episode content
-		$content = strip_tags( get_the_content_feed( 'rss2' ) );
+		$content = htmlspecialchars( strip_tags( esc_html( get_the_content_feed( 'rss2' ) ) ) );
+		$content = substr( $content, 0, 3000 );
 
 	?>
 	<item>
@@ -261,11 +262,8 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		<dc:creator><?php echo $author; ?></dc:creator>
 		<guid isPermaLink="false"><?php the_guid(); ?></guid>
 		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
-		<?php if ( strlen( $content ) > 0 ) : ?>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
-		<itunes:summary><![CDATA[<?php echo $content; ?>]]></itunes:summary><?php else : ?>
-		<content:encoded><![CDATA[<?php the_excerpt_rss(); ?>]]></content:encoded>
-		<itunes:summary><![CDATA[<?php the_excerpt_rss(); ?>]]></itunes:summary><?php endif; ?>
+		<itunes:summary><![CDATA[<?php echo $content; ?>]]></itunes:summary>
 		<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $size ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo htmlspecialchars( $explicit_flag ); ?></itunes:explicit>
 		<itunes:duration><?php echo htmlspecialchars( $duration ); ?></itunes:duration>

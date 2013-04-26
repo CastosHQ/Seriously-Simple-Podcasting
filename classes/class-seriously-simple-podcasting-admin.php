@@ -32,6 +32,10 @@ class SeriouslySimplePodcasting_Admin {
 		// Mark date on which feed redirection was activated
 		add_action( 'update_option' , array( &$this, 'mark_feed_redirect_date' ) , 10 , 3 );
 
+		// Display notices in the WP admin
+		add_action( 'admin_notices', array( &$this, 'admin_notices' ), 10 );
+		add_action( 'admin_init', array( &$this, 'admin_notice_actions'), 1 );
+
 	}
 
 	public function add_menu_item() {
@@ -56,6 +60,33 @@ class SeriouslySimplePodcasting_Admin {
         wp_enqueue_script( 'media-upload' );
         wp_enqueue_script( 'ss_podcasting-admin' );
 
+	}
+
+	public function admin_notices() {
+		global $current_user ;
+        $user_id = $current_user->ID;
+
+        $hide_survey_notice = get_user_meta( $user_id, 'ss_podcasting_hide_survey_notice', true );
+        
+        if( ! $hide_survey_notice ) {
+			?>
+			<div class="updated">
+		        <p><?php printf( __( 'Got some ideas on how to improve your podcasting experience? %1$sClick here%2$s to take a quick Seriously Simple Podcasting user survey. %3$s%4$sHide this notice%5$s', 'ss-podcasting' ), '<a href="https://docs.google.com/forms/d/1PbMBocuGZq4K_LV2dL-GfmAJwNlsT76HUbr5fgRZxfo/viewform" target="_blank">', '</a>', '<br/>', '<em><a href="' . add_query_arg( 'ssp_hide_notice', 'survey' ) . '">', '</a></em>' ); ?></p>
+		    </div>
+		    <?php
+		}
+	}
+
+	public function admin_notice_actions() {
+		if( isset( $_GET['ssp_hide_notice'] ) ) {
+			global $current_user ;
+        	$user_id = $current_user->ID;
+
+			switch( esc_attr( $_GET['ssp_hide_notice'] ) ) {
+				case 'survey': add_user_meta( $user_id, 'ss_podcasting_hide_survey_notice', true ); break;
+			}
+
+		}
 	}
 
 	public function register_settings() {
@@ -344,7 +375,7 @@ class SeriouslySimplePodcasting_Admin {
 				<input id="ss_podcasting_upload_image" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />
 			  	<input id="ss_podcasting_delete_image" type="button" class="button" value="'. __( 'Remove image' , 'ss-podcasting' ) . '" />
 				<input id="ss_podcasting_data_image" type="hidden" name="ss_podcasting_data_image" value="' . $data . '"/>
-				<br/><span class="description">'. __( 'Your primary podcast image.' , 'ss-podcasting' ) . '</span>';
+				<br/><span class="description">'. __( 'Your primary podcast image. iTunes now requires that this image has a minimum size of 1400x1400 px.' , 'ss-podcasting' ) . '</span>';
 	}
 
 	public function data_owner() {

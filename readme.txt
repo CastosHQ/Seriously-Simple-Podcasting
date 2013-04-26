@@ -20,7 +20,7 @@ Podcast episodes are playable directly on your site using the MediaElement.js au
 
 CONTRIBUTE ON GITHUB: https://github.com/hlashbrooke/Seriously-Simple-Podcasting
 
-UPGRADE NOTICE: Users upgrading to v1.4.x please take note of the changed feed URLs for individual series.
+TAKE A QUICK USER SURVEY: https://docs.google.com/forms/d/1PbMBocuGZq4K_LV2dL-GfmAJwNlsT76HUbr5fgRZxfo/viewform
 
 == Usage ==
 

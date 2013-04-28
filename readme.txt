@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.4.6
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,6 +17,8 @@ Podcasting done right.
 It comes with built-in templates, widget and shortcode so you can display your podcast however you like. It also has easy subscribe links for iTunes listeners and standard RSS subscribers.
 
 Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/.
+
+The plugin is fully translatable using WPML.
 
 CONTRIBUTE ON GITHUB: https://github.com/hlashbrooke/Seriously-Simple-Podcasting
 
@@ -77,6 +79,15 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.5 =
+* 2013-04-28
+* [FEATURE] Forcing episode download when download link is clicked
+* [UPDATE] Improving UI for podcast image uploads
+* [UPDATE] Removing episode meta data from excerpt text
+* [UPDATE] Improving built-in single episode template
+* [UPDATE] Adding action to settings screen allowing additional settings fields to be added
+* [FIX] Showing all episodes in podcast feed
 
 = 1.4.6 =
 * 2013-04-26
@@ -206,6 +217,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.5 =
+* 2013-04-28
+* Forcing episode download when download link is clicked & various UI improvements
 
 = 1.4.6 =
 * Adding admin notice for plugin survey

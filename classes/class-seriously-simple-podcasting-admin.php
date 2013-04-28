@@ -161,6 +161,9 @@ class SeriouslySimplePodcasting_Admin {
 		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_password' , array( &$this , 'encode_password' ) );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_no_access_message' , array( &$this , 'validate_message' ) );
 
+		// Allow plugins to add more settings fields
+		do_action( 'ss_podcasting_settings_fields' );
+
 	}
 
 	public function main_settings() { echo '<p>' . __( 'These are a few simple settings to make your podcast work the way you want it to work.' , 'ss-podcasting' ) . '</p>'; }
@@ -371,11 +374,11 @@ class SeriouslySimplePodcasting_Admin {
 			$data = $option;
 		}
 
-		echo '<img id="ss_podcasting_data_image_preview" src="' . $data . '" /><br/>
+		echo '<img id="ss_podcasting_data_image_preview" src="' . $data . '" style="max-width:400px;height:auto;" /><br/>
 				<input id="ss_podcasting_upload_image" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />
 			  	<input id="ss_podcasting_delete_image" type="button" class="button" value="'. __( 'Remove image' , 'ss-podcasting' ) . '" />
 				<input id="ss_podcasting_data_image" type="hidden" name="ss_podcasting_data_image" value="' . $data . '"/>
-				<br/><span class="description">'. __( 'Your primary podcast image. iTunes now requires that this image has a minimum size of 1400x1400 px.' , 'ss-podcasting' ) . '</span>';
+				<br/><span class="description">'. __( 'Your primary podcast image. iTunes now requires that this image has a minimum size of 1400x1400 px. Image preview shown here will be smaller than actual image size.' , 'ss-podcasting' ) . '</span>';
 	}
 
 	public function data_owner() {

@@ -45,28 +45,7 @@ $post = get_post( $id );
 					</a>
 				<?php } ?>
 
-				<?php if( $file && strlen( $file ) > 0 ) { ?>
-					<div class="podcast_player">
-						<?php echo $ss_podcasting->audio_player( $file ); ?>
-					</div>
-					<br/><br/>
-				<?php } ?>
-
-				<?php
-				
-				$file = get_post_meta( $id , 'enclosure' , true );
-				$duration = get_post_meta( $id , 'duration' , true );
-				$size = get_post_meta( $id , 'filesize' , true );
-
-				$meta = '<div class="podcast_meta"><aside>';
-				if( $file && strlen( $file ) > 0 ) { $meta .= '<a href="' . esc_url( $file ) . '" title="' . $post->post_title . ' ">Download file</a>'; }
-				if( $duration && strlen( $duration ) > 0 ) { if( $file && strlen( $file ) > 0 ) { $meta .= ' | '; } $meta .= 'Duration: ' . $duration; }
-				if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= 'Size: ' . $size; }
-				$meta .= '</aside></div>';
-
-				echo $meta . wpautop( $post->post_content );
-
-				?>
+				<?php the_content(); ?>
 
 			<section>
 

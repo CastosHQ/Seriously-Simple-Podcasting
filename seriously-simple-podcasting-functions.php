@@ -15,6 +15,20 @@ if( ! function_exists( 'is_podcast_feed' ) ) {
 	}
 }
 
+if( ! function_exists( 'is_file_download' ) ) {
+	/**
+	 * Check if file is being downloaded
+	 * @since  1.5
+	 * @return boolean True if file is being downloaded
+	 */
+	function is_file_download() {
+		if( ( isset( $_GET['download_file'] ) && $_GET['download_file'] == 'podcast' ) && isset( $_GET['episode'] ) ) {
+			return true;
+		}
+		return false;
+	}
+}
+
 if ( ! function_exists( 'ss_get_podcast' ) ) {
 	/**
 	 * Wrapper function to get the podcast episodes from the SeriouslySimplePodcasting class.

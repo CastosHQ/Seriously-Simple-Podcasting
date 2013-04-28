@@ -3,9 +3,13 @@
  * Podcast RSS feed template
  *
  * @package WordPress
+ * @subpackage SeriouslySimplePodcasting
  */
 
 global $ss_podcasting;
+
+// Hide all errors
+error_reporting( 0 );
 
 // Check if feed is password protected
 $protection = get_option('ss_podcasting_protect_feed');
@@ -42,9 +46,6 @@ if( $protection && $protection == 'on' ) {
 		die( $no_access_message );
 	}
 }
-
-// Hide all errors
-error_reporting( 0 );
 
 // Action hook for plugins/themes to intercept template
 // Any add_action( 'do_feed_podcast' ) calls must be made before the 'template_redirect' hook
@@ -133,7 +134,7 @@ if( ! $category || strlen( $category ) == 0 || $category == '' ) {
 	}
 }
 
-header('Content-Type: ' . feed_content_type('rss-http') . '; charset=' . get_option('blog_charset'), true);
+header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
 echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 
@@ -145,7 +146,7 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
 	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
 	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
-	<?php do_action('rss2_ns'); ?>
+	<?php do_action( 'rss2_ns' ); ?>
 >
 
 <channel>
@@ -181,7 +182,8 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 	// Fetch podcast episodes
 	$args = array(
 		'post_type' => 'podcast',
-		'post_status' => 'publish'
+		'post_status' => 'publish',
+		'posts_per_page' => -1
 	);
 	if( isset( $_GET['podcast_series'] ) && strlen( $_GET['podcast_series'] ) > 0 ) {
 		$args['series'] = esc_attr( $_GET['podcast_series'] );

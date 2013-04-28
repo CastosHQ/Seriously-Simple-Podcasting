@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
 	}
 
 	$('#ss_podcasting_upload_image').click(function() {
-		tb_show( 'Upload an audio file' , 'media-upload.php?referer=ss_podcast_image&type=image&TB_iframe=true' , false );
+		tb_show( 'Upload an image' , 'media-upload.php?referer=ss_podcast_image&type=image&TB_iframe=true' , false );
 		return false;
 	});
 

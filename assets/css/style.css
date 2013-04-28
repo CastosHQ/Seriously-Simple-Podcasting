@@ -42,10 +42,6 @@
 	font-size: 80%;
 }
 
-.podcast_template .podcast_player {
-	float: left;
-}
-
 .podcast_template .series_episodes .current_episode {
 	font-weight: bold;
 }

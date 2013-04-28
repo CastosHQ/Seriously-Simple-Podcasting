@@ -36,9 +36,6 @@ class SeriouslySimplePodcasting {
 		// Add meta data to start of podcast content
 		add_filter( 'the_content', array( &$this , 'content_meta_data' ) );
 
-		// Add meta data to start of podcast excerpt
-		add_filter( 'the_excerpt', array( &$this , 'content_meta_data' ) );
-
 		// Add RSS meta tag to site header
 		add_action( 'wp_head' , array( &$this , 'rss_meta_tag' ) );
 
@@ -77,6 +74,10 @@ class SeriouslySimplePodcasting {
 				case 'podcast': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 100 ); break;
 				case 'itunes': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 100 ); break; // Backward compatibility
 			}
+		}
+
+		if( is_file_download() ) {
+			add_action( 'wp', array( &$this , 'download_file' ), 1 );
 		}
 
 	}
@@ -455,28 +456,31 @@ class SeriouslySimplePodcasting {
 		if( ( ( get_post_type() == 'podcast' && is_single() ) || is_post_type_archive( 'podcast' ) ) && ! is_podcast_feed() ) {
 			
 			$id = get_the_ID();
+			$file = $this->get_enclosure( $id );
 
-			$file = get_post_meta( $id , 'enclosure' , true );
-			$duration = get_post_meta( $id , 'duration' , true );
-			$size = get_post_meta( $id , 'filesize' , true );
-			if( ! $size || strlen( $size ) == 0 || $size == '' ) {
-				$size = $this->get_file_size( $file );
-				$size = $size['formatted'];
+			if( $file ) {
+				$link = add_query_arg( array( 'download_file' => 'podcast', 'episode' => $id ) );
+				$duration = get_post_meta( $id , 'duration' , true );
+				$size = get_post_meta( $id , 'filesize' , true );
+				if( ! $size || strlen( $size ) == 0 || $size == '' ) {
+					$size = $this->get_file_size( $file );
+					$size = $size['formatted'];
+				}
+
+				$meta = '';
+
+				if( is_single() ) {
+					$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
+				}
+
+				$meta .= '<div class="podcast_meta"><aside>';
+				if( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
+				if( $duration && strlen( $duration ) > 0 ) { if( $file && strlen( $file ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
+				if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
+				$meta .= '</aside></div>';
+
+				$content = $meta . $content;
 			}
-
-			$meta = '';
-
-			if( is_single() ) {
-				$meta .= $this->audio_player( $file );
-			}
-
-			$meta .= '<div class="' . esc_attr( 'podcast_meta' ) . '"><aside>';
-			if( $file && strlen( $file ) > 0 ) { $meta .= '<a href="' . esc_url( $file ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-			if( $duration && strlen( $duration ) > 0 ) { if( $file && strlen( $file ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
-			if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
-			$meta .= '</aside></div>';
-
-			$content = $meta . $content;
 
 		}
 
@@ -716,7 +720,7 @@ class SeriouslySimplePodcasting {
 
 	}
 
-	protected function get_image ( $id, $size = 'podcast-thumbnail' ) {
+	protected function get_image( $id, $size = 'podcast-thumbnail' ) {
 		$response = '';
 
 		if ( has_post_thumbnail( $id ) ) {
@@ -801,21 +805,77 @@ class SeriouslySimplePodcasting {
 		return $query;
 	}
 
-	public function register_image_sizes () {
+	public function get_enclosure( $episode ) {
+
+		if( $episode ) {
+			return get_post_meta( $episode, 'enclosure', true );
+		}
+
+		return false;
+
+	}
+
+	public function download_file() {
+
+		$episode = esc_attr( $_GET['episode'] );
+
+		if( $episode ) {
+
+			$file = $this->get_enclosure( $episode );
+
+			if( $file ) {
+
+				// Allow other actions
+			    do_action( 'ss_podcasting_file_download', $episode, $file );
+
+				// Download file if fopen wrappers are allowed on the server, otherwise simply redirect to file
+				if( ini_get( 'allow_url_fopen' ) ) {
+
+					// Set headers to force download
+					header( 'Content-Description: File Transfer' );
+				    header( 'Content-Type: application/octet-stream' );
+				    header( 'Content-Disposition: attachment; filename=' . basename( $file ) );
+				    header( 'Content-Transfer-Encoding: binary' );
+				    header( 'Expires: 0' );
+				    header( 'Cache-Control: must-revalidate' );
+				    header( 'Pragma: public' );
+				    header( 'Content-Length: ' . filesize( $file ) );
+
+				    // Clear output buffer
+				    ob_clean();
+				    flush();
+
+				    // Output file contents
+				    readfile( $file );
+
+				} else {
+					wp_redirect( $file );
+				}
+
+			    // Stop execution
+			    exit;
+
+			}
+
+		}
+
+	}
+
+	public function register_image_sizes() {
 		if ( function_exists( 'add_image_size' ) ) { 
 			add_image_size( 'podcast-thumbnail', 200, 9999 ); // 200 pixels wide (and unlimited height)
 		}
 	}
 
-	public function ensure_post_thumbnails_support () {
+	public function ensure_post_thumbnails_support() {
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
 	}
 
-	public function load_localisation () {
+	public function load_localisation() {
 		load_plugin_textdomain( 'ss-podcasting', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 	}
 
-	public function load_plugin_textdomain () {
+	public function load_plugin_textdomain() {
 	    $domain = 'ss-podcasting';
 	    // The "plugin_locale" filter is also used in load_plugin_textdomain()
 	    $locale = apply_filters( 'plugin_locale', get_locale(), $domain );

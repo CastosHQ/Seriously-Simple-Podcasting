@@ -51,7 +51,7 @@ On the plugin's settings page (Podcast > Settings) you can opt to use the plugin
 
 = Why can't I upload an audio file that is larger than 2/8/16/32 MB? =
 
-This issue actually has nothing to do with this plugin. Your server and your WordPress installation will each have a maximum file upload size that you are allowed and there is no way for this plugin to override that. There are a few ways in which you can increase your server's maximum file upload size, but those instructions are outside the scope of this FAQ.
+This issue actually has nothing to do with this plugin. Your server and your WordPress installation will each have a maximum file upload size that you are allowed to make use of and there is no way for this plugin to override that. There are a few ways in which you can increase your server's maximum file upload size, but those instructions are outside the scope of this FAQ.
 
 = Why don't I see the media player when I view the individual episode pages? =
 

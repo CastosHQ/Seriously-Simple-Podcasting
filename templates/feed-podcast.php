@@ -136,7 +136,7 @@ if( ! $category || strlen( $category ) == 0 || $category == '' ) {
 
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
-echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
+echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?>
 
 <rss version="2.0"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -150,28 +150,28 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 >
 
 <channel>
-	<title><?php echo htmlspecialchars( $title ); ?></title>
-	<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml" />
-	<link><?php bloginfo_rss('url') ?></link>
-	<description><?php echo htmlspecialchars( $description ); ?></description>
-	<lastBuildDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_lastpostmodified('GMT'), false); ?></lastBuildDate>
-	<language><?php echo htmlspecialchars( $language ); ?></language>
-	<copyright><?php echo htmlspecialchars( $copyright ); ?></copyright>
-	<itunes:subtitle><?php echo htmlspecialchars( $subtitle ); ?></itunes:subtitle>
-	<itunes:author><?php echo htmlspecialchars( $author ); ?></itunes:author>
-	<itunes:summary><?php echo htmlspecialchars( $description ); ?></itunes:summary>
+	<title><?php echo esc_html( $title ); ?></title>
+	<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml" />
+	<link><?php esc_url( bloginfo_rss('url') ) ?></link>
+	<description><?php echo esc_html( $description ); ?></description>
+	<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>
+	<language><?php echo esc_html( $language ); ?></language>
+	<copyright><?php echo esc_html( $copyright ); ?></copyright>
+	<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>
+	<itunes:author><?php echo esc_html( $author ); ?></itunes:author>
+	<itunes:summary><?php echo esc_html( $description ); ?></itunes:summary>
 	<itunes:owner>
-		<itunes:name><?php echo htmlspecialchars( $owner_name ); ?></itunes:name>
-		<itunes:email><?php echo htmlspecialchars( $owner_email ); ?></itunes:email>
+		<itunes:name><?php echo esc_html( $owner_name ); ?></itunes:name>
+		<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>
 	</itunes:owner>
-	<itunes:explicit><?php echo htmlspecialchars( $explicit ); ?></itunes:explicit>
+	<itunes:explicit><?php echo esc_html( $explicit ); ?></itunes:explicit>
 	<?php if( $image ) { ?>
-	<itunes:image href="<?php echo $image; ?>"></itunes:image>
+	<itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
 	<?php } ?>
 	<?php if( $category ) { ?>
-	<itunes:category text="<?php echo htmlspecialchars( $category ); ?>">
+	<itunes:category text="<?php echo esc_attr( $category ); ?>">
 		<?php if( $subcategory ) { ?>
-		<itunes:category text="<?php echo htmlspecialchars( $subcategory ); ?>"></itunes:category>
+		<itunes:category text="<?php echo esc_attr( $subcategory ); ?>"></itunes:category>
 		<?php } ?>
 	</itunes:category>
 	<?php } ?>
@@ -250,27 +250,29 @@ echo '<?xml version="1.0" encoding="'.get_option('blog_charset').'"?'.'>'; ?>
 		}
 
 		// Episode author
-		$author = htmlspecialchars( esc_html( get_the_author() ) );
+		$author = esc_html( get_the_author() );
 
 		// Episode content
-		$content = htmlspecialchars( strip_tags( esc_html( get_the_content_feed( 'rss2' ) ) ) );
-		$content = substr( $content, 0, 3000 );
+		$content = get_the_content_feed( 'rss2' );
+
+		// iTunes summary does not allow any HTML and must be shorter than 4000 characters
+		$itunes_summary = substr( strip_tags( $content ), 0, 3900 );
 
 	?>
 	<item>
-		<title><?php the_title_rss(); ?></title>
-		<link><?php the_permalink_rss(); ?></link>
-		<pubDate><?php echo mysql2date('D, d M Y H:i:s +0000', get_post_time('Y-m-d H:i:s', true), false); ?></pubDate>
+		<title><?php esc_html( the_title_rss() ); ?></title>
+		<link><?php esc_url( the_permalink_rss() ); ?></link>
+		<pubDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) ); ?></pubDate>
 		<dc:creator><?php echo $author; ?></dc:creator>
-		<guid isPermaLink="false"><?php the_guid(); ?></guid>
+		<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
 		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
-		<itunes:summary><![CDATA[<?php echo $content; ?>]]></itunes:summary>
-		<enclosure url="<?php echo $enclosure; ?>" length="<?php echo htmlspecialchars( $size ); ?>" type="<?php echo htmlspecialchars( $mime_type ); ?>"></enclosure>
-		<itunes:explicit><?php echo htmlspecialchars( $explicit_flag ); ?></itunes:explicit>
-		<itunes:duration><?php echo htmlspecialchars( $duration ); ?></itunes:duration>
+		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
+		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
+		<itunes:explicit><?php echo esc_html( $explicit_flag ); ?></itunes:explicit>
+		<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
 		<itunes:author><?php echo $author; ?></itunes:author><?php if( $keywords ) { ?>
-		<itunes:keywords><?php echo htmlspecialchars( $keywords ); ?></itunes:keywords><?php } ?>
+		<itunes:keywords><?php echo esc_html( $keywords ); ?></itunes:keywords><?php } ?>
 	</item><?php endwhile; endif; ?>
 </channel>
-</rss>
+</rss><?php exit; ?>

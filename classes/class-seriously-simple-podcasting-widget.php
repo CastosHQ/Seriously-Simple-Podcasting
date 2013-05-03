@@ -38,7 +38,7 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 	public function __construct() {
 		/* Widget variable settings. */
 		$this->widget_cssclass = 'widget_ss_podcast';
-		$this->widget_description = __( 'Display a list of your podcast series or episodes from a selecte series.', 'ss-podcast' );
+		$this->widget_description = __( 'Display a list of your podcast series or episodes from a selected series.', 'ss-podcast' );
 		$this->widget_idbase = 'ss_podcast';
 		$this->widget_title = __( 'Podcast', 'ss-podcast' );
 

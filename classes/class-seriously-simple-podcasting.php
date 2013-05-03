@@ -71,8 +71,8 @@ class SeriouslySimplePodcasting {
 			add_action( 'template_redirect' , array( &$this , 'prevent_feed_404' ) , 10 );
 
 			switch( $_GET['feed'] ) {
-				case 'podcast': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 100 ); break;
-				case 'itunes': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 100 ); break; // Backward compatibility
+				case 'podcast': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 1 ); break;
+				case 'itunes': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 1 ); break; // Backward compatibility
 			}
 		}
 
@@ -80,6 +80,14 @@ class SeriouslySimplePodcasting {
 			add_action( 'wp', array( &$this , 'download_file' ), 1 );
 		}
 
+		// Fluch rewrite rules on plugin activation
+		register_activation_hook( $file, array( &$this, 'rewrite_flush' ) );
+
+	}
+
+	public function rewrite_flush() {
+		$this->register_post_type();
+		flush_rewrite_rules();
 	}
 
 	public function register_post_type() {
@@ -475,7 +483,7 @@ class SeriouslySimplePodcasting {
 
 				$meta .= '<div class="podcast_meta"><aside>';
 				if( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-				if( $duration && strlen( $duration ) > 0 ) { if( $file && strlen( $file ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
+				if( $duration && strlen( $duration ) > 0 ) { if( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
 				if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
 				$meta .= '</aside></div>';
 

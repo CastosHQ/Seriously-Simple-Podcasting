@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.5
+Stable tag: 1.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -49,6 +49,10 @@ Your podcast page will always be available from this URL on your site: http://ww
 
 On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them. To do this, disable the use of the built-in templates and copy the 'archive-podcast.php' and 'single-podcast.php' files from the plugin's 'templates' directory and paste them in your theme's root folder - from there you can edit them to display the content however you wish.
 
+= Why can't I upload an audio file that is larger than 2/8/16/32 MB? =
+
+This issue actually has nothing to do with this plugin. Your server and your WordPress installation will each have a maximum file upload size that you are allowed and there is no way for this plugin to override that. There are a few ways in which you can increase your server's maximum file upload size, but those instructions are outside the scope of this FAQ.
+
 = Why don't I see the media player when I view the individual episode pages? =
 
 There could be a few reasons for this:
@@ -59,6 +63,10 @@ There could be a few reasons for this:
 1. You have one of these plugins installed & activated on your site: 'WP Audio Player' or 'MediaElement.js - HTML5 Video & Audio Player'
 
 If any of these are true for you then that will most likely be the reason that the media player is not showing on your podcast episodes.
+
+= Why does my podcast image not save properly? =
+
+For your podcast image to be valid on iTunes, it must be at least 1400x1400 px. This means that when you upload your image you must make sure to select the 'full size' option. The image will display smaller on the plugin's settings screen, but as long as your uploaded image is the correct size and you have selected full size when inserting it then it will work.
 
 = My feed password does not seem to be saving - what gives? =
 
@@ -79,6 +87,13 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.5.1 =
+* 2013-05-03
+* [UPDATE] Improving (and fully fixing) HTML encoding in feed fields
+* [UPDATE] Setting rewrite rules to flush on plugin activation
+* [UPDATE] Adding to the plugin FAQ
+* [FIX] Fixing typo in back-end widget display
 
 = 1.5 =
 * 2013-04-28
@@ -217,6 +232,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.5.1 =
+* 2013-05-03
+* Fully fixing HTML encoding in feed fields and setting rewrite rules to flush on plugin activation
 
 = 1.5 =
 * 2013-04-28

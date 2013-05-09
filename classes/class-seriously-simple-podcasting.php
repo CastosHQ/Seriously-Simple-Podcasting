@@ -44,11 +44,11 @@ class SeriouslySimplePodcasting {
 		if( $include_in_main_query && $include_in_main_query == 'on' ) {
 			add_filter( 'pre_get_posts' , array( &$this , 'add_to_home_query' ) );
 		}
-		
+
 		if ( is_admin() ) {
 
 			add_action( 'admin_menu', array( &$this, 'meta_box_setup' ), 20 );
-			add_action( 'save_post', array( &$this, 'meta_box_save' ) );	
+			add_action( 'save_post', array( &$this, 'meta_box_save' ) );
 			add_filter( 'enter_title_here', array( &$this, 'enter_title_here' ) );
 			add_filter( 'post_updated_messages', array( &$this, 'updated_messages' ) );
 			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_styles' ), 10 );
@@ -72,6 +72,7 @@ class SeriouslySimplePodcasting {
 
 			switch( $_GET['feed'] ) {
 				case 'podcast': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 1 ); break;
+				case 'itunes': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 1 ); break; // Backwards compatiblity
 			}
 		}
 
@@ -90,7 +91,7 @@ class SeriouslySimplePodcasting {
 	}
 
 	public function register_post_type() {
- 
+
 		$labels = array(
 			'name' => _x( 'Podcast', 'post type general name' , 'ss-podcasting' ),
 			'singular_name' => _x( 'Podcast', 'post type singular name' , 'ss-podcasting' ),
@@ -132,14 +133,14 @@ class SeriouslySimplePodcasting {
 		);
 
 		register_post_type( $this->token, $args );
-	        
+
         register_taxonomy( 'series', array( $this->token ), array( 'hierarchical' => true , 'label' => 'Series' , 'singular_label' => 'Series' , 'rewrite' => true) );
         register_taxonomy( 'keywords', array( $this->token ), array( 'hierarchical' => false , 'label' => 'Keywords' , 'singular_label' => 'Keyword' , 'rewrite' => true) );
 	}
 
 	public function register_custom_columns ( $column_name, $id ) {
 		global $wpdb, $post;
-		
+
 		$meta = get_post_custom( $id );
 
 		switch ( $column_name ) {
@@ -158,7 +159,7 @@ class SeriouslySimplePodcasting {
 
 				echo $value;
 			break;
-			
+
 			case 'image':
 				$value = '';
 
@@ -169,31 +170,31 @@ class SeriouslySimplePodcasting {
 
 			default:
 			break;
-		
+
 		}
 	}
 
 	public function register_custom_column_headings ( $defaults ) {
 		$new_columns = array( 'series' => __( 'Series' , 'ss-podcasting' ) , 'image' => __( 'Image' , 'ss-podcasting' ) );
-		
+
 		$last_item = '';
 
 		if ( isset( $defaults['date'] ) ) { unset( $defaults['date'] ); }
 
-		if ( count( $defaults ) > 2 ) { 
+		if ( count( $defaults ) > 2 ) {
 			$last_item = array_slice( $defaults, -1 );
 
 			array_pop( $defaults );
 		}
 		$defaults = array_merge( $defaults, $new_columns );
-		
+
 		if ( $last_item != '' ) {
 			foreach ( $last_item as $k => $v ) {
 				$defaults[$k] = $v;
 				break;
 			}
 		}
-		
+
 		return $defaults;
 	}
 
@@ -204,7 +205,7 @@ class SeriouslySimplePodcasting {
 
         $columns['series_feed_url'] = __( 'Series feed URL' , 'ss-podcasting' );
         $columns['posts'] = __( 'Episodes' , 'ss-podcasting' );
-        
+
         return $columns;
     }
 
@@ -219,7 +220,7 @@ class SeriouslySimplePodcasting {
             break;
         }
 
-        return $column_data; 
+        return $column_data;
     }
 
 	public function updated_messages ( $messages ) {
@@ -243,7 +244,7 @@ class SeriouslySimplePodcasting {
 	  return $messages;
 	}
 
-	public function meta_box_setup () {		
+	public function meta_box_setup () {
 		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( &$this, 'meta_box_content' ), $this->token, 'normal', 'high' );
 
 		do_action( 'ss_podcasting_meta_boxes' );
@@ -255,9 +256,9 @@ class SeriouslySimplePodcasting {
 		$field_data = $this->get_custom_fields_settings();
 
 		$html = '';
-		
+
 		$html .= '<input type="hidden" name="seriouslysimple_' . $this->token . '_nonce" id="seriouslysimple_' . $this->token . '_nonce" value="' . wp_create_nonce( plugin_basename( $this->dir ) ) . '" />';
-		
+
 		if ( 0 < count( $field_data ) ) {
 			$html .= '<table class="form-table">' . "\n";
 			$html .= '<tbody>' . "\n";
@@ -289,33 +290,33 @@ class SeriouslySimplePodcasting {
 			$html .= '</tbody>' . "\n";
 			$html .= '</table>' . "\n";
 		}
-		
-		echo $html;	
+
+		echo $html;
 	}
 
 	public function meta_box_save( $post_id ) {
 		global $post, $messages;
-		
+
 		// Verify
-		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) {  
-			return $post_id;  
+		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) {
+			return $post_id;
 		}
-		  
-		if ( 'page' == $_POST['post_type'] ) {  
-			if ( ! current_user_can( 'edit_page', $post_id ) ) { 
+
+		if ( 'page' == $_POST['post_type'] ) {
+			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
 			}
-		} else {  
-			if ( ! current_user_can( 'edit_post', $post_id ) ) { 
+		} else {
+			if ( ! current_user_can( 'edit_post', $post_id ) ) {
 				return $post_id;
 			}
 		}
-		
+
 		$field_data = $this->get_custom_fields_settings();
 		$fields = array_keys( $field_data );
-		
+
 		foreach ( $fields as $f ) {
-			
+
 			if( isset( $_POST[$f] ) ) {
 				${$f} = strip_tags( trim( $_POST[$f] ) );
 			}
@@ -326,8 +327,8 @@ class SeriouslySimplePodcasting {
 			}
 
 			if( $f == 'enclosure' ) { $enclosure = ${$f}; }
-			
-			if ( ${$f} == '' ) { 
+
+			if ( ${$f} == '' ) {
 				delete_post_meta( $post_id , $f , get_post_meta( $post_id , $f , true ) );
 			} else {
 				update_post_meta( $post_id , $f , ${$f} );
@@ -364,7 +365,7 @@ class SeriouslySimplePodcasting {
 		return $title;
 	}
 
-	public function enqueue_admin_styles () {
+	public function enqueue_admin_styles() {
 
 		// Admin CSS
 		wp_register_style( 'ss_podcasting-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), '1.0.0' );
@@ -372,7 +373,7 @@ class SeriouslySimplePodcasting {
 
 	}
 
-	public function enqueue_admin_scripts () {
+	public function enqueue_admin_scripts() {
 
 		// Admin JS
 		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' , 'media-upload' , 'thickbox' ), '1.0.1' );
@@ -386,12 +387,12 @@ class SeriouslySimplePodcasting {
 
 	}
 
-	public function get_custom_fields_settings () {
+	public function get_custom_fields_settings() {
 		$fields = array();
 
 		$fields['enclosure'] = array(
 		    'name' => __( 'Audio file:' , 'ss-podcasting' ),
-		    'description' => __( 'Upload the podcast audio file (usually in MP3 format). If the file is hosted on another server simply paste the URL into this box.' , 'ss-podcasting' ),
+		    'description' => __( 'Upload the podcast audio file. If the file is hosted on another server simply paste the URL here.' , 'ss-podcasting' ),
 		    'type' => 'url',
 		    'default' => '',
 		    'section' => 'info'
@@ -421,7 +422,7 @@ class SeriouslySimplePodcasting {
 		    'section' => 'info'
 		);
 
-		return $fields;
+		return apply_filters( 'ss_podcasting_episode_fields', $fields );
 	}
 
 	public function enqueue_scripts() {
@@ -464,7 +465,7 @@ class SeriouslySimplePodcasting {
 
 		$file = $this->get_enclosure( $episode );
 
-		$link = add_query_arg( array( 'podcast_episode' => $file ) );
+		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->site_url );
 
 		return $link;
 	}
@@ -472,7 +473,7 @@ class SeriouslySimplePodcasting {
 	public function content_meta_data( $content ) {
 
 		if( ( ( get_post_type() == 'podcast' && is_single() ) || is_post_type_archive( 'podcast' ) ) && ! is_podcast_feed() ) {
-			
+
 			$id = get_the_ID();
 			$file = $this->get_enclosure( $id );
 
@@ -513,7 +514,7 @@ class SeriouslySimplePodcasting {
 			if ( $query->is_home() && $query->is_main_query() ) {
 				$query->set( 'post_type', array( 'post' , 'podcast' ) );
 			}
-			
+
 
 		}
 	}
@@ -547,7 +548,7 @@ class SeriouslySimplePodcasting {
 
 		/*
 		 * Uses getid3 class for calculation audio duration
-		 * 
+		 *
 		 * http://www.getid3.org/
 		*/
 
@@ -556,7 +557,7 @@ class SeriouslySimplePodcasting {
 			require_once( $this->assets_dir . '/getid3/getid3.php' );
 
 			$getid3 = new getid3();
-				
+
 			// Identify file by root path and not URL (required for getID3 class)
 			$site_url = trailingslashit( site_url() );
 			$site_root = trailingslashit( ABSPATH );
@@ -573,7 +574,7 @@ class SeriouslySimplePodcasting {
 					$duration = gmdate( 'H:i:s' , $info['playtime_seconds'] );
 				}
 			}
-			
+
 			return $duration;
 
 		}
@@ -584,7 +585,7 @@ class SeriouslySimplePodcasting {
 	protected function format_bytes( $size , $precision = 2 ) {
 
 		if( $size ) {
-		    
+
 		    $base = log ( $size ) / log( 1024 );
 		    $suffixes = array( '' , 'k' , 'M' , 'G' , 'T' );
 		    $bytes = round( pow( 1024 , $base - floor( $base ) ) , $precision ) . $suffixes[ floor( $base ) ];
@@ -621,7 +622,7 @@ class SeriouslySimplePodcasting {
 	public function format_duration( $duration = false ) {
 
 		$length = false;
-		
+
 		if( $duration ) {
 			sscanf( $duration , "%d:%d:%d" , $hours , $minutes , $seconds );
 			$length = isset( $seconds ) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
@@ -641,7 +642,7 @@ class SeriouslySimplePodcasting {
 		/*
 		 * Uses MediaElement.js for audio player
 		 * This code is pulled from the MediaElement.js WordPress plugin
-		 * 
+		 *
 		 * http://mediaelementjs.com/
 		*/
 
@@ -668,7 +669,7 @@ class SeriouslySimplePodcasting {
 				$height = '30';
 
 				$attributes = array(
-					'src' => htmlspecialchars( $src ),  
+					'src' => htmlspecialchars( $src ),
 					'mp3' => '',
 					'ogg' => '',
 					'poster' => '',
@@ -676,16 +677,16 @@ class SeriouslySimplePodcasting {
 					'height' => $height,
 					'type' => 'audio',
 					'preload' => 'none',
-					'skin' => get_option('mep_video_skin'),
+					'skin' => get_option( 'mep_video_skin' ),
 					'autoplay' => 'false',
 					'loop' => 'false',
-					
+
 					// old ones
 					'duration' => 'true',
 					'progress' => 'true',
 					'fullscreen' => 'false',
 					'volume' => 'true',
-					
+
 					// captions
 					'captions' => '',
 					'captionslang' => 'en'
@@ -724,8 +725,8 @@ class SeriouslySimplePodcasting {
 					' . $sources_string . '
 					<object width="' . $width . '" height="' . $height . '" type="application/x-shockwave-flash" data="' . $dir . 'flashmediaelement.swf">
 						<param name="movie" value="' . $dir . 'flashmediaelement.swf" />
-						<param name="flashvars" value="controls=true&amp;file=' . $flash_src . '" />			
-					</object>		
+						<param name="flashvars" value="controls=true&amp;file=' . $flash_src . '" />
+					</object>
 				</audio>';
 
   				return $mediahtml;
@@ -766,12 +767,12 @@ class SeriouslySimplePodcasting {
 			'content' => 'series',
 			'series' => ''
 		);
-		
+
 		$args = wp_parse_args( $args, $defaults );
-		
+
 		// Allow themes/plugins to filter here.
 		$args = apply_filters( 'podcast_get_args', $args );
-		
+
 		if( $args['content'] == 'episodes' ) {
 
 			// The Query Arguments.
@@ -779,11 +780,11 @@ class SeriouslySimplePodcasting {
 			$query_args['post_type'] = 'podcast';
 			$query_args['posts_per_page'] = -1;
 			$query_args['suppress_filters'] = 0;
-			
+
 			if ( $args['series'] != '' ) {
 				$query_args[ 'series' ] = $args[ 'series' ];
 			}
-			
+
 			// The Query.
 			$query = get_posts( $query_args );
 
@@ -819,7 +820,7 @@ class SeriouslySimplePodcasting {
 		}
 
 		$query[ 'content' ] = $args[ 'content' ];
-		
+
 		return $query;
 	}
 
@@ -848,8 +849,8 @@ class SeriouslySimplePodcasting {
 			);
 
 			$qry = new WP_Query( $args );
-				
-			if ( $qry->have_posts() ) { 
+
+			if ( $qry->have_posts() ) {
 				while ( $qry->have_posts() ) { $qry->the_post();
 					$episode = get_queried_object();
 					break;
@@ -884,10 +885,10 @@ class SeriouslySimplePodcasting {
 			header( "Content-Transfer-Encoding: binary" );
 
 			// Set size of file
-	        if ( $size = @filesize( $file ) ) 
+	        if ( $size = @filesize( $file ) )
 	        	header( "Content-Length: " . $size );
 
-	        // Use readfile_chunked() if possible or simply access file directly
+	        // Use readfile_chunked() if allowed on the server or simply access file directly
 			@readfile_chunked( "$file" ) or header( 'Location: ' . $file );
 
 		}
@@ -895,7 +896,7 @@ class SeriouslySimplePodcasting {
 	}
 
 	public function register_image_sizes() {
-		if ( function_exists( 'add_image_size' ) ) { 
+		if ( function_exists( 'add_image_size' ) ) {
 			add_image_size( 'podcast-thumbnail', 200, 9999 ); // 200 pixels wide (and unlimited height)
 		}
 	}
@@ -912,11 +913,11 @@ class SeriouslySimplePodcasting {
 	    $domain = 'ss-podcasting';
 	    // The "plugin_locale" filter is also used in load_plugin_textdomain()
 	    $locale = apply_filters( 'plugin_locale', get_locale(), $domain );
-	 
+
 	    load_textdomain( $domain, WP_LANG_DIR . '/' . $domain . '/' . $domain . '-' . $locale . '.mo' );
 	    load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 	}
-	
+
     public function register_widget_area() {
 
         register_sidebar( array(
@@ -940,11 +941,12 @@ class SeriouslySimplePodcasting {
     		status_header( 200 );
 			$wp_query->is_404 = false;
     	}
-    	
+
     }
 
     public function feed_template() {
-	    require( $this->template_path . 'feed-podcast.php' );
+    	$file_name = 'feed-podcast.php';
+		require( $this->template_path . $file_name );
 	    exit;
 	}
 

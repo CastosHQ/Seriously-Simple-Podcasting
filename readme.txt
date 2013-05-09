@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.5.1
+Stable tag: 1.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,13 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.5.2 =
+* 2013-05-10
+* [UPDATE] Slight tweak to HTML encoding in feed fields
+* [UPDATE] Improving episode download functionality
+* [UPDATE] Adding hooks for admin pages
+* [FIX] Fixing backwards compatiblity for old iTunes feed link
 
 = 1.5.1 =
 * 2013-05-03
@@ -232,6 +239,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.5.2 =
+* 2013-05-10
+* Feed HTML encoding fixes, backwards compatibilty fix & episode download functionality improvements
 
 = 1.5.1 =
 * 2013-05-03

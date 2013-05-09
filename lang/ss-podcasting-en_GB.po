@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting v1.5.1\n"
+"Project-Id-Version: Seriously Simple Podcasting v1.5.2\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-05-03 05:46:53+0000\n"
+"PO-Revision-Date: 2013-05-09 20:19:19+0000\n"
 "Last-Translator: Hugh Lashbrooke <hlashbrooke@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -182,17 +182,17 @@ msgstr ""
 msgid "Episode Details"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:273
+#: classes/class-seriously-simple-podcasting.php:275
 #@ ss-podcasting
 msgid "Upload File"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:361
+#: classes/class-seriously-simple-podcasting.php:363
 #@ ss-podcasting
 msgid "Enter the episode title here"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:486
+#: classes/class-seriously-simple-podcasting.php:497
 #@ ss-podcasting
 msgid "Duration"
 msgstr ""
@@ -237,12 +237,12 @@ msgstr ""
 msgid "Episodes from Selected Series"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:898
+#: classes/class-seriously-simple-podcasting.php:924
 #@ ss-podcasting
 msgid "Podcast sidebar"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:900
+#: classes/class-seriously-simple-podcasting.php:926
 #@ ss-podcasting
 msgid "Sidebar used on the podcast pages if you are using the plugin's built-in templates."
 msgstr ""
@@ -323,7 +323,7 @@ msgid "Copyright:"
 msgstr ""
 
 #: classes/class-seriously-simple-podcasting-admin.php:118
-#: classes/class-seriously-simple-podcasting.php:416
+#: classes/class-seriously-simple-podcasting.php:418
 #@ ss-podcasting
 msgid "Explicit:"
 msgstr ""
@@ -396,47 +396,42 @@ msgstr ""
 msgid "Save Settings"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:392
+#: classes/class-seriously-simple-podcasting.php:394
 #@ ss-podcasting
 msgid "Audio file:"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:393
-#@ ss-podcasting
-msgid "Upload the podcast audio file (usually in MP3 format). If the file is hosted on another server simply paste the URL into this box."
-msgstr ""
-
-#: classes/class-seriously-simple-podcasting.php:400
+#: classes/class-seriously-simple-podcasting.php:402
 #@ ss-podcasting
 msgid "Duration:"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:401
+#: classes/class-seriously-simple-podcasting.php:403
 #@ ss-podcasting
 msgid "Duration of audio file as it will be displayed on the site. <b>This will be calculated automatically if possible - fill in a value here to override the automatic calculation.</b> This will ONLY work for files uploaded to this server - if a value is not calculated then you can fill in your own data. Leave the field blank to force a recalculation."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:408
+#: classes/class-seriously-simple-podcasting.php:410
 #@ ss-podcasting
 msgid "File size:"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:409
+#: classes/class-seriously-simple-podcasting.php:411
 #@ ss-podcasting
 msgid "Size of the audio file as it will be displayed on the site. <b>This will be calculated automatically if possible - fill in a value here to override the automatic calculation.</b> If a value is not calculated then you can fill in your own data. Leave the field blank to force a recalculation."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:417
+#: classes/class-seriously-simple-podcasting.php:419
 #@ ss-podcasting
 msgid "Mark whether this episode is explicit or not."
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:485
+#: classes/class-seriously-simple-podcasting.php:496
 #@ ss-podcasting
 msgid "Download file"
 msgstr ""
 
-#: classes/class-seriously-simple-podcasting.php:487
+#: classes/class-seriously-simple-podcasting.php:498
 #@ ss-podcasting
 msgid "Size"
 msgstr ""
@@ -635,5 +630,10 @@ msgstr ""
 #: classes/class-seriously-simple-podcasting-widget.php:41
 #@ ss-podcast
 msgid "Display a list of your podcast series or episodes from a selected series."
+msgstr ""
+
+#: classes/class-seriously-simple-podcasting.php:395
+#@ ss-podcasting
+msgid "Upload the podcast audio file. If the file is hosted on another server simply paste the URL here."
 msgstr ""
 

@@ -67,7 +67,7 @@ class SeriouslySimplePodcasting_Admin {
         $user_id = $current_user->ID;
 
         $hide_survey_notice = get_user_meta( $user_id, 'ss_podcasting_hide_survey_notice', true );
-        
+
         if( ! $hide_survey_notice ) {
 			?>
 			<div class="updated">
@@ -90,7 +90,7 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function register_settings() {
-		
+
 		// Add settings section
 		add_settings_section( 'customise' , __( 'Customise' , 'ss-podcasting' ) , array( &$this , 'main_settings' ) , 'ss_podcasting' );
 		add_settings_section( 'describe' , __( 'Describe' , 'ss-podcasting' ) , array( &$this , 'podcast_data' ) , 'ss_podcasting' );
@@ -253,7 +253,7 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function mark_feed_redirect_date( $option , $old_value , $new_value ) {
-		
+
 		if( $option == 'ss_podcasting_redirect_feed' ) {
 			if( $new_value && $new_value == 'on' ) {
 				$date = time();
@@ -364,7 +364,7 @@ class SeriouslySimplePodcasting_Admin {
 
 		return $description;
 	}
-	
+
 	public function data_image() {
 
 		$option = get_option('ss_podcasting_data_image');
@@ -473,7 +473,7 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function protection_password() {
-		
+
 		echo '<input id="protection_password" type="text" name="ss_podcasting_protection_password" value=""/>
 				<label for="protection_password"><span class="description">' . __( 'Login password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again. If you leave this field blank than the password will not be updated.' , 'ss-podcasting' ) . '</span></label>';
 
@@ -509,7 +509,7 @@ class SeriouslySimplePodcasting_Admin {
 	public function validate_message( $message ) {
 
 		if( $message && strlen( $message ) > 0 && $message != '' ) {
-			
+
 			$allowed = array(
 			    'a' => array(
 			        'href' => array(),

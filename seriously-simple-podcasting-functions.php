@@ -8,7 +8,7 @@ if( ! function_exists( 'is_podcast_feed' ) ) {
 	 * @return boolean True if current page is podcast feed
 	 */
 	function is_podcast_feed() {
-		if( isset( $_GET['feed'] ) && $_GET['feed'] == 'podcast' ) {
+		if( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( 'podcast', 'itunes' ) ) ) {
 			return true;
 		}
 		return false;
@@ -17,12 +17,12 @@ if( ! function_exists( 'is_podcast_feed' ) ) {
 
 if( ! function_exists( 'is_file_download' ) ) {
 	/**
-	 * Check if file is being downloaded
+	 * Check if podcast file is being downloaded
 	 * @since  1.5
 	 * @return boolean True if file is being downloaded
 	 */
 	function is_file_download() {
-		if( ( isset( $_GET['download_file'] ) && $_GET['download_file'] == 'podcast' ) && isset( $_GET['episode'] ) ) {
+		if( isset( $_GET['podcast_episode'] ) ) {
 			return true;
 		}
 		return false;
@@ -205,4 +205,42 @@ if ( ! function_exists( 'ss_podcast_shortcode' ) ) {
 
 // Register shortcode
 add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );
+
+if ( ! function_exists('readfile_chunked')) {
+
+	/**
+	 * Reads file in chunks so big downloads are possible without changing PHP.INI - http://codeigniter.com/wiki/Download_helper_for_large_files/
+	 *
+	 * @param    string    file
+	 * @param    boolean    return bytes of file
+	 * @return   mixed
+	 */
+    function readfile_chunked( $file, $retbytes = true ) {
+
+		$chunksize = 1 * ( 1024 * 1024 );
+		$buffer = '';
+		$cnt = 0;
+
+		$handle = fopen( $file, 'r' );
+		if ( $handle === FALSE ) 
+			return FALSE;
+
+		while ( ! feof( $handle ) ) {
+			$buffer = fread( $handle, $chunksize );
+			echo $buffer;
+			ob_flush();
+			flush();
+			
+			if ( $retbytes ) 
+				$cnt += strlen( $buffer );
+		}
+
+		$status = fclose( $handle );
+
+		if ( $retbytes && $status ) 
+			return $cnt;
+
+		return $status;
+    }
+}
 ?>

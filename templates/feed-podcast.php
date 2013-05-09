@@ -81,6 +81,7 @@ $description = get_option( 'ss_podcasting_data_description' );
 if( ! $description || strlen( $description ) == 0 || $description == '' ) {
 	$description = get_bloginfo( 'description' );
 }
+$itunes_description = strip_tags( $description );
 
 $language = get_option( 'ss_podcasting_data_language' );
 if( ! $language || strlen( $language ) == 0 || $language == '' ) {
@@ -159,7 +160,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	<copyright><?php echo esc_html( $copyright ); ?></copyright>
 	<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>
 	<itunes:author><?php echo esc_html( $author ); ?></itunes:author>
-	<itunes:summary><?php echo esc_html( $description ); ?></itunes:summary>
+	<itunes:summary><?php echo esc_html( $itunes_description ); ?></itunes:summary>
 	<itunes:owner>
 		<itunes:name><?php echo esc_html( $owner_name ); ?></itunes:name>
 		<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>
@@ -189,16 +190,16 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		$args['series'] = esc_attr( $_GET['podcast_series'] );
 	}
 	$qry = new WP_Query( $args );
-	
+
 	if( $qry->have_posts() ) :
 		while( $qry->have_posts()) : $qry->the_post();
 
 		// Enclosure (audio file)
-		$enclosure = get_post_meta( get_the_ID() , 'enclosure' , true );
-		
+		$enclosure = $ss_podcasting->get_episode_download_link( get_the_ID() );
+
 		// Episode duration
 		$duration = get_post_meta( get_the_ID() , 'duration' , true );
-		
+
 		// File size
 		$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
 		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
@@ -256,7 +257,9 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		$content = get_the_content_feed( 'rss2' );
 
 		// iTunes summary does not allow any HTML and must be shorter than 4000 characters
-		$itunes_summary = substr( strip_tags( $content ), 0, 3900 );
+		$itunes_summary = strip_tags( $content );
+		$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"' ), array( 'and', '', '', '', '' ), $itunes_summary );
+		$itunes_summary = substr( $itunes_summary, 0, 3950 );
 
 	?>
 	<item>

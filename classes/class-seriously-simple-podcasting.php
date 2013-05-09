@@ -72,7 +72,6 @@ class SeriouslySimplePodcasting {
 
 			switch( $_GET['feed'] ) {
 				case 'podcast': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 1 ); break;
-				case 'itunes': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 1 ); break; // Backward compatibility
 			}
 		}
 
@@ -246,6 +245,8 @@ class SeriouslySimplePodcasting {
 
 	public function meta_box_setup () {		
 		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( &$this, 'meta_box_content' ), $this->token, 'normal', 'high' );
+
+		do_action( 'ss_podcasting_meta_boxes' );
 	}
 
 	public function meta_box_content() {
@@ -459,6 +460,15 @@ class SeriouslySimplePodcasting {
 		echo $html;
 	}
 
+	public function get_episode_download_link( $episode ) {
+
+		$file = $this->get_enclosure( $episode );
+
+		$link = add_query_arg( array( 'podcast_episode' => $file ) );
+
+		return $link;
+	}
+
 	public function content_meta_data( $content ) {
 
 		if( ( ( get_post_type() == 'podcast' && is_single() ) || is_post_type_archive( 'podcast' ) ) && ! is_podcast_feed() ) {
@@ -467,7 +477,7 @@ class SeriouslySimplePodcasting {
 			$file = $this->get_enclosure( $id );
 
 			if( $file ) {
-				$link = add_query_arg( array( 'download_file' => 'podcast', 'episode' => $id ) );
+				$link = $this->get_episode_download_link( $id );
 				$duration = get_post_meta( $id , 'duration' , true );
 				$size = get_post_meta( $id , 'filesize' , true );
 				if( ! $size || strlen( $size ) == 0 || $size == '' ) {
@@ -823,47 +833,62 @@ class SeriouslySimplePodcasting {
 
 	}
 
+	public function get_episode_from_file( $file = '' ) {
+
+		$episode = false;
+
+		if( $file != '' ) {
+
+			$args = array(
+				'post_type' => 'podcast',
+				'post_status' => 'publish',
+				'posts_per_page' => 1,
+				'meta_key' => 'enclosure',
+				'meta_value' => $file
+			);
+
+			$qry = new WP_Query( $args );
+				
+			if ( $qry->have_posts() ) { 
+				while ( $qry->have_posts() ) { $qry->the_post();
+					$episode = get_queried_object();
+					break;
+				}
+			}
+		}
+
+		return $episode;
+
+	}
+
 	public function download_file() {
 
-		$episode = esc_attr( $_GET['episode'] );
+		$file = esc_attr( $_GET['podcast_episode'] );
 
-		if( $episode ) {
+		if( $file ) {
 
-			$file = $this->get_enclosure( $episode );
+			// Get episode object
+			$episode = $this->get_episode_from_file( $file );
 
-			if( $file ) {
+			// Allow other actions
+		    do_action( 'ss_podcasting_file_download', $file, $episode );
 
-				// Allow other actions
-			    do_action( 'ss_podcasting_file_download', $episode, $file );
+		    // Set necessary headers
+			header( "Pragma: no-cache" );
+			header( "Expires: 0" );
+			header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+			header( "Robots: none" );
+			header( "Content-Type: application/force-download" );
+			header( "Content-Description: File Transfer" );
+			header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
+			header( "Content-Transfer-Encoding: binary" );
 
-				// Download file if fopen wrappers are allowed on the server, otherwise simply redirect to file
-				if( ini_get( 'allow_url_fopen' ) ) {
+			// Set size of file
+	        if ( $size = @filesize( $file ) ) 
+	        	header( "Content-Length: " . $size );
 
-					// Set headers to force download
-					header( 'Content-Description: File Transfer' );
-				    header( 'Content-Type: application/octet-stream' );
-				    header( 'Content-Disposition: attachment; filename=' . basename( $file ) );
-				    header( 'Content-Transfer-Encoding: binary' );
-				    header( 'Expires: 0' );
-				    header( 'Cache-Control: must-revalidate' );
-				    header( 'Pragma: public' );
-				    header( 'Content-Length: ' . filesize( $file ) );
-
-				    // Clear output buffer
-				    ob_clean();
-				    flush();
-
-				    // Output file contents
-				    readfile( $file );
-
-				} else {
-					wp_redirect( $file );
-				}
-
-			    // Stop execution
-			    exit;
-
-			}
+	        // Use readfile_chunked() if possible or simply access file directly
+			@readfile_chunked( "$file" ) or header( 'Location: ' . $file );
 
 		}
 

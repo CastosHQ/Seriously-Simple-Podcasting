@@ -199,6 +199,9 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 
 		// Episode duration
 		$duration = get_post_meta( get_the_ID() , 'duration' , true );
+		if( ! $duration || strlen( $duration ) == 0 || $duration == '' ) {
+			$duration = '0:00';
+		}
 
 		// File size
 		$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
@@ -257,7 +260,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		$content = get_the_content_feed( 'rss2' );
 
 		// iTunes summary does not allow any HTML and must be shorter than 4000 characters
-		$itunes_summary = strip_tags( $content );
+		$itunes_summary = strip_tags( get_the_content() );
 		$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"' ), array( 'and', '', '', '', '' ), $itunes_summary );
 		$itunes_summary = substr( $itunes_summary, 0, 3950 );
 

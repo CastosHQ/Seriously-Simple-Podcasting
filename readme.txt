@@ -1,10 +1,10 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
-Donate link: http://www.hughlashbrooke.com/donate/
+Donate link: https://flattr.com/thing/1332401/Seriously-Simple-Podcasting-WordPress-plugin
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.5.1
-Stable tag: 1.5.2
+Stable tag: 1.5.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,6 +87,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.5.3 =
+* 2013-05-11
+* [FIX] Fixing episode file URL in feed
 
 = 1.5.2 =
 * 2013-05-10
@@ -239,6 +243,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.5.3 =
+* 2013-05-11
+* Fixing episode file URL in feed
 
 = 1.5.2 =
 * 2013-05-10

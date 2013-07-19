@@ -195,7 +195,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		while( $qry->have_posts()) : $qry->the_post();
 
 		// Enclosure (audio file)
-		$enclosure = $ss_podcasting->get_episode_download_link( get_the_ID() );
+		$enclosure = $ss_podcasting->get_enclosure( get_the_ID() );
 
 		// Episode duration
 		$duration = get_post_meta( get_the_ID() , 'duration' , true );

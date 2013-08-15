@@ -103,6 +103,7 @@ class SeriouslySimplePodcasting_Admin {
 		add_settings_field( 'ss_podcasting_slug' , __( 'URL slug for podcast pages:' , 'ss-podcasting' ) , array( &$this , 'slug_field' )  , 'ss_podcasting' , 'customise' );
 		add_settings_field( 'ss_podcasting_feed_url' , __( 'URL for your podcast:' , 'ss-podcasting' ) , array( &$this , 'feed_url_field' )  , 'ss_podcasting' , 'customise' );
 		add_settings_field( 'ss_podcasting_include_in_main_query' , __( 'Include podcast episodes in home page blog listing:' , 'ss-podcasting' ) , array( &$this , 'include_in_main_query' )  , 'ss_podcasting' , 'customise' );
+		add_settings_field( 'ss_podcasting_hide_content_meta' , __( 'Prevent audio player and podcast data from showing above episode content:' , 'ss-podcasting' ) , array( &$this , 'content_meta' )  , 'ss_podcasting' , 'customise' );
 
 		// Add data fields
 		add_settings_field( 'ss_podcasting_data_title' , __( 'Title:' , 'ss-podcasting' ) , array( &$this , 'data_title' )  , 'ss_podcasting' , 'describe' );
@@ -136,6 +137,7 @@ class SeriouslySimplePodcasting_Admin {
 		register_setting( 'ss_podcasting' , 'ss_podcasting_slug' , array( &$this , 'validate_slug' ) );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_feed_url' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_include_in_main_query' );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_hide_content_meta' );
 
 		// Register data fields
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_title' );
@@ -236,6 +238,19 @@ class SeriouslySimplePodcasting_Admin {
 
 		echo '<input id="include_in_main_query" type="checkbox" name="ss_podcasting_include_in_main_query" ' . $checked . '/>
 				<label for="include_in_main_query"><span class="description">' . __( 'This setting may behave differently in each theme, so test it carefully after activation - it will add the \'podcast\' post type to your site\'s main query so that your podcast episodes appear on your home page along with your blog posts.' , 'ss-podcasting' ) . '</span></label>';
+	}
+
+	public function content_meta() {
+
+		$option = get_option('ss_podcasting_hide_content_meta');
+
+		$checked = '';
+		if( $option && $option == 'on' ) {
+			$checked = 'checked="checked"';
+		}
+
+		echo '<input id="content_meta" type="checkbox" name="ss_podcasting_hide_content_meta" ' . $checked . '/>
+				<label for="content_meta"><span class="description">' . sprintf( __( 'Select this to %1$shide%1$s the podcast audio player along with the episode data (download link, duration and file size) wherever the full content of the episode is displayed.' , 'ss-podcasting' ), '<em>', '</em>' ) . '</span></label>';
 	}
 
 	public function redirect_feed() {

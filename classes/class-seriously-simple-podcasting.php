@@ -441,7 +441,7 @@ class SeriouslySimplePodcasting {
 		}
 
 		// Podcast archive template
-		if( is_archive() && is_tax( 'series' ) ) {
+		if( is_post_type_archive( 'podcast' ) || is_tax( 'series' ) ) {
 			include( $this->template_path . 'archive-podcast.php' );
 			exit;
 		}
@@ -472,35 +472,39 @@ class SeriouslySimplePodcasting {
 
 	public function content_meta_data( $content ) {
 
-		if( ( ( get_post_type() == 'podcast' && is_single() ) || is_post_type_archive( 'podcast' ) ) && ! is_podcast_feed() ) {
+		$hide_content_meta = get_option( 'ss_podcasting_hide_content_meta' );
+		if( ! $hide_content_meta ) {
 
-			$id = get_the_ID();
-			$file = $this->get_enclosure( $id );
+			if( ( ( get_post_type() == 'podcast' && is_single() ) || is_post_type_archive( 'podcast' ) ) && ! is_podcast_feed() ) {
 
-			if( $file ) {
-				$link = $this->get_episode_download_link( $id );
-				$duration = get_post_meta( $id , 'duration' , true );
-				$size = get_post_meta( $id , 'filesize' , true );
-				if( ! $size || strlen( $size ) == 0 || $size == '' ) {
-					$size = $this->get_file_size( $file );
-					$size = $size['formatted'];
+				$id = get_the_ID();
+				$file = $this->get_enclosure( $id );
+
+				if( $file ) {
+					$link = $this->get_episode_download_link( $id );
+					$duration = get_post_meta( $id , 'duration' , true );
+					$size = get_post_meta( $id , 'filesize' , true );
+					if( ! $size || strlen( $size ) == 0 || $size == '' ) {
+						$size = $this->get_file_size( $file );
+						$size = $size['formatted'];
+					}
+
+					$meta = '';
+
+					if( is_single() ) {
+						$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
+					}
+
+					$meta .= '<div class="podcast_meta"><aside>';
+					if( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
+					if( $duration && strlen( $duration ) > 0 ) { if( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
+					if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
+					$meta .= '</aside></div>';
+
+					$content = $meta . $content;
 				}
 
-				$meta = '';
-
-				if( is_single() ) {
-					$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
-				}
-
-				$meta .= '<div class="podcast_meta"><aside>';
-				if( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-				if( $duration && strlen( $duration ) > 0 ) { if( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
-				if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
-				$meta .= '</aside></div>';
-
-				$content = $meta . $content;
 			}
-
 		}
 
 		return $content;
@@ -638,101 +642,103 @@ class SeriouslySimplePodcasting {
 	}
 
 	public function audio_player( $src = false ) {
-
-		/*
-		 * Uses MediaElement.js for audio player
-		 * This code is pulled from the MediaElement.js WordPress plugin
-		 *
-		 * http://mediaelementjs.com/
-		*/
+		global $wp_version;
 
 		if( $src ) {
 
-			$dir = $this->assets_url . 'mediaelement/';
+			if( $wp_version && $wp_version == '3.6' ) {
+				return wp_audio_shortcode( array( 'src' => $src ) );
+			} else {
 
-			// Only enqueue script when needed
-			wp_register_script( 'mediaelementjs-scripts' , esc_url( $dir . 'mediaelement-and-player.min.js' ) , array('jquery') , '2.7.0' , false );
-			wp_enqueue_script( 'mediaelementjs-scripts' );
+				// DEPRECATED: All the following code will be removed from future version of the plugin
+				// It is included here for backwards compatibility with versions of WordPress prior to 3.6
 
-			wp_register_style( 'mediaelementjs-styles' , esc_url( $dir . 'mediaelementplayer.css' ) );
-			wp_enqueue_style( 'mediaelementjs-styles' );
+				$dir = $this->assets_url . 'mediaelement/';
 
-			$ext = pathinfo(basename($src), PATHINFO_EXTENSION);
+				// Only enqueue script when needed
+				wp_register_script( 'mediaelementjs-scripts' , esc_url( $dir . 'mediaelement-and-player.min.js' ) , array('jquery') , '2.7.0' , false );
+				wp_enqueue_script( 'mediaelementjs-scripts' );
 
-			if( $ext && strlen( $ext ) > 0 ) {
+				wp_register_style( 'mediaelementjs-styles' , esc_url( $dir . 'mediaelementplayer.css' ) );
+				wp_enqueue_style( 'mediaelementjs-styles' );
 
-				$sources = array();
-				$options = array();
-				$flash_src = '';
+				$ext = pathinfo(basename($src), PATHINFO_EXTENSION);
 
-				$width = '400';
-				$height = '30';
+				if( $ext && strlen( $ext ) > 0 ) {
 
-				$attributes = array(
-					'src' => htmlspecialchars( $src ),
-					'mp3' => '',
-					'ogg' => '',
-					'poster' => '',
-					'width' => $width,
-					'height' => $height,
-					'type' => 'audio',
-					'preload' => 'none',
-					'skin' => get_option( 'mep_video_skin' ),
-					'autoplay' => 'false',
-					'loop' => 'false',
+					$sources = array();
+					$options = array();
+					$flash_src = '';
 
-					// old ones
-					'duration' => 'true',
-					'progress' => 'true',
-					'fullscreen' => 'false',
-					'volume' => 'true',
+					$width = '400';
+					$height = '30';
 
-					// captions
-					'captions' => '',
-					'captionslang' => 'en'
-				);
+					$attributes = array(
+						'src' => htmlspecialchars( $src ),
+						'mp3' => '',
+						'ogg' => '',
+						'poster' => '',
+						'width' => $width,
+						'height' => $height,
+						'type' => 'audio',
+						'preload' => 'none',
+						'skin' => get_option( 'mep_video_skin' ),
+						'autoplay' => 'false',
+						'loop' => 'false',
 
-				$sources[] = '<source src="' . htmlspecialchars( $src ) . '" type="audio/' . $ext . '" />';
-				$flash_src = htmlspecialchars( $src );
+						// old ones
+						'duration' => 'true',
+						'progress' => 'true',
+						'fullscreen' => 'false',
+						'volume' => 'true',
 
-				// MEJS options
-				if ($attributes['loop']) {
-					$options[]  = 'loop: ' . $attributes['loop'];
+						// captions
+						'captions' => '',
+						'captionslang' => 'en'
+					);
+
+					$sources[] = '<source src="' . htmlspecialchars( $src ) . '" type="audio/' . $ext . '" />';
+					$flash_src = htmlspecialchars( $src );
+
+					// MEJS options
+					if ($attributes['loop']) {
+						$options[]  = 'loop: ' . $attributes['loop'];
+					}
+
+					// CONTROLS array
+					$controls_option[] = '"playpause"';
+					if ($attributes['progress'] == 'true') {
+						$controls_option[] = '"current"';
+						$controls_option[] = '"progress"';
+					}
+					if ($attributes['duration'] == 'true') {
+						$controls_option[] = '"duration"';
+					}
+					if ($attributes['volume'] == 'true') {
+						$controls_option[] = '"volume"';
+					}
+					$controls_option[] = '"tracks"';
+					$options[] = '"features":[' . implode(',', $controls_option) . ']';
+					$options[] = '"audioWidth":'.$width;
+					$options[] = '"audioHeight":'.$height;
+
+					$attributes_string = !empty($attributes) ? implode(' ', $attributes) : '';
+					$sources_string = !empty($sources) ? implode("\n\t\t", $sources) : '';
+					$options_string = !empty($options) ? '{' . implode(',', $options) . '}' : '';
+
+					$mediahtml = '<audio id="wp_mep_0" controls="controls" ' . $attributes_string . ' class="mejs-player" data-mejsoptions="' . $options_string . '">
+						' . $sources_string . '
+						<object width="' . $width . '" height="' . $height . '" type="application/x-shockwave-flash" data="' . $dir . 'flashmediaelement.swf">
+							<param name="movie" value="' . $dir . 'flashmediaelement.swf" />
+							<param name="flashvars" value="controls=true&amp;file=' . $flash_src . '" />
+						</object>
+					</audio>';
+
+	  				return $mediahtml;
+
 				}
-
-				// CONTROLS array
-				$controls_option[] = '"playpause"';
-				if ($attributes['progress'] == 'true') {
-					$controls_option[] = '"current"';
-					$controls_option[] = '"progress"';
-				}
-				if ($attributes['duration'] == 'true') {
-					$controls_option[] = '"duration"';
-				}
-				if ($attributes['volume'] == 'true') {
-					$controls_option[] = '"volume"';
-				}
-				$controls_option[] = '"tracks"';
-				$options[] = '"features":[' . implode(',', $controls_option) . ']';
-				$options[] = '"audioWidth":'.$width;
-				$options[] = '"audioHeight":'.$height;
-
-				$attributes_string = !empty($attributes) ? implode(' ', $attributes) : '';
-				$sources_string = !empty($sources) ? implode("\n\t\t", $sources) : '';
-				$options_string = !empty($options) ? '{' . implode(',', $options) . '}' : '';
-
-				$mediahtml = '<audio id="wp_mep_0" controls="controls" ' . $attributes_string . ' class="mejs-player" data-mejsoptions="' . $options_string . '">
-					' . $sources_string . '
-					<object width="' . $width . '" height="' . $height . '" type="application/x-shockwave-flash" data="' . $dir . 'flashmediaelement.swf">
-						<param name="movie" value="' . $dir . 'flashmediaelement.swf" />
-						<param name="flashvars" value="controls=true&amp;file=' . $flash_src . '" />
-					</object>
-				</audio>';
-
-  				return $mediahtml;
 
 			}
-
 		}
 
 		return false;

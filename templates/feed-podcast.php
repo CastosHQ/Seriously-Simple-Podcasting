@@ -261,8 +261,13 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 
 		// iTunes summary does not allow any HTML and must be shorter than 4000 characters
 		$itunes_summary = strip_tags( get_the_content() );
-		$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"' ), array( 'and', '', '', '', '' ), $itunes_summary );
+		$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( 'and', '', '', '', '', '' ), $itunes_summary );
 		$itunes_summary = substr( $itunes_summary, 0, 3950 );
+
+		// iTunes short description does not allow any HTML and must be shorter than 4000 characters
+		$itunes_excerpt = strip_tags( get_the_excerpt() );
+		$itunes_excerpt = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_excerpt );
+		$itunes_excerpt = substr( $itunes_excerpt, 0, 3950 );
 
 	?>
 	<item>
@@ -272,6 +277,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<dc:creator><?php echo $author; ?></dc:creator>
 		<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
 		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
+		<itunes:subtitle><?php echo $itunes_excerpt; ?></itunes:subtitle>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
 		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
 		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>

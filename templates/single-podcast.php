@@ -45,7 +45,7 @@ $post = get_post( $id );
 					</a>
 				<?php } ?>
 
-				<?php the_content(); ?>
+				<?php echo $ss_podcasting->content_meta_data( wpautop( $post->post_content ) ); ?>
 
 			<section>
 
@@ -56,7 +56,7 @@ $post = get_post( $id );
 	</div>
 
 	<div class="podcast_right">
-		
+
 		<?php
 
 		$args = array(
@@ -75,7 +75,7 @@ $post = get_post( $id );
 
 				<ul>
 					<?php foreach( $qry->posts as $episode ) {
-						
+
 						$this_id = $episode->ID;
 						$class_tail = '';
 						if( $this_id == $id ) {
@@ -94,7 +94,7 @@ $post = get_post( $id );
 			</div>
 
 		<?php } ?>
-		
+
 		<?php if ( function_exists( 'dynamic_sidebar' ) ) { dynamic_sidebar( 'podcast_sidebar' ); } ?>
 	</div>
 

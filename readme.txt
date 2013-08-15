@@ -1,12 +1,12 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
-Donate link: https://flattr.com/thing/1332401/Seriously-Simple-Podcasting-WordPress-plugin
+Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
-Tested up to: 3.5.1
-Stable tag: 1.5.3
-License: GPLv2 or later
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Tested up to: 3.6
+Stable tag: 1.6
+License: GPLv3 or later
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Podcasting done right.
 
@@ -16,11 +16,13 @@ Podcasting done right.
 
 It comes with built-in templates, widget and shortcode so you can display your podcast however you like. It also has easy subscribe links for iTunes listeners and standard RSS subscribers.
 
-Podcast episodes are playable directly on your site using the MediaElement.js audio player that works in all browsers: http://mediaelementjs.com/.
+Podcast episodes are playable directly on your site using the built-in media player included in WordPress 3.6 and above. If you are using an older version of WordPress then the same audio player is included (although it will be removed in future versions).
 
 The plugin is fully translatable using WPML.
 
 CONTRIBUTE ON GITHUB: https://github.com/hlashbrooke/Seriously-Simple-Podcasting
+
+SEE AN EXAMPLE OF THE PLUGIN IN ACTION: http://www.southerncrosschurch.org/sermons/
 
 TAKE A QUICK USER SURVEY: https://docs.google.com/forms/d/1PbMBocuGZq4K_LV2dL-GfmAJwNlsT76HUbr5fgRZxfo/viewform
 
@@ -87,6 +89,13 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.6 =
+* 2013-08-15
+* [FEATURE] Adding option to hide audio player and episode data from the top of episode content
+* [FEATURE] Adding episode descriptions for individual episodes in iTunes
+* [UPDATE] Using built-in audio player functions for WordPress 3.6+
+* [UPDATE] Improving content display for built-in plugin templates
 
 = 1.5.3 =
 * 2013-05-11
@@ -243,6 +252,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.6 =
+* 2013-08-15
+* Adding option to hide audio player and episode data from the top of episode content, improving iTunes feed & switching to WordPress' built-in audio player (for v3.6+)
 
 = 1.5.3 =
 * 2013-05-11

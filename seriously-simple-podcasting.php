@@ -1,23 +1,18 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.5.3
+ * Version: 1.6
  * Plugin URI: http://wordpress.org/extend/plugins/seriously-simple-podcasting/
  * Description: Podcasting done right.
  * Author: Hugh Lashbrooke
  * Author URI: http://www.hughlashbrooke.com
  * Requires at least: 3.0
- * Tested up to: 3.5.1
+ * Tested up to: 3.6
  *
  * @package WordPress
  * @subpackage SeriouslySimplePodcasting
  * @author Hugh Lashbrooke
  * @since 1.0.0
- */
-
-/*
- * Uses MediaElement.js for audio player
- * http://mediaelementjs.com/
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;

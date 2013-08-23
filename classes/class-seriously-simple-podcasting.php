@@ -16,6 +16,7 @@ class SeriouslySimplePodcasting {
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
 		$this->site_url = trailingslashit( site_url() );
+		$this->home_url = trailingslashit( home_url() );
 		$this->token = 'podcast';
 
 		// Handle localisation
@@ -465,7 +466,7 @@ class SeriouslySimplePodcasting {
 
 		$file = $this->get_enclosure( $episode );
 
-		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->site_url );
+		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->home_url );
 
 		return $link;
 	}

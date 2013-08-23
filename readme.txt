@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.0
 Tested up to: 3.6
-Stable tag: 1.6
+Stable tag: 1.6.1
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -42,6 +42,10 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 1. Customise the plugin from the 'Podcast > Settings' page
 
 == Frequently Asked Questions ==
+
+= The plugin doesn't work like it should - what's the problem? =
+
+There could be a number of reasons for this, but the most common one is that you have another podcasting plugin activated on your site. Make sure you deactivate any other podcasting plugins (e.g. BluBrry PowerPress, PodPress, etc.). If you have done that and the plugin is still not working as it should then have a read of the rest of the FAQs as well as the support forum - if you don't find what you need there, then create a new topic.
 
 = I've installed the plugin and added episodes, but where do I find all of it on my website? =
 
@@ -89,6 +93,11 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.6.1 =
+* 2013-08-23
+* [FIX] Switching download link to use home_url() instead of site_url()
+* [UPDATE] Updating plugin FAQ
 
 = 1.6 =
 * 2013-08-15
@@ -252,6 +261,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.6.1 =
+* 2013-08-23
+* Switching download link to use home_url() instead of site_url()
 
 = 1.6 =
 * 2013-08-15

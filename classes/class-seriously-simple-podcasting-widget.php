@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) || ! function_exists( 'ss_podcast' ) ) exit; // Exit
  * protected $widget_description
  * protected $widget_idbase
  * protected $widget_title
- * 
+ *
  * - __construct()
  * - widget()
  * - update()

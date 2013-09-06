@@ -228,6 +228,14 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			$explicit_flag = 'No';
 		}
 
+		// Episode block flag
+		$ep_block = get_post_meta( get_the_ID() , 'block' , true );
+		if( $ep_block && $ep_block == 'on' ) {
+			$block_flag = 'Yes';
+		} else {
+			$block_flag = 'No';
+		}
+
 		// Episode series name
 		$series_list = wp_get_post_terms( get_the_ID() , 'series' );
 		$series = false;
@@ -282,6 +290,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
 		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo esc_html( $explicit_flag ); ?></itunes:explicit>
+		<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
 		<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
 		<itunes:author><?php echo $author; ?></itunes:author><?php if( $keywords ) { ?>
 		<itunes:keywords><?php echo esc_html( $keywords ); ?></itunes:keywords><?php } ?>

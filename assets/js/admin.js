@@ -1,36 +1,58 @@
 jQuery(document).ready(function($) {
 
-	$('#upload_file_button').click(function() {
-		var post_id = jQuery( '#seriouslysimple_post_id' ).val();
-		tb_show( 'Upload an audio file' , 'media-upload.php?referer=seriouslysimple-file&type=audio&TB_iframe=true&post_id=' + post_id , false );
-		return false;
-	});
+	/* ADD/EDIT EPISODE */
 
-	if( jQuery( '#upload_file_button' ).length > 0 ) {
-		window.send_to_editor = function(html) {
-			var file_url = jQuery( html ).attr( 'href' );
-			jQuery( '#enclosure' ).val( file_url );
-			tb_remove();
+	// Uploading files
+	var file_frame;
+
+	jQuery.fn.ssp_upload_media_file = function( button, preview_media ) {
+		event.preventDefault();
+
+		var button_id = button.attr('id');
+		var field_id = button_id.replace( '_button', '' );
+		var preview_id = button_id.replace( '_button', '_preview' );
+
+		// If the media frame already exists, reopen it.
+		if ( file_frame ) {
+		  file_frame.open();
+		  return;
 		}
+
+		// Create the media frame.
+		file_frame = wp.media.frames.file_frame = wp.media({
+		  title: jQuery( this ).data( 'uploader_title' ),
+		  button: {
+		    text: jQuery( this ).data( 'uploader_button_text' ),
+		  },
+		  multiple: false
+		});
+
+		// When an image is selected, run a callback.
+		file_frame.on( 'select', function() {
+		  attachment = file_frame.state().get('selection').first().toJSON();
+		  jQuery("#"+field_id).val(attachment.url);
+		  if( preview_media ) {
+		  	jQuery("#"+preview_id).attr('src',attachment.url);
+		  }
+		});
+
+		// Finally, open the modal
+		file_frame.open();
 	}
 
-	$('#ss_podcasting_upload_image').click(function() {
-		tb_show( 'Upload an image' , 'media-upload.php?referer=ss_podcast_image&type=image&TB_iframe=true' , false );
-		return false;
+	jQuery('#upload_audio_file_button').click(function( event ){
+		jQuery.fn.ssp_upload_media_file( jQuery(this), false );
 	});
 
-	if( jQuery( '#ss_podcasting_upload_image' ).length > 0 ) {
-		window.send_to_editor = function(html) {
-			var file_url = jQuery( 'img' , html ).attr( 'src' );
-			jQuery( '#ss_podcasting_data_image' ).val( file_url );
-			jQuery( '#ss_podcasting_data_image_preview' ).attr( 'src' , file_url );
-			tb_remove();
-		}
-	}
+	/* SETTINGS PAGE */
 
-	$('#ss_podcasting_delete_image').click(function() {
-		$( '#ss_podcasting_data_image' ).val( '' );
-		$( '#ss_podcasting_data_image_preview' ).remove();
+	jQuery('#ss_podcasting_data_image_button').click(function() {
+		jQuery.fn.ssp_upload_media_file( jQuery(this), true );
+	});
+
+	jQuery('#ss_podcasting_delete_image').click(function() {
+		jQuery( '#ss_podcasting_data_image' ).val( '' );
+		jQuery( '#ss_podcasting_data_image_preview' ).remove();
 		return false;
 	});
 
@@ -40,18 +62,19 @@ jQuery(document).ready(function($) {
 		jQuery( 'h3:contains("' + jQuery( this ).text() + '")' ).attr( 'id', id_value ).addClass( 'section-heading' );
 	});
 
+	// Create nav links for settings page
 	jQuery( '#podcast_settings .subsubsub a.tab' ).click( function ( e ) {
 		// Move the "current" CSS class.
 		jQuery( this ).parents( '.subsubsub' ).find( '.current' ).removeClass( 'current' );
 		jQuery( this ).addClass( 'current' );
-	
+
 		// If "All" is clicked, show all.
 		if ( jQuery( this ).hasClass( 'all' ) ) {
 			jQuery( '#podcast_settings h3, #podcast_settings form p, #podcast_settings table.form-table, p.submit' ).show();
-			
+
 			return false;
 		}
-		
+
 		// If the link is a tab, show only the specified tab.
 		var toShow = jQuery( this ).attr( 'href' );
 
@@ -60,7 +83,7 @@ jQuery(document).ready(function($) {
 
 		jQuery( '#podcast_settings h3, #podcast_settings form > p:not(".submit"), #podcast_settings table' ).hide();
 		jQuery( 'h3#' + toShow ).show().nextUntil( 'h3.section-heading', 'p, table, table p' ).show();
-		
+
 		return false;
 	});
 

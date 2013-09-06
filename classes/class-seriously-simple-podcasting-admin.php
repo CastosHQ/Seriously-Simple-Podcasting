@@ -18,28 +18,28 @@ class SeriouslySimplePodcasting_Admin {
 		$this->token = 'podcast';
 
 		// Register podcast settings
-		add_action( 'admin_init' , array( &$this , 'register_settings' ) );
+		add_action( 'admin_init' , array( $this , 'register_settings' ) );
 
 		// Add settings page to menu
-		add_action( 'admin_menu' , array( &$this , 'add_menu_item' ) );
+		add_action( 'admin_menu' , array( $this , 'add_menu_item' ) );
 
 		// Add settings link to plugins page
-		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ) , array( &$this , 'add_settings_link' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ) , array( $this , 'add_settings_link' ) );
 
 		// Load scripts for settings page
-		add_action( 'admin_enqueue_scripts' , array( &$this, 'enqueue_admin_scripts' ) , 10 );
+		add_action( 'admin_enqueue_scripts' , array( $this, 'enqueue_admin_scripts' ) , 10 );
 
 		// Mark date on which feed redirection was activated
-		add_action( 'update_option' , array( &$this, 'mark_feed_redirect_date' ) , 10 , 3 );
+		add_action( 'update_option' , array( $this, 'mark_feed_redirect_date' ) , 10 , 3 );
 
 		// Display notices in the WP admin
-		add_action( 'admin_notices', array( &$this, 'admin_notices' ), 10 );
-		add_action( 'admin_init', array( &$this, 'admin_notice_actions'), 1 );
+		add_action( 'admin_notices', array( $this, 'admin_notices' ), 10 );
+		add_action( 'admin_init', array( $this, 'admin_notice_actions'), 1 );
 
 	}
 
 	public function add_menu_item() {
-		add_submenu_page( 'edit.php?post_type=podcast' , 'Podcast Settings' , 'Settings', 'manage_options' , 'podcast_settings' , array( &$this , 'settings_page' ) );
+		add_submenu_page( 'edit.php?post_type=podcast' , 'Podcast Settings' , 'Settings', 'manage_options' , 'podcast_settings' , array( $this , 'settings_page' ) );
 	}
 
 	public function add_settings_link( $links ) {
@@ -51,14 +51,11 @@ class SeriouslySimplePodcasting_Admin {
 	public function enqueue_admin_scripts () {
 
 		// Admin JS
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' , 'media-upload' , 'thickbox' ), '1.1' );
+		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '1.7.0' );
+		wp_enqueue_script( 'ss_podcasting-admin' );
 
-		// JS & CSS for media uploader
-		wp_enqueue_script( 'jquery' );
-        wp_enqueue_script( 'thickbox' );
-        wp_enqueue_style( 'thickbox' );
-        wp_enqueue_script( 'media-upload' );
-        wp_enqueue_script( 'ss_podcasting-admin' );
+		// Media uploader scripts
+		wp_enqueue_media();
 
 	}
 
@@ -92,49 +89,51 @@ class SeriouslySimplePodcasting_Admin {
 	public function register_settings() {
 
 		// Add settings section
-		add_settings_section( 'customise' , __( 'Customise' , 'ss-podcasting' ) , array( &$this , 'main_settings' ) , 'ss_podcasting' );
-		add_settings_section( 'describe' , __( 'Describe' , 'ss-podcasting' ) , array( &$this , 'podcast_data' ) , 'ss_podcasting' );
-		add_settings_section( 'protect' , __( 'Protect' , 'ss-podcasting' ) , array( &$this , 'protection_settings' ) , 'ss_podcasting' );
-		add_settings_section( 'redirect' , __( 'Redirect' , 'ss-podcasting' ) , array( &$this , 'redirect_settings' ) , 'ss_podcasting' );
-		add_settings_section( 'share' , __( 'Share' , 'ss-podcasting' ) , array( &$this , 'feed_info' ) , 'ss_podcasting' );
+		add_settings_section( 'customise' , __( 'Customise' , 'ss-podcasting' ) , array( $this , 'main_settings' ) , 'ss_podcasting' );
+		add_settings_section( 'describe' , __( 'Describe' , 'ss-podcasting' ) , array( $this , 'podcast_data' ) , 'ss_podcasting' );
+		add_settings_section( 'protect' , __( 'Protect' , 'ss-podcasting' ) , array( $this , 'protection_settings' ) , 'ss_podcasting' );
+		add_settings_section( 'redirect' , __( 'Redirect' , 'ss-podcasting' ) , array( $this , 'redirect_settings' ) , 'ss_podcasting' );
+		add_settings_section( 'share' , __( 'Share' , 'ss-podcasting' ) , array( $this , 'feed_info' ) , 'ss_podcasting' );
 
 		// Add settings fields
-		add_settings_field( 'ss_podcasting_use_templates' , __( 'Use built-in plugin templates:' , 'ss-podcasting' ) , array( &$this , 'use_templates_field' )  , 'ss_podcasting' , 'customise' );
-		add_settings_field( 'ss_podcasting_slug' , __( 'URL slug for podcast pages:' , 'ss-podcasting' ) , array( &$this , 'slug_field' )  , 'ss_podcasting' , 'customise' );
-		add_settings_field( 'ss_podcasting_feed_url' , __( 'URL for your podcast:' , 'ss-podcasting' ) , array( &$this , 'feed_url_field' )  , 'ss_podcasting' , 'customise' );
-		add_settings_field( 'ss_podcasting_include_in_main_query' , __( 'Include podcast episodes in home page blog listing:' , 'ss-podcasting' ) , array( &$this , 'include_in_main_query' )  , 'ss_podcasting' , 'customise' );
-		add_settings_field( 'ss_podcasting_hide_content_meta' , __( 'Prevent audio player and podcast data from showing above episode content:' , 'ss-podcasting' ) , array( &$this , 'content_meta' )  , 'ss_podcasting' , 'customise' );
+		add_settings_field( 'ss_podcasting_use_templates' , __( 'Use built-in plugin templates:' , 'ss-podcasting' ) , array( $this , 'use_templates_field' )  , 'ss_podcasting' , 'customise' );
+		add_settings_field( 'ss_podcasting_slug' , __( 'URL slug for podcast pages:' , 'ss-podcasting' ) , array( $this , 'slug_field' )  , 'ss_podcasting' , 'customise' );
+		add_settings_field( 'ss_podcasting_feed_url' , __( 'URL for your podcast:' , 'ss-podcasting' ) , array( $this , 'feed_url_field' )  , 'ss_podcasting' , 'customise' );
+		add_settings_field( 'ss_podcasting_include_in_main_query' , __( 'Include podcast episodes in home page blog listing:' , 'ss-podcasting' ) , array( $this , 'include_in_main_query' )  , 'ss_podcasting' , 'customise' );
+		add_settings_field( 'ss_podcasting_hide_content_meta' , __( 'Prevent audio player and podcast data from showing above episode content:' , 'ss-podcasting' ) , array( $this , 'content_meta' )  , 'ss_podcasting' , 'customise' );
 
 		// Add data fields
-		add_settings_field( 'ss_podcasting_data_title' , __( 'Title:' , 'ss-podcasting' ) , array( &$this , 'data_title' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_subtitle' , __( 'Subtitle:' , 'ss-podcasting' ) , array( &$this , 'data_subtitle' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_author' , __( 'Author:' , 'ss-podcasting' ) , array( &$this , 'data_author' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_category' , __( 'Category:' , 'ss-podcasting' ) , array( &$this , 'data_category' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_subcategory' , __( 'Sub-Category:' , 'ss-podcasting' ) , array( &$this , 'data_subcategory' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_description' , __( 'Description/Summary:' , 'ss-podcasting' ) , array( &$this , 'data_description' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_image' , __( 'Image:' , 'ss-podcasting' ) , array( &$this , 'data_image' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_owner_name' , __( 'Owner:' , 'ss-podcasting' ) , array( &$this , 'data_owner' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_language' , __( 'Language:' , 'ss-podcasting' ) , array( &$this , 'data_language' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_copyright' , __( 'Copyright:' , 'ss-podcasting' ) , array( &$this , 'data_copyright' )  , 'ss_podcasting' , 'describe' );
-		add_settings_field( 'ss_podcasting_data_explicit' , __( 'Explicit:' , 'ss-podcasting' ) , array( &$this , 'data_explicit' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_title' , __( 'Title:' , 'ss-podcasting' ) , array( $this , 'data_title' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_subtitle' , __( 'Subtitle:' , 'ss-podcasting' ) , array( $this , 'data_subtitle' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_author' , __( 'Author:' , 'ss-podcasting' ) , array( $this , 'data_author' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_category' , __( 'Category:' , 'ss-podcasting' ) , array( $this , 'data_category' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_subcategory' , __( 'Sub-Category:' , 'ss-podcasting' ) , array( $this , 'data_subcategory' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_description' , __( 'Description/Summary:' , 'ss-podcasting' ) , array( $this , 'data_description' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_image' , __( 'Image:' , 'ss-podcasting' ) , array( $this , 'data_image' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_owner_name' , __( 'Owner:' , 'ss-podcasting' ) , array( $this , 'data_owner' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_language' , __( 'Language:' , 'ss-podcasting' ) , array( $this , 'data_language' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_copyright' , __( 'Copyright:' , 'ss-podcasting' ) , array( $this , 'data_copyright' )  , 'ss_podcasting' , 'describe' );
+		add_settings_field( 'ss_podcasting_data_explicit' , __( 'Explicit:' , 'ss-podcasting' ) , array( $this , 'data_explicit' )  , 'ss_podcasting' , 'describe' );
 
-		// Add feed info fields
-		add_settings_field( 'ss_podcasting_feed_standard' , __( 'Complete feed:' , 'ss-podcasting' ) , array( &$this , 'feed_standard' )  , 'ss_podcasting' , 'share' );
-		add_settings_field( 'ss_podcasting_feed_standard_series' , __( 'Feed for a specific series:' , 'ss-podcasting' ) , array( &$this , 'feed_standard_series' )  , 'ss_podcasting' , 'share' );
+		// Add sharing fields
+		add_settings_field( 'ss_podcasting_feed_standard' , __( 'Complete feed:' , 'ss-podcasting' ) , array( $this , 'feed_standard' )  , 'ss_podcasting' , 'share' );
+		add_settings_field( 'ss_podcasting_feed_standard_series' , __( 'Feed for a specific series:' , 'ss-podcasting' ) , array( $this , 'feed_standard_series' )  , 'ss_podcasting' , 'share' );
+		add_settings_field( 'ss_podcasting_podcast_url' , __( 'Podcast page:' , 'ss-podcasting' ) , array( $this , 'podcast_url' )  , 'ss_podcasting' , 'share' );
+		add_settings_field( 'ss_podcasting_social_sharing' , __( 'Share online:' , 'ss-podcasting' ) , array( $this , 'social_sharing' )  , 'ss_podcasting' , 'share' );
 
 		// Add redirect settings fields
-		add_settings_field( 'ss_podcasting_redirect_feed' , __( 'Redirect podcast feed to new URL:' , 'ss-podcasting' ) , array( &$this , 'redirect_feed' )  , 'ss_podcasting' , 'redirect' );
-		add_settings_field( 'ss_podcasting_new_feed_url' , __( 'New podcast URL:' , 'ss-podcasting' ) , array( &$this , 'new_feed_url' )  , 'ss_podcasting' , 'redirect' );
+		add_settings_field( 'ss_podcasting_redirect_feed' , __( 'Redirect podcast feed to new URL:' , 'ss-podcasting' ) , array( $this , 'redirect_feed' )  , 'ss_podcasting' , 'redirect' );
+		add_settings_field( 'ss_podcasting_new_feed_url' , __( 'New podcast URL:' , 'ss-podcasting' ) , array( $this , 'new_feed_url' )  , 'ss_podcasting' , 'redirect' );
 
 		// Add protection settings fields
-		add_settings_field( 'ss_podcasting_protect_feed' , __( 'Password protect your podcast feed:' , 'ss-podcasting' ) , array( &$this , 'protect_feed' )  , 'ss_podcasting' , 'protect' );
-		add_settings_field( 'ss_podcasting_protection_username' , __( 'Username:' , 'ss-podcasting' ) , array( &$this , 'protection_username' )  , 'ss_podcasting' , 'protect' );
-		add_settings_field( 'ss_podcasting_protection_password' , __( 'Password:' , 'ss-podcasting' ) , array( &$this , 'protection_password' )  , 'ss_podcasting' , 'protect' );
-		add_settings_field( 'ss_podcasting_protection_no_access_message' , __( 'No access message:' , 'ss-podcasting' ) , array( &$this , 'protection_no_access_message' )  , 'ss_podcasting' , 'protect' );
+		add_settings_field( 'ss_podcasting_protect_feed' , __( 'Password protect your podcast feed:' , 'ss-podcasting' ) , array( $this , 'protect_feed' )  , 'ss_podcasting' , 'protect' );
+		add_settings_field( 'ss_podcasting_protection_username' , __( 'Username:' , 'ss-podcasting' ) , array( $this , 'protection_username' )  , 'ss_podcasting' , 'protect' );
+		add_settings_field( 'ss_podcasting_protection_password' , __( 'Password:' , 'ss-podcasting' ) , array( $this , 'protection_password' )  , 'ss_podcasting' , 'protect' );
+		add_settings_field( 'ss_podcasting_protection_no_access_message' , __( 'No access message:' , 'ss-podcasting' ) , array( $this , 'protection_no_access_message' )  , 'ss_podcasting' , 'protect' );
 
 		// Register settings fields
 		register_setting( 'ss_podcasting' , 'ss_podcasting_use_templates' );
-		register_setting( 'ss_podcasting' , 'ss_podcasting_slug' , array( &$this , 'validate_slug' ) );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_slug' , array( $this , 'validate_slug' ) );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_feed_url' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_include_in_main_query' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_hide_content_meta' );
@@ -145,7 +144,7 @@ class SeriouslySimplePodcasting_Admin {
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_author' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_category' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_subcategory' );
-		register_setting( 'ss_podcasting' , 'ss_podcasting_data_description' , array( &$this , 'validate_description' ) );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_data_description' , array( $this , 'validate_description' ) );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_image' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_owner_name' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_data_owner_email' );
@@ -160,8 +159,8 @@ class SeriouslySimplePodcasting_Admin {
 		// Register protection settings fields
 		register_setting( 'ss_podcasting' , 'ss_podcasting_protect_feed' );
 		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_username' );
-		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_password' , array( &$this , 'encode_password' ) );
-		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_no_access_message' , array( &$this , 'validate_message' ) );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_password' , array( $this , 'encode_password' ) );
+		register_setting( 'ss_podcasting' , 'ss_podcasting_protection_no_access_message' , array( $this , 'validate_message' ) );
 
 		// Allow plugins to add more settings fields
 		do_action( 'ss_podcasting_settings_fields' );
@@ -390,7 +389,7 @@ class SeriouslySimplePodcasting_Admin {
 		}
 
 		echo '<img id="ss_podcasting_data_image_preview" src="' . $data . '" style="max-width:400px;height:auto;" /><br/>
-				<input id="ss_podcasting_upload_image" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />
+				<input id="ss_podcasting_data_image_button" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />
 			  	<input id="ss_podcasting_delete_image" type="button" class="button" value="'. __( 'Remove image' , 'ss-podcasting' ) . '" />
 				<input id="ss_podcasting_data_image" type="hidden" name="ss_podcasting_data_image" value="' . $data . '"/>
 				<br/><span class="description">'. __( 'Your primary podcast image. iTunes now requires that this image has a minimum size of 1400x1400 px. Image preview shown here will be smaller than actual image size.' , 'ss-podcasting' ) . '</span>';
@@ -553,13 +552,71 @@ class SeriouslySimplePodcasting_Admin {
 		echo $rss_url;
 	}
 
+	public function podcast_url() {
+
+		$podcast_url = $this->site_url;
+
+		$slug = get_option('ss_podcasting_slug');
+		if( $slug && strlen( $slug ) > 0 && $slug != '' ) {
+			$podcast_url .= $slug;
+		} else {
+			$podcast_url .= '?post_type=podcast';
+		}
+
+		echo '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';
+
+	}
+
+	public function social_sharing() {
+
+		$share_url = $this->site_url;
+		$custom_title = get_option('ss_podcasting_data_title');
+		$share_title = sprintf( __( 'Podcast on %s', 'ss-podcasting' ), get_bloginfo( 'name' ) );
+		if( $custom_title && strlen( $custom_title ) > 0 && $custom_title != '' ) {
+			$share_title = $custom_title;
+		}
+
+		$slug = get_option('ss_podcasting_slug');
+		if( $slug && strlen( $slug ) > 0 && $slug != '' ) {
+			$share_url .= $slug;
+		} else {
+			$share_url .= '?post_type=podcast';
+		}
+
+		printf( __( 'Use this to quickly share a link to your site\'s podcast directory page - this is currently %s, but can be customised using the \'URL slug\' option in the \'Customise\' settings section.', 'ss-podcasting' ), '<a href="' . esc_url( $share_url ) . '">' . $share_url . '</a>' );
+
+		?>
+		<br/>
+
+		<!-- Twitter -->
+		<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo esc_url( $share_url ); ?>" data-text="<?php echo esc_attr( $share_title ); ?>" data-count="none">Tweet</a>
+		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
+		&nbsp;&nbsp;&nbsp;
+		<!-- Facebook -->
+		<a id="fb-share" style='text-decoration:none;' type="icon_link" onClick="window.open('http://www.facebook.com/sharer.php?s=100&amp;p[title]=<?php echo esc_attr( $share_title ); ?>&amp;p[url]=<?php echo esc_url( $share_url ); ?>','sharer','toolbar=0,status=0,width=580,height=325');" href="javascript: void(0)">
+		    <img src="<?php echo $this->assets_url; ?>images/fb_share.gif" />
+		</a>
+		&nbsp;&nbsp;&nbsp;
+		<!-- Google+ -->
+		<div class="g-plus" data-action="share" data-annotation="none" href="<?php echo esc_url( $share_url ); ?>"></div>
+		<script type="text/javascript">
+		  (function() {
+		    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
+		    po.src = 'https://apis.google.com/js/plusone.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
+		  })();
+		</script>
+
+		<?php
+	}
+
 	public function settings_page() {
 
 		$settings = get_option('ss_podcasting_allow_download');
 
 		echo '<div class="wrap" id="podcast_settings">
 				<div class="icon32" id="ss_podcasting-icon"><br/></div>
-				<h2>Podcast Settings</h2>
+				<h2>' . __( 'Podcast Settings' , 'ss-podcasting' ) . '</h2>
 				<form method="post" action="options.php" enctype="multipart/form-data">
 					<ul id="settings-sections" class="subsubsub hide-if-no-js">
 						<li><a class="tab all current" href="#all">All</a> |</li>

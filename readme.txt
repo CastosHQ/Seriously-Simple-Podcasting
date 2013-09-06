@@ -2,9 +2,9 @@
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
-Requires at least: 3.0
+Requires at least: 3.5
 Tested up to: 3.6
-Stable tag: 1.6.1
+Stable tag: 1.7
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -16,7 +16,7 @@ Podcasting done right.
 
 It comes with built-in templates, widget and shortcode so you can display your podcast however you like. It also has easy subscribe links for iTunes listeners and standard RSS subscribers.
 
-Podcast episodes are playable directly on your site using the built-in media player included in WordPress 3.6 and above. If you are using an older version of WordPress then the same audio player is included (although it will be removed in future versions).
+Podcast episodes are playable directly on your site using the built-in media player included in WordPress 3.6 and above. If you are using an older version of WordPress then the same audio player is included in the plugin (although it will be removed in future versions).
 
 The plugin is fully translatable using WPML.
 
@@ -53,11 +53,15 @@ Your podcast page will always be available from this URL on your site: http://ww
 
 = Why do the podcast episode and archive pages just look like my default blog pages? =
 
-On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them. To do this, disable the use of the built-in templates and copy the 'archive-podcast.php' and 'single-podcast.php' files from the plugin's 'templates' directory and paste them in your theme's root folder - from there you can edit them to display the content however you wish.
+On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them. To do this, disable the use of the built-in templates and copy the 'archive-podcast.php' and 'single-podcast.php' files from the plugin's 'templates' directory and paste them into your theme's root folder - from there you can edit them to display the content however you wish.
 
-= Why can't I upload an audio file that is larger than 2/8/16/32 MB? =
+= How can I edit the actual content of the RSS feed? =
 
-This issue actually has nothing to do with this plugin. Your server and your WordPress installation will each have a maximum file upload size that you are allowed to make use of and there is no way for this plugin to override that. There are a few ways in which you can increase your server's maximum file upload size, but those instructions are outside the scope of this FAQ.
+You shouldn't ever need to do this, but if you would like to override the the RSS feed content then copy the 'feed-template.php' file from the plugin's 'templates' directory and paste it into your theme's root folder - from there you can edit it to display the feed content however you wish.
+
+= Why can't I upload an audio file that is larger than 2/8/16/32/XX MB? =
+
+This issue actually has nothing to do with this plugin. Your server and your WordPress installation will each have a maximum file upload size that you are allowed to make use of and there is no way for this plugin to override that. There are a few ways in which you can increase your server's maximum file upload size, but those instructions are outside the scope of this plugin's FAQ.
 
 = Why don't I see the media player when I view the individual episode pages? =
 
@@ -72,7 +76,7 @@ If any of these are true for you then that will most likely be the reason that t
 
 = Why does my podcast image not save properly? =
 
-For your podcast image to be valid on iTunes, it must be at least 1400x1400 px. This means that when you upload your image you must make sure to select the 'full size' option. The image will display smaller on the plugin's settings screen, but as long as your uploaded image is the correct size and you have selected full size when inserting it then it will work.
+For your podcast image to be valid on iTunes, it must be at least 1400x1400 px. This means that when you upload your image you must make sure to select a size option that at least has those dimensions. The image will display smaller on the plugin's settings screen, but as long as your uploaded image is the correct dimensions and you have selected the right size when inserting it then it will work.
 
 = My feed password does not seem to be saving - what gives? =
 
@@ -93,6 +97,16 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.7 =
+* 2013-09-07
+* [FEATURE] Adding ability to block individual episodes from appearing in iTunes
+* [FEATURE] Adding integrated sharing options so you can share your podcast URL straight from your WordPress dashboard
+* [FEATURE] Adding function to overwrite feed template (see the FAQ for more info)
+* [UPDATE] Switching to using the new WordPress media uploader for all media uploading in plugin
+* [UPDATE] General code clean up
+* [UPDATE] Updating plugin FAQ
+* [FIX] Fixing bug that prevented images being uploaded to episode post content
 
 = 1.6.1 =
 * 2013-08-23
@@ -261,6 +275,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.7 =
+* 2013-09-07
+* Adding ability to block individual episodes from appearing in iTunes, adding integrated sharing options so you can share your podcast URL straight from your WordPress dashboard and adding function to overwrite feed template (see the FAQ for more info). Also switching to using the new WordPress media uploader for all media uploading in plugin as well as a general code clean up.
 
 = 1.6.1 =
 * 2013-08-23

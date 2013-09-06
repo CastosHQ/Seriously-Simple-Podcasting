@@ -21,68 +21,68 @@ class SeriouslySimplePodcasting {
 
 		// Handle localisation
 		$this->load_plugin_textdomain();
-		add_action( 'init', array( &$this, 'load_localisation' ), 0 );
+		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Regsiter 'podcast' post type
-		add_action('init', array( &$this , 'register_post_type' ) );
+		add_action('init', array( $this , 'register_post_type' ) );
 
 		// Use built-in templates if selected
 		$template_option = get_option( 'ss_podcasting_use_templates' );
 		if( ( $template_option && $template_option == 'on' ) ) {
-			add_action( 'template_redirect' , array( &$this , 'page_templates' ) , 10 );
-			add_action( 'widgets_init', array( &$this , 'register_widget_area' ) );
-			add_action( 'wp_enqueue_scripts', array( &$this, 'enqueue_scripts' ) );
+			add_action( 'template_redirect' , array( $this , 'page_templates' ) , 10 );
+			add_action( 'widgets_init', array( $this , 'register_widget_area' ) );
+			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		}
 
 		// Add meta data to start of podcast content
-		add_filter( 'the_content', array( &$this , 'content_meta_data' ) );
+		add_filter( 'the_content', array( $this , 'content_meta_data' ) );
 
 		// Add RSS meta tag to site header
-		add_action( 'wp_head' , array( &$this , 'rss_meta_tag' ) );
+		add_action( 'wp_head' , array( $this , 'rss_meta_tag' ) );
 
 		// Add podcast episode to main query loop if setting is activated
 		$include_in_main_query = get_option('ss_podcasting_include_in_main_query');
 		if( $include_in_main_query && $include_in_main_query == 'on' ) {
-			add_filter( 'pre_get_posts' , array( &$this , 'add_to_home_query' ) );
+			add_filter( 'pre_get_posts' , array( $this , 'add_to_home_query' ) );
 		}
 
 		if ( is_admin() ) {
 
-			add_action( 'admin_menu', array( &$this, 'meta_box_setup' ), 20 );
-			add_action( 'save_post', array( &$this, 'meta_box_save' ) );
-			add_filter( 'enter_title_here', array( &$this, 'enter_title_here' ) );
-			add_filter( 'post_updated_messages', array( &$this, 'updated_messages' ) );
-			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_styles' ), 10 );
-			add_action( 'admin_enqueue_scripts', array( &$this, 'enqueue_admin_scripts' ), 10 );
-			add_filter( 'manage_edit-' . $this->token . '_columns', array( &$this, 'register_custom_column_headings' ), 10, 1 );
-			add_action( 'manage_posts_custom_column', array( &$this, 'register_custom_columns' ), 10, 2 );
-			add_filter( 'manage_edit-series_columns' , array( &$this , 'edit_series_columns' ) );
-            add_filter( 'manage_series_custom_column' , array( &$this , 'add_series_columns' ) , 1 , 3 );
+			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'save_post', array( $this, 'meta_box_save' ) );
+			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
+			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ), 10 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10 );
+			add_filter( 'manage_edit-' . $this->token . '_columns', array( $this, 'register_custom_column_headings' ), 10, 1 );
+			add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
+			add_filter( 'manage_edit-series_columns' , array( $this , 'edit_series_columns' ) );
+            add_filter( 'manage_series_custom_column' , array( $this , 'add_series_columns' ) , 1 , 3 );
 
 		}
 
 		// Add podcast image size
-		add_action( 'after_setup_theme', array( &$this , 'ensure_post_thumbnails_support' ) );
-		add_action( 'after_setup_theme', array( &$this , 'register_image_sizes' ) );
+		add_action( 'after_setup_theme', array( $this , 'ensure_post_thumbnails_support' ) );
+		add_action( 'after_setup_theme', array( $this , 'register_image_sizes' ) );
 
 		// Handle RSS template
 		if( is_podcast_feed() ) {
 
 			// Prevent feed from returning a 404 error when no posts are present on site
-			add_action( 'template_redirect' , array( &$this , 'prevent_feed_404' ) , 10 );
+			add_action( 'template_redirect' , array( $this , 'prevent_feed_404' ) , 10 );
 
 			switch( $_GET['feed'] ) {
-				case 'podcast': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 1 ); break;
-				case 'itunes': add_action( 'template_redirect' , array( &$this , 'feed_template' ) , 1 ); break; // Backwards compatiblity
+				case 'podcast': add_action( 'template_redirect' , array( $this , 'feed_template' ) , 1 ); break;
+				case 'itunes': add_action( 'template_redirect' , array( $this , 'feed_template' ) , 1 ); break; // Backwards compatiblity
 			}
 		}
 
 		if( is_file_download() ) {
-			add_action( 'wp', array( &$this , 'download_file' ), 1 );
+			add_action( 'wp', array( $this , 'download_file' ), 1 );
 		}
 
 		// Fluch rewrite rules on plugin activation
-		register_activation_hook( $file, array( &$this, 'rewrite_flush' ) );
+		register_activation_hook( $file, array( $this, 'rewrite_flush' ) );
 
 	}
 
@@ -229,24 +229,24 @@ class SeriouslySimplePodcasting {
 
 	  $messages[$this->token] = array(
 	    0 => '', // Unused. Messages start at index 1.
-	    1 => sprintf( __( 'Podcast updated. %sView podcast%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+	    1 => sprintf( __( 'Episode updated. %sView episode%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 	    2 => __( 'Custom field updated.' , 'ss-podcasting' ),
 	    3 => __( 'Custom field deleted.' , 'ss-podcasting' ),
-	    4 => __( 'Podcast updated.' , 'ss-podcasting' ),
+	    4 => __( 'Episode updated.' , 'ss-podcasting' ),
 	    /* translators: %s: date and time of the revision */
-	    5 => isset($_GET['revision']) ? sprintf( __( 'Podcast restored to revision from %s.' , 'ss-podcasting' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-	    6 => sprintf( __( 'Podcast published. %sView podcast%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-	    7 => __( 'Podcast saved.' , 'ss-podcasting' ),
-	    8 => sprintf( __( 'Podcast submitted. %sPreview podcast%s.' , 'ss-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
-	    9 => sprintf( __( 'Podcast scheduled for: %1$s. %2$sPreview podcast%3$s.' , 'ss-podcasting' ), '<strong>' . date_i18n( __( 'M j, Y @ G:i' , 'ss-podcasting' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-	    10 => sprintf( __( 'Podcast draft updated. %sPreview podcast%s.' , 'ss-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+	    5 => isset($_GET['revision']) ? sprintf( __( 'Episode restored to revision from %s.' , 'ss-podcasting' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
+	    6 => sprintf( __( 'Episode published. %sView episode%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+	    7 => __( 'Episode saved.' , 'ss-podcasting' ),
+	    8 => sprintf( __( 'Episode submitted. %sPreview episode%s.' , 'ss-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+	    9 => sprintf( __( 'Episode scheduled for: %1$s. %2$sPreview episode%3$s.' , 'ss-podcasting' ), '<strong>' . date_i18n( __( 'M j, Y @ G:i' , 'ss-podcasting' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+	    10 => sprintf( __( 'Episode draft updated. %sPreview episode%s.' , 'ss-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 	  );
 
 	  return $messages;
 	}
 
 	public function meta_box_setup () {
-		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( &$this, 'meta_box_content' ), $this->token, 'normal', 'high' );
+		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $this->token, 'normal', 'high' );
 
 		do_action( 'ss_podcasting_meta_boxes' );
 	}
@@ -273,7 +273,7 @@ class SeriouslySimplePodcasting {
 				}
 
 				if( $k == 'enclosure' ) {
-					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input id="upload_file_button" type="button" class="button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" /> <input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
+					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input type="button" class="button" id="upload_audio_file_button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" data-uploader_title="Choose a file" data-uploader_button_text="Insert audio file" /><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 					$html .= '</td><tr/>' . "\n";
 				} else {
@@ -377,14 +377,8 @@ class SeriouslySimplePodcasting {
 	public function enqueue_admin_scripts() {
 
 		// Admin JS
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' , 'media-upload' , 'thickbox' ), '1.0.1' );
-
-		// JS & CSS for media uploader
-		wp_enqueue_script( 'jquery' );
-        wp_enqueue_script( 'thickbox' );
-        wp_enqueue_style( 'thickbox' );
-        wp_enqueue_script( 'media-upload' );
-        wp_enqueue_script( 'ss_podcasting-admin' );
+		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '1.7.0' );
+		wp_enqueue_script( 'ss_podcasting-admin' );
 
 	}
 
@@ -393,7 +387,7 @@ class SeriouslySimplePodcasting {
 
 		$fields['enclosure'] = array(
 		    'name' => __( 'Audio file:' , 'ss-podcasting' ),
-		    'description' => __( 'Upload the podcast audio file. If the file is hosted on another server simply paste the URL here.' , 'ss-podcasting' ),
+		    'description' => __( 'Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here.' , 'ss-podcasting' ),
 		    'type' => 'url',
 		    'default' => '',
 		    'section' => 'info'
@@ -417,7 +411,15 @@ class SeriouslySimplePodcasting {
 
 		$fields['explicit'] = array(
 		    'name' => __( 'Explicit:' , 'ss-podcasting' ),
-		    'description' => __( 'Mark whether this episode is explicit or not.' , 'ss-podcasting' ),
+		    'description' => __( 'Mark this episode as explicit.' , 'ss-podcasting' ),
+		    'type' => 'checkbox',
+		    'default' => '',
+		    'section' => 'info'
+		);
+
+		$fields['block'] = array(
+		    'name' => __( 'Block from iTunes:' , 'ss-podcasting' ),
+		    'description' => __( 'Block this episode from appearing in iTunes.' , 'ss-podcasting' ),
 		    'type' => 'checkbox',
 		    'default' => '',
 		    'section' => 'info'
@@ -952,8 +954,18 @@ class SeriouslySimplePodcasting {
     }
 
     public function feed_template() {
+
     	$file_name = 'feed-podcast.php';
-		require( $this->template_path . $file_name );
+
+    	$theme_template_file = trailingslashit( get_template_directory() ) . $file_name;
+
+    	// Load feed template from theme if it exists, otherwise use plugin template
+    	if( file_exists( $theme_template_file ) ) {
+    		require( $theme_template_file );
+    	} else {
+    		require( $this->template_path . $file_name );
+    	}
+
 	    exit;
 	}
 

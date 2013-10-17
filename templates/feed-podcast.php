@@ -206,8 +206,12 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		// File size
 		$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
 		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
-			$size = $ss_podcasting->get_file_size( $enclosure );
-			$size = esc_html( $size['raw'] );
+			$filesize = $ss_podcasting->get_file_size( $enclosure );
+			$size = esc_html( $filesize['raw'] );
+
+			// Update so we don't do this again unless necessary
+			update_post_meta( get_the_ID() , 'filesize' , $filesize['formatted'] );
+			update_post_meta( get_the_ID(), 'filesize_raw' , $filesize['raw'] );
 		}
 
 		if( ! $size || strlen( $size ) == 0 || $size == '' ) {

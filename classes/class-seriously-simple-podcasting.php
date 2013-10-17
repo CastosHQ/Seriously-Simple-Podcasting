@@ -488,8 +488,12 @@ class SeriouslySimplePodcasting {
 					$duration = get_post_meta( $id , 'duration' , true );
 					$size = get_post_meta( $id , 'filesize' , true );
 					if( ! $size || strlen( $size ) == 0 || $size == '' ) {
-						$size = $this->get_file_size( $file );
-						$size = $size['formatted'];
+						$filesize = $this->get_file_size( $file );
+						$size = $filesize['formatted'];
+
+						// Update so we don't do this again unless necessary
+						update_post_meta( $id , 'filesize' , $filesize['formatted'] );
+						update_post_meta( $id, 'filesize_raw' , $filesize['raw'] );
 					}
 
 					$meta = '';

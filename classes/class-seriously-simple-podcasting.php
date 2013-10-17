@@ -530,8 +530,10 @@ class SeriouslySimplePodcasting {
 
 		if( $file ) {
 
-			$data = wp_remote_head( $file );
-
+			// Override default timeout of 5 because e.g. libsyn can be slow to return
+			// Also by default wp_remote_head doesn't follow redirects, so restore default
+			// redirect value of 5 to ensure we e.g. follow a CDN's likely redirects.
+			$data = wp_remote_head( $file, array('timeout' => 10, 'redirection' => 5));
 			if( is_array($data) && isset( $data['headers']['content-length'] ) ) {
 
 				$raw = $data['headers']['content-length'];

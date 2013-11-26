@@ -12,7 +12,7 @@ global $ss_podcasting;
 error_reporting( 0 );
 
 // Check if feed is password protected
-$protection = get_option('ss_podcasting_protect_feed');
+$protection = get_option( 'ss_podcasting_protect_feed' );
 
 if( $protection && $protection == 'on' ) {
 
@@ -46,11 +46,6 @@ if( $protection && $protection == 'on' ) {
 		die( $no_access_message );
 	}
 }
-
-// Action hook for plugins/themes to intercept template
-// Any add_action( 'do_feed_podcast' ) calls must be made before the 'template_redirect' hook
-// If you are still going to load this template after using this hook then you must not output any data
-do_action( 'do_feed_podcast' );
 
 // If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
 $redirect = get_option( 'ss_podcasting_redirect_feed' );
@@ -208,6 +203,9 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
 			$size = $ss_podcasting->get_file_size( $enclosure );
 			$size = esc_html( $size['raw'] );
+
+			update_post_meta( get_the_ID(), 'filesize', $size['formatted'] );
+ 			update_post_meta( get_the_ID(), 'filesize_raw', $size['raw'] );
 		}
 
 		if( ! $size || strlen( $size ) == 0 || $size == '' ) {

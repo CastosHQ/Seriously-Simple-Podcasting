@@ -23,27 +23,33 @@ class SeriouslySimplePodcasting {
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
-		// Regsiter 'podcast' post type
-		add_action('init', array( $this , 'register_post_type' ) );
+		// Regsiter podcast post type
+		add_action('init', array( $this, 'register_post_type' ) );
+
+		// Register podcast feed
+		add_action( 'init', array( $this, 'add_feed' ) );
+
+		// Handle pre-v2 feed URL (deprecated)
+		add_action( 'init', array( $this, 'redirect_old_feed' ) );
 
 		// Use built-in templates if selected
 		$template_option = get_option( 'ss_podcasting_use_templates' );
 		if( ( $template_option && $template_option == 'on' ) ) {
-			add_action( 'template_redirect' , array( $this , 'page_templates' ) , 10 );
-			add_action( 'widgets_init', array( $this , 'register_widget_area' ) );
+			add_action( 'template_redirect' , array( $this, 'page_templates' ) , 10 );
+			add_action( 'widgets_init', array( $this, 'register_widget_area' ) );
 			add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		}
 
 		// Add meta data to start of podcast content
-		add_filter( 'the_content', array( $this , 'content_meta_data' ) );
+		add_filter( 'the_content', array( $this, 'content_meta_data' ) );
 
 		// Add RSS meta tag to site header
-		add_action( 'wp_head' , array( $this , 'rss_meta_tag' ) );
+		add_action( 'wp_head' , array( $this, 'rss_meta_tag' ) );
 
 		// Add podcast episode to main query loop if setting is activated
 		$include_in_main_query = get_option('ss_podcasting_include_in_main_query');
 		if( $include_in_main_query && $include_in_main_query == 'on' ) {
-			add_filter( 'pre_get_posts' , array( $this , 'add_to_home_query' ) );
+			add_filter( 'pre_get_posts' , array( $this, 'add_to_home_query' ) );
 		}
 
 		if ( is_admin() ) {
@@ -56,29 +62,17 @@ class SeriouslySimplePodcasting {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10 );
 			add_filter( 'manage_edit-' . $this->token . '_columns', array( $this, 'register_custom_column_headings' ), 10, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
-			add_filter( 'manage_edit-series_columns' , array( $this , 'edit_series_columns' ) );
-            add_filter( 'manage_series_custom_column' , array( $this , 'add_series_columns' ) , 1 , 3 );
+			add_filter( 'manage_edit-series_columns' , array( $this, 'edit_series_columns' ) );
+            add_filter( 'manage_series_custom_column' , array( $this, 'add_series_columns' ) , 1 , 3 );
 
 		}
 
 		// Add podcast image size
-		add_action( 'after_setup_theme', array( $this , 'ensure_post_thumbnails_support' ) );
-		add_action( 'after_setup_theme', array( $this , 'register_image_sizes' ) );
-
-		// Handle RSS template
-		if( is_podcast_feed() ) {
-
-			// Prevent feed from returning a 404 error when no posts are present on site
-			add_action( 'template_redirect' , array( $this , 'prevent_feed_404' ) , 10 );
-
-			switch( $_GET['feed'] ) {
-				case 'podcast': add_action( 'template_redirect' , array( $this , 'feed_template' ) , 1 ); break;
-				case 'itunes': add_action( 'template_redirect' , array( $this , 'feed_template' ) , 1 ); break; // Backwards compatiblity
-			}
-		}
+		add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
+		add_action( 'after_setup_theme', array( $this, 'register_image_sizes' ) );
 
 		if( is_file_download() ) {
-			add_action( 'wp', array( $this , 'download_file' ), 1 );
+			add_action( 'wp', array( $this, 'download_file' ), 1 );
 		}
 
 		// Fluch rewrite rules on plugin activation
@@ -88,6 +82,7 @@ class SeriouslySimplePodcasting {
 
 	public function rewrite_flush() {
 		$this->register_post_type();
+		$this->add_feed();
 		flush_rewrite_rules();
 	}
 
@@ -451,19 +446,6 @@ class SeriouslySimplePodcasting {
 
 	}
 
-	public function rss_meta_tag() {
-
-		$custom_feed_url = get_option('ss_podcasting_feed_url');
-		$feed_url = $this->site_url . '?feed=podcast';
-		if( $custom_feed_url && strlen( $custom_feed_url ) > 0 && $custom_feed_url != '' ) {
-			$feed_url = $custom_feed_url;
-		}
-
-		$html = '<link rel="alternate" type="application/rss+xml" title="Podcast RSS feed" href="' . esc_url( $feed_url ) . '" />';
-
-		echo $html;
-	}
-
 	public function get_episode_download_link( $episode ) {
 
 		$file = $this->get_enclosure( $episode );
@@ -478,7 +460,7 @@ class SeriouslySimplePodcasting {
 		$hide_content_meta = get_option( 'ss_podcasting_hide_content_meta' );
 		if( ! $hide_content_meta ) {
 
-			if( ( ( get_post_type() == 'podcast' && is_single() ) || is_post_type_archive( 'podcast' ) ) && ! is_podcast_feed() ) {
+			if( ( ( get_post_type() == 'podcast' && is_single() ) || is_post_type_archive( 'podcast' ) ) && ! is_feed( 'podcast' ) ) {
 
 				$id = get_the_ID();
 				$file = $this->get_enclosure( $id );
@@ -490,6 +472,10 @@ class SeriouslySimplePodcasting {
 					if( ! $size || strlen( $size ) == 0 || $size == '' ) {
 						$size = $this->get_file_size( $file );
 						$size = $size['formatted'];
+						if( $size ) {
+							update_post_meta( $post_id, 'filesize', $size['formatted'] );
+							update_post_meta( $post_id, 'filesize_raw', $size['raw'] );
+						}
 					}
 
 					$meta = '';
@@ -530,7 +516,7 @@ class SeriouslySimplePodcasting {
 
 		if( $file ) {
 
-			$data = wp_remote_head( $file );
+			$data = wp_remote_head( $file, array( 'timeout' => 10, 'redirection' => 5 ) );
 
 			if( isset( $data['headers']['content-length'] ) ) {
 
@@ -945,21 +931,23 @@ class SeriouslySimplePodcasting {
 
     }
 
-    public function prevent_feed_404() {
-    	global $wp_query;
-
-    	if( is_podcast_feed() ) {
-    		status_header( 200 );
-			$wp_query->is_404 = false;
-    	}
-
-    }
+    public function add_feed() {
+		add_feed( $this->token, array( $this, 'feed_template' ) );
+	}
 
     public function feed_template() {
+    	global $wp_query;
+
+    	// Prevent 404 on feed
+    	$wp_query->is_404 = false;
+    	status_header( 200 );
 
     	$file_name = 'feed-podcast.php';
 
     	$theme_template_file = trailingslashit( get_template_directory() ) . $file_name;
+
+		// Any functions hooked in here must NOT output any data
+		do_action( 'before_podcast_feed' );
 
     	// Load feed template from theme if it exists, otherwise use plugin template
     	if( file_exists( $theme_template_file ) ) {
@@ -968,7 +956,29 @@ class SeriouslySimplePodcasting {
     		require( $this->template_path . $file_name );
     	}
 
-	    exit;
+    	// Any functions hooked in here must NOT output any data
+    	do_action( 'after_podcast_feed' );
+	}
+
+	public function rss_meta_tag() {
+
+		$feed_url = $this->site_url . 'feed/' . $this->token;
+		$custom_feed_url = get_option('ss_podcasting_feed_url');
+		if( $custom_feed_url && strlen( $custom_feed_url ) > 0 && $custom_feed_url != '' ) {
+			$feed_url = $custom_feed_url;
+		}
+
+		$html = '<link rel="alternate" type="application/rss+xml" title="Podcast RSS feed" href="' . esc_url( $feed_url ) . '" />';
+
+		echo $html;
+	}
+
+	public function redirect_old_feed() {
+		if( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( 'podcast', 'itunes' ) ) ) {
+			// wp_redirect( $this->site_url . 'feed/' . $this->token );
+			$this->feed_template();
+			exit;
+		}
 	}
 
 }

@@ -29,5 +29,3 @@ if( is_admin() ) {
 }
 
 require_once( 'classes/class-seriously-simple-podcasting-widget.php' );
-
-?>

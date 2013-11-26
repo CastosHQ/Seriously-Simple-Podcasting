@@ -1,20 +1,6 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if( ! function_exists( 'is_podcast_feed' ) ) {
-	/**
-	 * Check if current page is podcast feed
-	 * @since  1.4.2
-	 * @return boolean True if current page is podcast feed
-	 */
-	function is_podcast_feed() {
-		if( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( 'podcast', 'itunes' ) ) ) {
-			return true;
-		}
-		return false;
-	}
-}
-
 if( ! function_exists( 'is_file_download' ) ) {
 	/**
 	 * Check if podcast file is being downloaded

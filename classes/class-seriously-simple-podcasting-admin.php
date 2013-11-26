@@ -554,12 +554,12 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function feed_standard() {
-		$rss_url = $this->site_url . '?feed=podcast';
+		$rss_url = $this->site_url . 'feed/' . $this->token;
 		echo $rss_url;
 	}
 
 	public function feed_standard_series() {
-		$rss_url = $this->site_url . '?feed=podcast&podcast_series=series-slug';
+		$rss_url = $this->site_url . 'feed/podcast&podcast_series=series-slug';
 		echo $rss_url;
 	}
 

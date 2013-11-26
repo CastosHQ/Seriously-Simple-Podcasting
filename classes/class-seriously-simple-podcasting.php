@@ -488,8 +488,12 @@ class SeriouslySimplePodcasting {
 					$duration = get_post_meta( $id , 'duration' , true );
 					$size = get_post_meta( $id , 'filesize' , true );
 					if( ! $size || strlen( $size ) == 0 || $size == '' ) {
-						$size = $this->get_file_size( $file );
-						$size = $size['formatted'];
+						$filesize = $this->get_file_size( $file );
+						$size = $filesize['formatted'];
+
+						// Update so we don't do this again unless necessary
+						update_post_meta( $id , 'filesize' , $filesize['formatted'] );
+						update_post_meta( $id, 'filesize_raw' , $filesize['raw'] );
 					}
 
 					$meta = '';
@@ -530,9 +534,11 @@ class SeriouslySimplePodcasting {
 
 		if( $file ) {
 
-			$data = wp_remote_head( $file );
-
-			if( isset( $data['headers']['content-length'] ) ) {
+			// Override default timeout of 5 because e.g. libsyn can be slow to return
+			// Also by default wp_remote_head doesn't follow redirects, so restore default
+			// redirect value of 5 to ensure we e.g. follow a CDN's likely redirects.
+			$data = wp_remote_head( $file, array('timeout' => 10, 'redirection' => 5));
+			if( is_array($data) && isset( $data['headers']['content-length'] ) ) {
 
 				$raw = $data['headers']['content-length'];
 				$formatted = $this->format_bytes( $raw );

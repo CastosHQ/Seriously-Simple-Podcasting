@@ -454,7 +454,7 @@ class SeriouslySimplePodcasting {
 	public function rss_meta_tag() {
 
 		$custom_feed_url = get_option('ss_podcasting_feed_url');
-		$feed_url = trailingslashit( get_site_url() ) . '?feed=podcast';
+		$feed_url = $this->site_url . '?feed=podcast';
 		if( $custom_feed_url && strlen( $custom_feed_url ) > 0 && $custom_feed_url != '' ) {
 			$feed_url = $custom_feed_url;
 		}
@@ -468,7 +468,7 @@ class SeriouslySimplePodcasting {
 
 		$file = $this->get_enclosure( $episode );
 
-		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->home_url );
+		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->site_url );
 
 		return $link;
 	}
@@ -561,14 +561,15 @@ class SeriouslySimplePodcasting {
 
 		if( $file ) {
 
-			require_once( $this->assets_dir . '/getid3/getid3.php' );
+			if( ! class_exists( 'getid3' ) ) {
+				require_once( $this->assets_dir . '/getid3/getid3.php' );
+			}
 
 			$getid3 = new getid3();
 
 			// Identify file by root path and not URL (required for getID3 class)
-			$site_url = trailingslashit( site_url() );
 			$site_root = trailingslashit( ABSPATH );
-			$file = str_replace( $site_url , $site_root , $file );
+			$file = str_replace( $this->site_url, $site_root, $file );
 
 			$info = $getid3->analyze( $file );
 
@@ -649,7 +650,7 @@ class SeriouslySimplePodcasting {
 
 		if( $src ) {
 
-			if( $wp_version && $wp_version == '3.6' ) {
+			if( $wp_version && version_compare( $wp_version, '3.6', '>=' ) ) {
 				return wp_audio_shortcode( array( 'src' => $src ) );
 			} else {
 
@@ -813,6 +814,7 @@ class SeriouslySimplePodcasting {
 
 			if( count( $terms ) > 0) {
 				foreach ( $terms as $term ) {
+					$query[ $term->term_id ] = new stdClass();
 					$query[ $term->term_id ]->title = $term->name;
 		    		$query[ $term->term_id ]->url = get_term_link( $term );
 		    		$posts = get_posts( array(

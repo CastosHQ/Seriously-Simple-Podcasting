@@ -49,22 +49,33 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function enqueue_admin_scripts () {
-
+		global $wp_version;
 		// Admin JS
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '1.7.0' );
+		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '1.7.2' );
 		wp_enqueue_script( 'ss_podcasting-admin' );
 
-		// Media uploader scripts
-		wp_enqueue_media();
+		if( $wp_version >= 3.5 ) {
+			// Media uploader scripts
+			wp_enqueue_media();
+		}
 
 	}
 
 	public function admin_notices() {
-		global $current_user ;
+		global $current_user, $wp_version;
         $user_id = $current_user->ID;
 
-        $hide_survey_notice = get_user_meta( $user_id, 'ss_podcasting_hide_survey_notice', true );
+        // Version notice
+        if( $wp_version < 3.5 ) {
+			?>
+			<div class="error">
+		        <p><?php printf( __( '%1$sSeriously Simple Podcasting%2$s requires WordPress 3.5 or above in order to function correctly. You are running v%3$s - please update now.', 'ss-podcasting' ), '<strong>', '</strong>', $wp_version ); ?></p>
+		    </div>
+		    <?php
+		}
 
+		// Survey notice
+        $hide_survey_notice = get_user_meta( $user_id, 'ss_podcasting_hide_survey_notice', true );
         if( ! $hide_survey_notice ) {
 			?>
 			<div class="updated">
@@ -199,7 +210,7 @@ class SeriouslySimplePodcasting_Admin {
 			$data = $option;
 		}
 
-		$default_url = trailingslashit( get_site_url() ) . '?post_type=podcast';
+		$default_url = $this->site_url . '?post_type=podcast';
 
 		echo '<input id="slug" type="text" name="ss_podcasting_slug" value="' . $data . '"/>
 				<label for="slug"><span class="description">' . sprintf( __( 'Provide a custom URL slug for the podcast archive and single pages. You must re-save your %1$spermalinks%2$s after changing this setting. No matter what you put here your podcast will always be visible at %3$s.' , 'ss-podcasting' ) , '<a href="' . esc_attr( 'options-permalink.php' ) . '">' , '</a>' , '<a href="' . esc_url( $default_url ) . '">' . $default_url . '</a>' ) . '</span></label>';

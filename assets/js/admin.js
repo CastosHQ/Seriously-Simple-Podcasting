@@ -6,8 +6,6 @@ jQuery(document).ready(function($) {
 	var file_frame;
 
 	jQuery.fn.ssp_upload_media_file = function( button, preview_media ) {
-		event.preventDefault();
-
 		var button_id = button.attr('id');
 		var field_id = button_id.replace( '_button', '' );
 		var preview_id = button_id.replace( '_button', '_preview' );
@@ -41,6 +39,7 @@ jQuery(document).ready(function($) {
 	}
 
 	jQuery('#upload_audio_file_button').click(function( event ){
+		event.preventDefault();
 		jQuery.fn.ssp_upload_media_file( jQuery(this), false );
 	});
 

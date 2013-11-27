@@ -211,7 +211,7 @@ class SeriouslySimplePodcasting {
             case 'series_feed_url':
             	$series = get_term( $term_id, 'series' );
             	$series_slug = $series->slug;
-            	$feed_url = $this->site_url . '?feed=podcast&podcast_series=' . $series_slug;
+            	$feed_url = $this->site_url . 'feed/' . $this->token . '/?podcast_series=' . $series_slug;
                 $column_data = '<a href="' . $feed_url . '" target="_blank">' . $feed_url . '</a>';
             break;
         }

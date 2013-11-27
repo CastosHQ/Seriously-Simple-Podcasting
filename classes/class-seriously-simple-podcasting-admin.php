@@ -559,7 +559,7 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function feed_standard_series() {
-		$rss_url = $this->site_url . 'feed/podcast&podcast_series=series-slug';
+		$rss_url = $this->site_url . 'feed/' . $this->token . '/?podcast_series=series-slug';
 		echo $rss_url;
 	}
 
@@ -571,7 +571,7 @@ class SeriouslySimplePodcasting_Admin {
 		if( $slug && strlen( $slug ) > 0 && $slug != '' ) {
 			$podcast_url .= $slug;
 		} else {
-			$podcast_url .= '?post_type=podcast';
+			$podcast_url .= '?post_type=' . $this->token;
 		}
 
 		echo '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';

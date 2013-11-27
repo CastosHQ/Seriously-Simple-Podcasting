@@ -101,6 +101,7 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 = 2.0.0 =
 * 2013-11-26
 * [UPDATE] Switching to add_feed() to generate podcast feed
+* [UPDATE] Updating podcast feed URLs
 * [UPDATE] Saving file size wherever it is checked
 * [UPDATE] Improving wp_remote_head() call (thanks Daniel Jalkut)
 

@@ -6,7 +6,7 @@ class SeriouslySimplePodcasting_Admin {
 	private $file;
 	private $assets_dir;
 	private $assets_url;
-	private $site_url;
+	private $home_url;
 	private $token;
 
 	public function __construct( $file ) {
@@ -14,7 +14,7 @@ class SeriouslySimplePodcasting_Admin {
 		$this->file = $file;
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
-		$this->site_url = trailingslashit( site_url() );
+		$this->home_url = trailingslashit( home_url() );
 		$this->token = 'podcast';
 
 		// Register podcast settings
@@ -210,7 +210,7 @@ class SeriouslySimplePodcasting_Admin {
 			$data = $option;
 		}
 
-		$default_url = $this->site_url . '?post_type=podcast';
+		$default_url = $this->home_url . '?post_type=podcast';
 
 		echo '<input id="slug" type="text" name="ss_podcasting_slug" value="' . $data . '"/>
 				<label for="slug"><span class="description">' . sprintf( __( 'Provide a custom URL slug for the podcast archive and single pages. You must re-save your %1$spermalinks%2$s after changing this setting. No matter what you put here your podcast will always be visible at %3$s.' , 'ss-podcasting' ) , '<a href="' . esc_attr( 'options-permalink.php' ) . '">' , '</a>' , '<a href="' . esc_url( $default_url ) . '">' . $default_url . '</a>' ) . '</span></label>';
@@ -554,18 +554,18 @@ class SeriouslySimplePodcasting_Admin {
 	}
 
 	public function feed_standard() {
-		$rss_url = $this->site_url . '?feed=podcast';
+		$rss_url = $this->home_url . '?feed=podcast';
 		echo $rss_url;
 	}
 
 	public function feed_standard_series() {
-		$rss_url = $this->site_url . '?feed=podcast&podcast_series=series-slug';
+		$rss_url = $this->home_url . '?feed=podcast&podcast_series=series-slug';
 		echo $rss_url;
 	}
 
 	public function podcast_url() {
 
-		$podcast_url = $this->site_url;
+		$podcast_url = $this->home_url;
 
 		$slug = get_option('ss_podcasting_slug');
 		if( $slug && strlen( $slug ) > 0 && $slug != '' ) {
@@ -580,7 +580,7 @@ class SeriouslySimplePodcasting_Admin {
 
 	public function social_sharing() {
 
-		$share_url = $this->site_url;
+		$share_url = $this->home_url;
 		$custom_title = get_option('ss_podcasting_data_title');
 		$share_title = sprintf( __( 'Podcast on %s', 'ss-podcasting' ), get_bloginfo( 'name' ) );
 		if( $custom_title && strlen( $custom_title ) > 0 && $custom_title != '' ) {

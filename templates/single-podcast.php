@@ -45,7 +45,7 @@ $post = get_post( $id );
 					</a>
 				<?php } ?>
 
-				<?php echo $ss_podcasting->content_meta_data( wpautop( $post->post_content ) ); ?>
+				<?php the_content(); ?>
 
 			<section>
 

@@ -51,7 +51,7 @@ class SeriouslySimplePodcasting_Admin {
 	public function enqueue_admin_scripts () {
 		global $wp_version;
 		// Admin JS
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '1.7.2' );
+		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '1.7.5' );
 		wp_enqueue_script( 'ss_podcasting-admin' );
 
 		if( $wp_version >= 3.5 ) {

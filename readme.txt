@@ -3,8 +3,8 @@ Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 3.5
-Tested up to: 3.7.1
-Stable tag: 1.7.4
+Tested up to: 3.8
+Stable tag: 1.7.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -97,6 +97,11 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 2. The info that you need to add to each podcast episode.
 
 == Changelog ==
+
+= 1.7.5 =
+* 2013-12-22
+* [UPDATE] Fixing content display on single podcast template
+* [UPDATE] Updating admin icon for WordPress 3.8
 
 = 1.7.4 =
 * 2013-11-26

@@ -430,7 +430,7 @@ class SeriouslySimplePodcasting {
 
 	public function enqueue_scripts() {
 
-		wp_register_style( 'ss_podcasting', esc_url( $this->assets_url . 'css/style.css' ), array(), '1.0.0' );
+		wp_register_style( 'ss_podcasting', esc_url( $this->assets_url . 'css/style.css' ), array(), '1.7.5' );
 		wp_enqueue_style( 'ss_podcasting' );
 
 	}

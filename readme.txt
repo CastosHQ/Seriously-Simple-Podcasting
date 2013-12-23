@@ -100,8 +100,10 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 = 1.7.5 =
 * 2013-12-22
-* [UPDATE] Fixing content display on single podcast template
+* [UPDATE] Fixing content display on single podcast template (kudos jeherve)
 * [UPDATE] Updating admin icon for WordPress 3.8
+* [UPDATE] Small CSS tweak on single podcast template
+* [FIX] Fixing site URLs to work with proper home URL field (kudos firejdl)
 
 = 1.7.4 =
 * 2013-11-26
@@ -299,6 +301,13 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.7.5 =
+* 2013-12-22
+* [UPDATE] Fixing content display on single podcast template (kudos jeherve)
+* [UPDATE] Updating admin icon for WordPress 3.8
+* [UPDATE] Small CSS tweak on single podcast template
+* [FIX] Fixing site URLs to work with proper home URL field (kudos firejdl)
 
 = 1.7.4 =
 * 2013-11-26

@@ -42,7 +42,7 @@ foreach( $terms as $term ) {
 
 				<?php if( has_post_thumbnail( $id ) ) { ?>
 					<?php $img = wp_get_attachment_image_src( get_post_thumbnail_id( $id ) ); ?>
-					<a href="<?php echo $img[0]; ?>" title="<?php echo the_title(); ?>">
+					<a href="<?php echo $img[0]; ?>" title="<?php the_title(); ?>">
 						<?php echo get_the_post_thumbnail( $id , 'podcast-thumbnail' , array( 'class' => 'podcast_image' , 'align' => 'left' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
 					</a>
 				<?php } ?>

@@ -8,6 +8,7 @@ class SeriouslySimplePodcasting {
 	private $assets_url;
 	private $template_path;
 	private $token;
+	private $home_url;
 
 	public function __construct( $file ) {
 		$this->dir = dirname( $file );
@@ -15,7 +16,6 @@ class SeriouslySimplePodcasting {
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
-		$this->site_url = trailingslashit( site_url() );
 		$this->home_url = trailingslashit( home_url() );
 		$this->token = 'podcast';
 
@@ -216,7 +216,7 @@ class SeriouslySimplePodcasting {
             case 'series_feed_url':
             	$series = get_term( $term_id, 'series' );
             	$series_slug = $series->slug;
-            	$feed_url = $this->site_url . '?feed=podcast&podcast_series=' . $series_slug;
+            	$feed_url = $this->home_url . '?feed=podcast&podcast_series=' . $series_slug;
                 $column_data = '<a href="' . $feed_url . '" target="_blank">' . $feed_url . '</a>';
             break;
         }
@@ -454,7 +454,7 @@ class SeriouslySimplePodcasting {
 	public function rss_meta_tag() {
 
 		$custom_feed_url = get_option('ss_podcasting_feed_url');
-		$feed_url = $this->site_url . '?feed=podcast';
+		$feed_url = $this->home_url . '?feed=podcast';
 		if( $custom_feed_url && strlen( $custom_feed_url ) > 0 && $custom_feed_url != '' ) {
 			$feed_url = $custom_feed_url;
 		}
@@ -468,7 +468,7 @@ class SeriouslySimplePodcasting {
 
 		$file = $this->get_enclosure( $episode );
 
-		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->site_url );
+		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->home_url );
 
 		return $link;
 	}
@@ -569,7 +569,7 @@ class SeriouslySimplePodcasting {
 
 			// Identify file by root path and not URL (required for getID3 class)
 			$site_root = trailingslashit( ABSPATH );
-			$file = str_replace( $this->site_url, $site_root, $file );
+			$file = str_replace( $this->home_url, $site_root, $file );
 
 			$info = $getid3->analyze( $file );
 

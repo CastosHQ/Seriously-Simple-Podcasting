@@ -1,9 +1,9 @@
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting v1.7.4\n"
+"Project-Id-Version: Seriously Simple Podcasting v1.7.5\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: \n"
-"PO-Revision-Date: 2013-11-26 17:28:40+0000\n"
+"PO-Revision-Date: 2013-12-23 05:45:47+0000\n"
 "Last-Translator: Hugh Lashbrooke <hlashbrooke@gmail.com>\n"
 "Language-Team: \n"
 "MIME-Version: 1.0\n"
@@ -150,7 +150,7 @@ msgstr ""
 msgid "Duration"
 msgstr ""
 
-#: templates/single-podcast.php:74
+#: templates/single-podcast.php:76
 #@ ss-podcasting
 msgid "Series:"
 msgstr ""

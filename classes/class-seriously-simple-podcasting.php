@@ -8,6 +8,7 @@ class SeriouslySimplePodcasting {
 	private $assets_url;
 	private $template_path;
 	private $token;
+	private $home_url;
 
 	public function __construct( $file ) {
 		$this->dir = dirname( $file );
@@ -15,7 +16,6 @@ class SeriouslySimplePodcasting {
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
-		$this->site_url = trailingslashit( site_url() );
 		$this->home_url = trailingslashit( home_url() );
 		$this->token = 'podcast';
 
@@ -425,7 +425,7 @@ class SeriouslySimplePodcasting {
 
 	public function enqueue_scripts() {
 
-		wp_register_style( 'ss_podcasting', esc_url( $this->assets_url . 'css/style.css' ), array(), '1.0.0' );
+		wp_register_style( 'ss_podcasting', esc_url( $this->assets_url . 'css/style.css' ), array(), '1.7.5' );
 		wp_enqueue_style( 'ss_podcasting' );
 
 	}
@@ -450,7 +450,7 @@ class SeriouslySimplePodcasting {
 
 		$file = $this->get_enclosure( $episode );
 
-		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->site_url );
+		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->home_url );
 
 		return $link;
 	}
@@ -555,7 +555,7 @@ class SeriouslySimplePodcasting {
 
 			// Identify file by root path and not URL (required for getID3 class)
 			$site_root = trailingslashit( ABSPATH );
-			$file = str_replace( $this->site_url, $site_root, $file );
+			$file = str_replace( $this->home_url, $site_root, $file );
 
 			$info = $getid3->analyze( $file );
 
@@ -975,7 +975,6 @@ class SeriouslySimplePodcasting {
 
 	public function redirect_old_feed() {
 		if( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( 'podcast', 'itunes' ) ) ) {
-			// wp_redirect( $this->site_url . 'feed/' . $this->token );
 			$this->feed_template();
 			exit;
 		}

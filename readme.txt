@@ -2,9 +2,9 @@
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
-Requires at least: 3.6
-Tested up to: 3.7.1
-Stable tag: 2.0
+Requires at least: 3.5
+Tested up to: 3.8
+Stable tag: 1.7.5
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -98,12 +98,12 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 == Changelog ==
 
-= 2.0.0 =
-* 2013-11-26
-* [UPDATE] Switching to add_feed() to generate podcast feed
-* [UPDATE] Updating podcast feed URLs
-* [UPDATE] Saving file size wherever it is checked
-* [UPDATE] Improving wp_remote_head() call (thanks Daniel Jalkut)
+= 1.7.5 =
+* 2013-12-22
+* [UPDATE] Fixing content display on single podcast template (kudos jeherve)
+* [UPDATE] Updating admin icon for WordPress 3.8
+* [UPDATE] Small CSS tweak on single podcast template
+* [FIX] Fixing site URLs to work with proper home URL field (kudos firejdl)
 
 = 1.7.4 =
 * 2013-11-26
@@ -301,6 +301,13 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * Initial release
 
 == Upgrade Notice ==
+
+= 1.7.5 =
+* 2013-12-22
+* [UPDATE] Fixing content display on single podcast template (kudos jeherve)
+* [UPDATE] Updating admin icon for WordPress 3.8
+* [UPDATE] Small CSS tweak on single podcast template
+* [FIX] Fixing site URLs to work with proper home URL field (kudos firejdl)
 
 = 1.7.4 =
 * 2013-11-26

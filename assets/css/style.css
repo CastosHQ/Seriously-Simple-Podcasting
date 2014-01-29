@@ -40,6 +40,8 @@
 .podcast_template .podcast_meta {
 	font-style: italic;
 	font-size: 80%;
+	position: relative;
+	z-index: 99;
 }
 
 .podcast_template .series_episodes .current_episode {

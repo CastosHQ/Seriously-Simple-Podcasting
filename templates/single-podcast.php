@@ -13,6 +13,9 @@ global $ss_podcasting, $wp_query;
 get_header(); ?>
 
 <?php
+
+the_post();
+
 $id = get_the_ID();
 $file = get_post_meta( $id , 'enclosure' , true );
 $terms = wp_get_post_terms( $id , 'series' );
@@ -22,7 +25,6 @@ foreach( $terms as $term ) {
 	break;
 }
 
-$post = get_post( $id );
 ?>
 
 
@@ -31,7 +33,7 @@ $post = get_post( $id );
 	<div class="podcast_left">
 
 		<header>
-			<h1><?php echo $post->post_title; ?></h1>
+			<h1><?php the_title(); ?></h1>
 		</header>
 
 		<div class="podcast_content">
@@ -40,12 +42,12 @@ $post = get_post( $id );
 
 				<?php if( has_post_thumbnail( $id ) ) { ?>
 					<?php $img = wp_get_attachment_image_src( get_post_thumbnail_id( $id ) ); ?>
-					<a href="<?php echo $img[0]; ?>" title="<?php echo $post->post_title; ?>">
+					<a href="<?php echo $img[0]; ?>" title="<?php the_title(); ?>">
 						<?php echo get_the_post_thumbnail( $id , 'podcast-thumbnail' , array( 'class' => 'podcast_image' , 'align' => 'left' , 'alt' => get_the_title() , 'title' => get_the_title() ) ); ?>
 					</a>
 				<?php } ?>
 
-				<?php echo $ss_podcasting->content_meta_data( wpautop( $post->post_content ) ); ?>
+				<?php the_content(); ?>
 
 			<section>
 

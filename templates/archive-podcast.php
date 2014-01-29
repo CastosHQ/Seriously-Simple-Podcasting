@@ -21,7 +21,7 @@ get_header(); ?>
 				</header>
 
 				<?php
-				$feed_url = trailingslashit( get_site_url() ) . '?feed=podcast';
+				$feed_url = trailingslashit( home_url() ) . '?feed=podcast';
 				$custom_feed_url = get_option('ss_podcasting_feed_url');
 				if( $custom_feed_url && strlen( $custom_feed_url ) > 0 && $custom_feed_url != '' ) {
 					$feed_url = $custom_feed_url;

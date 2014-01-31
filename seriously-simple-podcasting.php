@@ -6,26 +6,28 @@
  * Description: Podcasting done right.
  * Author: Hugh Lashbrooke
  * Author URI: http://www.hughlashbrooke.com
- * Requires at least: 3.5
+ * Requires at least: 3.6
  * Tested up to: 3.8.1
  *
- * @package WordPress
- * @subpackage SeriouslySimplePodcasting
- * @author Hugh Lashbrooke
- * @since 1.0.0
+ * Text Domain: ss-podcasting
+ *
+ * @package 	SeriouslySimplePodcasting
+ * @category 	Core
+ * @author 		Hugh Lashbrooke
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-require_once( 'seriously-simple-podcasting-functions.php' );
-require_once( 'classes/class-seriously-simple-podcasting.php' );
+require_once( 'includes/ssp-functions.php' );
+require_once( 'includes/class-seriously-simple-podcasting.php' );
 
 global $ss_podcasting;
-$ss_podcasting = new SeriouslySimplePodcasting( __FILE__ );
+$ss_podcasting = new Seriously_Simple_Podcasting( __FILE__ );
 
 if( is_admin() ) {
-	require_once( 'classes/class-seriously-simple-podcasting-admin.php' );
-	$ss_podcasting_admin = new SeriouslySimplePodcasting_Admin( __FILE__ );
+	global $ssp_admin;
+	require_once( 'includes/class-ssp-settings.php' );
+	$ssp_admin = new SSP_Settings( __FILE__ );
 }
 
-require_once( 'classes/class-seriously-simple-podcasting-widget.php' );
+require_once( 'includes/class-ssp-widget.php' );

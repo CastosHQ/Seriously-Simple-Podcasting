@@ -49,7 +49,7 @@ jQuery(document).ready(function($) {
 		jQuery.fn.ssp_upload_media_file( jQuery(this), true );
 	});
 
-	jQuery('#ss_podcasting_delete_image').click(function() {
+	jQuery('#ss_podcasting_data_image_delete').click(function() {
 		jQuery( '#ss_podcasting_data_image' ).val( '' );
 		jQuery( '#ss_podcasting_data_image_preview' ).remove();
 		return false;

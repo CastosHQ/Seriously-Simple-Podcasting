@@ -1,7 +1,15 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
-class SeriouslySimplePodcasting {
+/**
+ * Main plugin class
+ *
+ * @author      Hugh Lashbrooke
+ * @category    Class
+ * @package     SeriouslySimplePodcasting/Classes
+ * @since       1.0
+ */
+class Seriously_Simple_Podcasting {
 	private $dir;
 	private $file;
 	private $assets_dir;
@@ -856,7 +864,7 @@ class SeriouslySimplePodcasting {
     	$theme_template_file = trailingslashit( get_template_directory() ) . $file_name;
 
 		// Any functions hooked in here must NOT output any data
-		do_action( 'before_podcast_feed' );
+		do_action( 'ssp_before_feed' );
 
     	// Load feed template from theme if it exists, otherwise use plugin template
     	if( file_exists( $theme_template_file ) ) {
@@ -866,7 +874,7 @@ class SeriouslySimplePodcasting {
     	}
 
     	// Any functions hooked in here must NOT output any data
-    	do_action( 'after_podcast_feed' );
+    	do_action( 'ssp_after_feed' );
 	}
 
 	public function rss_meta_tag() {

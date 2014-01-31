@@ -4,11 +4,10 @@ if ( ! defined( 'ABSPATH' ) || ! function_exists( 'ss_podcast' ) ) exit; // Exit
 /**
  * Seriously Simple Podcasting Widget
  *
- * @package WordPress
- * @subpackage SeriouslySimplePodcasting
- * @category Widgets
- * @author Hugh Lashbrooke
- * @since 1.0.0
+ * @author 		Hugh Lashbrooke
+ * @package 	SeriouslySimplePodcasting
+ * @category 	SeriouslySimplePodcasting/Widgets
+ * @since 		1.0.0
  *
  * TABLE OF CONTENTS
  *
@@ -24,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) || ! function_exists( 'ss_podcast' ) ) exit; // Exit
  * - get_content_options()
  * - get_all_series()
  */
-class SeriouslySimplePodcasting_Widget extends WP_Widget {
+class SSP_Widget extends WP_Widget {
 	protected $widget_cssclass;
 	protected $widget_description;
 	protected $widget_idbase;
@@ -49,7 +48,7 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 		$control_ops = array( 'width' => 250, 'height' => 350, 'id_base' => $this->widget_idbase );
 
 		/* Create the widget. */
-		$this->WP_Widget( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );	
+		$this->WP_Widget( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
 	} // End __construct()
 
 	/**
@@ -59,12 +58,12 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 	 * @param  array $instance Widget settings for this instance.
 	 * @return void
 	 */
-	public function widget( $args, $instance ) {  
+	public function widget( $args, $instance ) {
 		extract( $args, EXTR_SKIP );
-		
+
 		/* Our variables from the widget settings. */
 		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
-			
+
 		/* Before widget (defined by themes). */
 		$args = array();
 
@@ -72,7 +71,7 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 		if ( $title ) {
 			$args['title'] = $title;
 		}
-		
+
 		/* Widget content. */
 		// Add actions for plugins/themes to hook onto.
 		do_action( $this->widget_cssclass . '_top' );
@@ -114,8 +113,8 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 	 * @param  array $instance The settings for this instance.
 	 * @return void
 	 */
-    public function form( $instance ) {       
-   
+    public function form( $instance ) {
+
 		/* Set up some default widget settings. */
 		/* Make sure all keys are added here, even with empty string values. */
 		$defaults = array(
@@ -123,7 +122,7 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 			'content' => 'series',
 			'series' => 0
 		);
-		
+
 		$instance = wp_parse_args( (array) $instance, $defaults );
 		?>
 		<!-- Widget Title: Text Input -->
@@ -137,7 +136,7 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 			<select name="<?php echo $this->get_field_name( 'content' ); ?>" class="widefat" id="<?php echo $this->get_field_id( 'content' ); ?>">
 			<?php foreach ( $this->get_content_options() as $k => $v ) { ?>
 				<option value="<?php echo $k; ?>"<?php selected( $instance['content'], $k ); ?>><?php echo $v; ?></option>
-			<?php } ?>       
+			<?php } ?>
 			</select>
 		</p>
 		<!-- Widget Series: Select Input -->
@@ -146,7 +145,7 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 			<select name="<?php echo $this->get_field_name( 'series' ); ?>" class="widefat" id="<?php echo $this->get_field_id( 'series' ); ?>">
 			<?php foreach ( $this->get_all_series() as $k => $v ) { ?>
 				<option value="<?php echo $k; ?>"<?php selected( $instance['series'], $k ); ?>><?php echo $v; ?></option>
-			<?php } ?>       
+			<?php } ?>
 			</select><br/>
 			<small><?php _e( 'Required if content is set to show episodes from selected series.', 'ss-podcast' ); ?></small>
 		</p>
@@ -160,7 +159,7 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 	 */
 	protected function get_content_options () {
 		return array(
-					'series' => __( 'All Series', 'ss-podcast' ), 
+					'series' => __( 'All Series', 'ss-podcast' ),
 					'episodes' => __( 'Episodes from Selected Series', 'ss-podcast' ),
 					);
 	} // End get_content_options()
@@ -186,6 +185,6 @@ class SeriouslySimplePodcasting_Widget extends WP_Widget {
 	} // End get_all_series()
 } // End Class
 
-/* Register the widget. */
-add_action( 'widgets_init', create_function( '', 'return register_widget("SeriouslySimplePodcasting_Widget");' ), 1 ); 
+// Regsiter the widget
+add_action( 'widgets_init', create_function( '', 'return register_widget( "SSP_Widget" );' ), 1 );
 ?>

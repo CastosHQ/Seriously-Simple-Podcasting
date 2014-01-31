@@ -2,9 +2,9 @@
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
-Requires at least: 3.5
-Tested up to: 3.8
-Stable tag: 1.7.5
+Requires at least: 3.6
+Tested up to: 3.8.1
+Stable tag: 2.0.0
 License: GPLv3 or later
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -98,11 +98,16 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 == Changelog ==
 
+= 2.0.0 =
+* 2014-01-31
+* [NEW] Renaming and restructuring classes and files
+* [NEW] New settings class - settings can now be extended by plugins and themes
+
 = 1.7.5 =
 * 2013-12-22
-* [UPDATE] Fixing content display on single podcast template (kudos jeherve)
-* [UPDATE] Updating admin icon for WordPress 3.8
-* [UPDATE] Small CSS tweak on single podcast template
+* [TWEAK] Fixing content display on single podcast template (kudos jeherve)
+* [TWEAK] Updating admin icon for WordPress 3.8
+* [TWEAK] Small CSS tweak on single podcast template
 * [FIX] Fixing site URLs to work with proper home URL field (kudos firejdl)
 
 = 1.7.4 =
@@ -120,31 +125,31 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 = 1.7.1 =
 * 2013-09-23
-* [UPDATE] Adding error notice for versions of WordPress prior to v3.5
+* [TWEAK] Adding error notice for versions of WordPress prior to v3.5
 * [FIX] Removing PHP warning when using widget
 * [FIX] Fixing fatal error when using WordPress versions older than v3.5
 
 = 1.7 =
 * 2013-09-07
-* [FEATURE] Adding ability to block individual episodes from appearing in iTunes
-* [FEATURE] Adding integrated sharing options so you can share your podcast URL straight from your WordPress dashboard
-* [FEATURE] Adding function to overwrite feed template (see the FAQ for more info)
-* [UPDATE] Switching to using the new WordPress media uploader for all media uploading in plugin
-* [UPDATE] General code clean up
-* [UPDATE] Updating plugin FAQ
+* [NEW] Adding ability to block individual episodes from appearing in iTunes
+* [NEW] Adding integrated sharing options so you can share your podcast URL straight from your WordPress dashboard
+* [NEW] Adding function to overwrite feed template (see the FAQ for more info)
+* [TWEAK] Switching to using the new WordPress media uploader for all media uploading in plugin
+* [TWEAK] General code clean up
+* [TWEAK] Updating plugin FAQ
 * [FIX] Fixing bug that prevented images being uploaded to episode post content
 
 = 1.6.1 =
 * 2013-08-23
 * [FIX] Switching download link to use home_url() instead of site_url()
-* [UPDATE] Updating plugin FAQ
+* [TWEAK] Updating plugin FAQ
 
 = 1.6 =
 * 2013-08-15
-* [FEATURE] Adding option to hide audio player and episode data from the top of episode content
-* [FEATURE] Adding episode descriptions for individual episodes in iTunes
-* [UPDATE] Using built-in audio player functions for WordPress 3.6+
-* [UPDATE] Improving content display for built-in plugin templates
+* [NEW] Adding option to hide audio player and episode data from the top of episode content
+* [NEW] Adding episode descriptions for individual episodes in iTunes
+* [TWEAK] Using built-in audio player functions for WordPress 3.6+
+* [TWEAK] Improving content display for built-in plugin templates
 
 = 1.5.3 =
 * 2013-05-11
@@ -152,72 +157,72 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 = 1.5.2 =
 * 2013-05-10
-* [UPDATE] Slight tweak to HTML encoding in feed fields
-* [UPDATE] Improving episode download functionality
-* [UPDATE] Adding hooks for admin pages
+* [TWEAK] Slight tweak to HTML encoding in feed fields
+* [TWEAK] Improving episode download functionality
+* [TWEAK] Adding hooks for admin pages
 * [FIX] Fixing backwards compatiblity for old iTunes feed link
 
 = 1.5.1 =
 * 2013-05-03
-* [UPDATE] Improving (and fully fixing) HTML encoding in feed fields
-* [UPDATE] Setting rewrite rules to flush on plugin activation
-* [UPDATE] Adding to the plugin FAQ
+* [TWEAK] Improving (and fully fixing) HTML encoding in feed fields
+* [TWEAK] Setting rewrite rules to flush on plugin activation
+* [TWEAK] Adding to the plugin FAQ
 * [FIX] Fixing typo in back-end widget display
 
 = 1.5 =
 * 2013-04-28
-* [FEATURE] Forcing episode download when download link is clicked
-* [UPDATE] Improving UI for podcast image uploads
-* [UPDATE] Removing episode meta data from excerpt text
-* [UPDATE] Improving built-in single episode template
-* [UPDATE] Adding action to settings screen allowing additional settings fields to be added
+* [NEW] Forcing episode download when download link is clicked
+* [TWEAK] Improving UI for podcast image uploads
+* [TWEAK] Removing episode meta data from excerpt text
+* [TWEAK] Improving built-in single episode template
+* [TWEAK] Adding action to settings screen allowing additional settings fields to be added
 * [FIX] Showing all episodes in podcast feed
 
 = 1.4.6 =
 * 2013-04-26
-* [UPDATE] Adding settings info about new iTunes image dimensions
-* [UPDATE] Adding admin notice for plugin survey
+* [TWEAK] Adding settings info about new iTunes image dimensions
+* [TWEAK] Adding admin notice for plugin survey
 
 = 1.4.5 =
 * 2013-04-25
-* [UPDATE] Adding further checks for removing HTML from feed content
-* [UPDATE] Trimming episode summary/description in feed
+* [TWEAK] Adding further checks for removing HTML from feed content
+* [TWEAK] Trimming episode summary/description in feed
 
 = 1.4.4 =
 * 2013-04-19
-* [UPDATE] Adding file size fallback to feed template to avoid potential validation errors
+* [TWEAK] Adding file size fallback to feed template to avoid potential validation errors
 
 = 1.4.3 =
 * 2013-04-07
-* [UPDATE] Adding new plugin branding to WordPress admin - no new features are included in this update
-* [UPDATE] Updated the plugin FAQ
+* [TWEAK] Adding new plugin branding to WordPress admin - no new features are included in this update
+* [TWEAK] Updated the plugin FAQ
 
 = 1.4.2 =
 * 2013-03-30
-* [UPDATE] Added work around for WordPress bug that causes 404 error on feed when site has no posts
-* [UPDATE] Removed episode meta from feed description/summary
-* [UPDATE] Added global function to check if podcast feed is loading
-* [UPDATE] Core functions are now loaded earlier in the plugin so they are more widely available
+* [TWEAK] Added work around for WordPress bug that causes 404 error on feed when site has no posts
+* [TWEAK] Removed episode meta from feed description/summary
+* [TWEAK] Added global function to check if podcast feed is loading
+* [TWEAK] Core functions are now loaded earlier in the plugin so they are more widely available
 
 = 1.4.1 =
 * 2013-03-18
-* [UPDATE] Restructured & streamlined settings page
+* [TWEAK] Restructured & streamlined settings page
 * [FIX] Fixed built-in archive page template
-* [UPDATE] Updated FAQs to reflect recent support queries
+* [TWEAK] Updated FAQs to reflect recent support queries
 
 = 1.4 =
 * 2013-03-13
-* [FEATURE] Added option to password protect podcast feed - sets a 'HTTP 401 Unauthorized' header and requests a username and password
-* [FEATURE] Added 'do_feed_podcast' action so plugins/themes can intercept the feed or add their own processing - see templates/feed-podcast.php for usage caveats
+* [NEW] Added option to password protect podcast feed - sets a 'HTTP 401 Unauthorized' header and requests a username and password
+* [NEW] Added 'do_feed_podcast' action so plugins/themes can intercept the feed or add their own processing - see templates/feed-podcast.php for usage caveats
 * [USABILITY] Added series feed URL to series taxonomy table for quick reference
 * [USABILITY] Moved feed template include to latest possible hook - this allows other plugins to load their templates first if necessary
 * [USABILITY] Simplified field descriptions on settings page
 * [FIX] Fixed series feed URLs (please take note of changes on podcast settings page)
 * [FIX] Fixed a few typos on the settings page
-* [UPDATE] Added validation to podcast description field
-* [UPDATE] Updated localisation strings
-* [UPDATE] Updated plugin FAQ
-* [UPDATE] Added 'Upcoming Features' list
+* [TWEAK] Added validation to podcast description field
+* [TWEAK] Updated localisation strings
+* [TWEAK] Updated plugin FAQ
+* [TWEAK] Added 'Upcoming Features' list
 
 = 1.3.4 =
 * 2013-03-11
@@ -235,14 +240,14 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * 2013-02-28
 * [USABILITY] Added comments capability to podcast episodes
 * [FIX] Removed HTML tags from feed description/summary
-* [UPDATE] Improved MIME type recognition
-* [UPDATE] Improved plugin FAQ
+* [TWEAK] Improved MIME type recognition
+* [TWEAK] Improved plugin FAQ
 
 = 1.3 =
 * 2013-02-16
-* [FEATURE] Added option to syndicate your feed through Feedburner (or similar service)
-* [FEATURE] Added RSS meta tags to site header
-* [FEATURE] Added option to show podcast episodes in main query loop on home page along with blog posts
+* [NEW] Added option to syndicate your feed through Feedburner (or similar service)
+* [NEW] Added RSS meta tags to site header
+* [NEW] Added option to show podcast episodes in main query loop on home page along with blog posts
 * [USABILITY] Unified feed templates, so only one feed is used for all podcasting services (ensured backward compatibility for existing feed URLs)
 * [USABILITY] Changed podcast settings page URL (menu link is still in same place though)
 
@@ -256,19 +261,19 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 = 1.2 =
 * 2013-02-12
-* [FEATURE] Added setting for redirecting podcast feed to new URL
-* [FEATURE] Added episode meta data to start of episode excerpt
+* [NEW] Added setting for redirecting podcast feed to new URL
+* [NEW] Added episode meta data to start of episode excerpt
 * [FIX] Fixed file size info & episode descriptions in feeds
 * [USABILITY] Moved settings page to be a sub-page of the Podcast menu
-* [UPDATE] Improved enclosure file size detection
-* [UPDATE] Improved code commenting to make some features more clear
-* [UPDATE] Improved script loading in dashboard to improve performance on all admin pages
-* [UPDATE] Improved FAQ list
+* [TWEAK] Improved enclosure file size detection
+* [TWEAK] Improved code commenting to make some features more clear
+* [TWEAK] Improved script loading in dashboard to improve performance on all admin pages
+* [TWEAK] Improved FAQ list
 
 = 1.1.4 =
 * 2013-02-07
-* [UPDATE] Switching to using WordPress' built-in MIME type detection
-* [UPDATE] Improving feed tag layout
+* [TWEAK] Switching to using WordPress' built-in MIME type detection
+* [TWEAK] Improving feed tag layout
 
 = 1.1.3 =
 * 2013-01-23
@@ -281,16 +286,16 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 = 1.1.1 =
 * 2013-01-18
-* [UPDATE] Adding file MIME type to feed RSS
+* [TWEAK] Adding file MIME type to feed RSS
 
 = 1.1 =
 * 2013-01-17
-* [FEATURE] Added loads of settings for the podcast feed details
-* [FEATURE] Massive improvements to both iTunes & standard RSS feeds (including new feed URLs)
-* [FEATURE] Audio duration is now calculated automatically
-* [FEATURE] Added 'keywords' taxonomy to episodes
-* [UPDATE] General performance enhancements
-* [UPDATE] Enhanced localisation support
+* [NEW] Added loads of settings for the podcast feed details
+* [NEW] Massive improvements to both iTunes & standard RSS feeds (including new feed URLs)
+* [NEW] Audio duration is now calculated automatically
+* [NEW] Added 'keywords' taxonomy to episodes
+* [TWEAK] General performance enhancements
+* [TWEAK] Enhanced localisation support
 
 = 1.0.1 =
 * 2013-01-06
@@ -304,9 +309,9 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 = 1.7.5 =
 * 2013-12-22
-* [UPDATE] Fixing content display on single podcast template (kudos jeherve)
-* [UPDATE] Updating admin icon for WordPress 3.8
-* [UPDATE] Small CSS tweak on single podcast template
+* [TWEAK] Fixing content display on single podcast template (kudos jeherve)
+* [TWEAK] Updating admin icon for WordPress 3.8
+* [TWEAK] Small CSS tweak on single podcast template
 * [FIX] Fixing site URLs to work with proper home URL field (kudos firejdl)
 
 = 1.7.4 =
@@ -324,7 +329,7 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 = 1.7.1 =
 * 2013-09-23
-* [UPDATE] Adding error notice for versions of WordPress prior to v3.5
+* [TWEAK] Adding error notice for versions of WordPress prior to v3.5
 * [FIX] Removing PHP warning when using widget
 * [FIX] Fixing fatal error when using WordPress versions older than v3.5
 
@@ -369,28 +374,28 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * This update adds the new plugin branding to the WordPress admin - no new features are included.
 
 = 1.4.2 =
-* [UPDATE] Added work around for WordPress bug that causes 404 error on feed when site has no posts
-* [UPDATE] Removed episode meta from feed description/summary
-* [UPDATE] Added global function to check if podcast feed is loading
-* [UPDATE] Core functions are now loaded earlier in the plugin so they are more widely available
+* [TWEAK] Added work around for WordPress bug that causes 404 error on feed when site has no posts
+* [TWEAK] Removed episode meta from feed description/summary
+* [TWEAK] Added global function to check if podcast feed is loading
+* [TWEAK] Core functions are now loaded earlier in the plugin so they are more widely available
 
 = 1.4.1 =
-* [UPDATE] Restructured & streamlined settings page
+* [TWEAK] Restructured & streamlined settings page
 * [FIX] Fixed built-in archive page template
-* [UPDATE] Updated FAQs to reflect recent support queries
+* [TWEAK] Updated FAQs to reflect recent support queries
 
 = 1.4 =
-* [FEATURE] Added option to password protect podcast feed - sets a 'HTTP 401 Unauthorized' header and requests a username and password
-* [FEATURE] Added 'do_feed_podcast' action so plugins/themes can intercept the feed or add their own processing - see templates/feed-podcast.php for usage caveats
+* [NEW] Added option to password protect podcast feed - sets a 'HTTP 401 Unauthorized' header and requests a username and password
+* [NEW] Added 'do_feed_podcast' action so plugins/themes can intercept the feed or add their own processing - see templates/feed-podcast.php for usage caveats
 * [USABILITY] Added series feed URL to series taxonomy table for quick reference
 * [USABILITY] Moved feed template include to latest possible hook - this allows other plugins to load their templates first if necessary
 * [USABILITY] Simplified field descriptions on settings page
 * [FIX] Fixed series feed URLs (please take note of changes on podcast settings page)
 * [FIX] Fixed a few typos on the settings page
-* [UPDATE] Added validation to podcast description field
-* [UPDATE] Updated localisation strings
-* [UPDATE] Updated plugin FAQ
-* [UPDATE] Added 'Upcoming Features' list
+* [TWEAK] Added validation to podcast description field
+* [TWEAK] Updated localisation strings
+* [TWEAK] Updated plugin FAQ
+* [TWEAK] Added 'Upcoming Features' list
 
 = 1.3.4 =
 * [FIX] Fixed issue where site subtitle was being displayed in author field in feed
@@ -404,13 +409,13 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 = 1.3.1 =
 * [USABILITY] Added comments capability to podcast episodes
 * [FIX] Removed HTML tags from feed description/summary
-* [UPDATE] Improved MIME type recognition
-* [UPDATE] Improved plugin FAQ
+* [TWEAK] Improved MIME type recognition
+* [TWEAK] Improved plugin FAQ
 
 = 1.3 =
-* [FEATURE] Added option to syndicate your feed through Feedburner (or similar service)
-* [FEATURE] Added RSS meta tags to site header
-* [FEATURE] Added option to show podcast episodes in main query loop on home page along with blog posts
+* [NEW] Added option to syndicate your feed through Feedburner (or similar service)
+* [NEW] Added RSS meta tags to site header
+* [NEW] Added option to show podcast episodes in main query loop on home page along with blog posts
 * [USABILITY] Unified feed templates, so only one feed is used for all podcasting services (ensured backward compatibility for existing feed URLs)
 * [USABILITY] Changed podcast settings page URL (menu link is still in same place though)
 
@@ -421,18 +426,18 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * [FIX] Fixed critical bug that was preventing episode data from being added
 
 = 1.2 =
-* [FEATURE] Added setting for redirecting podcast feed to new URL
-* [FEATURE] Added episode meta data to start of episode excerpt
+* [NEW] Added setting for redirecting podcast feed to new URL
+* [NEW] Added episode meta data to start of episode excerpt
 * [FIX] Fixed file size info & episode descriptions in feeds
 * [USABILITY] Moved settings page to be a sub-page of the Podcast menu
-* [UPDATE] Improved enclosure file size detection
-* [UPDATE] Improved code commenting to make some features more clear
-* [UPDATE] Improved script loading in dashboard to improve performance on all admin pages
-* [UPDATE] Improved FAQ list
+* [TWEAK] Improved enclosure file size detection
+* [TWEAK] Improved code commenting to make some features more clear
+* [TWEAK] Improved script loading in dashboard to improve performance on all admin pages
+* [TWEAK] Improved FAQ list
 
 = 1.1.4 =
-* [UPDATE] Switching to using WordPress' built-in MIME type detection
-* [UPDATE] Improving feed tag layout
+* [TWEAK] Switching to using WordPress' built-in MIME type detection
+* [TWEAK] Improving feed tag layout
 
 = 1.1.3 =
 * [FIX] Fixing some feed validaton errors and warnings
@@ -442,15 +447,15 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * [FIX] Fixing XML encoding of category names
 
 = 1.1.1 =
-* [UPDATE] Adding file MIME type to feed RSS
+* [TWEAK] Adding file MIME type to feed RSS
 
 = 1.1 =
-* [FEATURE] Added loads of settings for the podcast feed details
-* [FEATURE] Massive improvements to both iTunes & standard RSS feeds (including new feed URLs)
-* [FEATURE] Audio duration is now calculated automatically
-* [FEATURE] Added 'keywords' taxonomy to episodes
-* [UPDATE] General performance enhancements
-* [UPDATE] Enhanced localisation support
+* [NEW] Added loads of settings for the podcast feed details
+* [NEW] Massive improvements to both iTunes & standard RSS feeds (including new feed URLs)
+* [NEW] Audio duration is now calculated automatically
+* [NEW] Added 'keywords' taxonomy to episodes
+* [TWEAK] General performance enhancements
+* [TWEAK] Enhanced localisation support
 
 = 1.0.1 =
 * [FIX] Fixing bug that broke media uploader in WordPress 3.5

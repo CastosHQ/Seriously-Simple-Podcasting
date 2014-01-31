@@ -23,7 +23,8 @@ class SSP_Settings {
 
 	/**
 	 * Constructor
-	 * @param string $file Plugin base file
+	 * @param 	string $file Plugin base file
+	 * @return 	void
 	 */
 	public function __construct( $file ) {
 		$this->file = $file;
@@ -78,7 +79,7 @@ class SSP_Settings {
 	 * Load admin javascript
 	 * @return void
 	 */
-	public function enqueue_admin_scripts () {
+	public function enqueue_admin_scripts() {
 		global $wp_version;
 
 		// Admin JS
@@ -406,9 +407,12 @@ class SSP_Settings {
 		$option_name = $this->settings_base . $field['id'];
 		$option = get_option( $option_name );
 
-		$data = $field['default'];
-		if( $option  ) {
-			$data = $option;
+		$data = '';
+		if( isset( $field['default'] ) ) {
+			$data = $field['default'];
+			if( $option  ) {
+				$data = $option;
+			}
 		}
 
 		switch( $field['type'] ) {
@@ -606,7 +610,7 @@ class SSP_Settings {
 	public function settings_page() {
 
 		// Build page HTML
-		$html .= '<div class="wrap" id="podcast_settings">' . "\n";
+		$html = '<div class="wrap" id="podcast_settings">' . "\n";
 			$html .= '<h2>' . __( 'Podcast Settings' , 'ss-podcasting' ) . '</h2>' . "\n";
 
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";

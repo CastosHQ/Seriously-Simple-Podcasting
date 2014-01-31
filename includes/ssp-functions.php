@@ -167,6 +167,13 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 }
 
 if ( ! function_exists( 'ss_podcast_shortcode' ) ) {
+
+	/**
+	 * Load podcast shortcode
+	 * @param  array  $atts    Shortcode attributes
+	 * @param  string $content Shortcode content
+	 * @return string          HTML output
+	 */
 	function ss_podcast_shortcode ( $atts, $content = null ) {
 
 		$args = (array) $atts;

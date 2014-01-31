@@ -18,6 +18,11 @@ class Seriously_Simple_Podcasting {
 	private $token;
 	private $home_url;
 
+	/**
+	 * Constructor
+	 * @param 	string $file Plugin base file
+	 * @return 	void
+	 */
 	public function __construct( $file ) {
 		$this->dir = dirname( $file );
 		$this->file = $file;
@@ -37,7 +42,7 @@ class Seriously_Simple_Podcasting {
 		// Register podcast feed
 		add_action( 'init', array( $this, 'add_feed' ) );
 
-		// Handle pre-v2 feed URL (deprecated)
+		// Handle v1.x feed URL
 		add_action( 'init', array( $this, 'redirect_old_feed' ) );
 
 		// Use built-in templates if selected
@@ -61,7 +66,6 @@ class Seriously_Simple_Podcasting {
 		}
 
 		if ( is_admin() ) {
-
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -72,7 +76,6 @@ class Seriously_Simple_Podcasting {
 			add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
 			add_filter( 'manage_edit-series_columns' , array( $this, 'edit_series_columns' ) );
             add_filter( 'manage_series_custom_column' , array( $this, 'add_series_columns' ) , 1 , 3 );
-
 		}
 
 		// Add podcast image size
@@ -88,12 +91,20 @@ class Seriously_Simple_Podcasting {
 
 	}
 
+	/**
+	 * Flush reqrite rules on plugin acivation
+	 * @return void
+	 */
 	public function rewrite_flush() {
 		$this->register_post_type();
 		$this->add_feed();
 		flush_rewrite_rules();
 	}
 
+	/**
+	 * Register 'podcast' post type
+	 * @return void
+	 */
 	public function register_post_type() {
 
 		$labels = array(
@@ -110,7 +121,6 @@ class Seriously_Simple_Podcasting {
 			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash' , 'ss-podcasting' ), __( 'Episodes' , 'ss-podcasting' ) ),
 			'parent_item_colon' => '',
 			'menu_name' => __( 'Podcast' , 'ss-podcasting' )
-
 		);
 
 		$slug = __( 'podcast' , 'ss-podcasting' );
@@ -119,6 +129,7 @@ class Seriously_Simple_Podcasting {
 			$slug = $custom_slug;
 		}
 
+		$slug = apply_filters( 'ssp_archive_slug', $slug );
 
 		$args = array(
 			'labels' => $labels,
@@ -127,7 +138,7 @@ class Seriously_Simple_Podcasting {
 			'show_ui' => true,
 			'show_in_menu' => true,
 			'query_var' => true,
-			'rewrite' => array( 'slug' => $slug , 'feeds' => true ),
+			'rewrite' => array( 'slug' => $slug, 'feeds' => true ),
 			'capability_type' => 'post',
 			'has_archive' => true,
 			'hierarchical' => false,
@@ -138,11 +149,97 @@ class Seriously_Simple_Podcasting {
 
 		register_post_type( $this->token, $args );
 
-        register_taxonomy( 'series', array( $this->token ), array( 'hierarchical' => true , 'label' => 'Series' , 'singular_label' => 'Series' , 'rewrite' => true) );
-        register_taxonomy( 'keywords', array( $this->token ), array( 'hierarchical' => false , 'label' => 'Keywords' , 'singular_label' => 'Keyword' , 'rewrite' => true) );
+		$this->register_taxonomies();
 	}
 
-	public function register_custom_columns ( $column_name, $id ) {
+	/**
+	 * Register taxonomies
+	 * @return void
+	 */
+	private function register_taxonomies() {
+
+        $series_labels = array(
+            'name' => __( 'Series' , 'ss-podcasting' ),
+            'singular_name' => __( 'Series', 'ss-podcasting' ),
+            'search_items' =>  __( 'Search Series' , 'ss-podcasting' ),
+            'all_items' => __( 'All Series' , 'ss-podcasting' ),
+            'parent_item' => __( 'Parent Series' , 'ss-podcasting' ),
+            'parent_item_colon' => __( 'Parent Series:' , 'ss-podcasting' ),
+            'edit_item' => __( 'Edit Series' , 'ss-podcasting' ),
+            'update_item' => __( 'Update Series' , 'ss-podcasting' ),
+            'add_new_item' => __( 'Add New Series' , 'ss-podcasting' ),
+            'new_item_name' => __( 'New Series Name' , 'ss-podcasting' ),
+            'menu_name' => __( 'Series' , 'ss-podcasting' )
+        );
+
+        $series_args = array(
+            'public' => true,
+            'hierarchical' => true,
+            'rewrite' => array( 'slug' => apply_filters( 'ssp_series_slug', 'series' ) ),
+            'labels' => $series_labels
+        );
+
+        register_taxonomy( 'series', $this->token, $series_args );
+
+        $keywords_labels = array(
+            'name' => __( 'Keywords' , 'ss-podcasting' ),
+            'singular_name' => __( 'Keyword', 'ss-podcasting' ),
+            'search_items' =>  __( 'Search Keywords' , 'ss-podcasting' ),
+            'all_items' => __( 'All Keywords' , 'ss-podcasting' ),
+            'parent_item' => __( 'Parent Keyword' , 'ss-podcasting' ),
+            'parent_item_colon' => __( 'Parent Keyword:' , 'ss-podcasting' ),
+            'edit_item' => __( 'Edit Keyword' , 'ss-podcasting' ),
+            'update_item' => __( 'Update Keyword' , 'ss-podcasting' ),
+            'add_new_item' => __( 'Add New Keyword' , 'ss-podcasting' ),
+            'new_item_name' => __( 'New Keyword Name' , 'ss-podcasting' ),
+            'menu_name' => __( 'Keywords' , 'ss-podcasting' )
+        );
+
+        $keywords_args = array(
+            'public' => true,
+            'hierarchical' => false,
+            'rewrite' => array( 'slug' => apply_filters( 'ssp_keywords_slug', 'keyword' ) ),
+            'labels' => $keywords_labels
+        );
+
+        register_taxonomy( 'keywords', $this->token, $keywords_args );
+    }
+
+    /**
+	 * Register columns for podcast list table
+	 * @param  array $defaults Default columns
+	 * @return array           Modified columns
+	 */
+	public function register_custom_column_headings( $defaults ) {
+		$new_columns = apply_filters( 'ssp_admin_columns_episodes', array( 'series' => __( 'Series' , 'ss-podcasting' ) , 'image' => __( 'Image' , 'ss-podcasting' ) ) );
+
+		$last_item = '';
+
+		if ( isset( $defaults['date'] ) ) { unset( $defaults['date'] ); }
+
+		if ( count( $defaults ) > 2 ) {
+			$last_item = array_slice( $defaults, -1 );
+			array_pop( $defaults );
+		}
+		$defaults = array_merge( $defaults, $new_columns );
+
+		if ( $last_item != '' ) {
+			foreach ( $last_item as $k => $v ) {
+				$defaults[$k] = $v;
+				break;
+			}
+		}
+
+		return $defaults;
+	}
+
+    /**
+     * Display column data in podcast list table
+     * @param  string  $column_name Name of current column
+     * @param  integer $id          ID of episode
+     * @return void
+     */
+	public function register_custom_columns( $column_name, $id ) {
 		global $wpdb, $post;
 
 		$meta = get_post_custom( $id );
@@ -178,30 +275,11 @@ class Seriously_Simple_Podcasting {
 		}
 	}
 
-	public function register_custom_column_headings ( $defaults ) {
-		$new_columns = array( 'series' => __( 'Series' , 'ss-podcasting' ) , 'image' => __( 'Image' , 'ss-podcasting' ) );
-
-		$last_item = '';
-
-		if ( isset( $defaults['date'] ) ) { unset( $defaults['date'] ); }
-
-		if ( count( $defaults ) > 2 ) {
-			$last_item = array_slice( $defaults, -1 );
-
-			array_pop( $defaults );
-		}
-		$defaults = array_merge( $defaults, $new_columns );
-
-		if ( $last_item != '' ) {
-			foreach ( $last_item as $k => $v ) {
-				$defaults[$k] = $v;
-				break;
-			}
-		}
-
-		return $defaults;
-	}
-
+	/**
+	 * Register solumns for series list table
+	 * @param  array $defaults Default columns
+	 * @return array           Modified columns
+	 */
 	public function edit_series_columns( $columns ) {
 
         unset( $columns['description'] );
@@ -210,9 +288,17 @@ class Seriously_Simple_Podcasting {
         $columns['series_feed_url'] = __( 'Series feed URL' , 'ss-podcasting' );
         $columns['posts'] = __( 'Episodes' , 'ss-podcasting' );
 
+        $columns = apply_filters( 'ssp_admin_columns_series', $columns );
+
         return $columns;
     }
 
+    /**
+     * Display column data in series list table
+     * @param string  $column_data Default column content
+     * @param string  $column_name Name of current column
+     * @param integer $term_id     ID of term
+     */
     public function add_series_columns( $column_data , $column_name , $term_id ) {
 
         switch ( $column_name ) {
@@ -227,10 +313,15 @@ class Seriously_Simple_Podcasting {
         return $column_data;
     }
 
-	public function updated_messages ( $messages ) {
+    /**
+     * Create custom dashboard message
+     * @param  array $messages Default messages
+     * @return array           Modified messages
+     */
+	public function updated_messages( $messages ) {
 	  global $post, $post_ID;
 
-	  $messages[$this->token] = array(
+	  $messages[ $this->token ] = array(
 	    0 => '', // Unused. Messages start at index 1.
 	    1 => sprintf( __( 'Episode updated. %sView episode%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 	    2 => __( 'Custom field updated.' , 'ss-podcasting' ),
@@ -248,16 +339,25 @@ class Seriously_Simple_Podcasting {
 	  return $messages;
 	}
 
+	/**
+	 * Create meta box on episode edit screen
+	 * @return void
+	 */
 	public function meta_box_setup () {
 		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $this->token, 'normal', 'high' );
 
-		do_action( 'ss_podcasting_meta_boxes' );
+		// Allow more metaboxes to be added
+		do_action( 'ssp_meta_boxes' );
 	}
 
+	/**
+	 * Load content for episode meta box
+	 * @return void
+	 */
 	public function meta_box_content() {
 		global $post_id;
 		$fields = get_post_custom( $post_id );
-		$field_data = $this->get_custom_fields_settings();
+		$field_data = $this->custom_fields();
 
 		$html = '';
 
@@ -298,6 +398,11 @@ class Seriously_Simple_Podcasting {
 		echo $html;
 	}
 
+	/**
+	 * Save episoe meta box content
+	 * @param  integer $post_id ID of post
+	 * @return void
+	 */
 	public function meta_box_save( $post_id ) {
 		global $post, $messages;
 
@@ -316,7 +421,7 @@ class Seriously_Simple_Podcasting {
 			}
 		}
 
-		$field_data = $this->get_custom_fields_settings();
+		$field_data = $this->custom_fields();
 		$fields = array_keys( $field_data );
 
 		foreach ( $fields as $f ) {
@@ -362,30 +467,11 @@ class Seriously_Simple_Podcasting {
 
 	}
 
-	public function enter_title_here( $title ) {
-		if ( get_post_type() == $this->token ) {
-			$title = __( 'Enter the episode title here' , 'ss-podcasting' );
-		}
-		return $title;
-	}
-
-	public function enqueue_admin_styles() {
-
-		// Admin CSS
-		wp_register_style( 'ss_podcasting-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), '1.0.0' );
-		wp_enqueue_style( 'ss_podcasting-admin' );
-
-	}
-
-	public function enqueue_admin_scripts() {
-
-		// Admin JS
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '1.7.0' );
-		wp_enqueue_script( 'ss_podcasting-admin' );
-
-	}
-
-	public function get_custom_fields_settings() {
+	/**
+	 * Setup custom fields for episodes
+	 * @return array Custom fields
+	 */
+	public function custom_fields() {
 		$fields = array();
 
 		$fields['enclosure'] = array(
@@ -428,16 +514,52 @@ class Seriously_Simple_Podcasting {
 		    'section' => 'info'
 		);
 
-		return apply_filters( 'ss_podcasting_episode_fields', $fields );
+		return apply_filters( 'ssp_episode_fields', $fields );
 	}
 
-	public function enqueue_scripts() {
+	/**
+	 * Modify the 'enter title here' text
+	 * @param  string $title Default text
+	 * @return string        Modified text
+	 */
+	public function enter_title_here( $title ) {
+		if ( get_post_type() == $this->token ) {
+			$title = __( 'Enter the episode title here' , 'ss-podcasting' );
+		}
+		return $title;
+	}
 
+	/**
+	 * Load admin CSS
+	 * @return void
+	 */
+	public function enqueue_admin_styles() {
+		wp_register_style( 'ss_podcasting-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), '1.0.0' );
+		wp_enqueue_style( 'ss_podcasting-admin' );
+	}
+
+	/**
+	 * Load admin JS
+	 * @return void
+	 */
+	public function enqueue_admin_scripts() {
+		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '2.0.0' );
+		wp_enqueue_script( 'ss_podcasting-admin' );
+	}
+
+	/**
+	 * Load frontend CSS
+	 * @return void
+	 */
+	public function enqueue_scripts() {
 		wp_register_style( 'ss_podcasting', esc_url( $this->assets_url . 'css/style.css' ), array(), '1.7.5' );
 		wp_enqueue_style( 'ss_podcasting' );
-
 	}
 
+	/**
+	 * Load podcast page template
+	 * @return void
+	 */
 	public function page_templates() {
 
 		// Single podcast template
@@ -454,15 +576,22 @@ class Seriously_Simple_Podcasting {
 
 	}
 
-	public function get_episode_download_link( $episode ) {
-
-		$file = $this->get_enclosure( $episode );
-
+	/**
+	 * Get download link for episode
+	 * @param  integer $episode_id ID of episode
+	 * @return string              Episode download link
+	 */
+	public function get_episode_download_link( $episode_id ) {
+		$file = $this->get_enclosure( $episode_id );
 		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->home_url );
-
-		return $link;
+		return apply_filters( 'ssp_episode_download_link', $link, $episode_id, $file );
 	}
 
+	/**
+	 * Dislpay episode meta data
+	 * @param  string $content Episode content
+	 * @return string          Updated episode content
+	 */
 	public function content_meta_data( $content ) {
 
 		$hide_content_meta = get_option( 'ss_podcasting_hide_content_meta' );
@@ -472,6 +601,8 @@ class Seriously_Simple_Podcasting {
 
 				$id = get_the_ID();
 				$file = $this->get_enclosure( $id );
+
+				$meta = '';
 
 				if( $file ) {
 					$link = $this->get_episode_download_link( $id );
@@ -486,8 +617,6 @@ class Seriously_Simple_Podcasting {
 						}
 					}
 
-					$meta = '';
-
 					if( is_single() ) {
 						$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
 					}
@@ -497,9 +626,11 @@ class Seriously_Simple_Podcasting {
 					if( $duration && strlen( $duration ) > 0 ) { if( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
 					if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
 					$meta .= '</aside></div>';
-
-					$content = $meta . $content;
 				}
+
+				$meta = apply_filters( 'ssp_episode_meta', $meta, $post_id );
+
+				$content = $meta . $content;
 
 			}
 		}
@@ -508,19 +639,24 @@ class Seriously_Simple_Podcasting {
 
 	}
 
+	/**
+	 * Add podcast to home page query
+	 * @param object $query The query object
+	 */
 	public function add_to_home_query( $query ) {
-
 		if ( ! is_admin() ) {
-
 			if ( $query->is_home() && $query->is_main_query() ) {
-				$query->set( 'post_type', array( 'post' , 'podcast' ) );
+				$query->set( 'post_type', array( 'post', 'podcast' ) );
 			}
-
-
 		}
 	}
 
-	public function get_file_size( $file = false ) {
+	/**
+	 * Get size of media file
+	 * @param  string  $file File name & path
+	 * @return boolean       File sizeo n success, boolean false on failure
+	 */
+	public function get_file_size( $file = '' ) {
 
 		if( $file ) {
 
@@ -536,7 +672,7 @@ class Seriously_Simple_Podcasting {
 					'formatted' => $formatted
 				);
 
-				return $size;
+				return apply_filters( 'ssp_file_size', $size, $file );
 
 			}
 
@@ -545,13 +681,13 @@ class Seriously_Simple_Podcasting {
 		return false;
 	}
 
+	/**
+	 * Get duration of audio file
+	 * Uses getid3 class for calculation audio duration - http://www.getid3.org/
+	 * @param  string $file File name & path
+	 * @return mixed        File duration on success, boolean false on failure
+	 */
 	public function get_file_duration( $file ) {
-
-		/*
-		 * Uses getid3 class for calculation audio duration
-		 *
-		 * http://www.getid3.org/
-		*/
 
 		if( $file ) {
 
@@ -577,13 +713,19 @@ class Seriously_Simple_Podcasting {
 				}
 			}
 
-			return $duration;
+			return apply_filters( 'ssp_file_duration', $duration, $file );
 
 		}
 
 		return false;
 	}
 
+	/**
+	 * Format filesize for display
+	 * @param  integer $size      Raw file size
+	 * @param  integer $precision Level of precision for formatting
+	 * @return mixed              Formatted file size on success, false on failure
+	 */
 	protected function format_bytes( $size , $precision = 2 ) {
 
 		if( $size ) {
@@ -592,13 +734,41 @@ class Seriously_Simple_Podcasting {
 		    $suffixes = array( '' , 'k' , 'M' , 'G' , 'T' );
 		    $bytes = round( pow( 1024 , $base - floor( $base ) ) , $precision ) . $suffixes[ floor( $base ) ];
 
-		    return $bytes;
+		    return apply_filters( 'ssp_file_size_formatted', $bytes, $size );
 		}
 
 		return false;
 	}
 
-	public function get_attachment_mimetype( $attachment = false ) {
+	/**
+	 * Format duration of audio track for display
+	 * @param  integer $duration Raw duration in seconds
+	 * @return mixed             Formatted duration on success, 0 on failure
+	 */
+	public function format_duration( $duration = '' ) {
+
+		$length = false;
+
+		if( $duration ) {
+			sscanf( $duration , "%d:%d:%d" , $hours , $minutes , $seconds );
+			$length = isset( $seconds ) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
+
+			if( ! $length ) {
+				$length = (int) $duration;
+			}
+
+			return apply_filters( 'ssp_file_duration_formatted', $length, $duration );
+		}
+
+		return 0;
+	}
+
+	/**
+	 * Get MIME type of attachment file
+	 * @param  string $attachment Attachment URL
+	 * @return mixed              MIME type on success, false on failure
+	 */
+	public function get_attachment_mimetype( $attachment = '' ) {
 
 		if( $attachment ) {
 		    global $wpdb;
@@ -612,7 +782,7 @@ class Seriously_Simple_Podcasting {
 
 			    $mime_type = get_post_mime_type( $id );
 
-			    return $mime_type;
+			    return apply_filters( 'ssp_attachment_mimetype', $mime_type, $id );
 			}
 
 		}
@@ -621,38 +791,30 @@ class Seriously_Simple_Podcasting {
 
 	}
 
-	public function format_duration( $duration = false ) {
-
-		$length = false;
-
-		if( $duration ) {
-			sscanf( $duration , "%d:%d:%d" , $hours , $minutes , $seconds );
-			$length = isset( $seconds ) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
-
-			if( ! $length ) {
-				$length = (int) $duration;
-			}
-
-			return $length;
-		}
-
-		return 0;
-	}
-
-	public function audio_player( $src = false ) {
-		global $wp_version;
+	/**
+	 * Load audio player for given file
+	 * @param  string $src Source of audio file
+	 * @return mixed       Audio player HTML on success, false on failure
+	 */
+	public function audio_player( $src = '' ) {
 
 		if( $src ) {
+			global $wp_version;
 			if( $wp_version && version_compare( $wp_version, '3.6', '>=' ) ) {
 				return wp_audio_shortcode( array( 'src' => $src ) );
 			}
 		}
 
 		return false;
-
 	}
 
-	protected function get_image( $id, $size = 'podcast-thumbnail' ) {
+	/**
+	 * Get episode image
+	 * @param  integer $id   ID of episode
+	 * @param  string  $size Image size
+	 * @return string        Image HTML markup
+	 */
+	protected function get_image( $id = 0, $size = 'podcast-thumbnail' ) {
 		$response = '';
 
 		if ( has_post_thumbnail( $id ) ) {
@@ -665,13 +827,12 @@ class Seriously_Simple_Podcasting {
 			$response = get_the_post_thumbnail( intval( $id ), $size );
 		}
 
-		return $response;
+		return apply_filters( 'ssp_episode_image', $response, $id );
 	}
 
 	/**
 	 * Get podcast
 	 * @param  string/array $args Arguments to be passed to the query.
-	 * @since  1.0.0
 	 * @return array/boolean      Array if true, boolean if false.
 	 */
 	public function get_podcast( $args = '' ) {
@@ -682,9 +843,7 @@ class Seriously_Simple_Podcasting {
 		);
 
 		$args = wp_parse_args( $args, $defaults );
-
-		// Allow themes/plugins to filter here.
-		$args = apply_filters( 'podcast_get_args', $args );
+		$args = apply_filters( 'ssp_get_podcast_args', $args );
 
 		if( $args['content'] == 'episodes' ) {
 
@@ -733,21 +892,30 @@ class Seriously_Simple_Podcasting {
 
 		}
 
-		$query[ 'content' ] = $args[ 'content' ];
+		$query['content'] = $args['content'];
 
 		return $query;
 	}
 
-	public function get_enclosure( $episode ) {
+	/**
+	 * Get episode enclosure
+	 * @param  integer $episode_id ID of episode
+	 * @return string              URL of enclosure
+	 */
+	public function get_enclosure( $episode_id = 0 ) {
 
-		if( $episode ) {
-			return get_post_meta( $episode, 'enclosure', true );
+		if( $episode_id ) {
+			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, 'enclosure', true ), $episode_id );
 		}
 
 		return false;
-
 	}
 
+	/**
+	 * Get episode from audio file
+	 * @param  string $file File name & path
+	 * @return object       Episode post object
+	 */
 	public function get_episode_from_file( $file = '' ) {
 
 		$episode = false;
@@ -772,10 +940,14 @@ class Seriously_Simple_Podcasting {
 			}
 		}
 
-		return $episode;
+		return apply_filters( 'ssp_episode_from_file', $episode, $file );
 
 	}
 
+	/**
+	 * Download file from $_GET['podcast_episode']
+	 * @return void
+	 */
 	public function download_file() {
 
 		$file = esc_attr( $_GET['podcast_episode'] );
@@ -809,20 +981,36 @@ class Seriously_Simple_Podcasting {
 
 	}
 
+	/**
+	 * Register new image size
+	 * @return void
+	 */
 	public function register_image_sizes() {
 		if ( function_exists( 'add_image_size' ) ) {
 			add_image_size( 'podcast-thumbnail', 200, 9999 ); // 200 pixels wide (and unlimited height)
 		}
 	}
 
+	/**
+	 * Ensure thumbnail support on site
+	 * @return void
+	 */
 	public function ensure_post_thumbnails_support() {
 		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
 	}
 
+	/**
+	 * Load plugin text domain
+	 * @return void
+	 */
 	public function load_localisation() {
 		load_plugin_textdomain( 'ss-podcasting', false, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 	}
 
+	/**
+	 * Load localisation
+	 * @return void
+	 */
 	public function load_plugin_textdomain() {
 	    $domain = 'ss-podcasting';
 	    // The "plugin_locale" filter is also used in load_plugin_textdomain()
@@ -832,6 +1020,10 @@ class Seriously_Simple_Podcasting {
 	    load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 	}
 
+	/**
+	 * Regsiter new widget area for podcast template
+	 * @return void
+	 */
     public function register_widget_area() {
 
         register_sidebar( array(
@@ -848,10 +1040,17 @@ class Seriously_Simple_Podcasting {
 
     }
 
+    /**
+     * Register podcast feed
+     */
     public function add_feed() {
 		add_feed( $this->token, array( $this, 'feed_template' ) );
 	}
 
+	/**
+	 * Load feed template
+	 * @return void
+	 */
     public function feed_template() {
     	global $wp_query;
 
@@ -861,14 +1060,14 @@ class Seriously_Simple_Podcasting {
 
     	$file_name = 'feed-podcast.php';
 
-    	$theme_template_file = trailingslashit( get_template_directory() ) . $file_name;
+    	$user_template_file = apply_filters( 'ssp_template_file', trailingslashit( get_template_directory() ) . $file_name );
 
 		// Any functions hooked in here must NOT output any data
 		do_action( 'ssp_before_feed' );
 
     	// Load feed template from theme if it exists, otherwise use plugin template
-    	if( file_exists( $theme_template_file ) ) {
-    		require( $theme_template_file );
+    	if( file_exists( $user_template_file ) ) {
+    		require( $user_template_file );
     	} else {
     		require( $this->template_path . $file_name );
     	}
@@ -877,6 +1076,10 @@ class Seriously_Simple_Podcasting {
     	do_action( 'ssp_after_feed' );
 	}
 
+	/**
+	 * Display feed meta tag in site HTML
+	 * @return void
+	 */
 	public function rss_meta_tag() {
 
 		$feed_url = $this->site_url . 'feed/' . $this->token;
@@ -887,9 +1090,13 @@ class Seriously_Simple_Podcasting {
 
 		$html = '<link rel="alternate" type="application/rss+xml" title="Podcast RSS feed" href="' . esc_url( $feed_url ) . '" />';
 
-		echo $html;
+		echo apply_filters( 'ssp_rss_meta_tag', $html );
 	}
 
+	/**
+	 * Redirect v1.x feed
+	 * @return void
+	 */
 	public function redirect_old_feed() {
 		if( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( 'podcast', 'itunes' ) ) ) {
 			$this->feed_template();

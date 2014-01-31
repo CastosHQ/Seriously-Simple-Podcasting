@@ -102,6 +102,9 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 * 2014-01-31
 * [NEW] Renaming and restructuring classes and files
 * [NEW] New settings class - settings can now be extended by plugins and themes
+* [NEW] Removing MediaElement library
+* [NEW] Generating feed using add_feed() and ensuring backwards compatibility for older versions
+* [TWEAK] Improving file size calculations and saving (thanks danielpunkass)
 
 = 1.7.5 =
 * 2013-12-22

@@ -6,7 +6,7 @@
  * Description: Podcasting done right.
  * Author: Hugh Lashbrooke
  * Author URI: http://www.hughlashbrooke.com
- * Requires at least: 3.6
+ * Requires at least: 3.8
  * Tested up to: 3.8.1
  *
  * Text Domain: ss-podcasting

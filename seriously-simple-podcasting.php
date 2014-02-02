@@ -19,15 +19,16 @@
 if ( ! defined( 'ABSPATH' ) ) exit;
 
 require_once( 'includes/ssp-functions.php' );
-require_once( 'includes/class-seriously-simple-podcasting.php' );
+require_once( 'includes/class-ssp-admin.php' );
+require_once( 'includes/class-ssp-frontend.php' );
 
-global $ss_podcasting;
-$ss_podcasting = new Seriously_Simple_Podcasting( __FILE__ );
+global $ssp_admin, $ss_podcasting;
+$ssp_admin = new SSP_Admin( __FILE__ );
+$ss_podcasting = new SSP_Frontend( __FILE__ );
 
 if( is_admin() ) {
-	global $ssp_admin;
 	require_once( 'includes/class-ssp-settings.php' );
-	$ssp_admin = new SSP_Settings( __FILE__ );
+	new SSP_Settings( __FILE__ );
 }
 
 require_once( 'includes/class-ssp-widget.php' );

@@ -24,8 +24,6 @@ if( $protection && $protection == 'on' ) {
 		$message = $message_option;
 	}
 
-	$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
-
 	// Request password and give access if correct
 	if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) && ! isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 	    $give_access = false;
@@ -40,9 +38,14 @@ if( $protection && $protection == 'on' ) {
 		}
 	}
 
+	// Display no access message and send 401 status
 	if( ! $give_access ) {
+
+		$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
+
 		header('WWW-Authenticate: Basic realm="Podcast Feed"');
 	    header('HTTP/1.0 401 Unauthorized');
+
 		die( $no_access_message );
 	}
 }
@@ -58,6 +61,7 @@ if( $redirect && $redirect == 'on' ) {
 		$redirect_date = strtotime( '+2 days' , $update_date );
 		$current_date = time();
 
+		// Redirect with 301 if it is more than 2 days since redirect was saved
 		if( $current_date > $redirect_date ) {
 			header ( 'HTTP/1.1 301 Moved Permanently' );
 			header ( 'Location: ' . $new_feed_url );
@@ -68,43 +72,43 @@ if( $redirect && $redirect == 'on' ) {
 
 // Get podcast data
 $title = get_option( 'ss_podcasting_data_title' );
-if( ! $title || strlen( $title ) == 0 || $title == '' ) {
+if( ! $title ) {
 	$title = get_bloginfo( 'name' );
 }
 
 $description = get_option( 'ss_podcasting_data_description' );
-if( ! $description || strlen( $description ) == 0 || $description == '' ) {
+if( ! $description ) {
 	$description = get_bloginfo( 'description' );
 }
 $itunes_description = strip_tags( $description );
 
 $language = get_option( 'ss_podcasting_data_language' );
-if( ! $language || strlen( $language ) == 0 || $language == '' ) {
+if( ! $language ) {
 	$language = get_bloginfo( 'language' );
 }
 
 $copyright = get_option( 'ss_podcasting_data_copyright' );
-if( ! $copyright || strlen( $copyright ) == 0 || $copyright == '' ) {
+if( ! $copyright ) {
 	$copyright = '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' );
 }
 
 $subtitle = get_option( 'ss_podcasting_data_subtitle' );
-if( ! $subtitle || strlen( $subtitle ) == 0 || $subtitle == '' ) {
+if( ! $subtitle ) {
 	$subtitle = get_bloginfo( 'description' );
 }
 
 $author = get_option( 'ss_podcasting_data_author' );
-if( ! $author || strlen( $author ) == 0 || $author == '' ) {
+if( ! $author ) {
 	$author = get_bloginfo( 'name' );
 }
 
 $owner_name = get_option( 'ss_podcasting_data_owner_name' );
-if( ! $owner_name || strlen( $owner_name ) == 0 || $owner_name == '' ) {
+if( ! $owner_name ) {
 	$owner_name = get_bloginfo( 'name' );
 }
 
 $owner_email = get_option( 'ss_podcasting_data_owner_email' );
-if( ! $owner_email || strlen( $owner_email ) == 0 || $owner_email == '' ) {
+if( ! $owner_email ) {
 	$owner_email = get_bloginfo( 'admin_email' );
 }
 
@@ -116,22 +120,25 @@ if( $explicit && $explicit == 'on' ) {
 }
 
 $image = get_option( 'ss_podcasting_data_image' );
-if( ! $image || strlen( $image ) == 0 || $image == '' ) {
+if( ! $image ) {
 	$image = false;
 }
 
 $category = get_option( 'ss_podcasting_data_category' );
-if( ! $category || strlen( $category ) == 0 || $category == '' ) {
+if( ! $category ) {
 	$category = false;
+	$subcategory = false;
 } else {
 	$subcategory = get_option( 'ss_podcasting_data_subcategory' );
-	if( ! $subcategory || strlen( $subcategory ) == 0 || $subcategory == '' ) {
+	if( ! $subcategory ) {
 		$subcategory = false;
 	}
 }
 
+// Set RSS header
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
+// Echo first line to prevent any extra characters at start of document
 echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?>
 
 <rss version="2.0"
@@ -150,7 +157,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml" />
 	<link><?php esc_url( bloginfo_rss('url') ) ?></link>
 	<description><?php echo esc_html( $description ); ?></description>
-	<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>
+	<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', 1( 'GMT' ), false ) ); ?></lastBuildDate>
 	<language><?php echo esc_html( $language ); ?></language>
 	<copyright><?php echo esc_html( $copyright ); ?></copyright>
 	<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>
@@ -194,13 +201,13 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 
 		// Episode duration
 		$duration = get_post_meta( get_the_ID() , 'duration' , true );
-		if( ! $duration || strlen( $duration ) == 0 || $duration == '' ) {
+		if( ! $duration ) {
 			$duration = '0:00';
 		}
 
 		// File size
 		$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
-		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
+		if( ! $size ) {
 			$size = $ss_podcasting->get_file_size( $enclosure );
 			$size = esc_html( $size['raw'] );
 
@@ -208,13 +215,13 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
  			update_post_meta( get_the_ID(), 'filesize_raw', $size['raw'] );
 		}
 
-		if( ! $size || strlen( $size ) == 0 || $size == '' ) {
+		if( ! $size ) {
 			$size = 1;
 		}
 
 		// File MIME type (default to MP3 to ensure that there is always a value for this)
 		$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
-		if( ! $mime_type || strlen( $mime_type ) == 0 || $mime_type == '' ) {
+		if( ! $mime_type ) {
 			$mime_type = 'audio/mpeg';
 		}
 
@@ -273,7 +280,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		// iTunes short description does not allow any HTML and must be shorter than 4000 characters
 		$itunes_excerpt = strip_tags( get_the_excerpt() );
 		$itunes_excerpt = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_excerpt );
-		$itunes_excerpt = substr( $itunes_excerpt, 0, 3950 );
+		$itunes_excerpt = substr( $itunes_excerpt, 0, 3800 );
 
 	?>
 	<item>

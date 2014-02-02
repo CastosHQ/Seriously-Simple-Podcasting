@@ -30,7 +30,7 @@ get_header(); ?>
 				?>
 
 				<section class="podcast_subscribe">
-					Subscribe: <a href="<?php echo $feed_url; ?>" title="<?php _e( 'Standard podcast RSS feed' , 'ss-podcasting' ); ?>">RSS</a> | <a href="<?php echo $itunes_url; ?>" title="<?php _e( 'iTunes podcast feed' , 'ss-podcasting' ); ?>">iTunes</a>
+					<?php _e( 'Subscribe:', 'ss-podcasting' ); ?> <a href="<?php echo esc_url( $feed_url ); ?>" title="<?php _e( 'Standard podcast RSS feed' , 'ss-podcasting' ); ?>">RSS</a> | <a href="<?php echo $itunes_url; ?>" title="<?php _e( 'iTunes podcast feed' , 'ss-podcasting' ); ?>">iTunes</a>
 				</section>
 
 				<section>
@@ -63,7 +63,7 @@ get_header(); ?>
 							</h3>
 
 						</article>
-						
+
 					<?php
 					endwhile;
 					?>

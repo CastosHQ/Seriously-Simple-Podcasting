@@ -121,40 +121,32 @@ class SSP_Settings {
 			'title'					=> __( 'Customise', 'ss-podcasting' ),
 			'description'			=> __( 'These are a few simple settings to make your podcast work the way you want it to work.', 'ss-podcasting' ),
 			'fields'				=> array(
-				array(
-					'id' 			=> 'use_templates',
-					'label'			=> __( 'Use built-in plugin templates', 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Select this to use the built-in templates for the podcast archive and single pages. If you leave this disabled then your theme\'s default post templates will be used unless you %1$screate your own%2$s', 'ss-podcasting' ), '<a href="' . esc_url( 'http://codex.wordpress.org/Post_Type_Templates' ) . '" target="' . esc_attr( '_blank' ) . '">', '</a>' ),
-					'type'			=> 'checkbox',
-					'default'		=> ''
-				),
-				array(
-					'id' 			=> 'slug',
-					'label'			=> __( 'URL slug for podcast pages', 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Provide a custom URL slug for the podcast archive and single pages. You must re-save your %1$spermalinks%2$s after changing this setting. No matter what you put here your podcast will always be visible at %3$s.', 'ss-podcasting' ), '<a href="' . esc_attr( 'options-permalink.php' ) . '">', '</a>', '<a href="' . esc_url( $this->home_url . '?post_type=podcast' ) . '">' . $this->home_url . '?post_type=podcast</a>' ),
-					'type'			=> 'text',
-					'default'		=> 'podcast',
-					'placeholder'	=> '',
-					'callback'		=> array( $this, 'validate_slug' )
-				),
-				array(
-					'id' 			=> 'feed_url',
-					'label'			=> __( 'URL for your podcast', 'ss-podcasting' ),
-					'description'	=> __( 'If you are using Feedburner (or a similar service) to syndicate your podcast feed you can insert the URL here, otherwise this must be left blank.' , 'ss-podcasting' ),
-					'type'			=> 'text',
-					'default'		=> '',
-					'placeholder'	=> __( 'External feed URL', 'ss-podcasting' )
-				),
+				// array(
+				// 	'id' 			=> 'use_templates',
+				// 	'label'			=> __( 'Use built-in plugin templates', 'ss-podcasting' ),
+				// 	'description'	=> sprintf( __( 'Select this to use the built-in templates for the podcast archive and single pages. If you leave this disabled then your theme\'s default post templates will be used unless you %1$screate your own%2$s', 'ss-podcasting' ), '<a href="' . esc_url( 'http://codex.wordpress.org/Post_Type_Templates' ) . '" target="' . esc_attr( '_blank' ) . '">', '</a>' ),
+				// 	'type'			=> 'checkbox',
+				// 	'default'		=> ''
+				// ),
+				// array(
+				// 	'id' 			=> 'slug',
+				// 	'label'			=> __( 'URL slug for podcast pages', 'ss-podcasting' ),
+				// 	'description'	=> sprintf( __( 'Provide a custom URL slug for the podcast archive and single pages. You must re-save your %1$spermalinks%2$s after changing this setting. No matter what you put here your podcast will always be visible at %3$s.', 'ss-podcasting' ), '<a href="' . esc_attr( 'options-permalink.php' ) . '">', '</a>', '<a href="' . esc_url( $this->home_url . '?post_type=podcast' ) . '">' . $this->home_url . '?post_type=podcast</a>' ),
+				// 	'type'			=> 'text',
+				// 	'default'		=> 'podcast',
+				// 	'placeholder'	=> '',
+				// 	'callback'		=> array( $this, 'validate_slug' )
+				// ),
 				array(
 					'id' 			=> 'include_in_main_query',
-					'label'			=> __( 'Include podcast episodes in home page blog listing', 'ss-podcasting' ),
+					'label'			=> __( 'Include podcast in main blog', 'ss-podcasting' ),
 					'description'	=> __( 'This setting may behave differently in each theme, so test it carefully after activation - it will add the \'podcast\' post type to your site\'s main query so that your podcast episodes appear on your home page along with your blog posts.', 'ss-podcasting' ),
 					'type'			=> 'checkbox',
 					'default'		=> ''
 				),
 				array(
 					'id' 			=> 'hide_content_meta',
-					'label'			=> __( 'Prevent audio player and podcast data from showing above episode content', 'ss-podcasting' ),
+					'label'			=> __( 'Hide episode data and audio player', 'ss-podcasting' ),
 					'description'	=> sprintf( __( 'Select this to %1$shide%2$s the podcast audio player along with the episode data (download link, duration and file size) wherever the full content of the episode is displayed.', 'ss-podcasting' ), '<em>', '</em>' ),
 					'type'			=> 'checkbox',
 					'default'		=> ''
@@ -279,16 +271,16 @@ class SSP_Settings {
 				array(
 					'id' 			=> 'protection_username',
 					'label'			=> __( 'Username' , 'ss-podcasting' ),
-					'description'	=> __( 'Login username for your podcast feed.', 'ss-podcasting' ),
+					'description'	=> __( 'Username for your podcast feed.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> __( 'Feed username', 'ss-podcasting' )
 				),
 				array(
 					'id' 			=> 'protection_password',
-					'label'			=> __( 'Username' , 'ss-podcasting' ),
-					'description'	=> __( 'Login password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again. If you leave this field blank than the password will not be updated.', 'ss-podcasting' ),
-					'type'			=> 'text_hidden',
+					'label'			=> __( 'Password' , 'ss-podcasting' ),
+					'description'	=> __( 'Password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again.', 'ss-podcasting' ),
+					'type'			=> 'text_secret',
 					'default'		=> '',
 					'placeholder'	=> '',
 					'callback'		=> array( $this, 'encode_password' )
@@ -296,7 +288,7 @@ class SSP_Settings {
 				array(
 					'id' 			=> 'protection_no_access_message',
 					'label'			=> __( 'No access message' , 'ss-podcasting' ),
-					'description'	=> __( 'This will be the message displayed to people who are not allowed access to your podcast feed. Limited HTML allowed.', 'ss-podcasting' ),
+					'description'	=> __( 'This message will be displayed to people who are not allowed access to your podcast feed. Limited HTML allowed.', 'ss-podcasting' ),
 					'type'			=> 'textarea',
 					'default'		=> __( 'You are not permitted to view this podcast feed.', 'ss-podcasting' ),
 					'placeholder'	=> __( 'Message displayed to users who do not have access', 'ss-podcasting' ),
@@ -323,6 +315,7 @@ class SSP_Settings {
 					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> '',
+					'callback'		=> 'esc_url'
 				),
 			)
 		);
@@ -331,6 +324,15 @@ class SSP_Settings {
 			'title'					=> __( 'Publish' , 'ss-podcasting' ),
 			'description'			=> __( 'Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes).' , 'ss-podcasting' ),
 			'fields'				=> array(
+				array(
+					'id' 			=> 'feed_url',
+					'label'			=> __( 'External feed URL', 'ss-podcasting' ),
+					'description'	=> __( 'If you are syndicating your podcast using a third-party service (like Feedburner) you can insert the URL here, otherwise this must be left blank.' , 'ss-podcasting' ),
+					'type'			=> 'text',
+					'default'		=> '',
+					'placeholder'	=> __( 'External feed URL', 'ss-podcasting' ),
+					'callback'		=> 'esc_url'
+				),
 				array(
 					'id' 			=> 'feed_link',
 					'label'			=> __( 'Complete feed', 'ss-podcasting' ),
@@ -348,12 +350,6 @@ class SSP_Settings {
 					'label'			=> __( 'Podcast page', 'ss-podcasting' ),
 					'description'	=> '',
 					'type'			=> 'podcast_url'
-				),
-				array(
-					'id' 			=> 'social_sharing',
-					'label'			=> __( 'Share online', 'ss-podcasting' ),
-					'description'	=> '',
-					'type'			=> 'social_sharing'
 				)
 			)
 		);
@@ -422,7 +418,7 @@ class SSP_Settings {
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '"/>' . "\n";
 			break;
 
-			case 'text_hidden':
+			case 'text_secret':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value=""/>' . "\n";
 			break;
 
@@ -468,10 +464,6 @@ class SSP_Settings {
 				}
 
 				$html .= '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';
-			break;
-
-			case 'social_sharing':
-				$html .= $this->social_sharing();
 			break;
 
 		}
@@ -555,52 +547,6 @@ class SSP_Settings {
 			}
 		}
 
-	}
-
-	/**
-	 * Generate HTML for social sharing section
-	 * @return void
-	 */
-	private function social_sharing() {
-
-		$share_url = $this->home_url;
-		$custom_title = get_option('ss_podcasting_data_title');
-		$share_title = sprintf( __( 'Podcast on %s', 'ss-podcasting' ), get_bloginfo( 'name' ) );
-		if( $custom_title ) {
-			$share_title = $custom_title;
-		}
-
-		$slug = get_option('ss_podcasting_slug');
-		if( $slug ) {
-			$share_url .= $slug;
-		} else {
-			$share_url .= '?post_type=podcast';
-		}
-
-		printf( __( 'Use this to quickly share a link to your site\'s podcast directory page - this is currently %s, but can be customised using the \'URL slug\' option in the \'Customise\' settings section.', 'ss-podcasting' ), '<a href="' . esc_url( $share_url ) . '">' . $share_url . '</a>' );
-
-		?>
-		<br/>
-
-		<!-- Twitter -->
-		<a href="https://twitter.com/share" class="twitter-share-button" data-url="<?php echo esc_url( $share_url ); ?>" data-text="<?php echo esc_attr( $share_title ); ?>" data-count="none">Tweet</a>
-		<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
-		&nbsp;&nbsp;&nbsp;
-		<!-- Facebook -->
-		<a id="fb-share" style='text-decoration:none;' type="icon_link" onClick="window.open('http://www.facebook.com/sharer.php?s=100&amp;p[title]=<?php echo esc_attr( $share_title ); ?>&amp;p[url]=<?php echo esc_url( $share_url ); ?>','sharer','toolbar=0,status=0,width=580,height=325');" href="javascript: void(0)">
-		    <img src="<?php echo $this->assets_url; ?>images/fb_share.gif" />
-		</a>
-		&nbsp;&nbsp;&nbsp;
-		<!-- Google+ -->
-		<div class="g-plus" data-action="share" data-annotation="none" href="<?php echo esc_url( $share_url ); ?>"></div>
-		<script type="text/javascript">
-		  (function() {
-		    var po = document.createElement('script'); po.type = 'text/javascript'; po.async = true;
-		    po.src = 'https://apis.google.com/js/plusone.js';
-		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(po, s);
-		  })();
-		</script>
-		<?php
 	}
 
 	/**

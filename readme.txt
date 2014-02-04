@@ -100,11 +100,15 @@ If you would like to contribute to the code then you can fork the GitHub repo he
 
 = 2.0.0 =
 * 2014-01-31
-* [NEW] Renaming and restructuring classes and files
-* [NEW] New settings class - settings can now be extended by plugins and themes
+* [NEW] Complete restructuring and renaming of classes and files
+* [NEW] New settings class - settings load much faster and can now be easily extended by plugins and themes
 * [NEW] Removing MediaElement library
 * [NEW] Generating feed using add_feed() and ensuring backwards compatibility for older versions
+* [NEW] Commenting all the things
+* [NEW] Adding brand new actions and filters everywhere
 * [TWEAK] Improving file size calculations and saving (thanks danielpunkass)
+* [TWEAK] Optimising feed template
+* [TWEAK] Removing page templates
 
 = 1.7.5 =
 * 2013-12-22

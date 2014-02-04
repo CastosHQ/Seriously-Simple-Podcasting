@@ -38,7 +38,7 @@ if( $protection && $protection == 'on' ) {
 		}
 	}
 
-	// Display no access message and send 401 status
+	// Send 401 status and display no access message
 	if( ! $give_access ) {
 
 		$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
@@ -52,12 +52,13 @@ if( $protection && $protection == 'on' ) {
 
 // If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
 $redirect = get_option( 'ss_podcasting_redirect_feed' );
+$new_feed_url = false;
 if( $redirect && $redirect == 'on' ) {
 
 	$new_feed_url = get_option( 'ss_podcasting_new_feed_url' );
 	$update_date = get_option( 'ss_podcasting_redirect_feed_date' );
 
-	if( ( $update_date && strlen( $update_date ) > 0 && $update_date != '' ) && ( $new_feed_url && strlen( $new_feed_url ) > 0 && $new_feed_url != '' ) ) {
+	if( $new_feed_url && $update_date ) {
 		$redirect_date = strtotime( '+2 days' , $update_date );
 		$current_date = time();
 
@@ -178,7 +179,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<?php } ?>
 	</itunes:category>
 	<?php } ?>
-	<?php if( isset( $new_feed_url ) && strlen( $new_feed_url ) > 0 && $new_feed_url != '' ) { ?>
+	<?php if( $new_feed_url ) { ?>
 	<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 	<?php }
 

@@ -45,28 +45,30 @@ class SSP_Admin {
 		// Handle v1.x feed URL
 		add_action( 'init', array( $this, 'redirect_old_feed' ) );
 
-		// Use built-in templates if selected
-		$template_option = get_option( 'ss_podcasting_use_templates' );
-		if( ( $template_option && $template_option == 'on' ) ) {
-			add_action( 'widgets_init', array( $this, 'register_widget_area' ) );
-		}
-
 		if ( is_admin() ) {
+
+			// Episode meta box
 			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
+
+			// Episode edit screen
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
 			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
+
+			// Admin JS & CSS
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ), 10 );
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10 );
+
+			// Episodes list table
 			add_filter( 'manage_edit-' . $this->token . '_columns', array( $this, 'register_custom_column_headings' ), 10, 1 );
 			add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
-			add_filter( 'manage_edit-series_columns' , array( $this, 'edit_series_columns' ) );
-            add_filter( 'manage_series_custom_column' , array( $this, 'add_series_columns' ) , 1 , 3 );
-		}
 
-		// Add podcast image size
-		add_action( 'after_setup_theme', array( $this, 'ensure_post_thumbnails_support' ) );
-		add_action( 'after_setup_theme', array( $this, 'register_image_sizes' ) );
+			// Series list table
+			add_filter( 'manage_edit-series_columns' , array( $this, 'edit_series_columns' ) );
+            add_filter( 'manage_series_custom_column' , array( $this, 'add_series_columns' ), 1, 3 );
+
+            add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
+		}
 
 		// Flush rewrite rules on plugin activation
 		register_activation_hook( $file, array( $this, 'rewrite_flush' ) );
@@ -498,6 +500,24 @@ class SSP_Admin {
 		return apply_filters( 'ssp_episode_fields', $fields );
 	}
 
+	public function glance_items( $items ) {
+
+		$num_posts = wp_count_posts( 'podcast' );
+		if ( $num_posts && $num_posts->publish ) {
+			$text = _n( '%s Episode', '%s Episodes', $num_posts->publish, 'ss-podcasting' );
+			$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
+			$post_type_object = get_post_type_object( 'podcast' );
+			if ( $post_type_object && current_user_can( $post_type_object->cap->edit_posts ) ) {
+				$items[] = sprintf( '<a class="podcast-count" href="edit.php?post_type=podcast">%1$s</a>', $text ) . "\n";
+			} else {
+				$items[] = sprintf( '<span class="podcast-count">%1$s</span>', $text ) . "\n";
+			}
+
+		}
+
+		return $items;
+	}
+
 	/**
 	 * Modify the 'enter title here' text
 	 * @param  string $title Default text
@@ -505,7 +525,7 @@ class SSP_Admin {
 	 */
 	public function enter_title_here( $title ) {
 		if ( get_post_type() == $this->token ) {
-			$title = __( 'Enter the episode title here' , 'ss-podcasting' );
+			$title = __( 'Enter the episode title here', 'ss-podcasting' );
 		}
 		return $title;
 	}
@@ -529,21 +549,13 @@ class SSP_Admin {
 	}
 
 	/**
-	 * Register new image size
-	 * @return void
-	 */
-	public function register_image_sizes() {
-		if ( function_exists( 'add_image_size' ) ) {
-			add_image_size( 'podcast-thumbnail', 200, 9999 ); // 200 pixels wide (and unlimited height)
-		}
-	}
-
-	/**
 	 * Ensure thumbnail support on site
 	 * @return void
 	 */
 	public function ensure_post_thumbnails_support() {
-		if ( ! current_theme_supports( 'post-thumbnails' ) ) { add_theme_support( 'post-thumbnails' ); }
+		if ( ! current_theme_supports( 'post-thumbnails' ) ) {
+			add_theme_support( 'post-thumbnails' );
+		}
 	}
 
 	/**
@@ -567,28 +579,9 @@ class SSP_Admin {
 	    load_plugin_textdomain( $domain, FALSE, dirname( plugin_basename( $this->file ) ) . '/lang/' );
 	}
 
-	/**
-	 * Regsiter new widget area for podcast template
-	 * @return void
-	 */
-    public function register_widget_area() {
-
-        register_sidebar( array(
-            'name' => __( 'Podcast sidebar' , 'ss-podcasting' ),
-            'id' => 'podcast_sidebar',
-            'description' => __( 'Sidebar used on the podcast pages if you are using the plugin\'s built-in templates.' , 'ss-podcasting' ),
-            'class' => 'podcast_sidebar',
-            'before_widget' => '<div class="widget">',
-            'after_widget' => '</div>',
-            'before_title' => '<h3>',
-            'after_title' => '</h3>',
-        	)
-        );
-
-    }
-
     /**
      * Register podcast feed
+     * @return void
      */
     public function add_feed() {
 		add_feed( $this->token, array( $this, 'feed_template' ) );

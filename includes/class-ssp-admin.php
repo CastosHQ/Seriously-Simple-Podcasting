@@ -510,14 +510,13 @@ class SSP_Admin {
 
 		$num_posts = wp_count_posts( 'podcast' );
 		if ( $num_posts && $num_posts->publish ) {
-			$post_type = 'podcast';
 			$text = _n( '%s Episode', '%s Episodes', $num_posts->publish, 'ss-podcasting' );
 			$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-			$post_type_object = get_post_type_object( $post_type );
+			$post_type_object = get_post_type_object( $this->token );
 			if ( $post_type_object && current_user_can( $post_type_object->cap->edit_posts ) ) {
-				$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $post_type, $text ) . "\n";
+				$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $this->token, $text ) . "\n";
 			} else {
-				$items[] = sprintf( '<span class="%1$s-count">%2$s</span>', $post_type, $text ) . "\n";
+				$items[] = sprintf( '<span class="%1$s-count">%2$s</span>', $this->token, $text ) . "\n";
 			}
 
 		}

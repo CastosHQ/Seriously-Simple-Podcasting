@@ -67,6 +67,7 @@ class SSP_Admin {
 			add_filter( 'manage_edit-series_columns' , array( $this, 'edit_series_columns' ) );
             add_filter( 'manage_series_custom_column' , array( $this, 'add_series_columns' ), 1, 3 );
 
+            // Dashboard widgets
             add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
 		}
 
@@ -500,17 +501,23 @@ class SSP_Admin {
 		return apply_filters( 'ssp_episode_fields', $fields );
 	}
 
-	public function glance_items( $items ) {
+	/**
+	 * Adding podcast episodes to 'At a glance' dashboard widget
+	 * @param  array $items Existing items
+	 * @return array        Updated items
+	 */
+	public function glance_items( $items = array() ) {
 
 		$num_posts = wp_count_posts( 'podcast' );
 		if ( $num_posts && $num_posts->publish ) {
+			$post_type = 'podcast';
 			$text = _n( '%s Episode', '%s Episodes', $num_posts->publish, 'ss-podcasting' );
 			$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-			$post_type_object = get_post_type_object( 'podcast' );
+			$post_type_object = get_post_type_object( $post_type );
 			if ( $post_type_object && current_user_can( $post_type_object->cap->edit_posts ) ) {
-				$items[] = sprintf( '<a class="podcast-count" href="edit.php?post_type=podcast">%1$s</a>', $text ) . "\n";
+				$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $post_type, $text ) . "\n";
 			} else {
-				$items[] = sprintf( '<span class="podcast-count">%1$s</span>', $text ) . "\n";
+				$items[] = sprintf( '<span class="%1$s-count">%2$s</span>', $post_type, $text ) . "\n";
 			}
 
 		}

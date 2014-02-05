@@ -9,12 +9,13 @@ if( ! function_exists( 'is_podcast_download' ) ) {
 	 */
 	function is_podcast_download() {
 		$download = false;
-
+		$episode = false;
 		if( isset( $_GET['podcast_episode'] ) ) {
 			$download = true;
+			$episode = $_GET['podcast_episode'];
 		}
 
-		return apply_filters( 'ssp_is_podcast_download', $download, $_GET['podcast_episode'] );
+		return apply_filters( 'ssp_is_podcast_download', $download, $episode );
 	}
 }
 

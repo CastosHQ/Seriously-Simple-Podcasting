@@ -158,7 +158,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml" />
 	<link><?php esc_url( bloginfo_rss('url') ) ?></link>
 	<description><?php echo esc_html( $description ); ?></description>
-	<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', 1( 'GMT' ), false ) ); ?></lastBuildDate>
+	<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>
 	<language><?php echo esc_html( $language ); ?></language>
 	<copyright><?php echo esc_html( $copyright ); ?></copyright>
 	<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>

@@ -70,53 +70,82 @@ class SSP_Frontend {
 	}
 
 	/**
-	 * Dislpay episode meta data
+	 * Add episode player to podcast content
 	 * @param  string $content Episode content
 	 * @return string          Updated episode content
 	 */
 	public function content_meta_data( $content ) {
 		global $post;
 
-		if( ! apply_filters( 'ssp_hide_episode_meta', get_option( 'ss_podcasting_hide_content_meta' ), $post ) ) {
+		if( ( 'podcast' == get_post_type() && is_single() ) && ! is_feed( 'podcast' ) ) {
 
-			if( ( 'podcast' == get_post_type() && is_single() ) && ! is_feed( 'podcast' ) ) {
+			$post_id = get_the_ID();
 
-				$post_id = get_the_ID();
-				$file = $this->get_enclosure( $post_id );
+			$player = $this->get_player( $post_id, false );
 
-				$meta = '';
-
-				if( $file ) {
-					$link = $this->get_episode_download_link( $post_id );
-					$duration = get_post_meta( $post_id , 'duration' , true );
-					$size = get_post_meta( $post_id , 'filesize' , true );
-					if( ! $size ) {
-						$size = $this->get_file_size( $file );
-						$size = $size['formatted'];
-						if( $size ) {
-							update_post_meta( $post_id, 'filesize', $size['formatted'] );
-							update_post_meta( $post_id, 'filesize_raw', $size['raw'] );
-						}
-					}
-
-					$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
-
-					$meta .= '<div class="podcast_meta"><aside>';
-					if( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-					if( $duration && strlen( $duration ) > 0 ) { if( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
-					if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
-					$meta .= '</aside></div>';
-				}
-
-				$meta = apply_filters( 'ssp_episode_meta', $meta, $post_id );
-
-				$content = $meta . $content;
-
-			}
+			$content = $player . $content;
 		}
 
 		return $content;
+	}
+	
+	/**
+	 * Create a podcast player with or without metadata
+	 * @param  int    $post_id    The post id
+	 * @param  bool   $hide_meta  Whether to hide podcast metadata. Defaults to false
+	 * @return string             Markup for displaying the podcast
+	 */
+	public function get_player( $post_id, $hide_meta = false ) {
+		
+		$hide_meta = apply_filters( 'ssp_hide_episode_meta', get_option( 'ss_podcasting_hide_content_meta' ), $post_id );
+		
+		$file = $this->get_enclosure( $post_id );
 
+		$markup = '';
+
+		if( $file ) {
+			$link = $this->get_episode_download_link( $post_id );
+			$duration = get_post_meta( $post_id , 'duration' , true );
+			$size = get_post_meta( $post_id , 'filesize' , true );
+			if( ! $size ) {
+				$size = $this->get_file_size( $file );
+				$size = $size['formatted'];
+				if( $size ) {
+					update_post_meta( $post_id, 'filesize', $size['formatted'] );
+					update_post_meta( $post_id, 'filesize_raw', $size['raw'] );
+				}
+			}
+
+			$markup .= '<div class="podcast_player">';
+
+			$markup .= '<div class="podcast_audio">' . $this->audio_player( $file ) . '</div>';
+			
+			if( ! $hide_meta ) {
+				$markup .= '<div class="podcast_meta"><aside>';
+				if( $link && strlen( $link ) > 0 ) { 
+					$markup .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; 
+				}
+				if( $duration && strlen( $duration ) > 0 ) { 
+					if( $link && strlen( $link ) > 0 ) { 
+						$markup .= ' | '; 
+					} 
+					$markup .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; 
+				}
+				if( $size && strlen( $size ) > 0 ) { 
+					if( ( $duration && strlen( $duration ) > 0 ) || ( $file && strlen( $file ) > 0 ) ) { 
+						$markup .= ' | '; 
+					} 
+					$markup .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; 
+				}
+				$markup .= '</aside></div>';
+			}
+			
+			$markup .= '</div>';
+		}
+
+		$markup = apply_filters( 'ssp_episode_meta', $markup, $post_id );
+		
+		return $markup;
 	}
 
 	/**

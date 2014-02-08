@@ -389,6 +389,7 @@ class SSP_Admin {
 	 */
 	public function meta_box_save( $post_id ) {
 		global $post, $messages;
+		$ss_podcasting = $GLOBALS['ss_podcasting'];
 
 		// Verify
 		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) {
@@ -432,7 +433,7 @@ class SSP_Admin {
 
 			// Get file Duration
 			if ( get_post_meta( $post_id , 'duration' , true ) == '' ) {
-				$duration = $this->get_file_duration( $enclosure );
+				$duration = $ss_podcasting->get_file_duration( $enclosure );
 				if( $duration ) {
 					update_post_meta( $post_id , 'duration' , $duration );
 				}
@@ -440,7 +441,7 @@ class SSP_Admin {
 
 			// Get file size
 			if ( get_post_meta( $post_id , 'filesize' , true ) == '' ) {
-				$filesize = $this->get_file_size( $enclosure );
+				$filesize = $ss_podcasting->get_file_size( $enclosure );
 				if( $filesize ) {
 					update_post_meta( $post_id , 'filesize' , $filesize['formatted'] );
 					update_post_meta( $post_id , 'filesize_raw' , $filesize['raw'] );

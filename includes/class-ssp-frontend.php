@@ -468,7 +468,7 @@ class SSP_Frontend {
 	 */
 	public function rss_meta_tag() {
 
-		$feed_url = $this->site_url . 'feed/' . $this->token;
+		$feed_url = $this->home_url . 'feed/' . $this->token;
 		$custom_feed_url = get_option('ss_podcasting_feed_url');
 		if( $custom_feed_url ) {
 			$feed_url = $custom_feed_url;

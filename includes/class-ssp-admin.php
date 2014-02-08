@@ -94,7 +94,7 @@ class SSP_Admin {
 		$labels = array(
 			'name' => _x( 'Podcast', 'post type general name' , 'ss-podcasting' ),
 			'singular_name' => _x( 'Podcast', 'post type singular name' , 'ss-podcasting' ),
-			'add_new' => _x( 'Add New', $this->token , 'ss-podcasting' ),
+			'add_new' => _x( 'Add New', 'podcast' , 'ss-podcasting' ),
 			'add_new_item' => sprintf( __( 'Add New %s' , 'ss-podcasting' ), __( 'Episode' , 'ss-podcasting' ) ),
 			'edit_item' => sprintf( __( 'Edit %s' , 'ss-podcasting' ), __( 'Episode' , 'ss-podcasting' ) ),
 			'new_item' => sprintf( __( 'New %s' , 'ss-podcasting' ), __( 'Episode' , 'ss-podcasting' ) ),

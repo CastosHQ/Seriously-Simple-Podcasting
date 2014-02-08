@@ -81,15 +81,15 @@ class SSP_Frontend {
 
 			if( ( 'podcast' == get_post_type() && is_single() ) && ! is_feed( 'podcast' ) ) {
 
-				$id = get_the_ID();
-				$file = $this->get_enclosure( $id );
+				$post_id = get_the_ID();
+				$file = $this->get_enclosure( $post_id );
 
 				$meta = '';
 
 				if( $file ) {
-					$link = $this->get_episode_download_link( $id );
-					$duration = get_post_meta( $id , 'duration' , true );
-					$size = get_post_meta( $id , 'filesize' , true );
+					$link = $this->get_episode_download_link( $post_id );
+					$duration = get_post_meta( $post_id , 'duration' , true );
+					$size = get_post_meta( $post_id , 'filesize' , true );
 					if( ! $size ) {
 						$size = $this->get_file_size( $file );
 						$size = $size['formatted'];

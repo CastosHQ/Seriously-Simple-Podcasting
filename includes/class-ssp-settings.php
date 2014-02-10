@@ -61,7 +61,7 @@ class SSP_Settings {
 	 * @return  void
 	 */
 	public function add_menu_item() {
-		add_submenu_page( 'edit.php?post_type=podcast' , 'Podcast Settings' , 'Settings', 'manage_options' , 'podcast_settings' , array( $this , 'settings_page' ) );
+		add_submenu_page( 'edit.php?post_type=podcast' , __( 'Podcast Settings', 'ss-podcasting' ) , __( 'Settings', 'ss-podcasting' ), 'manage_options' , 'podcast_settings' , array( $this , 'settings_page' ) );
 	}
 
 	/**
@@ -70,7 +70,7 @@ class SSP_Settings {
 	 * @return array $links Modified links
 	 */
 	public function add_plugin_links( $links ) {
-		$settings_link = '<a href="edit.php?post_type=podcast&page=podcast_settings">Settings</a>';
+		$settings_link = '<a href="edit.php?post_type=podcast&page=podcast_settings">' . __( 'Settings', 'ss-podcasting' ) . '</a>';
   		array_push( $links, $settings_link );
   		return $links;
 	}

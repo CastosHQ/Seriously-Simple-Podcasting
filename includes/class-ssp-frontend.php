@@ -116,9 +116,9 @@ class SSP_Frontend {
 				}
 			}
 
-			$markup .= '<div class="podcast_player">';
+			$markup .= '<div class="podcast_container">';
 
-			$markup .= '<div class="podcast_audio">' . $this->audio_player( $file ) . '</div>';
+			$markup .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
 			
 			if( ! $hide_meta ) {
 				$markup .= '<div class="podcast_meta"><aside>';

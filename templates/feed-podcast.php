@@ -183,105 +183,119 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 	<?php }
 
+	$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+	$allowed_post_types[] = 'podcast';
+
 	// Fetch podcast episodes
 	$args = array(
-		'post_type' => 'podcast',
+		'post_type' => $allowed_post_types,
 		'post_status' => 'publish',
-		'posts_per_page' => -1
+		'posts_per_page' => -1,
+		'meta_query' => array(
+			array(
+				'key' => 'enclosure',
+				'compare' => 'EXISTS',
+			),
+		),
 	);
 	if( isset( $_GET['podcast_series'] ) && strlen( $_GET['podcast_series'] ) > 0 ) {
 		$args['series'] = esc_attr( $_GET['podcast_series'] );
 	}
 	$qry = new WP_Query( $args );
 
-	if( $qry->have_posts() ) :
-		while( $qry->have_posts()) : $qry->the_post();
+	if( $qry->have_posts() ) {
+		while( $qry->have_posts()) {
+			$qry->the_post();
 
-		// Enclosure (audio file)
-		$enclosure = $ss_podcasting->get_enclosure( get_the_ID() );
+			// Enclosure (audio file)
+			$enclosure = $ss_podcasting->get_enclosure( get_the_ID() );
 
-		// Episode duration
-		$duration = get_post_meta( get_the_ID() , 'duration' , true );
-		if( ! $duration ) {
-			$duration = '0:00';
-		}
-
-		// File size
-		$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
-		if( ! $size ) {
-			$size = $ss_podcasting->get_file_size( $enclosure );
-			$size = esc_html( $size['raw'] );
-
-			update_post_meta( get_the_ID(), 'filesize', $size['formatted'] );
- 			update_post_meta( get_the_ID(), 'filesize_raw', $size['raw'] );
-		}
-
-		if( ! $size ) {
-			$size = 1;
-		}
-
-		// File MIME type (default to MP3 to ensure that there is always a value for this)
-		$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
-		if( ! $mime_type ) {
-			$mime_type = 'audio/mpeg';
-		}
-
-		// Episode explicit flag
-		$ep_explicit = get_post_meta( get_the_ID() , 'explicit' , true );
-		if( $ep_explicit && $ep_explicit == 'on' ) {
-			$explicit_flag = 'Yes';
-		} else {
-			$explicit_flag = 'No';
-		}
-
-		// Episode block flag
-		$ep_block = get_post_meta( get_the_ID() , 'block' , true );
-		if( $ep_block && $ep_block == 'on' ) {
-			$block_flag = 'Yes';
-		} else {
-			$block_flag = 'No';
-		}
-
-		// Episode series name
-		$series_list = wp_get_post_terms( get_the_ID() , 'series' );
-		$series = false;
-		if( $series_list && count( $series_list ) > 0 ) {
-			foreach( $series_list as $s ) {
-				$series = esc_html( $s->name );
-				break;
+			if( ! isset( $enclosure ) || ! $enclosure || $enclosure == '' ) {
+				continue;
 			}
-		}
 
-		// Episode keywords
-		$keyword_list = wp_get_post_terms( get_the_ID() , 'keywords' );
-		$keywords = false;
-		if( $keyword_list && count( $keyword_list ) > 0 ) {
-			$c = 0;
-			foreach( $keyword_list as $k ) {
-				if( $c == 0 ) {
-					$keywords = esc_html( $k->name );
-					++$c;
-				} else {
-					$keywords .= ', ' . esc_html( $k->name );
+			// Episode duration
+			$duration = get_post_meta( get_the_ID() , 'duration' , true );
+			if( ! $duration ) {
+				$duration = '0:00';
+			}
+
+			// File size
+			$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
+			if( ! $size ) {
+				$size = $ss_podcasting->get_file_size( $enclosure );
+				$size = esc_html( $size['raw'] );
+
+				update_post_meta( get_the_ID(), 'filesize', $size['formatted'] );
+	 			update_post_meta( get_the_ID(), 'filesize_raw', $size['raw'] );
+			}
+
+			if( ! $size ) {
+				$size = 1;
+			}
+
+			// File MIME type (default to MP3 to ensure that there is always a value for this)
+			$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
+			if( ! $mime_type ) {
+				$mime_type = 'audio/mpeg';
+			}
+
+			// Episode explicit flag
+			$ep_explicit = get_post_meta( get_the_ID() , 'explicit' , true );
+			if( $ep_explicit && $ep_explicit == 'on' ) {
+				$explicit_flag = 'Yes';
+			} else {
+				$explicit_flag = 'No';
+			}
+
+			// Episode block flag
+			$ep_block = get_post_meta( get_the_ID() , 'block' , true );
+			if( $ep_block && $ep_block == 'on' ) {
+				$block_flag = 'Yes';
+			} else {
+				$block_flag = 'No';
+			}
+
+			// Episode series name
+			$series_list = wp_get_post_terms( get_the_ID() , 'series' );
+			$series = false;
+			if( $series_list && count( $series_list ) > 0 ) {
+				foreach( $series_list as $s ) {
+					$series = esc_html( $s->name );
+					break;
 				}
 			}
-		}
 
-		// Episode author
-		$author = esc_html( get_the_author() );
+			// Episode keywords
+			$keyword_list = wp_get_post_terms( get_the_ID() , 'keywords' );
+			$keywords = false;
+			if( $keyword_list && count( $keyword_list ) > 0 ) {
+				$c = 0;
+				foreach( $keyword_list as $k ) {
+					if( $c == 0 ) {
+						$keywords = esc_html( $k->name );
+						++$c;
+					} else {
+						$keywords .= ', ' . esc_html( $k->name );
+					}
+				}
+			}
 
-		// Episode content
-		$content = get_the_content_feed( 'rss2' );
+			// Episode author
+			$author = esc_html( get_the_author() );
 
-		// iTunes summary does not allow any HTML and must be shorter than 4000 characters
-		$itunes_summary = strip_tags( get_the_content() );
-		$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( 'and', '', '', '', '', '' ), $itunes_summary );
-		$itunes_summary = substr( $itunes_summary, 0, 3950 );
+			// Episode content
+			$content = get_the_content_feed( 'rss2' );
 
-		// iTunes short description does not allow any HTML and must be shorter than 4000 characters
-		$itunes_excerpt = strip_tags( get_the_excerpt() );
-		$itunes_excerpt = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_excerpt );
-		$itunes_excerpt = substr( $itunes_excerpt, 0, 3800 );
+			// iTunes summary does not allow any HTML and must be shorter than 4000 characters
+			$itunes_summary = strip_tags( get_the_content() );
+			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( 'and', '', '', '', '', '' ), $itunes_summary );
+			$itunes_summary = substr( $itunes_summary, 0, 3950 );
+
+			// iTunes short description does not allow any HTML and must be shorter than 4000 characters
+			$itunes_excerpt = strip_tags( get_the_excerpt() );
+			$itunes_excerpt = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_excerpt );
+			$itunes_excerpt = substr( $itunes_excerpt, 0, 3800 );
 
 	?>
 	<item>
@@ -300,6 +314,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
 		<itunes:author><?php echo $author; ?></itunes:author><?php if( $keywords ) { ?>
 		<itunes:keywords><?php echo esc_html( $keywords ); ?></itunes:keywords><?php } ?>
-	</item><?php endwhile; endif; ?>
+	</item><?php }
+	} ?>
 </channel>
 </rss><?php exit; ?>

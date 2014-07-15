@@ -34,7 +34,8 @@ class SSP_Settings {
 		$this->home_url = trailingslashit( home_url() );
 		$this->token = 'podcast';
 		$this->settings_base = 'ss_podcasting_';
-		$this->settings = $this->settings_fields();
+
+		add_action( 'init', array( $this, 'load_settings' ), 11 );
 
 		// Register podcast settings
 		add_action( 'admin_init', array( $this , 'register_settings' ) );
@@ -54,6 +55,10 @@ class SSP_Settings {
 		// Display notices in the WP admin
 		add_action( 'admin_notices', array( $this, 'admin_notices' ), 10 );
 
+	}
+
+	public function load_settings() {
+		$this->settings = $this->settings_fields();
 	}
 
 	/**
@@ -102,10 +107,10 @@ class SSP_Settings {
         $user_id = $current_user->ID;
 
         // Version notice
-        if( $wp_version < 3.6 ) {
+        if( $wp_version < 3.9 ) {
 			?>
 			<div class="error">
-		        <p><?php printf( __( '%1$sSeriously Simple Podcasting%2$s requires WordPress 3.6 or above in order to function correctly. You are running v%3$s - please update now.', 'ss-podcasting' ), '<strong>', '</strong>', $wp_version ); ?></p>
+		        <p><?php printf( __( '%1$sSeriously Simple Podcasting%2$s requires WordPress 3.9 or above in order to function correctly. You are running v%3$s - please update now.', 'ss-podcasting' ), '<strong>', '</strong>', $wp_version ); ?></p>
 		    </div>
 		    <?php
 		}
@@ -116,18 +121,18 @@ class SSP_Settings {
 	 * @return array Fields to be displayed on settings page
 	 */
 	private function settings_fields() {
+		global $wp_post_types;
+
+		// Set options for post type selection
+		foreach( $wp_post_types as $post_type => $data ) {
+			if( in_array( $post_type, array( 'page', 'attachment', 'revision', 'nav_menu_item', 'wooframework', 'podcast' ) ) ) continue;
+			$post_type_options[ $post_type ] = $data->labels->name;
+		}
 
 		$settings['customise'] = array(
 			'title'					=> __( 'Customise', 'ss-podcasting' ),
 			'description'			=> __( 'These are a few simple settings to make your podcast work the way you want it to work.', 'ss-podcasting' ),
 			'fields'				=> array(
-				// array(
-				// 	'id' 			=> 'use_templates',
-				// 	'label'			=> __( 'Use built-in plugin templates', 'ss-podcasting' ),
-				// 	'description'	=> sprintf( __( 'Select this to use the built-in templates for the podcast archive and single pages. If you leave this disabled then your theme\'s default post templates will be used unless you %1$screate your own%2$s', 'ss-podcasting' ), '<a href="' . esc_url( 'http://codex.wordpress.org/Post_Type_Templates' ) . '" target="' . esc_attr( '_blank' ) . '">', '</a>' ),
-				// 	'type'			=> 'checkbox',
-				// 	'default'		=> ''
-				// ),
 				// array(
 				// 	'id' 			=> 'slug',
 				// 	'label'			=> __( 'URL slug for podcast pages', 'ss-podcasting' ),
@@ -138,20 +143,28 @@ class SSP_Settings {
 				// 	'callback'		=> array( $this, 'validate_slug' )
 				// ),
 				array(
+					'id' 			=> 'use_post_types',
+					'label'			=> __( 'Podcast post types:', 'ss-podcasting' ),
+					'description'	=> __( 'Use this setting to enable podcast functions on any post type - this will add all podcast posts from the specified types to your podcast feed.', 'ss-podcasting' ),
+					'type'			=> 'checkbox_multi',
+					'options'		=> $post_type_options,
+					'default'		=> array(),
+				),
+				array(
 					'id' 			=> 'include_in_main_query',
 					'label'			=> __( 'Include podcast in main blog', 'ss-podcasting' ),
 					'description'	=> __( 'This setting may behave differently in each theme, so test it carefully after activation - it will add the \'podcast\' post type to your site\'s main query so that your podcast episodes appear on your home page along with your blog posts.', 'ss-podcasting' ),
 					'type'			=> 'checkbox',
-					'default'		=> ''
+					'default'		=> '',
 				),
 				array(
 					'id' 			=> 'hide_content_meta',
 					'label'			=> __( 'Hide episode data and audio player', 'ss-podcasting' ),
 					'description'	=> sprintf( __( 'Select this to %1$shide%2$s the podcast audio player along with the episode data (download link, duration and file size) wherever the full content of the episode is displayed.', 'ss-podcasting' ), '<em>', '</em>' ),
 					'type'			=> 'checkbox',
-					'default'		=> ''
-				)
-			)
+					'default'		=> '',
+				),
+			),
 		);
 
 		$settings['describe'] = array(
@@ -434,7 +447,36 @@ class SSP_Settings {
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . '/>' . "\n";
 			break;
 
+			case 'checkbox_multi':
+				foreach( $field['options'] as $k => $v ) {
+					$checked = false;
+					if( in_array( $k, $data ) ) {
+						$checked = true;
+					}
+					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label><br/>';
+				}
+			break;
+
+			case 'radio':
+				foreach( $field['options'] as $k => $v ) {
+					$checked = false;
+					if( $k == $data ) {
+						$checked = true;
+					}
+					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label> ';
+				}
+			break;
+
 			case 'select':
+				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '">';
+				foreach( $field['options'] as $k => $v ) {
+					$selected = false;
+					if( $k == $data ) {
+						$selected = true;
+					}
+					$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>';
+				}
+				$html .= '</select> ';
 			break;
 
 			case 'image':
@@ -469,7 +511,18 @@ class SSP_Settings {
 		}
 
 		if( ! in_array( $field['type'], array( 'feed_link', 'feed_link_series', 'podcast_url' ) ) ) {
-			$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n";
+			switch( $field['type'] ) {
+
+				case 'checkbox_multi':
+				case 'radio':
+				case 'select_multi':
+					$html .= '<br/><span class="description">' . $field['description'] . '</span>';
+				break;
+
+				default:
+					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n";
+				break;
+			}
 		}
 
 		echo $html;

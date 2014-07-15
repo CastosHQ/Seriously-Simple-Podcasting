@@ -37,7 +37,7 @@ class SSP_Admin {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Regsiter podcast post type and taxonomies
-		add_action('init', array( $this, 'register_post_type' ) );
+		add_action( 'init', array( $this, 'register_post_type' ) );
 
 		// Register podcast feed
 		add_action( 'init', array( $this, 'add_feed' ) );
@@ -328,7 +328,13 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function meta_box_setup () {
+
 		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $this->token, 'normal', 'high' );
+
+		$other_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+		foreach( $other_post_types as $post_type ) {
+			add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $post_type, 'normal', 'high' );
+		}
 
 		// Allow more metaboxes to be added
 		do_action( 'ssp_meta_boxes' );
@@ -388,10 +394,13 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function meta_box_save( $post_id ) {
-		global $post, $messages;
+		global $post, $messages, $ss_podcasting;
 
-		// Verify
-		if ( ( get_post_type() != $this->token ) || ! wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) {
+		$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+		$allowed_post_types[] = $this->token;
+
+		// Security check
+		if ( ( ! in_array( get_post_type(), $allowed_post_types ) ) || ! wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) {
 			return $post_id;
 		}
 
@@ -432,7 +441,7 @@ class SSP_Admin {
 
 			// Get file Duration
 			if ( get_post_meta( $post_id , 'duration' , true ) == '' ) {
-				$duration = $this->get_file_duration( $enclosure );
+				$duration = $ss_podcasting->get_file_duration( $enclosure );
 				if( $duration ) {
 					update_post_meta( $post_id , 'duration' , $duration );
 				}
@@ -440,7 +449,7 @@ class SSP_Admin {
 
 			// Get file size
 			if ( get_post_meta( $post_id , 'filesize' , true ) == '' ) {
-				$filesize = $this->get_file_size( $enclosure );
+				$filesize = $ss_podcasting->get_file_size( $enclosure );
 				if( $filesize ) {
 					update_post_meta( $post_id , 'filesize' , $filesize['formatted'] );
 					update_post_meta( $post_id , 'filesize_raw' , $filesize['raw'] );
@@ -468,7 +477,7 @@ class SSP_Admin {
 
 		$fields['duration'] = array(
 		    'name' => __( 'Duration:' , 'ss-podcasting' ),
-		    'description' => __( 'Duration of audio file as it will be displayed on the site. <b>This will be calculated automatically if possible - fill in a value here to override the automatic calculation.</b> This will ONLY work for files uploaded to this server - if a value is not calculated then you can fill in your own data. Leave the field blank to force a recalculation.' , 'ss-podcasting' ),
+		    'description' => __( 'Duration of audio file as it will be displayed on the site - will be calculated automatically if possible.' , 'ss-podcasting' ),
 		    'type' => 'text',
 		    'default' => '',
 		    'section' => 'info'
@@ -476,7 +485,7 @@ class SSP_Admin {
 
 		$fields['filesize'] = array(
 		    'name' => __( 'File size:' , 'ss-podcasting' ),
-		    'description' => __( 'Size of the audio file as it will be displayed on the site. <b>This will be calculated automatically if possible - fill in a value here to override the automatic calculation.</b> If a value is not calculated then you can fill in your own data. Leave the field blank to force a recalculation.' , 'ss-podcasting' ),
+		    'description' => __( 'Size of the audio file as it will be displayed on the site - will be calculated automatically if possible.' , 'ss-podcasting' ),
 		    'type' => 'text',
 		    'default' => '',
 		    'section' => 'info'

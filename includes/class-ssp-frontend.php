@@ -79,17 +79,20 @@ class SSP_Frontend {
 
 		if( ! apply_filters( 'ssp_hide_episode_meta', get_option( 'ss_podcasting_hide_content_meta' ), $post ) ) {
 
-			if( ( 'podcast' == get_post_type() && is_single() ) && ! is_feed( 'podcast' ) ) {
+			$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+			$allowed_post_types[] = $this->token;
 
-				$id = get_the_ID();
-				$file = $this->get_enclosure( $id );
+			if( ( in_array( get_post_type(), $allowed_post_types ) && is_single() ) && ! is_feed( 'podcast' ) ) {
+
+				$post_id = get_the_ID();
+				$file = $this->get_enclosure( $post_id );
 
 				$meta = '';
 
 				if( $file ) {
-					$link = $this->get_episode_download_link( $id );
-					$duration = get_post_meta( $id , 'duration' , true );
-					$size = get_post_meta( $id , 'filesize' , true );
+					$link = $this->get_episode_download_link( $post_id );
+					$duration = get_post_meta( $post_id , 'duration' , true );
+					$size = get_post_meta( $post_id , 'filesize' , true );
 					if( ! $size ) {
 						$size = $this->get_file_size( $file );
 						$size = $size['formatted'];

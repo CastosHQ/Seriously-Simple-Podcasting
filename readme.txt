@@ -2,29 +2,37 @@
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
-Requires at least: 3.5
-Tested up to: 3.8
+Requires at least: 3.6
+Tested up to: 4.1
 Stable tag: 1.7.5
-License: GPLv3 or later
-License URI: http://www.gnu.org/licenses/gpl-3.0.html
+License: GPLv2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Podcasting done right.
+Podcasting the way it's meant to be.
 
 == Description ==
 
-"Seriously Simple Podcasting" is a simple and easy-to-use podcasting solution for WordPress. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content. Quite simply, it is podcasting done right.
+"Seriously Simple Podcasting" is a simple and easy-to-use podcasting solution for WordPress. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
 It comes with built-in templates, widget and shortcode so you can display your podcast however you like. It also has easy subscribe links for iTunes listeners and standard RSS subscribers.
 
-Podcast episodes are playable directly on your site using the built-in media player included in WordPress 3.6 and above. If you are using an older version of WordPress then the same audio player is included in the plugin (although it will be removed in future versions).
+**Primary Features**
 
-The plugin is fully translatable using WPML.
+- New `podcast` post type and `series` taxonomy for managing your podcast episodes
+- Customisable templates for podcast pages
+- Highly configurable RSS feed designed for all podcast services, including iTunes
+- Widget and shortcode for displaying podcast episodes anywhere on your site
+- Playable episodes using the built-in WordPress media player
+- Simple settings so you can get your podcast up and running quickly
+- Allows audio files to be hosted on the same site or any other server
+- Full i18n support
 
-CONTRIBUTE ON GITHUB: https://github.com/hlashbrooke/Seriously-Simple-Podcasting
+**Some examples of the plugin in action**
 
-SEE AN EXAMPLE OF THE PLUGIN IN ACTION: http://www.southerncrosschurch.org/sermons/
+- [Southern Cross Church](http://www.southerncrosschurch.org/sermons/)
+- [WP Cape Town](http://www.wpcapetown.co.za/podcast/)
 
-TAKE A QUICK USER SURVEY: https://docs.google.com/forms/d/1PbMBocuGZq4K_LV2dL-GfmAJwNlsT76HUbr5fgRZxfo/viewform
+Want to contribute? [Fork the GitHub repository](https://github.com/hlashbrooke/Seriously-Simple-Podcasting).
 
 == Usage ==
 
@@ -68,9 +76,9 @@ This issue actually has nothing to do with this plugin. Your server and your Wor
 There could be a few reasons for this:
 
 1. Your episode audio file is reference to folder and not a specific file
-1. The audio file is password protected
-1. Your site is running on an IP address and not a domain name
-1. You have one of these plugins installed & activated on your site: 'WP Audio Player' or 'MediaElement.js - HTML5 Video & Audio Player'
+2. The audio file is password protected
+3. Your site is running on an IP address and not a domain name
+4. You have one of these plugins installed & activated on your site: 'WP Audio Player' or 'MediaElement.js - HTML5 Video & Audio Player'
 
 If any of these are true for you then that will most likely be the reason that the media player is not showing on your podcast episodes.
 
@@ -88,8 +96,8 @@ There is currently no documentation for this plugin, but you can post questions 
 
 = I have an idea for this plugin - how can I make it known? =
 
-If you have an idea for the plugin, feel free to post on the support forum here: http://wordpress.org/support/plugin/seriously-simple-podcasting.
-If you would like to contribute to the code then you can fork the GitHub repo here: https://github.com/hlashbrooke/Seriously-Simple-Podcasting - your pull requests will be reviewed and merged if they fit into the goals for this plugin. All contributors will be given credit where it is due.
+If you have an idea for the plugin, feel free to post on the support forum [here](http://wordpress.org/support/plugin/seriously-simple-podcasting_.
+If you would like to contribute to the code then you can fork the GitHub repo [here](https://github.com/hlashbrooke/Seriously-Simple-Podcasting) - your pull requests will be reviewed and merged if they fit into the goals for this plugin. All contributors will be given credit where it is due.
 
 == Screenshots ==
 

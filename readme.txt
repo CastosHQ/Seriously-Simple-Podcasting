@@ -103,7 +103,7 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 == Changelog ==
 
 = 1.8 =
-* 2015-01-31
+* 2015-01-13
 * [NEW] Allowing any post type to be used for podcast episodes
 * [NEW] Changing options for displaying audio player and episode details
 * [NEW] Removing built-in templates
@@ -114,6 +114,7 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 * [NEW] Generating feed correctly using add_feed() and ensuring backwards compatibility for older versions
 * [NEW] Commenting all the things
 * [NEW] Adding brand new actions and filters everywhere
+* [TWEAK] Changing dashboard menu icon to something more relevant
 * [TWEAK] Improving file size calculations and saving (kudos danielpunkass)
 * [TWEAK] Optimising feed template
 
@@ -322,4 +323,4 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 == Upgrade Notice ==
 
 = 1.8 =
-* This is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING: http://www.hughlashbrooke.com/.
+* This is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.

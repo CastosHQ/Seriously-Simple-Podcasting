@@ -35,10 +35,12 @@ class SSP_Settings {
 		$this->token = 'podcast';
 		$this->settings_base = 'ss_podcasting_';
 
+		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 		add_action( 'init', array( $this, 'load_settings' ), 11 );
 
 		// Register podcast settings
-		add_action( 'admin_init', array( $this , 'register_settings' ) );
+		add_action( 'admin_init' , array( $this, 'register_settings' ) );
 
 		// Add settings page to menu
 		add_action( 'admin_menu', array( $this , 'add_menu_item' ) );
@@ -47,13 +49,10 @@ class SSP_Settings {
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array( $this , 'add_plugin_links' ) );
 
 		// Load scripts for settings page
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) , 10 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) , 10 );
 
 		// Mark date on which feed redirection was activated
 		add_action( 'update_option', array( $this, 'mark_feed_redirect_date' ) , 10 , 3 );
-
-		// Display notices in the WP admin
-		add_action( 'admin_notices', array( $this, 'admin_notices' ), 10 );
 
 	}
 
@@ -84,36 +83,14 @@ class SSP_Settings {
 	 * Load admin javascript
 	 * @return void
 	 */
-	public function enqueue_admin_scripts() {
-		global $wp_version;
+	public function enqueue_scripts() {
 
 		// Admin JS
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '2.0.0' );
+		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array( 'jquery' ), '1.8.0' );
 		wp_enqueue_script( 'ss_podcasting-admin' );
 
-		if( $wp_version >= 3.5 ) {
-			// Media uploader scripts
-			wp_enqueue_media();
-		}
+		wp_enqueue_media();
 
-	}
-
-	/**
-	 * Display notices in the WordPress dashboard
-	 * @return void
-	 */
-	public function admin_notices() {
-		global $current_user, $wp_version;
-        $user_id = $current_user->ID;
-
-        // Version notice
-        if( $wp_version < 3.9 ) {
-			?>
-			<div class="error">
-		        <p><?php printf( __( '%1$sSeriously Simple Podcasting%2$s requires WordPress 3.9 or above in order to function correctly. You are running v%3$s - please update now.', 'ss-podcasting' ), '<strong>', '</strong>', $wp_version ); ?></p>
-		    </div>
-		    <?php
-		}
 	}
 
 	/**
@@ -129,22 +106,13 @@ class SSP_Settings {
 			$post_type_options[ $post_type ] = $data->labels->name;
 		}
 
-		$settings['customise'] = array(
-			'title'					=> __( 'Customise', 'ss-podcasting' ),
-			'description'			=> __( 'These are a few simple settings to make your podcast work the way you want it to work.', 'ss-podcasting' ),
+		$settings['general'] = array(
+			'title'					=> __( 'General', 'ss-podcasting' ),
+			'description'			=> __( '', 'ss-podcasting' ),
 			'fields'				=> array(
-				// array(
-				// 	'id' 			=> 'slug',
-				// 	'label'			=> __( 'URL slug for podcast pages', 'ss-podcasting' ),
-				// 	'description'	=> sprintf( __( 'Provide a custom URL slug for the podcast archive and single pages. You must re-save your %1$spermalinks%2$s after changing this setting. No matter what you put here your podcast will always be visible at %3$s.', 'ss-podcasting' ), '<a href="' . esc_attr( 'options-permalink.php' ) . '">', '</a>', '<a href="' . esc_url( $this->home_url . '?post_type=podcast' ) . '">' . $this->home_url . '?post_type=podcast</a>' ),
-				// 	'type'			=> 'text',
-				// 	'default'		=> 'podcast',
-				// 	'placeholder'	=> '',
-				// 	'callback'		=> array( $this, 'validate_slug' )
-				// ),
 				array(
 					'id' 			=> 'use_post_types',
-					'label'			=> __( 'Podcast post types:', 'ss-podcasting' ),
+					'label'			=> __( 'Podcast post types', 'ss-podcasting' ),
 					'description'	=> __( 'Use this setting to enable podcast functions on any post type - this will add all podcast posts from the specified types to your podcast feed.', 'ss-podcasting' ),
 					'type'			=> 'checkbox_multi',
 					'options'		=> $post_type_options,
@@ -158,17 +126,18 @@ class SSP_Settings {
 					'default'		=> '',
 				),
 				array(
-					'id' 			=> 'hide_content_meta',
-					'label'			=> __( 'Hide episode data and audio player', 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Select this to %1$shide%2$s the podcast audio player along with the episode data (download link, duration and file size) wherever the full content of the episode is displayed.', 'ss-podcasting' ), '<em>', '</em>' ),
-					'type'			=> 'checkbox',
-					'default'		=> '',
+					'id' 			=> 'player_locations',
+					'label'			=> __( 'Audio player locations', 'ss-podcasting' ),
+					'description'	=> __( 'Select where to show the podcast audio player along with the episode data (download link, duration and file size)', 'ss-podcasting' ),
+					'type'			=> 'checkbox_multi',
+					'options'		=> array( 'content' => __( 'Full content', 'ss-podcasting' ), 'excerpt' => __( 'Excerpt', 'ss-podcasting' ) ),
+					'default'		=> array( 'content' ),
 				),
 			),
 		);
 
-		$settings['describe'] = array(
-			'title'					=> __( 'Describe', 'ss-podcasting' ),
+		$settings['feed-details'] = array(
+			'title'					=> __( 'Feed details', 'ss-podcasting' ),
 			'description'			=> sprintf( __( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe.%1$sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.%2$s', 'ss-podcasting' ), '<br/><em>', '</em>' ),
 			'fields'				=> array(
 				array(
@@ -270,8 +239,8 @@ class SSP_Settings {
 			)
 		);
 
-		$settings['protect'] = array(
-			'title'					=> __( 'Protect', 'ss-podcasting' ),
+		$settings['security'] = array(
+			'title'					=> __( 'Security', 'ss-podcasting' ),
 			'description'			=> __( 'Change these settings to ensure that your podcast feed remains private. This will block feed readers (including iTunes) from accessing your feed.', 'ss-podcasting' ),
 			'fields'				=> array(
 				array(
@@ -310,8 +279,8 @@ class SSP_Settings {
 			)
 		);
 
-		$settings['redirect'] = array(
-			'title'					=> __( 'Redirect', 'ss-podcasting' ),
+		$settings['redirection'] = array(
+			'title'					=> __( 'Redirection', 'ss-podcasting' ),
 			'description'			=> __( 'Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active.', 'ss-podcasting' ),
 			'fields'				=> array(
 				array(
@@ -333,8 +302,8 @@ class SSP_Settings {
 			)
 		);
 
-		$settings['publish'] = array(
-			'title'					=> __( 'Publish' , 'ss-podcasting' ),
+		$settings['publishing'] = array(
+			'title'					=> __( 'Publishing' , 'ss-podcasting' ),
 			'description'			=> __( 'Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes).' , 'ss-podcasting' ),
 			'fields'				=> array(
 				array(
@@ -378,11 +347,24 @@ class SSP_Settings {
 	 */
 	public function register_settings() {
 		if( is_array( $this->settings ) ) {
+
+			// Check posted/selected tab
+			$current_section = 'general';
+			if ( isset( $_POST['tab'] ) && $_POST['tab'] ) {
+				$current_section = $_POST['tab'];
+			} else {
+				if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {
+					$current_section = $_GET['tab'];
+				}
+			}
+
 			foreach( $this->settings as $section => $data ) {
+
+				if ( $current_section && $current_section != $section ) continue;
 
 				// Add section to page
 				add_settings_section( $section, $data['title'], '', 'ss_podcasting' );
-
+				add_settings_section( $section, $data['title'], array( $this, 'settings_section' ), 'ss_podcasting' );
 				foreach( $data['fields'] as $field ) {
 
 					// Validation callback for field
@@ -396,10 +378,15 @@ class SSP_Settings {
 					register_setting( 'ss_podcasting', $option_name, $validation );
 
 					// Add field to page
-					add_settings_field( $field['id'], $field['label'], array( $this, 'display_field' ), 'ss_podcasting', $section, array( 'field' => $field ) );
+					add_settings_field( $field['id'], $field['label'], array( $this, 'display_field' ), 'ss_podcasting', $section, array( 'field' => $field, 'prefix' => $this->settings_base ) );
 				}
 			}
 		}
+	}
+
+	public function settings_section ( $section ) {
+		$html = '<p> ' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
+		echo $html;
 	}
 
 	/**
@@ -612,19 +599,53 @@ class SSP_Settings {
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";
 			$html .= '<h2>' . __( 'Podcast Settings' , 'ss-podcasting' ) . '</h2>' . "\n";
 
-			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
+			$tab = 'general';
+			if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {
+				$tab = $_GET['tab'];
+			}
 
-				// Setup navigation
-				$html .= '<ul id="settings-sections" class="subsubsub hide-if-no-js">' . "\n";
-					$html .= '<li><a class="tab all current" href="#all">' . __( 'All' , 'ss-podcasting' ) . '</a></li>' . "\n";
+			// Show page tabs
+			if ( is_array( $this->settings ) && 1 < count( $this->settings ) ) {
 
-					foreach( $this->settings as $section => $data ) {
-						$html .= '<li>| <a class="tab" href="#' . $section . '">' . $data['title'] . '</a></li>' . "\n";
+				$html .= '<h2 class="nav-tab-wrapper">' . "\n";
+
+				$c = 0;
+				foreach ( $this->settings as $section => $data ) {
+
+					// Set tab class
+					$class = 'nav-tab';
+					if ( ! isset( $_GET['tab'] ) ) {
+						if ( 0 == $c ) {
+							$class .= ' nav-tab-active';
+						}
+					} else {
+						if ( isset( $_GET['tab'] ) && $section == $_GET['tab'] ) {
+							$class .= ' nav-tab-active';
+						}
 					}
 
-				$html .= '</ul>' . "\n";
+					// Set tab link
+					$tab_link = add_query_arg( array( 'tab' => $section ) );
+					if ( isset( $_GET['settings-updated'] ) ) {
+						$tab_link = remove_query_arg( 'settings-updated', $tab_link );
+					}
 
-				$html .= '<div class="clear"></div>' . "\n";
+					// Output tab
+					$html .= '<a href="' . $tab_link . '" class="' . esc_attr( $class ) . '">' . esc_html( $data['title'] ) . '</a>' . "\n";
+
+					++$c;
+				}
+
+				$html .= '</h2>' . "\n";
+			}
+
+			if ( isset( $_GET['settings-updated'] ) ) {
+				$html .= '<br/><div class="updated">
+					        <p>' . sprintf( __( '%1$s settings updated.', 'ss-podcasting' ), '<b>' . str_replace( '-', ' ', ucfirst( $tab ) ) . '</b>' ) . '</p>
+					    </div>';
+			}
+
+			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 
 				// Get settings fields
 				ob_start();
@@ -634,6 +655,7 @@ class SSP_Settings {
 
 				// Submit button
 				$html .= '<p class="submit">' . "\n";
+					$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
 					$html .= '<input name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings' , 'ss-podcasting' ) ) . '" />' . "\n";
 				$html .= '</p>' . "\n";
 

@@ -193,7 +193,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		'posts_per_page' => -1,
 		'meta_query' => array(
 			array(
-				'key' => 'enclosure',
+				'key' => 'audio_file',
 				'compare' => 'EXISTS',
 			),
 		),
@@ -207,10 +207,10 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		while( $qry->have_posts()) {
 			$qry->the_post();
 
-			// Enclosure (audio file)
-			$enclosure = $ss_podcasting->get_enclosure( get_the_ID() );
+			// Audio file
+			$audio_file = $ss_podcasting->get_enclosure( get_the_ID() );
 
-			if( ! isset( $enclosure ) || ! $enclosure || $enclosure == '' ) {
+			if( ! isset( $audio_file ) || ! $audio_file || $audio_file == '' ) {
 				continue;
 			}
 
@@ -223,7 +223,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			// File size
 			$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
 			if( ! $size ) {
-				$size = $ss_podcasting->get_file_size( $enclosure );
+				$size = $ss_podcasting->get_file_size( $audio_file );
 				$size = esc_html( $size['raw'] );
 
 				update_post_meta( get_the_ID(), 'filesize', $size['formatted'] );
@@ -235,7 +235,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			}
 
 			// File MIME type (default to MP3 to ensure that there is always a value for this)
-			$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
+			$mime_type = $ss_podcasting->get_attachment_mimetype( $audio_file );
 			if( ! $mime_type ) {
 				$mime_type = 'audio/mpeg';
 			}
@@ -308,7 +308,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<itunes:subtitle><?php echo $itunes_excerpt; ?></itunes:subtitle>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
 		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
-		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
+		<enclosure url="<?php echo esc_url( $audio_file ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo esc_html( $explicit_flag ); ?></itunes:explicit>
 		<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
 		<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>

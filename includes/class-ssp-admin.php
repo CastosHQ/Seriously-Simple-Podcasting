@@ -32,6 +32,8 @@ class SSP_Admin {
 		$this->home_url = trailingslashit( home_url() );
 		$this->token = 'podcast';
 
+		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+
 		// Handle localisation
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
@@ -48,7 +50,7 @@ class SSP_Admin {
 		if ( is_admin() ) {
 
 			// Episode meta box
-			add_action( 'admin_menu', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ) );
 
 			// Episode edit screen
@@ -107,28 +109,25 @@ class SSP_Admin {
 			'menu_name' => __( 'Podcast' , 'ss-podcasting' )
 		);
 
-		$slug = __( 'podcast' , 'ss-podcasting' );
-		$custom_slug = get_option( 'ss_podcasting_slug' );
-		if( $custom_slug && strlen( $custom_slug ) > 0 && $custom_slug != '' ) {
-			$slug = $custom_slug;
-		}
-
-		$slug = apply_filters( 'ssp_archive_slug', $slug );
+		$slug = apply_filters( 'ssp_archive_slug', __( 'podcast' , 'ss-podcasting' ) );
 
 		$args = array(
 			'labels' => $labels,
 			'public' => true,
 			'publicly_queryable' => true,
+			'exclude_from_search' => false,
 			'show_ui' => true,
 			'show_in_menu' => true,
+			'show_in_nav_menus' => true,
 			'query_var' => true,
+			'can_export' => true,
 			'rewrite' => array( 'slug' => $slug, 'feeds' => true ),
 			'capability_type' => 'post',
 			'has_archive' => true,
 			'hierarchical' => false,
 			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'comments', 'author', 'custom-fields' ),
 			'menu_position' => 5,
-			'menu_icon' => ''
+			'menu_icon' => 'dashicons-microphone',
 		);
 
 		register_post_type( $this->token, $args );
@@ -332,7 +331,7 @@ class SSP_Admin {
 		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $this->token, 'normal', 'high' );
 
 		$other_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		foreach( $other_post_types as $post_type ) {
+		foreach( (array) $other_post_types as $post_type ) {
 			add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $post_type, 'normal', 'high' );
 		}
 
@@ -346,7 +345,7 @@ class SSP_Admin {
 	 */
 	public function meta_box_content() {
 		global $post_id;
-		$fields = get_post_custom( $post_id );
+
 		$field_data = $this->custom_fields();
 
 		$html = '';
@@ -361,11 +360,12 @@ class SSP_Admin {
 
 			foreach ( $field_data as $k => $v ) {
 				$data = $v['default'];
-				if ( isset( $fields[$k] ) && isset( $fields[$k][0] ) ) {
-					$data = $fields[$k][0];
+				$saved = get_post_meta( $post_id, $k, true );
+				if( $saved ) {
+					$data = $saved;
 				}
 
-				if( $k == 'enclosure' ) {
+				if( $k == 'audio_file' ) {
 					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input type="button" class="button" id="upload_audio_file_button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" data-uploader_title="Choose a file" data-uploader_button_text="Insert audio file" /><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 					$html .= '</td><tr/>' . "\n";
@@ -416,32 +416,32 @@ class SSP_Admin {
 
 		$field_data = $this->custom_fields();
 		$fields = array_keys( $field_data );
+		$audio_file = '';
 
-		foreach ( $fields as $f ) {
+		foreach ( $field_data as $k => $field ) {
 
-			if( isset( $_POST[$f] ) ) {
-				${$f} = strip_tags( trim( $_POST[$f] ) );
+			$val = '';
+			if( isset( $_POST[ $k ] ) ) {
+				$val = strip_tags( trim( $_POST[ $k ] ) );
 			}
 
 			// Escape the URLs.
-			if ( 'url' == $field_data[$f]['type'] ) {
-				${$f} = esc_url( ${$f} );
+			if ( 'url' == $field['type'] ) {
+				$val = esc_url( $val );
 			}
 
-			if( $f == 'enclosure' ) { $enclosure = ${$f}; }
-
-			if( ! isset( ${$f} ) || '' == ${$f} ) {
-				delete_post_meta( $post_id , $f , get_post_meta( $post_id , $f , true ) );
-			} else {
-				update_post_meta( $post_id , $f , ${$f} );
+			if( $f == 'audio_file' ) {
+				$audio_file = $val;
 			}
+
+			update_post_meta( $post_id, $k, $val );
 		}
 
-		if( isset( $enclosure ) && strlen( $enclosure ) > 0 ) {
+		if( $audio_file ) {
 
 			// Get file Duration
 			if ( get_post_meta( $post_id , 'duration' , true ) == '' ) {
-				$duration = $ss_podcasting->get_file_duration( $enclosure );
+				$duration = $ss_podcasting->get_file_duration( $audio_file );
 				if( $duration ) {
 					update_post_meta( $post_id , 'duration' , $duration );
 				}
@@ -449,7 +449,7 @@ class SSP_Admin {
 
 			// Get file size
 			if ( get_post_meta( $post_id , 'filesize' , true ) == '' ) {
-				$filesize = $ss_podcasting->get_file_size( $enclosure );
+				$filesize = $ss_podcasting->get_file_size( $audio_file );
 				if( $filesize ) {
 					update_post_meta( $post_id , 'filesize' , $filesize['formatted'] );
 					update_post_meta( $post_id , 'filesize_raw' , $filesize['raw'] );
@@ -467,7 +467,7 @@ class SSP_Admin {
 	public function custom_fields() {
 		$fields = array();
 
-		$fields['enclosure'] = array(
+		$fields['audio_file'] = array(
 		    'name' => __( 'Audio file:' , 'ss-podcasting' ),
 		    'description' => __( 'Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here.' , 'ss-podcasting' ),
 		    'type' => 'url',
@@ -550,7 +550,7 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function enqueue_admin_styles() {
-		wp_register_style( 'ss_podcasting-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), '1.0.0' );
+		wp_register_style( 'ss_podcasting-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), '1.8.0' );
 		wp_enqueue_style( 'ss_podcasting-admin' );
 	}
 
@@ -559,7 +559,7 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function enqueue_admin_scripts() {
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin.js' ), array( 'jquery' ), '2.0.0' );
+		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array( 'jquery' ), '1.8.0' );
 		wp_enqueue_script( 'ss_podcasting-admin' );
 	}
 

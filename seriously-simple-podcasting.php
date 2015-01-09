@@ -1,18 +1,17 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 2.0.0-alpha
+ * Version: 1.8.0
  * Plugin URI: http://wordpress.org/extend/plugins/seriously-simple-podcasting/
- * Description: Podcasting done right.
+ * Description: Podcasting the way it's meant to be.
  * Author: Hugh Lashbrooke
  * Author URI: http://www.hughlashbrooke.com
- * Requires at least: 3.8
- * Tested up to: 3.8.1
+ * Requires at least: 4.0
+ * Tested up to: 4.1
  *
  * Text Domain: ss-podcasting
  *
  * @package 	SeriouslySimplePodcasting
- * @category 	Core
  * @author 		Hugh Lashbrooke
  */
 

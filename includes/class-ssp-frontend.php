@@ -36,13 +36,13 @@ class SSP_Frontend {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 
 		// Add meta data to start of podcast content
-		$locations = get_option( 'ss_podcasting_player_locations', array( 'content' ) );
+		$locations = get_option( 'ss_podcasting_player_locations', array() );
 
-		if( in_array( 'content', $locations ) ) {
+		if( in_array( 'content', (array) $locations ) ) {
 			add_filter( 'the_content', array( $this, 'content_meta_data' ) );
 		}
 
-		if( in_array( 'excerpt', $locations ) ) {
+		if( in_array( 'excerpt', (array) $locations ) ) {
 			add_filter( 'the_excerpt', array( $this, 'content_meta_data' ) );
 		}
 
@@ -398,7 +398,7 @@ class SSP_Frontend {
 	public function get_enclosure( $episode_id = 0 ) {
 
 		if( $episode_id ) {
-			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, 'audio_file', true ), $episode_id );
+			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, 'enclosure', true ), $episode_id );
 		}
 
 		return false;

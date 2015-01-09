@@ -102,7 +102,11 @@ class SSP_Settings {
 
 		// Set options for post type selection
 		foreach( $wp_post_types as $post_type => $data ) {
-			if( in_array( $post_type, array( 'page', 'attachment', 'revision', 'nav_menu_item', 'wooframework', 'podcast' ) ) ) continue;
+
+			if( in_array( $post_type, array( 'page', 'attachment', 'revision', 'nav_menu_item', 'wooframework', 'podcast' ) ) ){
+				continue;
+			}
+
 			$post_type_options[ $post_type ] = $data->labels->name;
 		}
 
@@ -131,7 +135,7 @@ class SSP_Settings {
 					'description'	=> __( 'Select where to show the podcast audio player along with the episode data (download link, duration and file size)', 'ss-podcasting' ),
 					'type'			=> 'checkbox_multi',
 					'options'		=> array( 'content' => __( 'Full content', 'ss-podcasting' ), 'excerpt' => __( 'Excerpt', 'ss-podcasting' ) ),
-					'default'		=> array( 'content' ),
+					'default'		=> array(),
 				),
 			),
 		);
@@ -406,7 +410,7 @@ class SSP_Settings {
 		$data = '';
 		if( isset( $field['default'] ) ) {
 			$data = $field['default'];
-			if( $option  ) {
+			if( $option ) {
 				$data = $option;
 			}
 		}
@@ -437,7 +441,7 @@ class SSP_Settings {
 			case 'checkbox_multi':
 				foreach( $field['options'] as $k => $v ) {
 					$checked = false;
-					if( in_array( $k, $data ) ) {
+					if( in_array( $k, (array) $data ) ) {
 						$checked = true;
 					}
 					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label><br/>';

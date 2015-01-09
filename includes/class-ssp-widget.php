@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) || ! function_exists( 'ss_podcast' ) ) exit; // Exit
  * - get_content_options()
  * - get_all_series()
  */
-class SSP_Widget extends WP_Widget {
+class SSP_Widget_Recent_Episodes extends WP_Widget {
 	protected $widget_cssclass;
 	protected $widget_description;
 	protected $widget_idbase;
@@ -36,155 +36,135 @@ class SSP_Widget extends WP_Widget {
 	 */
 	public function __construct() {
 		/* Widget variable settings. */
-		$this->widget_cssclass = 'widget_ss_podcast';
-		$this->widget_description = __( 'Display a list of your podcast series or episodes from a selected series.', 'ss-podcast' );
+		$this->widget_cssclass = 'widget_recent_entries widget_recent_episodes';
+		$this->widget_description = __( 'Display a list of your most recent podcastepisodes.', 'ss-podcasting' );
 		$this->widget_idbase = 'ss_podcast';
-		$this->widget_title = __( 'Podcast', 'ss-podcast' );
+		$this->widget_title = __( 'Recent Podcast Episodes', 'ss-podcasting' );
 
 		/* Widget settings. */
 		$widget_ops = array( 'classname' => $this->widget_cssclass, 'description' => $this->widget_description );
 
-		/* Widget control settings. */
-		$control_ops = array( 'width' => 250, 'height' => 350, 'id_base' => $this->widget_idbase );
+		parent::__construct('recent-podcast-episodes', $this->widget_title, $widget_ops);
 
-		/* Create the widget. */
-		$this->WP_Widget( $this->widget_idbase, $this->widget_title, $widget_ops, $control_ops );
+		$this->alt_option_name = 'widget_recent_episodes';
+
+		add_action( 'save_post', array( $this, 'flush_widget_cache' ) );
+		add_action( 'deleted_post', array( $this, 'flush_widget_cache' ) );
+		add_action( 'switch_theme', array( $this, 'flush_widget_cache' ) );
+
 	} // End __construct()
 
-	/**
-	 * Display the widget on the frontend.
-	 * @since  1.0.0
-	 * @param  array $args     Widget arguments.
-	 * @param  array $instance Widget settings for this instance.
-	 * @return void
-	 */
-	public function widget( $args, $instance ) {
-		extract( $args, EXTR_SKIP );
-
-		/* Our variables from the widget settings. */
-		$title = apply_filters('widget_title', $instance['title'], $instance, $this->id_base );
-
-		/* Before widget (defined by themes). */
-		$args = array();
-
-		/* Display the widget title if one was input (before and after defined by themes). */
-		if ( $title ) {
-			$args['title'] = $title;
+	public function widget($args, $instance) {
+		$cache = array();
+		if ( ! $this->is_preview() ) {
+			$cache = wp_cache_get( 'widget_recent_episodes', 'widget' );
 		}
 
-		/* Widget content. */
-		// Add actions for plugins/themes to hook onto.
-		do_action( $this->widget_cssclass . '_top' );
+		if ( ! is_array( $cache ) ) {
+			$cache = array();
+		}
 
-		// Select boxes.
-		if ( isset( $instance['content'] ) && in_array( $instance['content'], array_keys( $this->get_content_options() ) ) ) { $args['content'] = $instance['content']; }
-		if ( isset( $instance['series'] ) && in_array( $instance['series'], array_keys( $this->get_all_series() ) ) ) { $args['series'] = $instance['series']; }
+		if ( ! isset( $args['widget_id'] ) ) {
+			$args['widget_id'] = $this->id;
+		}
 
-		// Display the data.
-		ss_podcast( $args );
+		if ( isset( $cache[ $args['widget_id'] ] ) ) {
+			echo $cache[ $args['widget_id'] ];
+			return;
+		}
 
-		// Add actions for plugins/themes to hook onto.
-		do_action( $this->widget_cssclass . '_bottom' );
-	} // End widget()
+		ob_start();
 
-	/**
-	 * Method to update the settings from the form() method.
-	 * @since  1.0.0
-	 * @param  array $new_instance New settings.
-	 * @param  array $old_instance Previous settings.
-	 * @return array               Updated settings.
-	 */
-	public function update ( $new_instance, $old_instance ) {
+		$title = ( ! empty( $instance['title'] ) ) ? $instance['title'] : __( 'Recent Episodes', 'ss-podcasting' );
+
+		/** This filter is documented in wp-includes/default-widgets.php */
+		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
+
+		$number = ( ! empty( $instance['number'] ) ) ? absint( $instance['number'] ) : 5;
+		if ( ! $number )
+			$number = 5;
+		$show_date = isset( $instance['show_date'] ) ? $instance['show_date'] : false;
+
+		$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+		$allowed_post_types[] = 'podcast';
+
+		$r = new WP_Query( apply_filters( 'widget_recent_episodes_args', array(
+			'post_type'			  => $allowed_post_types,
+			'posts_per_page'      => $number,
+			'no_found_rows'       => true,
+			'post_status'         => 'publish',
+			'ignore_sticky_posts' => true,
+			'meta_query' 		  => array(
+				array(
+					'key' 		  => 'enclosure',
+					'compare' 	  => '!=',
+					'value'		  => '',
+				),
+			),
+		) ) );
+
+		if ($r->have_posts()) :
+?>
+		<?php echo $args['before_widget']; ?>
+		<?php if ( $title ) {
+			echo $args['before_title'] . $title . $args['after_title'];
+		} ?>
+		<ul>
+		<?php while ( $r->have_posts() ) : $r->the_post(); ?>
+			<li>
+				<a href="<?php the_permalink(); ?>"><?php get_the_title() ? the_title() : the_ID(); ?></a>
+			<?php if ( $show_date ) : ?>
+				<span class="post-date"><?php echo get_the_date(); ?></span>
+			<?php endif; ?>
+			</li>
+		<?php endwhile; ?>
+		</ul>
+		<?php echo $args['after_widget']; ?>
+<?php
+		// Reset the global $the_post as this query will have stomped on it
+		wp_reset_postdata();
+
+		endif;
+
+		if ( ! $this->is_preview() ) {
+			$cache[ $args['widget_id'] ] = ob_get_flush();
+			wp_cache_set( 'widget_recent_episodes', $cache, 'widget' );
+		} else {
+			ob_end_flush();
+		}
+	}
+
+	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
-
-		/* Strip tags for title and name to remove HTML (important for text inputs). */
-		$instance['title'] = strip_tags( $new_instance['title'] );
-
-		/* The select box is returning a text value, so we escape it. */
-		$instance['content'] = esc_attr( $new_instance['content'] );
-		$instance['series'] = esc_attr( $new_instance['series'] );
+		$instance['title'] = strip_tags($new_instance['title']);
+		$instance['number'] = (int) $new_instance['number'];
+		$instance['show_date'] = isset( $new_instance['show_date'] ) ? (bool) $new_instance['show_date'] : false;
+		$this->flush_widget_cache();
 
 		return $instance;
-	} // End update()
+	}
 
-	/**
-	 * The form on the widget control in the widget administration area.
-	 * @since  1.0.0
-	 * @param  array $instance The settings for this instance.
-	 * @return void
-	 */
-    public function form( $instance ) {
+	public function flush_widget_cache() {
+		wp_cache_delete('widget_recent_episodes', 'widget');
+	}
 
-		/* Set up some default widget settings. */
-		/* Make sure all keys are added here, even with empty string values. */
-		$defaults = array(
-			'title' => '',
-			'content' => 'series',
-			'series' => 0
-		);
+	public function form( $instance ) {
+		$title     = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
+		$number    = isset( $instance['number'] ) ? absint( $instance['number'] ) : 5;
+		$show_date = isset( $instance['show_date'] ) ? (bool) $instance['show_date'] : false;
+?>
+		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'ss-podcasting' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" value="<?php echo $title; ?>" /></p>
 
-		$instance = wp_parse_args( (array) $instance, $defaults );
-		?>
-		<!-- Widget Title: Text Input -->
-		<p>
-			<label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title (optional):', 'ss-podcast' ); ?></label>
-			<input type="text" name="<?php echo $this->get_field_name( 'title' ); ?>"  value="<?php echo $instance['title']; ?>" class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" />
-		</p>
-		<!-- Widget Content: Select Input -->
-		<p>
-			<label for="<?php echo $this->get_field_id( 'content' ); ?>"><?php _e( 'Content:', 'ss-podcast' ); ?></label>
-			<select name="<?php echo $this->get_field_name( 'content' ); ?>" class="widefat" id="<?php echo $this->get_field_id( 'content' ); ?>">
-			<?php foreach ( $this->get_content_options() as $k => $v ) { ?>
-				<option value="<?php echo $k; ?>"<?php selected( $instance['content'], $k ); ?>><?php echo $v; ?></option>
-			<?php } ?>
-			</select>
-		</p>
-		<!-- Widget Series: Select Input -->
-		<p>
-			<label for="<?php echo $this->get_field_id( 'series' ); ?>"><?php _e( 'Series to display:', 'ss-podcast' ); ?></label>
-			<select name="<?php echo $this->get_field_name( 'series' ); ?>" class="widefat" id="<?php echo $this->get_field_id( 'series' ); ?>">
-			<?php foreach ( $this->get_all_series() as $k => $v ) { ?>
-				<option value="<?php echo $k; ?>"<?php selected( $instance['series'], $k ); ?>><?php echo $v; ?></option>
-			<?php } ?>
-			</select><br/>
-			<small><?php _e( 'Required if content is set to show episodes from selected series.', 'ss-podcast' ); ?></small>
-		</p>
-		<?php
-	} // End form()
+		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php _e( 'Number of episodes to show:', 'ss-podcasting' ); ?></label>
+		<input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" /></p>
 
-	/**
-	 * Get an array of the available content options
-	 * @since  1.0.0
-	 * @return array
-	 */
-	protected function get_content_options () {
-		return array(
-					'series' => __( 'All Series', 'ss-podcast' ),
-					'episodes' => __( 'Episodes from Selected Series', 'ss-podcast' ),
-					);
-	} // End get_content_options()
-
-	/**
-	 * Get an array of the available podcast series
-	 * @since  1.0.0
-	 * @return array
-	 */
-	protected function get_all_series () {
-
-		$series = array();
-
-		$terms = get_terms( 'series' );
-
-		if( count( $terms ) > 0) {
-			foreach ( $terms as $term ) {
-	    		$series[ $term->slug ] = $term->name;
-		    }
-		}
-
-		return $series;
-	} // End get_all_series()
+		<p><input class="checkbox" type="checkbox" <?php checked( $show_date ); ?> id="<?php echo $this->get_field_id( 'show_date' ); ?>" name="<?php echo $this->get_field_name( 'show_date' ); ?>" />
+		<label for="<?php echo $this->get_field_id( 'show_date' ); ?>"><?php _e( 'Display episode date?', 'ss-podcasting' ); ?></label></p>
+<?php
+	}
 } // End Class
 
 // Regsiter the widget
-add_action( 'widgets_init', create_function( '', 'return register_widget( "SSP_Widget" );' ), 1 );
+add_action( 'widgets_init', create_function( '', 'return register_widget( "SSP_Widget_Recent_Episodes" );' ), 1 );
 ?>

@@ -50,8 +50,8 @@ class SSP_Admin {
 		if ( is_admin() ) {
 
 			// Episode meta box
-			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
-			add_action( 'save_post', array( $this, 'meta_box_save' ) );
+			add_action( 'admin_init', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'save_post', array( $this, 'meta_box_save' ), 200, 1 );
 
 			// Episode edit screen
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -130,6 +130,8 @@ class SSP_Admin {
 			'menu_icon' => 'dashicons-microphone',
 		);
 
+		$args = apply_filters( 'ssp_register_post_type_args', $args );
+
 		register_post_type( $this->token, $args );
 
 		$this->register_taxonomies();
@@ -162,6 +164,8 @@ class SSP_Admin {
             'labels' => $series_labels
         );
 
+        $series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );
+
         register_taxonomy( 'series', $this->token, $series_args );
 
         $keywords_labels = array(
@@ -184,6 +188,8 @@ class SSP_Admin {
             'rewrite' => array( 'slug' => apply_filters( 'ssp_keywords_slug', 'keyword' ) ),
             'labels' => $keywords_labels
         );
+
+        $keywords_args = apply_filters( 'ssp_register_taxonomy_args', $keywords_args, 'keywords' );
 
         register_taxonomy( 'keywords', $this->token, $keywords_args );
     }
@@ -331,8 +337,10 @@ class SSP_Admin {
 		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $this->token, 'normal', 'high' );
 
 		$other_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		foreach( (array) $other_post_types as $post_type ) {
-			add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $post_type, 'normal', 'high' );
+		if( count( $other_post_types ) > 0 ) {
+			foreach( (array) $other_post_types as $post_type ) {
+				add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $post_type, 'normal', 'high' );
+			}
 		}
 
 		// Allow more metaboxes to be added
@@ -365,7 +373,7 @@ class SSP_Admin {
 					$data = $saved;
 				}
 
-				if( $k == 'audio_file' ) {
+				if( $k == 'enclosure' ) {
 					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input type="button" class="button" id="upload_audio_file_button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" data-uploader_title="Choose a file" data-uploader_button_text="Insert audio file" /><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 					$html .= '</td><tr/>' . "\n";
@@ -414,9 +422,13 @@ class SSP_Admin {
 			}
 		}
 
+		// Prevents automatic enclosure deletion
+		// See: https://core.trac.wordpress.org/ticket/10511#comment:27
+		delete_post_meta( $post_id, '_encloseme' );
+
 		$field_data = $this->custom_fields();
 		$fields = array_keys( $field_data );
-		$audio_file = '';
+		$enclosure = '';
 
 		foreach ( $field_data as $k => $field ) {
 
@@ -430,18 +442,18 @@ class SSP_Admin {
 				$val = esc_url( $val );
 			}
 
-			if( $f == 'audio_file' ) {
-				$audio_file = $val;
+			if( $f == 'enclosure' ) {
+				$enclosure = $val;
 			}
 
 			update_post_meta( $post_id, $k, $val );
 		}
 
-		if( $audio_file ) {
+		if( $enclosure ) {
 
 			// Get file Duration
 			if ( get_post_meta( $post_id , 'duration' , true ) == '' ) {
-				$duration = $ss_podcasting->get_file_duration( $audio_file );
+				$duration = $ss_podcasting->get_file_duration( $enclosure );
 				if( $duration ) {
 					update_post_meta( $post_id , 'duration' , $duration );
 				}
@@ -449,7 +461,7 @@ class SSP_Admin {
 
 			// Get file size
 			if ( get_post_meta( $post_id , 'filesize' , true ) == '' ) {
-				$filesize = $ss_podcasting->get_file_size( $audio_file );
+				$filesize = $ss_podcasting->get_file_size( $enclosure );
 				if( $filesize ) {
 					update_post_meta( $post_id , 'filesize' , $filesize['formatted'] );
 					update_post_meta( $post_id , 'filesize_raw' , $filesize['raw'] );
@@ -467,7 +479,7 @@ class SSP_Admin {
 	public function custom_fields() {
 		$fields = array();
 
-		$fields['audio_file'] = array(
+		$fields['enclosure'] = array(
 		    'name' => __( 'Audio file:' , 'ss-podcasting' ),
 		    'description' => __( 'Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here.' , 'ss-podcasting' ),
 		    'type' => 'url',

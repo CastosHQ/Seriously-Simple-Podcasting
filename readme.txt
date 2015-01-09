@@ -19,7 +19,7 @@ It comes with built-in templates, widget and shortcode so you can display your p
 **Primary Features**
 
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
-- Customisable templates for podcast pages
+- Ability to use any post type for podcast episodes
 - Highly configurable RSS feed designed for all podcast services, including iTunes
 - Widget and shortcode for displaying podcast episodes anywhere on your site
 - Playable episodes using the built-in WordPress media player
@@ -57,11 +57,7 @@ There could be a number of reasons for this, but the most common one is that you
 
 = I've installed the plugin and added episodes, but where do I find all of it on my website? =
 
-Your podcast page will always be available from this URL on your site: http://www.example.com/?post_type=podcast, but if you go to the plugin's settings page (Podcast > Settings) you can specify a URL slug that will make your podcast URLs more attractive - once you have saved your slug, the podcast archive page URL will be formatted like this: http://www.example.com/your-slug.
-
-= Why do the podcast episode and archive pages just look like my default blog pages? =
-
-On the plugin's settings page (Podcast > Settings) you can opt to use the plugin's built-in templates - they will ensure that your podcast is displayed correctly. They are not guaranteed to fit in with every theme, but you can simply create your own page templates to override them. To do this, disable the use of the built-in templates and copy the 'archive-podcast.php' and 'single-podcast.php' files from the plugin's 'templates' directory and paste them into your theme's root folder - from there you can edit them to display the content however you wish.
+By default, your podcast episodes will be available at this URL on your site: http://www.example.com/podcast and your feed will be available here: http://www.example.com/feed/podcast. You can also set your podcast episodes to appear in your home page blog feed in the general settings.
 
 = How can I edit the actual content of the RSS feed? =
 
@@ -75,10 +71,10 @@ This issue actually has nothing to do with this plugin. Your server and your Wor
 
 There could be a few reasons for this:
 
-1. Your episode audio file is reference to folder and not a specific file
+1. Your episode audio file is a reference to a folder and not a specific file
 2. The audio file is password protected
 3. Your site is running on an IP address and not a domain name
-4. You have one of these plugins installed & activated on your site: 'WP Audio Player' or 'MediaElement.js - HTML5 Video & Audio Player'
+4. You have one a plugin installed that conflicts with the WordPress media player
 
 If any of these are true for you then that will most likely be the reason that the media player is not showing on your podcast episodes.
 
@@ -92,7 +88,7 @@ Once you have saved a password for your podcast feed you will not see the passwo
 
 = Where can I find documentation/support for this plugin? =
 
-There is currently no documentation for this plugin, but you can post questions on the support forum here: http://wordpress.org/support/plugin/seriously-simple-podcasting - I will respond to topics as I have time to do so, but I can make no guarantees of my availability. Before posting anything on the support forum, please update to the latest version of the plugin.
+There is currently no documentation for this plugin, but you can post questions on the support forum [here](http://wordpress.org/support/plugin/seriously-simple-podcasting) - I will respond to topics as I have time to do so, but I can make no guarantees of my availability. Before posting anything on the support forum, please update to the latest version of the plugin.
 
 = I have an idea for this plugin - how can I make it known? =
 
@@ -108,14 +104,17 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 
 = 1.8 =
 * 2015-01-31
+* [NEW] Allowing any post type to be used for podcast episodes
+* [NEW] Changing options for displaying audio player and episode details
+* [NEW] Removing built-in templates
+* [NEW] Removing and replacing widget with new 'Recent Podcast Episodes' widget
 * [NEW] Complete restructuring and renaming of classes and files
 * [NEW] New settings class - settings use proper tabs, load much faster and can now be easily extended
-* [NEW] Removing MediaElement library as it is included in WordPress core
+* [NEW] Removing MediaElement library from plugin
 * [NEW] Generating feed correctly using add_feed() and ensuring backwards compatibility for older versions
 * [NEW] Commenting all the things
 * [NEW] Adding brand new actions and filters everywhere
-* [NEW] Removing built-in templates
-* [TWEAK] Improving file size calculations and saving (thanks danielpunkass)
+* [TWEAK] Improving file size calculations and saving (kudos danielpunkass)
 * [TWEAK] Optimising feed template
 
 = 1.7.5 =
@@ -323,5 +322,4 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 == Upgrade Notice ==
 
 = 1.8 =
-* 2015-01-31
-* 
+* This is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING: http://www.hughlashbrooke.com/.

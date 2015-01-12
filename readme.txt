@@ -36,7 +36,7 @@ Want to contribute? [Fork the GitHub repository](https://github.com/hlashbrooke/
 
 == Usage ==
 
-Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add new episodes and go to "Podcast > Settings" to customise, describe, protect, redirect & share your podcast.
+Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add new episodes and go to "Podcast > Settings" to customise your podcast.
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them in manually.
 
@@ -144,7 +144,7 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 * [NEW] Commenting all the things
 * [NEW] Adding brand new actions and filters everywhere
 * [TWEAK] Changing dashboard menu icon to be more relevant
-* [TWEAK] Improving file size calculations and saving (kudos danielpunkass)
+* [TWEAK] Improving file size calculations and saving (kudos danielpunkass & kallewangstedt)
 * [TWEAK] Optimising feed template
 
 = 1.7.5 =

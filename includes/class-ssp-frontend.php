@@ -158,7 +158,7 @@ class SSP_Frontend {
 
 			$data = wp_remote_head( $file, array( 'timeout' => 10, 'redirection' => 5 ) );
 
-			if( is_array( $data ) && isset( $data['headers']['content-length'] ) ) {
+			if( ! is_wp_error( $data ) && is_array( $data ) && isset( $data['headers']['content-length'] ) ) {
 
 				$raw = $data['headers']['content-length'];
 				$formatted = $this->format_bytes( $raw );

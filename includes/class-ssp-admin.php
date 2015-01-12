@@ -552,7 +552,7 @@ class SSP_Admin {
 	 */
 	public function enter_title_here( $title ) {
 		if ( get_post_type() == $this->token ) {
-			$title = __( 'Enter the episode title here', 'ss-podcasting' );
+			$title = __( 'Enter episode title here', 'ss-podcasting' );
 		}
 		return $title;
 	}
@@ -628,24 +628,24 @@ class SSP_Admin {
 
     	$file_name = 'feed-podcast.php';
 
-    	$user_template_file = apply_filters( 'ssp_template_file', trailingslashit( get_template_directory() ) . $file_name );
+    	$user_template_file = apply_filters( 'ssp_feed_template_file', trailingslashit( get_template_directory() ) . $file_name );
 
-		// Any functions hooked in here must NOT output any data
+		// Any functions hooked in here must NOT output any data or else feed will break
 		do_action( 'ssp_before_feed' );
 
-    	// Load feed template from theme if it exists, otherwise use plugin template
+    	// Load user feed template if it exists, otherwise use plugin template
     	if( file_exists( $user_template_file ) ) {
     		require( $user_template_file );
     	} else {
     		require( $this->template_path . $file_name );
     	}
 
-    	// Any functions hooked in here must NOT output any data
+    	// Any functions hooked in here must NOT output any data or else feed will break
     	do_action( 'ssp_after_feed' );
 	}
 
 	/**
-	 * Redirect v1.x feed
+	 * Redirect feed URLs created prior to v1.8 to ensure backwards compatibility
 	 * @return void
 	 */
 	public function redirect_old_feed() {

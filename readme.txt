@@ -109,7 +109,7 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 * [NEW] Removing built-in templates
 * [NEW] Removing and replacing widget with new 'Recent Podcast Episodes' widget
 * [NEW] Complete restructuring and renaming of classes and files
-* [NEW] New settings class - settings use proper tabs, load much faster and can now be easily extended
+* [NEW] New settings class - settings page uses proper tabs, loads much faster and can now be easily extended
 * [NEW] Removing MediaElement library from plugin
 * [NEW] Generating feed correctly using add_feed() and ensuring backwards compatibility for older versions
 * [NEW] Commenting all the things

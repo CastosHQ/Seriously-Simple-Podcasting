@@ -1,12 +1,12 @@
 # Seriously Simple Podcasting #
-**Contributors:** hlashbrooke  
-**Donate link:** http://www.hughlashbrooke.com/donate/  
-**Tags:** podcast, audio, rss, feed, itunes, media player  
-**Requires at least:** 3.8  
-**Tested up to:** 4.1  
-**Stable tag:** 1.8  
-**License:** GPLv2 or later  
-**License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
+**Contributors:** hlashbrooke
+**Donate link:** http://www.hughlashbrooke.com/donate/
+**Tags:** podcast, audio, rss, feed, itunes, media player
+**Requires at least:** 4.0
+**Tested up to:** 4.1
+**Stable tag:** 1.8
+**License:** GPLv2 or later
+**License URI:** http://www.gnu.org/licenses/gpl-2.0.html
 
 Podcasting the way it's meant to be.
 

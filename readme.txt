@@ -2,7 +2,7 @@
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
-Requires at least: 3.8
+Requires at least: 4.0
 Tested up to: 4.1
 Stable tag: 1.8
 License: GPLv2 or later

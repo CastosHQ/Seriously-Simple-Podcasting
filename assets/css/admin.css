@@ -1,3 +1,4 @@
-#menu-posts-podcast .wp-menu-image:before {
-  content: "\f303";
+#dashboard_right_now a.podcast-count:before,
+#dashboard_right_now span.podcast-count:before {
+  content: "\f482";
 }

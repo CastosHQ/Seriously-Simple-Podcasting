@@ -1,31 +1,21 @@
 <?php
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-if( ! function_exists( 'is_podcast_feed' ) ) {
-	/**
-	 * Check if current page is podcast feed
-	 * @since  1.4.2
-	 * @return boolean True if current page is podcast feed
-	 */
-	function is_podcast_feed() {
-		if( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( 'podcast', 'itunes' ) ) ) {
-			return true;
-		}
-		return false;
-	}
-}
-
-if( ! function_exists( 'is_file_download' ) ) {
+if( ! function_exists( 'is_podcast_download' ) ) {
 	/**
 	 * Check if podcast file is being downloaded
 	 * @since  1.5
 	 * @return boolean True if file is being downloaded
 	 */
-	function is_file_download() {
+	function is_podcast_download() {
+		$download = false;
+		$episode = false;
 		if( isset( $_GET['podcast_episode'] ) ) {
-			return true;
+			$download = true;
+			$episode = $_GET['podcast_episode'];
 		}
-		return false;
+
+		return apply_filters( 'ssp_is_podcast_download', $download, $episode );
 	}
 }
 
@@ -46,7 +36,7 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
  * Enable the usage of do_action( 'get_podcast' ) to display podcast within a theme/plugin.
  * @since  1.0.0
  */
-add_action( 'get_podcast', 'podcast_get' );
+add_action( 'get_podcast', 'ss_podcast' );
 
 if ( ! function_exists( 'ss_podcast' ) ) {
 	/**
@@ -55,7 +45,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 	 * @since  1.0.0
 	 * @return string
 	 */
-	function ss_podcast ( $args = '' ) {
+	function ss_podcast( $args = '' ) {
 		global $post;
 
 		$defaults = array(
@@ -72,16 +62,16 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		// Allow child themes/plugins to filter here.
-		$args = apply_filters( 'ss_podcast_args', $args );
+		// Allow child themes/plugins to filter here
+		$args = apply_filters( 'ssp_podcast_args', $args );
 		$html = '';
 
-		do_action( 'ss_podcast_before', $args );
+		do_action( 'ssp_podcast_before', $args );
 
-		// The Query.
+		// The Query
 		$query = ss_get_podcast( $args );
 
-		// The Display.
+		// The Display
 		if ( ! is_wp_error( $query ) && is_array( $query ) && count( $query ) > 0 ) {
 			$html .= $args['before'] . "\n";
 
@@ -168,19 +158,28 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 			wp_reset_postdata();
 		}
 
-		// Allow themes/plugins to filter here.
-		$html = apply_filters( 'ss_podcast_html', $html, $query, $args );
+		// Allow themes/plugins to filter here
+		$html = apply_filters( 'ssp_podcast_html', $html, $query, $args );
 
-		if ( $args['echo'] != true ) { return $html; }
+		if ( ! $args['echo'] ) { return $html; }
 
-		// Should only run if "echo" is set to true.
+		// Should only run if "echo" is set to true
 		echo $html;
 
-		do_action( 'ss_podcast_after', $args ); // Only if "echo" is set to true.
+		do_action( 'ssp_podcast_after', $args );
 	}
 }
 
+// Register shortcode
+add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );
 if ( ! function_exists( 'ss_podcast_shortcode' ) ) {
+
+	/**
+	 * Load podcast shortcode
+	 * @param  array  $atts    Shortcode attributes
+	 * @param  string $content Shortcode content
+	 * @return string          HTML output
+	 */
 	function ss_podcast_shortcode ( $atts, $content = null ) {
 
 		$args = (array) $atts;
@@ -203,10 +202,7 @@ if ( ! function_exists( 'ss_podcast_shortcode' ) ) {
 	}
 }
 
-// Register shortcode
-add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );
-
-if ( ! function_exists('readfile_chunked')) {
+if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 
 	/**
 	 * Reads file in chunks so big downloads are possible without changing PHP.INI - http://codeigniter.com/wiki/Download_helper_for_large_files/
@@ -215,7 +211,7 @@ if ( ! function_exists('readfile_chunked')) {
 	 * @param    boolean    return bytes of file
 	 * @return   mixed
 	 */
-    function readfile_chunked( $file, $retbytes = true ) {
+    function ssp_readfile_chunked( $file, $retbytes = true ) {
 
 		$chunksize = 1 * ( 1024 * 1024 );
 		$buffer = '';

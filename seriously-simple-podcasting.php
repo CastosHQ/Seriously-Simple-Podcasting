@@ -1,35 +1,32 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.7.5
+ * Version: 1.8
  * Plugin URI: http://wordpress.org/extend/plugins/seriously-simple-podcasting/
  * Description: Podcasting the way it's meant to be.
  * Author: Hugh Lashbrooke
  * Author URI: http://www.hughlashbrooke.com/
- * Requires at least: 3.6
+ * Requires at least: 4.0
  * Tested up to: 4.1
  *
  * Text Domain: ss-podcasting
  * Domain Path: /lang/
- *
- * @package WordPress
- * @author Hugh Lashbrooke
- * @since 1.0.0
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit;
 
-require_once( 'seriously-simple-podcasting-functions.php' );
-require_once( 'classes/class-seriously-simple-podcasting.php' );
+require_once( 'includes/ssp-functions.php' );
+require_once( 'includes/class-ssp-admin.php' );
+require_once( 'includes/class-ssp-frontend.php' );
 
-global $ss_podcasting;
-$ss_podcasting = new SeriouslySimplePodcasting( __FILE__ );
+global $ssp_admin, $ss_podcasting;
+$ssp_admin = new SSP_Admin( __FILE__ );
+$ss_podcasting = new SSP_Frontend( __FILE__ );
 
 if( is_admin() ) {
-	require_once( 'classes/class-seriously-simple-podcasting-admin.php' );
-	$ss_podcasting_admin = new SeriouslySimplePodcasting_Admin( __FILE__ );
+	global $ssp_settings;
+	require_once( 'includes/class-ssp-settings.php' );
+	$ssp_settings = new SSP_Settings( __FILE__ );
 }
 
-require_once( 'classes/class-seriously-simple-podcasting-widget.php' );
-
-?>
+require_once( 'includes/class-ssp-widget.php' );

@@ -38,7 +38,7 @@ Want to contribute? [Fork the GitHub repository](https://github.com/hlashbrooke/
 
 Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add new episodes and go to "Podcast > Settings" to customise, describe, protect, redirect & share your podcast.
 
-Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. Please note that episode lengths can only be automatically calculated for files that are hosted on the same server as the website - you can input them in manually otherwise.
+Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them in manually.
 
 == Installation ==
 
@@ -51,6 +51,10 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 == Frequently Asked Questions ==
 
+= I've just updated to v1.8 and things are all messed up - what have you done?!? =
+
+Please read [this post](http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/) regarding the updates that come with v1.8 of Seriously Simple Podcasting. There have been changes to the template system and various other important areas.
+
 = The plugin doesn't work like it should - what's the problem? =
 
 There could be a number of reasons for this, but the most common one is that you have another podcasting plugin activated on your site. Make sure you deactivate any other podcasting plugins (e.g. BluBrry PowerPress, PodPress, etc.). If you have done that and the plugin is still not working as it should then have a read of the rest of the FAQs as well as the support forum - if you don't find what you need there, then create a new topic.
@@ -58,6 +62,30 @@ There could be a number of reasons for this, but the most common one is that you
 = I've installed the plugin and added episodes, but where do I find all of it on my website? =
 
 By default, your podcast episodes will be available at this URL on your site: http://www.example.com/podcast and your feed will be available here: http://www.example.com/feed/podcast. You can also set your podcast episodes to appear in your home page blog feed in the general settings.
+
+= How do I change the URLs for my podcast episodes and RSS feed? =
+
+The URLs mentioned in the previous question can be changed by using the following snippets.
+
+For the podcast episode archive:
+
+```
+add_filter( 'ssp_archive_slug', 'ssp_modify_podcast_archive_slug' );
+function ssp_modify_podcast_archive_slug ( $slug ) {
+  return 'new-slug';
+}
+```
+
+For the podcast RSS feed:
+
+```
+add_filter( 'ssp_feed_slug', 'ssp_modify_podcast_feed_slug' );
+function ssp_modify_podcast_feed_slug ( $slug ) {
+  return 'new-slug';
+}
+```
+
+Just add those to your theme (or a plugin) and then re-save your site's permalinks on the Settings > Permalinks page and you'll be good to go.
 
 = How can I edit the actual content of the RSS feed? =
 
@@ -67,16 +95,17 @@ You shouldn't ever need to do this, but if you would like to override the the RS
 
 This issue actually has nothing to do with this plugin. Your server and your WordPress installation will each have a maximum file upload size that you are allowed to make use of and there is no way for this plugin to override that. There are a few ways in which you can increase your server's maximum file upload size, but those instructions are outside the scope of this plugin's FAQ.
 
-= Why don't I see the media player when I view the individual episode pages? =
+= Why don't I see the audio player when I view the individual episode pages? =
 
 There could be a few reasons for this:
 
-1. Your episode audio file is a reference to a folder and not a specific file
-2. The audio file is password protected
-3. Your site is running on an IP address and not a domain name
-4. You have one a plugin installed that conflicts with the WordPress media player
+1. You have not set the audio player to appear for the full content of an episode - you can change this in the podcast settings
+2. Your episode audio file is a reference to a folder and not a specific file
+3. The audio file is password protected
+4. Your site is running on an IP address and not a domain name
+5. You have a plugin installed that conflicts with the WordPress media player
 
-If any of these are true for you then that will most likely be the reason that the media player is not showing on your podcast episodes.
+If any of these are true for you then that will most likely be the reason that the audio player is not showing on your podcast episodes.
 
 = Why does my podcast image not save properly? =
 
@@ -111,10 +140,10 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 * [NEW] Complete restructuring and renaming of classes and files
 * [NEW] New settings class - settings page uses proper tabs, loads much faster and can now be easily extended
 * [NEW] Removing MediaElement library from plugin
-* [NEW] Generating feed correctly using add_feed() and ensuring backwards compatibility for older versions
+* [NEW] Generating feed correctly using add_feed() and ensuring backwards compatibility for previous versions
 * [NEW] Commenting all the things
 * [NEW] Adding brand new actions and filters everywhere
-* [TWEAK] Changing dashboard menu icon to something more relevant
+* [TWEAK] Changing dashboard menu icon to be more relevant
 * [TWEAK] Improving file size calculations and saving (kudos danielpunkass)
 * [TWEAK] Optimising feed template
 

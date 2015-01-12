@@ -532,7 +532,10 @@ class SeriouslySimplePodcasting {
 
 			$data = wp_remote_head( $file );
 
-			if( isset( $data['headers']['content-length'] ) ) {
+			if(is_wp_error($data))
+				die($data->get_error_message());
+
+			if( !is_wp_error($data) && isset( $data['headers']['content-length'] ) ) {
 
 				$raw = $data['headers']['content-length'];
 				$formatted = $this->format_bytes( $raw );

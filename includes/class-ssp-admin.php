@@ -611,7 +611,8 @@ class SSP_Admin {
      * @return void
      */
     public function add_feed() {
-		add_feed( $this->token, array( $this, 'feed_template' ) );
+    	$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+		add_feed( $feed_slug, array( $this, 'feed_template' ) );
 	}
 
 	/**

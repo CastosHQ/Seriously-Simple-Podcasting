@@ -444,6 +444,7 @@ class SSP_Frontend {
 	public function download_file() {
 
 		if( is_podcast_download() ) {
+
 			$file = esc_attr( $_GET['podcast_episode'] );
 
 			if( $file ) {
@@ -465,8 +466,9 @@ class SSP_Frontend {
 				header( "Content-Transfer-Encoding: binary" );
 
 				// Set size of file
-		        if ( $size = @filesize( $file ) )
+		        if ( $size = @filesize( $file ) ) {
 		        	header( "Content-Length: " . $size );
+		        }
 
 		        // Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 				@ssp_readfile_chunked( "$file" ) or header( 'Location: ' . $file );
@@ -481,7 +483,10 @@ class SSP_Frontend {
 	 */
 	public function rss_meta_tag() {
 
-		$feed_url = $this->site_url . 'feed/' . $this->token;
+		// Get feed slug
+		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+
+		$feed_url = $this->site_url . 'feed/' . $feed_slug;
 		$custom_feed_url = get_option('ss_podcasting_feed_url');
 		if( $custom_feed_url ) {
 			$feed_url = $custom_feed_url;

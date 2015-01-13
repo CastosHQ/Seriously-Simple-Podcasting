@@ -51,7 +51,7 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 ### I've just updated to v1.8 and things are all messed up - what have you done?!? ###
 
-Please read [this post](http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/) regarding the updates that come with v1.8 of Seriously Simple Podcasting. There have been changes to the template system and various other important areas.
+Please read [this post](http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/) regarding the updates that come with v1.8 of Seriously Simple Podcasting. There have been changes to the template system, audio player display and various other important areas.
 
 ### The plugin doesn't work like it should - what's the problem? ###
 
@@ -119,8 +119,38 @@ There is currently no documentation for this plugin, but you can post questions 
 
 ### I have an idea for this plugin - how can I make it known? ###
 
-If you have an idea for the plugin, feel free to post on the support forum [here](http://wordpress.org/support/plugin/seriously-simple-podcasting_.
+If you have an idea for the plugin, feel free to post on the support forum [here](http://wordpress.org/support/plugin/seriously-simple-podcasting).
 If you would like to contribute to the code then you can fork the GitHub repo [here](https://github.com/hlashbrooke/Seriously-Simple-Podcasting) - your pull requests will be reviewed and merged if they fit into the goals for this plugin. All contributors will be given credit where it is due.
+
+## Screenshots ##
+
+### 1. Audio player and episode details displayed on the frontend above post content. ###
+![1. Audio player and episode details displayed on the frontend above post content.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-1.png)
+
+### 2. The only info that you need to add to each podcast episode. ###
+![2. The only info that you need to add to each podcast episode.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-2.png)
+
+### 3. Set up your podcast. ###
+![3. Set up your podcast.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-3.png)
+
+### 4. Customise your podcast feed. ###
+![4. Customise your podcast feed.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-4.png)
+
+### 5. Secure your podcast feed. ###
+![5. Secure your podcast feed.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-5.png)
+
+### 6. Handle redirection for your feed. ###
+![6. Handle redirection for your feed.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-6.png)
+
+### 7. Publish your podcast. ###
+![7. Publish your podcast.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-7.png)
+
+### 8. The podcast admin menu location. ###
+![8. The podcast admin menu location.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-8.png)
+
+### 9. Podcast episodes are shown in the At a Glance dashboard widget. ###
+![9. Podcast episodes are shown in the At a Glance dashboard widget.](http://ps.w.org/seriously-simple-podcasting/assets/screenshot-9.png)
+
 
 ## Changelog ##
 

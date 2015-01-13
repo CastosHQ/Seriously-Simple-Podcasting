@@ -53,7 +53,7 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 = I've just updated to v1.8 and things are all messed up - what have you done?!? =
 
-Please read [this post](http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/) regarding the updates that come with v1.8 of Seriously Simple Podcasting. There have been changes to the template system and various other important areas.
+Please read [this post](http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/) regarding the updates that come with v1.8 of Seriously Simple Podcasting. There have been changes to the template system, audio player display and various other important areas.
 
 = The plugin doesn't work like it should - what's the problem? =
 
@@ -121,13 +121,20 @@ There is currently no documentation for this plugin, but you can post questions 
 
 = I have an idea for this plugin - how can I make it known? =
 
-If you have an idea for the plugin, feel free to post on the support forum [here](http://wordpress.org/support/plugin/seriously-simple-podcasting_.
+If you have an idea for the plugin, feel free to post on the support forum [here](http://wordpress.org/support/plugin/seriously-simple-podcasting).
 If you would like to contribute to the code then you can fork the GitHub repo [here](https://github.com/hlashbrooke/Seriously-Simple-Podcasting) - your pull requests will be reviewed and merged if they fit into the goals for this plugin. All contributors will be given credit where it is due.
 
 == Screenshots ==
 
-1. The plugin settings screen within the WordPress admin.
-2. The info that you need to add to each podcast episode.
+1. Audio player and episode details displayed on the frontend above post content.
+2. The only info that you need to add to each podcast episode.
+3. Set up your podcast.
+4. Customise your podcast feed.
+5. Secure your podcast feed.
+6. Handle redirection for your feed.
+7. Publish your podcast.
+8. The podcast admin menu location.
+9. Podcast episodes are shown in the At a Glance dashboard widget.
 
 == Changelog ==
 

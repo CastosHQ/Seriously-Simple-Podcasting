@@ -14,14 +14,12 @@ Podcasting the way it's meant to be.
 
 "Seriously Simple Podcasting" is a simple and easy-to-use podcasting solution for WordPress. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
-It comes with built-in templates, widget and shortcode so you can display your podcast however you like. It also has easy subscribe links for iTunes listeners and standard RSS subscribers.
-
 **Primary Features**
 
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Ability to use any post type for podcast episodes
-- Highly configurable RSS feed designed for all podcast services, including iTunes
-- Widget and shortcode for displaying podcast episodes anywhere on your site
+- Highly configurable RSS feed designed for all podcast services and feed readers, including iTunes
+- Widget for displaying recent podcast episodes anywhere on your site
 - Playable episodes using the built-in WordPress media player
 - Simple settings so you can get your podcast up and running quickly
 - Allows audio files to be hosted on the same site or any other server

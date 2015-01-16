@@ -124,7 +124,12 @@ class SSP_Frontend {
 
 			$meta = apply_filters( 'ssp_episode_meta', $meta, $post_id );
 
-			$content = $meta . $content;
+			$player_location = get_option( 'ss_podcasting_player_content_location', 'above' );
+
+			switch( $player_location ) {
+				case 'above': $content = $meta . $content; break;
+				case 'below': $content = $content . $meta; break;
+			}
 
 		}
 
@@ -486,13 +491,15 @@ class SSP_Frontend {
 		// Get feed slug
 		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
 
-		$feed_url = $this->site_url . 'feed/' . $feed_slug;
-		$custom_feed_url = get_option('ss_podcasting_feed_url');
+		$feed_url = $this->home_url . 'feed/' . $feed_slug;
+		$custom_feed_url = get_option( 'ss_podcasting_feed_url' );
 		if( $custom_feed_url ) {
 			$feed_url = $custom_feed_url;
 		}
 
-		$html = '<link rel="alternate" type="application/rss+xml" title="Podcast RSS feed" href="' . esc_url( $feed_url ) . '" />';
+		$feed_url = apply_filters( 'ssp_feed_url', $feed_url );
+
+		$html = '<link rel="alternate" type="application/rss+xml" title="' . __( 'Podcast RSS feed', 'ss-podcasting' ) . '" href="' . esc_url( $feed_url ) . '" />';
 
 		echo apply_filters( 'ssp_rss_meta_tag', $html );
 	}

@@ -137,6 +137,14 @@ class SSP_Settings {
 					'options'		=> array( 'content' => __( 'Full content', 'ss-podcasting' ), 'excerpt' => __( 'Excerpt', 'ss-podcasting' ) ),
 					'default'		=> array(),
 				),
+				array(
+					'id' 			=> 'player_content_location',
+					'label'			=> __( 'Audio player location in content', 'ss-podcasting' ),
+					'description'	=> __( 'Select whether to display the audio player above or below the full content.', 'ss-podcasting' ),
+					'type'			=> 'radio',
+					'options'		=> array( 'above' => __( 'Above content', 'ss-podcasting' ), 'below' => __( 'Below content', 'ss-podcasting' ) ),
+					'default'		=> 'above',
+				),
 			),
 		);
 
@@ -454,7 +462,7 @@ class SSP_Settings {
 					if( $k == $data ) {
 						$checked = true;
 					}
-					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label> ';
+					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label><br/>';
 				}
 			break;
 

@@ -143,8 +143,11 @@ class SSP_Admin {
 	 */
 	private function register_taxonomies() {
 
+		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+		$podcast_post_types[] = $this->token;
+
         $series_labels = array(
-            'name' => __( 'Series' , 'ss-podcasting' ),
+            'name' => __( 'Podcast Series' , 'ss-podcasting' ),
             'singular_name' => __( 'Series', 'ss-podcasting' ),
             'search_items' =>  __( 'Search Series' , 'ss-podcasting' ),
             'all_items' => __( 'All Series' , 'ss-podcasting' ),
@@ -154,7 +157,13 @@ class SSP_Admin {
             'update_item' => __( 'Update Series' , 'ss-podcasting' ),
             'add_new_item' => __( 'Add New Series' , 'ss-podcasting' ),
             'new_item_name' => __( 'New Series Name' , 'ss-podcasting' ),
-            'menu_name' => __( 'Series' , 'ss-podcasting' )
+            'menu_name' => __( 'Series' , 'ss-podcasting' ),
+            'view_item' => __( 'View Series' , 'ss-podcasting' ),
+            'popular_items' => __( 'Popular Series' , 'ss-podcasting' ),
+            'separate_items_with_commas' => __( 'Separate series with commas' , 'ss-podcasting' ),
+            'add_or_remove_items' => __( 'Add or remove Series' , 'ss-podcasting' ),
+            'choose_from_most_used' => __( 'Choose from the most used Series' , 'ss-podcasting' ),
+            'not_found' => __( 'No Series Found' , 'ss-podcasting' ),
         );
 
         $series_args = array(
@@ -166,10 +175,10 @@ class SSP_Admin {
 
         $series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );
 
-        register_taxonomy( 'series', $this->token, $series_args );
+        register_taxonomy( 'series', $podcast_post_types, $series_args );
 
         $keywords_labels = array(
-            'name' => __( 'Keywords' , 'ss-podcasting' ),
+            'name' => __( 'Podcast Keywords' , 'ss-podcasting' ),
             'singular_name' => __( 'Keyword', 'ss-podcasting' ),
             'search_items' =>  __( 'Search Keywords' , 'ss-podcasting' ),
             'all_items' => __( 'All Keywords' , 'ss-podcasting' ),
@@ -179,7 +188,13 @@ class SSP_Admin {
             'update_item' => __( 'Update Keyword' , 'ss-podcasting' ),
             'add_new_item' => __( 'Add New Keyword' , 'ss-podcasting' ),
             'new_item_name' => __( 'New Keyword Name' , 'ss-podcasting' ),
-            'menu_name' => __( 'Keywords' , 'ss-podcasting' )
+            'menu_name' => __( 'Keywords' , 'ss-podcasting' ),
+            'view_item' => __( 'View Keywords' , 'ss-podcasting' ),
+            'popular_items' => __( 'Popular Keywords' , 'ss-podcasting' ),
+            'separate_items_with_commas' => __( 'Separate keywords with commas' , 'ss-podcasting' ),
+            'add_or_remove_items' => __( 'Add or remove Keywords' , 'ss-podcasting' ),
+            'choose_from_most_used' => __( 'Choose from the most used keywords' , 'ss-podcasting' ),
+            'not_found' => __( 'No Keywords Found' , 'ss-podcasting' ),
         );
 
         $keywords_args = array(
@@ -191,7 +206,7 @@ class SSP_Admin {
 
         $keywords_args = apply_filters( 'ssp_register_taxonomy_args', $keywords_args, 'keywords' );
 
-        register_taxonomy( 'keywords', $this->token, $keywords_args );
+        register_taxonomy( 'keywords', $podcast_post_types, $keywords_args );
     }
 
     /**

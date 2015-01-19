@@ -317,6 +317,11 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function meta_box_setup () {
+		global $pagenow;
+		// Return early if we're on a single edit post screen.
+		if ( false === strpos( $pagenow, 'post' ) ) {
+			return;
+		}
 
 		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $this->token, 'normal', 'high' );
 

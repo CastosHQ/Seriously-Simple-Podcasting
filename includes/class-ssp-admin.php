@@ -321,8 +321,8 @@ class SSP_Admin {
 		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $this->token, 'normal', 'high' );
 
 		$other_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		if( count( $other_post_types ) > 0 ) {
-			foreach( (array) $other_post_types as $post_type ) {
+		if ( ! empty( $other_post_types ) ) {
+			foreach ( (array) $other_post_types as $post_type ) {
 				add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $post_type, 'normal', 'high' );
 			}
 		}

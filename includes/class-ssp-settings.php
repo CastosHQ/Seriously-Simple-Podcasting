@@ -110,6 +110,93 @@ class SSP_Settings {
 			$post_type_options[ $post_type ] = $data->labels->name;
 		}
 
+		// Available category options
+		$category_options = array(
+			'' => __( '-- None --', 'ss-podcasting' ),
+			'Arts' => __( 'Arts', 'ss-podcasting' ),
+			'Business' => __( 'Business', 'ss-podcasting' ),
+			'Comedy' => __( 'Comedy', 'ss-podcasting' ),
+			'Education' => __( 'Education', 'ss-podcasting' ),
+			'Games & Hobbies' => __( 'Games & Hobbies', 'ss-podcasting' ),
+			'Government & Organizations' => __( 'Government & Organizations', 'ss-podcasting' ),
+			'Health' => __( 'Health', 'ss-podcasting' ),
+			'Kids & Family' => __( 'Kids & Family', 'ss-podcasting' ),
+			'Music' => __( 'Music', 'ss-podcasting' ),
+			'News & Politics' => __( 'News & Politics', 'ss-podcasting' ),
+			'Religion & Spirituality' => __( 'Religion & Spirituality', 'ss-podcasting' ),
+			'Science & Medicine' => __( 'Science & Medicine', 'ss-podcasting' ),
+			'Society & Culture' => __( 'Society & Culture', 'ss-podcasting' ),
+			'Sports & Recreation' => __( 'Sports & Recreation', 'ss-podcasting' ),
+			'Technology' => __( 'Technology', 'ss-podcasting' ),
+			'TV & Film' => __( 'TV & Film', 'ss-podcasting' ),
+		);
+
+		// Available sub-category options
+		$subcategory_options = array(
+
+			'' => __( '-- None --', 'ss-podcasting' ),
+
+			'Design' => array( 'label' => __( 'Design', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
+			'Fashion & Beauty' => array( 'label' => __( 'Fashion & Beauty', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
+			'Food' => array( 'label' => __( 'Food', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
+			'Literature' => array( 'label' => __( 'Literature', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
+			'Performing Arts' => array( 'label' => __( 'Performing Arts', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
+			'Visual Arts' => array( 'label' => __( 'Visual Arts', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
+
+			'Business News' => array( 'label' => __( 'Business News', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
+			'Careers' => array( 'label' => __( 'Careers', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
+			'Investing' => array( 'label' => __( 'Investing', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
+			'Management & Marketing' => array( 'label' => __( 'Management & Marketing', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
+			'Shopping' => array( 'label' => __( 'Shopping', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
+
+			'Education' => array( 'label' => __( 'Education', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
+			'Education Technology' => array( 'label' => __( 'Education Technology', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
+			'Higher Education' => array( 'label' => __( 'Higher Education', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
+			'K-12' => array( 'label' => __( 'K-12', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
+			'Language Courses' => array( 'label' => __( 'Language Courses', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
+			'Training' => array( 'label' => __( 'Training', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
+
+			'Automotive' => array( 'label' => __( 'Automotive', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
+			'Aviation' => array( 'label' => __( 'Aviation', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
+			'Hobbies' => array( 'label' => __( 'Hobbies', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
+			'Other Games' => array( 'label' => __( 'Other Games', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
+			'Video Games' => array( 'label' => __( 'Video Games', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
+
+			'Local' => array( 'label' => __( 'Local', 'ss-podcasting' ), 'group' => __( 'Government & Organizations', 'ss-podcasting' ) ),
+			'National' => array( 'label' => __( 'National', 'ss-podcasting' ), 'group' => __( 'Government & Organizations', 'ss-podcasting' ) ),
+			'Non-Profit' => array( 'label' => __( 'Non-Profit', 'ss-podcasting' ), 'group' => __( 'Government & Organizations', 'ss-podcasting' ) ),
+			'Regional' => array( 'label' => __( 'Regional', 'ss-podcasting' ), 'group' => __( 'Government & Organizations', 'ss-podcasting' ) ),
+
+			'Alternative Health' => array( 'label' => __( 'Alternative Health', 'ss-podcasting' ), 'group' => __( 'Health', 'ss-podcasting' ) ),
+			'Fitness & Nutrition' => array( 'label' => __( 'Fitness & Nutrition', 'ss-podcasting' ), 'group' => __( 'Health', 'ss-podcasting' ) ),
+			'Self-Help' => array( 'label' => __( 'Self-Help', 'ss-podcasting' ), 'group' => __( 'Health', 'ss-podcasting' ) ),
+			'Sexuality' => array( 'label' => __( 'Sexuality', 'ss-podcasting' ), 'group' => __( 'Health', 'ss-podcasting' ) ),
+
+			'Buddhism' => array( 'label' => __( 'Buddhism', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
+			'Christianity' => array( 'label' => __( 'Christianity', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
+			'Hinduism' => array( 'label' => __( 'Hinduism', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
+			'Islam' => array( 'label' => __( 'Islam', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
+			'Judaism' => array( 'label' => __( 'Judaism', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
+			'Other' => array( 'label' => __( 'Other', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
+			'Spirituality' => array( 'label' => __( 'Spirituality', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
+
+			'History' => array( 'label' => __( 'History', 'ss-podcasting' ), 'group' => __( 'Society & Culture', 'ss-podcasting' ) ),
+			'Personal Journals' => array( 'label' => __( 'Personal Journals', 'ss-podcasting' ), 'group' => __( 'Society & Culture', 'ss-podcasting' ) ),
+			'Philosophy' => array( 'label' => __( 'Philosophy', 'ss-podcasting' ), 'group' => __( 'Society & Culture', 'ss-podcasting' ) ),
+			'Places & Travel' => array( 'label' => __( 'Places & Travel', 'ss-podcasting' ), 'group' => __( 'Society & Culture', 'ss-podcasting' ) ),
+
+			'Amateur' => array( 'label' => __( 'Amateur', 'ss-podcasting' ), 'group' => __( 'Sports & Recreation', 'ss-podcasting' ) ),
+			'College & High School' => array( 'label' => __( 'College & High School', 'ss-podcasting' ), 'group' => __( 'Sports & Recreation', 'ss-podcasting' ) ),
+			'Outdoor' => array( 'label' => __( 'Outdoor', 'ss-podcasting' ), 'group' => __( 'Sports & Recreation', 'ss-podcasting' ) ),
+			'Professional' => array( 'label' => __( 'Professional', 'ss-podcasting' ), 'group' => __( 'Sports & Recreation', 'ss-podcasting' ) ),
+
+			'Gadgets' => array( 'label' => __( 'Gadgets', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
+			'Tech News' => array( 'label' => __( 'Tech News', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
+			'Podcasting' => array( 'label' => __( 'Podcasting', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
+			'Software How-To' => array( 'label' => __( 'Software How-To', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
+
+		);
+
 		$settings['general'] = array(
 			'title'					=> __( 'General', 'ss-podcasting' ),
 			'description'			=> __( '', 'ss-podcasting' ),
@@ -139,8 +226,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'player_content_location',
-					'label'			=> __( 'Audio player location in content', 'ss-podcasting' ),
-					'description'	=> __( 'Select whether to display the audio player above or below the full content.', 'ss-podcasting' ),
+					'label'			=> __( 'Audio player position', 'ss-podcasting' ),
+					'description'	=> __( 'Select whether to display the audio player above or below the post content/excerpt.', 'ss-podcasting' ),
 					'type'			=> 'radio',
 					'options'		=> array( 'above' => __( 'Above content', 'ss-podcasting' ), 'below' => __( 'Below content', 'ss-podcasting' ) ),
 					'default'		=> 'above',
@@ -179,18 +266,18 @@ class SSP_Settings {
 				array(
 					'id' 			=> 'data_category',
 					'label'			=> __( 'Category' , 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Your podcast\'s category - use one of the first-tier categories from %1$sthis list%2$s.', 'ss-podcasting' ), '<a href="' . esc_url( 'http://www.apple.com/itunes/podcasts/specs.html#categories' ) . '" target="' . esc_attr( '_blank' ) . '">', '</a>' ),
-					'type'			=> 'text',
+					'description'	=> __( 'Your podcast\'s category.', 'ss-podcasting' ),
+					'type'			=> 'select',
+					'options'		=> $category_options,
 					'default'		=> '',
-					'placeholder'	=> __( 'Podcast category', 'ss-podcasting' )
 				),
 				array(
 					'id' 			=> 'data_subcategory',
 					'label'			=> __( 'Sub-Category' , 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Your podcast\'s sub-category - use one of the second-tier categories from %1$sthis list%2$s (must be a sub-category of your selected primary category).', 'ss-podcasting' ), '<a href="' . esc_url( 'http://www.apple.com/itunes/podcasts/specs.html#categories' ) . '" target="' . esc_attr( '_blank' ) . '">', '</a>' ),
-					'type'			=> 'text',
+					'description'	=> __( 'Your podcast\'s sub-category - must be a sub-category of the category selected above (if available).', 'ss-podcasting' ),
+					'type'			=> 'select',
+					'options'		=> $subcategory_options,
 					'default'		=> '',
-					'placeholder'	=> __( 'Podcast sub-category', 'ss-podcasting' )
 				),
 				array(
 					'id' 			=> 'data_description',
@@ -238,8 +325,8 @@ class SSP_Settings {
 					'label'			=> __( 'Copyright' , 'ss-podcasting' ),
 					'description'	=> __( 'Copyright line for your podcast.', 'ss-podcasting' ),
 					'type'			=> 'text',
-					'default'		=> get_bloginfo( 'language' ),
-					'placeholder'	=> __( 'Language', 'ss-podcasting' )
+					'default'		=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
+					'placeholder'	=> __( 'Copyright', 'ss-podcasting' )
 				),
 				array(
 					'id' 			=> 'explicit',
@@ -468,12 +555,33 @@ class SSP_Settings {
 
 			case 'select':
 				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '">';
+				$prev_group = '';
 				foreach( $field['options'] as $k => $v ) {
+
+					$group = '';
+					if( is_array( $v ) ) {
+						if( isset( $v['group'] ) ) {
+							$group = $v['group'];
+						}
+						$v = $v['label'];
+					}
+
+					if( $prev_group && $group != $prev_group ) {
+						$html .= '</optgroup>';
+					}
+
 					$selected = false;
 					if( $k == $data ) {
 						$selected = true;
 					}
+
+					if( $group && $group != $prev_group ) {
+						$html .= '<optgroup label="' . $group . '">';
+					}
+
 					$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>';
+
+					$prev_group = $group;
 				}
 				$html .= '</select> ';
 			break;

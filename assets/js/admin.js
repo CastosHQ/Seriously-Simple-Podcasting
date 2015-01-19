@@ -1,7 +1,5 @@
 jQuery(document).ready(function($) {
 
-	/* ADD/EDIT EPISODE */
-
 	// Uploading files
 	var file_frame;
 
@@ -37,6 +35,8 @@ jQuery(document).ready(function($) {
 		// Finally, open the modal
 		file_frame.open();
 	}
+
+	/* ADD/EDIT EPISODE */
 
 	jQuery('#upload_audio_file_button').click(function( event ){
 		event.preventDefault();

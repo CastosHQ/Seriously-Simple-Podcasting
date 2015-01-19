@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player
 Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 1.8.1
+Stable tag: 1.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,12 +16,13 @@ Podcasting the way it's meant to be.
 
 **Primary Features**
 
+- Simple settings so you can get your podcast up and running quickly
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Ability to use any post type for podcast episodes
 - Highly configurable RSS feed designed for all podcast services and feed readers, including iTunes
 - Widget for displaying recent podcast episodes anywhere on your site
+- Shortcode for displaying list of podcast episodes or series anywhere on your site
 - Playable episodes using the built-in WordPress media player
-- Simple settings so you can get your podcast up and running quickly
 - Allows audio files to be hosted on the same site or any other server
 - Full i18n support
 
@@ -105,9 +106,24 @@ There could be a few reasons for this:
 
 If any of these are true for you then that will most likely be the reason that the audio player is not showing on your podcast episodes.
 
+= Why do I only see X episodes in my podcast RSS feed? =
+
+The number of episodes in your podcast RSS feed is limited to the same number of posts as set in the 'Syndication feeds show the most recent X items' in your WordPress Reading settings - this is set to 10 by default. You can change how many episodes appear in your podcast RSS feed using this snippet:
+
+`
+add_filter( 'ssp_feed_number_of_posts', 'ssp_modify_number_of_posts_in_feed' );
+function ssp_modify_number_of_posts_in_feed ( $n ) {
+  return 25; // Where 25 is the number of episodes that you would like to include in your RSS feed
+}
+`
+
 = Why does my podcast image not save properly? =
 
 For your podcast image to be valid on iTunes, it must be at least 1400x1400 px. This means that when you upload your image you must make sure to select a size option that at least has those dimensions. The image will display smaller on the plugin's settings screen, but as long as your uploaded image is the correct dimensions and you have selected the right size when inserting it then it will work.
+
+= I have set a featured image for my episode, but it isn't showing in iTunes - why not? =
+
+All podcast episode images need to be at least 1400x1400 px. If your images are smaller than that then they will not show up in iTunes.
 
 = My feed password does not seem to be saving - what gives? =
 
@@ -115,7 +131,7 @@ Once you have saved a password for your podcast feed you will not see the passwo
 
 = Where can I find documentation/support for this plugin? =
 
-There is currently no documentation for this plugin, but you can post questions on the support forum [here](http://wordpress.org/support/plugin/seriously-simple-podcasting) - I will respond to topics as I have time to do so, but I can make no guarantees of my availability. Before posting anything on the support forum, please update to the latest version of the plugin.
+There is currently no documentation for this plugin (aside from this FAQ), but you can post questions on the support forum [here](http://wordpress.org/support/plugin/seriously-simple-podcasting) - I will respond to topics as I have time to do so, but I can make no guarantees of my availability. Before posting anything on the support forum, please update to the latest version of the plugin.
 
 = I have an idea for this plugin - how can I make it known? =
 
@@ -135,6 +151,20 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 9. Podcast episodes are shown in the At a Glance dashboard widget.
 
 == Changelog ==
+
+= 1.8.2 =
+* 2015-01-19
+* [NEW] Adding episode featured image as episode image in RSS feed using `itunes:image` tag
+* [TWEAK] Udating all episode queries (archives, etc.) to fetch episodes from all relevant post types
+* [TWEAK] Ensuring all `podcast` posts are fetched on the frontend, even if they don't have an enclosure
+* [TWEAK] Updating feed category selection to use drop-down menus
+* [TWEAK] Setting RSS feed to only show number of posts specified in WordPress settings
+* [TWEAK] Adding `ssp_feed_number_of_posts` filter to allow dynamic filtering of number of posts shown in RSS feed
+* [TWEAK] Clarifying descriptions of some options
+* [TWEAK] Removing 'Keywords' taxonomy as it is no longer supported by iTunes
+* [TWEAK] Removing unneeded frontend CSS file (obsolete since v1.8)
+* [FIX] Reinstating `ss_podcast` shortcode that was removed in v1.8
+* [FIX] Fixing default copyright text in feed
 
 = 1.8.1 =
 * 2015-01-16
@@ -160,6 +190,7 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 * [TWEAK] Changing dashboard menu icon to be more relevant
 * [TWEAK] Improving file size calculations and saving (kudos danielpunkass & kallewangstedt)
 * [TWEAK] Optimising feed template
+* [TWEAK] Minifying Javascript
 
 = 1.7.5 =
 * 2013-12-22
@@ -365,5 +396,5 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 
 == Upgrade Notice ==
 
-= 1.8.1 =
+= 1.8.2 =
 * v1.8 is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.

@@ -183,28 +183,15 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 	<?php }
 
-	$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-	$allowed_post_types[] = 'podcast';
+	// Get post IDs of all podcast episodes
+	$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ) ) );
 
-	// Fetch podcast episodes
-	$args = array(
-		'post_type' => $allowed_post_types,
-		'post_status' => 'publish',
-		'posts_per_page' => -1,
-		'meta_query' => array(
-			array(
-				'key' => 'enclosure',
-				'compare' => '!=',
-				'value' => '',
-			),
-		),
-	);
-
+	$podcast_series = '';
 	if( isset( $_GET['podcast_series'] ) && strlen( $_GET['podcast_series'] ) > 0 ) {
-		$args['series'] = esc_attr( $_GET['podcast_series'] );
+		$podcast_series = $_GET['podcast_series'];
 	}
 
-	$args = apply_filters( 'ssp_feed_query_args', $args );
+	$args = ssp_episodes( $num_posts, $podcast_series, true, 'feed' );
 
 	$qry = new WP_Query( $args );
 
@@ -215,8 +202,19 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			// Audio file
 			$enclosure = $ss_podcasting->get_enclosure( get_the_ID() );
 
-			if( ! isset( $enclosure ) || ! $enclosure || $enclosure == '' ) {
+			// If there is no enclosure then go no further
+			if( ! isset( $enclosure ) || ! $enclosure ) {
 				continue;
+			}
+
+			// Get episode image from post featured image
+			$episode_image = '';
+			$image_id = get_post_thumbnail_id( get_the_ID() );
+			if( $image_id ) {
+				$image_att = wp_get_attachment_image_src( $image_id, 'full' );
+				if( $image_att ) {
+					$episode_image = $image_att[0];
+				}
 			}
 
 			// Episode duration
@@ -235,6 +233,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	 			update_post_meta( get_the_ID(), 'filesize_raw', $size['raw'] );
 			}
 
+			// Set default size to prevent invalid feed
 			if( ! $size ) {
 				$size = 1;
 			}
@@ -246,7 +245,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			}
 
 			// Episode explicit flag
-			$ep_explicit = get_post_meta( get_the_ID() , 'explicit' , true );
+			$ep_explicit = get_post_meta( get_the_ID(), 'explicit', true );
 			if( $ep_explicit && $ep_explicit == 'on' ) {
 				$explicit_flag = 'Yes';
 			} else {
@@ -254,36 +253,11 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			}
 
 			// Episode block flag
-			$ep_block = get_post_meta( get_the_ID() , 'block' , true );
+			$ep_block = get_post_meta( get_the_ID(), 'block', true );
 			if( $ep_block && $ep_block == 'on' ) {
 				$block_flag = 'Yes';
 			} else {
 				$block_flag = 'No';
-			}
-
-			// Episode series name
-			$series_list = wp_get_post_terms( get_the_ID() , 'series' );
-			$series = false;
-			if( $series_list && count( $series_list ) > 0 ) {
-				foreach( $series_list as $s ) {
-					$series = esc_html( $s->name );
-					break;
-				}
-			}
-
-			// Episode keywords
-			$keyword_list = wp_get_post_terms( get_the_ID() , 'keywords' );
-			$keywords = false;
-			if( $keyword_list && count( $keyword_list ) > 0 ) {
-				$c = 0;
-				foreach( $keyword_list as $k ) {
-					if( $c == 0 ) {
-						$keywords = esc_html( $k->name );
-						++$c;
-					} else {
-						$keywords .= ', ' . esc_html( $k->name );
-					}
-				}
 			}
 
 			// Episode author
@@ -312,13 +286,13 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
 		<itunes:subtitle><?php echo $itunes_excerpt; ?></itunes:subtitle>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
-		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
+		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary><?php if( $episode_image ) { ?>
+		<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image><?php } ?>
 		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo esc_html( $explicit_flag ); ?></itunes:explicit>
 		<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
 		<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
-		<itunes:author><?php echo $author; ?></itunes:author><?php if( $keywords ) { ?>
-		<itunes:keywords><?php echo esc_html( $keywords ); ?></itunes:keywords><?php } ?>
+		<itunes:author><?php echo $author; ?></itunes:author>
 	</item><?php }
 	} ?>
 </channel>

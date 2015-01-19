@@ -1,27 +1,13 @@
 <?php
-if ( ! defined( 'ABSPATH' ) || ! function_exists( 'ss_podcast' ) ) exit; // Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
 
 /**
- * Seriously Simple Podcasting Widget
+ * Seriously Simple Podcasting Recent Podcast Episodes Widget
  *
  * @author 		Hugh Lashbrooke
  * @package 	SeriouslySimplePodcasting
  * @category 	SeriouslySimplePodcasting/Widgets
- * @since 		1.0.0
- *
- * TABLE OF CONTENTS
- *
- * protected $widget_cssclass
- * protected $widget_description
- * protected $widget_idbase
- * protected $widget_title
- *
- * - __construct()
- * - widget()
- * - update()
- * - form()
- * - get_content_options()
- * - get_all_series()
+ * @since 		1.8.0
  */
 class SSP_Widget_Recent_Episodes extends WP_Widget {
 	protected $widget_cssclass;
@@ -39,7 +25,7 @@ class SSP_Widget_Recent_Episodes extends WP_Widget {
 		$this->widget_cssclass = 'widget_recent_entries widget_recent_episodes';
 		$this->widget_description = __( 'Display a list of your most recent podcastepisodes.', 'ss-podcasting' );
 		$this->widget_idbase = 'ss_podcast';
-		$this->widget_title = __( 'Recent Podcast Episodes', 'ss-podcasting' );
+		$this->widget_title = __( 'Podcast: Recent Episodes', 'ss-podcasting' );
 
 		/* Widget settings. */
 		$widget_ops = array( 'classname' => $this->widget_cssclass, 'description' => $this->widget_description );
@@ -81,36 +67,24 @@ class SSP_Widget_Recent_Episodes extends WP_Widget {
 		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
 		$number = ( ! empty( $instance['number'] ) ) ? absint( $instance['number'] ) : 5;
-		if ( ! $number )
+		if ( ! $number ) {
 			$number = 5;
+		}
+
 		$show_date = isset( $instance['show_date'] ) ? $instance['show_date'] : false;
 
-		$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		$allowed_post_types[] = 'podcast';
+		$query_args = ssp_episodes( $number, '', true, 'feed' );
 
-		$r = new WP_Query( apply_filters( 'widget_recent_episodes_args', array(
-			'post_type'			  => $allowed_post_types,
-			'posts_per_page'      => $number,
-			'no_found_rows'       => true,
-			'post_status'         => 'publish',
-			'ignore_sticky_posts' => true,
-			'meta_query' 		  => array(
-				array(
-					'key' 		  => 'enclosure',
-					'compare' 	  => '!=',
-					'value'		  => '',
-				),
-			),
-		) ) );
+		$qry = new WP_Query( apply_filters( 'widget_recent_episodes_args', $query_args ) );
 
-		if ($r->have_posts()) :
+		if ($qry->have_posts()) :
 ?>
 		<?php echo $args['before_widget']; ?>
 		<?php if ( $title ) {
 			echo $args['before_title'] . $title . $args['after_title'];
 		} ?>
 		<ul>
-		<?php while ( $r->have_posts() ) : $r->the_post(); ?>
+		<?php while ( $qry->have_posts() ) : $qry->the_post(); ?>
 			<li>
 				<a href="<?php the_permalink(); ?>"><?php get_the_title() ? the_title() : the_ID(); ?></a>
 			<?php if ( $show_date ) : ?>

@@ -176,37 +176,6 @@ class SSP_Admin {
         $series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );
 
         register_taxonomy( 'series', $podcast_post_types, $series_args );
-
-        $keywords_labels = array(
-            'name' => __( 'Podcast Keywords' , 'ss-podcasting' ),
-            'singular_name' => __( 'Keyword', 'ss-podcasting' ),
-            'search_items' =>  __( 'Search Keywords' , 'ss-podcasting' ),
-            'all_items' => __( 'All Keywords' , 'ss-podcasting' ),
-            'parent_item' => __( 'Parent Keyword' , 'ss-podcasting' ),
-            'parent_item_colon' => __( 'Parent Keyword:' , 'ss-podcasting' ),
-            'edit_item' => __( 'Edit Keyword' , 'ss-podcasting' ),
-            'update_item' => __( 'Update Keyword' , 'ss-podcasting' ),
-            'add_new_item' => __( 'Add New Keyword' , 'ss-podcasting' ),
-            'new_item_name' => __( 'New Keyword Name' , 'ss-podcasting' ),
-            'menu_name' => __( 'Keywords' , 'ss-podcasting' ),
-            'view_item' => __( 'View Keywords' , 'ss-podcasting' ),
-            'popular_items' => __( 'Popular Keywords' , 'ss-podcasting' ),
-            'separate_items_with_commas' => __( 'Separate keywords with commas' , 'ss-podcasting' ),
-            'add_or_remove_items' => __( 'Add or remove Keywords' , 'ss-podcasting' ),
-            'choose_from_most_used' => __( 'Choose from the most used keywords' , 'ss-podcasting' ),
-            'not_found' => __( 'No Keywords Found' , 'ss-podcasting' ),
-        );
-
-        $keywords_args = array(
-            'public' => true,
-            'hierarchical' => false,
-            'rewrite' => array( 'slug' => apply_filters( 'ssp_keywords_slug', 'keyword' ) ),
-            'labels' => $keywords_labels
-        );
-
-        $keywords_args = apply_filters( 'ssp_register_taxonomy_args', $keywords_args, 'keywords' );
-
-        register_taxonomy( 'keywords', $podcast_post_types, $keywords_args );
     }
 
     /**
@@ -419,6 +388,8 @@ class SSP_Admin {
 	public function meta_box_save( $post_id ) {
 		global $post, $messages, $ss_podcasting;
 
+
+
 		$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
 		$allowed_post_types[] = $this->token;
 
@@ -437,9 +408,13 @@ class SSP_Admin {
 			}
 		}
 
-		// Prevents automatic enclosure deletion
+		// Prevents automatic enclosure deletion in most cases
 		// See: https://core.trac.wordpress.org/ticket/10511#comment:27
 		delete_post_meta( $post_id, '_encloseme' );
+
+		// Remove ping and enclosure updates
+		// Prevents further automatic enclosure deletion
+		remove_action( 'do_pings', 'do_all_pings', 10, 1 );
 
 		$field_data = $this->custom_fields();
 		$fields = array_keys( $field_data );
@@ -466,7 +441,7 @@ class SSP_Admin {
 
 		if( $enclosure ) {
 
-			// Get file Duration
+			// Get file duration
 			if ( get_post_meta( $post_id , 'duration' , true ) == '' ) {
 				$duration = $ss_podcasting->get_file_duration( $enclosure );
 				if( $duration ) {
@@ -482,6 +457,8 @@ class SSP_Admin {
 					update_post_meta( $post_id , 'filesize_raw' , $filesize['raw'] );
 				}
 			}
+
+			update_post_meta( $post_id, 'enclosure', $enclosure );
 
 		}
 
@@ -544,17 +521,17 @@ class SSP_Admin {
 	 */
 	public function glance_items( $items = array() ) {
 
-		$num_posts = wp_count_posts( 'podcast' );
-		if ( $num_posts && $num_posts->publish ) {
-			$text = _n( '%s Episode', '%s Episodes', $num_posts->publish, 'ss-podcasting' );
-			$text = sprintf( $text, number_format_i18n( $num_posts->publish ) );
-			$post_type_object = get_post_type_object( $this->token );
-			if ( $post_type_object && current_user_can( $post_type_object->cap->edit_posts ) ) {
-				$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $this->token, $text ) . "\n";
-			} else {
-				$items[] = sprintf( '<span class="%1$s-count">%2$s</span>', $this->token, $text ) . "\n";
-			}
+		$num_posts = count( ssp_episodes( -1, '', false, 'glance' ) );
 
+		$post_type_object = get_post_type_object( $this->token );
+
+		$text = _n( '%s Episode', '%s Episodes', $num_posts, 'ss-podcasting' );
+		$text = sprintf( $text, number_format_i18n( $num_posts ) );
+
+		if ( $post_type_object && current_user_can( $post_type_object->cap->edit_posts ) ) {
+			$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $this->token, $text ) . "\n";
+		} else {
+			$items[] = sprintf( '<span class="%1$s-count">%2$s</span>', $this->token, $text ) . "\n";
 		}
 
 		return $items;

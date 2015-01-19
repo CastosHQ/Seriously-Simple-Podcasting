@@ -68,21 +68,21 @@ The URLs mentioned in the previous question can be changed by using the followin
 
 For the podcast episode archive:
 
-`
+```
 add_filter( 'ssp_archive_slug', 'ssp_modify_podcast_archive_slug' );
 function ssp_modify_podcast_archive_slug ( $slug ) {
   return 'new-slug';
 }
-`
+```
 
 For the podcast RSS feed:
 
-`
+```
 add_filter( 'ssp_feed_slug', 'ssp_modify_podcast_feed_slug' );
 function ssp_modify_podcast_feed_slug ( $slug ) {
   return 'new-slug';
 }
-`
+```
 
 Just add those to your theme (or a plugin) and then re-save your site's permalinks on the Settings > Permalinks page and you'll be good to go.
 
@@ -110,12 +110,12 @@ If any of these are true for you then that will most likely be the reason that t
 
 The number of episodes in your podcast RSS feed is limited to the same number of posts as set in the 'Syndication feeds show the most recent X items' in your WordPress Reading settings - this is set to 10 by default. You can change how many episodes appear in your podcast RSS feed using this snippet:
 
-`
+```
 add_filter( 'ssp_feed_number_of_posts', 'ssp_modify_number_of_posts_in_feed' );
 function ssp_modify_number_of_posts_in_feed ( $n ) {
   return 25; // Where 25 is the number of episodes that you would like to include in your RSS feed
 }
-`
+```
 
 ### Why does my podcast image not save properly? ###
 

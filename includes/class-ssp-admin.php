@@ -50,7 +50,7 @@ class SSP_Admin {
 		if ( is_admin() ) {
 
 			// Episode meta box
-			add_action( 'admin_init', array( $this, 'meta_box_setup' ), 20 );
+			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 200, 1 );
 
 			// Episode edit screen
@@ -71,6 +71,7 @@ class SSP_Admin {
 
             // Dashboard widgets
             add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
+
 		}
 
 		// Flush rewrite rules on plugin activation
@@ -176,6 +177,11 @@ class SSP_Admin {
         $series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );
 
         register_taxonomy( 'series', $podcast_post_types, $series_args );
+
+        // Add Tags to podcast post type
+        if( apply_filters( 'ssp_use_post_tags', true ) ) {
+        	register_taxonomy_for_object_type( 'post_tag', $this->token );
+        }
     }
 
     /**
@@ -317,9 +323,10 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function meta_box_setup () {
-		global $pagenow;
+
 		// Return early if we're on a single edit post screen.
-		if ( false === strpos( $pagenow, 'post' ) ) {
+		$screen = get_current_screen();
+		if ( ! in_array( $screen->id, array( 'post', $this->token ) ) ) {
 			return;
 		}
 

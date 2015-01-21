@@ -76,7 +76,12 @@ class SSP_Frontend {
 	 * @return string          Updated episode content
 	 */
 	public function content_meta_data( $content ) {
-		global $post;
+		global $post, $wp_current_filter;
+
+		// Don't output unformatted data on excerpts.
+		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter ) ) {
+			return $content;
+		}
 
 		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
 		$podcast_post_types[] = $this->token;

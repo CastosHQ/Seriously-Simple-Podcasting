@@ -72,6 +72,9 @@ class SSP_Admin {
             // Dashboard widgets
             add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
 
+            // Appreciation links
+            add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 4 );
+
 		}
 
 		// Flush rewrite rules on plugin activation
@@ -552,6 +555,33 @@ class SSP_Admin {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Adding appreciation links to the SSP record in the plugin list table
+	 * @param  array  $plugin_meta Default plugin meta links
+	 * @param  string $plugin_file Plugin file
+	 * @param  array  $plugin_data Array of plugin data
+	 * @param  string $status      Plugin status
+	 * @return array               Modified plugin meta links
+	 */
+	public function plugin_row_meta ( $plugin_meta = array(), $plugin_file = '', $plugin_data = array(), $status = '' ) {
+
+		if( ! isset( $plugin_data['slug'] ) || 'seriously-simple-podcasting' != $plugin_data['slug'] ) {
+			return $plugin_meta;
+		}
+
+		$donate_link = 'http://www.hughlashbrooke.com/donate';
+
+		$plugin_meta['review'] = '<a href="https://wordpress.org/support/view/plugin-reviews/' . $plugin_data['slug'] . '?rate=5#postform" target="_blank">' . __( 'Write a review', 'ss-podcasting' ) . '</a>';
+		$plugin_meta['donate'] = '<a href="' . esc_url( $donate_link ) . '" target="_blank">' . __( 'Donate', 'ss-podcasting' ) . '</a>';
+
+		if( isset( $plugin_data['Version'] ) ) {
+			global $wp_version;
+			$plugin_meta['compatibility'] = '<a href="https://wordpress.org/plugins/' . $plugin_data['slug'] . '/?compatibility%5Bversion%5D=' . $wp_version . '&compatibility%5Btopic_version%5D=' . $plugin_data['Version'] . '&compatibility%5Bcompatible%5D=1" target="_blank">' . __( 'Confirm compatibility', 'ss-podcasting' ) . '</a>';
+		}
+
+		return $plugin_meta;
 	}
 
 	/**

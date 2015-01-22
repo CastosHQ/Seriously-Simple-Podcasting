@@ -170,10 +170,10 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 == Changelog ==
 
 = 1.8.3 =
-* 2015-01-26
+* 2015-01-22
 * [NEW] Adding post tag taxonomy to `podcast` post type (in lieu of keywords removal)
 * [TWEAK] Moving meta box setup to correct hook
-* [TWEAK] Further measures to prevent WordPress from stripping out audio file
+* [TWEAK] Adding further measures to prevent WordPress from stripping out audio file when saving episodes
 * [FIX] Preventing unformatted episode meta data from showing on excerpt (kudos Robert Neu)
 * [FIX] Fixing non-object error when no post types are selected in settings (kudos Robert Neu)
 

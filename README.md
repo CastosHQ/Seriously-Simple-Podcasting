@@ -1,10 +1,10 @@
 # Seriously Simple Podcasting #
 **Contributors:** hlashbrooke  
 **Donate link:** http://www.hughlashbrooke.com/donate/  
-**Tags:** podcast, audio, rss, feed, itunes, media player  
+**Tags:** podcast, audio, rss, feed, itunes, media player, podcasting, radio  
 **Requires at least:** 4.0  
 **Tested up to:** 4.1  
-**Stable tag:** 1.8.2  
+**Stable tag:** 1.8.3  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -12,18 +12,19 @@ Podcasting the way it's meant to be.
 
 ## Description ##
 
-"Seriously Simple Podcasting" is a simple and easy-to-use podcasting solution for WordPress. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+"Seriously Simple Podcasting" is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
 **Primary Features**
 
 - Simple settings so you can get your podcast up and running quickly
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
-- Ability to use any post type for podcast episodes
-- Highly configurable RSS feed designed for all podcast services and feed readers, including iTunes
+- Ability to use any post type for your podcast episodes
+- Integration with WordPress post tags for `podcast` post type
+- Highly configurable ad robust RSS feed designed for all podcast services and feed readers, including iTunes
 - Widget for displaying recent podcast episodes anywhere on your site
 - Shortcode for displaying list of podcast episodes or series anywhere on your site
 - Playable episodes using the built-in WordPress media player
-- Allows audio files to be hosted on the same site or any other server
+- The freedom to host your audio files on the same site or any other server
 - Full i18n support
 
 **Some examples of the plugin in action**
@@ -117,6 +118,22 @@ function ssp_modify_number_of_posts_in_feed ( $n ) {
 }
 ```
 
+### Where are the keywords? Why do I see tags on my episodes instead? ###
+
+iTunes has deprecated the use of keywords and no longer supports them, so they have been removed from this plugin. However, because tagging like that is still useful inside of WordPress, the post tag taxonomy has been added to the `podcast` post type as well. This means that you can use all of your post tags for your podcast episodes too. If you would like to remove the post tag support from the `podcast` post type then you can do so by using this snippet:
+
+```
+add_filter( 'ssp_use_post_tags', '__return_false' );
+```
+
+### How do I use my blog categories with my podcast episodes? ###
+
+You can add the blog categories to your podcast episodes using the following snippet:
+
+```
+register_taxonomy_for_object_type( 'category', 'podcast' );
+```
+
 ### Why does my podcast image not save properly? ###
 
 For your podcast image to be valid on iTunes, it must be at least 1400x1400 px. This means that when you upload your image you must make sure to select a size option that at least has those dimensions. The image will display smaller on the plugin's settings screen, but as long as your uploaded image is the correct dimensions and you have selected the right size when inserting it then it will work.
@@ -139,6 +156,14 @@ If you have an idea for the plugin, feel free to post on the support forum [here
 If you would like to contribute to the code then you can fork the GitHub repo [here](https://github.com/hlashbrooke/Seriously-Simple-Podcasting) - your pull requests will be reviewed and merged if they fit into the goals for this plugin. All contributors will be given credit where it is due.
 
 ## Changelog ##
+
+### 1.8.3 ###
+* 2015-01-22
+* [NEW] Adding post tag taxonomy to `podcast` post type (in lieu of keywords removal)
+* [TWEAK] Moving meta box setup to correct hook
+* [TWEAK] Adding further measures to prevent WordPress from stripping out audio file when saving episodes
+* [FIX] Preventing unformatted episode meta data from showing on excerpt (kudos Robert Neu)
+* [FIX] Fixing non-object error when no post types are selected in settings (kudos Robert Neu)
 
 ### 1.8.2 ###
 * 2015-01-19
@@ -384,5 +409,5 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 
 ## Upgrade Notice ##
 
-### 1.8.2 ###
-* v1.8 is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.
+### 1.8.3 ###
+* v1.8.x is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.

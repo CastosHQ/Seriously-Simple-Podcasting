@@ -126,6 +126,14 @@ iTunes has deprecated the use of keywords and no longer supports them, so they h
 add_filter( 'ssp_use_post_tags', '__return_false' );
 `
 
+= How do I use my blog categories with my podcast episodes? =
+
+You can add the blog categories to your podcast episodes using the following snippet:
+
+`
+register_taxonomy_for_object_type( 'category', 'podcast' );
+`
+
 = Why does my podcast image not save properly? =
 
 For your podcast image to be valid on iTunes, it must be at least 1400x1400 px. This means that when you upload your image you must make sure to select a size option that at least has those dimensions. The image will display smaller on the plugin's settings screen, but as long as your uploaded image is the correct dimensions and you have selected the right size when inserting it then it will work.
@@ -165,6 +173,7 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 * 2015-01-26
 * [NEW] Adding post tag taxonomy to `podcast` post type (in lieu of keywords removal)
 * [TWEAK] Moving meta box setup to correct hook
+* [TWEAK] Further measures to prevent WordPress from stripping out audio file
 * [FIX] Preventing unformatted episode meta data from showing on excerpt (kudos Robert Neu)
 * [FIX] Fixing non-object error when no post types are selected in settings (kudos Robert Neu)
 

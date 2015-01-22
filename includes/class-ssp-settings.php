@@ -227,7 +227,7 @@ class SSP_Settings {
 				array(
 					'id' 			=> 'player_content_location',
 					'label'			=> __( 'Audio player position', 'ss-podcasting' ),
-					'description'	=> __( 'Select whether to display the audio player above or below the post content/excerpt.', 'ss-podcasting' ),
+					'description'	=> __( 'Select whether to display the audio player above or below the full post content.', 'ss-podcasting' ),
 					'type'			=> 'radio',
 					'options'		=> array( 'above' => __( 'Above content', 'ss-podcasting' ), 'below' => __( 'Below content', 'ss-podcasting' ) ),
 					'default'		=> 'above',

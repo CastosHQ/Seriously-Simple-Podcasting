@@ -400,8 +400,6 @@ class SSP_Admin {
 	public function meta_box_save( $post_id ) {
 		global $post, $messages, $ss_podcasting;
 
-
-
 		$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
 		$allowed_post_types[] = $this->token;
 
@@ -444,7 +442,7 @@ class SSP_Admin {
 				$val = esc_url( $val );
 			}
 
-			if( $f == 'enclosure' ) {
+			if( $k == 'enclosure' ) {
 				$enclosure = $val;
 			}
 
@@ -454,7 +452,7 @@ class SSP_Admin {
 		if( $enclosure ) {
 
 			// Get file duration
-			if ( get_post_meta( $post_id , 'duration' , true ) == '' ) {
+			if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
 				$duration = $ss_podcasting->get_file_duration( $enclosure );
 				if( $duration ) {
 					update_post_meta( $post_id , 'duration' , $duration );
@@ -462,11 +460,18 @@ class SSP_Admin {
 			}
 
 			// Get file size
-			if ( get_post_meta( $post_id , 'filesize' , true ) == '' ) {
+			if ( get_post_meta( $post_id, 'filesize', true ) == '' ) {
 				$filesize = $ss_podcasting->get_file_size( $enclosure );
 				if( $filesize ) {
-					update_post_meta( $post_id , 'filesize' , $filesize['formatted'] );
-					update_post_meta( $post_id , 'filesize_raw' , $filesize['raw'] );
+
+					if( isset( $filesize['formatted'] ) ) {
+						update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+					}
+
+					if( isset( $filesize['raw'] ) ) {
+						update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+					}
+
 				}
 			}
 

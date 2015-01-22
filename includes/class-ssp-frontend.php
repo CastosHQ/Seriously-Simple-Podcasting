@@ -36,11 +36,11 @@ class SSP_Frontend {
 		$locations = get_option( 'ss_podcasting_player_locations', array() );
 
 		if( in_array( 'content', (array) $locations ) ) {
-			add_filter( 'the_content', array( $this, 'content_meta_data' ) );
+			add_filter( 'the_content', array( $this, 'content_meta_data' ), 10, 1 );
 		}
 
 		if( in_array( 'excerpt', (array) $locations ) ) {
-			add_filter( 'the_excerpt', array( $this, 'content_meta_data' ) );
+			add_filter( 'the_excerpt', array( $this, 'excerpt_meta_data' ), 10, 1 );
 		}
 
 		// Add RSS meta tag to site header
@@ -71,55 +71,28 @@ class SSP_Frontend {
 	}
 
 	/**
-	 * Dislpay episode meta data
-	 * @param  string $content Episode content
-	 * @return string          Updated episode content
+	 * Add episode meta data to the full content
+	 * @param  string $content Existing content
+	 * @return string          Modified content
 	 */
-	public function content_meta_data( $content ) {
-		global $post;
+	public function content_meta_data( $content = '' ) {
+		global $post, $wp_current_filter;
+
+		// Don't output unformatted data on excerpts.
+		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter ) ) {
+			return $content;
+		}
 
 		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
 		$podcast_post_types[] = $this->token;
 
-		if( ( in_array( get_post_type(), $podcast_post_types ) ) && ! is_feed( 'podcast' ) ) {
+		if( in_array( $post->post_type, $podcast_post_types ) && ! is_feed() ) {
 
-			$post_id = get_the_ID();
-			$file = $this->get_enclosure( $post_id );
+			$meta = $this->episode_meta( $post->ID, 'content' );
 
-			$meta = '';
+			$player_position = get_option( 'ss_podcasting_player_content_location', 'above' );
 
-			if( $file ) {
-				$link = $this->get_episode_download_link( $post_id );
-				$duration = get_post_meta( $post_id , 'duration' , true );
-				$size = get_post_meta( $post_id , 'filesize' , true );
-				if( ! $size ) {
-					$size_data = $this->get_file_size( $file );
-					$size = $size_data['formatted'];
-					if( $size ) {
-						if( isset( $size_data['formatted'] ) ) {
-							update_post_meta( $post_id, 'filesize', $size_data['formatted'] );
-						}
-
-						if( isset( $size_data['raw'] ) ) {
-							update_post_meta( $post_id, 'filesize_raw', $size_data['raw'] );
-						}
-					}
-				}
-
-				$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
-
-				$meta .= '<div class="podcast_meta"><aside>';
-				if( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-				if( $duration && strlen( $duration ) > 0 ) { if( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
-				if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $link && strlen( $link ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
-				$meta .= '</aside></div>';
-			}
-
-			$meta = apply_filters( 'ssp_episode_meta', $meta, $post_id );
-
-			$player_location = get_option( 'ss_podcasting_player_content_location', 'above' );
-
-			switch( $player_location ) {
+			switch( $player_position ) {
 				case 'above': $content = $meta . $content; break;
 				case 'below': $content = $content . $meta; break;
 			}
@@ -127,7 +100,75 @@ class SSP_Frontend {
 		}
 
 		return $content;
+	}
 
+	/**
+	 * Add episode meta data to the excerpt
+	 * @param  string $excerpt Existing excerpt
+	 * @return string          Modified excerpt
+	 */
+	public function excerpt_meta_data( $excerpt = '' ) {
+		global $post;
+
+		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+		$podcast_post_types[] = $this->token;
+
+		if( ( in_array( $post->post_type, $podcast_post_types ) ) && ! is_feed() ) {
+
+			$meta = $this->episode_meta( $post->ID, 'excerpt' );
+
+			$excerpt = $meta . $excerpt;
+
+		}
+
+		return $excerpt;
+	}
+
+	/**
+	 * Get episode meta data
+	 * @param  integer $post_id ID of episode post
+	 * @return string           Episode meta
+	 */
+	public function episode_meta( $post_id = 0, $context = 'content' ) {
+
+		$meta = '';
+
+		if( ! $post_id ) {
+			return $meta;
+		}
+
+		$file = $this->get_enclosure( $post_id );
+
+		if( $file ) {
+			$link = $this->get_episode_download_link( $post_id );
+			$duration = get_post_meta( $post_id , 'duration' , true );
+			$size = get_post_meta( $post_id , 'filesize' , true );
+			if( ! $size ) {
+				$size_data = $this->get_file_size( $file );
+				$size = $size_data['formatted'];
+				if( $size ) {
+					if( isset( $size_data['formatted'] ) ) {
+						update_post_meta( $post_id, 'filesize', $size_data['formatted'] );
+					}
+
+					if( isset( $size_data['raw'] ) ) {
+						update_post_meta( $post_id, 'filesize_raw', $size_data['raw'] );
+					}
+				}
+			}
+
+			$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
+
+			$meta .= '<div class="podcast_meta"><aside>';
+			if( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
+			if( $duration && strlen( $duration ) > 0 ) { if( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
+			if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $link && strlen( $link ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
+			$meta .= '</aside></div>';
+		}
+
+		$meta = apply_filters( 'ssp_episode_meta', $meta, $post_id, $context );
+
+		return $meta;
 	}
 
 	/**

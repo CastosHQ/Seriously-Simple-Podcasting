@@ -1,7 +1,7 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
-Tags: podcast, audio, rss, feed, itunes, media player
+Tags: podcast, audio, rss, feed, itunes, media player, podcasting, radio
 Requires at least: 4.0
 Tested up to: 4.1
 Stable tag: 1.8.3
@@ -12,19 +12,19 @@ Podcasting the way it's meant to be.
 
 == Description ==
 
-"Seriously Simple Podcasting" is a simple and easy-to-use podcasting solution for WordPress. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+"Seriously Simple Podcasting" is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
 **Primary Features**
 
 - Simple settings so you can get your podcast up and running quickly
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
-- Ability to use any post type for podcast episodes
+- Ability to use any post type for your podcast episodes
 - Integration with WordPress post tags for `podcast` post type
-- Highly configurable RSS feed designed for all podcast services and feed readers, including iTunes
+- Highly configurable ad robust RSS feed designed for all podcast services and feed readers, including iTunes
 - Widget for displaying recent podcast episodes anywhere on your site
 - Shortcode for displaying list of podcast episodes or series anywhere on your site
 - Playable episodes using the built-in WordPress media player
-- Allows audio files to be hosted on the same site or any other server
+- The freedom to host your audio files on the same site or any other server
 - Full i18n support
 
 **Some examples of the plugin in action**
@@ -165,6 +165,7 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 * 2015-01-26
 * [NEW] Adding post tag taxonomy to `podcast` post type (in lieu of keywords removal)
 * [TWEAK] Moving meta box setup to correct hook
+* [FIX] Preventing unformatted episode meta data from showing on excerpt (kudos Robert Neu)
 * [FIX] Fixing non-object error when no post types are selected in settings (kudos Robert Neu)
 
 = 1.8.2 =

@@ -1,7 +1,7 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
-Tags: podcast, audio, rss, feed, itunes, media player, podcasting, radio
+Tags: podcast, audio, rss, feed, itunes, media player, podcasting, radio, audio player, media
 Requires at least: 4.0
 Tested up to: 4.1
 Stable tag: 1.8.3
@@ -20,7 +20,7 @@ Podcasting the way it's meant to be.
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Ability to use any post type for your podcast episodes
 - Integration with WordPress post tags for `podcast` post type
-- Highly configurable ad robust RSS feed designed for all podcast services and feed readers, including iTunes
+- Highly configurable and robust RSS feed designed for all podcast services and feed readers, including iTunes
 - Widget for displaying recent podcast episodes anywhere on your site
 - Shortcode for displaying list of podcast episodes or series anywhere on your site
 - Playable episodes using the built-in WordPress media player

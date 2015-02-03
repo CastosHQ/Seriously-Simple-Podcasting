@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player, podcasting, radio, audio player, media
 Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 1.8.3
+Stable tag: 1.8.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -168,6 +168,14 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 9. Podcast episodes are shown in the At a Glance dashboard widget.
 
 == Changelog ==
+
+= 1.8.4 =
+* 2015-02-03
+* [FIX] Ensuring that podcast episode details metabox displays for all selected post types
+* [FIX] Switching to `audio_file` meta field for episode audio files to prevent automatic audio file deletion
+* [FIX] Updating all existing `enclosure` fields to new `audio_file` field
+* [TWEAK] Clarifying descriptions of some settings
+* [TWEAK] Improving display of settings fields
 
 = 1.8.3 =
 * 2015-01-22
@@ -421,5 +429,5 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 
 == Upgrade Notice ==
 
-= 1.8.3 =
+= 1.8.4 =
 * v1.8.x is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.

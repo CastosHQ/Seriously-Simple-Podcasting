@@ -110,7 +110,7 @@ class SSP_Settings {
 			$post_type_options[ $post_type ] = $data->labels->name;
 		}
 
-		// Available category options
+		// Set up available category options
 		$category_options = array(
 			'' => __( '-- None --', 'ss-podcasting' ),
 			'Arts' => __( 'Arts', 'ss-podcasting' ),
@@ -131,7 +131,7 @@ class SSP_Settings {
 			'TV & Film' => __( 'TV & Film', 'ss-podcasting' ),
 		);
 
-		// Available sub-category options
+		// Set up available sub-category options
 		$subcategory_options = array(
 
 			'' => __( '-- None --', 'ss-podcasting' ),
@@ -245,7 +245,8 @@ class SSP_Settings {
 					'description'	=> __( 'Your podcast title.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
-					'placeholder'	=> __( 'Podcast title', 'ss-podcasting' )
+					'placeholder'	=> __( 'Podcast title', 'ss-podcasting' ),
+					'class'			=> 'large-text',
 				),
 				array(
 					'id' 			=> 'data_subtitle',
@@ -253,7 +254,8 @@ class SSP_Settings {
 					'description'	=> __( 'Your podcast subtitle.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'description' ),
-					'placeholder'	=> __( 'Podcast subtitle', 'ss-podcasting' )
+					'placeholder'	=> __( 'Podcast subtitle', 'ss-podcasting' ),
+					'class'			=> 'large-text',
 				),
 				array(
 					'id' 			=> 'data_author',
@@ -261,7 +263,8 @@ class SSP_Settings {
 					'description'	=> __( 'Your podcast author.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
-					'placeholder'	=> __( 'Podcast author', 'ss-podcasting' )
+					'placeholder'	=> __( 'Podcast author', 'ss-podcasting' ),
+					'class'			=> 'large-text',
 				),
 				array(
 					'id' 			=> 'data_category',
@@ -274,7 +277,7 @@ class SSP_Settings {
 				array(
 					'id' 			=> 'data_subcategory',
 					'label'			=> __( 'Sub-Category' , 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast\'s sub-category - must be a sub-category of the category selected above (if available).', 'ss-podcasting' ),
+					'description'	=> __( 'Your podcast\'s sub-category (if available) - must be a sub-category of the category selected above.', 'ss-podcasting' ),
 					'type'			=> 'select',
 					'options'		=> $subcategory_options,
 					'default'		=> '',
@@ -286,12 +289,13 @@ class SSP_Settings {
 					'type'			=> 'textarea',
 					'default'		=> get_bloginfo( 'description' ),
 					'placeholder'	=> __( 'Podcast description', 'ss-podcasting' ),
-					'callback'		=> 'strip_tags'
+					'callback'		=> 'strip_tags',
+					'class'			=> 'large-text',
 				),
 				array(
 					'id' 			=> 'data_image',
-					'label'			=> __( 'Image' , 'ss-podcasting' ),
-					'description'	=> __( 'Your primary podcast image - must have a minimum size of 1400x1400 px.', 'ss-podcasting' ),
+					'label'			=> __( 'Cover Image' , 'ss-podcasting' ),
+					'description'	=> __( 'Your podcast cover image - must have a minimum size of 1400x1400 px.', 'ss-podcasting' ),
 					'type'			=> 'image',
 					'default'		=> '',
 					'placeholder'	=> ''
@@ -302,7 +306,8 @@ class SSP_Settings {
 					'description'	=> __( 'Podcast owner\'s name.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
-					'placeholder'	=> __( 'Name', 'ss-podcasting' )
+					'placeholder'	=> __( 'Name', 'ss-podcasting' ),
+					'class'			=> 'large-text',
 				),
 				array(
 					'id' 			=> 'data_owner_email',
@@ -310,7 +315,8 @@ class SSP_Settings {
 					'description'	=> __( 'Podcast owner\'s email address.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'admin_email' ),
-					'placeholder'	=> __( 'Email address', 'ss-podcasting' )
+					'placeholder'	=> __( 'Email address', 'ss-podcasting' ),
+					'class'			=> 'large-text',
 				),
 				array(
 					'id' 			=> 'data_language',
@@ -318,7 +324,8 @@ class SSP_Settings {
 					'description'	=> sprintf( __( 'Your podcast\'s language in %1$sISO-639-1 format%2$s.', 'ss-podcasting' ), '<a href="' . esc_url( 'http://www.loc.gov/standards/iso639-2/php/code_list.php' ) . '" target="' . esc_attr( '_blank' ) . '">', '</a>' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'language' ),
-					'placeholder'	=> __( 'Language', 'ss-podcasting' )
+					'placeholder'	=> __( 'Language', 'ss-podcasting' ),
+					'class'			=> 'all-options',
 				),
 				array(
 					'id' 			=> 'data_copyright',
@@ -326,7 +333,8 @@ class SSP_Settings {
 					'description'	=> __( 'Copyright line for your podcast.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
-					'placeholder'	=> __( 'Copyright', 'ss-podcasting' )
+					'placeholder'	=> __( 'Copyright', 'ss-podcasting' ),
+					'class'			=> 'large-text',
 				),
 				array(
 					'id' 			=> 'explicit',
@@ -355,7 +363,8 @@ class SSP_Settings {
 					'description'	=> __( 'Username for your podcast feed.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '',
-					'placeholder'	=> __( 'Feed username', 'ss-podcasting' )
+					'placeholder'	=> __( 'Feed username', 'ss-podcasting' ),
+					'class'			=> 'regular-text',
 				),
 				array(
 					'id' 			=> 'protection_password',
@@ -363,8 +372,9 @@ class SSP_Settings {
 					'description'	=> __( 'Password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again.', 'ss-podcasting' ),
 					'type'			=> 'text_secret',
 					'default'		=> '',
-					'placeholder'	=> '',
-					'callback'		=> array( $this, 'encode_password' )
+					'placeholder'	=> __( 'Feed password', 'ss-podcasting' ),
+					'callback'		=> array( $this, 'encode_password' ),
+					'class'			=> 'regular-text',
 				),
 				array(
 					'id' 			=> 'protection_no_access_message',
@@ -372,8 +382,9 @@ class SSP_Settings {
 					'description'	=> __( 'This message will be displayed to people who are not allowed access to your podcast feed. Limited HTML allowed.', 'ss-podcasting' ),
 					'type'			=> 'textarea',
 					'default'		=> __( 'You are not permitted to view this podcast feed.', 'ss-podcasting' ),
-					'placeholder'	=> __( 'Message displayed to users who do not have access', 'ss-podcasting' ),
-					'callback'		=> array( $this, 'validate_message' )
+					'placeholder'	=> __( 'Message displayed to users who do not have access to the podcast feed', 'ss-podcasting' ),
+					'callback'		=> array( $this, 'validate_message' ),
+					'class'			=> 'large-text',
 				),
 			)
 		);
@@ -387,7 +398,7 @@ class SSP_Settings {
 					'label'			=> __( 'Redirect podcast feed to new URL', 'ss-podcasting' ),
 					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.', 'ss-podcasting' ) , '<br/>' ),
 					'type'			=> 'checkbox',
-					'default'		=> ''
+					'default'		=> '',
 				),
 				array(
 					'id' 			=> 'new_feed_url',
@@ -395,8 +406,9 @@ class SSP_Settings {
 					'description'	=> __( 'Your podcast feed\'s new URL.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '',
-					'placeholder'	=> '',
-					'callback'		=> 'esc_url'
+					'placeholder'	=> __( 'New feed URL', 'ss-podcasting' ),
+					'callback'		=> 'esc_url',
+					'class'			=> 'regular-text',
 				),
 			)
 		);
@@ -412,7 +424,8 @@ class SSP_Settings {
 					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> __( 'External feed URL', 'ss-podcasting' ),
-					'callback'		=> 'esc_url'
+					'callback'		=> 'esc_url',
+					'class'			=> 'regular-text',
 				),
 				array(
 					'id' 			=> 'feed_link',
@@ -510,19 +523,28 @@ class SSP_Settings {
 			}
 		}
 
+		$class = '';
+		if( isset( $field['class'] ) ) {
+			$class = $field['class'];
+		}
+
 		switch( $field['type'] ) {
 			case 'text':
 			case 'password':
 			case 'number':
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '"/>' . "\n";
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . $data . '" class="' . $class . '"/>' . "\n";
 			break;
 
 			case 'text_secret':
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value=""/>' . "\n";
+				$placeholder = $field['placeholder'];
+				if( $data ) {
+					$placeholder = __( 'Password stored securely', 'ss-podcasting' );
+				}
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" value="" class="' . $class . '"/>' . "\n";
 			break;
 
 			case 'textarea':
-				$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" rows="5" cols="50" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '">' . $data . '</textarea><br/>'. "\n";
+				$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" rows="5" cols="50" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" class="' . $class . '">' . $data . '</textarea><br/>'. "\n";
 			break;
 
 			case 'checkbox':
@@ -530,7 +552,7 @@ class SSP_Settings {
 				if( $option && 'on' == $option ){
 					$checked = 'checked="checked"';
 				}
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . '/>' . "\n";
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . ' class="' . $class . '"/>' . "\n";
 			break;
 
 			case 'checkbox_multi':
@@ -539,7 +561,7 @@ class SSP_Settings {
 					if( in_array( $k, (array) $data ) ) {
 						$checked = true;
 					}
-					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label><br/>';
+					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</label><br/>';
 				}
 			break;
 
@@ -549,12 +571,12 @@ class SSP_Settings {
 					if( $k == $data ) {
 						$checked = true;
 					}
-					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" /> ' . $v . '</label><br/>';
+					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</label><br/>';
 				}
 			break;
 
 			case 'select':
-				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '">';
+				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
 				$prev_group = '';
 				foreach( $field['options'] as $k => $v ) {
 

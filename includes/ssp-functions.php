@@ -250,7 +250,7 @@ if( ! function_exists( 'ssp_episode_ids' ) ) {
 				'posts_per_page' => -1,
 				'meta_query' => array(
 					array(
-						'key' => 'enclosure',
+						'key' => 'audio_file',
 						'compare' => '!=',
 						'value' => '',
 					),

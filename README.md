@@ -1,10 +1,10 @@
 # Seriously Simple Podcasting #
 **Contributors:** hlashbrooke  
 **Donate link:** http://www.hughlashbrooke.com/donate/  
-**Tags:** podcast, audio, rss, feed, itunes, media player, podcasting, radio  
+**Tags:** podcast, audio, rss, feed, itunes, media player, podcasting, radio, audio player, media  
 **Requires at least:** 4.0  
 **Tested up to:** 4.1  
-**Stable tag:** 1.8.3  
+**Stable tag:** 1.8.4  
 **License:** GPLv2 or later  
 **License URI:** http://www.gnu.org/licenses/gpl-2.0.html  
 
@@ -20,7 +20,7 @@ Podcasting the way it's meant to be.
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Ability to use any post type for your podcast episodes
 - Integration with WordPress post tags for `podcast` post type
-- Highly configurable ad robust RSS feed designed for all podcast services and feed readers, including iTunes
+- Highly configurable and robust RSS feed designed for all podcast services and feed readers, including iTunes
 - Widget for displaying recent podcast episodes anywhere on your site
 - Shortcode for displaying list of podcast episodes or series anywhere on your site
 - Playable episodes using the built-in WordPress media player
@@ -31,8 +31,6 @@ Podcasting the way it's meant to be.
 
 - [Southern Cross Church](http://www.southerncrosschurch.org/sermons/)
 - [WP Cape Town](http://www.wpcapetown.co.za/podcast/)
-
-Want to contribute? [Fork the GitHub repository](https://github.com/hlashbrooke/Seriously-Simple-Podcasting).
 
 ## Usage ##
 
@@ -156,6 +154,14 @@ If you have an idea for the plugin, feel free to post on the support forum [here
 If you would like to contribute to the code then you can fork the GitHub repo [here](https://github.com/hlashbrooke/Seriously-Simple-Podcasting) - your pull requests will be reviewed and merged if they fit into the goals for this plugin. All contributors will be given credit where it is due.
 
 ## Changelog ##
+
+### 1.8.4 ###
+* 2015-02-03
+* [FIX] Ensuring that podcast episode details metabox displays for all selected post types
+* [FIX] Switching to `audio_file` meta field for episode audio files to prevent automatic audio file deletion
+* [FIX] Updating all existing `enclosure` fields to new `audio_file` field
+* [TWEAK] Clarifying descriptions of some settings
+* [TWEAK] Improving display of settings fields
 
 ### 1.8.3 ###
 * 2015-01-22
@@ -409,5 +415,5 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 
 ## Upgrade Notice ##
 
-### 1.8.3 ###
+### 1.8.4 ###
 * v1.8.x is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.

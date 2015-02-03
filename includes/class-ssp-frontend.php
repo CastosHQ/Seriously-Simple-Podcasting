@@ -474,7 +474,7 @@ class SSP_Frontend {
 	public function get_enclosure( $episode_id = 0 ) {
 
 		if( $episode_id ) {
-			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, 'enclosure', true ), $episode_id );
+			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, 'audio_file', true ), $episode_id );
 		}
 
 		return false;
@@ -495,7 +495,7 @@ class SSP_Frontend {
 				'post_type' => 'podcast',
 				'post_status' => 'publish',
 				'posts_per_page' => 1,
-				'meta_key' => 'enclosure',
+				'meta_key' => 'audio_file',
 				'meta_value' => $file
 			);
 

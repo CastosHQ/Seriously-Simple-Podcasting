@@ -49,8 +49,14 @@ class SSP_Admin {
 
 		if ( is_admin() ) {
 
+			add_action( 'admin_init', array( $this, 'update_enclosures' ) );
+
 			// Episode meta box
-			add_action( 'add_meta_boxes', array( $this, 'meta_box_setup' ), 20 );
+			$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+			$podcast_post_types[] = $this->token;
+			foreach ( (array) $podcast_post_types as $post_type ) {
+				add_action( 'add_meta_boxes_' . $post_type, array( $this, 'meta_box_setup' ), 10, 1 );
+			}
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 200, 1 );
 
 			// Episode edit screen
@@ -325,25 +331,13 @@ class SSP_Admin {
 	 * Create meta box on episode edit screen
 	 * @return void
 	 */
-	public function meta_box_setup () {
+	public function meta_box_setup ( $post ) {
 
-		// Return early if we're on a single edit post screen.
-		$screen = get_current_screen();
-		if ( ! in_array( $screen->id, array( 'post', $this->token ) ) ) {
-			return;
-		}
-
-		add_meta_box( 'episode-data', __( 'Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $this->token, 'normal', 'high' );
-
-		$other_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		if ( ! empty( $other_post_types ) ) {
-			foreach ( (array) $other_post_types as $post_type ) {
-				add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $post_type, 'normal', 'high' );
-			}
-		}
+		add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details' , 'ss-podcasting' ), array( $this, 'meta_box_content' ), $post->post_type, 'normal', 'high' );
 
 		// Allow more metaboxes to be added
-		do_action( 'ssp_meta_boxes' );
+		do_action( 'ssp_meta_boxes', $post );
+
 	}
 
 	/**
@@ -372,7 +366,7 @@ class SSP_Admin {
 					$data = $saved;
 				}
 
-				if( $k == 'enclosure' ) {
+				if( $k == 'audio_file' ) {
 					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input type="button" class="button" id="upload_audio_file_button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" data-uploader_title="Choose a file" data-uploader_button_text="Insert audio file" /><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 					$html .= '</td><tr/>' . "\n";
@@ -421,7 +415,7 @@ class SSP_Admin {
 			}
 		}
 
-		// Prevents automatic enclosure deletion in most cases
+		// Prevents automatic enclosure deletion in some cases
 		// See: https://core.trac.wordpress.org/ticket/10511#comment:27
 		delete_post_meta( $post_id, '_encloseme' );
 
@@ -445,7 +439,7 @@ class SSP_Admin {
 				$val = esc_url( $val );
 			}
 
-			if( $k == 'enclosure' ) {
+			if( $k == 'audio_file' ) {
 				$enclosure = $val;
 			}
 
@@ -478,6 +472,7 @@ class SSP_Admin {
 				}
 			}
 
+			// Save audio file to 'enclosure' meta field for standards-sake
 			update_post_meta( $post_id, 'enclosure', $enclosure );
 
 		}
@@ -491,7 +486,7 @@ class SSP_Admin {
 	public function custom_fields() {
 		$fields = array();
 
-		$fields['enclosure'] = array(
+		$fields['audio_file'] = array(
 		    'name' => __( 'Audio file:' , 'ss-podcasting' ),
 		    'description' => __( 'Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here.' , 'ss-podcasting' ),
 		    'type' => 'url',
@@ -692,6 +687,62 @@ class SSP_Admin {
 			$this->feed_template();
 			exit;
 		}
+	}
+
+	/**
+	 * Update 'enclosure' meta field to 'audio_file' meta field
+	 * @return void
+	 */
+	public function update_enclosures () {
+
+		// Allow forced re-run of update if necessary
+		if( isset( $_GET['ssp_update_enclosures'] ) ) {
+			delete_option( 'ssp_update_enclosures' );
+		}
+
+		// Check if update has been run
+		$update_run = get_option( 'ssp_update_enclosures', false );
+
+		if( $update_run ) {
+			return;
+		}
+
+		// Get IDs of all posts with enclosures
+		$args = array(
+			'post_type' => 'any',
+			'post_status' => 'any',
+			'posts_per_page' => -1,
+			'meta_query' => array(
+				array(
+					'key' => 'enclosure',
+					'compare' => '!=',
+					'value' => '',
+				),
+			),
+			'fields' => 'ids',
+		);
+
+		$posts_with_enclosures = get_posts( $args );
+
+		if( 0 == count( $posts_with_enclosures ) ) {
+			return;
+		}
+
+		// Add 'audio_file' meta field to all posts with enclosures
+		foreach( (array) $posts_with_enclosures as $post_id ) {
+
+			// Get existing enclosure
+			$enclosure = get_post_meta( $post_id, 'enclosure', true );
+
+			// Add audio_file field
+			if( $enclosure ) {
+				update_post_meta( $post_id, 'audio_file', $enclosure );
+			}
+
+		}
+
+		// Mark update as having been run
+		update_option( 'ssp_update_enclosures', 'run' );
 	}
 
 }

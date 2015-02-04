@@ -139,6 +139,4 @@ class SSP_Widget_Recent_Episodes extends WP_Widget {
 	}
 } // End Class
 
-// Regsiter the widget
-add_action( 'widgets_init', create_function( '', 'return register_widget( "SSP_Widget_Recent_Episodes" );' ), 1 );
 ?>

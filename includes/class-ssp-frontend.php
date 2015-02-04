@@ -57,6 +57,9 @@ class SSP_Frontend {
 
 		// Add shortcode
 		add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );
+
+		// Register widgets
+		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
 	}
 
 	/**
@@ -573,6 +576,23 @@ class SSP_Frontend {
 		$html = '<link rel="alternate" type="application/rss+xml" title="' . __( 'Podcast RSS feed', 'ss-podcasting' ) . '" href="' . esc_url( $feed_url ) . '" />';
 
 		echo apply_filters( 'ssp_rss_meta_tag', $html );
+	}
+
+	/**
+	 * Register plugin widgets
+	 * @return void
+	 */
+	public function register_widgets () {
+
+		$widgets = array(
+			'recent-episodes' => 'Recent_Episodes',
+		);
+
+		foreach( $widgets as $id => $name ) {
+			require_once( $this->dir . '/includes/widgets/class-ssp-widget-' . $id . '.php' );
+			register_widget( 'SSP_Widget_' . $name );
+		}
+
 	}
 
 }

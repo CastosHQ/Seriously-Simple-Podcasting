@@ -28,5 +28,3 @@ if( is_admin() ) {
 	require_once( 'includes/class-ssp-settings.php' );
 	$ssp_settings = new SSP_Settings( __FILE__ );
 }
-
-require_once( 'includes/class-ssp-widget.php' );

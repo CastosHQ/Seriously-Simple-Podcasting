@@ -89,7 +89,7 @@ Just add those to your theme (or a plugin) and then re-save your site's permalin
 
 = How can I edit the actual content of the RSS feed? =
 
-You shouldn't ever need to do this, but if you would like to override the the RSS feed content then copy the 'feed-template.php' file from the plugin's 'templates' directory and paste it into your theme's root folder - from there you can edit it to display the feed content however you wish.
+You shouldn't ever need to do this, but if you would like to override the the RSS feed content then copy the 'feed-podcast.php' file from the plugin's 'templates' directory and paste it into your theme's root folder - from there you can edit it to display the feed content however you wish.
 
 = Why can't I upload an audio file that is larger than 2/8/16/32/XX MB? =
 

@@ -83,7 +83,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 
 			// Begin templating logic.
 			$tpl = '<div class="%%CLASS%%"><h4 class="podcast-title">%%TITLE%%</h4><aside class="meta">%%META%%</aside></div>';
-			$tpl = apply_filters( 'ss_podcast_item_template', $tpl, $args );
+			$tpl = apply_filters( 'ssp_podcast_item_template', $tpl, $args );
 
 			if( $query['content'] == 'episodes' ) {
 

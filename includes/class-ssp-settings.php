@@ -245,7 +245,7 @@ class SSP_Settings {
 					'description'	=> __( 'Your podcast title.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
-					'placeholder'	=> __( 'Podcast title', 'ss-podcasting' ),
+					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
 				),
 				array(
@@ -254,7 +254,7 @@ class SSP_Settings {
 					'description'	=> __( 'Your podcast subtitle.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'description' ),
-					'placeholder'	=> __( 'Podcast subtitle', 'ss-podcasting' ),
+					'placeholder'	=> get_bloginfo( 'description' ),
 					'class'			=> 'large-text',
 				),
 				array(
@@ -263,7 +263,7 @@ class SSP_Settings {
 					'description'	=> __( 'Your podcast author.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
-					'placeholder'	=> __( 'Podcast author', 'ss-podcasting' ),
+					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
 				),
 				array(
@@ -288,7 +288,7 @@ class SSP_Settings {
 					'description'	=> __( 'A description/summary of your podcast - no HTML allowed.', 'ss-podcasting' ),
 					'type'			=> 'textarea',
 					'default'		=> get_bloginfo( 'description' ),
-					'placeholder'	=> __( 'Podcast description', 'ss-podcasting' ),
+					'placeholder'	=> get_bloginfo( 'description' ),
 					'callback'		=> 'strip_tags',
 					'class'			=> 'large-text',
 				),
@@ -306,7 +306,7 @@ class SSP_Settings {
 					'description'	=> __( 'Podcast owner\'s name.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
-					'placeholder'	=> __( 'Name', 'ss-podcasting' ),
+					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
 				),
 				array(
@@ -315,7 +315,7 @@ class SSP_Settings {
 					'description'	=> __( 'Podcast owner\'s email address.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'admin_email' ),
-					'placeholder'	=> __( 'Email address', 'ss-podcasting' ),
+					'placeholder'	=> get_bloginfo( 'admin_email' ),
 					'class'			=> 'large-text',
 				),
 				array(
@@ -324,7 +324,7 @@ class SSP_Settings {
 					'description'	=> sprintf( __( 'Your podcast\'s language in %1$sISO-639-1 format%2$s.', 'ss-podcasting' ), '<a href="' . esc_url( 'http://www.loc.gov/standards/iso639-2/php/code_list.php' ) . '" target="' . esc_attr( '_blank' ) . '">', '</a>' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'language' ),
-					'placeholder'	=> __( 'Language', 'ss-podcasting' ),
+					'placeholder'	=> get_bloginfo( 'language' ),
 					'class'			=> 'all-options',
 				),
 				array(
@@ -333,7 +333,7 @@ class SSP_Settings {
 					'description'	=> __( 'Copyright line for your podcast.', 'ss-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
-					'placeholder'	=> __( 'Copyright', 'ss-podcasting' ),
+					'placeholder'	=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
 				),
 				array(
@@ -625,14 +625,9 @@ class SSP_Settings {
 			break;
 
 			case 'podcast_url';
-				$podcast_url = $this->home_url;
 
-				$slug = get_option('ss_podcasting_slug');
-				if( $slug ) {
-					$podcast_url .= $slug;
-				} else {
-					$podcast_url .= '?post_type=podcast';
-				}
+				$slug = apply_filters( 'ssp_archive_slug', __( 'podcast' , 'ss-podcasting' ) );
+				$podcast_url = $this->home_url . $slug;
 
 				$html .= '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';
 			break;

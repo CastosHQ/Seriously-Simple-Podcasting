@@ -176,6 +176,9 @@ If you would like to contribute to the code then you can fork the GitHub repo [h
 * [FIX] Updating all existing `enclosure` fields to new `audio_file` field
 * [TWEAK] Clarifying descriptions of some settings
 * [TWEAK] Improving display of settings fields
+* [TWEAK] Moving widget registration logic into frontend class
+* [TWEAK] Renaming a few filters for consistency
+* [TWEAK] Indicating feed data placeholders more effectively
 
 = 1.8.3 =
 * 2015-01-22

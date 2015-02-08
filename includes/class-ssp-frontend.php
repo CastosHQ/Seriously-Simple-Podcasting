@@ -305,35 +305,12 @@ class SSP_Frontend {
 
 		    $base = log ( $size ) / log( 1024 );
 		    $suffixes = array( '' , 'k' , 'M' , 'G' , 'T' );
-		    $bytes = round( pow( 1024 , $base - floor( $base ) ) , $precision ) . $suffixes[ floor( $base ) ];
+		    $formatted_size = round( pow( 1024 , $base - floor( $base ) ) , $precision ) . $suffixes[ floor( $base ) ];
 
-		    return apply_filters( 'ssp_file_size_formatted', $bytes, $size );
+		    return apply_filters( 'ssp_file_size_formatted', $formatted_size, $size );
 		}
 
 		return false;
-	}
-
-	/**
-	 * Format duration of audio track for display
-	 * @param  integer $duration Raw duration in seconds
-	 * @return mixed             Formatted duration on success, 0 on failure
-	 */
-	public function format_duration( $duration = '' ) {
-
-		$length = false;
-
-		if( $duration ) {
-			sscanf( $duration , "%d:%d:%d" , $hours , $minutes , $seconds );
-			$length = isset( $seconds ) ? $hours * 3600 + $minutes * 60 + $seconds : $hours * 60 + $minutes;
-
-			if( ! $length ) {
-				$length = (int) $duration;
-			}
-
-			return apply_filters( 'ssp_file_duration_formatted', $length, $duration );
-		}
-
-		return 0;
 	}
 
 	/**
@@ -348,7 +325,7 @@ class SSP_Frontend {
 
 		    $prefix = $wpdb->prefix;
 
-		    $attachment = $wpdb->get_col($wpdb->prepare( 'SELECT ID FROM ' . $prefix . 'posts' . ' WHERE guid="' . $attachment . '";' ) );
+		    $attachment = $wpdb->get_col( $wpdb->prepare( 'SELECT ID FROM ' . $prefix . 'posts' . ' WHERE guid="' . $attachment . '";' ) );
 
 		    if( $attachment[0] ) {
 			    $id = $attachment[0];
@@ -385,7 +362,7 @@ class SSP_Frontend {
 	 * @return string        Image HTML markup
 	 */
 	public function get_image( $id = 0, $size = 'podcast-thumbnail' ) {
-		$response = '';
+		$image = '';
 
 		if ( has_post_thumbnail( $id ) ) {
 			// If not a string or an array, and not an integer, default to 200x9999.
@@ -394,10 +371,10 @@ class SSP_Frontend {
 			} elseif ( ! is_string( $size ) && ! is_array( $size ) ) {
 				$size = array( 200, 9999 );
 			}
-			$response = get_the_post_thumbnail( intval( $id ), $size );
+			$image = get_the_post_thumbnail( intval( $id ), $size );
 		}
 
-		return apply_filters( 'ssp_episode_image', $response, $id );
+		return apply_filters( 'ssp_episode_image', $image, $id );
 	}
 
 	/**
@@ -532,7 +509,7 @@ class SSP_Frontend {
 				$episode = $this->get_episode_from_file( $file );
 
 				// Allow other actions - functions hooked on here must not echo any data
-			    do_action( 'ss_podcasting_file_download', $file, $episode );
+			    do_action( 'ssp_file_download', $file, $episode );
 
 			    // Set necessary headers
 				header( "Pragma: no-cache" );

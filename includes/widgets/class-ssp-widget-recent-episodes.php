@@ -75,7 +75,7 @@ class SSP_Widget_Recent_Episodes extends WP_Widget {
 
 		$query_args = ssp_episodes( $number, '', true, 'feed' );
 
-		$qry = new WP_Query( apply_filters( 'widget_recent_episodes_args', $query_args ) );
+		$qry = new WP_Query( apply_filters( 'ssp_widget_recent_episodes_args', $query_args ) );
 
 		if ($qry->have_posts()) :
 ?>

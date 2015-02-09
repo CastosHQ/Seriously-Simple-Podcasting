@@ -114,7 +114,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					if( ! $size ) {
 						$file = $ss_podcasting->get_enclosure( $post->ID );
 						$size_data = $ss_podcasting->get_file_size( $file );
-						$size = $size['formatted'];
+						$size = $size_data['formatted'];
 						if( $size ) {
 							if( isset( $size_data['formatted'] ) ) {
 								update_post_meta( $post->ID, 'filesize', $size_data['formatted'] );

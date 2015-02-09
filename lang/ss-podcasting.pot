@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Seriously Simple Podcasting package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting 1.8.4\n"
+"Project-Id-Version: Seriously Simple Podcasting 1.8.5\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-02-03 09:48:02+00:00\n"
+"POT-Creation-Date: 2015-02-09 09:49:07+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:122
+#: includes/class-ssp-admin.php:122 includes/class-ssp-settings.php:629
 msgid "podcast"
 msgstr ""
 
@@ -252,38 +252,42 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/class-ssp-admin.php:571
-msgid "Write a review"
+msgid "Documentation"
 msgstr ""
 
 #: includes/class-ssp-admin.php:572
+msgid "Write a review"
+msgstr ""
+
+#: includes/class-ssp-admin.php:573
 msgid "Donate"
 msgstr ""
 
-#: includes/class-ssp-admin.php:576
+#: includes/class-ssp-admin.php:577
 msgid "Confirm compatibility"
 msgstr ""
 
-#: includes/class-ssp-admin.php:589
+#: includes/class-ssp-admin.php:590
 msgid "Enter episode title here"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:163 includes/ssp-functions.php:130
+#: includes/class-ssp-frontend.php:166 includes/ssp-functions.php:130
 msgid "Download file"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:164 includes/ssp-functions.php:131
+#: includes/class-ssp-frontend.php:167 includes/ssp-functions.php:131
 msgid "Duration"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:165 includes/ssp-functions.php:132
+#: includes/class-ssp-frontend.php:168 includes/ssp-functions.php:132
 msgid "Size"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:573
+#: includes/class-ssp-frontend.php:553
 msgid "Podcast RSS feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:68 includes/class-ssp-settings.php:742
+#: includes/class-ssp-settings.php:68 includes/class-ssp-settings.php:737
 msgid "Podcast Settings"
 msgstr ""
 
@@ -642,10 +646,6 @@ msgstr ""
 msgid "Your podcast title."
 msgstr ""
 
-#: includes/class-ssp-settings.php:248
-msgid "Podcast title"
-msgstr ""
-
 #: includes/class-ssp-settings.php:253
 msgid "Subtitle"
 msgstr ""
@@ -654,20 +654,12 @@ msgstr ""
 msgid "Your podcast subtitle."
 msgstr ""
 
-#: includes/class-ssp-settings.php:257
-msgid "Podcast subtitle"
-msgstr ""
-
 #: includes/class-ssp-settings.php:262
 msgid "Author"
 msgstr ""
 
 #: includes/class-ssp-settings.php:263
 msgid "Your podcast author."
-msgstr ""
-
-#: includes/class-ssp-settings.php:266
-msgid "Podcast author"
 msgstr ""
 
 #: includes/class-ssp-settings.php:271
@@ -694,10 +686,6 @@ msgstr ""
 msgid "A description/summary of your podcast - no HTML allowed."
 msgstr ""
 
-#: includes/class-ssp-settings.php:291
-msgid "Podcast description"
-msgstr ""
-
 #: includes/class-ssp-settings.php:297
 msgid "Cover Image"
 msgstr ""
@@ -714,10 +702,6 @@ msgstr ""
 msgid "Podcast owner's name."
 msgstr ""
 
-#: includes/class-ssp-settings.php:309
-msgid "Name"
-msgstr ""
-
 #: includes/class-ssp-settings.php:314
 msgid "Owner email address"
 msgstr ""
@@ -726,11 +710,7 @@ msgstr ""
 msgid "Podcast owner's email address."
 msgstr ""
 
-#: includes/class-ssp-settings.php:318
-msgid "Email address"
-msgstr ""
-
-#: includes/class-ssp-settings.php:323 includes/class-ssp-settings.php:327
+#: includes/class-ssp-settings.php:323
 msgid "Language"
 msgstr ""
 
@@ -738,7 +718,7 @@ msgstr ""
 msgid "Your podcast's language in %1$sISO-639-1 format%2$s."
 msgstr ""
 
-#: includes/class-ssp-settings.php:332 includes/class-ssp-settings.php:336
+#: includes/class-ssp-settings.php:332
 msgid "Copyright"
 msgstr ""
 
@@ -878,40 +858,40 @@ msgstr ""
 msgid "Remove image"
 msgstr ""
 
-#: includes/class-ssp-settings.php:786
+#: includes/class-ssp-settings.php:781
 msgid "%1$s settings updated."
 msgstr ""
 
-#: includes/class-ssp-settings.php:801
+#: includes/class-ssp-settings.php:796
 msgid "Save Settings"
-msgstr ""
-
-#: includes/class-ssp-widget.php:26
-msgid "Display a list of your most recent podcastepisodes."
-msgstr ""
-
-#: includes/class-ssp-widget.php:28
-msgid "Podcast: Recent Episodes"
-msgstr ""
-
-#: includes/class-ssp-widget.php:64
-msgid "Recent Episodes"
-msgstr ""
-
-#: includes/class-ssp-widget.php:130
-msgid "Title:"
-msgstr ""
-
-#: includes/class-ssp-widget.php:133
-msgid "Number of episodes to show:"
-msgstr ""
-
-#: includes/class-ssp-widget.php:137
-msgid "Display episode date?"
 msgstr ""
 
 #: includes/ssp-functions.php:160
 msgid " episodes"
+msgstr ""
+
+#: includes/widgets/class-ssp-widget-recent-episodes.php:26
+msgid "Display a list of your most recent podcastepisodes."
+msgstr ""
+
+#: includes/widgets/class-ssp-widget-recent-episodes.php:28
+msgid "Podcast: Recent Episodes"
+msgstr ""
+
+#: includes/widgets/class-ssp-widget-recent-episodes.php:64
+msgid "Recent Episodes"
+msgstr ""
+
+#: includes/widgets/class-ssp-widget-recent-episodes.php:130
+msgid "Title:"
+msgstr ""
+
+#: includes/widgets/class-ssp-widget-recent-episodes.php:133
+msgid "Number of episodes to show:"
+msgstr ""
+
+#: includes/widgets/class-ssp-widget-recent-episodes.php:137
+msgid "Display episode date?"
 msgstr ""
 #. Plugin Name of the plugin/theme
 msgid "Seriously Simple Podcasting"

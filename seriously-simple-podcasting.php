@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.8.4
+ * Version: 1.8.5
  * Plugin URI: https://wordpress.org/plugins/seriously-simple-podcasting/
  * Description: Podcasting the way it's meant to be.
  * Author: Hugh Lashbrooke

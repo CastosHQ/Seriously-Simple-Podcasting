@@ -57,7 +57,7 @@ class SSP_Admin {
 			foreach ( (array) $podcast_post_types as $post_type ) {
 				add_action( 'add_meta_boxes_' . $post_type, array( $this, 'meta_box_setup' ), 10, 1 );
 			}
-			add_action( 'save_post', array( $this, 'meta_box_save' ), 200, 1 );
+			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 
 			// Episode edit screen
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -395,16 +395,22 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function meta_box_save( $post_id ) {
-		global $post, $messages, $ss_podcasting;
+		global $post, $ss_podcasting;
 
 		$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
 		$allowed_post_types[] = $this->token;
 
+		// Post type check
+		if ( ! in_array( get_post_type(), $allowed_post_types ) ) {
+			return false;
+		}
+
 		// Security check
-		if ( ( ! in_array( get_post_type(), $allowed_post_types ) ) || ! wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) {
+		if ( ! wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) {
 			return $post_id;
 		}
 
+		// User capability check
 		if ( 'page' == $_POST['post_type'] ) {
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
@@ -414,14 +420,6 @@ class SSP_Admin {
 				return $post_id;
 			}
 		}
-
-		// Prevents automatic enclosure deletion in some cases
-		// See: https://core.trac.wordpress.org/ticket/10511#comment:27
-		delete_post_meta( $post_id, '_encloseme' );
-
-		// Remove ping and enclosure updates
-		// Prevents further automatic enclosure deletion
-		remove_action( 'do_pings', 'do_all_pings', 10, 1 );
 
 		$field_data = $this->custom_fields();
 		$fields = array_keys( $field_data );

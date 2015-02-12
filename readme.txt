@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, feed, itunes, media player, podcasting, radio, audio player, media
 Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 1.8.5
+Stable tag: 1.8.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -71,6 +71,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 9. Podcast episodes are shown in the At a Glance dashboard widget.
 
 == Changelog ==
+
+= 1.8.6 =
+* 2015-02-12
+* [TWEAK] Changing priority of meta box saving function - fixes conflict with The Events Calendar
 
 = 1.8.5 =
 * 2015-02-09
@@ -340,5 +344,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.8.5 =
+= 1.8.6 =
 * v1.8.x is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING FROM 1.7.x: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.

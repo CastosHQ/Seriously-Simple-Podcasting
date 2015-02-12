@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Seriously Simple Podcasting package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting 1.8.5\n"
+"Project-Id-Version: Seriously Simple Podcasting 1.8.6\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-02-09 09:49:07+00:00\n"
+"POT-Creation-Date: 2015-02-12 13:26:09+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -205,69 +205,69 @@ msgstr ""
 msgid "Upload File"
 msgstr ""
 
-#: includes/class-ssp-admin.php:490
+#: includes/class-ssp-admin.php:488
 msgid "Audio file:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:491
+#: includes/class-ssp-admin.php:489
 msgid "Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here."
 msgstr ""
 
-#: includes/class-ssp-admin.php:498
+#: includes/class-ssp-admin.php:496
 msgid "Duration:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:499
+#: includes/class-ssp-admin.php:497
 msgid "Duration of audio file as it will be displayed on the site - will be calculated automatically if possible."
 msgstr ""
 
-#: includes/class-ssp-admin.php:506
+#: includes/class-ssp-admin.php:504
 msgid "File size:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:507
+#: includes/class-ssp-admin.php:505
 msgid "Size of the audio file as it will be displayed on the site - will be calculated automatically if possible."
 msgstr ""
 
-#: includes/class-ssp-admin.php:514
+#: includes/class-ssp-admin.php:512
 msgid "Explicit:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:515
+#: includes/class-ssp-admin.php:513
 msgid "Mark this episode as explicit."
 msgstr ""
 
-#: includes/class-ssp-admin.php:522
+#: includes/class-ssp-admin.php:520
 msgid "Block from iTunes:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:523
+#: includes/class-ssp-admin.php:521
 msgid "Block this episode from appearing in iTunes."
 msgstr ""
 
-#: includes/class-ssp-admin.php:543
+#: includes/class-ssp-admin.php:541
 msgid "%s Episode"
 msgid_plural "%s Episodes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-ssp-admin.php:571
+#: includes/class-ssp-admin.php:569
 msgid "Documentation"
 msgstr ""
 
-#: includes/class-ssp-admin.php:572
+#: includes/class-ssp-admin.php:570
 msgid "Write a review"
 msgstr ""
 
-#: includes/class-ssp-admin.php:573
+#: includes/class-ssp-admin.php:571
 msgid "Donate"
 msgstr ""
 
-#: includes/class-ssp-admin.php:577
+#: includes/class-ssp-admin.php:575
 msgid "Confirm compatibility"
 msgstr ""
 
-#: includes/class-ssp-admin.php:590
+#: includes/class-ssp-admin.php:588
 msgid "Enter episode title here"
 msgstr ""
 

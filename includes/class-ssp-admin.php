@@ -44,6 +44,8 @@ class SSP_Admin {
 		// Register podcast feed
 		add_action( 'init', array( $this, 'add_feed' ) );
 
+		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
+
 		// Handle v1.x feed URL
 		add_action( 'init', array( $this, 'redirect_old_feed' ) );
 
@@ -52,8 +54,7 @@ class SSP_Admin {
 			add_action( 'admin_init', array( $this, 'update_enclosures' ) );
 
 			// Episode meta box
-			$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-			$podcast_post_types[] = $this->token;
+			$podcast_post_types = ssp_post_types( true );
 			foreach ( (array) $podcast_post_types as $post_type ) {
 				add_action( 'add_meta_boxes_' . $post_type, array( $this, 'meta_box_setup' ), 10, 1 );
 			}
@@ -153,8 +154,7 @@ class SSP_Admin {
 	 */
 	private function register_taxonomies() {
 
-		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		$podcast_post_types[] = $this->token;
+		$podcast_post_types = ssp_post_types( true );
 
         $series_labels = array(
             'name' => __( 'Podcast Series' , 'ss-podcasting' ),
@@ -397,11 +397,10 @@ class SSP_Admin {
 	public function meta_box_save( $post_id ) {
 		global $post, $ss_podcasting;
 
-		$allowed_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		$allowed_post_types[] = $this->token;
+		$podcast_post_types = ssp_post_types( true );
 
 		// Post type check
-		if ( ! in_array( get_post_type(), $allowed_post_types ) ) {
+		if ( ! in_array( get_post_type(), $podcast_post_types ) ) {
 			return false;
 		}
 
@@ -646,6 +645,21 @@ class SSP_Admin {
     public function add_feed() {
     	$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
 		add_feed( $feed_slug, array( $this, 'feed_template' ) );
+	}
+
+	/**
+	 * Hide RSS footer created by WordPress SEO from podcast RSS feed
+	 * Will only work if/when my patch is accepted: https://github.com/Yoast/wordpress-seo/pull/1990
+	 * @param  boolean $include_footer Default inclusion value
+	 * @return boolean                 Modified inclusion value
+	 */
+	public function hide_wp_seo_rss_footer ( $include_footer = true ) {
+
+		if( is_feed( 'podcast' ) ) {
+			$include_footer = false;
+		}
+
+		return $include_footer;
 	}
 
 	/**

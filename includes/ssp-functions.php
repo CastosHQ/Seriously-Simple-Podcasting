@@ -240,9 +240,9 @@ if( ! function_exists( 'ssp_episode_ids' ) ) {
 
 		$podcast_episodes = get_posts( $args );
 
-		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+		$podcast_post_types = ssp_post_types( false );
 
-		if( 0 < count( $podcast_post_types ) ) {
+		if( ! empty( $podcast_post_types ) ) {
 
 			$args = array(
 				'post_type' => $podcast_post_types,
@@ -261,6 +261,7 @@ if( ! function_exists( 'ssp_episode_ids' ) ) {
 			$other_episodes = get_posts( $args );
 
 			$podcast_episodes = array_merge( (array) $podcast_episodes, (array) $other_episodes );
+
 		}
 
 		// Reinstate action for future queries
@@ -274,7 +275,7 @@ if( ! function_exists( 'ssp_episode_ids' ) ) {
 if( ! function_exists( 'ssp_episodes' ) ) {
 
 	/**
-	 * Fetch podcast episodes
+	 * Fetch all podcast episodes
 	 * @param  integer $n           Number of episodes to fetch
 	 * @param  string  $series      Slug of series to fetch
 	 * @param  boolean $return_args True to return query args, false to return posts
@@ -287,12 +288,16 @@ if( ! function_exists( 'ssp_episodes' ) ) {
 		// Get all podcast episodes IDs
 		$episode_ids = (array) ssp_episode_ids();
 
-		if( 0 == count( $episode_ids ) ) {
+		if( empty( $episode_ids ) ) {
 			return array();
 		}
 
-		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		$podcast_post_types[] = 'podcast';
+		// Get all valid podcast post types
+		$podcast_post_types = ssp_post_types( true );
+
+		if( empty ( $podcast_post_types ) ) {
+			return array();
+		}
 
 		// Fetch podcast episodes
 		$args = array(
@@ -318,13 +323,49 @@ if( ! function_exists( 'ssp_episodes' ) ) {
 
 }
 
+if ( ! function_exists( 'ssp_post_types' ) ) {
+
+	/**
+	 * Fetch all valid podcast post types
+	 * @param  boolean $include_podcast Include the `podcast` post type or not
+	 * @since  1.8.7
+	 * @return array                    Array of podcast post types
+	 */
+	function ssp_post_types ( $include_podcast = true ) {
+
+		// Get saved podcast post type option
+		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+
+		// Add `podcast` post type to array if required
+		if( $include_podcast ) {
+			$podcast_post_types[] = 'podcast';
+		}
+
+		$valid_podcast_post_types = array();
+
+		// Check if post types exist
+		if( ! empty( $podcast_post_types ) ) {
+
+			foreach( $podcast_post_types as $type ) {
+				if( post_type_exists( $type ) ) {
+					$valid_podcast_post_types[] = $type;
+				}
+			}
+
+		}
+
+		// Return only the valid podcast post types
+		return apply_filters( 'ssp_podcast_post_types', $valid_podcast_post_types, $include_podcast );
+	}
+}
+
 if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 
 	/**
 	 * Reads file in chunks so big downloads are possible without changing PHP.INI - http://codeigniter.com/wiki/Download_helper_for_large_files/
 	 *
 	 * @param    string    file
-	 * @param    boolean    return bytes of file
+	 * @param    boolean   return bytes of file
 	 * @since  	 1.0.0
 	 * @return   mixed
 	 */

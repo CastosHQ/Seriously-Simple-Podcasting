@@ -1,10 +1,10 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
-Tags: podcast, audio, rss, feed, itunes, media player, podcasting, radio, audio player, media
+Tags: podcast, audio, rss, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher
 Requires at least: 4.0
 Tested up to: 4.1
-Stable tag: 1.8.6
+Stable tag: 1.8.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -21,7 +21,7 @@ Podcasting the way it's meant to be.
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Ability to use any post type for your podcast episodes
 - Integration with WordPress post tags for `podcast` post type
-- Highly configurable and robust RSS feed designed for all podcast services and feed readers, including iTunes
+- Highly configurable and robust RSS feed designed for *all* podcast services and feed readers, including iTunes and Stitcher
 - Widget for displaying recent podcast episodes anywhere on your site
 - Shortcode for displaying list of podcast episodes or series anywhere on your site
 - Playable episodes using the built-in WordPress media player
@@ -33,13 +33,19 @@ Podcasting the way it's meant to be.
 - [Southern Cross Church](http://www.southerncrosschurch.org/sermons/)
 - [WP Cape Town](http://www.wpcapetown.co.za/podcast/)
 
-Want to contribute? [Fork the GitHub repository](https://github.com/hlashbrooke/Seriously-Simple-Podcasting).
+**Where to find help**
+
+Seriously Simple Podcasting comes with complete user and developer [documentation](http://docs.hughlashbrooke.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
+
+**How to contribute**
+
+Want to contribute to Seriously Simple Podcasting? [Fork the GitHub repository](https://github.com/hlashbrooke/Seriously-Simple-Podcasting).
 
 == Usage ==
 
 Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add new episodes and go to "Podcast > Settings" to customise your podcast.
 
-Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them in manually.
+Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them in manually.*
 
 You can find complete user and developer documentation [here](http://docs.hughlashbrooke.com/).
 
@@ -71,6 +77,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 9. Podcast episodes are shown in the At a Glance dashboard widget.
 
 == Changelog ==
+
+= 1.8.7 =
+* 2015-02-16
+* [TWEAK] Removing getID3 class and switching to WordPress' built-in functions for retrieving ID3 data instead
+* [TWEAK] Improving retrieval of audio track length and file size
+* [TWEAK] Adding sanity checks when fetching podcast post types to ensure no errors are returned
+* [TWEAK] Adding global function for retrieving podcast post types to standardise and sanitise data
+* [TWEAK] Adding plugin generator tag to site header to indicate usage and current version
+* [TWEAK] Adding filter to hide WordPress SEO RSS footer embed on podcast feed if [my patch](https://github.com/Yoast/wordpress-seo/pull/1990) is accepted
 
 = 1.8.6 =
 * 2015-02-12
@@ -344,5 +359,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.8.6 =
+= 1.8.7 =
 * v1.8.x is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING FROM 1.7.x: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.

@@ -1,5 +1,10 @@
 # [Seriously Simple Podcasting](https://wordpress.org/plugins/seriously-simple-podcasting/)
 
+![Plugin Version](https://img.shields.io/wordpress/plugin/v/seriously-simple-podcasting.svg)
+![Total Downloads](https://img.shields.io/wordpress/plugin/dt/seriously-simple-podcasting.svg)
+![Plugin Rating](https://img.shields.io/wordpress/plugin/r/seriously-simple-podcasting.svg)
+![WordPress Compatibility](https://img.shields.io/wordpress/v/seriously-simple-podcasting.svg)
+
 Welcome to the Seriously Simple Podcasting repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
 
 Seriously Simple Podcasting is a podcasting plugin for WordPress that aims to take the complexity out of running your own podcast without sacrificing any powerful (and necessary) features. It is developed and maintained by Hugh Lashbrooke and is neither owned nor run by any team or company. If you would like to know more about the plugin you can get in touch with Hugh on Twitter: [@hlashbrooke](https://twitter.com/hlashbrooke).

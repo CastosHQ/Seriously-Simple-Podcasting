@@ -39,7 +39,7 @@ Seriously Simple Podcasting comes with complete user and developer [documentatio
 
 **How to contribute**
 
-Want to contribute to Seriously Simple Podcasting? [Fork the GitHub repository](https://github.com/hlashbrooke/Seriously-Simple-Podcasting).
+If you want to contribute to Seriously Simple Podcasting, you can [fork the GitHub repository](https://github.com/hlashbrooke/Seriously-Simple-Podcasting) - please read the [contributor guidelines](https://github.com/hlashbrooke/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information how you can do this.
 
 == Usage ==
 

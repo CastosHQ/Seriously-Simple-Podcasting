@@ -54,10 +54,7 @@ class SSP_Admin {
 			add_action( 'admin_init', array( $this, 'update_enclosures' ) );
 
 			// Episode meta box
-			$podcast_post_types = ssp_post_types( true );
-			foreach ( (array) $podcast_post_types as $post_type ) {
-				add_action( 'add_meta_boxes_' . $post_type, array( $this, 'meta_box_setup' ), 10, 1 );
-			}
+			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 
 			// Episode edit screen
@@ -310,12 +307,11 @@ class SSP_Admin {
 	  global $post, $post_ID;
 
 	  $messages[ $this->token ] = array(
-	    0 => '', // Unused. Messages start at index 1.
+	    0 => '',
 	    1 => sprintf( __( 'Episode updated. %sView episode%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 	    2 => __( 'Custom field updated.' , 'ss-podcasting' ),
 	    3 => __( 'Custom field deleted.' , 'ss-podcasting' ),
 	    4 => __( 'Episode updated.' , 'ss-podcasting' ),
-	    /* translators: %s: date and time of the revision */
 	    5 => isset($_GET['revision']) ? sprintf( __( 'Episode restored to revision from %s.' , 'ss-podcasting' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
 	    6 => sprintf( __( 'Episode published. %sView episode%s.' , 'ss-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 	    7 => __( 'Episode saved.' , 'ss-podcasting' ),
@@ -325,6 +321,21 @@ class SSP_Admin {
 	  );
 
 	  return $messages;
+	}
+
+	/**
+	 * Register podcast episode details meta boxes
+	 * @return void
+	 */
+	public function register_meta_boxes () {
+
+		// Get all podcast post types
+		$podcast_post_types = ssp_post_types( true );
+
+		// Add meta box to each post type
+		foreach ( (array) $podcast_post_types as $post_type ) {
+			add_action( 'add_meta_boxes_' . $post_type, array( $this, 'meta_box_setup' ), 10, 1 );
+		}
 	}
 
 	/**

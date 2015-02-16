@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Seriously Simple Podcasting package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting 1.8.7\n"
+"Project-Id-Version: Seriously Simple Podcasting 1.8.8\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-02-16 10:16:16+00:00\n"
+"POT-Creation-Date: 2015-02-16 17:05:24+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,262 +12,260 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: includes/class-ssp-admin.php:108
+#: includes/class-ssp-admin.php:105
 msgctxt "post type general name"
 msgid "Podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:109
+#: includes/class-ssp-admin.php:106
 msgctxt "post type singular name"
 msgid "Podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:110
+#: includes/class-ssp-admin.php:107
 msgctxt "podcast"
 msgid "Add New"
 msgstr ""
 
-#: includes/class-ssp-admin.php:111
+#: includes/class-ssp-admin.php:108
 msgid "Add New %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:111 includes/class-ssp-admin.php:112
-#: includes/class-ssp-admin.php:113 includes/class-ssp-admin.php:115
+#: includes/class-ssp-admin.php:108 includes/class-ssp-admin.php:109
+#: includes/class-ssp-admin.php:110 includes/class-ssp-admin.php:112
 msgid "Episode"
 msgstr ""
 
-#: includes/class-ssp-admin.php:112
+#: includes/class-ssp-admin.php:109
 msgid "Edit %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:113
+#: includes/class-ssp-admin.php:110
 msgid "New %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:114
+#: includes/class-ssp-admin.php:111
 msgid "All %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:114 includes/class-ssp-admin.php:116
-#: includes/class-ssp-admin.php:117 includes/class-ssp-admin.php:118
-#: includes/class-ssp-admin.php:277
+#: includes/class-ssp-admin.php:111 includes/class-ssp-admin.php:113
+#: includes/class-ssp-admin.php:114 includes/class-ssp-admin.php:115
+#: includes/class-ssp-admin.php:274
 msgid "Episodes"
 msgstr ""
 
-#: includes/class-ssp-admin.php:115
+#: includes/class-ssp-admin.php:112
 msgid "View %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:116
+#: includes/class-ssp-admin.php:113
 msgid "Search %a"
 msgstr ""
 
-#: includes/class-ssp-admin.php:117
+#: includes/class-ssp-admin.php:114
 msgid "No %s Found"
 msgstr ""
 
-#: includes/class-ssp-admin.php:118
+#: includes/class-ssp-admin.php:115
 msgid "No %s Found In Trash"
 msgstr ""
 
-#: includes/class-ssp-admin.php:120
+#: includes/class-ssp-admin.php:117
 msgid "Podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:123 includes/class-ssp-settings.php:629
+#: includes/class-ssp-admin.php:120 includes/class-ssp-settings.php:629
 msgid "podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:160
+#: includes/class-ssp-admin.php:157
 msgid "Podcast Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:161 includes/class-ssp-admin.php:170
-#: includes/class-ssp-admin.php:202
+#: includes/class-ssp-admin.php:158 includes/class-ssp-admin.php:167
+#: includes/class-ssp-admin.php:199
 msgid "Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:162
+#: includes/class-ssp-admin.php:159
 msgid "Search Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:163
+#: includes/class-ssp-admin.php:160
 msgid "All Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:164
+#: includes/class-ssp-admin.php:161
 msgid "Parent Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:165
+#: includes/class-ssp-admin.php:162
 msgid "Parent Series:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:166
+#: includes/class-ssp-admin.php:163
 msgid "Edit Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:167
+#: includes/class-ssp-admin.php:164
 msgid "Update Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:168
+#: includes/class-ssp-admin.php:165
 msgid "Add New Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:169
+#: includes/class-ssp-admin.php:166
 msgid "New Series Name"
 msgstr ""
 
-#: includes/class-ssp-admin.php:171
+#: includes/class-ssp-admin.php:168
 msgid "View Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:172
+#: includes/class-ssp-admin.php:169
 msgid "Popular Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:173
+#: includes/class-ssp-admin.php:170
 msgid "Separate series with commas"
 msgstr ""
 
-#: includes/class-ssp-admin.php:174
+#: includes/class-ssp-admin.php:171
 msgid "Add or remove Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:175
+#: includes/class-ssp-admin.php:172
 msgid "Choose from the most used Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:176
+#: includes/class-ssp-admin.php:173
 msgid "No Series Found"
 msgstr ""
 
-#: includes/class-ssp-admin.php:202
+#: includes/class-ssp-admin.php:199
 msgid "Image"
 msgstr ""
 
-#: includes/class-ssp-admin.php:276
+#: includes/class-ssp-admin.php:273
 msgid "Series feed URL"
 msgstr ""
 
-#: includes/class-ssp-admin.php:314
+#: includes/class-ssp-admin.php:311
 msgid "Episode updated. %sView episode%s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:315
+#: includes/class-ssp-admin.php:312
 msgid "Custom field updated."
 msgstr ""
 
-#: includes/class-ssp-admin.php:316
+#: includes/class-ssp-admin.php:313
 msgid "Custom field deleted."
 msgstr ""
 
-#: includes/class-ssp-admin.php:317
+#: includes/class-ssp-admin.php:314
 msgid "Episode updated."
 msgstr ""
 
-#. translators: %s: date and time of the revision
-
-#: includes/class-ssp-admin.php:319
+#: includes/class-ssp-admin.php:315
 msgid "Episode restored to revision from %s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:320
+#: includes/class-ssp-admin.php:316
 msgid "Episode published. %sView episode%s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:321
+#: includes/class-ssp-admin.php:317
 msgid "Episode saved."
 msgstr ""
 
-#: includes/class-ssp-admin.php:322
+#: includes/class-ssp-admin.php:318
 msgid "Episode submitted. %sPreview episode%s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:323
+#: includes/class-ssp-admin.php:319
 msgid "Episode scheduled for: %1$s. %2$sPreview episode%3$s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:323
+#: includes/class-ssp-admin.php:319
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: includes/class-ssp-admin.php:324
+#: includes/class-ssp-admin.php:320
 msgid "Episode draft updated. %sPreview episode%s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:336
+#: includes/class-ssp-admin.php:347
 msgid "Podcast Episode Details"
 msgstr ""
 
-#: includes/class-ssp-admin.php:370
+#: includes/class-ssp-admin.php:381
 msgid "Upload File"
 msgstr ""
 
-#: includes/class-ssp-admin.php:487
+#: includes/class-ssp-admin.php:498
 msgid "Audio file:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:488
+#: includes/class-ssp-admin.php:499
 msgid "Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here."
 msgstr ""
 
-#: includes/class-ssp-admin.php:495
+#: includes/class-ssp-admin.php:506
 msgid "Duration:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:496
+#: includes/class-ssp-admin.php:507
 msgid "Duration of audio file as it will be displayed on the site - will be calculated automatically if possible."
 msgstr ""
 
-#: includes/class-ssp-admin.php:503
+#: includes/class-ssp-admin.php:514
 msgid "File size:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:504
+#: includes/class-ssp-admin.php:515
 msgid "Size of the audio file as it will be displayed on the site - will be calculated automatically if possible."
 msgstr ""
 
-#: includes/class-ssp-admin.php:511
+#: includes/class-ssp-admin.php:522
 msgid "Explicit:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:512
+#: includes/class-ssp-admin.php:523
 msgid "Mark this episode as explicit."
 msgstr ""
 
-#: includes/class-ssp-admin.php:519
+#: includes/class-ssp-admin.php:530
 msgid "Block from iTunes:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:520
+#: includes/class-ssp-admin.php:531
 msgid "Block this episode from appearing in iTunes."
 msgstr ""
 
-#: includes/class-ssp-admin.php:540
+#: includes/class-ssp-admin.php:551
 msgid "%s Episode"
 msgid_plural "%s Episodes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-ssp-admin.php:568
+#: includes/class-ssp-admin.php:579
 msgid "Documentation"
 msgstr ""
 
-#: includes/class-ssp-admin.php:569
+#: includes/class-ssp-admin.php:580
 msgid "Write a review"
 msgstr ""
 
-#: includes/class-ssp-admin.php:570
+#: includes/class-ssp-admin.php:581
 msgid "Donate"
 msgstr ""
 
-#: includes/class-ssp-admin.php:574
+#: includes/class-ssp-admin.php:585
 msgid "Confirm compatibility"
 msgstr ""
 
-#: includes/class-ssp-admin.php:587
+#: includes/class-ssp-admin.php:598
 msgid "Enter episode title here"
 msgstr ""
 

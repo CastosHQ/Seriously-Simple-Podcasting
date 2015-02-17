@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Seriously Simple Podcasting package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting 1.8.8\n"
+"Project-Id-Version: Seriously Simple Podcasting 1.8.9\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-02-16 17:05:24+00:00\n"
+"POT-Creation-Date: 2015-02-17 10:08:50+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -281,7 +281,7 @@ msgstr ""
 msgid "Size"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:587
+#: includes/class-ssp-frontend.php:597
 msgid "Podcast RSS feed"
 msgstr ""
 

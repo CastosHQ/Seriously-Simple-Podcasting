@@ -237,6 +237,11 @@ class SSP_Frontend {
 
 		if( $file ) {
 
+			// Include media functions if necessary
+			if( ! function_exists( 'wp_read_audio_metadata' ) ) {
+				require_once( ABSPATH . 'wp-admin/includes/media.php' );
+			}
+
 			// Get file data (for local file)
 			$data = wp_read_audio_metadata( $file );
 
@@ -279,6 +284,11 @@ class SSP_Frontend {
 	public function get_file_duration( $file ) {
 
 		if( $file ) {
+
+			// Include media functions if necessary
+			if( ! function_exists( 'wp_read_audio_metadata' ) ) {
+				require_once( ABSPATH . 'wp-admin/includes/media.php' );
+			}
 
 			// Identify file by root path and not URL (required for getID3 class)
 			$site_root = trailingslashit( ABSPATH );

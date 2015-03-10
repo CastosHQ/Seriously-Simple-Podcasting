@@ -78,6 +78,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.9 =
+* 2015-03-31
+* [NEW] Adding 'Date recorded' field to episode details
+* [TWEAK] Further improving episode download links
+* [TWEAK] Improving episode custom fields display
+* [TWEAK] Updating publishing URLs to be more accurate
+
 = 1.8.11 =
 * 2015-03-05
 * [TWEAK] Improving episode download links

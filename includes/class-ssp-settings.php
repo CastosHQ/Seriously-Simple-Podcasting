@@ -565,7 +565,7 @@ class SSP_Settings {
 			if( $data ) {
 				$field['placeholder'] = $data;
 
-				if( in_array( $field['type'], array( 'checkbox', 'image' ) ) ) {
+				if( in_array( $field['type'], array( 'checkbox', 'select', 'image' ) ) ) {
 					$option_default = $data;
 				}
 			}
@@ -632,6 +632,7 @@ class SSP_Settings {
 			break;
 
 			case 'select':
+
 				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
 				$prev_group = '';
 				foreach( $field['options'] as $k => $v ) {

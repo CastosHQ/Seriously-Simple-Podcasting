@@ -45,9 +45,10 @@ class SSP_Frontend {
 			add_filter( 'the_excerpt', array( $this, 'excerpt_meta_data' ), 10, 1 );
 		}
 
-		// Add SSP label and version to generaotr tags
+		// Add SSP label and version to generator tags
 		add_action( 'get_the_generator_html', array( $this, 'generator_tag' ), 10, 2 );
 		add_action( 'get_the_generator_xhtml', array( $this, 'generator_tag' ), 10, 2 );
+		add_action( 'get_the_generator_rss2', array( $this, 'generator_tag' ), 10, 2 );
 
 		// Add RSS meta tag to site header
 		add_action( 'wp_head' , array( $this, 'rss_meta_tag' ) );
@@ -73,9 +74,28 @@ class SSP_Frontend {
 	 * @param  integer $episode_id ID of episode
 	 * @return string              Episode download link
 	 */
-	public function get_episode_download_link( $episode_id ) {
+	public function get_episode_download_link( $episode_id, $referrer = '' ) {
+
+		// Get file URL
 		$file = $this->get_enclosure( $episode_id );
-		$link = add_query_arg( array( 'podcast_episode' => $file ), $this->home_url );
+
+		// Get download link based on permalink structure
+		if ( get_option( 'permalink_structure' ) ) {
+			$episode = get_post( $episode_id );
+			$ext = pathinfo( $file, PATHINFO_EXTENSION );
+			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
+		} else {
+			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
+		}
+
+		// Allow for dyamic referrer
+		$referrer = apply_filters( 'ssp_download_referrer', $referrer, $episode_id );
+
+		// Add referrer flag if supplied
+		if( $referrer ) {
+			$link = add_query_arg( array( 'ref' => $referrer ), $link );
+		}
+
 		return apply_filters( 'ssp_episode_download_link', $link, $episode_id, $file );
 	}
 
@@ -94,7 +114,7 @@ class SSP_Frontend {
 
 		$podcast_post_types = ssp_post_types( true );
 
-		if( in_array( $post->post_type, $podcast_post_types ) && ! is_feed() ) {
+		if( in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
 
 			$meta = $this->episode_meta( $post->ID, 'content' );
 
@@ -147,7 +167,7 @@ class SSP_Frontend {
 		$file = $this->get_enclosure( $post_id );
 
 		if( $file ) {
-			$link = $this->get_episode_download_link( $post_id );
+			$link = $this->get_episode_download_link( $post_id, 'download' );
 			$duration = get_post_meta( $post_id , 'duration' , true );
 			$size = get_post_meta( $post_id , 'filesize' , true );
 			if( ! $size ) {
@@ -487,13 +507,16 @@ class SSP_Frontend {
 	 * @return object       Episode post object
 	 */
 	public function get_episode_from_file( $file = '' ) {
+		global $post;
 
 		$episode = false;
 
 		if( $file != '' ) {
 
+			$post_types = ssp_post_types( true );
+
 			$args = array(
-				'post_type' => 'podcast',
+				'post_type' => $post_types,
 				'post_status' => 'publish',
 				'posts_per_page' => 1,
 				'meta_key' => 'audio_file',
@@ -504,7 +527,7 @@ class SSP_Frontend {
 
 			if ( $qry->have_posts() ) {
 				while ( $qry->have_posts() ) { $qry->the_post();
-					$episode = get_queried_object();
+					$episode = $post;
 					break;
 				}
 			}
@@ -515,24 +538,39 @@ class SSP_Frontend {
 	}
 
 	/**
-	 * Download file from $_GET['podcast_episode']
+	 * Download file from `podcast_episode` query variable
 	 * @return void
 	 */
 	public function download_file() {
 
 		if( is_podcast_download() ) {
+			global $wp_query;
 
-			$file = esc_attr( $_GET['podcast_episode'] );
+			// Get requested episode ID
+			$episode_id = intval( $wp_query->query_vars['podcast_episode'] );
 
-			if( $file ) {
+			if( isset( $episode_id ) && $episode_id ) {
 
-				// Get episode object
-				$episode = $this->get_episode_from_file( $file );
+				// Get episode post object
+				$episode = get_post( $episode_id );
+
+				// Make sure we have a valid episode post object
+				if( ! $episode || ! is_object( $episode ) || is_wp_error( $episode ) || ! isset( $episode->ID ) ) {
+					return;
+				}
+
+				// Get audio file for download
+				$file = $this->get_enclosure( $episode_id );
+
+				// Exit if no file is found
+				if( ! $file ) {
+					return;
+				}
 
 				// Allow other actions - functions hooked on here must not echo any data
 			    do_action( 'ssp_file_download', $file, $episode );
 
-			    // Set necessary headers
+			    // Set necessary headers for download
 				header( "Pragma: no-cache" );
 				header( "Expires: 0" );
 				header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
@@ -560,15 +598,17 @@ class SSP_Frontend {
 	 */
 	function generator_tag( $gen, $type ) {
 
-		// Allow generator tag to be hidden if necessary
-		if( apply_filters( 'ssp_show_generator_tag', true ) ) {
+		// Allow generator tags to be hidden if necessary
+		if( apply_filters( 'ssp_show_generator_tag', true, $type ) ) {
+
+			$generator = 'Seriously Simple Podcasting ' . esc_attr( $this->version );
 
 			switch ( $type ) {
 				case 'html':
-					$gen .= "\n" . '<meta name="generator" content="Seriously Simple Podcasting ' . esc_attr( $this->version ) . '">';
+					$gen .= "\n" . '<meta name="generator" content="' . $generator . '">';
 				break;
 				case 'xhtml':
-					$gen .= "\n" . '<meta name="generator" content="Seriously Simple Podcasting ' . esc_attr( $this->version ) . '" />';
+					$gen .= "\n" . '<meta name="generator" content="' . $generator . '" />';
 				break;
 			}
 
@@ -586,7 +626,11 @@ class SSP_Frontend {
 		// Get feed slug
 		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
 
-		$feed_url = $this->home_url . 'feed/' . $feed_slug;
+		if ( get_option( 'permalink_structure' ) ) {
+			$feed_url = $this->home_url . 'feed/' . $feed_slug;
+		} else {
+			$feed_url = $this->home_url . '?feed=' . $feed_slug;
+		}
 		$custom_feed_url = get_option( 'ss_podcasting_feed_url' );
 		if( $custom_feed_url ) {
 			$feed_url = $custom_feed_url;

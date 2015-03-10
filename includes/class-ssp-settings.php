@@ -616,12 +616,29 @@ class SSP_Settings {
 			break;
 
 			case 'feed_link':
-				$url = $this->home_url . 'feed/' . $this->token;
+
+				// Set feed URL based on site's permalink structure
+				if ( get_option( 'permalink_structure' ) ) {
+					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+					$url = $this->home_url . 'feed/' . $feed_slug;
+				} else {
+					$url = $this->home_url . '?feed=' . $this->token;
+				}
+
 				$html .= '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>';
 			break;
 
 			case 'feed_link_series':
-				$html .= $this->home_url . 'feed/' . $this->token . '/?podcast_series=series-slug' . "\n";
+
+				// Set feed URL based on site's permalink structure
+				if ( get_option( 'permalink_structure' ) ) {
+					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+					$url = $this->home_url . 'feed/' . $feed_slug . '/?podcast_series=series-slug';
+				} else {
+					$url = $this->home_url . '?feed=' . $this->token . '&podcast_series=series-slug';
+				}
+
+				$html .= $url . "\n";
 			break;
 
 			case 'podcast_url';

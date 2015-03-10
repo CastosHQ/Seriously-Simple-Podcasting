@@ -12,7 +12,7 @@ global $ss_podcasting;
 error_reporting( 0 );
 
 // Check if feed is password protected
-$protection = get_option( 'ss_podcasting_protect_feed' );
+$protection = get_option( 'ss_podcasting_protect' );
 
 if( $protection && $protection == 'on' ) {
 
@@ -28,8 +28,8 @@ if( $protection && $protection == 'on' ) {
 	if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) && ! isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 	    $give_access = false;
 	} else {
-		$username = get_option('ss_podcasting_protection_username');
-		$password = get_option('ss_podcasting_protection_password');
+		$username = get_option( 'ss_podcasting_protection_username' );
+		$password = get_option( 'ss_podcasting_protection_password' );
 
 		if( $_SERVER['PHP_AUTH_USER'] == $username ) {
 			if( md5( $_SERVER['PHP_AUTH_PW'] ) == $password ) {
@@ -113,8 +113,9 @@ if( ! $owner_email ) {
 	$owner_email = get_bloginfo( 'admin_email' );
 }
 
-$explicit = get_option( 'ss_podcasting_data_explicit' );
-if( $explicit && $explicit == 'on' ) {
+$explicit_option = get_option( 'ss_podcasting_explicit', '' );
+
+if( $explicit_option && 'on' == $explicit_option ) {
 	$explicit = 'Yes';
 } else {
 	$explicit = 'No';
@@ -183,6 +184,9 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 	<?php }
 
+	// Add RSS2 headers
+	do_action( 'rss2_head' );
+
 	// Get post IDs of all podcast episodes
 	$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ) ) );
 
@@ -200,7 +204,11 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			$qry->the_post();
 
 			// Audio file
-			$enclosure = $ss_podcasting->get_enclosure( get_the_ID() );
+			if ( get_option( 'permalink_structure' ) ) {
+				$enclosure = $ss_podcasting->get_episode_download_link( get_the_ID() );
+			} else {
+				$enclosure = $ss_podcasting->get_enclosure( get_the_ID() );
+			}
 
 			// If there is no enclosure then go no further
 			if( ! isset( $enclosure ) || ! $enclosure ) {
@@ -217,7 +225,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 				}
 			}
 
-			// Episode duration
+			// Episode duration (default to 0:00 to ensure there is always a value for this)
 			$duration = get_post_meta( get_the_ID() , 'duration' , true );
 			if( ! $duration ) {
 				$duration = '0:00';
@@ -238,7 +246,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 				$size = 1;
 			}
 
-			// File MIME type (default to MP3 to ensure that there is always a value for this)
+			// File MIME type (default to MP3 to ensure there is always a value for this)
 			$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
 			if( ! $mime_type ) {
 				$mime_type = 'audio/mpeg';

@@ -23,7 +23,10 @@ class SSP_Admin {
 	 * @param 	string $file Plugin base file
 	 * @return 	void
 	 */
-	public function __construct( $file ) {
+	public function __construct( $file, $version ) {
+
+		$this->version = $version;
+
 		$this->dir = dirname( $file );
 		$this->file = $file;
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
@@ -39,15 +42,18 @@ class SSP_Admin {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Regsiter podcast post type and taxonomies
-		add_action( 'init', array( $this, 'register_post_type' ) );
+		add_action( 'init', array( $this, 'register_post_type' ), 1 );
 
 		// Register podcast feed
-		add_action( 'init', array( $this, 'add_feed' ) );
+		add_action( 'init', array( $this, 'add_feed' ), 1 );
 
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
-		// Handle v1.x feed URL
+		// Handle v1.x feed URL as well as feed URLs for default permalinks
 		add_action( 'init', array( $this, 'redirect_old_feed' ) );
+
+		// Setup permalink structure for episode downloads
+		add_action( 'init', array( $this, 'setup_permastruct' ) );
 
 		if ( is_admin() ) {
 
@@ -81,18 +87,18 @@ class SSP_Admin {
 
 		}
 
-		// Flush rewrite rules on plugin activation
-		register_activation_hook( $file, array( $this, 'rewrite_flush' ) );
+		// Setup activation and deactivation hooks
+		register_activation_hook( $file, array( $this, 'activate' ) );
+		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
 	}
 
 	/**
-	 * Flush reqrite rules on plugin acivation
+	 * Setup custom permalink structure for podcast episode downloads
 	 * @return void
 	 */
-	public function rewrite_flush() {
-		$this->register_post_type();
-		$this->add_feed();
-		flush_rewrite_rules();
+	public function setup_permastruct() {
+		add_rewrite_rule( '^podcast-download/([^/]*)/([^/]*)/?', 'index.php?podcast_episode=$matches[1]', 'top' );
+		add_rewrite_tag( '%podcast_episode%', '([^&]+)' );
 	}
 
 	/**
@@ -133,7 +139,7 @@ class SSP_Admin {
 			'capability_type' => 'post',
 			'has_archive' => true,
 			'hierarchical' => false,
-			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'comments', 'author', 'custom-fields' ),
+			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'comments', 'author', 'custom-fields', 'publicize' ),
 			'menu_position' => 5,
 			'menu_icon' => 'dashicons-microphone',
 		);
@@ -290,7 +296,14 @@ class SSP_Admin {
             case 'series_feed_url':
             	$series = get_term( $term_id, 'series' );
             	$series_slug = $series->slug;
-            	$feed_url = $this->home_url . 'feed/' . $this->token . '/?podcast_series=' . $series_slug;
+
+            	if ( get_option( 'permalink_structure' ) ) {
+					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+					$feed_url = $this->home_url . 'feed/' . $feed_slug . '/?podcast_series=' . $series_slug;
+				} else {
+					$feed_url = $this->home_url . '?feed=' . $this->token . '&podcast_series=' . $series_slug;
+				}
+
                 $column_data = '<a href="' . $feed_url . '" target="_blank">' . $feed_url . '</a>';
             break;
         }
@@ -714,6 +727,35 @@ class SSP_Admin {
 	}
 
 	/**
+	 * Flush rewrite rules on plugin acivation
+	 * @return void
+	 */
+	public function activate() {
+
+		update_option( 'ssp_version', $this->version );
+
+		// Setup all custom URL rules
+		$this->register_post_type();
+		$this->add_feed();
+		$this->setup_permastruct();
+
+		// Flush permalinks
+		flush_rewrite_rules( true );
+	}
+
+	/**
+	 * Flush rewrite rules on plugin deacivation
+	 * @return void
+	 */
+	public function deactivate() {
+		flush_rewrite_rules();
+	}
+
+	public function run_updates () {
+
+	}
+
+	/**
 	 * Update 'enclosure' meta field to 'audio_file' meta field
 	 * @return void
 	 */
@@ -752,7 +794,7 @@ class SSP_Admin {
 			return;
 		}
 
-		// Add 'audio_file' meta field to all posts with enclosures
+		// Add `audio_file` meta field to all posts with enclosures
 		foreach( (array) $posts_with_enclosures as $post_id ) {
 
 			// Get existing enclosure

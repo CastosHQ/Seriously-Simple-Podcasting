@@ -8,11 +8,13 @@ if( ! function_exists( 'is_podcast_download' ) ) {
 	 * @return boolean True if file is being downloaded
 	 */
 	function is_podcast_download() {
-		$download = false;
-		$episode = false;
-		if( isset( $_GET['podcast_episode'] ) ) {
+		global $wp_query;
+
+		$download = $episode = false;
+
+		if( isset( $wp_query->query_vars['podcast_episode'] ) && $wp_query->query_vars['podcast_episode'] ) {
 			$download = true;
-			$episode = $_GET['podcast_episode'];
+			$episode = intval( $wp_query->query_vars['podcast_episode'] );
 		}
 
 		return apply_filters( 'ssp_is_podcast_download', $download, $episode );
@@ -376,8 +378,9 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 		$cnt = 0;
 
 		$handle = fopen( $file, 'r' );
-		if ( $handle === FALSE )
-			return FALSE;
+		if ( $handle === false ) {
+			return false;
+		}
 
 		while ( ! feof( $handle ) ) {
 			$buffer = fread( $handle, $chunksize );
@@ -385,14 +388,16 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 			ob_flush();
 			flush();
 
-			if ( $retbytes )
+			if ( $retbytes ) {
 				$cnt += strlen( $buffer );
+			}
 		}
 
 		$status = fclose( $handle );
 
-		if ( $retbytes && $status )
+		if ( $retbytes && $status ) {
 			return $cnt;
+		}
 
 		return $status;
     }

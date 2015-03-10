@@ -1,10 +1,10 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
-Tags: podcast, audio, rss, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher
+Tags: podcast, audio, rss, rss2, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher
 Requires at least: 4.0
 Tested up to: 4.1.1
-Stable tag: 1.8.9
+Stable tag: 1.8.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -47,7 +47,7 @@ Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them in manually.*
 
-You can find complete user and developer documentation [here](http://docs.hughlashbrooke.com/).
+If you need help, you can find complete user and developer documentation [here](http://docs.hughlashbrooke.com/).
 
 == Installation ==
 
@@ -77,6 +77,21 @@ You can find complete user and developer documentation (along with the FAQs) on 
 9. Podcast episodes are shown in the At a Glance dashboard widget.
 
 == Changelog ==
+
+= 1.8.11 =
+* 2015-03-05
+* [TWEAK] Improving episode download links
+* [TWEAK] Minor code reformat and optimisation
+
+= 1.8.10 =
+* 2015-02-24
+* [TWEAK] Adding Jetpack Publicize support to `podcast` post type
+* [TWEAK] Adding `$type` argument to `ssp_show_generator_tag` filter
+* [TWEAK] Moving `podcast` post type and feed registration earlier to prevent potential conflicts with other plugins
+* [TWEAK] Adding RSS2 head tags to podcast RSS feed
+* [FIX] Fixing episode lookup when downloading audio file
+* [FIX] Ensuring that only the current episode audio file can be accessed when downloading audio files
+* [FIX] Fixing explicit flag in podcast RSS feed
 
 = 1.8.9 =
 * 2015-02-17
@@ -367,5 +382,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.8.9 =
-* v1.8.x is a major update that affects how your podcast is displayed on your site. READ THIS BEFORE UPDATING FROM 1.7.x: http://www.hughlashbrooke.com/2015/01/important-upgrade-information-seriously-simple-podcasting-v1-8/.
+= 1.8.11 =
+* This update fixes some issues with the episode download links not always working.

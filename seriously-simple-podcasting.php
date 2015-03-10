@@ -1,7 +1,7 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.8.9
+ * Version: 1.8.11
  * Plugin URI: https://wordpress.org/plugins/seriously-simple-podcasting/
  * Description: Podcasting the way it's meant to be.
  * Author: Hugh Lashbrooke
@@ -20,8 +20,8 @@ require_once( 'includes/class-ssp-admin.php' );
 require_once( 'includes/class-ssp-frontend.php' );
 
 global $ssp_admin, $ss_podcasting;
-$ssp_admin = new SSP_Admin( __FILE__ );
-$ss_podcasting = new SSP_Frontend( __FILE__, '1.8.8' );
+$ssp_admin = new SSP_Admin( __FILE__, '1.8.11' );
+$ss_podcasting = new SSP_Frontend( __FILE__, '1.8.11' );
 
 if( is_admin() ) {
 	global $ssp_settings;

@@ -184,12 +184,15 @@ class SSP_Frontend {
 				}
 			}
 
+			$date_recorded = get_post_meta( $post_id, 'date_recorded', true );
+
 			$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
 
 			$meta .= '<div class="podcast_meta"><aside>';
-			if( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-			if( $duration && strlen( $duration ) > 0 ) { if( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
-			if( $size && strlen( $size ) > 0 ) { if( ( $duration && strlen( $duration ) > 0 ) || ( $link && strlen( $link ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
+			if( $link ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
+			if( $duration ) { if( $link ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
+			if( $size ) { if( $duration || $link ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
+			if( $date_recorded ) { if( $size || $duration || $link ) { $meta .= ' | '; } $meta .= __( 'Recorded on' , 'ss-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $date_recorded ) ); }
 			$meta .= '</aside></div>';
 		}
 

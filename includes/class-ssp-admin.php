@@ -390,16 +390,25 @@ class SSP_Admin {
 					$data = $saved;
 				}
 
+				$class = '';
+				if( isset( $v['class'] ) ) {
+					$class = $v['class'];
+				}
+
 				if( $k == 'audio_file' ) {
 					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input type="button" class="button" id="upload_audio_file_button" value="'. __( 'Upload File' , 'ss-podcasting' ) . '" data-uploader_title="Choose a file" data-uploader_button_text="Insert audio file" /><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 					$html .= '</td><tr/>' . "\n";
 				} else {
 					if( $v['type'] == 'checkbox' ) {
-						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td><input name="' . esc_attr( $k ) . '" type="checkbox" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span class="description">' . $v['description'] . '</span></label>' . "\n";
+						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span class="description">' . $v['description'] . '</span></label>' . "\n";
+						$html .= '</td><tr/>' . "\n";
+					} elseif( $v['type'] == 'datepicker' ) {
+						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td class="hasDatepicker"><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
+						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 						$html .= '</td><tr/>' . "\n";
 					} else {
-						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
+						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
 						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 						$html .= '</td><tr/>' . "\n";
 					}
@@ -512,23 +521,31 @@ class SSP_Admin {
 		    'description' => __( 'Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here.' , 'ss-podcasting' ),
 		    'type' => 'url',
 		    'default' => '',
-		    'section' => 'info'
+		    'section' => 'info',
 		);
 
 		$fields['duration'] = array(
 		    'name' => __( 'Duration:' , 'ss-podcasting' ),
-		    'description' => __( 'Duration of audio file as it will be displayed on the site - will be calculated automatically if possible.' , 'ss-podcasting' ),
+		    'description' => __( 'Duration of audio file for display (calculated automatically if possible).' , 'ss-podcasting' ),
 		    'type' => 'text',
 		    'default' => '',
-		    'section' => 'info'
+		    'section' => 'info',
 		);
 
 		$fields['filesize'] = array(
 		    'name' => __( 'File size:' , 'ss-podcasting' ),
-		    'description' => __( 'Size of the audio file as it will be displayed on the site - will be calculated automatically if possible.' , 'ss-podcasting' ),
+		    'description' => __( 'Size of the audio file for display (calculated automatically if possible).' , 'ss-podcasting' ),
 		    'type' => 'text',
 		    'default' => '',
-		    'section' => 'info'
+		    'section' => 'info',
+		);
+
+		$fields['date_recorded'] = array(
+		    'name' => __( 'Date recorded:' , 'ss-podcasting' ),
+		    'description' => __( 'The date on which this episode was recorded.' , 'ss-podcasting' ),
+		    'type' => 'datepicker',
+		    'default' => '',
+		    'section' => 'info',
 		);
 
 		$fields['explicit'] = array(
@@ -536,7 +553,7 @@ class SSP_Admin {
 		    'description' => __( 'Mark this episode as explicit.' , 'ss-podcasting' ),
 		    'type' => 'checkbox',
 		    'default' => '',
-		    'section' => 'info'
+		    'section' => 'info',
 		);
 
 		$fields['block'] = array(
@@ -544,7 +561,7 @@ class SSP_Admin {
 		    'description' => __( 'Block this episode from appearing in iTunes.' , 'ss-podcasting' ),
 		    'type' => 'checkbox',
 		    'default' => '',
-		    'section' => 'info'
+		    'section' => 'info',
 		);
 
 		return apply_filters( 'ssp_episode_fields', $fields );
@@ -618,8 +635,11 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function enqueue_admin_styles() {
-		wp_register_style( 'ss_podcasting-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), '1.8.0' );
-		wp_enqueue_style( 'ss_podcasting-admin' );
+		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), $this->version );
+		wp_enqueue_style( 'ssp-admin' );
+
+		// Datepicker
+		wp_enqueue_style( 'jquery-ui-datepicker', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css' );
 	}
 
 	/**
@@ -627,8 +647,8 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function enqueue_admin_scripts() {
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array( 'jquery' ), '1.8.0' );
-		wp_enqueue_script( 'ss_podcasting-admin' );
+		wp_register_script( 'ssp-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array( 'jquery', 'jquery-ui-core', 'jquery-ui-datepicker' ), $this->version );
+		wp_enqueue_script( 'ssp-admin' );
 	}
 
 	/**

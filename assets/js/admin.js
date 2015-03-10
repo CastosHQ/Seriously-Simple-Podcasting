@@ -43,6 +43,15 @@ jQuery(document).ready(function($) {
 		jQuery.fn.ssp_upload_media_file( jQuery(this), false );
 	});
 
+	/* DATEPICKER */
+
+	jQuery('.ssp-datepicker').datepicker({
+		changeMonth: true,
+      	changeYear: true,
+      	showAnim: 'slideDown',
+      	dateFormat: 'dd-mm-yy'
+	});
+
 	/* SETTINGS PAGE */
 
 	jQuery('#ss_podcasting_data_image_button').click(function() {

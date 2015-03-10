@@ -476,6 +476,7 @@ class SSP_Settings {
 					continue;
 				}
 
+				// Get data for specific feed series
 				$title_tail = '';
 				$series_id = 0;
 				if( 'feed-details' == $section ) {
@@ -544,6 +545,7 @@ class SSP_Settings {
 
 		// Get option name
 		$option_name = $this->settings_base . $field['id'];
+		$default_option_name = $option_name;
 
 		// Get field default
 		$default = '';
@@ -563,7 +565,7 @@ class SSP_Settings {
 			if( $data ) {
 				$field['placeholder'] = $data;
 
-				if( 'checkbox' == $field['type'] ) {
+				if( in_array( $field['type'], array( 'checkbox', 'image' ) ) ) {
 					$option_default = $data;
 				}
 			}
@@ -663,10 +665,10 @@ class SSP_Settings {
 			break;
 
 			case 'image':
-				$html .= '<img id="' . $option_name . '_preview" src="' . $data . '" style="max-width:400px;height:auto;" /><br/>' . "\n";
-				$html .= '<input id="' . $option_name . '_button" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />' . "\n";
-				$html .= '<input id="' . $option_name . '_delete" type="button" class="button" value="'. __( 'Remove image' , 'ss-podcasting' ) . '" />' . "\n";
-				$html .= '<input id="' . $option_name . '" type="hidden" name="' . $option_name . '" value="' . $data . '"/><br/>' . "\n";
+				$html .= '<img id="' . $default_option_name . '_preview" src="' . $data . '" style="max-width:400px;height:auto;" /><br/>' . "\n";
+				$html .= '<input id="' . $default_option_name . '_button" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />' . "\n";
+				$html .= '<input id="' . $default_option_name . '_delete" type="button" class="button" value="'. __( 'Remove image' , 'ss-podcasting' ) . '" />' . "\n";
+				$html .= '<input id="' . $default_option_name . '" type="hidden" name="' . $option_name . '" value="' . $data . '"/><br/>' . "\n";
 			break;
 
 			case 'feed_link':
@@ -857,44 +859,48 @@ class SSP_Settings {
 					    </div>';
 			}
 
+			$current_series = '';
+
 			// Series submenu for feed details
-			$series = get_terms( 'series', array( 'hide_empty' => false ) );
+			if( 'feed-details' == $tab ) {
+				$series = get_terms( 'series', array( 'hide_empty' => false ) );
 
-			if( ! empty( $series ) ) {
+				if( ! empty( $series ) ) {
 
-				if( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
-					$current_series = esc_attr( $_GET['feed-series'] );
-					$series_class = '';
-				} else {
-					$current_series = 'default';
-					$series_class = 'current';
-				}
-
-				$html .= '<ul class="subsubsub">' . "\n";
-					$html .= '<li><a href="' . add_query_arg( 'feed-series', 'default' ) . '" class="' . $series_class . '">' . __( 'Default feed', 'ss-podcasting' ) . '</a></li>';
-
-					foreach( $series as $s ) {
-
-						if( $current_series == $s->slug ) {
-							$series_class = 'current';
-						} else {
-							$series_class = '';
-						}
-
-						$html .= '<li>' . "\n";
-							$html .= ' | <a href="' . add_query_arg( array( 'feed-series' => $s->slug, 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
-						$html .= '</li>' . "\n";
+					if( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
+						$current_series = esc_attr( $_GET['feed-series'] );
+						$series_class = '';
+					} else {
+						$current_series = 'default';
+						$series_class = 'current';
 					}
 
-				$html .= '</ul>' . "\n";
-				$html .= '<br class="clear" />' . "\n";
+					$html .= '<ul class="subsubsub">' . "\n";
+						$html .= '<li><a href="' . add_query_arg( array( 'feed-series' => 'default', 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'ss-podcasting' ) . '</a></li>';
+
+						foreach( $series as $s ) {
+
+							if( $current_series == $s->slug ) {
+								$series_class = 'current';
+							} else {
+								$series_class = '';
+							}
+
+							$html .= '<li>' . "\n";
+								$html .= ' | <a href="' . add_query_arg( array( 'feed-series' => $s->slug, 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
+							$html .= '</li>' . "\n";
+						}
+
+					$html .= '</ul>' . "\n";
+					$html .= '<br class="clear" />' . "\n";
+				}
 			}
 
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 
 
-				if( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
-					$html .= '<input type="hidden" name="feed-series" value="' . esc_attr( $_GET['feed-series'] ) . '" />' . "\n";
+				if( $current_series ) {
+					$html .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
 				}
 
 				// Get settings fields

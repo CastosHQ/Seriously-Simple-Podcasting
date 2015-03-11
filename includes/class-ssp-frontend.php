@@ -62,8 +62,9 @@ class SSP_Frontend {
 		// Download podcast episode
 		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
-		// Add shortcode
+		// Add shortcodes
 		add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );
+		add_shortcode( 'podcast_episode', array( $this, 'podcast_episode' ) );
 
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
@@ -660,6 +661,42 @@ class SSP_Frontend {
 			require_once( $this->dir . '/includes/widgets/class-ssp-widget-' . $id . '.php' );
 			register_widget( 'SSP_Widget_' . $name );
 		}
+
+	}
+
+	/**
+	 * Shortcode function to display single podcast episode
+	 * @param  array  $params Shortcode paramaters
+	 * @return string         HTML output
+	 */
+	public function podcast_episode ( $params ) {
+
+		extract( shortcode_atts( array(
+	        'episode' => 0,
+	        'show_title' => 'true',
+	        'show_details' => 'true',
+	    ), $params ) );
+
+	    if( ! $episode ) {
+	    	return;
+	    }
+
+	    $html = '<div class="podcast-episode episode-' . esc_attr( $episode ) . '">' . "\n";
+
+	    	if( 'true' == $show_title ) {
+		    	$html .= '<h3 class="episode-title">' . get_the_title( $episode ) . '</h3>' . "\n";
+		    }
+
+		    if( 'true' == $show_details ) {
+		    	$html .= $this->episode_meta( $episode, 'shortcode' );
+		    } else {
+		    	$file = $this->get_enclosure( $episode );
+		    	$html .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>' . "\n";
+		    }
+
+		$html .= '</div>' . "\n";
+
+	    return $html;
 
 	}
 

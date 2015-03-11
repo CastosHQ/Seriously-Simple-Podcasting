@@ -54,6 +54,22 @@ jQuery(document).ready(function($) {
 
 	/* SETTINGS PAGE */
 
+	jQuery('#feed-series-toggle').click(function(e) {
+
+		if( jQuery(this).hasClass( 'series-open' ) ) {
+			jQuery('#feed-series-list').slideUp('fast');
+			jQuery(this).removeClass( 'series-open' );
+			jQuery(this).addClass( 'series-closed' );
+
+		} else if( jQuery(this).hasClass( 'series-closed' ) ) {
+			jQuery('#feed-series-list').slideDown('fast');
+			jQuery(this).removeClass( 'series-closed' );
+			jQuery(this).addClass( 'series-open' );
+
+		}
+
+	});
+
 	jQuery('#ss_podcasting_data_image_button').click(function() {
 		jQuery.fn.ssp_upload_media_file( jQuery(this), true );
 	});

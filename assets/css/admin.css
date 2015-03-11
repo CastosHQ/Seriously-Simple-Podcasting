@@ -1,1 +1,7 @@
-#dashboard_right_now a.podcast-count:before,#dashboard_right_now span.podcast-count:before {content: "\f482";}
+#dashboard_right_now a.podcast-count:before,#dashboard_right_now span.podcast-count:before{content:"\f482";}
+.feed-series-list-container{margin-top:8px;}
+#feed-series-toggle{cursor:pointer;float:left;margin-top:5px;}
+#feed-series-toggle:before{font-family:dashicons;font-size:150%;color:#ccc;}
+#feed-series-toggle.series-open:before{content:"\f142";}
+#feed-series-toggle.series-closed:before{content:"\f140";}
+#feed-series-list{margin:0;}

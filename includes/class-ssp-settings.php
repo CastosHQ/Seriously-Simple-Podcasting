@@ -84,13 +84,7 @@ class SSP_Settings {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-
-		// Admin JS
-		wp_register_script( 'ss_podcasting-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array( 'jquery' ), '1.8.0' );
-		wp_enqueue_script( 'ss_podcasting-admin' );
-
 		wp_enqueue_media();
-
 	}
 
 	/**
@@ -876,24 +870,29 @@ class SSP_Settings {
 						$series_class = 'current';
 					}
 
-					$html .= '<ul class="subsubsub">' . "\n";
-						$html .= '<li><a href="' . add_query_arg( array( 'feed-series' => 'default', 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'ss-podcasting' ) . '</a></li>';
+					$html .= '<div class="feed-series-list-container">' . "\n";
+						$html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'ss-podcasting' ) . '"></span>' . "\n";
 
-						foreach( $series as $s ) {
+						$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
+							$html .= '<li><a href="' . add_query_arg( array( 'feed-series' => 'default', 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'ss-podcasting' ) . '</a></li>';
 
-							if( $current_series == $s->slug ) {
-								$series_class = 'current';
-							} else {
-								$series_class = '';
+							foreach( $series as $s ) {
+
+								if( $current_series == $s->slug ) {
+									$series_class = 'current';
+								} else {
+									$series_class = '';
+								}
+
+								$html .= '<li>' . "\n";
+									$html .= ' | <a href="' . add_query_arg( array( 'feed-series' => $s->slug, 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
+								$html .= '</li>' . "\n";
 							}
 
-							$html .= '<li>' . "\n";
-								$html .= ' | <a href="' . add_query_arg( array( 'feed-series' => $s->slug, 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
-							$html .= '</li>' . "\n";
-						}
+						$html .= '</ul>' . "\n";
+						$html .= '<br class="clear" />' . "\n";
+					$html .= '</div>' . "\n";
 
-					$html .= '</ul>' . "\n";
-					$html .= '<br class="clear" />' . "\n";
 				}
 			}
 

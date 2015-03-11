@@ -6,7 +6,8 @@
  * @subpackage SeriouslySimplePodcasting
  */
 
-global $ss_podcasting;
+global $ss_podcasting, $wp_query;
+
 
 // Hide all errors
 error_reporting( 0 );
@@ -71,12 +72,16 @@ if( $redirect && $redirect == 'on' ) {
 	}
 }
 
+// Get specified podcast series
 $podcast_series = '';
-$option_tail = '';
 if( isset( $_GET['podcast_series'] ) && $_GET['podcast_series'] ) {
 	$podcast_series = esc_attr( $_GET['podcast_series'] );
+} elseif( isset( $wp_query->query_vars['podcast_series'] ) && $wp_query->query_vars['podcast_series'] ) {
+	$podcast_series = esc_attr( $wp_query->query_vars['podcast_series'] );
+}
 
-	$series = get_term_by( 'slug', esc_attr( $_GET['podcast_series'] ), 'series' );
+if( $podcast_series ) {
+	$series = get_term_by( 'slug', $podcast_series, 'series' );
 	$series_id = $series->term_id;
 }
 

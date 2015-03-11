@@ -52,8 +52,8 @@ class SSP_Admin {
 		// Handle v1.x feed URL as well as feed URLs for default permalinks
 		add_action( 'init', array( $this, 'redirect_old_feed' ) );
 
-		// Setup permalink structure for episode downloads
-		add_action( 'init', array( $this, 'setup_permastruct' ) );
+		// Setup custom permalink structures
+		add_action( 'init', array( $this, 'setup_permastruct' ), 10 );
 
 		if ( is_admin() ) {
 
@@ -90,15 +90,24 @@ class SSP_Admin {
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
+
+		add_action( 'init', array( $this, 'update' ), 11 );
 	}
 
 	/**
-	 * Setup custom permalink structure for podcast episode downloads
+	 * Setup custom permalink structures
 	 * @return void
 	 */
 	public function setup_permastruct() {
+
+		// Episode download links
 		add_rewrite_rule( '^podcast-download/([^/]*)/([^/]*)/?', 'index.php?podcast_episode=$matches[1]', 'top' );
 		add_rewrite_tag( '%podcast_episode%', '([^&]+)' );
+
+		// Series feed URLs
+		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+		add_rewrite_rule( '^feed/' . $feed_slug . '/([^/]*)/?', 'index.php?feed=podcast&podcast_series=$matches[1]', 'top' );
+		add_rewrite_tag( '%podcast_series%', '([^&]+)' );
 	}
 
 	/**
@@ -771,8 +780,20 @@ class SSP_Admin {
 		flush_rewrite_rules();
 	}
 
-	public function run_updates () {
+	/**
+	 * Run functions on plugin update
+	 * @return void
+	 */
+	public function update () {
 
+		$old_version = get_option( 'ssp_version', 0 );
+
+		// New permalink structure was added in v1.9 along with the `ssp_version` option, so just checking if `ssp_version` doesn't exist yet is all we need to do here
+		if( ! $old_version ) {
+			flush_rewrite_rules( true );
+		}
+
+		update_option( 'ssp_version', $this->version );
 	}
 
 	/**

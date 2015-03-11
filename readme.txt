@@ -80,6 +80,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.9 =
 * 2015-03-31
+* [NEW] Adding ability to supply different feed details for each series
+* [NEW] New permalink structure for series feeds
 * [NEW] Adding 'Date recorded' field to episode details
 * [TWEAK] Further improving episode download links
 * [TWEAK] Improving episode custom fields display

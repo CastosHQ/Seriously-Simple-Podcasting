@@ -1,5 +1,9 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Settings class
@@ -95,9 +99,9 @@ class SSP_Settings {
 		global $wp_post_types;
 
 		// Set options for post type selection
-		foreach( $wp_post_types as $post_type => $data ) {
+		foreach ( $wp_post_types as $post_type => $data ) {
 
-			if( in_array( $post_type, array( 'page', 'attachment', 'revision', 'nav_menu_item', 'wooframework', 'podcast' ) ) ){
+			if ( in_array( $post_type, array( 'page', 'attachment', 'revision', 'nav_menu_item', 'wooframework', 'podcast' ) ) ){
 				continue;
 			}
 
@@ -452,7 +456,7 @@ class SSP_Settings {
 	 * @return void
 	 */
 	public function register_settings() {
-		if( is_array( $this->settings ) ) {
+		if ( is_array( $this->settings ) ) {
 
 			// Check posted/selected tab
 			$current_section = 'general';
@@ -464,7 +468,7 @@ class SSP_Settings {
 				}
 			}
 
-			foreach( $this->settings as $section => $data ) {
+			foreach ( $this->settings as $section => $data ) {
 
 				if ( $current_section && $current_section != $section ) {
 					continue;
@@ -473,9 +477,9 @@ class SSP_Settings {
 				// Get data for specific feed series
 				$title_tail = '';
 				$series_id = 0;
-				if( 'feed-details' == $section ) {
+				if ( 'feed-details' == $section ) {
 
-					if( isset( $_REQUEST['feed-series'] ) && $_REQUEST['feed-series'] && 'default' != $_REQUEST['feed-series'] ) {
+					if ( isset( $_REQUEST['feed-series'] ) && $_REQUEST['feed-series'] && 'default' != $_REQUEST['feed-series'] ) {
 
 						// Get selected series
 						$series = get_term_by( 'slug', esc_attr( $_REQUEST['feed-series'] ), 'series' );
@@ -484,7 +488,7 @@ class SSP_Settings {
 						$series_id = $series->term_id;
 
 						// Append series name to section title
-						if( $series ) {
+						if ( $series ) {
 							$title_tail = ': ' . $series->name;
 						}
 					}
@@ -495,11 +499,11 @@ class SSP_Settings {
 				// Add section to page
 				add_settings_section( $section, $section_title, array( $this, 'settings_section' ), 'ss_podcasting' );
 
-				foreach( $data['fields'] as $field ) {
+				foreach ( $data['fields'] as $field ) {
 
 					// Validation callback for field
 					$validation = '';
-					if( isset( $field['callback'] ) ) {
+					if ( isset( $field['callback'] ) ) {
 						$validation = $field['callback'];
 					}
 
@@ -507,7 +511,7 @@ class SSP_Settings {
 					$option_name = $this->settings_base . $field['id'];
 
 					// Append series ID if selected
-					if( $series_id ) {
+					if ( $series_id ) {
 						$option_name .= '_' . $series_id;
 					}
 
@@ -543,7 +547,7 @@ class SSP_Settings {
 
 		// Get field default
 		$default = '';
-		if( isset( $field['default'] ) ) {
+		if ( isset( $field['default'] ) ) {
 			$default = $field['default'];
 		}
 
@@ -551,15 +555,15 @@ class SSP_Settings {
 		$data = get_option( $option_name, $default );
 
 		// Get specific series data if applicable
-		if( isset( $args['feed-series'] ) && $args['feed-series'] ) {
+		if ( isset( $args['feed-series'] ) && $args['feed-series'] ) {
 
 			$option_default = '';
 
 			// Set placeholder to default feed option with specified default fallback
-			if( $data ) {
+			if ( $data ) {
 				$field['placeholder'] = $data;
 
-				if( in_array( $field['type'], array( 'checkbox', 'select', 'image' ) ) ) {
+				if ( in_array( $field['type'], array( 'checkbox', 'select', 'image' ) ) ) {
 					$option_default = $data;
 				}
 			}
@@ -574,7 +578,7 @@ class SSP_Settings {
 
 		// Get field class
 		$class = '';
-		if( isset( $field['class'] ) ) {
+		if ( isset( $field['class'] ) ) {
 			$class = $field['class'];
 		}
 
@@ -587,7 +591,7 @@ class SSP_Settings {
 
 			case 'text_secret':
 				$placeholder = $field['placeholder'];
-				if( $data ) {
+				if ( $data ) {
 					$placeholder = __( 'Password stored securely', 'ss-podcasting' );
 				}
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" value="" class="' . $class . '"/>' . "\n";
@@ -599,16 +603,16 @@ class SSP_Settings {
 
 			case 'checkbox':
 				$checked = '';
-				if( $data && 'on' == $data ){
+				if ( $data && 'on' == $data ){
 					$checked = 'checked="checked"';
 				}
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . ' class="' . $class . '"/>' . "\n";
 			break;
 
 			case 'checkbox_multi':
-				foreach( $field['options'] as $k => $v ) {
+				foreach ( $field['options'] as $k => $v ) {
 					$checked = false;
-					if( in_array( $k, (array) $data ) ) {
+					if ( in_array( $k, (array) $data ) ) {
 						$checked = true;
 					}
 					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</label><br/>';
@@ -616,9 +620,9 @@ class SSP_Settings {
 			break;
 
 			case 'radio':
-				foreach( $field['options'] as $k => $v ) {
+				foreach ( $field['options'] as $k => $v ) {
 					$checked = false;
-					if( $k == $data ) {
+					if ( $k == $data ) {
 						$checked = true;
 					}
 					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</label><br/>';
@@ -629,26 +633,26 @@ class SSP_Settings {
 
 				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
 				$prev_group = '';
-				foreach( $field['options'] as $k => $v ) {
+				foreach ( $field['options'] as $k => $v ) {
 
 					$group = '';
-					if( is_array( $v ) ) {
-						if( isset( $v['group'] ) ) {
+					if ( is_array( $v ) ) {
+						if ( isset( $v['group'] ) ) {
 							$group = $v['group'];
 						}
 						$v = $v['label'];
 					}
 
-					if( $prev_group && $group != $prev_group ) {
+					if ( $prev_group && $group != $prev_group ) {
 						$html .= '</optgroup>';
 					}
 
 					$selected = false;
-					if( $k == $data ) {
+					if ( $k == $data ) {
 						$selected = true;
 					}
 
-					if( $group && $group != $prev_group ) {
+					if ( $group && $group != $prev_group ) {
 						$html .= '<optgroup label="' . $group . '">';
 					}
 
@@ -702,7 +706,7 @@ class SSP_Settings {
 
 		}
 
-		if( ! in_array( $field['type'], array( 'feed_link', 'feed_link_series', 'podcast_url' ) ) ) {
+		if ( ! in_array( $field['type'], array( 'feed_link', 'feed_link_series', 'podcast_url' ) ) ) {
 			switch( $field['type'] ) {
 
 				case 'checkbox_multi':
@@ -726,7 +730,7 @@ class SSP_Settings {
 	 * @return string       Validated string
 	 */
 	public function validate_slug( $slug ) {
-		if( $slug && strlen( $slug ) > 0 && $slug != '' ) {
+		if ( $slug && strlen( $slug ) > 0 && $slug != '' ) {
 			$slug = urlencode( strtolower( str_replace( ' ' , '-' , $slug ) ) );
 		}
 		return $slug;
@@ -739,7 +743,7 @@ class SSP_Settings {
 	 */
 	public function encode_password( $password ) {
 
-		if( $password && strlen( $password ) > 0 && $password != '' ) {
+		if ( $password && strlen( $password ) > 0 && $password != '' ) {
 			$password = md5( $password );
 		} else {
 			$option = get_option( 'ss_podcasting_protection_password' );
@@ -756,7 +760,7 @@ class SSP_Settings {
 	 */
 	public function validate_message( $message ) {
 
-		if( $message ) {
+		if ( $message ) {
 
 			$allowed = array(
 			    'a' => array(
@@ -785,8 +789,8 @@ class SSP_Settings {
 	 */
 	public function mark_feed_redirect_date( $option, $old_value, $new_value ) {
 
-		if( $option == 'ss_podcasting_redirect_feed' ) {
-			if( ( $new_value != $old_value ) && $new_value == 'on' ) {
+		if ( $option == 'ss_podcasting_redirect_feed' ) {
+			if ( ( $new_value != $old_value ) && $new_value == 'on' ) {
 				$date = time();
 				update_option( 'ss_podcasting_redirect_feed_date', $date );
 			}
@@ -857,12 +861,12 @@ class SSP_Settings {
 			$current_series = '';
 
 			// Series submenu for feed details
-			if( 'feed-details' == $tab ) {
+			if ( 'feed-details' == $tab ) {
 				$series = get_terms( 'series', array( 'hide_empty' => false ) );
 
-				if( ! empty( $series ) ) {
+				if ( ! empty( $series ) ) {
 
-					if( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
+					if ( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
 						$current_series = esc_attr( $_GET['feed-series'] );
 						$series_class = '';
 					} else {
@@ -876,9 +880,9 @@ class SSP_Settings {
 						$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
 							$html .= '<li><a href="' . add_query_arg( array( 'feed-series' => 'default', 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'ss-podcasting' ) . '</a></li>';
 
-							foreach( $series as $s ) {
+							foreach ( $series as $s ) {
 
-								if( $current_series == $s->slug ) {
+								if ( $current_series == $s->slug ) {
 									$series_class = 'current';
 								} else {
 									$series_class = '';
@@ -899,7 +903,7 @@ class SSP_Settings {
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 
 
-				if( $current_series ) {
+				if ( $current_series ) {
 					$html .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
 				}
 

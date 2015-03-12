@@ -13,7 +13,10 @@
  * Domain Path: /lang/
  */
 
-if ( ! defined( 'ABSPATH' ) ) exit;
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 require_once( 'includes/ssp-functions.php' );
 require_once( 'includes/class-ssp-admin.php' );
@@ -23,7 +26,7 @@ global $ssp_admin, $ss_podcasting;
 $ssp_admin = new SSP_Admin( __FILE__, '1.8.11' );
 $ss_podcasting = new SSP_Frontend( __FILE__, '1.8.11' );
 
-if( is_admin() ) {
+if ( is_admin() ) {
 	global $ssp_settings;
 	require_once( 'includes/class-ssp-settings.php' );
 	$ssp_settings = new SSP_Settings( __FILE__ );

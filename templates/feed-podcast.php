@@ -6,6 +6,11 @@
  * @subpackage SeriouslySimplePodcasting
  */
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 global $ss_podcasting, $wp_query;
 
 
@@ -13,15 +18,15 @@ global $ss_podcasting, $wp_query;
 error_reporting( 0 );
 
 // Check if feed is password protected
-$protection = get_option( 'ss_podcasting_protect' );
+$protection = get_option( 'ss_podcasting_protect', '' );
 
-if( $protection && $protection == 'on' ) {
+if ( $protection && $protection == 'on' ) {
 
 	$give_access = false;
 
 	$message_option = get_option('ss_podcasting_protection_no_access_message');
 	$message = __( 'You are not permitted to view this podcast feed.' , 'ss-podcasting' );
-	if( $message_option && strlen( $message_option ) > 0 && $message_option != '' ) {
+	if ( $message_option && strlen( $message_option ) > 0 && $message_option != '' ) {
 		$message = $message_option;
 	}
 
@@ -32,15 +37,15 @@ if( $protection && $protection == 'on' ) {
 		$username = get_option( 'ss_podcasting_protection_username' );
 		$password = get_option( 'ss_podcasting_protection_password' );
 
-		if( $_SERVER['PHP_AUTH_USER'] == $username ) {
-			if( md5( $_SERVER['PHP_AUTH_PW'] ) == $password ) {
+		if ( $_SERVER['PHP_AUTH_USER'] == $username ) {
+			if ( md5( $_SERVER['PHP_AUTH_PW'] ) == $password ) {
 				$give_access = true;
 			}
 		}
 	}
 
 	// Send 401 status and display no access message
-	if( ! $give_access ) {
+	if ( ! $give_access ) {
 
 		$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
 
@@ -54,17 +59,17 @@ if( $protection && $protection == 'on' ) {
 // If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
 $redirect = get_option( 'ss_podcasting_redirect_feed' );
 $new_feed_url = false;
-if( $redirect && $redirect == 'on' ) {
+if ( $redirect && $redirect == 'on' ) {
 
 	$new_feed_url = get_option( 'ss_podcasting_new_feed_url' );
 	$update_date = get_option( 'ss_podcasting_redirect_feed_date' );
 
-	if( $new_feed_url && $update_date ) {
+	if ( $new_feed_url && $update_date ) {
 		$redirect_date = strtotime( '+2 days' , $update_date );
 		$current_date = time();
 
 		// Redirect with 301 if it is more than 2 days since redirect was saved
-		if( $current_date > $redirect_date ) {
+		if ( $current_date > $redirect_date ) {
 			header ( 'HTTP/1.1 301 Moved Permanently' );
 			header ( 'Location: ' . $new_feed_url );
 			exit;
@@ -74,31 +79,31 @@ if( $redirect && $redirect == 'on' ) {
 
 // Get specified podcast series
 $podcast_series = '';
-if( isset( $_GET['podcast_series'] ) && $_GET['podcast_series'] ) {
+if ( isset( $_GET['podcast_series'] ) && $_GET['podcast_series'] ) {
 	$podcast_series = esc_attr( $_GET['podcast_series'] );
-} elseif( isset( $wp_query->query_vars['podcast_series'] ) && $wp_query->query_vars['podcast_series'] ) {
+} elseif ( isset( $wp_query->query_vars['podcast_series'] ) && $wp_query->query_vars['podcast_series'] ) {
 	$podcast_series = esc_attr( $wp_query->query_vars['podcast_series'] );
 }
 
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series = get_term_by( 'slug', $podcast_series, 'series' );
 	$series_id = $series->term_id;
 }
 
 // Podcast title
 $title = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_title = get_option( 'ss_podcasting_data_title_' . $series_id, '' );
-	if( $series_title ) {
+	if ( $series_title ) {
 		$title = $series_title;
 	}
 }
 
 // Podcast description
 $description = get_option( 'ss_podcasting_data_description', get_bloginfo( 'description' ) );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_description = get_option( 'ss_podcasting_data_description_' . $series_id, '' );
-	if( $series_description ) {
+	if ( $series_description ) {
 		$description = $series_description;
 	}
 }
@@ -106,65 +111,65 @@ $itunes_description = strip_tags( $description );
 
 // Podcast language
 $language = get_option( 'ss_podcasting_data_language', get_bloginfo( 'language' ) );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_language = get_option( 'ss_podcasting_data_language_' . $series_id, '' );
-	if( $series_language ) {
+	if ( $series_language ) {
 		$language = $series_language;
 	}
 }
 
 // Podcast copyright string
 $copyright = get_option( 'ss_podcasting_data_copyright', '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ) );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_copyright = get_option( 'ss_podcasting_data_copyright_' . $series_id, '' );
-	if( $series_copyright ) {
+	if ( $series_copyright ) {
 		$copyright = $series_copyright;
 	}
 }
 
 // Podcast subtitle
 $subtitle = get_option( 'ss_podcasting_data_subtitle', get_bloginfo( 'description' ) );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_subtitle = get_option( 'ss_podcasting_data_subtitle_' . $series_id, '' );
-	if( $series_subtitle ) {
+	if ( $series_subtitle ) {
 		$subtitle = $series_subtitle;
 	}
 }
 
 // Podcast author
 $author = get_option( 'ss_podcasting_data_author', get_bloginfo( 'name' ) );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_author = get_option( 'ss_podcasting_data_author_' . $series_id, '' );
-	if( $series_author ) {
+	if ( $series_author ) {
 		$author = $series_author;
 	}
 }
 
 // Podcast owner name
 $owner_name = get_option( 'ss_podcasting_data_owner_name', get_bloginfo( 'name' ) );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_owner_name = get_option( 'ss_podcasting_data_owner_name_' . $series_id, '' );
-	if( $series_owner_name ) {
+	if ( $series_owner_name ) {
 		$owner_name = $series_owner_name;
 	}
 }
 
 // Podcast owner email address
 $owner_email = get_option( 'ss_podcasting_data_owner_email', get_bloginfo( 'admin_email' ) );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_owner_email = get_option( 'ss_podcasting_data_owner_email_' . $series_id, '' );
-	if( $series_owner_email ) {
+	if ( $series_owner_email ) {
 		$owner_email = $series_owner_email;
 	}
 }
 
 // Podcast explicit setting
 $explicit_option = get_option( 'ss_podcasting_explicit', '' );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_explicit_option = get_option( 'ss_podcasting_explicit_' . $series_id, '' );
 	$explicit_option = $series_explicit_option;
 }
-if( $explicit_option && 'on' == $explicit_option ) {
+if ( $explicit_option && 'on' == $explicit_option ) {
 	$explicit = 'Yes';
 } else {
 	$explicit = 'No';
@@ -172,29 +177,29 @@ if( $explicit_option && 'on' == $explicit_option ) {
 
 // Podcast cover image
 $image = get_option( 'ss_podcasting_data_image', '' );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_image = get_option( 'ss_podcasting_data_image_' . $series_id, 'no-image' );
-	if( 'no-image' != $series_image ) {
+	if ( 'no-image' != $series_image ) {
 		$image = $series_image;
 	}
 }
 
 // Podcast category and subcategory
 $category = get_option( 'ss_podcasting_data_category', '' );
-if( $podcast_series ) {
+if ( $podcast_series ) {
 	$series_category = get_option( 'ss_podcasting_data_category_' . $series_id, 'no-category' );
-	if( 'no-category' != $series_category ) {
+	if ( 'no-category' != $series_category ) {
 		$category = $series_category;
 	}
 }
-if( ! $category ) {
+if ( ! $category ) {
 	$category = false;
 	$subcategory = false;
 } else {
 	$subcategory = get_option( 'ss_podcasting_data_subcategory', '' );
-	if( $podcast_series ) {
+	if ( $podcast_series ) {
 		$series_subcategory = get_option( 'ss_podcasting_data_subcategory_' . $series_id, 'no-subcategory' );
-		if( 'no-subcategory' != $series_subcategory ) {
+		if ( 'no-subcategory' != $series_subcategory ) {
 			$subcategory = $series_subcategory;
 		}
 	}
@@ -233,17 +238,17 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>
 	</itunes:owner>
 	<itunes:explicit><?php echo esc_html( $explicit ); ?></itunes:explicit>
-	<?php if( $image ) { ?>
+	<?php if ( $image ) { ?>
 	<itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
 	<?php } ?>
-	<?php if( $category ) { ?>
+	<?php if ( $category ) { ?>
 	<itunes:category text="<?php echo esc_attr( $category ); ?>">
-		<?php if( $subcategory ) { ?>
+		<?php if ( $subcategory ) { ?>
 		<itunes:category text="<?php echo esc_attr( $subcategory ); ?>"></itunes:category>
 		<?php } ?>
 	</itunes:category>
 	<?php } ?>
-	<?php if( $new_feed_url ) { ?>
+	<?php if ( $new_feed_url ) { ?>
 	<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 	<?php }
 
@@ -257,8 +262,8 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 
 	$qry = new WP_Query( $args );
 
-	if( $qry->have_posts() ) {
-		while( $qry->have_posts()) {
+	if ( $qry->have_posts() ) {
+		while ( $qry->have_posts()) {
 			$qry->the_post();
 
 			// Audio file
@@ -269,29 +274,29 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			}
 
 			// If there is no enclosure then go no further
-			if( ! isset( $enclosure ) || ! $enclosure ) {
+			if ( ! isset( $enclosure ) || ! $enclosure ) {
 				continue;
 			}
 
 			// Get episode image from post featured image
 			$episode_image = '';
 			$image_id = get_post_thumbnail_id( get_the_ID() );
-			if( $image_id ) {
+			if ( $image_id ) {
 				$image_att = wp_get_attachment_image_src( $image_id, 'full' );
-				if( $image_att ) {
+				if ( $image_att ) {
 					$episode_image = $image_att[0];
 				}
 			}
 
 			// Episode duration (default to 0:00 to ensure there is always a value for this)
 			$duration = get_post_meta( get_the_ID() , 'duration' , true );
-			if( ! $duration ) {
+			if ( ! $duration ) {
 				$duration = '0:00';
 			}
 
 			// File size
 			$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
-			if( ! $size ) {
+			if ( ! $size ) {
 				$size = $ss_podcasting->get_file_size( $enclosure );
 				$size = esc_html( $size['raw'] );
 
@@ -300,19 +305,19 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			}
 
 			// Set default size to prevent invalid feed
-			if( ! $size ) {
+			if ( ! $size ) {
 				$size = 1;
 			}
 
 			// File MIME type (default to MP3 to ensure there is always a value for this)
 			$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
-			if( ! $mime_type ) {
+			if ( ! $mime_type ) {
 				$mime_type = 'audio/mpeg';
 			}
 
 			// Episode explicit flag
 			$ep_explicit = get_post_meta( get_the_ID(), 'explicit', true );
-			if( $ep_explicit && $ep_explicit == 'on' ) {
+			if ( $ep_explicit && $ep_explicit == 'on' ) {
 				$explicit_flag = 'Yes';
 			} else {
 				$explicit_flag = 'No';
@@ -320,7 +325,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 
 			// Episode block flag
 			$ep_block = get_post_meta( get_the_ID(), 'block', true );
-			if( $ep_block && $ep_block == 'on' ) {
+			if ( $ep_block && $ep_block == 'on' ) {
 				$block_flag = 'Yes';
 			} else {
 				$block_flag = 'No';
@@ -352,7 +357,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
 		<itunes:subtitle><?php echo $itunes_excerpt; ?></itunes:subtitle>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
-		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary><?php if( $episode_image ) { ?>
+		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary><?php if ( $episode_image ) { ?>
 		<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image><?php } ?>
 		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo esc_html( $explicit_flag ); ?></itunes:explicit>

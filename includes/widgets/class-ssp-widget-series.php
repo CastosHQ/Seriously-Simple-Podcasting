@@ -1,5 +1,9 @@
 <?php
-if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly.
+
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
 
 /**
  * Seriously Simple Podcasting Podcast Series Widget
@@ -63,13 +67,13 @@ class SSP_Widget_Series extends WP_Widget {
 
 		$series_id = $instance['series_id'];
 
-		if( ! $series_id ) {
+		if ( ! $series_id ) {
 			return;
 		}
 
 		$series = get_term( $series_id, 'series' );
 
-		if( ! $series || is_wp_error( $series ) ) {
+		if ( ! $series || is_wp_error( $series ) ) {
 			return;
 		}
 
@@ -93,11 +97,11 @@ class SSP_Widget_Series extends WP_Widget {
 			echo $args['before_title'] . $title . $args['after_title'];
 		} ?>
 
-		<?php if( $show_title ) { ?>
+		<?php if ( $show_title ) { ?>
 			<h3><?php echo $series->name; ?></h3>
 		<?php } ?>
 
-		<?php if( $show_desc ) { ?>
+		<?php if ( $show_desc ) { ?>
 			<p><?php echo $series->description; ?></p>
 		<?php } ?>
 
@@ -158,7 +162,7 @@ class SSP_Widget_Series extends WP_Widget {
 		<p><label for="<?php echo $this->get_field_id( 'series_id' ); ?>"><?php _e( 'Series:', 'ss-podcasting' ); ?></label>
 		<select id="<?php echo $this->get_field_id( 'series_id' ); ?>" name="<?php echo $this->get_field_name( 'series_id' ); ?>">
 			<?php
-			foreach( $series as $s ) {
+			foreach ( $series as $s ) {
 				echo '<option value="' . esc_attr( $s->term_id ) . '" ' . selected( $series_id, $s->term_id, false ) . '>' . $s->name . '</option>' . "\n";
 			}
 			?>

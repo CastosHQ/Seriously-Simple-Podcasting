@@ -902,7 +902,7 @@ class SSP_Settings {
 
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 
-
+				// Add current series to posted data
 				if ( $current_series ) {
 					$html .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
 				}

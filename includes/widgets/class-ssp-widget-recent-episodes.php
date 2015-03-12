@@ -73,7 +73,7 @@ class SSP_Widget_Recent_Episodes extends WP_Widget {
 
 		$show_date = isset( $instance['show_date'] ) ? $instance['show_date'] : false;
 
-		$query_args = ssp_episodes( $number, '', true, 'feed' );
+		$query_args = ssp_episodes( $number, '', true, 'widget' );
 
 		$qry = new WP_Query( apply_filters( 'ssp_widget_recent_episodes_args', $query_args ) );
 

@@ -154,6 +154,7 @@ class SSP_Widget_Single_Episode extends WP_Widget {
 		$show_player  = isset( $instance['show_player'] ) ? (bool) $instance['show_player'] : false;
 		$show_details = isset( $instance['show_details'] ) ? (bool) $instance['show_details'] : false;
 
+		// Get all podcast episodes
 		$episode_ids = (array) ssp_episode_ids();
 ?>
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'ss-podcasting' ); ?></label>

@@ -81,12 +81,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 = 1.9 =
 * 2015-03-31
 * [NEW] Adding ability to supply different feed details for each series
-* [NEW] New permalink structure for series feeds
+* [NEW] Adding 'Series' widget for displaying a list of episodes from a selected series
+* [NEW] Adding 'Single Episode' widget for displaying single podcast episode
 * [NEW] Adding `podcast_episode` shortcode for displaying single podcast episode
 * [NEW] Adding 'Date recorded' field to episode details
+* [NEW] Creating new permalink structure for series feeds
 * [TWEAK] Further improving episode download links
 * [TWEAK] Improving episode custom fields display
-* [TWEAK] Updating publishing URLs to be more accurate
+* [TWEAK] Updating publishing URLs to be more accurate for different permalink structures
 
 = 1.8.11 =
 * 2015-03-05

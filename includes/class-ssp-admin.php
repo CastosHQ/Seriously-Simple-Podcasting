@@ -244,7 +244,7 @@ class SSP_Admin {
      * @return void
      */
 	public function register_custom_columns( $column_name, $id ) {
-		global $post, $ss_podcasting;
+		global $ss_podcasting;
 
 		switch ( $column_name ) {
 

@@ -113,7 +113,8 @@ class SSP_Frontend {
 			return $content;
 		}
 
-		if( isset( $episode_context ) && 'shortcode' == $episode_context ) {
+		// Don't output episode meta in shortcode or widget
+		if( isset( $episode_context ) && in_array( $episode_context, array( 'shortcode', 'widget' ) ) ) {
 			return $content;
 		}
 
@@ -685,6 +686,7 @@ class SSP_Frontend {
 
 		$widgets = array(
 			'recent-episodes' => 'Recent_Episodes',
+			'single-episode' => 'Single_Episode',
 		);
 
 		foreach( $widgets as $id => $name ) {
@@ -710,9 +712,11 @@ class SSP_Frontend {
 	    	return;
 	    }
 
+	    // Setup array of content items and trim whitespace
 	    $content_items = explode( ',', $content );
 	    $content_items = array_map( 'trim', $content_items );
 
+	    // Get episode for display
 	    $html = $this->podcast_episode( $episode, $content_items, 'shortcode' );
 
 	    return $html;
@@ -732,6 +736,7 @@ class SSP_Frontend {
 			return;
 		}
 
+		// Get episode object
 		$episode = get_post( $episode_id );
 
 		if( ! $episode || is_wp_error( $episode ) ) {
@@ -746,6 +751,7 @@ class SSP_Frontend {
 
 			$episode_context = $context;
 
+			// Display specified content items in the order supplied
 			foreach( $content_items as $item ) {
 
 				switch( $item ) {
@@ -755,11 +761,11 @@ class SSP_Frontend {
 					break;
 
 					case 'excerpt':
-						$html .= '<div class="episode-excerpt">' . get_the_excerpt() . '</div>' . "\n";
+						$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
 					break;
 
 					case 'content':
-						$html .= '<div class="episode-excerpt">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
+						$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
 					break;
 
 					case 'player':

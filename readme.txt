@@ -89,6 +89,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [TWEAK] Further improving episode download links
 * [TWEAK] Improving episode custom fields display
 * [TWEAK] Updating publishing URLs to be more accurate for different permalink structures
+* [TWEAK] Numerous code improvements and optimisations across the board
 
 = 1.8.11 =
 * 2015-03-05

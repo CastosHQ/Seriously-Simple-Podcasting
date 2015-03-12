@@ -4,6 +4,7 @@
 ![Total Downloads](https://img.shields.io/wordpress/plugin/dt/seriously-simple-podcasting.svg)
 ![Plugin Rating](https://img.shields.io/wordpress/plugin/r/seriously-simple-podcasting.svg)
 ![WordPress Compatibility](https://img.shields.io/wordpress/v/seriously-simple-podcasting.svg)
+[![Codacy Badge](https://www.codacy.com/project/badge/211a68dd12a54853a711b158ad067c2f)](https://www.codacy.com/public/hugh/Seriously-Simple-Podcasting)
 
 Welcome to the Seriously Simple Podcasting repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
 

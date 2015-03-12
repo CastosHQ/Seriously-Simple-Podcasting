@@ -96,7 +96,9 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 				$i = 0;
 				foreach ( $query as $post ) {
 
-					if ( ! is_object( $post ) ) continue;
+					if ( ! is_object( $post ) ) {
+						continue;
+					}
 
 					$template = $tpl;
 					$i++;

@@ -64,7 +64,7 @@ class SSP_Frontend {
 
 		// Add shortcodes
 		add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );
-		add_shortcode( 'podcast_episode', array( $this, 'podcast_episode' ) );
+		add_shortcode( 'podcast_episode', array( $this, 'podcast_episode_shortcode' ) );
 
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
@@ -106,10 +106,14 @@ class SSP_Frontend {
 	 * @return string          Modified content
 	 */
 	public function content_meta_data( $content = '' ) {
-		global $post, $wp_current_filter;
+		global $post, $wp_current_filter, $episode_context;
 
 		// Don't output unformatted data on excerpts
 		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter ) ) {
+			return $content;
+		}
+
+		if( isset( $episode_context ) && 'shortcode' == $episode_context ) {
 			return $content;
 		}
 
@@ -119,7 +123,7 @@ class SSP_Frontend {
 
 			$meta = $this->episode_meta( $post->ID, 'content' );
 
-			$player_position = get_option( 'ss_podcasting_player_content_location', 'above' );
+			$player_position = get_option( 'ssp_player_content_location', 'above' );
 
 			switch( $player_position ) {
 				case 'above': $content = $meta . $content; break;
@@ -154,52 +158,78 @@ class SSP_Frontend {
 
 	/**
 	 * Get episode meta data
-	 * @param  integer $post_id ID of episode post
-	 * @return string           Episode meta
+	 * @param  integer $episode_id ID of episode post
+	 * @param  string  $context    Context for display
+	 * @return string          	   Episode meta
 	 */
-	public function episode_meta( $post_id = 0, $context = 'content' ) {
+	public function episode_meta( $episode_id = 0, $context = 'content' ) {
 
 		$meta = '';
 
-		if( ! $post_id ) {
+		if( ! $episode_id ) {
 			return $meta;
 		}
 
-		$file = $this->get_enclosure( $post_id );
+		$file = $this->get_enclosure( $episode_id );
 
 		if( $file ) {
-			$link = $this->get_episode_download_link( $post_id, 'download' );
-			$duration = get_post_meta( $post_id , 'duration' , true );
-			$size = get_post_meta( $post_id , 'filesize' , true );
-			if( ! $size ) {
-				$size_data = $this->get_file_size( $file );
-				$size = $size_data['formatted'];
-				if( $size ) {
-					if( isset( $size_data['formatted'] ) ) {
-						update_post_meta( $post_id, 'filesize', $size_data['formatted'] );
-					}
-
-					if( isset( $size_data['raw'] ) ) {
-						update_post_meta( $post_id, 'filesize_raw', $size_data['raw'] );
-					}
-				}
-			}
-
-			$date_recorded = get_post_meta( $post_id, 'date_recorded', true );
-
 			$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
-
-			$meta .= '<div class="podcast_meta"><aside>';
-			if( $link ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-			if( $duration ) { if( $link ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
-			if( $size ) { if( $duration || $link ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
-			if( $date_recorded ) { if( $size || $duration || $link ) { $meta .= ' | '; } $meta .= __( 'Recorded on' , 'ss-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $date_recorded ) ); }
-			$meta .= '</aside></div>';
+			$meta .= $this->episode_meta_details( $episode_id, $context );
 		}
 
-		$meta = apply_filters( 'ssp_episode_meta', $meta, $post_id, $context );
+		$meta = apply_filters( 'ssp_episode_meta', $meta, $episode_id, $context );
 
 		return $meta;
+	}
+
+	/**
+	 * Fetch episode meta details
+	 * @param  integer $episode_id ID of episode post
+	 * @param  string  $context    Context for display
+	 * @return string              Episode meta details
+	 */
+	public function episode_meta_details ( $episode_id = 0, $context = 'content' ) {
+
+		if( ! $episode_id ) {
+			return;
+		}
+
+		$file = $this->get_enclosure( $episode_id );
+
+		if( ! $file ) {
+			return;
+		}
+
+		$link = $this->get_episode_download_link( $episode_id, 'download' );
+		$duration = get_post_meta( $episode_id , 'duration' , true );
+		$size = get_post_meta( $episode_id , 'filesize' , true );
+		if( ! $size ) {
+			$size_data = $this->get_file_size( $file );
+			$size = $size_data['formatted'];
+			if( $size ) {
+				if( isset( $size_data['formatted'] ) ) {
+					update_post_meta( $episode_id, 'filesize', $size_data['formatted'] );
+				}
+
+				if( isset( $size_data['raw'] ) ) {
+					update_post_meta( $episode_id, 'filesize_raw', $size_data['raw'] );
+				}
+			}
+		}
+
+		$date_recorded = get_post_meta( $episode_id, 'date_recorded', true );
+
+		$meta = '<div class="podcast_meta"><aside>';
+		if( $link ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
+		if( $duration ) { if( $link ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
+		if( $size ) { if( $duration || $link ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
+		if( $date_recorded ) { if( $size || $duration || $link ) { $meta .= ' | '; } $meta .= __( 'Recorded on' , 'ss-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $date_recorded ) ); }
+		$meta .= '</aside></div>';
+
+		$meta = apply_filters( 'ssp_episode_meta_details', $meta, $episode_id, $context );
+
+		return $meta;
+
 	}
 
 	/**
@@ -669,35 +699,87 @@ class SSP_Frontend {
 	 * @param  array  $params Shortcode paramaters
 	 * @return string         HTML output
 	 */
-	public function podcast_episode ( $params ) {
+	public function podcast_episode_shortcode ( $params ) {
 
 		extract( shortcode_atts( array(
 	        'episode' => 0,
-	        'show_title' => 'true',
-	        'show_details' => 'true',
+	        'content' => 'title,player,details',
 	    ), $params ) );
 
 	    if( ! $episode ) {
 	    	return;
 	    }
 
-	    $html = '<div class="podcast-episode episode-' . esc_attr( $episode ) . '">' . "\n";
+	    $content_items = explode( ',', $content );
+	    $content_items = array_map( 'trim', $content_items );
 
-	    	if( 'true' == $show_title ) {
-		    	$html .= '<h3 class="episode-title">' . get_the_title( $episode ) . '</h3>' . "\n";
-		    }
+	    $html = $this->podcast_episode( $episode, $content_items, 'shortcode' );
 
-		    if( 'true' == $show_details ) {
-		    	$html .= $this->episode_meta( $episode, 'shortcode' );
-		    } else {
-		    	$file = $this->get_enclosure( $episode );
-		    	$html .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>' . "\n";
-		    }
+	    return $html;
+
+	}
+
+	/**
+	 * Show single podcast episode with specified content items
+	 * @param  integer $episode_id    ID of episode post
+	 * @param  array   $content_items Orderd array of content items to display
+	 * @return string                 HTML of episode with specified content items
+	 */
+	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '' ) {
+		global $post, $episode_context;
+
+		if( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
+			return;
+		}
+
+		$episode = get_post( $episode_id );
+
+		if( ! $episode || is_wp_error( $episode ) ) {
+			return;
+		}
+
+		$html = '<div class="podcast-episode episode-' . esc_attr( $episode_id ) . '">' . "\n";
+
+			// Setup post data for episode post object
+			$post = $episode;
+			setup_postdata( $post );
+
+			$episode_context = $context;
+
+			foreach( $content_items as $item ) {
+
+				switch( $item ) {
+
+					case 'title':
+						$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
+					break;
+
+					case 'excerpt':
+						$html .= '<div class="episode-excerpt">' . get_the_excerpt() . '</div>' . "\n";
+					break;
+
+					case 'content':
+						$html .= '<div class="episode-excerpt">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
+					break;
+
+					case 'player':
+						$file = $this->get_enclosure( $episode_id );
+		    			$html .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>' . "\n";
+					break;
+
+					case 'details':
+						$html .= $this->episode_meta_details( $episode_id, $episode_context );
+					break;
+
+				}
+			}
+
+			// Reset post data after fetching episode details
+			wp_reset_postdata();
 
 		$html .= '</div>' . "\n";
 
 	    return $html;
-
 	}
 
 }

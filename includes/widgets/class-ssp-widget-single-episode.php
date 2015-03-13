@@ -21,8 +21,7 @@ class SSP_Widget_Single_Episode extends WP_Widget {
 
 	/**
 	 * Constructor function.
-	 * @since  1.0.0
-	 * @return  void
+	 * @since  1.9.0
 	 */
 	public function __construct() {
 		/* Widget variable settings. */

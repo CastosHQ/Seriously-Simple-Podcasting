@@ -28,7 +28,6 @@ class SSP_Settings {
 	/**
 	 * Constructor
 	 * @param 	string $file Plugin base file
-	 * @return 	void
 	 */
 	public function __construct( $file ) {
 		$this->file = $file;
@@ -97,6 +96,8 @@ class SSP_Settings {
 	 */
 	private function settings_fields() {
 		global $wp_post_types;
+
+		$post_type_options = array();
 
 		// Set options for post type selection
 		foreach ( $wp_post_types as $post_type => $data ) {
@@ -194,6 +195,8 @@ class SSP_Settings {
 			'Software How-To' => array( 'label' => __( 'Software How-To', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
 
 		);
+
+		$settings = array();
 
 		$settings['general'] = array(
 			'title'					=> __( 'General', 'ss-podcasting' ),

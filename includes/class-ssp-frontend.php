@@ -25,7 +25,6 @@ class SSP_Frontend {
 	/**
 	 * Constructor
 	 * @param 	string $file Plugin base file
-	 * @return 	void
 	 */
 	public function __construct( $file, $version ) {
 		$this->dir = dirname( $file );
@@ -463,8 +462,8 @@ class SSP_Frontend {
 
 	/**
 	 * Get podcast
-	 * @param  string/array $args Arguments to be passed to the query.
-	 * @return array/boolean      Array if true, boolean if false.
+	 * @param  mixed $args Arguments to be passed to the query.
+	 * @return mixed       Array if true, boolean if false.
 	 */
 	public function get_podcast( $args = '' ) {
 		$defaults = array(
@@ -505,6 +504,8 @@ class SSP_Frontend {
 
 			if ( count( $terms ) > 0) {
 
+				$query = array();
+
 				foreach ( $terms as $term ) {
 					$query[ $term->term_id ] = new stdClass();
 					$query[ $term->term_id ]->title = $term->name;
@@ -537,7 +538,7 @@ class SSP_Frontend {
 			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, 'audio_file', true ), $episode_id );
 		}
 
-		return false;
+		return '';
 	}
 
 	/**
@@ -635,7 +636,7 @@ class SSP_Frontend {
 	 * Display plugin name and version in generator meta tag
 	 * @return void
 	 */
-	function generator_tag( $gen, $type ) {
+	public function generator_tag( $gen, $type ) {
 
 		// Allow generator tags to be hidden if necessary
 		if ( apply_filters( 'ssp_show_generator_tag', true, $type ) ) {

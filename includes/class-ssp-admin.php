@@ -25,7 +25,6 @@ class SSP_Admin {
 	/**
 	 * Constructor
 	 * @param 	string $file Plugin base file
-	 * @return 	void
 	 */
 	public function __construct( $file, $version ) {
 
@@ -264,10 +263,7 @@ class SSP_Admin {
 			break;
 
 			case 'image':
-				$value = '';
-
 				$value = $ss_podcasting->get_image( $id, 40 );
-
 				echo $value;
 			break;
 

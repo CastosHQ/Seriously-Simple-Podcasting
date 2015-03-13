@@ -28,9 +28,9 @@ if ( ! function_exists( 'is_podcast_download' ) ) {
 if ( ! function_exists( 'ss_get_podcast' ) ) {
 	/**
 	 * Wrapper function to get the podcast episodes from the SeriouslySimplePodcasting class.
-	 * @param  string/array $args  Arguments
+	 * @param  mixed $args  Arguments
 	 * @since  1.0.0
-	 * @return array/boolean       Array if true, boolean if false.
+	 * @return mixed        Array if true, boolean if false.
 	 */
 	function ss_get_podcast( $args = '' ) {
 		global $ss_podcasting;
@@ -47,7 +47,7 @@ add_action( 'get_podcast', 'ss_podcast' );
 if ( ! function_exists( 'ss_podcast' ) ) {
 	/**
 	 * Display or return HTML-formatted podcast data.
-	 * @param  string/array $args Arguments
+	 * @param  mixed $args Arguments
 	 * @since  1.0.0
 	 * @return string
 	 */
@@ -204,9 +204,7 @@ if ( ! function_exists( 'ss_podcast_shortcode' ) ) {
 	 * @param  string $content Shortcode content
 	 * @return string          HTML output
 	 */
-	function ss_podcast_shortcode ( $atts, $content = null ) {
-
-		$args = (array) $atts;
+	function ss_podcast_shortcode ( $atts ) {
 
 		$defaults = array(
 			'title' => '',
@@ -380,7 +378,6 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
     function ssp_readfile_chunked( $file, $retbytes = true ) {
 
 		$chunksize = 1 * ( 1024 * 1024 );
-		$buffer = '';
 		$cnt = 0;
 
 		$handle = fopen( $file, 'r' );
@@ -408,4 +405,3 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 		return $status;
     }
 }
-?>

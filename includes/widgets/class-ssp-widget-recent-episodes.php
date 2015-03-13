@@ -21,8 +21,7 @@ class SSP_Widget_Recent_Episodes extends WP_Widget {
 
 	/**
 	 * Constructor function.
-	 * @since  1.0.0
-	 * @return  void
+	 * @since  1.8.0
 	 */
 	public function __construct() {
 		/* Widget variable settings. */

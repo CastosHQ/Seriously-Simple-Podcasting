@@ -79,8 +79,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.9 =
-* 2015-03-31
-* [NEW] Adding ability to supply different feed details for each series
+* 2015-03-16
+* [NEW] Adding ability to supply different feed details for each series so you can run multiple podcasts from one site
 * [NEW] Adding 'Series' widget for displaying a list of episodes from a selected series
 * [NEW] Adding 'Single Episode' widget for displaying single podcast episode
 * [NEW] Adding `podcast_episode` shortcode for displaying single podcast episode

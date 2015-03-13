@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       1.0
  */
 class SSP_Admin {
+	private $version;
 	private $dir;
 	private $file;
 	private $assets_dir;
@@ -21,6 +22,7 @@ class SSP_Admin {
 	private $template_path;
 	private $token;
 	private $home_url;
+	private $script_suffix;
 
 	/**
 	 * Constructor
@@ -226,8 +228,8 @@ class SSP_Admin {
 		}
 		$defaults = array_merge( $defaults, $new_columns );
 
-		if ( $last_item != '' ) {
-			foreach ( $last_item as $k => $v ) {
+		if ( $last_item ) {
+			foreach ( (array) $last_item as $k => $v ) {
 				$defaults[$k] = $v;
 				break;
 			}
@@ -275,8 +277,8 @@ class SSP_Admin {
 
 	/**
 	 * Register solumns for series list table
-	 * @param  array $defaults Default columns
-	 * @return array           Modified columns
+	 * @param  array $columns Default columns
+	 * @return array          Modified columns
 	 */
 	public function edit_series_columns( $columns ) {
 

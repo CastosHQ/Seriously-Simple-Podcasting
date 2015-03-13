@@ -38,8 +38,6 @@ class SSP_Settings {
 		$this->token = 'podcast';
 		$this->settings_base = 'ss_podcasting_';
 
-		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 		add_action( 'init', array( $this, 'load_settings' ), 11 );
 
 		// Register podcast settings

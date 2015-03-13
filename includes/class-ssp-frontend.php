@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       1.0
  */
 class SSP_Frontend {
+	private $version;
 	private $dir;
 	private $file;
 	private $assets_dir;
@@ -27,6 +28,9 @@ class SSP_Frontend {
 	 * @param 	string $file Plugin base file
 	 */
 	public function __construct( $file, $version ) {
+
+		$this->version = $version;
+
 		$this->dir = dirname( $file );
 		$this->file = $file;
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
@@ -34,8 +38,6 @@ class SSP_Frontend {
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
 		$this->home_url = trailingslashit( home_url() );
 		$this->token = 'podcast';
-
-		$this->version = $version;
 
 		// Add meta data to start of podcast content
 		$locations = get_option( 'ss_podcasting_player_locations', array() );
@@ -474,6 +476,8 @@ class SSP_Frontend {
 
 		$args = apply_filters( 'ssp_get_podcast_args', wp_parse_args( $args, $defaults ) );
 
+		$query = array();
+
 		if ( 'episodes' == $args['content'] ) {
 
 			// Get selected series
@@ -503,8 +507,6 @@ class SSP_Frontend {
 			$terms = get_terms( 'series' );
 
 			if ( count( $terms ) > 0) {
-
-				$query = array();
 
 				foreach ( $terms as $term ) {
 					$query[ $term->term_id ] = new stdClass();

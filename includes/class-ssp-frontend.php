@@ -711,10 +711,12 @@ class SSP_Frontend {
 	 */
 	public function podcast_episode_shortcode ( $params ) {
 
-		extract( shortcode_atts( array(
+		$atts = shortcode_atts( array(
 	        'episode' => 0,
 	        'content' => 'title,player,details',
-	    ), $params ) );
+	    ), $params );
+
+		extract( $atts );
 
 	    if ( ! $episode ) {
 	    	return;

@@ -531,8 +531,6 @@ class SSP_Settings {
 
 		if( 'feed-details' == $section['id'] ) {
 
-			$feed_url = '';
-
 			$feed_series = 'default';
 			if( isset( $_GET['feed-series'] ) ) {
 				$feed_series = esc_attr( $_GET['feed-series'] );

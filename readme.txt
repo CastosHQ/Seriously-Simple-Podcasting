@@ -1,14 +1,14 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
-Tags: podcast, audio, rss, rss2, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher
+Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation
 Requires at least: 4.0
 Tested up to: 4.1.1
-Stable tag: 1.8.11
+Stable tag: 1.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Podcasting the way it's meant to be.
+Podcasting the way it's meant to be. Supports multiple podcast shows, all post types
 
 == Description ==
 
@@ -16,17 +16,17 @@ Podcasting the way it's meant to be.
 
 **Primary Features**
 
-- Complete user and developer [documentation](http://docs.hughlashbrooke.com/)
 - Simple settings so you can get your podcast up and running quickly
+- Run multiple podcasts from the same site - each with their own, unique RSS feed
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Ability to use any post type for your podcast episodes
-- Integration with WordPress post tags for `podcast` post type
 - Highly configurable and robust RSS feed designed for *all* podcast services and feed readers, including iTunes and Stitcher
-- Widget for displaying recent podcast episodes anywhere on your site
-- Shortcode for displaying list of podcast episodes or series anywhere on your site
+- Shortcodes & widgets for displaying podcast episode lists as well as single episodes anywhere on your site
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your audio files on the same site or any other server
+- Complete user and developer [documentation](http://docs.hughlashbrooke.com/)
 - Full i18n support
+- Full support for multisite networks
 
 **Some examples of the plugin in action**
 
@@ -86,10 +86,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [NEW] Adding `podcast_episode` shortcode for displaying single podcast episode
 * [NEW] Adding 'Date recorded' field to episode details
 * [NEW] Creating new permalink structure for series feeds
+* [NEW] Adding 'view feed' link to feed details settings page
 * [TWEAK] Further improving episode download links
 * [TWEAK] Improving episode custom fields display
 * [TWEAK] Updating publishing URLs to be more accurate for different permalink structures
-* [TWEAK] Numerous code improvements and optimisations across the board
+* [TWEAK] Numerous code improvements and performance optimisations across the board
 
 = 1.8.11 =
 * 2015-03-05
@@ -395,5 +396,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.8.11 =
-* This update fixes some issues with the episode download links not always working.
+= 1.9 =
+* This release adds a number of useful new features, including the ability to customise each series' RSS feed.

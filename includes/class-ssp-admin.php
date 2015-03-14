@@ -760,8 +760,6 @@ class SSP_Admin {
 	 */
 	public function activate() {
 
-		update_option( 'ssp_version', $this->version );
-
 		// Setup all custom URL rules
 		$this->register_post_type();
 		$this->add_feed();
@@ -780,16 +778,15 @@ class SSP_Admin {
 	}
 
 	/**
-	 * Run functions on plugin update
+	 * Run functions on plugin update/activation
 	 * @return void
 	 */
 	public function update () {
 
-		$old_version = get_option( 'ssp_version', 0 );
+		$previous_version = get_option( 'ssp_version', '1.0' );
 
-		// New permalink structure was added in v1.9 along with the `ssp_version` option, so just checking if `ssp_version` doesn't exist yet is all we need to do here
-		if ( ! $old_version ) {
-			flush_rewrite_rules( true );
+		if ( version_compare( $previous_version, '1.9.0', '<' ) ) {
+			flush_rewrite_rules();
 		}
 
 		update_option( 'ssp_version', $this->version );

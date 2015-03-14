@@ -527,7 +527,40 @@ class SSP_Settings {
 	}
 
 	public function settings_section ( $section ) {
-		$html = '<p> ' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
+		$html = '<p>' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
+
+		if( 'feed-details' == $section['id'] ) {
+
+			$feed_url = '';
+
+			$feed_series = 'default';
+			if( isset( $_GET['feed-series'] ) ) {
+				$feed_series = esc_attr( $_GET['feed-series'] );
+			}
+
+			$permalink_structure = get_option( 'permalink_structure' );
+
+			if ( $permalink_structure ) {
+				$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+				$feed_url = $this->home_url . 'feed/' . $feed_slug;
+			} else {
+				$feed_url = $this->home_url . '?feed=' . $this->token;
+			}
+
+			if( $feed_series && $feed_series != 'default' ) {
+				if ( $permalink_structure ) {
+					$feed_url .= '/' . $feed_series;
+				} else {
+					$feed_url .= '&podcast_series=' . $feed_series;
+				}
+			}
+
+			if( $feed_url ) {
+				$html .= '<p><a class="view-feed-link" href="' . esc_url( $feed_url ) . '" target="_blank"><span class="dashicons dashicons-rss"></span>' . __( 'View feed', 'ss-podcasting' ) . '</a></p>' . "\n";
+			}
+
+		}
+
 		echo $html;
 	}
 

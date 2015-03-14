@@ -6,3 +6,5 @@
 #feed-series-toggle.series-open:before{content:"\f142";}
 #feed-series-toggle.series-closed:before{content:"\f140";}
 #feed-series-list{margin:0;}
+.view-feed-link{text-decoration:none;}
+.view-feed-link span{font-size:100%;margin-top:2px;margin-bottom:-2px;}

@@ -19,14 +19,13 @@ Podcasting the way it's meant to be. Supports multiple podcast shows, all post t
 - Simple settings so you can get your podcast up and running quickly
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
-- Ability to use any post type for your podcast episodes
+- Use any post type for your podcast episodes
 - Highly configurable and robust RSS feed designed for *all* podcast services and feed readers, including iTunes and Stitcher
 - Shortcodes & widgets for displaying podcast episode lists as well as single episodes anywhere on your site
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your audio files on the same site or any other server
 - Complete user and developer [documentation](http://docs.hughlashbrooke.com/)
 - Full i18n support
-- Full support for multisite networks
 
 **Some examples of the plugin in action**
 
@@ -75,6 +74,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 7. Publish your podcast.
 8. The podcast admin menu location.
 9. Podcast episodes are shown in the At a Glance dashboard widget.
+10. Recent episodes widget
+11. Single episode widget
+12. Podcast series widget
 
 == Changelog ==
 
@@ -85,7 +87,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [NEW] Adding 'Single Episode' widget for displaying single podcast episode
 * [NEW] Adding `podcast_episode` shortcode for displaying single podcast episode
 * [NEW] Adding 'Date recorded' field to episode details
-* [NEW] Creating new permalink structure for series feeds
+* [NEW] Adding `ssp_hide_episode_details` to allow dynamic hiding of episode details
+* [NEW] Creating new and improved permalink structure for series feeds
 * [NEW] Adding 'view feed' link to feed details settings page
 * [TWEAK] Further improving episode download links
 * [TWEAK] Improving episode custom fields display

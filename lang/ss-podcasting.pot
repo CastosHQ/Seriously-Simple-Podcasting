@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Seriously Simple Podcasting 1.9\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-03-14 18:19:28+00:00\n"
+"POT-Creation-Date: 2015-03-15 10:14:32+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -74,7 +74,7 @@ msgstr ""
 msgid "Podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:140 includes/class-ssp-settings.php:735
+#: includes/class-ssp-admin.php:140 includes/class-ssp-settings.php:733
 msgid "podcast"
 msgstr ""
 
@@ -277,27 +277,27 @@ msgstr ""
 msgid "Enter episode title here"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:229 includes/ssp-functions.php:138
+#: includes/class-ssp-frontend.php:232 includes/ssp-functions.php:138
 msgid "Download file"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:230 includes/ssp-functions.php:139
+#: includes/class-ssp-frontend.php:233 includes/ssp-functions.php:139
 msgid "Duration"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:231 includes/ssp-functions.php:140
+#: includes/class-ssp-frontend.php:234 includes/ssp-functions.php:140
 msgid "Size"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:232
+#: includes/class-ssp-frontend.php:235
 msgid "Recorded on"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:683
+#: includes/class-ssp-frontend.php:686
 msgid "Podcast RSS feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:69 includes/class-ssp-settings.php:843
+#: includes/class-ssp-settings.php:69 includes/class-ssp-settings.php:841
 msgid "Podcast Settings"
 msgstr ""
 
@@ -856,35 +856,35 @@ msgstr ""
 msgid "Podcast page"
 msgstr ""
 
-#: includes/class-ssp-settings.php:559
+#: includes/class-ssp-settings.php:557
 msgid "View feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:629
+#: includes/class-ssp-settings.php:627
 msgid "Password stored securely"
 msgstr ""
 
-#: includes/class-ssp-settings.php:702
+#: includes/class-ssp-settings.php:700
 msgid "Upload new image"
 msgstr ""
 
-#: includes/class-ssp-settings.php:703
+#: includes/class-ssp-settings.php:701
 msgid "Remove image"
 msgstr ""
 
-#: includes/class-ssp-settings.php:891
+#: includes/class-ssp-settings.php:889
 msgid "%1$s settings updated."
 msgstr ""
 
-#: includes/class-ssp-settings.php:912
+#: includes/class-ssp-settings.php:910
 msgid "Toggle series list display"
 msgstr ""
 
-#: includes/class-ssp-settings.php:915
+#: includes/class-ssp-settings.php:913
 msgid "Default feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:953
+#: includes/class-ssp-settings.php:951
 msgid "Save Settings"
 msgstr ""
 

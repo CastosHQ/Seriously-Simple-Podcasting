@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Seriously Simple Podcasting package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting 1.9\n"
+"Project-Id-Version: Seriously Simple Podcasting 1.9.1\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/tag/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-03-15 10:14:32+00:00\n"
+"POT-Creation-Date: 2015-03-16 06:41:34+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -277,23 +277,23 @@ msgstr ""
 msgid "Enter episode title here"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:232 includes/ssp-functions.php:138
+#: includes/class-ssp-frontend.php:241 includes/ssp-functions.php:138
 msgid "Download file"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:233 includes/ssp-functions.php:139
+#: includes/class-ssp-frontend.php:242 includes/ssp-functions.php:139
 msgid "Duration"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:234 includes/ssp-functions.php:140
+#: includes/class-ssp-frontend.php:243 includes/ssp-functions.php:140
 msgid "Size"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:235
+#: includes/class-ssp-frontend.php:244
 msgid "Recorded on"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:686
+#: includes/class-ssp-frontend.php:695
 msgid "Podcast RSS feed"
 msgstr ""
 

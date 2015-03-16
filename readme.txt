@@ -4,11 +4,11 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation
 Requires at least: 4.0
 Tested up to: 4.1.1
-Stable tag: 1.9
+Stable tag: 1.9.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Podcasting the way it's meant to be. Supports multiple podcast shows, all post types
+Podcasting the way it's meant to be.
 
 == Description ==
 
@@ -80,14 +80,18 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.9 =
+= 1.9.1 =
 * 2015-03-16
+* [TWEAK] Making sure that the audio player always receieves a direct file reference (requires pretty permalinks)
+
+= 1.9 =
+* 2015-03-15
 * [NEW] Adding ability to supply different feed details for each series so you can run multiple podcasts from one site
 * [NEW] Adding 'Series' widget for displaying a list of episodes from a selected series
 * [NEW] Adding 'Single Episode' widget for displaying single podcast episode
 * [NEW] Adding `podcast_episode` shortcode for displaying single podcast episode
 * [NEW] Adding 'Date recorded' field to episode details
-* [NEW] Adding `ssp_hide_episode_details` to allow dynamic hiding of episode details
+* [NEW] Adding `ssp_hide_episode_details` filter to allow dynamic hiding of episode details
 * [NEW] Creating new and improved permalink structure for series feeds
 * [NEW] Adding 'view feed' link to feed details settings page
 * [TWEAK] Further improving episode download links
@@ -399,5 +403,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.9 =
-* This release adds a number of useful new features, including the ability to customise each series' RSS feed.
+= 1.9.1 =
+* v1.9 adds a number of useful new features, including the ability to customise each series' RSS feed as well as additional widgets and shortcode.

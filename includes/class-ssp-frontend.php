@@ -85,6 +85,10 @@ class SSP_Frontend {
 		// Get file URL
 		$file = $this->get_enclosure( $episode_id );
 
+		if ( ! $file ) {
+			return;
+		}
+
 		// Get download link based on permalink structure
 		if ( get_option( 'permalink_structure' ) ) {
 			$episode = get_post( $episode_id );
@@ -179,9 +183,14 @@ class SSP_Frontend {
 		$file = $this->get_enclosure( $episode_id );
 
 		if ( $file ) {
+
+			if ( get_option( 'permalink_structure' ) ) {
+				$file = $this->get_episode_download_link( $episode_id, 'player' );
+			}
+
 			$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
 
-			if( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
+			if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
 				$meta .= $this->episode_meta_details( $episode_id, $context );
 			}
 		}
@@ -612,7 +621,7 @@ class SSP_Frontend {
 					return;
 				}
 
-				// Allow other actions - functions hooked on here must not echo any data
+				// Allow other actions - functions hooked on here must not output any data
 			    do_action( 'ssp_file_download', $file, $episode );
 
 			    // Set necessary headers for download

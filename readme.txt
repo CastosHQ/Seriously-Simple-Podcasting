@@ -4,11 +4,11 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation
 Requires at least: 4.0
 Tested up to: 4.1.1
-Stable tag: 1.9.1
+Stable tag: 1.9.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Podcasting the way it's meant to be.
+Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
 
 == Description ==
 
@@ -80,9 +80,18 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.9.3 =
+* 2015-03-18
+* [FIX] Fixing 'Audio player position' option to make sure the selected positioning works in all cases
+
+= 1.9.2 =
+* 2015-03-17
+* [FIX] Fixing streaming through audio player as well as remote services (iTunes, etc.) by checking link referrer
+* [TWEAK] Passing audio file referrer to download function and action hook
+
 = 1.9.1 =
 * 2015-03-16
-* [TWEAK] Making sure that the audio player always receieves a direct file reference (requires pretty permalinks)
+* [TWEAK] Making sure that the audio player always receives a direct file reference (requires pretty permalinks)
 
 = 1.9 =
 * 2015-03-15
@@ -403,5 +412,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.9.1 =
-* v1.9 adds a number of useful new features, including the ability to customise each series' RSS feed as well as additional widgets and shortcode.
+= 1.9.3 =
+* v1.9 adds a number of useful new features, including the ability to customise each series' RSS feed as well as additional widgets and a shortcode.

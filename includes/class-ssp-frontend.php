@@ -65,7 +65,7 @@ class SSP_Frontend {
 		add_action( 'pre_get_posts' , array( $this, 'add_all_post_types' ) );
 
 		// Download podcast episode
-		add_action( 'parse_query', array( $this, 'download_file' ), 1 );
+		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
 		// Add shortcodes
 		add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );

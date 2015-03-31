@@ -65,7 +65,7 @@ class SSP_Frontend {
 		add_action( 'pre_get_posts' , array( $this, 'add_all_post_types' ) );
 
 		// Download podcast episode
-		add_action( 'wp', array( $this, 'download_file' ), 1 );
+		add_action( 'parse_query', array( $this, 'download_file' ), 1 );
 
 		// Add shortcodes
 		add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );
@@ -447,11 +447,17 @@ class SSP_Frontend {
 	 */
 	public function audio_player( $src = '' ) {
 
+		$player = '';
+
 		if ( $src ) {
-			return wp_audio_shortcode( array( 'src' => $src ) );
+			// Use built-in WordPress media player
+			$player = wp_audio_shortcode( array( 'src' => $src ) );
+
+			// Allow filtering so that alternative players can be used
+			$player = apply_filters( 'ssp_audio_player', $player, $src );
 		}
 
-		return false;
+		return $player;
 	}
 
 	/**

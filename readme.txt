@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation
 Requires at least: 4.0
 Tested up to: 4.1.1
-Stable tag: 1.9.3
+Stable tag: 1.9.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.9.4 =
+* 2015-03-31
+* [TWEAK] Removing dynamic file size calculation from feed template to improve feed load times
+* [TWEAK] Removing `iframe` tags from all feed content
+* [TWEAK] Adding `ssp_audio_player` filter to allow alternative media players to be used
+* [FIX] Adjusting `itunes:subtitle` feed tag content to never exceed 225 characters
 
 = 1.9.3 =
 * 2015-03-18
@@ -412,5 +419,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.9.3 =
+= 1.9.4 =
 * v1.9 adds a number of useful new features, including the ability to customise each series' RSS feed as well as additional widgets and a shortcode.

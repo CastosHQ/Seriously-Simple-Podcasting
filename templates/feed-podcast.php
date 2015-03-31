@@ -289,22 +289,13 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			}
 
 			// Episode duration (default to 0:00 to ensure there is always a value for this)
-			$duration = get_post_meta( get_the_ID() , 'duration' , true );
+			$duration = get_post_meta( get_the_ID(), 'duration', true );
 			if ( ! $duration ) {
 				$duration = '0:00';
 			}
 
 			// File size
-			$size = get_post_meta( get_the_ID() , 'filesize_raw' , true );
-			if ( ! $size ) {
-				$size = $ss_podcasting->get_file_size( $enclosure );
-				$size = esc_html( $size['raw'] );
-
-				update_post_meta( get_the_ID(), 'filesize', $size['formatted'] );
-	 			update_post_meta( get_the_ID(), 'filesize_raw', $size['raw'] );
-			}
-
-			// Set default size to prevent invalid feed
+			$size = get_post_meta( get_the_ID(), 'filesize_raw', true );
 			if ( ! $size ) {
 				$size = 1;
 			}
@@ -334,18 +325,19 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			// Episode author
 			$author = esc_html( get_the_author() );
 
-			// Episode content
+			// Episode content (with iframes removed)
 			$content = get_the_content_feed( 'rss2' );
+			$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 
 			// iTunes summary does not allow any HTML and must be shorter than 4000 characters
 			$itunes_summary = strip_tags( get_the_content() );
 			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( 'and', '', '', '', '', '' ), $itunes_summary );
-			$itunes_summary = substr( $itunes_summary, 0, 3950 );
+			$itunes_summary = substr( $itunes_summary, 0, 3949 );
 
 			// iTunes short description does not allow any HTML and must be shorter than 4000 characters
 			$itunes_excerpt = strip_tags( get_the_excerpt() );
 			$itunes_excerpt = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_excerpt );
-			$itunes_excerpt = substr( $itunes_excerpt, 0, 3800 );
+			$itunes_excerpt = substr( $itunes_excerpt, 0, 224 );
 
 	?>
 	<item>

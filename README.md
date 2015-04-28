@@ -1,4 +1,4 @@
-# [Seriously Simple Podcasting](https://wordpress.org/plugins/seriously-simple-podcasting/)
+# Seriously Simple Podcasting
 
 ![Plugin Version](https://img.shields.io/wordpress/plugin/v/seriously-simple-podcasting.svg)
 ![Total Downloads](https://img.shields.io/wordpress/plugin/dt/seriously-simple-podcasting.svg)

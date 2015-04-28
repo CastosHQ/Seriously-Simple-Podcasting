@@ -106,7 +106,7 @@ class SSP_Frontend {
 			$link = add_query_arg( array( 'ref' => $referrer ), $link );
 		}
 
-		return apply_filters( 'ssp_episode_download_link', $link, $episode_id, $file );
+		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
 	}
 
 	/**
@@ -124,6 +124,10 @@ class SSP_Frontend {
 
 		// Don't output episode meta in shortcode or widget
 		if ( isset( $episode_context ) && in_array( $episode_context, array( 'shortcode', 'widget' ) ) ) {
+			return $content;
+		}
+
+		if( post_password_required( $post->ID ) ) {
 			return $content;
 		}
 
@@ -154,6 +158,10 @@ class SSP_Frontend {
 	 */
 	public function excerpt_meta_data( $excerpt = '' ) {
 		global $post;
+
+		if( post_password_required( $post->ID ) ) {
+			return $excerpt;
+		}
 
 		$podcast_post_types = ssp_post_types( true );
 
@@ -187,7 +195,7 @@ class SSP_Frontend {
 		if ( $file ) {
 
 			if ( get_option( 'permalink_structure' ) ) {
-				$file = $this->get_episode_download_link( $episode_id, 'player' );
+				$file = $this->get_episode_download_link( $episode_id );
 			}
 
 			$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
@@ -816,6 +824,9 @@ class SSP_Frontend {
 
 					case 'player':
 						$file = $this->get_enclosure( $episode_id );
+						if ( get_option( 'permalink_structure' ) ) {
+							$file = $this->get_episode_download_link( $episode_id );
+						}
 		    			$html .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>' . "\n";
 					break;
 

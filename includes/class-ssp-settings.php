@@ -876,7 +876,7 @@ class SSP_Settings {
 					}
 
 					// Output tab
-					$html .= '<a href="' . $tab_link . '" class="' . esc_attr( $class ) . '">' . esc_html( $data['title'] ) . '</a>' . "\n";
+					$html .= '<a href="' . esc_url( $tab_link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $data['title'] ) . '</a>' . "\n";
 
 					++$c;
 				}
@@ -921,7 +921,7 @@ class SSP_Settings {
 								}
 
 								$html .= '<li>' . "\n";
-									$html .= ' | <a href="' . add_query_arg( array( 'feed-series' => $s->slug, 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
+									$html .= ' | <a href="' . esc_url( add_query_arg( array( 'feed-series' => $s->slug, 'settings-updated' => false ) ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
 								$html .= '</li>' . "\n";
 							}
 

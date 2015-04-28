@@ -8,12 +8,12 @@
 
 Welcome to the Seriously Simple Podcasting repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
 
-Seriously Simple Podcasting is a podcasting plugin for WordPress that aims to take the complexity out of running your own podcast without sacrificing any powerful (and necessary) features. It is developed and maintained by Hugh Lashbrooke and is neither owned nor run by any team or company. If you would like to know more about the plugin you can get in touch with Hugh on Twitter: [@hlashbrooke](https://twitter.com/hlashbrooke).
+[Seriously Simple Podcasting](http://www.seriouslysimplepodcasting.com/) is a podcasting plugin for WordPress that aims to take the complexity out of running your own podcast without sacrificing any powerful (and necessary) features. It is developed and maintained by Hugh Lashbrooke and is neither owned nor run by any team or company. If you would like to know more about the plugin you can get in touch with [Hugh on Twitter](https://twitter.com/hlashbrooke) or follow [@SSPodcasting](https://twitter.com/SSPodcasting) directly.
 
 If you are not a developer, please visit the [Seriously Simple Podcasting plugin page](https://wordpress.org/plugins/seriously-simple-podcasting/) on WordPress.org where you can download the plugin and find more info.
 
 ## Documentation
-You will find complete and robust documentation for both users and developers on the [Seriously Simple Podcasting docs site](http://docs.hughlashbrooke.com/). It also includes helpful snippets and FAQs.
+You will find complete and robust documentation for both users and developers on the [Seriously Simple Podcasting site](http://www.seriouslysimplepodcasting.com/). It also includes helpful snippets and FAQs.
 
 ## Support
 This repository is not suitable for support. Please don't use the issue tracker for support requests, but for core Seriously Simple Podcasting issues only. Support can only take place in the appropriate channel - the dedicated [plugin support forum](http://wordpress.org/support/plugin/seriously-simple-podcasting).

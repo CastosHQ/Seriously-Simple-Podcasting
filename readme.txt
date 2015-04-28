@@ -1,10 +1,10 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
-Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation
+Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.0
-Tested up to: 4.1.1
-Stable tag: 1.9.4
+Tested up to: 4.2.1
+Stable tag: 1.9.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,7 +12,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 == Description ==
 
-"Seriously Simple Podcasting" is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+[Seriously Simple Podcasting](http://www.seriouslysimplepodcasting.com/) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
 **Primary Features**
 
@@ -24,7 +24,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Shortcodes & widgets for displaying podcast episode lists as well as single episodes anywhere on your site
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your audio files on the same site or any other server
-- Complete user and developer [documentation](http://docs.hughlashbrooke.com/)
+- Complete user and developer [documentation](http://www.seriouslysimplepodcasting.com/)
 - Full i18n support
 
 **Some examples of the plugin in action**
@@ -34,7 +34,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 **Where to find help**
 
-Seriously Simple Podcasting comes with complete user and developer [documentation](http://docs.hughlashbrooke.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
+Seriously Simple Podcasting comes with complete user and developer [documentation](http://www.seriouslysimplepodcasting.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
 
 **How to contribute**
 
@@ -46,7 +46,7 @@ Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add
 
 Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them in manually.*
 
-If you need help, you can find complete user and developer documentation [here](http://docs.hughlashbrooke.com/).
+If you need help, you can find complete user and developer documentation [here](http://www.seriouslysimplepodcasting.com/).
 
 == Installation ==
 
@@ -61,7 +61,7 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 = Where are the FAQs? =
 
-You can find complete user and developer documentation (along with the FAQs) on [the Seriously Simple Podcasting documentation site](http://docs.hughlashbrooke.com/).
+You can find complete user and developer documentation (along with the FAQs) on [the Seriously Simple Podcasting documentation site](http://www.seriouslysimplepodcasting.com/).
 
 == Screenshots ==
 
@@ -79,6 +79,21 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.9.7 =
+* 2015-04-28
+* [TWEAK] Making sure that audio player and episode data do not display on protected posts until password has been entered
+* [TWEAK] Updating 'Documentation' URL in plugin links
+
+= 1.9.6 =
+* 2015-04-22
+* [TWEAK] Making sure that widget & shortcode audio player use correct file URL
+* [FIX] Removing `ref` parameter from audio player file URL to ensure reliable playback
+
+= 1.9.5 =
+* 2015-04-20
+* [FIX] Properly escaping URLs to account for recent security exposure in WordPress core
+* [FIX] Removing URL escaping when saving audio file to episode - prevents stripping of spaces from file names
 
 = 1.9.4 =
 * 2015-03-31
@@ -419,5 +434,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.9.4 =
-* v1.9 adds a number of useful new features, including the ability to customise each series' RSS feed as well as additional widgets and a shortcode.
+= 1.9.7 =
+* v1.9.7 contains the latest fixes and upgrades for Seriously Simple Podcasting - all users are recommended to update ASAP.

@@ -472,11 +472,6 @@ class SSP_Admin {
 				$val = strip_tags( trim( $_POST[ $k ] ) );
 			}
 
-			// Escape the URLs.
-			if ( 'url' == $field['type'] ) {
-				$val = esc_url( $val );
-			}
-
 			if ( $k == 'audio_file' ) {
 				$enclosure = $val;
 			}
@@ -614,7 +609,7 @@ class SSP_Admin {
 
 		$donate_link = 'http://www.hughlashbrooke.com/donate';
 
-		$plugin_meta['docs'] = '<a href="http://docs.hughlashbrooke.com/" target="_blank">' . __( 'Documentation', 'ss-podcasting' ) . '</a>';
+		$plugin_meta['docs'] = '<a href="http://www.seriouslysimplepodcasting.com/" target="_blank">' . __( 'Documentation', 'ss-podcasting' ) . '</a>';
 		$plugin_meta['review'] = '<a href="https://wordpress.org/support/view/plugin-reviews/' . $plugin_data['slug'] . '?rate=5#postform" target="_blank">' . __( 'Write a review', 'ss-podcasting' ) . '</a>';
 		$plugin_meta['donate'] = '<a href="' . esc_url( $donate_link ) . '" target="_blank">' . __( 'Donate', 'ss-podcasting' ) . '</a>';
 

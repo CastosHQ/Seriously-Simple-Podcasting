@@ -205,6 +205,20 @@ if ( ! $category ) {
 	}
 }
 
+$feed_url = '';
+if ( get_option( 'permalink_structure' ) ) {
+	$feed_slug = apply_filters( 'ssp_feed_slug', $ss_podcasting->token );
+	$feed_url = $ss_podcasting->home_url . 'feed/' . $feed_slug . '/';
+	if ( $podcast_series ) {
+		$feed_url .= $podcast_series;
+	}
+} else {
+	$feed_url = $ss_podcasting->home_url . '?feed=' . $ss_podcasting->token;
+	if ( $podcast_series ) {
+		$feed_url .= '&podcast_series=' . $podcast_series;
+	}
+}
+
 // Set RSS header
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
@@ -225,7 +239,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 <channel>
 	<title><?php echo esc_html( $title ); ?></title>
 	<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml" />
-	<link><?php esc_url( bloginfo_rss('url') ) ?></link>
+	<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $feed_url, $podcast_series ) ) ?></link>
 	<description><?php echo esc_html( $description ); ?></description>
 	<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>
 	<language><?php echo esc_html( $language ); ?></language>
@@ -267,10 +281,11 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			$qry->the_post();
 
 			// Audio file
+			$audio_file = $ss_podcasting->get_enclosure( get_the_ID() );
 			if ( get_option( 'permalink_structure' ) ) {
 				$enclosure = $ss_podcasting->get_episode_download_link( get_the_ID() );
 			} else {
-				$enclosure = $ss_podcasting->get_enclosure( get_the_ID() );
+				$enclosure = $audio_file;
 			}
 
 			// If there is no enclosure then go no further
@@ -301,7 +316,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			}
 
 			// File MIME type (default to MP3 to ensure there is always a value for this)
-			$mime_type = $ss_podcasting->get_attachment_mimetype( $enclosure );
+			$mime_type = $ss_podcasting->get_attachment_mimetype( $audio_file );
 			if ( ! $mime_type ) {
 				$mime_type = 'audio/mpeg';
 			}
@@ -331,13 +346,13 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 
 			// iTunes summary does not allow any HTML and must be shorter than 4000 characters
 			$itunes_summary = strip_tags( get_the_content() );
-			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( 'and', '', '', '', '', '' ), $itunes_summary );
-			$itunes_summary = substr( $itunes_summary, 0, 3949 );
+			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( __( 'and', 'ss-podcasting' ), '', '', '', '', '' ), $itunes_summary );
+			$itunes_summary = mb_substr( $itunes_summary, 0, 3949 );
 
 			// iTunes short description does not allow any HTML and must be shorter than 4000 characters
 			$itunes_excerpt = strip_tags( get_the_excerpt() );
 			$itunes_excerpt = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_excerpt );
-			$itunes_excerpt = substr( $itunes_excerpt, 0, 224 );
+			$itunes_excerpt = mb_substr( $itunes_excerpt, 0, 224 );
 
 	?>
 	<item>

@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.0
 Tested up to: 4.2.1
-Stable tag: 1.9.7
+Stable tag: 1.9.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.9.8 =
+* 2015-05-05
+* [TWEAK] Using correct feed URL for `<link>` tag in podcast RSS feed
+* [TWEAK] Updating 'Feed for a specific series' in 'Publishing' tab to show correct URL structure
+* [TWEAK] Making `$version`, `$token` and `$home_url` class variables public for easier access
+* [FIX] Making sure feed checks for audio file MIME type on correct file
+* [FIX] Correctly handling multibyte characters inside episode details in feeds
 
 = 1.9.7 =
 * 2015-04-28
@@ -434,5 +442,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.9.7 =
-* v1.9.7 contains the latest fixes and upgrades for Seriously Simple Podcasting - all users are recommended to update ASAP.
+= 1.9.8 =
+* v1.9.8 contains the latest fixes and upgrades for Seriously Simple Podcasting - all users are recommended to update ASAP.

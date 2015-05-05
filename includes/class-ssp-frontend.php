@@ -14,14 +14,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       1.0
  */
 class SSP_Frontend {
-	private $version;
+	public $version;
 	private $dir;
 	private $file;
 	private $assets_dir;
 	private $assets_url;
 	private $template_path;
-	private $token;
-	private $home_url;
+	public $token;
+	public $home_url;
 
 	/**
 	 * Constructor
@@ -432,9 +432,9 @@ class SSP_Frontend {
 
 		    $prefix = $wpdb->prefix;
 
-		    $attachment = $wpdb->get_col( $wpdb->prepare( 'SELECT ID FROM ' . $prefix . 'posts' . ' WHERE guid="' . $attachment . '";' ) );
+		    $attachment = $wpdb->get_col( 'SELECT ID FROM ' . $prefix . 'posts' . ' WHERE guid="' . $attachment . '";' );
 
-		    if ( $attachment[0] ) {
+		    if ( isset( $attachment[0] ) ) {
 			    $id = $attachment[0];
 
 			    $mime_type = get_post_mime_type( $id );

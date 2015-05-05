@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Seriously Simple Podcasting 1.9.7\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-04-28 09:05:37+00:00\n"
+"POT-Creation-Date: 2015-05-05 07:23:24+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -977,6 +977,10 @@ msgstr ""
 
 #: includes/widgets/class-ssp-widget-single-episode.php:189
 msgid "Display episode details?"
+msgstr ""
+
+#: templates/feed-podcast.php:349
+msgid "and"
 msgstr ""
 #. Plugin Name of the plugin/theme
 msgid "Seriously Simple Podcasting"

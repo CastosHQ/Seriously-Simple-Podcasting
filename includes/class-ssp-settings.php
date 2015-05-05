@@ -720,7 +720,7 @@ class SSP_Settings {
 				// Set feed URL based on site's permalink structure
 				if ( get_option( 'permalink_structure' ) ) {
 					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-					$url = $this->home_url . 'feed/' . $feed_slug . '/?podcast_series=series-slug';
+					$url = $this->home_url . 'feed/' . $feed_slug . '/series-slug';
 				} else {
 					$url = $this->home_url . '?feed=' . $this->token . '&podcast_series=series-slug';
 				}

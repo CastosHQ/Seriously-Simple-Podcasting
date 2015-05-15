@@ -205,20 +205,6 @@ if ( ! $category ) {
 	}
 }
 
-$feed_url = '';
-if ( get_option( 'permalink_structure' ) ) {
-	$feed_slug = apply_filters( 'ssp_feed_slug', $ss_podcasting->token );
-	$feed_url = $ss_podcasting->home_url . 'feed/' . $feed_slug . '/';
-	if ( $podcast_series ) {
-		$feed_url .= $podcast_series;
-	}
-} else {
-	$feed_url = $ss_podcasting->home_url . '?feed=' . $ss_podcasting->token;
-	if ( $podcast_series ) {
-		$feed_url .= '&podcast_series=' . $podcast_series;
-	}
-}
-
 // Set RSS header
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
@@ -239,7 +225,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 <channel>
 	<title><?php echo esc_html( $title ); ?></title>
 	<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml" />
-	<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $feed_url, $podcast_series ) ) ?></link>
+	<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $ss_podcasting->home_url, $podcast_series ) ) ?></link>
 	<description><?php echo esc_html( $description ); ?></description>
 	<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>
 	<language><?php echo esc_html( $language ); ?></language>

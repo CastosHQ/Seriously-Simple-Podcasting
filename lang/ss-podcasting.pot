@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Seriously Simple Podcasting package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting 1.9.7\n"
+"Project-Id-Version: Seriously Simple Podcasting 1.9.9\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-05-05 07:23:24+00:00\n"
+"POT-Creation-Date: 2015-05-12 09:25:19+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -277,23 +277,23 @@ msgstr ""
 msgid "Enter episode title here"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:251 includes/ssp-functions.php:138
+#: includes/class-ssp-frontend.php:256 includes/ssp-functions.php:138
 msgid "Download file"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:252 includes/ssp-functions.php:139
+#: includes/class-ssp-frontend.php:257 includes/ssp-functions.php:139
 msgid "Duration"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:253 includes/ssp-functions.php:140
+#: includes/class-ssp-frontend.php:258 includes/ssp-functions.php:140
 msgid "Size"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:254
+#: includes/class-ssp-frontend.php:259
 msgid "Recorded on"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:727
+#: includes/class-ssp-frontend.php:732
 msgid "Podcast RSS feed"
 msgstr ""
 
@@ -979,7 +979,7 @@ msgstr ""
 msgid "Display episode details?"
 msgstr ""
 
-#: templates/feed-podcast.php:349
+#: templates/feed-podcast.php:335
 msgid "and"
 msgstr ""
 #. Plugin Name of the plugin/theme

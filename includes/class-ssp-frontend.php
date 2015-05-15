@@ -53,7 +53,6 @@ class SSP_Frontend {
 		// Add SSP label and version to generator tags
 		add_action( 'get_the_generator_html', array( $this, 'generator_tag' ), 10, 2 );
 		add_action( 'get_the_generator_xhtml', array( $this, 'generator_tag' ), 10, 2 );
-		add_action( 'get_the_generator_rss2', array( $this, 'generator_tag' ), 10, 2 );
 
 		// Add RSS meta tag to site header
 		add_action( 'wp_head' , array( $this, 'rss_meta_tag' ) );
@@ -92,7 +91,13 @@ class SSP_Frontend {
 		// Get download link based on permalink structure
 		if ( get_option( 'permalink_structure' ) ) {
 			$episode = get_post( $episode_id );
+
+			// Get file extension - default to MP3 to prevent empty extension strings
 			$ext = pathinfo( $file, PATHINFO_EXTENSION );
+			if( ! $ext ) {
+				$ext = 'mp3';
+			}
+
 			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
 		} else {
 			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );

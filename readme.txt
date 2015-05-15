@@ -3,8 +3,8 @@ Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.0
-Tested up to: 4.2.1
-Stable tag: 1.9.8
+Tested up to: 4.2.2
+Stable tag: 1.9.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -80,8 +80,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.9.9 =
+* 2015-05-08
+* [TWEAK] Correcting URL in `<link>` tag in podcast RSS feed
+* [TWEAK] Making sure enclosure URLs always have a valid file extension
+
 = 1.9.8 =
 * 2015-05-05
+* [NEW] Adding `ssp_feed_channel_link_tag` filter to allow dynamic editing of RSS feed `<link>` tag content
 * [TWEAK] Using correct feed URL for `<link>` tag in podcast RSS feed
 * [TWEAK] Updating 'Feed for a specific series' in 'Publishing' tab to show correct URL structure
 * [TWEAK] Making `$version`, `$token` and `$home_url` class variables public for easier access
@@ -442,5 +448,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.9.8 =
-* v1.9.8 contains the latest fixes and upgrades for Seriously Simple Podcasting - all users are recommended to update ASAP.
+= 1.9.9 =
+* v1.9.9 contains the latest fixes and upgrades for Seriously Simple Podcasting - all users are recommended to update ASAP.

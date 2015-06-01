@@ -246,6 +246,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'data_subtitle',
@@ -255,6 +256,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'description' ),
 					'placeholder'	=> get_bloginfo( 'description' ),
 					'class'			=> 'large-text',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'data_author',
@@ -264,6 +266,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'data_category',
@@ -280,6 +283,7 @@ class SSP_Settings {
 					'type'			=> 'select',
 					'options'		=> $subcategory_options,
 					'default'		=> '',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'data_description',
@@ -288,7 +292,7 @@ class SSP_Settings {
 					'type'			=> 'textarea',
 					'default'		=> get_bloginfo( 'description' ),
 					'placeholder'	=> get_bloginfo( 'description' ),
-					'callback'		=> 'strip_tags',
+					'callback'		=> 'esc_attr',
 					'class'			=> 'large-text',
 				),
 				array(
@@ -297,7 +301,8 @@ class SSP_Settings {
 					'description'	=> __( 'Your podcast cover image - must have a minimum size of 1400x1400 px.', 'ss-podcasting' ),
 					'type'			=> 'image',
 					'default'		=> '',
-					'placeholder'	=> ''
+					'placeholder'	=> '',
+					'callback'		=> 'esc_url',
 				),
 				array(
 					'id' 			=> 'data_owner_name',
@@ -307,6 +312,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'data_owner_email',
@@ -316,6 +322,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'admin_email' ),
 					'placeholder'	=> get_bloginfo( 'admin_email' ),
 					'class'			=> 'large-text',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'data_language',
@@ -325,6 +332,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'language' ),
 					'placeholder'	=> get_bloginfo( 'language' ),
 					'class'			=> 'all-options',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'data_copyright',
@@ -334,13 +342,15 @@ class SSP_Settings {
 					'default'		=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
 					'placeholder'	=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'explicit',
 					'label'			=> __( 'Explicit', 'ss-podcasting' ),
 					'description'	=> __( 'Mark if your podcast is explicit or not.', 'ss-podcasting' ),
 					'type'			=> 'checkbox',
-					'default'		=> ''
+					'default'		=> '',
+					'callback'		=> 'esc_attr',
 				),
 			)
 		);
@@ -354,7 +364,8 @@ class SSP_Settings {
 					'label'			=> __( 'Password protect your podcast feed', 'ss-podcasting' ),
 					'description'	=> __( 'Mark if you would like to password protect your podcast feed - you can set the username and password below. This will block all feed readers (including iTunes) from accessing your feed.', 'ss-podcasting' ),
 					'type'			=> 'checkbox',
-					'default'		=> ''
+					'default'		=> '',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'protection_username',
@@ -364,6 +375,7 @@ class SSP_Settings {
 					'default'		=> '',
 					'placeholder'	=> __( 'Feed username', 'ss-podcasting' ),
 					'class'			=> 'regular-text',
+					'callback'		=> 'esc_attr',
 				),
 				array(
 					'id' 			=> 'protection_password',
@@ -398,6 +410,7 @@ class SSP_Settings {
 					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.', 'ss-podcasting' ) , '<br/>' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
+					'callback'		=> 'esc_url',
 				),
 				array(
 					'id' 			=> 'new_feed_url',
@@ -430,19 +443,22 @@ class SSP_Settings {
 					'id' 			=> 'feed_link',
 					'label'			=> __( 'Complete feed', 'ss-podcasting' ),
 					'description'	=> '',
-					'type'			=> 'feed_link'
+					'type'			=> 'feed_link',
+					'callback'		=> 'esc_url',
 				),
 				array(
 					'id' 			=> 'feed_link_series',
 					'label'			=> __( 'Feed for a specific series', 'ss-podcasting' ),
 					'description'	=> '',
-					'type'			=> 'feed_link_series'
+					'type'			=> 'feed_link_series',
+					'callback'		=> 'esc_url',
 				),
 				array(
 					'id' 			=> 'podcast_url',
 					'label'			=> __( 'Podcast page', 'ss-podcasting' ),
 					'description'	=> '',
-					'type'			=> 'podcast_url'
+					'type'			=> 'podcast_url',
+					'callback'		=> 'esc_attr',
 				)
 			)
 		);

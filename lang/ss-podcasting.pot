@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Seriously Simple Podcasting package.
 msgid ""
 msgstr ""
-"Project-Id-Version: Seriously Simple Podcasting 1.9.9\n"
+"Project-Id-Version: Seriously Simple Podcasting 1.10\n"
 "Report-Msgid-Bugs-To: http://wordpress.org/support/plugin/seriously-simple-podcasting\n"
-"POT-Creation-Date: 2015-05-12 09:25:19+00:00\n"
+"POT-Creation-Date: 2015-06-02 08:01:16+00:00\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -12,269 +12,281 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 
-#: includes/class-ssp-admin.php:125
+#: includes/class-ssp-admin.php:131
 msgctxt "post type general name"
 msgid "Podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:126
+#: includes/class-ssp-admin.php:132
 msgctxt "post type singular name"
 msgid "Podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:127
+#: includes/class-ssp-admin.php:133
 msgctxt "podcast"
 msgid "Add New"
 msgstr ""
 
-#: includes/class-ssp-admin.php:128
+#: includes/class-ssp-admin.php:134
 msgid "Add New %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:128 includes/class-ssp-admin.php:129
-#: includes/class-ssp-admin.php:130 includes/class-ssp-admin.php:132
+#: includes/class-ssp-admin.php:134 includes/class-ssp-admin.php:135
+#: includes/class-ssp-admin.php:136 includes/class-ssp-admin.php:138
 msgid "Episode"
 msgstr ""
 
-#: includes/class-ssp-admin.php:129
+#: includes/class-ssp-admin.php:135
 msgid "Edit %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:130
+#: includes/class-ssp-admin.php:136
 msgid "New %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:131
+#: includes/class-ssp-admin.php:137
 msgid "All %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:131 includes/class-ssp-admin.php:133
-#: includes/class-ssp-admin.php:134 includes/class-ssp-admin.php:135
-#: includes/class-ssp-admin.php:289
+#: includes/class-ssp-admin.php:137 includes/class-ssp-admin.php:139
+#: includes/class-ssp-admin.php:140 includes/class-ssp-admin.php:141
+#: includes/class-ssp-admin.php:295
 msgid "Episodes"
 msgstr ""
 
-#: includes/class-ssp-admin.php:132
+#: includes/class-ssp-admin.php:138
 msgid "View %s"
 msgstr ""
 
-#: includes/class-ssp-admin.php:133
+#: includes/class-ssp-admin.php:139
 msgid "Search %a"
 msgstr ""
 
-#: includes/class-ssp-admin.php:134
+#: includes/class-ssp-admin.php:140
 msgid "No %s Found"
 msgstr ""
 
-#: includes/class-ssp-admin.php:135
+#: includes/class-ssp-admin.php:141
 msgid "No %s Found In Trash"
 msgstr ""
 
-#: includes/class-ssp-admin.php:137
+#: includes/class-ssp-admin.php:143
 msgid "Podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:140 includes/class-ssp-settings.php:733
+#: includes/class-ssp-admin.php:146 includes/class-ssp-settings.php:749
 msgid "podcast"
 msgstr ""
 
-#: includes/class-ssp-admin.php:177
+#: includes/class-ssp-admin.php:183
 msgid "Podcast Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:178 includes/class-ssp-admin.php:187
-#: includes/class-ssp-admin.php:219
+#: includes/class-ssp-admin.php:184 includes/class-ssp-admin.php:193
+#: includes/class-ssp-admin.php:225
 msgid "Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:179
+#: includes/class-ssp-admin.php:185
 msgid "Search Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:180
+#: includes/class-ssp-admin.php:186
 msgid "All Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:181
+#: includes/class-ssp-admin.php:187
 msgid "Parent Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:182
+#: includes/class-ssp-admin.php:188
 msgid "Parent Series:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:183
+#: includes/class-ssp-admin.php:189
 msgid "Edit Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:184
+#: includes/class-ssp-admin.php:190
 msgid "Update Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:185
+#: includes/class-ssp-admin.php:191
 msgid "Add New Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:186
+#: includes/class-ssp-admin.php:192
 msgid "New Series Name"
 msgstr ""
 
-#: includes/class-ssp-admin.php:188
+#: includes/class-ssp-admin.php:194
 msgid "View Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:189
+#: includes/class-ssp-admin.php:195
 msgid "Popular Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:190
+#: includes/class-ssp-admin.php:196
 msgid "Separate series with commas"
 msgstr ""
 
-#: includes/class-ssp-admin.php:191
+#: includes/class-ssp-admin.php:197
 msgid "Add or remove Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:192
+#: includes/class-ssp-admin.php:198
 msgid "Choose from the most used Series"
 msgstr ""
 
-#: includes/class-ssp-admin.php:193
+#: includes/class-ssp-admin.php:199
 msgid "No Series Found"
 msgstr ""
 
-#: includes/class-ssp-admin.php:219
+#: includes/class-ssp-admin.php:225
 msgid "Image"
 msgstr ""
 
-#: includes/class-ssp-admin.php:288
+#: includes/class-ssp-admin.php:294
 msgid "Series feed URL"
 msgstr ""
 
-#: includes/class-ssp-admin.php:333
+#: includes/class-ssp-admin.php:339
 msgid "Episode updated. %sView episode%s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:334
+#: includes/class-ssp-admin.php:340
 msgid "Custom field updated."
 msgstr ""
 
-#: includes/class-ssp-admin.php:335
+#: includes/class-ssp-admin.php:341
 msgid "Custom field deleted."
 msgstr ""
 
-#: includes/class-ssp-admin.php:336
+#: includes/class-ssp-admin.php:342
 msgid "Episode updated."
 msgstr ""
 
-#: includes/class-ssp-admin.php:337
+#: includes/class-ssp-admin.php:343
 msgid "Episode restored to revision from %s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:338
+#: includes/class-ssp-admin.php:344
 msgid "Episode published. %sView episode%s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:339
+#: includes/class-ssp-admin.php:345
 msgid "Episode saved."
 msgstr ""
 
-#: includes/class-ssp-admin.php:340
+#: includes/class-ssp-admin.php:346
 msgid "Episode submitted. %sPreview episode%s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:341
+#: includes/class-ssp-admin.php:347
 msgid "Episode scheduled for: %1$s. %2$sPreview episode%3$s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:341
+#: includes/class-ssp-admin.php:347
 msgid "M j, Y @ G:i"
 msgstr ""
 
-#: includes/class-ssp-admin.php:342
+#: includes/class-ssp-admin.php:348
 msgid "Episode draft updated. %sPreview episode%s."
 msgstr ""
 
-#: includes/class-ssp-admin.php:369
+#: includes/class-ssp-admin.php:375
 msgid "Podcast Episode Details"
 msgstr ""
 
-#: includes/class-ssp-admin.php:408
+#: includes/class-ssp-admin.php:414
 msgid "Upload File"
 msgstr ""
 
-#: includes/class-ssp-admin.php:523
+#: includes/class-ssp-admin.php:529
 msgid "Audio file:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:524
+#: includes/class-ssp-admin.php:530
 msgid "Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here."
 msgstr ""
 
-#: includes/class-ssp-admin.php:531
+#: includes/class-ssp-admin.php:537
 msgid "Duration:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:532
+#: includes/class-ssp-admin.php:538
 msgid "Duration of audio file for display (calculated automatically if possible)."
 msgstr ""
 
-#: includes/class-ssp-admin.php:539
+#: includes/class-ssp-admin.php:545
 msgid "File size:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:540
+#: includes/class-ssp-admin.php:546
 msgid "Size of the audio file for display (calculated automatically if possible)."
 msgstr ""
 
-#: includes/class-ssp-admin.php:547
+#: includes/class-ssp-admin.php:553
 msgid "Date recorded:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:548
+#: includes/class-ssp-admin.php:554
 msgid "The date on which this episode was recorded."
 msgstr ""
 
-#: includes/class-ssp-admin.php:555
+#: includes/class-ssp-admin.php:561
 msgid "Explicit:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:556
+#: includes/class-ssp-admin.php:562
 msgid "Mark this episode as explicit."
 msgstr ""
 
-#: includes/class-ssp-admin.php:563
+#: includes/class-ssp-admin.php:569
 msgid "Block from iTunes:"
 msgstr ""
 
-#: includes/class-ssp-admin.php:564
+#: includes/class-ssp-admin.php:570
 msgid "Block this episode from appearing in iTunes."
 msgstr ""
 
-#: includes/class-ssp-admin.php:584
+#: includes/class-ssp-admin.php:590
 msgid "%s Episode"
 msgid_plural "%s Episodes"
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/class-ssp-admin.php:612
+#: includes/class-ssp-admin.php:618
 msgid "Documentation"
 msgstr ""
 
-#: includes/class-ssp-admin.php:613
+#: includes/class-ssp-admin.php:619
 msgid "Write a review"
 msgstr ""
 
-#: includes/class-ssp-admin.php:614
+#: includes/class-ssp-admin.php:620
 msgid "Donate"
 msgstr ""
 
-#: includes/class-ssp-admin.php:618
+#: includes/class-ssp-admin.php:624
 msgid "Confirm compatibility"
 msgstr ""
 
-#: includes/class-ssp-admin.php:631
+#: includes/class-ssp-admin.php:637
 msgid "Enter episode title here"
+msgstr ""
+
+#: includes/class-ssp-admin.php:864
+msgid "If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!"
+msgstr ""
+
+#: includes/class-ssp-admin.php:864
+msgid "Thanks!"
+msgstr ""
+
+#: includes/class-ssp-admin.php:872
+msgid "%1$sThank you for publishing with %2$sSeriously Simple Podcasting%3$s.%4$s"
 msgstr ""
 
 #: includes/class-ssp-frontend.php:256 includes/ssp-functions.php:138
@@ -293,11 +305,11 @@ msgstr ""
 msgid "Recorded on"
 msgstr ""
 
-#: includes/class-ssp-frontend.php:732
+#: includes/class-ssp-frontend.php:734
 msgid "Podcast RSS feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:69 includes/class-ssp-settings.php:841
+#: includes/class-ssp-settings.php:69 includes/class-ssp-settings.php:857
 msgid "Podcast Settings"
 msgstr ""
 
@@ -656,235 +668,235 @@ msgstr ""
 msgid "Your podcast title."
 msgstr ""
 
-#: includes/class-ssp-settings.php:252
+#: includes/class-ssp-settings.php:253
 msgid "Subtitle"
 msgstr ""
 
-#: includes/class-ssp-settings.php:253
+#: includes/class-ssp-settings.php:254
 msgid "Your podcast subtitle."
 msgstr ""
 
-#: includes/class-ssp-settings.php:261
+#: includes/class-ssp-settings.php:263
 msgid "Author"
 msgstr ""
 
-#: includes/class-ssp-settings.php:262
+#: includes/class-ssp-settings.php:264
 msgid "Your podcast author."
 msgstr ""
 
-#: includes/class-ssp-settings.php:270
+#: includes/class-ssp-settings.php:273
 msgid "Category"
 msgstr ""
 
-#: includes/class-ssp-settings.php:271
+#: includes/class-ssp-settings.php:274
 msgid "Your podcast's category."
 msgstr ""
 
-#: includes/class-ssp-settings.php:278
+#: includes/class-ssp-settings.php:281
 msgid "Sub-Category"
 msgstr ""
 
-#: includes/class-ssp-settings.php:279
+#: includes/class-ssp-settings.php:282
 msgid "Your podcast's sub-category (if available) - must be a sub-category of the category selected above."
 msgstr ""
 
-#: includes/class-ssp-settings.php:286
+#: includes/class-ssp-settings.php:290
 msgid "Description/Summary"
 msgstr ""
 
-#: includes/class-ssp-settings.php:287
+#: includes/class-ssp-settings.php:291
 msgid "A description/summary of your podcast - no HTML allowed."
 msgstr ""
 
-#: includes/class-ssp-settings.php:296
+#: includes/class-ssp-settings.php:300
 msgid "Cover Image"
 msgstr ""
 
-#: includes/class-ssp-settings.php:297
+#: includes/class-ssp-settings.php:301
 msgid "Your podcast cover image - must have a minimum size of 1400x1400 px."
 msgstr ""
 
-#: includes/class-ssp-settings.php:304
+#: includes/class-ssp-settings.php:309
 msgid "Owner name"
 msgstr ""
 
-#: includes/class-ssp-settings.php:305
+#: includes/class-ssp-settings.php:310
 msgid "Podcast owner's name."
 msgstr ""
 
-#: includes/class-ssp-settings.php:313
+#: includes/class-ssp-settings.php:319
 msgid "Owner email address"
 msgstr ""
 
-#: includes/class-ssp-settings.php:314
+#: includes/class-ssp-settings.php:320
 msgid "Podcast owner's email address."
 msgstr ""
 
-#: includes/class-ssp-settings.php:322
+#: includes/class-ssp-settings.php:329
 msgid "Language"
 msgstr ""
 
-#: includes/class-ssp-settings.php:323
+#: includes/class-ssp-settings.php:330
 msgid "Your podcast's language in %1$sISO-639-1 format%2$s."
 msgstr ""
 
-#: includes/class-ssp-settings.php:331
+#: includes/class-ssp-settings.php:339
 msgid "Copyright"
 msgstr ""
 
-#: includes/class-ssp-settings.php:332
+#: includes/class-ssp-settings.php:340
 msgid "Copyright line for your podcast."
 msgstr ""
 
-#: includes/class-ssp-settings.php:340
+#: includes/class-ssp-settings.php:349
 msgid "Explicit"
 msgstr ""
 
-#: includes/class-ssp-settings.php:341
+#: includes/class-ssp-settings.php:350
 msgid "Mark if your podcast is explicit or not."
 msgstr ""
 
-#: includes/class-ssp-settings.php:349
+#: includes/class-ssp-settings.php:359
 msgid "Security"
 msgstr ""
 
-#: includes/class-ssp-settings.php:350
+#: includes/class-ssp-settings.php:360
 msgid "Change these settings to ensure that your podcast feed remains private. This will block feed readers (including iTunes) from accessing your feed."
 msgstr ""
 
-#: includes/class-ssp-settings.php:354
+#: includes/class-ssp-settings.php:364
 msgid "Password protect your podcast feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:355
+#: includes/class-ssp-settings.php:365
 msgid "Mark if you would like to password protect your podcast feed - you can set the username and password below. This will block all feed readers (including iTunes) from accessing your feed."
 msgstr ""
 
-#: includes/class-ssp-settings.php:361
+#: includes/class-ssp-settings.php:372
 msgid "Username"
 msgstr ""
 
-#: includes/class-ssp-settings.php:362
+#: includes/class-ssp-settings.php:373
 msgid "Username for your podcast feed."
 msgstr ""
 
-#: includes/class-ssp-settings.php:365
+#: includes/class-ssp-settings.php:376
 msgid "Feed username"
 msgstr ""
 
-#: includes/class-ssp-settings.php:370
+#: includes/class-ssp-settings.php:382
 msgid "Password"
 msgstr ""
 
-#: includes/class-ssp-settings.php:371
+#: includes/class-ssp-settings.php:383
 msgid "Password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again."
 msgstr ""
 
-#: includes/class-ssp-settings.php:374
+#: includes/class-ssp-settings.php:386
 msgid "Feed password"
 msgstr ""
 
-#: includes/class-ssp-settings.php:380
+#: includes/class-ssp-settings.php:392
 msgid "No access message"
 msgstr ""
 
-#: includes/class-ssp-settings.php:381
+#: includes/class-ssp-settings.php:393
 msgid "This message will be displayed to people who are not allowed access to your podcast feed. Limited HTML allowed."
 msgstr ""
 
-#: includes/class-ssp-settings.php:383 templates/feed-podcast.php:28
+#: includes/class-ssp-settings.php:395 templates/feed-podcast.php:28
 msgid "You are not permitted to view this podcast feed."
 msgstr ""
 
-#: includes/class-ssp-settings.php:384
+#: includes/class-ssp-settings.php:396
 msgid "Message displayed to users who do not have access to the podcast feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:392
+#: includes/class-ssp-settings.php:404
 msgid "Redirection"
 msgstr ""
 
-#: includes/class-ssp-settings.php:393
+#: includes/class-ssp-settings.php:405
 msgid "Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active."
 msgstr ""
 
-#: includes/class-ssp-settings.php:397
+#: includes/class-ssp-settings.php:409
 msgid "Redirect podcast feed to new URL"
 msgstr ""
 
-#: includes/class-ssp-settings.php:398
+#: includes/class-ssp-settings.php:410
 msgid "Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL."
 msgstr ""
 
-#: includes/class-ssp-settings.php:404
+#: includes/class-ssp-settings.php:417
 msgid "New podcast feed URL"
 msgstr ""
 
-#: includes/class-ssp-settings.php:405
+#: includes/class-ssp-settings.php:418
 msgid "Your podcast feed's new URL."
 msgstr ""
 
-#: includes/class-ssp-settings.php:408
+#: includes/class-ssp-settings.php:421
 msgid "New feed URL"
 msgstr ""
 
-#: includes/class-ssp-settings.php:416
+#: includes/class-ssp-settings.php:429
 msgid "Publishing"
 msgstr ""
 
-#: includes/class-ssp-settings.php:417
+#: includes/class-ssp-settings.php:430
 msgid "Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes)."
 msgstr ""
 
-#: includes/class-ssp-settings.php:421 includes/class-ssp-settings.php:425
+#: includes/class-ssp-settings.php:434 includes/class-ssp-settings.php:438
 msgid "External feed URL"
 msgstr ""
 
-#: includes/class-ssp-settings.php:422
+#: includes/class-ssp-settings.php:435
 msgid "If you are syndicating your podcast using a third-party service (like Feedburner) you can insert the URL here, otherwise this must be left blank."
 msgstr ""
 
-#: includes/class-ssp-settings.php:431
+#: includes/class-ssp-settings.php:444
 msgid "Complete feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:437
+#: includes/class-ssp-settings.php:451
 msgid "Feed for a specific series"
 msgstr ""
 
-#: includes/class-ssp-settings.php:443
+#: includes/class-ssp-settings.php:458
 msgid "Podcast page"
 msgstr ""
 
-#: includes/class-ssp-settings.php:557
+#: includes/class-ssp-settings.php:573
 msgid "View feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:627
+#: includes/class-ssp-settings.php:643
 msgid "Password stored securely"
 msgstr ""
 
-#: includes/class-ssp-settings.php:700
+#: includes/class-ssp-settings.php:716
 msgid "Upload new image"
 msgstr ""
 
-#: includes/class-ssp-settings.php:701
+#: includes/class-ssp-settings.php:717
 msgid "Remove image"
 msgstr ""
 
-#: includes/class-ssp-settings.php:889
+#: includes/class-ssp-settings.php:905
 msgid "%1$s settings updated."
 msgstr ""
 
-#: includes/class-ssp-settings.php:910
+#: includes/class-ssp-settings.php:926
 msgid "Toggle series list display"
 msgstr ""
 
-#: includes/class-ssp-settings.php:913
+#: includes/class-ssp-settings.php:929
 msgid "Default feed"
 msgstr ""
 
-#: includes/class-ssp-settings.php:951
+#: includes/class-ssp-settings.php:967
 msgid "Save Settings"
 msgstr ""
 
@@ -906,7 +918,7 @@ msgstr ""
 
 #: includes/widgets/class-ssp-widget-recent-episodes.php:133
 #: includes/widgets/class-ssp-widget-series.php:158
-#: includes/widgets/class-ssp-widget-single-episode.php:163
+#: includes/widgets/class-ssp-widget-single-episode.php:173
 msgid "Title:"
 msgstr ""
 
@@ -951,31 +963,35 @@ msgstr ""
 msgid "Podcast: Single Episode"
 msgstr ""
 
-#: includes/widgets/class-ssp-widget-single-episode.php:164
+#: includes/widgets/class-ssp-widget-single-episode.php:174
 msgid "Use episode title"
 msgstr ""
 
-#: includes/widgets/class-ssp-widget-single-episode.php:166
+#: includes/widgets/class-ssp-widget-single-episode.php:176
 msgid "Episode:"
 msgstr ""
 
-#: includes/widgets/class-ssp-widget-single-episode.php:177
+#: includes/widgets/class-ssp-widget-single-episode.php:178
+msgid "- Latest episode -"
+msgstr ""
+
+#: includes/widgets/class-ssp-widget-single-episode.php:188
 msgid "Display episode title inside widget?"
 msgstr ""
 
-#: includes/widgets/class-ssp-widget-single-episode.php:180
+#: includes/widgets/class-ssp-widget-single-episode.php:191
 msgid "Display episode excerpt?"
 msgstr ""
 
-#: includes/widgets/class-ssp-widget-single-episode.php:183
+#: includes/widgets/class-ssp-widget-single-episode.php:194
 msgid "Display full episode content?"
 msgstr ""
 
-#: includes/widgets/class-ssp-widget-single-episode.php:186
+#: includes/widgets/class-ssp-widget-single-episode.php:197
 msgid "Display episode audio player?"
 msgstr ""
 
-#: includes/widgets/class-ssp-widget-single-episode.php:189
+#: includes/widgets/class-ssp-widget-single-episode.php:200
 msgid "Display episode details?"
 msgstr ""
 

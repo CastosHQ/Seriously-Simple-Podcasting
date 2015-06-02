@@ -52,6 +52,7 @@ class SSP_Admin {
 		// Register podcast feed
 		add_action( 'init', array( $this, 'add_feed' ), 1 );
 
+		// Hide WP SEO footer text for podcast RSS feed
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
 		// Handle v1.x feed URL as well as feed URLs for default permalinks
@@ -90,7 +91,12 @@ class SSP_Admin {
             // Appreciation links
             add_filter( 'plugin_row_meta', array( $this, 'plugin_row_meta' ), 10, 4 );
 
+            // Add footer text to dashboard
+            add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
+
 		}
+
+		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
@@ -841,6 +847,43 @@ class SSP_Admin {
 
 		// Mark update as having been run
 		update_option( 'ssp_update_enclosures', 'run' );
+	}
+
+	/**
+	 * Add rating link to admin footer on SSP settings pages
+	 * @param  string $footer_text Default footer text
+	 * @return string              Modified footer text
+	 */
+	public function admin_footer_text( $footer_text ) {
+
+		// Check to make sure we're on a SSP settings page
+		if ( ( isset( $_GET['page'] ) && 'podcast_settings' == esc_attr( $_GET['page'] ) ) && apply_filters( 'ssp_display_admin_footer_text', true ) ) {
+
+			// Change the footer text
+			if ( ! get_option( 'ssp_admin_footer_text_rated' ) ) {
+				$footer_text = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'ss-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/view/plugin-reviews/seriously-simple-podcasting?filter=5#postform" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'ss-podcasting' ) . '">', '</a>' );
+				$footer_text .= "<script type='text/javascript'>
+					jQuery('a.ssp-rating-link').click(function() {
+						jQuery.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated' } );
+						jQuery(this).parent().text( jQuery(this).data( 'rated' ) );
+					});
+				</script>";
+			} else {
+				$footer_text = sprintf( __( '%1$sThank you for publishing with %2$sSeriously Simple Podcasting%3$s.%4$s', 'ss-podcasting' ), '<span id="footer-thankyou">', '<a href="http://www.seriouslysimplepodcasting.com/" target="_blank">', '</a>', '</span>' );
+			}
+
+		}
+
+		return $footer_text;
+	}
+
+	/**
+	 * Indicate that plugin has been rated
+	 * @return void
+	 */
+	public function rated() {
+		update_option( 'ssp_admin_footer_text_rated', 1 );
+		die();
 	}
 
 }

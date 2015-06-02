@@ -68,7 +68,17 @@ class SSP_Widget_Single_Episode extends WP_Widget {
 
 		$episode_id = $instance['episode_id'];
 
-		if ( ! $episode_id ) {
+		if( 0 == $episode_id ) {
+			$ssp_episodes = ssp_episodes( 1 );
+			if( 0 < count( $ssp_episodes ) ) {
+				foreach( $ssp_episodes as $episode ) {
+					$episode_id = $episode->ID;
+					break;
+				}
+			}
+		}
+
+		if( ! $episode_id ) {
 			return;
 		}
 
@@ -165,6 +175,7 @@ class SSP_Widget_Single_Episode extends WP_Widget {
 
 		<p><label for="<?php echo $this->get_field_id( 'episode_id' ); ?>"><?php _e( 'Episode:', 'ss-podcasting' ); ?></label>
 		<select id="<?php echo $this->get_field_id( 'episode_id' ); ?>" name="<?php echo $this->get_field_name( 'episode_id' ); ?>">
+			<option value="0"><?php _e( '- Latest episode -', 'ss-podcasting' ); ?></option>
 			<?php
 			foreach ( $episode_ids as $id ) {
 				echo '<option value="' . esc_attr( $id ) . '" ' . selected( $episode_id, $id, false ) . '>' . get_the_title( $id ) . '</option>' . "\n";

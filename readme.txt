@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.0
 Tested up to: 4.2.2
-Stable tag: 1.9.9
+Stable tag: 1.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.10 =
+* 2015-06-02
+* [NEW] Correctly sanitising all settings (props Jake Spurlock)
+* [NEW] Preparing SQL statement correctly (props Jake Spurlock)
+* [NEW] Adding option to display latest episode in Single Episode widget
+* [NEW] Making settings update notices dismissable in WordPress 4.2+
+* [NEW] Adding 'please review' and 'thank you' text to footer of plugin settings pages
 
 = 1.9.9 =
 * 2015-05-08
@@ -448,5 +456,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.9.9 =
-* v1.9.9 contains the latest fixes and upgrades for Seriously Simple Podcasting - all users are recommended to update ASAP.
+= 1.10 =
+* v1.10 contains a number of important security fixes as well as some helpful new features - all users are advised to update ASAP.

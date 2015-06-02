@@ -901,7 +901,7 @@ class SSP_Settings {
 			}
 
 			if ( isset( $_GET['settings-updated'] ) ) {
-				$html .= '<br/><div class="updated">
+				$html .= '<br/><div class="updated notice notice-success is-dismissible">
 					        <p>' . sprintf( __( '%1$s settings updated.', 'ss-podcasting' ), '<b>' . str_replace( '-', ' ', ucfirst( $tab ) ) . '</b>' ) . '</p>
 					    </div>';
 			}

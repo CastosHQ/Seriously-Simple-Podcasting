@@ -4,7 +4,7 @@ Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.0
 Tested up to: 4.2.2
-Stable tag: 1.10
+Stable tag: 1.10.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.10.1 =
+* 2015-06-03
+* [FIX] Fixing SQL statement when fetching episode from audio file URL (props Stef Pause)
 
 = 1.10 =
 * 2015-06-02
@@ -456,5 +460,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.10 =
+= 1.10.1 =
 * v1.10 contains a number of important security fixes as well as some helpful new features - all users are advised to update ASAP.

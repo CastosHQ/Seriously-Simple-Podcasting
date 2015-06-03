@@ -435,10 +435,8 @@ class SSP_Frontend {
 		if ( $attachment ) {
 		    global $wpdb;
 
-		    $prefix = $wpdb->prefix;
-
-		    $sql = 'SELECT ID FROM %sposts WHERE guid="%s";';
-		    $prepped = $wpdb->prepare( $sql, array( $prefix, esc_url_raw( $attachment ) ) );
+		    $sql = "SELECT ID FROM $wpdb->posts WHERE guid = %s";
+		    $prepped = $wpdb->prepare( $sql, esc_url_raw( $attachment ) );
 		    $attachment = $wpdb->get_col( $prepped );
 
 		    if ( isset( $attachment[0] ) ) {

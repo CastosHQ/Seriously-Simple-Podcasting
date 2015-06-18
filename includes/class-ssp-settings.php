@@ -246,7 +246,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'data_subtitle',
@@ -256,7 +256,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'description' ),
 					'placeholder'	=> get_bloginfo( 'description' ),
 					'class'			=> 'large-text',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'data_author',
@@ -266,7 +266,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'data_category',
@@ -275,6 +275,7 @@ class SSP_Settings {
 					'type'			=> 'select',
 					'options'		=> $category_options,
 					'default'		=> '',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'data_subcategory',
@@ -283,7 +284,7 @@ class SSP_Settings {
 					'type'			=> 'select',
 					'options'		=> $subcategory_options,
 					'default'		=> '',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'data_description',
@@ -292,7 +293,7 @@ class SSP_Settings {
 					'type'			=> 'textarea',
 					'default'		=> get_bloginfo( 'description' ),
 					'placeholder'	=> get_bloginfo( 'description' ),
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 					'class'			=> 'large-text',
 				),
 				array(
@@ -302,7 +303,7 @@ class SSP_Settings {
 					'type'			=> 'image',
 					'default'		=> '',
 					'placeholder'	=> '',
-					'callback'		=> 'esc_url',
+					'callback'		=> 'esc_url_raw',
 				),
 				array(
 					'id' 			=> 'data_owner_name',
@@ -312,7 +313,7 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'data_owner_email',
@@ -322,17 +323,17 @@ class SSP_Settings {
 					'default'		=> get_bloginfo( 'admin_email' ),
 					'placeholder'	=> get_bloginfo( 'admin_email' ),
 					'class'			=> 'large-text',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'data_language',
 					'label'			=> __( 'Language' , 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Your podcast\'s language in %1$sISO-639-1 format%2$s.', 'ss-podcasting' ), '<a href="' . esc_url( 'http://www.loc.gov/standards/iso639-2/php/code_list.php' ) . '" target="' . esc_attr( '_blank' ) . '">', '</a>' ),
+					'description'	=> sprintf( __( 'Your podcast\'s language in %1$sISO-639-1 format%2$s.', 'ss-podcasting' ), '<a href="' . esc_url( 'http://www.loc.gov/standards/iso639-2/php/code_list.php' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'language' ),
 					'placeholder'	=> get_bloginfo( 'language' ),
 					'class'			=> 'all-options',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'data_copyright',
@@ -342,7 +343,7 @@ class SSP_Settings {
 					'default'		=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
 					'placeholder'	=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
 					'class'			=> 'large-text',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'explicit',
@@ -350,7 +351,7 @@ class SSP_Settings {
 					'description'	=> __( 'Mark if your podcast is explicit or not.', 'ss-podcasting' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 			)
 		);
@@ -365,7 +366,7 @@ class SSP_Settings {
 					'description'	=> __( 'Mark if you would like to password protect your podcast feed - you can set the username and password below. This will block all feed readers (including iTunes) from accessing your feed.', 'ss-podcasting' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'protection_username',
@@ -375,7 +376,7 @@ class SSP_Settings {
 					'default'		=> '',
 					'placeholder'	=> __( 'Feed username', 'ss-podcasting' ),
 					'class'			=> 'regular-text',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'protection_password',
@@ -410,7 +411,7 @@ class SSP_Settings {
 					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.', 'ss-podcasting' ) , '<br/>' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
-					'callback'		=> 'esc_url',
+					'callback'		=> 'esc_url_raw',
 				),
 				array(
 					'id' 			=> 'new_feed_url',
@@ -419,7 +420,7 @@ class SSP_Settings {
 					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> __( 'New feed URL', 'ss-podcasting' ),
-					'callback'		=> 'esc_url',
+					'callback'		=> 'esc_url_raw',
 					'class'			=> 'regular-text',
 				),
 			)
@@ -436,7 +437,7 @@ class SSP_Settings {
 					'type'			=> 'text',
 					'default'		=> '',
 					'placeholder'	=> __( 'External feed URL', 'ss-podcasting' ),
-					'callback'		=> 'esc_url',
+					'callback'		=> 'esc_url_raw',
 					'class'			=> 'regular-text',
 				),
 				array(
@@ -444,21 +445,21 @@ class SSP_Settings {
 					'label'			=> __( 'Complete feed', 'ss-podcasting' ),
 					'description'	=> '',
 					'type'			=> 'feed_link',
-					'callback'		=> 'esc_url',
+					'callback'		=> 'esc_url_raw',
 				),
 				array(
 					'id' 			=> 'feed_link_series',
 					'label'			=> __( 'Feed for a specific series', 'ss-podcasting' ),
 					'description'	=> '',
 					'type'			=> 'feed_link_series',
-					'callback'		=> 'esc_url',
+					'callback'		=> 'esc_url_raw',
 				),
 				array(
 					'id' 			=> 'podcast_url',
 					'label'			=> __( 'Podcast page', 'ss-podcasting' ),
 					'description'	=> '',
 					'type'			=> 'podcast_url',
-					'callback'		=> 'esc_attr',
+					'callback'		=> 'esc_url_raw',
 				)
 			)
 		);
@@ -701,10 +702,10 @@ class SSP_Settings {
 					}
 
 					if ( $group && $group != $prev_group ) {
-						$html .= '<optgroup label="' . $group . '">';
+						$html .= '<optgroup label="' . esc_attr( $group ) . '">';
 					}
 
-					$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . $v . '</option>';
+					$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '">' . esc_html( $v ) . '</option>';
 
 					$prev_group = $group;
 				}
@@ -712,10 +713,10 @@ class SSP_Settings {
 			break;
 
 			case 'image':
-				$html .= '<img id="' . $default_option_name . '_preview" src="' . $data . '" style="max-width:400px;height:auto;" /><br/>' . "\n";
-				$html .= '<input id="' . $default_option_name . '_button" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />' . "\n";
-				$html .= '<input id="' . $default_option_name . '_delete" type="button" class="button" value="'. __( 'Remove image' , 'ss-podcasting' ) . '" />' . "\n";
-				$html .= '<input id="' . $default_option_name . '" type="hidden" name="' . $option_name . '" value="' . $data . '"/><br/>' . "\n";
+				$html .= '<img id="' . esc_attr( $default_option_name ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;" /><br/>' . "\n";
+				$html .= '<input id="' . esc_attr( $default_option_name ) . '_button" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />' . "\n";
+				$html .= '<input id="' . esc_attr( $default_option_name ) . '_delete" type="button" class="button" value="'. __( 'Remove image' , 'ss-podcasting' ) . '" />' . "\n";
+				$html .= '<input id="' . esc_attr( $default_option_name ) . '" type="hidden" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
 			break;
 
 			case 'feed_link':
@@ -741,7 +742,7 @@ class SSP_Settings {
 					$url = $this->home_url . '?feed=' . $this->token . '&podcast_series=series-slug';
 				}
 
-				$html .= $url . "\n";
+				$html .= esc_url( $url ) . "\n";
 			break;
 
 			case 'podcast_url';
@@ -760,11 +761,11 @@ class SSP_Settings {
 				case 'checkbox_multi':
 				case 'radio':
 				case 'select_multi':
-					$html .= '<br/><span class="description">' . $field['description'] . '</span>';
+					$html .= '<br/><span class="description">' . esc_attr( $field['description'] ) . '</span>';
 				break;
 
 				default:
-					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . $field['description'] . '</span></label>' . "\n";
+					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . esc_html( $field['description'] ) . '</span></label>' . "\n";
 				break;
 			}
 		}

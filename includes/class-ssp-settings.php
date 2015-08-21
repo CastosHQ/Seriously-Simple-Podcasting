@@ -783,7 +783,7 @@ class SSP_Settings {
 				break;
 
 				default:
-					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . esc_html( $field['description'] ) . '</span></label>' . "\n";
+					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . wp_kses_post( $field['description'] ) . '</span></label>' . "\n";
 				break;
 			}
 		}

@@ -353,6 +353,24 @@ class SSP_Settings {
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
 				),
+				array(
+					'id' 			=> 'redirect_feed',
+					'label'			=> __( 'Redirect podcast feed to new URL', 'ss-podcasting' ),
+					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.', 'ss-podcasting' ) , '<br/>' ),
+					'type'			=> 'checkbox',
+					'default'		=> '',
+					'callback'		=> 'esc_url_raw',
+				),
+				array(
+					'id' 			=> 'new_feed_url',
+					'label'			=> __( 'New podcast feed URL', 'ss-podcasting' ),
+					'description'	=> __( 'Your podcast feed\'s new URL.', 'ss-podcasting' ),
+					'type'			=> 'text',
+					'default'		=> '',
+					'placeholder'	=> __( 'New feed URL', 'ss-podcasting' ),
+					'callback'		=> 'esc_url_raw',
+					'class'			=> 'regular-text',
+				),
 			)
 		);
 

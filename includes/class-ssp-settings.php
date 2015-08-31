@@ -85,7 +85,10 @@ class SSP_Settings {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_media();
+		global $pagenow;
+		if ( in_array( $pagenow, array( 'post-new.php', 'post.php' ) ) ) {
+			wp_enqueue_media();
+		}
 	}
 
 	/**

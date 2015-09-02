@@ -583,7 +583,7 @@ class SSP_Admin {
 	 */
 	public function glance_items( $items = array() ) {
 
-		$num_posts = count( ssp_episodes( -1, '', false, 'glance' ) );
+		$num_posts = ssp_episodes( -1, '', false, 'glance' );
 
 		$post_type_object = get_post_type_object( $this->token );
 

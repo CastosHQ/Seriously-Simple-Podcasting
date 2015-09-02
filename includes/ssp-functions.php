@@ -293,8 +293,8 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		// Get all podcast episodes IDs
 		$episode_ids = (array) ssp_episode_ids();
 
-		if ( $context == 'glance' ) {
-			return count( $episode_ids );
+		if ( $context === 'glance' ) {
+			return $episode_ids;
 		}
 
 		if ( empty( $episode_ids ) ) {

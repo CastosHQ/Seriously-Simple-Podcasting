@@ -287,7 +287,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 	 * @since  1.8.2
 	 * @return array                Array of posts or array of query args
 	 */
-	function ssp_episodes ( $n = 10, $series = '', $return_args = false, $context = '' ) {
+	function ssp_episodes( $n = 10, $series = '', $return_args = false, $context = '' ) {
 
 		// Get all podcast episodes IDs
 		$episode_ids = (array) ssp_episode_ids();
@@ -309,11 +309,11 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 
 		// Fetch podcast episodes
 		$args = array(
-			'post_type' => $podcast_post_types,
-			'post_status' => 'publish',
-			'posts_per_page' => $n,
+			'post_type'           => $podcast_post_types,
+			'post_status'         => 'publish',
+			'posts_per_page'      => $n,
 			'ignore_sticky_posts' => true,
-			'post__in' => $episode_ids,
+			'post__in'            => $episode_ids,
 		);
 
 		if ( $series ) {
@@ -326,7 +326,17 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			return $args;
 		}
 
-		return get_posts( $args );
+		// Do we have anything in the cache here?
+		$key   = 'episodes';
+		$group = 'ssp';
+		$posts = wp_cache_get( $key, $group );
+
+		if ( $posts === false ) {
+			$posts = get_posts( $args );
+			wp_cache_add( $key, $posts, $group, HOUR_IN_SECONDS * 12 );
+		}
+
+		return $posts;
 	}
 
 }

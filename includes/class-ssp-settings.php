@@ -85,7 +85,10 @@ class SSP_Settings {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-		wp_enqueue_media();
+		global $pagenow;
+		if ( in_array( $pagenow, array( 'post-new.php', 'post.php' ) ) ) {
+			wp_enqueue_media();
+		}
 	}
 
 	/**
@@ -353,6 +356,24 @@ class SSP_Settings {
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
 				),
+				array(
+					'id' 			=> 'redirect_feed',
+					'label'			=> __( 'Redirect this feed to new URL', 'ss-podcasting' ),
+					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).', 'ss-podcasting' ) , '<br/>' ),
+					'type'			=> 'checkbox',
+					'default'		=> '',
+					'callback'		=> 'wp_strip_all_tags',
+				),
+				array(
+					'id' 			=> 'new_feed_url',
+					'label'			=> __( 'New podcast feed URL', 'ss-podcasting' ),
+					'description'	=> __( 'Your podcast feed\'s new URL.', 'ss-podcasting' ),
+					'type'			=> 'text',
+					'default'		=> '',
+					'placeholder'	=> __( 'New feed URL', 'ss-podcasting' ),
+					'callback'		=> 'esc_url_raw',
+					'class'			=> 'regular-text',
+				),
 			)
 		);
 
@@ -411,7 +432,7 @@ class SSP_Settings {
 					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.', 'ss-podcasting' ) , '<br/>' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
-					'callback'		=> 'esc_url_raw',
+					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'new_feed_url',
@@ -765,7 +786,7 @@ class SSP_Settings {
 				break;
 
 				default:
-					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . esc_html( $field['description'] ) . '</span></label>' . "\n";
+					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . wp_kses_post( $field['description'] ) . '</span></label>' . "\n";
 				break;
 			}
 		}

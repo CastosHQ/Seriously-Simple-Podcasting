@@ -26,4 +26,4 @@ If you have a patch, or you have stumbled upon an issue with Seriously Simple Po
 If you have an idea for Seriously Simple Podcasting, feel free to suggest it in an issue on this repo.
 
 ## Supporting Development
-If you enjoy using Seriously Simple Podcasting and find value in the plugin then please [leave a review](https://wordpress.org/support/view/plugin-reviews/seriously-simple-podcasting?rate=5#postform) or [make a donation](http://www.hughlashbrooke.com/donate/) to help promote continued development.
+If you enjoy using Seriously Simple Podcasting and find value in the plugin then please [leave a review](https://wordpress.org/support/view/plugin-reviews/seriously-simple-podcasting?rate=5#postform) to help promote continued development.

@@ -252,16 +252,79 @@ class SSP_Frontend {
 
 		$date_recorded = get_post_meta( $episode_id, 'date_recorded', true );
 
-		$meta = '<div class="podcast_meta"><aside>';
-		if ( $link ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-		if ( $duration ) { if ( $link ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
-		if ( $size ) { if ( $duration || $link ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
-		if ( $date_recorded ) { if ( $size || $duration || $link ) { $meta .= ' | '; } $meta .= __( 'Recorded on' , 'ss-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $date_recorded ) ); }
-		$meta .= '</aside></div>';
+		// Build up meta data array with default values
+		$meta = array(
+			'link' => '',
+			'new_window' => false,
+			'duration' => 0,
+			'size' => 0,
+			'date_recorded' => '',
+		);
 
+		if( $link ) {
+			$meta['link'] = $link;
+		}
+
+		if( $link && apply_filters( 'ssp_show_new_window_link', true ) ) {
+			$meta['new_window'] = true;
+		}
+
+		if( $link ) {
+			$meta['duration'] = $duration;
+		}
+
+		if( $size ) {
+			$meta['size'] = $size;
+		}
+
+		if( $date_recorded ) {
+			$meta['date_recorded'] = $date_recorded;
+		}
+
+		// Allow dynamic filtering of meta data - to remove, add or reorder meta items
 		$meta = apply_filters( 'ssp_episode_meta_details', $meta, $episode_id, $context );
 
-		return $meta;
+		$meta_display = '';
+		$meta_sep = apply_filters( 'ssp_episode_meta_separator', ' | ' );
+		foreach ( $meta as $key => $data ) {
+
+			if( ! $data ) {
+				continue;
+			}
+
+			if( $meta_display ) {
+				$meta_display .= $meta_sep;
+			}
+
+			switch( $key ) {
+
+				case 'link':
+					$meta_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>';
+				break;
+
+				case 'new_window':
+					$play_link = add_query_arg( 'ref', 'new_window', $link );
+					$meta_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' ">' . __( 'Play in new window' , 'ss-podcasting' ) . '</a>';
+				break;
+
+				case 'duration':
+					$meta_display .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $data;
+				break;
+
+				case 'size':
+					$meta_display .= __( 'Size' , 'ss-podcasting' ) . ': ' . $data;
+				break;
+
+				case 'date_recorded':
+					$meta_display .= __( 'Recorded on' , 'ss-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $data ) );
+				break;
+
+			}
+		}
+
+		$meta_display = '<div class="podcast_meta"><aside>' . $meta_display . '</aside></div>';
+
+		return $meta_display;
 
 	}
 

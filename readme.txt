@@ -2,9 +2,9 @@
 Contributors: hlashbrooke
 Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
-Requires at least: 4.0
-Tested up to: 4.2.2
-Stable tag: 1.10.3
+Requires at least: 4.2
+Tested up to: 4.3
+Stable tag: 1.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -79,6 +79,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.11 =
+* 2015-09-03
+* [NEW] Adding feed redirection option for individual series (props Jake Spurlock)
+* [NEW] Adding 'play in new window' link to episode meta
+* [NEW] Improving episode meta generation to make dynamic filtering much easier
+* [TWEAK] Updating settings sanitisation functions
+* [TWEAK] Only return episode IDs when loading episode count for At a Glance widget (props Jake Spurlock)
+* [TWEAK] Only run `wp_enqueue_media()` on post pages (props Jake Spurlock)
 
 = 1.10.3 =
 * 2015-07-13
@@ -468,5 +477,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.10.3 =
-* v1.10 contains a number of important security fixes as well as some helpful new features - all users are advised to update ASAP.
+= 1.11 =
+* v1.11 contains a number of important security fixes as well as some helpful new features - all users are advised to update ASAP.

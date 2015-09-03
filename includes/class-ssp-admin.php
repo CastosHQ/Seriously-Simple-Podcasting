@@ -94,6 +94,9 @@ class SSP_Admin {
             // Add footer text to dashboard
             add_filter( 'admin_footer_text', array( $this, 'admin_footer_text' ), 1 );
 
+            // Clear the cache on post save.
+            add_action( 'save_post', array( $this, 'invalidate_cache' ), 10, 2 );
+
 		}
 
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
@@ -885,5 +888,21 @@ class SSP_Admin {
 		update_option( 'ssp_admin_footer_text_rated', 1 );
 		die();
 	}
+
+	/**
+	 * Clear the cache on post save.
+	 * @param  int    $id   POST ID
+	 * @param  object $post WordPress Post Object
+	 * @return void
+	 */
+	public function invalidate_cache( $id, $post ){
+
+		if ( in_array( $post->post_type, array( 'posts', ) ) ){
+			wp_cache_delete( 'episodes', 'ssp' );
+			wp_cache_delete( 'episodes', 'episode_ids' );
+		}
+
+	}
+
 
 }

@@ -90,6 +90,22 @@ if ( $podcast_series ) {
 	$series_id = $series->term_id;
 }
 
+// Do we need to redirect a single feed?
+if ( $podcast_series ) {
+	$redirect = get_option( 'ss_podcasting_redirect_feed_' . $series_id );
+	$new_feed_url = false;
+	if ( $redirect && $redirect == 'on' ) {
+		$new_feed_url = get_option( 'ss_podcasting_new_feed_url_' . $series_id );
+		if ( $new_feed_url ) {
+			header ( 'HTTP/1.1 301 Moved Permanently' );
+			header ( 'Location: ' . $new_feed_url );
+			exit;
+		}
+	}
+
+}
+
+
 // Podcast title
 $title = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
 if ( $podcast_series ) {

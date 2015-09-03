@@ -1,6 +1,5 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke
-Donate link: http://www.hughlashbrooke.com/donate/
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.2
 Tested up to: 4.3

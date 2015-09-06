@@ -898,8 +898,8 @@ class SSP_Admin {
 	public function invalidate_cache( $id, $post ){
 
 		if ( in_array( $post->post_type, ssp_post_types( true ) ) ){
-			wp_cache_delete( 'episodes', 'ssp' );
-			wp_cache_delete( 'episodes', 'episode_ids' );
+			wp_cache_delete( 'episodes',    'ssp' );
+			wp_cache_delete( 'episode_ids', 'ssp' );
 		}
 
 	}

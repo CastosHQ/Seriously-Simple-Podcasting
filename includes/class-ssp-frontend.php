@@ -736,12 +736,13 @@ class SSP_Frontend {
 
 			        // Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 					@ssp_readfile_chunked( "$file" ) or header( 'Location: ' . $file );
-					exit();
 				} else {
 					// For all other referrers simply access the file directly
 					wp_redirect( $file, 302 );
-					exit();
 				}
+
+				// Exit to prevent other processes running later on
+				exit();
 
 			}
 		}

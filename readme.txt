@@ -2,7 +2,7 @@
 Contributors: hlashbrooke
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.2
-Tested up to: 4.3
+Tested up to: 4.3.1
 Stable tag: 1.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -80,13 +80,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.11 =
-* 2015-09-03
+* 2015-09-16
 * [NEW] Adding feed redirection option for individual series (props Jake Spurlock)
 * [NEW] Adding 'play in new window' link to episode meta
-* [NEW] Improving episode meta generation to make dynamic filtering much easier
+* [NEW] Improving episode meta generation to make dynamic filtering much easier using the `ssp_episode_meta_details` filter
+* [TWEAK] Adding caching to episode retrieval functions (props Jake Spurlock)
 * [TWEAK] Updating settings sanitisation functions
 * [TWEAK] Only return episode IDs when loading episode count for At a Glance widget (props Jake Spurlock)
 * [TWEAK] Only run `wp_enqueue_media()` on post pages (props Jake Spurlock)
+* [TWEAK] General syntax and coding standards updates
+* [FIX] Properly exiting after retrieving audio files (props Jake Spurlock)
 
 = 1.10.3 =
 * 2015-07-13
@@ -477,4 +480,4 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Upgrade Notice ==
 
 = 1.11 =
-* v1.11 contains a number of important security fixes as well as some helpful new features - all users are advised to update ASAP.
+* v1.11 contains a number of important updates and some helpful new features - all users are advised to update ASAP.

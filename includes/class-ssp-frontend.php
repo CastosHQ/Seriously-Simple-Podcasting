@@ -787,6 +787,7 @@ class SSP_Frontend {
 		} else {
 			$feed_url = $this->home_url . '?feed=' . $feed_slug;
 		}
+
 		$custom_feed_url = get_option( 'ss_podcasting_feed_url' );
 		if ( $custom_feed_url ) {
 			$feed_url = $custom_feed_url;
@@ -794,7 +795,27 @@ class SSP_Frontend {
 
 		$feed_url = apply_filters( 'ssp_feed_url', $feed_url );
 
-		$html = '<link rel="alternate" type="application/rss+xml" title="' . __( 'Podcast RSS feed', 'seriously-simple-podcasting' ) . '" href="' . esc_url( $feed_url ) . '" />';
+		if( apply_filters( 'ssp_show_global_feed_tag', true ) ) {
+			$html = '<link rel="alternate" type="application/rss+xml" title="' . __( 'Podcast RSS feed', 'seriously-simple-podcasting' ) . '" href="' . esc_url( $feed_url ) . '" />';
+		}
+
+		// Check if this is a series taxonomy archive and display series-specific RSS feed tag
+		$current_obj = get_queried_object();
+		if( isset( $current_obj->taxonomy ) && 'series' == $current_obj->taxonomy && isset( $current_obj->slug ) && $current_obj->slug ) {
+
+			if( apply_filters( 'ssp_show_series_feed_tag', true, $current_obj->slug ) ) {
+
+				if ( get_option( 'permalink_structure' ) ) {
+					$series_feed_url = $feed_url . '/' . $current_obj->slug;
+				} else {
+					$series_feed_url = $feed_url . '&podcast_series=' . $current_obj->slug;
+				}
+
+				$html .= "\n" . '<link rel="alternate" type="application/rss+xml" title="' . sprintf( __( '%s RSS feed', 'seriously-simple-podcasting' ), $current_obj->name ) . '" href="' . esc_url( $series_feed_url ) . '" />';
+
+			}
+
+		}
 
 		echo "\n" . apply_filters( 'ssp_rss_meta_tag', $html ) . "\n\n";
 	}

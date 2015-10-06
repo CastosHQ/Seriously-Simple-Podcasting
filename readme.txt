@@ -80,7 +80,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.11.3 =
-* 2015-10-08
+* 2015-10-06
+* [NEW] Adding series-specific feed tags to HTML head as it should be
+* [NEW] Adding `ssp_show_global_feed_tag` and `ssp_show_series_feed_tag` filters to hide feed tags from HTML head
 * [NEW] Adding German translation (props signor-rossi)
 * [FIX] Making sure shortcodes do not appear in iTunes excerpt (props Jake Spurlock)
 

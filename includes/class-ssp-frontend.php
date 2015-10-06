@@ -795,6 +795,8 @@ class SSP_Frontend {
 
 		$feed_url = apply_filters( 'ssp_feed_url', $feed_url );
 
+		$html = '';
+
 		if( apply_filters( 'ssp_show_global_feed_tag', true ) ) {
 			$html = '<link rel="alternate" type="application/rss+xml" title="' . __( 'Podcast RSS feed', 'seriously-simple-podcasting' ) . '" href="' . esc_url( $feed_url ) . '" />';
 		}

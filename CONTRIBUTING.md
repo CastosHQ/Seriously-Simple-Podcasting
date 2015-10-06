@@ -6,7 +6,7 @@ When contributing please ensure you follow the guidelines below so that we can k
 
 __Note:__
 
-GitHub is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](http://wordpress.org/support/plugin/seriously-simple-podcasting) instead for general support, but make sure to read through the [documentation](http://docs.hughlashbrooke.com/) first.
+GitHub is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](http://wordpress.org/support/plugin/seriously-simple-podcasting) instead for general support, but make sure to read through the [documentation](http://www.seriouslysimplepodcasting.com/) first.
 
 ## Getting Started
 
@@ -32,7 +32,7 @@ At this point you're waiting on us to merge your pull request. We'll review all 
 
 * [General GitHub documentation](http://help.github.com/)
 * [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
-* [Seriously Simple Podcasting Docs](http://docs.hughlashbrooke.com/)
+* [Seriously Simple Podcasting Docs](http://www.seriouslysimplepodcasting.com/)
 * [Seriously Simple Podcasting Support](http://wordpress.org/support/plugin/seriously-simple-podcasting)
 
-If you enjoy using Seriously Simple Podcasting and find value in the plugin then please [leave a review](https://wordpress.org/support/view/plugin-reviews/seriously-simple-podcasting?rate=5#postform) or [make a donation](http://www.hughlashbrooke.com/donate/) to help promote continued development.
+If you enjoy using Seriously Simple Podcasting and find value in the plugin then please [leave a review](https://wordpress.org/support/view/plugin-reviews/seriously-simple-podcasting?rate=5#postform) to help promote continued development.

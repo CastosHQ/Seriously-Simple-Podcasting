@@ -3,7 +3,7 @@ Contributors: hlashbrooke
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.2
 Tested up to: 4.3.1
-Stable tag: 1.11
+Stable tag: 1.11.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,7 +24,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your audio files on the same site or any other server
 - Complete user and developer [documentation](http://www.seriouslysimplepodcasting.com/)
-- Full i18n support
+- Full i18n support (comes with English and Russian translations)
 
 **Some examples of the plugin in action**
 
@@ -78,6 +78,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.11.2 =
+* 2015-10-01
+* [NEW] Adding Russian translation (props SMXRanger)
+* [FIX] Changing text domain to match plugin slug: `seriously-simple-podcasting`
+
+= 1.11.1 =
+* 2015-09-21
+* [FIX] Fixing image upload on feed settings page
 
 = 1.11 =
 * 2015-09-16
@@ -479,5 +488,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.11 =
+= 1.11.2 =
 * v1.11 contains a number of important updates and some helpful new features - all users are advised to update ASAP.

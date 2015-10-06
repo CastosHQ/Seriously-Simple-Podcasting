@@ -299,24 +299,24 @@ class SSP_Frontend {
 			switch( $key ) {
 
 				case 'link':
-					$meta_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>';
+					$meta_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
 				break;
 
 				case 'new_window':
 					$play_link = add_query_arg( 'ref', 'new_window', $link );
-					$meta_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' ">' . __( 'Play in new window' , 'ss-podcasting' ) . '</a>';
+					$meta_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' ">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
 				break;
 
 				case 'duration':
-					$meta_display .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $data;
+					$meta_display .= __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $data;
 				break;
 
 				case 'size':
-					$meta_display .= __( 'Size' , 'ss-podcasting' ) . ': ' . $data;
+					$meta_display .= __( 'Size' , 'seriously-simple-podcasting' ) . ': ' . $data;
 				break;
 
 				case 'date_recorded':
-					$meta_display .= __( 'Recorded on' , 'ss-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $data ) );
+					$meta_display .= __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $data ) );
 				break;
 
 			}
@@ -794,7 +794,7 @@ class SSP_Frontend {
 
 		$feed_url = apply_filters( 'ssp_feed_url', $feed_url );
 
-		$html = '<link rel="alternate" type="application/rss+xml" title="' . __( 'Podcast RSS feed', 'ss-podcasting' ) . '" href="' . esc_url( $feed_url ) . '" />';
+		$html = '<link rel="alternate" type="application/rss+xml" title="' . __( 'Podcast RSS feed', 'seriously-simple-podcasting' ) . '" href="' . esc_url( $feed_url ) . '" />';
 
 		echo "\n" . apply_filters( 'ssp_rss_meta_tag', $html ) . "\n\n";
 	}

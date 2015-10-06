@@ -66,7 +66,7 @@ class SSP_Settings {
 	 * @return  void
 	 */
 	public function add_menu_item() {
-		add_submenu_page( 'edit.php?post_type=podcast' , __( 'Podcast Settings', 'ss-podcasting' ) , __( 'Settings', 'ss-podcasting' ), 'manage_options' , 'podcast_settings' , array( $this , 'settings_page' ) );
+		add_submenu_page( 'edit.php?post_type=podcast' , __( 'Podcast Settings', 'seriously-simple-podcasting' ) , __( 'Settings', 'seriously-simple-podcasting' ), 'manage_options' , 'podcast_settings' , array( $this , 'settings_page' ) );
 	}
 
 	/**
@@ -75,7 +75,7 @@ class SSP_Settings {
 	 * @return array $links Modified links
 	 */
 	public function add_plugin_links( $links ) {
-		$settings_link = '<a href="edit.php?post_type=podcast&page=podcast_settings">' . __( 'Settings', 'ss-podcasting' ) . '</a>';
+		$settings_link = '<a href="edit.php?post_type=podcast&page=podcast_settings">' . __( 'Settings', 'seriously-simple-podcasting' ) . '</a>';
   		array_push( $links, $settings_link );
   		return $links;
 	}
@@ -86,7 +86,7 @@ class SSP_Settings {
 	 */
 	public function enqueue_scripts() {
 		global $pagenow;
-		if ( in_array( $pagenow, array( 'post-new.php', 'post.php' ) ) ) {
+		if ( in_array( $pagenow, array( 'post-new.php', 'post.php' ) ) || ( isset( $_GET['page'] ) && 'podcast_settings' == $_GET['page'] ) ) {
 			wp_enqueue_media();
 		}
 	}
@@ -112,139 +112,139 @@ class SSP_Settings {
 
 		// Set up available category options
 		$category_options = array(
-			'' => __( '-- None --', 'ss-podcasting' ),
-			'Arts' => __( 'Arts', 'ss-podcasting' ),
-			'Business' => __( 'Business', 'ss-podcasting' ),
-			'Comedy' => __( 'Comedy', 'ss-podcasting' ),
-			'Education' => __( 'Education', 'ss-podcasting' ),
-			'Games & Hobbies' => __( 'Games & Hobbies', 'ss-podcasting' ),
-			'Government & Organizations' => __( 'Government & Organizations', 'ss-podcasting' ),
-			'Health' => __( 'Health', 'ss-podcasting' ),
-			'Kids & Family' => __( 'Kids & Family', 'ss-podcasting' ),
-			'Music' => __( 'Music', 'ss-podcasting' ),
-			'News & Politics' => __( 'News & Politics', 'ss-podcasting' ),
-			'Religion & Spirituality' => __( 'Religion & Spirituality', 'ss-podcasting' ),
-			'Science & Medicine' => __( 'Science & Medicine', 'ss-podcasting' ),
-			'Society & Culture' => __( 'Society & Culture', 'ss-podcasting' ),
-			'Sports & Recreation' => __( 'Sports & Recreation', 'ss-podcasting' ),
-			'Technology' => __( 'Technology', 'ss-podcasting' ),
-			'TV & Film' => __( 'TV & Film', 'ss-podcasting' ),
+			'' => __( '-- None --', 'seriously-simple-podcasting' ),
+			'Arts' => __( 'Arts', 'seriously-simple-podcasting' ),
+			'Business' => __( 'Business', 'seriously-simple-podcasting' ),
+			'Comedy' => __( 'Comedy', 'seriously-simple-podcasting' ),
+			'Education' => __( 'Education', 'seriously-simple-podcasting' ),
+			'Games & Hobbies' => __( 'Games & Hobbies', 'seriously-simple-podcasting' ),
+			'Government & Organizations' => __( 'Government & Organizations', 'seriously-simple-podcasting' ),
+			'Health' => __( 'Health', 'seriously-simple-podcasting' ),
+			'Kids & Family' => __( 'Kids & Family', 'seriously-simple-podcasting' ),
+			'Music' => __( 'Music', 'seriously-simple-podcasting' ),
+			'News & Politics' => __( 'News & Politics', 'seriously-simple-podcasting' ),
+			'Religion & Spirituality' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
+			'Science & Medicine' => __( 'Science & Medicine', 'seriously-simple-podcasting' ),
+			'Society & Culture' => __( 'Society & Culture', 'seriously-simple-podcasting' ),
+			'Sports & Recreation' => __( 'Sports & Recreation', 'seriously-simple-podcasting' ),
+			'Technology' => __( 'Technology', 'seriously-simple-podcasting' ),
+			'TV & Film' => __( 'TV & Film', 'seriously-simple-podcasting' ),
 		);
 
 		// Set up available sub-category options
 		$subcategory_options = array(
 
-			'' => __( '-- None --', 'ss-podcasting' ),
+			'' => __( '-- None --', 'seriously-simple-podcasting' ),
 
-			'Design' => array( 'label' => __( 'Design', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
-			'Fashion & Beauty' => array( 'label' => __( 'Fashion & Beauty', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
-			'Food' => array( 'label' => __( 'Food', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
-			'Literature' => array( 'label' => __( 'Literature', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
-			'Performing Arts' => array( 'label' => __( 'Performing Arts', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
-			'Visual Arts' => array( 'label' => __( 'Visual Arts', 'ss-podcasting' ), 'group' => __( 'Arts', 'ss-podcasting' ) ),
+			'Design' => array( 'label' => __( 'Design', 'seriously-simple-podcasting' ), 'group' => __( 'Arts', 'seriously-simple-podcasting' ) ),
+			'Fashion & Beauty' => array( 'label' => __( 'Fashion & Beauty', 'seriously-simple-podcasting' ), 'group' => __( 'Arts', 'seriously-simple-podcasting' ) ),
+			'Food' => array( 'label' => __( 'Food', 'seriously-simple-podcasting' ), 'group' => __( 'Arts', 'seriously-simple-podcasting' ) ),
+			'Literature' => array( 'label' => __( 'Literature', 'seriously-simple-podcasting' ), 'group' => __( 'Arts', 'seriously-simple-podcasting' ) ),
+			'Performing Arts' => array( 'label' => __( 'Performing Arts', 'seriously-simple-podcasting' ), 'group' => __( 'Arts', 'seriously-simple-podcasting' ) ),
+			'Visual Arts' => array( 'label' => __( 'Visual Arts', 'seriously-simple-podcasting' ), 'group' => __( 'Arts', 'seriously-simple-podcasting' ) ),
 
-			'Business News' => array( 'label' => __( 'Business News', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
-			'Careers' => array( 'label' => __( 'Careers', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
-			'Investing' => array( 'label' => __( 'Investing', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
-			'Management & Marketing' => array( 'label' => __( 'Management & Marketing', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
-			'Shopping' => array( 'label' => __( 'Shopping', 'ss-podcasting' ), 'group' => __( 'Business', 'ss-podcasting' ) ),
+			'Business News' => array( 'label' => __( 'Business News', 'seriously-simple-podcasting' ), 'group' => __( 'Business', 'seriously-simple-podcasting' ) ),
+			'Careers' => array( 'label' => __( 'Careers', 'seriously-simple-podcasting' ), 'group' => __( 'Business', 'seriously-simple-podcasting' ) ),
+			'Investing' => array( 'label' => __( 'Investing', 'seriously-simple-podcasting' ), 'group' => __( 'Business', 'seriously-simple-podcasting' ) ),
+			'Management & Marketing' => array( 'label' => __( 'Management & Marketing', 'seriously-simple-podcasting' ), 'group' => __( 'Business', 'seriously-simple-podcasting' ) ),
+			'Shopping' => array( 'label' => __( 'Shopping', 'seriously-simple-podcasting' ), 'group' => __( 'Business', 'seriously-simple-podcasting' ) ),
 
-			'Education' => array( 'label' => __( 'Education', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
-			'Education Technology' => array( 'label' => __( 'Education Technology', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
-			'Higher Education' => array( 'label' => __( 'Higher Education', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
-			'K-12' => array( 'label' => __( 'K-12', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
-			'Language Courses' => array( 'label' => __( 'Language Courses', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
-			'Training' => array( 'label' => __( 'Training', 'ss-podcasting' ), 'group' => __( 'Education', 'ss-podcasting' ) ),
+			'Education' => array( 'label' => __( 'Education', 'seriously-simple-podcasting' ), 'group' => __( 'Education', 'seriously-simple-podcasting' ) ),
+			'Education Technology' => array( 'label' => __( 'Education Technology', 'seriously-simple-podcasting' ), 'group' => __( 'Education', 'seriously-simple-podcasting' ) ),
+			'Higher Education' => array( 'label' => __( 'Higher Education', 'seriously-simple-podcasting' ), 'group' => __( 'Education', 'seriously-simple-podcasting' ) ),
+			'K-12' => array( 'label' => __( 'K-12', 'seriously-simple-podcasting' ), 'group' => __( 'Education', 'seriously-simple-podcasting' ) ),
+			'Language Courses' => array( 'label' => __( 'Language Courses', 'seriously-simple-podcasting' ), 'group' => __( 'Education', 'seriously-simple-podcasting' ) ),
+			'Training' => array( 'label' => __( 'Training', 'seriously-simple-podcasting' ), 'group' => __( 'Education', 'seriously-simple-podcasting' ) ),
 
-			'Automotive' => array( 'label' => __( 'Automotive', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
-			'Aviation' => array( 'label' => __( 'Aviation', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
-			'Hobbies' => array( 'label' => __( 'Hobbies', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
-			'Other Games' => array( 'label' => __( 'Other Games', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
-			'Video Games' => array( 'label' => __( 'Video Games', 'ss-podcasting' ), 'group' => __( 'Games & Hobbies', 'ss-podcasting' ) ),
+			'Automotive' => array( 'label' => __( 'Automotive', 'seriously-simple-podcasting' ), 'group' => __( 'Games & Hobbies', 'seriously-simple-podcasting' ) ),
+			'Aviation' => array( 'label' => __( 'Aviation', 'seriously-simple-podcasting' ), 'group' => __( 'Games & Hobbies', 'seriously-simple-podcasting' ) ),
+			'Hobbies' => array( 'label' => __( 'Hobbies', 'seriously-simple-podcasting' ), 'group' => __( 'Games & Hobbies', 'seriously-simple-podcasting' ) ),
+			'Other Games' => array( 'label' => __( 'Other Games', 'seriously-simple-podcasting' ), 'group' => __( 'Games & Hobbies', 'seriously-simple-podcasting' ) ),
+			'Video Games' => array( 'label' => __( 'Video Games', 'seriously-simple-podcasting' ), 'group' => __( 'Games & Hobbies', 'seriously-simple-podcasting' ) ),
 
-			'Local' => array( 'label' => __( 'Local', 'ss-podcasting' ), 'group' => __( 'Government & Organizations', 'ss-podcasting' ) ),
-			'National' => array( 'label' => __( 'National', 'ss-podcasting' ), 'group' => __( 'Government & Organizations', 'ss-podcasting' ) ),
-			'Non-Profit' => array( 'label' => __( 'Non-Profit', 'ss-podcasting' ), 'group' => __( 'Government & Organizations', 'ss-podcasting' ) ),
-			'Regional' => array( 'label' => __( 'Regional', 'ss-podcasting' ), 'group' => __( 'Government & Organizations', 'ss-podcasting' ) ),
+			'Local' => array( 'label' => __( 'Local', 'seriously-simple-podcasting' ), 'group' => __( 'Government & Organizations', 'seriously-simple-podcasting' ) ),
+			'National' => array( 'label' => __( 'National', 'seriously-simple-podcasting' ), 'group' => __( 'Government & Organizations', 'seriously-simple-podcasting' ) ),
+			'Non-Profit' => array( 'label' => __( 'Non-Profit', 'seriously-simple-podcasting' ), 'group' => __( 'Government & Organizations', 'seriously-simple-podcasting' ) ),
+			'Regional' => array( 'label' => __( 'Regional', 'seriously-simple-podcasting' ), 'group' => __( 'Government & Organizations', 'seriously-simple-podcasting' ) ),
 
-			'Alternative Health' => array( 'label' => __( 'Alternative Health', 'ss-podcasting' ), 'group' => __( 'Health', 'ss-podcasting' ) ),
-			'Fitness & Nutrition' => array( 'label' => __( 'Fitness & Nutrition', 'ss-podcasting' ), 'group' => __( 'Health', 'ss-podcasting' ) ),
-			'Self-Help' => array( 'label' => __( 'Self-Help', 'ss-podcasting' ), 'group' => __( 'Health', 'ss-podcasting' ) ),
-			'Sexuality' => array( 'label' => __( 'Sexuality', 'ss-podcasting' ), 'group' => __( 'Health', 'ss-podcasting' ) ),
+			'Alternative Health' => array( 'label' => __( 'Alternative Health', 'seriously-simple-podcasting' ), 'group' => __( 'Health', 'seriously-simple-podcasting' ) ),
+			'Fitness & Nutrition' => array( 'label' => __( 'Fitness & Nutrition', 'seriously-simple-podcasting' ), 'group' => __( 'Health', 'seriously-simple-podcasting' ) ),
+			'Self-Help' => array( 'label' => __( 'Self-Help', 'seriously-simple-podcasting' ), 'group' => __( 'Health', 'seriously-simple-podcasting' ) ),
+			'Sexuality' => array( 'label' => __( 'Sexuality', 'seriously-simple-podcasting' ), 'group' => __( 'Health', 'seriously-simple-podcasting' ) ),
 
-			'Buddhism' => array( 'label' => __( 'Buddhism', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
-			'Christianity' => array( 'label' => __( 'Christianity', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
-			'Hinduism' => array( 'label' => __( 'Hinduism', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
-			'Islam' => array( 'label' => __( 'Islam', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
-			'Judaism' => array( 'label' => __( 'Judaism', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
-			'Other' => array( 'label' => __( 'Other', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
-			'Spirituality' => array( 'label' => __( 'Spirituality', 'ss-podcasting' ), 'group' => __( 'Religion & Spirituality', 'ss-podcasting' ) ),
+			'Buddhism' => array( 'label' => __( 'Buddhism', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
+			'Christianity' => array( 'label' => __( 'Christianity', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
+			'Hinduism' => array( 'label' => __( 'Hinduism', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
+			'Islam' => array( 'label' => __( 'Islam', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
+			'Judaism' => array( 'label' => __( 'Judaism', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
+			'Other' => array( 'label' => __( 'Other', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
+			'Spirituality' => array( 'label' => __( 'Spirituality', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
 
-			'History' => array( 'label' => __( 'History', 'ss-podcasting' ), 'group' => __( 'Society & Culture', 'ss-podcasting' ) ),
-			'Personal Journals' => array( 'label' => __( 'Personal Journals', 'ss-podcasting' ), 'group' => __( 'Society & Culture', 'ss-podcasting' ) ),
-			'Philosophy' => array( 'label' => __( 'Philosophy', 'ss-podcasting' ), 'group' => __( 'Society & Culture', 'ss-podcasting' ) ),
-			'Places & Travel' => array( 'label' => __( 'Places & Travel', 'ss-podcasting' ), 'group' => __( 'Society & Culture', 'ss-podcasting' ) ),
+			'History' => array( 'label' => __( 'History', 'seriously-simple-podcasting' ), 'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ) ),
+			'Personal Journals' => array( 'label' => __( 'Personal Journals', 'seriously-simple-podcasting' ), 'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ) ),
+			'Philosophy' => array( 'label' => __( 'Philosophy', 'seriously-simple-podcasting' ), 'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ) ),
+			'Places & Travel' => array( 'label' => __( 'Places & Travel', 'seriously-simple-podcasting' ), 'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ) ),
 
-			'Amateur' => array( 'label' => __( 'Amateur', 'ss-podcasting' ), 'group' => __( 'Sports & Recreation', 'ss-podcasting' ) ),
-			'College & High School' => array( 'label' => __( 'College & High School', 'ss-podcasting' ), 'group' => __( 'Sports & Recreation', 'ss-podcasting' ) ),
-			'Outdoor' => array( 'label' => __( 'Outdoor', 'ss-podcasting' ), 'group' => __( 'Sports & Recreation', 'ss-podcasting' ) ),
-			'Professional' => array( 'label' => __( 'Professional', 'ss-podcasting' ), 'group' => __( 'Sports & Recreation', 'ss-podcasting' ) ),
+			'Amateur' => array( 'label' => __( 'Amateur', 'seriously-simple-podcasting' ), 'group' => __( 'Sports & Recreation', 'seriously-simple-podcasting' ) ),
+			'College & High School' => array( 'label' => __( 'College & High School', 'seriously-simple-podcasting' ), 'group' => __( 'Sports & Recreation', 'seriously-simple-podcasting' ) ),
+			'Outdoor' => array( 'label' => __( 'Outdoor', 'seriously-simple-podcasting' ), 'group' => __( 'Sports & Recreation', 'seriously-simple-podcasting' ) ),
+			'Professional' => array( 'label' => __( 'Professional', 'seriously-simple-podcasting' ), 'group' => __( 'Sports & Recreation', 'seriously-simple-podcasting' ) ),
 
-			'Gadgets' => array( 'label' => __( 'Gadgets', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
-			'Tech News' => array( 'label' => __( 'Tech News', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
-			'Podcasting' => array( 'label' => __( 'Podcasting', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
-			'Software How-To' => array( 'label' => __( 'Software How-To', 'ss-podcasting' ), 'group' => __( 'Technology', 'ss-podcasting' ) ),
+			'Gadgets' => array( 'label' => __( 'Gadgets', 'seriously-simple-podcasting' ), 'group' => __( 'Technology', 'seriously-simple-podcasting' ) ),
+			'Tech News' => array( 'label' => __( 'Tech News', 'seriously-simple-podcasting' ), 'group' => __( 'Technology', 'seriously-simple-podcasting' ) ),
+			'Podcasting' => array( 'label' => __( 'Podcasting', 'seriously-simple-podcasting' ), 'group' => __( 'Technology', 'seriously-simple-podcasting' ) ),
+			'Software How-To' => array( 'label' => __( 'Software How-To', 'seriously-simple-podcasting' ), 'group' => __( 'Technology', 'seriously-simple-podcasting' ) ),
 
 		);
 
 		$settings = array();
 
 		$settings['general'] = array(
-			'title'					=> __( 'General', 'ss-podcasting' ),
-			'description'			=> __( '', 'ss-podcasting' ),
+			'title'					=> __( 'General', 'seriously-simple-podcasting' ),
+			'description'			=> __( '', 'seriously-simple-podcasting' ),
 			'fields'				=> array(
 				array(
 					'id' 			=> 'use_post_types',
-					'label'			=> __( 'Podcast post types', 'ss-podcasting' ),
-					'description'	=> __( 'Use this setting to enable podcast functions on any post type - this will add all podcast posts from the specified types to your podcast feed.', 'ss-podcasting' ),
+					'label'			=> __( 'Podcast post types', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Use this setting to enable podcast functions on any post type - this will add all podcast posts from the specified types to your podcast feed.', 'seriously-simple-podcasting' ),
 					'type'			=> 'checkbox_multi',
 					'options'		=> $post_type_options,
 					'default'		=> array(),
 				),
 				array(
 					'id' 			=> 'include_in_main_query',
-					'label'			=> __( 'Include podcast in main blog', 'ss-podcasting' ),
-					'description'	=> __( 'This setting may behave differently in each theme, so test it carefully after activation - it will add the \'podcast\' post type to your site\'s main query so that your podcast episodes appear on your home page along with your blog posts.', 'ss-podcasting' ),
+					'label'			=> __( 'Include podcast in main blog', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'This setting may behave differently in each theme, so test it carefully after activation - it will add the \'podcast\' post type to your site\'s main query so that your podcast episodes appear on your home page along with your blog posts.', 'seriously-simple-podcasting' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
 				),
 				array(
 					'id' 			=> 'player_locations',
-					'label'			=> __( 'Audio player locations', 'ss-podcasting' ),
-					'description'	=> __( 'Select where to show the podcast audio player along with the episode data (download link, duration and file size)', 'ss-podcasting' ),
+					'label'			=> __( 'Audio player locations', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Select where to show the podcast audio player along with the episode data (download link, duration and file size)', 'seriously-simple-podcasting' ),
 					'type'			=> 'checkbox_multi',
-					'options'		=> array( 'content' => __( 'Full content', 'ss-podcasting' ), 'excerpt' => __( 'Excerpt', 'ss-podcasting' ) ),
+					'options'		=> array( 'content' => __( 'Full content', 'seriously-simple-podcasting' ), 'excerpt' => __( 'Excerpt', 'seriously-simple-podcasting' ) ),
 					'default'		=> array(),
 				),
 				array(
 					'id' 			=> 'player_content_location',
-					'label'			=> __( 'Audio player position', 'ss-podcasting' ),
-					'description'	=> __( 'Select whether to display the audio player above or below the full post content.', 'ss-podcasting' ),
+					'label'			=> __( 'Audio player position', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Select whether to display the audio player above or below the full post content.', 'seriously-simple-podcasting' ),
 					'type'			=> 'radio',
-					'options'		=> array( 'above' => __( 'Above content', 'ss-podcasting' ), 'below' => __( 'Below content', 'ss-podcasting' ) ),
+					'options'		=> array( 'above' => __( 'Above content', 'seriously-simple-podcasting' ), 'below' => __( 'Below content', 'seriously-simple-podcasting' ) ),
 					'default'		=> 'above',
 				),
 			),
 		);
 
 		$settings['feed-details'] = array(
-			'title'					=> __( 'Feed details', 'ss-podcasting' ),
-			'description'			=> sprintf( __( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe.%1$sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.%2$s', 'ss-podcasting' ), '<br/><em>', '</em>' ),
+			'title'					=> __( 'Feed details', 'seriously-simple-podcasting' ),
+			'description'			=> sprintf( __( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe.%1$sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.%2$s', 'seriously-simple-podcasting' ), '<br/><em>', '</em>' ),
 			'fields'				=> array(
 				array(
 					'id' 			=> 'data_title',
-					'label'			=> __( 'Title' , 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast title.', 'ss-podcasting' ),
+					'label'			=> __( 'Title' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast title.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
@@ -253,8 +253,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_subtitle',
-					'label'			=> __( 'Subtitle' , 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast subtitle.', 'ss-podcasting' ),
+					'label'			=> __( 'Subtitle' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast subtitle.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'description' ),
 					'placeholder'	=> get_bloginfo( 'description' ),
@@ -263,8 +263,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_author',
-					'label'			=> __( 'Author' , 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast author.', 'ss-podcasting' ),
+					'label'			=> __( 'Author' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast author.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
@@ -273,8 +273,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_category',
-					'label'			=> __( 'Category' , 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast\'s category.', 'ss-podcasting' ),
+					'label'			=> __( 'Category' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s category.', 'seriously-simple-podcasting' ),
 					'type'			=> 'select',
 					'options'		=> $category_options,
 					'default'		=> '',
@@ -282,8 +282,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_subcategory',
-					'label'			=> __( 'Sub-Category' , 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast\'s sub-category (if available) - must be a sub-category of the category selected above.', 'ss-podcasting' ),
+					'label'			=> __( 'Sub-Category' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s sub-category (if available) - must be a sub-category of the category selected above.', 'seriously-simple-podcasting' ),
 					'type'			=> 'select',
 					'options'		=> $subcategory_options,
 					'default'		=> '',
@@ -291,8 +291,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_description',
-					'label'			=> __( 'Description/Summary' , 'ss-podcasting' ),
-					'description'	=> __( 'A description/summary of your podcast - no HTML allowed.', 'ss-podcasting' ),
+					'label'			=> __( 'Description/Summary' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'A description/summary of your podcast - no HTML allowed.', 'seriously-simple-podcasting' ),
 					'type'			=> 'textarea',
 					'default'		=> get_bloginfo( 'description' ),
 					'placeholder'	=> get_bloginfo( 'description' ),
@@ -301,8 +301,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_image',
-					'label'			=> __( 'Cover Image' , 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast cover image - must have a minimum size of 1400x1400 px.', 'ss-podcasting' ),
+					'label'			=> __( 'Cover Image' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast cover image - must have a minimum size of 1400x1400 px.', 'seriously-simple-podcasting' ),
 					'type'			=> 'image',
 					'default'		=> '',
 					'placeholder'	=> '',
@@ -310,8 +310,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_owner_name',
-					'label'			=> __( 'Owner name' , 'ss-podcasting' ),
-					'description'	=> __( 'Podcast owner\'s name.', 'ss-podcasting' ),
+					'label'			=> __( 'Owner name' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Podcast owner\'s name.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'name' ),
 					'placeholder'	=> get_bloginfo( 'name' ),
@@ -320,8 +320,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_owner_email',
-					'label'			=> __( 'Owner email address' , 'ss-podcasting' ),
-					'description'	=> __( 'Podcast owner\'s email address.', 'ss-podcasting' ),
+					'label'			=> __( 'Owner email address' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Podcast owner\'s email address.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'admin_email' ),
 					'placeholder'	=> get_bloginfo( 'admin_email' ),
@@ -330,8 +330,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_language',
-					'label'			=> __( 'Language' , 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Your podcast\'s language in %1$sISO-639-1 format%2$s.', 'ss-podcasting' ), '<a href="' . esc_url( 'http://www.loc.gov/standards/iso639-2/php/code_list.php' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+					'label'			=> __( 'Language' , 'seriously-simple-podcasting' ),
+					'description'	=> sprintf( __( 'Your podcast\'s language in %1$sISO-639-1 format%2$s.', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'http://www.loc.gov/standards/iso639-2/php/code_list.php' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 					'type'			=> 'text',
 					'default'		=> get_bloginfo( 'language' ),
 					'placeholder'	=> get_bloginfo( 'language' ),
@@ -340,8 +340,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_copyright',
-					'label'			=> __( 'Copyright' , 'ss-podcasting' ),
-					'description'	=> __( 'Copyright line for your podcast.', 'ss-podcasting' ),
+					'label'			=> __( 'Copyright' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Copyright line for your podcast.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
 					'placeholder'	=> '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
@@ -350,27 +350,27 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'explicit',
-					'label'			=> __( 'Explicit', 'ss-podcasting' ),
-					'description'	=> __( 'Mark if your podcast is explicit or not.', 'ss-podcasting' ),
+					'label'			=> __( 'Explicit', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Mark if your podcast is explicit or not.', 'seriously-simple-podcasting' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'redirect_feed',
-					'label'			=> __( 'Redirect this feed to new URL', 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).', 'ss-podcasting' ) , '<br/>' ),
+					'label'			=> __( 'Redirect this feed to new URL', 'seriously-simple-podcasting' ),
+					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).', 'seriously-simple-podcasting' ) , '<br/>' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'new_feed_url',
-					'label'			=> __( 'New podcast feed URL', 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast feed\'s new URL.', 'ss-podcasting' ),
+					'label'			=> __( 'New podcast feed URL', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast feed\'s new URL.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '',
-					'placeholder'	=> __( 'New feed URL', 'ss-podcasting' ),
+					'placeholder'	=> __( 'New feed URL', 'seriously-simple-podcasting' ),
 					'callback'		=> 'esc_url_raw',
 					'class'			=> 'regular-text',
 				),
@@ -378,44 +378,44 @@ class SSP_Settings {
 		);
 
 		$settings['security'] = array(
-			'title'					=> __( 'Security', 'ss-podcasting' ),
-			'description'			=> __( 'Change these settings to ensure that your podcast feed remains private. This will block feed readers (including iTunes) from accessing your feed.', 'ss-podcasting' ),
+			'title'					=> __( 'Security', 'seriously-simple-podcasting' ),
+			'description'			=> __( 'Change these settings to ensure that your podcast feed remains private. This will block feed readers (including iTunes) from accessing your feed.', 'seriously-simple-podcasting' ),
 			'fields'				=> array(
 				array(
 					'id' 			=> 'protect',
-					'label'			=> __( 'Password protect your podcast feed', 'ss-podcasting' ),
-					'description'	=> __( 'Mark if you would like to password protect your podcast feed - you can set the username and password below. This will block all feed readers (including iTunes) from accessing your feed.', 'ss-podcasting' ),
+					'label'			=> __( 'Password protect your podcast feed', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Mark if you would like to password protect your podcast feed - you can set the username and password below. This will block all feed readers (including iTunes) from accessing your feed.', 'seriously-simple-podcasting' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'protection_username',
-					'label'			=> __( 'Username' , 'ss-podcasting' ),
-					'description'	=> __( 'Username for your podcast feed.', 'ss-podcasting' ),
+					'label'			=> __( 'Username' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Username for your podcast feed.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '',
-					'placeholder'	=> __( 'Feed username', 'ss-podcasting' ),
+					'placeholder'	=> __( 'Feed username', 'seriously-simple-podcasting' ),
 					'class'			=> 'regular-text',
 					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'protection_password',
-					'label'			=> __( 'Password' , 'ss-podcasting' ),
-					'description'	=> __( 'Password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again.', 'ss-podcasting' ),
+					'label'			=> __( 'Password' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text_secret',
 					'default'		=> '',
-					'placeholder'	=> __( 'Feed password', 'ss-podcasting' ),
+					'placeholder'	=> __( 'Feed password', 'seriously-simple-podcasting' ),
 					'callback'		=> array( $this, 'encode_password' ),
 					'class'			=> 'regular-text',
 				),
 				array(
 					'id' 			=> 'protection_no_access_message',
-					'label'			=> __( 'No access message' , 'ss-podcasting' ),
-					'description'	=> __( 'This message will be displayed to people who are not allowed access to your podcast feed. Limited HTML allowed.', 'ss-podcasting' ),
+					'label'			=> __( 'No access message' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'This message will be displayed to people who are not allowed access to your podcast feed. Limited HTML allowed.', 'seriously-simple-podcasting' ),
 					'type'			=> 'textarea',
-					'default'		=> __( 'You are not permitted to view this podcast feed.', 'ss-podcasting' ),
-					'placeholder'	=> __( 'Message displayed to users who do not have access to the podcast feed', 'ss-podcasting' ),
+					'default'		=> __( 'You are not permitted to view this podcast feed.', 'seriously-simple-podcasting' ),
+					'placeholder'	=> __( 'Message displayed to users who do not have access to the podcast feed', 'seriously-simple-podcasting' ),
 					'callback'		=> array( $this, 'validate_message' ),
 					'class'			=> 'large-text',
 				),
@@ -423,24 +423,24 @@ class SSP_Settings {
 		);
 
 		$settings['redirection'] = array(
-			'title'					=> __( 'Redirection', 'ss-podcasting' ),
-			'description'			=> __( 'Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active.', 'ss-podcasting' ),
+			'title'					=> __( 'Redirection', 'seriously-simple-podcasting' ),
+			'description'			=> __( 'Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active.', 'seriously-simple-podcasting' ),
 			'fields'				=> array(
 				array(
 					'id' 			=> 'redirect_feed',
-					'label'			=> __( 'Redirect podcast feed to new URL', 'ss-podcasting' ),
-					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.', 'ss-podcasting' ) , '<br/>' ),
+					'label'			=> __( 'Redirect podcast feed to new URL', 'seriously-simple-podcasting' ),
+					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.', 'seriously-simple-podcasting' ) , '<br/>' ),
 					'type'			=> 'checkbox',
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
 					'id' 			=> 'new_feed_url',
-					'label'			=> __( 'New podcast feed URL', 'ss-podcasting' ),
-					'description'	=> __( 'Your podcast feed\'s new URL.', 'ss-podcasting' ),
+					'label'			=> __( 'New podcast feed URL', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast feed\'s new URL.', 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '',
-					'placeholder'	=> __( 'New feed URL', 'ss-podcasting' ),
+					'placeholder'	=> __( 'New feed URL', 'seriously-simple-podcasting' ),
 					'callback'		=> 'esc_url_raw',
 					'class'			=> 'regular-text',
 				),
@@ -448,36 +448,36 @@ class SSP_Settings {
 		);
 
 		$settings['publishing'] = array(
-			'title'					=> __( 'Publishing' , 'ss-podcasting' ),
-			'description'			=> __( 'Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes).' , 'ss-podcasting' ),
+			'title'					=> __( 'Publishing' , 'seriously-simple-podcasting' ),
+			'description'			=> __( 'Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes).' , 'seriously-simple-podcasting' ),
 			'fields'				=> array(
 				array(
 					'id' 			=> 'feed_url',
-					'label'			=> __( 'External feed URL', 'ss-podcasting' ),
-					'description'	=> __( 'If you are syndicating your podcast using a third-party service (like Feedburner) you can insert the URL here, otherwise this must be left blank.' , 'ss-podcasting' ),
+					'label'			=> __( 'External feed URL', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'If you are syndicating your podcast using a third-party service (like Feedburner) you can insert the URL here, otherwise this must be left blank.' , 'seriously-simple-podcasting' ),
 					'type'			=> 'text',
 					'default'		=> '',
-					'placeholder'	=> __( 'External feed URL', 'ss-podcasting' ),
+					'placeholder'	=> __( 'External feed URL', 'seriously-simple-podcasting' ),
 					'callback'		=> 'esc_url_raw',
 					'class'			=> 'regular-text',
 				),
 				array(
 					'id' 			=> 'feed_link',
-					'label'			=> __( 'Complete feed', 'ss-podcasting' ),
+					'label'			=> __( 'Complete feed', 'seriously-simple-podcasting' ),
 					'description'	=> '',
 					'type'			=> 'feed_link',
 					'callback'		=> 'esc_url_raw',
 				),
 				array(
 					'id' 			=> 'feed_link_series',
-					'label'			=> __( 'Feed for a specific series', 'ss-podcasting' ),
+					'label'			=> __( 'Feed for a specific series', 'seriously-simple-podcasting' ),
 					'description'	=> '',
 					'type'			=> 'feed_link_series',
 					'callback'		=> 'esc_url_raw',
 				),
 				array(
 					'id' 			=> 'podcast_url',
-					'label'			=> __( 'Podcast page', 'ss-podcasting' ),
+					'label'			=> __( 'Podcast page', 'seriously-simple-podcasting' ),
 					'description'	=> '',
 					'type'			=> 'podcast_url',
 					'callback'		=> 'esc_url_raw',
@@ -592,7 +592,7 @@ class SSP_Settings {
 			}
 
 			if( $feed_url ) {
-				$html .= '<p><a class="view-feed-link" href="' . esc_url( $feed_url ) . '" target="_blank"><span class="dashicons dashicons-rss"></span>' . __( 'View feed', 'ss-podcasting' ) . '</a></p>' . "\n";
+				$html .= '<p><a class="view-feed-link" href="' . esc_url( $feed_url ) . '" target="_blank"><span class="dashicons dashicons-rss"></span>' . __( 'View feed', 'seriously-simple-podcasting' ) . '</a></p>' . "\n";
 			}
 
 		}
@@ -662,7 +662,7 @@ class SSP_Settings {
 			case 'text_secret':
 				$placeholder = $field['placeholder'];
 				if ( $data ) {
-					$placeholder = __( 'Password stored securely', 'ss-podcasting' );
+					$placeholder = __( 'Password stored securely', 'seriously-simple-podcasting' );
 				}
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" value="" class="' . $class . '"/>' . "\n";
 			break;
@@ -735,8 +735,8 @@ class SSP_Settings {
 
 			case 'image':
 				$html .= '<img id="' . esc_attr( $default_option_name ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;" /><br/>' . "\n";
-				$html .= '<input id="' . esc_attr( $default_option_name ) . '_button" type="button" class="button" value="'. __( 'Upload new image' , 'ss-podcasting' ) . '" />' . "\n";
-				$html .= '<input id="' . esc_attr( $default_option_name ) . '_delete" type="button" class="button" value="'. __( 'Remove image' , 'ss-podcasting' ) . '" />' . "\n";
+				$html .= '<input id="' . esc_attr( $default_option_name ) . '_button" type="button" class="button" value="'. __( 'Upload new image' , 'seriously-simple-podcasting' ) . '" />' . "\n";
+				$html .= '<input id="' . esc_attr( $default_option_name ) . '_delete" type="button" class="button" value="'. __( 'Remove image' , 'seriously-simple-podcasting' ) . '" />' . "\n";
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '" type="hidden" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
 			break;
 
@@ -768,7 +768,7 @@ class SSP_Settings {
 
 			case 'podcast_url';
 
-				$slug = apply_filters( 'ssp_archive_slug', __( 'podcast' , 'ss-podcasting' ) );
+				$slug = apply_filters( 'ssp_archive_slug', __( 'podcast' , 'seriously-simple-podcasting' ) );
 				$podcast_url = $this->home_url . $slug;
 
 				$html .= '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';
@@ -876,7 +876,7 @@ class SSP_Settings {
 
 		// Build page HTML
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";
-			$html .= '<h2>' . __( 'Podcast Settings' , 'ss-podcasting' ) . '</h2>' . "\n";
+			$html .= '<h2>' . __( 'Podcast Settings' , 'seriously-simple-podcasting' ) . '</h2>' . "\n";
 
 			$tab = 'general';
 			if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {
@@ -924,7 +924,7 @@ class SSP_Settings {
 
 			if ( isset( $_GET['settings-updated'] ) ) {
 				$html .= '<br/><div class="updated notice notice-success is-dismissible">
-					        <p>' . sprintf( __( '%1$s settings updated.', 'ss-podcasting' ), '<b>' . str_replace( '-', ' ', ucfirst( $tab ) ) . '</b>' ) . '</p>
+					        <p>' . sprintf( __( '%1$s settings updated.', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucfirst( $tab ) ) . '</b>' ) . '</p>
 					    </div>';
 			}
 
@@ -945,10 +945,10 @@ class SSP_Settings {
 					}
 
 					$html .= '<div class="feed-series-list-container">' . "\n";
-						$html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'ss-podcasting' ) . '"></span>' . "\n";
+						$html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'seriously-simple-podcasting' ) . '"></span>' . "\n";
 
 						$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
-							$html .= '<li><a href="' . add_query_arg( array( 'feed-series' => 'default', 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'ss-podcasting' ) . '</a></li>';
+							$html .= '<li><a href="' . add_query_arg( array( 'feed-series' => 'default', 'settings-updated' => false ) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'seriously-simple-podcasting' ) . '</a></li>';
 
 							foreach ( $series as $s ) {
 
@@ -986,7 +986,7 @@ class SSP_Settings {
 				// Submit button
 				$html .= '<p class="submit">' . "\n";
 					$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-					$html .= '<input name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings' , 'ss-podcasting' ) ) . '" />' . "\n";
+					$html .= '<input name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings' , 'seriously-simple-podcasting' ) ) . '" />' . "\n";
 				$html .= '</p>' . "\n";
 
 			$html .= '</form>' . "\n";

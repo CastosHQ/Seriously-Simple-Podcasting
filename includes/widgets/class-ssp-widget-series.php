@@ -26,9 +26,9 @@ class SSP_Widget_Series extends WP_Widget {
 	public function __construct() {
 		/* Widget variable settings. */
 		$this->widget_cssclass = 'widget_podcast_series';
-		$this->widget_description = __( 'Display a list of episodes from a single series.', 'ss-podcasting' );
+		$this->widget_description = __( 'Display a list of episodes from a single series.', 'seriously-simple-podcasting' );
 		$this->widget_idbase = 'ss_podcast';
-		$this->widget_title = __( 'Podcast: Series', 'ss-podcasting' );
+		$this->widget_title = __( 'Podcast: Series', 'seriously-simple-podcasting' );
 
 		/* Widget settings. */
 		$widget_ops = array( 'classname' => $this->widget_cssclass, 'description' => $this->widget_description );
@@ -155,10 +155,10 @@ class SSP_Widget_Series extends WP_Widget {
 		// Get all podcast series
 		$series = get_terms( 'series' );
 ?>
-		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'ss-podcasting' ); ?></label>
-		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" placeholder="<?php _e( 'Use series title', 'ss-podcasting' ); ?>" value="<?php echo $title; ?>" /></p>
+		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'seriously-simple-podcasting' ); ?></label>
+		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" placeholder="<?php _e( 'Use series title', 'seriously-simple-podcasting' ); ?>" value="<?php echo $title; ?>" /></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'series_id' ); ?>"><?php _e( 'Series:', 'ss-podcasting' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'series_id' ); ?>"><?php _e( 'Series:', 'seriously-simple-podcasting' ); ?></label>
 		<select id="<?php echo $this->get_field_id( 'series_id' ); ?>" name="<?php echo $this->get_field_name( 'series_id' ); ?>">
 			<?php
 			foreach ( $series as $s ) {
@@ -169,13 +169,13 @@ class SSP_Widget_Series extends WP_Widget {
 		</p>
 
 		<p><input class="checkbox" type="checkbox" <?php checked( $show_title ); ?> id="<?php echo $this->get_field_id( 'show_title' ); ?>" name="<?php echo $this->get_field_name( 'show_title' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'show_title' ); ?>"><?php _e( 'Display series title inside widget?', 'ss-podcasting' ); ?></label></p>
+		<label for="<?php echo $this->get_field_id( 'show_title' ); ?>"><?php _e( 'Display series title inside widget?', 'seriously-simple-podcasting' ); ?></label></p>
 
 		<p><input class="checkbox" type="checkbox" <?php checked( $show_desc ); ?> id="<?php echo $this->get_field_id( 'show_desc' ); ?>" name="<?php echo $this->get_field_name( 'show_desc' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'show_desc' ); ?>"><?php _e( 'Display series description?', 'ss-podcasting' ); ?></label></p>
+		<label for="<?php echo $this->get_field_id( 'show_desc' ); ?>"><?php _e( 'Display series description?', 'seriously-simple-podcasting' ); ?></label></p>
 
 		<p><input class="checkbox" type="checkbox" <?php checked( $show_date ); ?> id="<?php echo $this->get_field_id( 'show_date' ); ?>" name="<?php echo $this->get_field_name( 'show_date' ); ?>" />
-		<label for="<?php echo $this->get_field_id( 'show_date' ); ?>"><?php _e( 'Display episode date?', 'ss-podcasting' ); ?></label></p>
+		<label for="<?php echo $this->get_field_id( 'show_date' ); ?>"><?php _e( 'Display episode date?', 'seriously-simple-podcasting' ); ?></label></p>
 <?php
 	}
 } // End Class

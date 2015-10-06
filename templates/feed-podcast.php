@@ -25,7 +25,7 @@ if ( $protection && $protection == 'on' ) {
 	$give_access = false;
 
 	$message_option = get_option('ss_podcasting_protection_no_access_message');
-	$message = __( 'You are not permitted to view this podcast feed.' , 'ss-podcasting' );
+	$message = __( 'You are not permitted to view this podcast feed.' , 'seriously-simple-podcasting' );
 	if ( $message_option && strlen( $message_option ) > 0 && $message_option != '' ) {
 		$message = $message_option;
 	}
@@ -344,7 +344,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 
 			// iTunes summary does not allow any HTML and must be shorter than 4000 characters
 			$itunes_summary = strip_tags( get_the_content() );
-			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( __( 'and', 'ss-podcasting' ), '', '', '', '', '' ), $itunes_summary );
+			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( __( 'and', 'seriously-simple-podcasting' ), '', '', '', '', '' ), $itunes_summary );
 			$itunes_summary = mb_substr( $itunes_summary, 0, 3949 );
 
 			// iTunes short description does not allow any HTML and must be shorter than 4000 characters

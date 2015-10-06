@@ -135,9 +135,9 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					}
 
 					$meta = '';
-					if ( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'ss-podcasting' ) . '</a>'; }
-					if ( $duration && strlen( $duration ) > 0 ) { if ( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'ss-podcasting' ) . ': ' . $duration; }
-					if ( $size && strlen( $size ) > 0 ) { if ( ( $duration && strlen( $duration ) > 0 ) || ( $link && strlen( $link ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'ss-podcasting' ) . ': ' . $size; }
+					if ( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>'; }
+					if ( $duration && strlen( $duration ) > 0 ) { if ( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $duration; }
+					if ( $size && strlen( $size ) > 0 ) { if ( ( $duration && strlen( $duration ) > 0 ) || ( $link && strlen( $link ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'seriously-simple-podcasting' ) . ': ' . $size; }
 
 					$template = str_replace( '%%META%%', $meta, $template );
 
@@ -165,7 +165,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$template = str_replace( '%%CLASS%%', $class, $template );
 					$template = str_replace( '%%TITLE%%', $title, $template );
 
-					$meta = $series->count . __( ' episodes' , 'ss-podcasting' );
+					$meta = $series->count . __( ' episodes' , 'seriously-simple-podcasting' );
 					$template = str_replace( '%%META%%' , $meta , $template );
 
 					$html .= $template;

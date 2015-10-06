@@ -348,7 +348,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			$itunes_summary = mb_substr( $itunes_summary, 0, 3949 );
 
 			// iTunes short description does not allow any HTML and must be shorter than 4000 characters
-			$itunes_excerpt = strip_tags( get_the_excerpt() );
+			$itunes_excerpt = strip_tags( strip_shortcodes( get_the_excerpt() ) );
 			$itunes_excerpt = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_excerpt );
 			$itunes_excerpt = mb_substr( $itunes_excerpt, 0, 224 );
 

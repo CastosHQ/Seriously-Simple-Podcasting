@@ -50,6 +50,10 @@ class SSP_Frontend {
 			add_filter( 'the_excerpt', array( $this, 'excerpt_meta_data' ), 10, 1 );
 		}
 
+		if ( in_array( 'excerpt_embed', (array) $locations ) ) {
+			add_filter( 'the_excerpt_embed', array( $this, 'excerpt_meta_data' ), 10, 1 );
+		}
+
 		// Add SSP label and version to generator tags
 		add_action( 'get_the_generator_html', array( $this, 'generator_tag' ), 10, 2 );
 		add_action( 'get_the_generator_xhtml', array( $this, 'generator_tag' ), 10, 2 );

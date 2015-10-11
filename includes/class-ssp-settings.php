@@ -78,7 +78,7 @@ class SSP_Settings {
 	public function add_caps() {
 
 		// Roles you'd like to have administer the podcast settings page.
-		// Admin, Producer, Top Editor, Editor
+		// Admin and Editor, as default.
 		$roles = apply_filters( 'ssp_manage_podcast', array( 'administrator', 'editor' ) );
 
 		// Loop through each role and assign capabilities

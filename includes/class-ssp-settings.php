@@ -55,6 +55,9 @@ class SSP_Settings {
 		// Mark date on which feed redirection was activated
 		add_action( 'update_option', array( $this, 'mark_feed_redirect_date' ) , 10 , 3 );
 
+		// New caps for editors and above.
+		add_action( 'admin_init', array( $this, 'add_caps' ), 1 );
+
 	}
 
 	public function load_settings() {
@@ -66,7 +69,45 @@ class SSP_Settings {
 	 * @return  void
 	 */
 	public function add_menu_item() {
-		add_submenu_page( 'edit.php?post_type=podcast' , __( 'Podcast Settings', 'seriously-simple-podcasting' ) , __( 'Settings', 'seriously-simple-podcasting' ), 'manage_options' , 'podcast_settings' , array( $this , 'settings_page' ) );
+		add_submenu_page( 'edit.php?post_type=podcast' , __( 'Podcast Settings', 'seriously-simple-podcasting' ) , __( 'Settings', 'seriously-simple-podcasting' ), 'manage_podcast' , 'podcast_settings' , array( $this , 'settings_page' ) );
+	}
+
+	/**
+	 * Add cabilities to edit podcast settings to admins, and editors.
+	 */
+	public function add_caps() {
+
+		// Roles you'd like to have administer the podcast settings page.
+		// Admin and Editor, as default.
+		$roles = apply_filters( 'ssp_manage_podcast', array( 'administrator', 'editor' ) );
+
+		// Loop through each role and assign capabilities
+		foreach( $roles as $the_role ) {
+
+			$role = get_role( $the_role );
+			$caps = array(
+				'manage_podcast',
+			);
+
+			// Add the caps.
+			foreach ( $caps as $cap ) {
+				$this->maybe_add_cap( $role, $cap );
+			}
+		}
+	}
+
+	/**
+	 * Check to see if the given role has a cap, and add if it doesn't exist.
+	 *
+	 * @param  object $role User Cap object, part of WP_User.
+	 * @param  string $cap  Cap to test against.
+	 * @return void
+	 */
+	public function maybe_add_cap( $role, $cap ) {
+		// Update the roles, if needed.
+		if ( ! $role->has_cap( $cap ) ) {
+			$role->add_cap( $cap );
+		}
 	}
 
 	/**
@@ -564,7 +605,7 @@ class SSP_Settings {
 		}
 	}
 
-	public function settings_section ( $section ) {
+	public function settings_section( $section ) {
 		$html = '<p>' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
 
 		if( 'feed-details' == $section['id'] ) {

@@ -223,7 +223,7 @@ class SSP_Settings {
 					'label'			=> __( 'Audio player locations', 'seriously-simple-podcasting' ),
 					'description'	=> __( 'Select where to show the podcast audio player along with the episode data (download link, duration and file size)', 'seriously-simple-podcasting' ),
 					'type'			=> 'checkbox_multi',
-					'options'		=> array( 'content' => __( 'Full content', 'seriously-simple-podcasting' ), 'excerpt' => __( 'Excerpt', 'seriously-simple-podcasting' ) ),
+					'options'		=> array( 'content' => __( 'Full content', 'seriously-simple-podcasting' ), 'excerpt' => __( 'Excerpt', 'seriously-simple-podcasting' ),  'excerpt_embed' => __( 'oEmbed Excerpt', 'seriously-simple-podcasting' ) ),
 					'default'		=> array(),
 				),
 				array(

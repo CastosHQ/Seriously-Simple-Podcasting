@@ -343,14 +343,10 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 
 			// iTunes summary does not allow any HTML and must be shorter than 4000 characters
-			$itunes_summary = strip_tags( get_the_content() );
-			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`' ), array( __( 'and', 'seriously-simple-podcasting' ), '', '', '', '', '' ), $itunes_summary );
+			$itunes_summary = strip_tags( strip_shortcodes( get_the_excerpt() ) );
+			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_summary );
 			$itunes_summary = mb_substr( $itunes_summary, 0, 3949 );
-
-			// iTunes short description does not allow any HTML and must be shorter than 4000 characters
-			$itunes_excerpt = strip_tags( strip_shortcodes( get_the_excerpt() ) );
-			$itunes_excerpt = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_excerpt );
-			$itunes_excerpt = mb_substr( $itunes_excerpt, 0, 224 );
+			$itunes_excerpt = mb_substr( $itunes_summary, 0, 224 );
 
 	?>
 	<item>

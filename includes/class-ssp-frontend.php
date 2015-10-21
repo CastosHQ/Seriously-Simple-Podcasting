@@ -493,27 +493,94 @@ class SSP_Frontend {
 	}
 
 	/**
+	 * Get the ID of an attachment from its image URL.
+	 *
+	 * @param   string      $url    The path to an image.
+	 * @return  int|bool            ID of the attachment or 0 on failure.
+	 */
+	public function get_attachment_id_from_url( $url = '' ) {
+
+		// Do we have anything in the cache for this URL?
+		$attachment_id = wp_cache_get( $url, 'attachment_id' );
+
+		if ( $attachment_id === false ) {
+
+			// If there is no url, return.
+			if ( '' === $url ) {
+				return false;
+			}
+
+			global $wpdb;
+			$attachment_id = 0;
+
+			// Function introduced in 4.0
+			if ( function_exists( 'attachment_url_to_postid' ) ) {
+				$attachment_id = absint( attachment_url_to_postid( $url ) );
+				var_dump( $attachment_id );
+				if ( 0 !== $attachment_id ) {
+					wp_cache_add( $url, $attachment_id, 'attachment_id' );
+					return $attachment_id;
+				}
+			}
+
+			// First try this
+			if ( preg_match( '#\.[a-zA-Z0-9]+$#', $url ) ) {
+				$sql = $wpdb->prepare(
+					"SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND guid = %s",
+					esc_url_raw( $url )
+				);
+				$attachment_id = absint( $wpdb->get_var( $sql ) );
+				if ( 0 !== $attachment_id ) {
+					wp_cache_add( $url, $attachment_id, 'attachment_id' );
+					return $attachment_id;
+				}
+			}
+
+			// Then try this
+			$upload_dir_paths = wp_upload_dir();
+			if ( false !== strpos( $url, $upload_dir_paths['baseurl'] ) ) {
+				// If this is the URL of an auto-generated thumbnail, get the URL of the original image
+				$url = preg_replace( '/-\d+x\d+(?=\.(m4a|mp3|mov|mp4)$)/i', '', $url );
+				// Remove the upload path base directory from the attachment URL
+				$url = str_replace( $upload_dir_paths['baseurl'] . '/', '', $url );
+				// Finally, run a custom database query to get the attachment ID from the modified attachment URL
+				$sql = $wpdb->prepare(
+					"SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'",
+					esc_url_raw( $url )
+				);
+				$attachment_id = absint( $wpdb->get_var( $sql ) );
+			}
+
+		}
+
+		if ( $attachment_id ) {
+			wp_cache_add( $url, $attachment_id, 'attachment_id' );
+		}
+		return $attachment_id;
+	}
+
+	/**
 	 * Get MIME type of attachment file
-	 * @param  string $attachment Attachment URL
-	 * @return mixed              MIME type on success, false on failure
+	 * @param  string $attachment  URL of resource
+	 * @return mixed               MIME type on success, false on failure
 	 */
 	public function get_attachment_mimetype( $attachment = '' ) {
 
 		if ( $attachment ) {
-		    global $wpdb;
+			// Do we have anything in the cache for this?
+			$mime = wp_cache_get( $attachment, 'mime-type' );
+			if ( $mime === false ) {
 
-		    $sql = "SELECT ID FROM $wpdb->posts WHERE guid = %s";
-		    $prepped = $wpdb->prepare( $sql, esc_url_raw( $attachment ) );
-		    $attachment = $wpdb->get_col( $prepped );
+				// Get the ID
+				$id   = $this->get_attachment_id_from_url( $attachment );
 
-		    if ( isset( $attachment[0] ) ) {
-			    $id = $attachment[0];
-
-			    $mime_type = get_post_mime_type( $id );
-
-			    return apply_filters( 'ssp_attachment_mimetype', $mime_type, $id );
+				// Get the MIME type
+				$mime = get_post_mime_type( $id );
+				// Set the cache
+				wp_cache_add( $attachment, $mime, 'mime-type' );
 			}
 
+		    return $mime;
 		}
 
 		return false;

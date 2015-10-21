@@ -516,7 +516,6 @@ class SSP_Frontend {
 			// Function introduced in 4.0
 			if ( function_exists( 'attachment_url_to_postid' ) ) {
 				$attachment_id = absint( attachment_url_to_postid( $url ) );
-				var_dump( $attachment_id );
 				if ( 0 !== $attachment_id ) {
 					wp_cache_add( $url, $attachment_id, 'attachment_id' );
 					return $attachment_id;

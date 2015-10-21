@@ -544,10 +544,7 @@ class SSP_Frontend {
 				// Remove the upload path base directory from the attachment URL
 				$url = str_replace( $upload_dir_paths['baseurl'] . '/', '', $url );
 				// Finally, run a custom database query to get the attachment ID from the modified attachment URL
-				$sql = $wpdb->prepare(
-					"SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'",
-					esc_url_raw( $url )
-				);
+				$sql = $wpdb->prepare( "SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'", $url );
 				$attachment_id = absint( $wpdb->get_var( $sql ) );
 			}
 

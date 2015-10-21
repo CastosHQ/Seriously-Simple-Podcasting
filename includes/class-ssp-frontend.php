@@ -505,15 +505,19 @@ class SSP_Frontend {
 
 		if ( $attachment_id === false ) {
 
+			// Globalize
+			global $wpdb;
+
 			// If there is no url, return.
 			if ( '' === $url ) {
 				return false;
 			}
 
-			global $wpdb;
+			// Set the default
 			$attachment_id = 0;
 
-			// Function introduced in 4.0
+
+			// Function introduced in 4.0, let's try this first.
 			if ( function_exists( 'attachment_url_to_postid' ) ) {
 				$attachment_id = absint( attachment_url_to_postid( $url ) );
 				if ( 0 !== $attachment_id ) {
@@ -522,7 +526,7 @@ class SSP_Frontend {
 				}
 			}
 
-			// First try this
+			// Then this.
 			if ( preg_match( '#\.[a-zA-Z0-9]+$#', $url ) ) {
 				$sql = $wpdb->prepare(
 					"SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND guid = %s",
@@ -535,7 +539,7 @@ class SSP_Frontend {
 				}
 			}
 
-			// Then try this
+			// And then try this
 			$upload_dir_paths = wp_upload_dir();
 			if ( false !== strpos( $url, $upload_dir_paths['baseurl'] ) ) {
 				// If this is the URL of an auto-generated thumbnail, get the URL of the original image

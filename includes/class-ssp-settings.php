@@ -315,8 +315,9 @@ class SSP_Settings {
 				array(
 					'id' 			=> 'data_category',
 					'label'			=> __( 'Category' , 'seriously-simple-podcasting' ),
-					'description'	=> __( 'Your podcast\'s category.', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s category. Up to three can be selected.', 'seriously-simple-podcasting' ),
 					'type'			=> 'select',
+					'multiple'      => true,
 					'options'		=> $category_options,
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
@@ -326,6 +327,7 @@ class SSP_Settings {
 					'label'			=> __( 'Sub-Category' , 'seriously-simple-podcasting' ),
 					'description'	=> __( 'Your podcast\'s sub-category (if available) - must be a sub-category of the category selected above.', 'seriously-simple-podcasting' ),
 					'type'			=> 'select',
+					'multiple'      => true,
 					'options'		=> $subcategory_options,
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
@@ -742,7 +744,9 @@ class SSP_Settings {
 
 			case 'select':
 
-				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
+				// Is this a multi select?
+				$multiple = ( ! empty( $field['multiple'] ) && $field['multiple'] ) ? 'multiple' : '';
+				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '"' . $multiple . '>';
 				$prev_group = '';
 				foreach ( $field['options'] as $k => $v ) {
 

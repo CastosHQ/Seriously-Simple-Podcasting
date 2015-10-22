@@ -24,12 +24,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your audio files on the same site or any other server
 - Complete user and developer [documentation](http://www.seriouslysimplepodcasting.com/)
-- Full i18n support (comes with English and Russian translations)
-
-**Some examples of the plugin in action**
-
-- [Southern Cross Church](http://www.southerncrosschurch.org/sermons/)
-- [WP Cape Town](http://www.wpcapetown.co.za/podcast/)
+- Full i18n support (comes with English, German and Russian translations)
 
 **Where to find help**
 
@@ -38,6 +33,10 @@ Seriously Simple Podcasting comes with complete user and developer [documentatio
 **How to contribute**
 
 If you want to contribute to Seriously Simple Podcasting, you can [fork the GitHub repository](https://github.com/hlashbrooke/Seriously-Simple-Podcasting) - please read the [contributor guidelines](https://github.com/hlashbrooke/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information on how you can do this.
+
+**Help translate this plugin**
+
+Seriously Simple Podcasting is currently available in English, Gemran & Russian, but if you would like to contirbute translations to this plugin you can do so through [a simple web interface](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting). Any and all translations are welcome.
 
 == Usage ==
 
@@ -83,6 +82,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [NEW] Added `manage_podcast` capability to allow editing of podcast settings (adds to Editors & Administrators by default)
 * [NEW] Added podcast player and meta data to oEmbed excerpt in WordPress 4.4+
 * [TWEAK] Removing localisation files as translations are now handled on translate.wordpress.org
+* [TWEAK] Improving MIME type detection for audio files and adding caching for faster queries
+* [TWEAK] Improving feed performance by removing duplicate actions performed on summary and excerpt text
 
 = 1.11.3 =
 * 2015-10-06

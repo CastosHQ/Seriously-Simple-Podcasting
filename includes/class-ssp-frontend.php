@@ -500,8 +500,12 @@ class SSP_Frontend {
 	 */
 	public function get_attachment_id_from_url( $url = '' ) {
 
+		// Let's hash the URL to ensure that we don't get
+		// any illegal chars that might break the cache.
+		$key = md5( $url );
+
 		// Do we have anything in the cache for this URL?
-		$attachment_id = wp_cache_get( $url, 'attachment_id' );
+		$attachment_id = wp_cache_get( $key, 'attachment_id' );
 
 		if ( $attachment_id === false ) {
 
@@ -521,7 +525,7 @@ class SSP_Frontend {
 			if ( function_exists( 'attachment_url_to_postid' ) ) {
 				$attachment_id = absint( attachment_url_to_postid( $url ) );
 				if ( 0 !== $attachment_id ) {
-					wp_cache_add( $url, $attachment_id, 'attachment_id' );
+					wp_cache_set( $key, $attachment_id, 'attachment_id', DAY_IN_SECONDS );
 					return $attachment_id;
 				}
 			}
@@ -534,7 +538,7 @@ class SSP_Frontend {
 				);
 				$attachment_id = absint( $wpdb->get_var( $sql ) );
 				if ( 0 !== $attachment_id ) {
-					wp_cache_add( $url, $attachment_id, 'attachment_id' );
+					wp_cache_set( $key, $attachment_id, 'attachment_id', DAY_IN_SECONDS );
 					return $attachment_id;
 				}
 			}
@@ -542,20 +546,21 @@ class SSP_Frontend {
 			// And then try this
 			$upload_dir_paths = wp_upload_dir();
 			if ( false !== strpos( $url, $upload_dir_paths['baseurl'] ) ) {
-				// If this is the URL of an auto-generated thumbnail, get the URL of the original image
-				$url = preg_replace( '/-\d+x\d+(?=\.(m4a|mp3|mov|mp4)$)/i', '', $url );
+				// Ensure that we have file extension that matches iTunes.
+				$url = preg_replace( '/(?=\.(m4a|mp3|mov|mp4)$)/i', '', $url );
 				// Remove the upload path base directory from the attachment URL
 				$url = str_replace( $upload_dir_paths['baseurl'] . '/', '', $url );
 				// Finally, run a custom database query to get the attachment ID from the modified attachment URL
 				$sql = $wpdb->prepare( "SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'", $url );
 				$attachment_id = absint( $wpdb->get_var( $sql ) );
+				if ( 0 !== $attachment_id ) {
+					wp_cache_set( $key, $attachment_id, 'attachment_id', DAY_IN_SECONDS );
+					return $attachment_id;
+				}
 			}
 
 		}
 
-		if ( $attachment_id ) {
-			wp_cache_add( $url, $attachment_id, 'attachment_id' );
-		}
 		return $attachment_id;
 	}
 
@@ -566,9 +571,13 @@ class SSP_Frontend {
 	 */
 	public function get_attachment_mimetype( $attachment = '' ) {
 
+		// Let's hash the URL to ensure that we don't get
+		// any illegal chars that might break the cache.
+		$key = md5( $attachment );
+
 		if ( $attachment ) {
 			// Do we have anything in the cache for this?
-			$mime = wp_cache_get( $attachment, 'mime-type' );
+			$mime = wp_cache_get( $key, 'mime-type' );
 			if ( $mime === false ) {
 
 				// Get the ID
@@ -577,7 +586,7 @@ class SSP_Frontend {
 				// Get the MIME type
 				$mime = get_post_mime_type( $id );
 				// Set the cache
-				wp_cache_add( $attachment, $mime, 'mime-type' );
+				wp_cache_set( $key, $mime, 'mime-type', DAY_IN_SECONDS );
 			}
 
 		    return $mime;

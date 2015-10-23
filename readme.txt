@@ -503,4 +503,4 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Upgrade Notice ==
 
 = 1.12 =
-* v1.11 contains a number of important updates and some helpful new features - all users are advised to update ASAP.
+* v1.12 contains a number of important updates and some helpful new features - all users are advised to update ASAP.

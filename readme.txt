@@ -36,7 +36,7 @@ If you want to contribute to Seriously Simple Podcasting, you can [fork the GitH
 
 **Help translate this plugin**
 
-Seriously Simple Podcasting is currently available in English, Gemran & Russian, but if you would like to contirbute translations to this plugin you can do so through [a simple web interface](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting). Any and all translations are welcome.
+If you would like to contribute translations to this plugin you can do so through [a simple web interface](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting). Any and all translations (new languages or updates to existing ones) are always welcome.
 
 == Usage ==
 
@@ -78,9 +78,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 = 1.12 =
-* 2015-10-20
+* 2015-10-23
 * [NEW] Added `manage_podcast` capability to allow editing of podcast settings (adds to Editors & Administrators by default)
 * [NEW] Added podcast player and meta data to oEmbed excerpt in WordPress 4.4+
+* [NEW] Added the ability to select up to three category/sub-category pairs for each feed
 * [TWEAK] Removing localisation files as translations are now handled on translate.wordpress.org
 * [TWEAK] Improving MIME type detection for audio files and adding caching for faster queries
 * [TWEAK] Improving feed performance by removing duplicate actions performed on summary and excerpt text

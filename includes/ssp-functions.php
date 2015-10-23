@@ -379,6 +379,46 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 	}
 }
 
+if( ! function_exists( 'ssp_get_feed_category_output' ) ) {
+
+	/**
+	 * Get the XML markup for the feed category st the specified level
+	 * @param  int    $level Category level
+	 * @return string        XML output for feed vategory
+	 */
+	function ssp_get_feed_category_output ( $level = 1, $series_id ) {
+
+		$level = (int) $level;
+
+		if( 1 == $level ) {
+			$level = '';
+		}
+
+		$category = get_option( 'ss_podcasting_data_category' . $level, '' );
+		if ( $series_id ) {
+			$series_category = get_option( 'ss_podcasting_data_category' . $level . '_' . $series_id, 'no-category' );
+			if ( 'no-category' != $series_category ) {
+				$category = $series_category;
+			}
+		}
+		if ( ! $category ) {
+			$category = '';
+			$subcategory = '';
+		} else {
+			$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level, '' );
+			if ( $series_id ) {
+				$series_subcategory = get_option( 'ss_podcasting_data_subcategory' . $level . '_' . $series_id, 'no-subcategory' );
+				if ( 'no-subcategory' != $series_subcategory ) {
+					$subcategory = $series_subcategory;
+				}
+			}
+		}
+
+		return apply_filters( 'ssp_feed_category_output', array( 'category' => $category, 'subcategory' => $subcategory ), $level, $series_id );
+	}
+
+}
+
 if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 
 	/**

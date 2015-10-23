@@ -85,6 +85,7 @@ if ( isset( $_GET['podcast_series'] ) && $_GET['podcast_series'] ) {
 	$podcast_series = esc_attr( $wp_query->query_vars['podcast_series'] );
 }
 
+$series_id = 0;
 if ( $podcast_series ) {
 	$series = get_term_by( 'slug', $podcast_series, 'series' );
 	$series_id = $series->term_id;
@@ -196,26 +197,10 @@ if ( $podcast_series ) {
 	}
 }
 
-// Podcast category and subcategory
-$category = get_option( 'ss_podcasting_data_category', '' );
-if ( $podcast_series ) {
-	$series_category = get_option( 'ss_podcasting_data_category_' . $series_id, 'no-category' );
-	if ( 'no-category' != $series_category ) {
-		$category = $series_category;
-	}
-}
-if ( ! $category ) {
-	$category = false;
-	$subcategory = false;
-} else {
-	$subcategory = get_option( 'ss_podcasting_data_subcategory', '' );
-	if ( $podcast_series ) {
-		$series_subcategory = get_option( 'ss_podcasting_data_subcategory_' . $series_id, 'no-subcategory' );
-		if ( 'no-subcategory' != $series_subcategory ) {
-			$subcategory = $series_subcategory;
-		}
-	}
-}
+// Podcast category and subcategory (all levels)
+$category1 = ssp_get_feed_category_output( 1, $series_id );
+$category2 = ssp_get_feed_category_output( 2, $series_id );
+$category3 = ssp_get_feed_category_output( 3, $series_id );
 
 // Set RSS header
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
@@ -253,10 +238,24 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	<?php if ( $image ) { ?>
 	<itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
 	<?php } ?>
-	<?php if ( $category ) { ?>
-	<itunes:category text="<?php echo esc_attr( $category ); ?>">
-		<?php if ( $subcategory ) { ?>
-		<itunes:category text="<?php echo esc_attr( $subcategory ); ?>"></itunes:category>
+	<?php if ( isset( $category1['category'] ) && $category1['category'] ) { ?>
+	<itunes:category text="<?php echo esc_attr( $category1['category'] ); ?>">
+		<?php if ( isset( $category1['subcategory'] ) && $category1['subcategory'] ) { ?>
+		<itunes:category text="<?php echo esc_attr( $category1['subcategory'] ); ?>"></itunes:category>
+		<?php } ?>
+	</itunes:category>
+	<?php } ?>
+	<?php if ( isset( $category2['category'] ) && $category2['category'] ) { ?>
+	<itunes:category text="<?php echo esc_attr( $category2['category'] ); ?>">
+		<?php if ( isset( $category2['subcategory'] ) && $category2['subcategory'] ) { ?>
+		<itunes:category text="<?php echo esc_attr( $category2['subcategory'] ); ?>"></itunes:category>
+		<?php } ?>
+	</itunes:category>
+	<?php } ?>
+	<?php if ( isset( $category3['category'] ) && $category3['category'] ) { ?>
+	<itunes:category text="<?php echo esc_attr( $category3['category'] ); ?>">
+		<?php if ( isset( $category3['subcategory'] ) && $category3['subcategory'] ) { ?>
+		<itunes:category text="<?php echo esc_attr( $category3['subcategory'] ); ?>"></itunes:category>
 		<?php } ?>
 	</itunes:category>
 	<?php } ?>

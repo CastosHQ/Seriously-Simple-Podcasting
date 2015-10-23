@@ -314,8 +314,8 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_category',
-					'label'			=> __( 'Category' , 'seriously-simple-podcasting' ),
-					'description'	=> __( 'Your podcast\'s category.', 'seriously-simple-podcasting' ),
+					'label'			=> __( 'Primary Category' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s primary category.', 'seriously-simple-podcasting' ),
 					'type'			=> 'select',
 					'options'		=> $category_options,
 					'default'		=> '',
@@ -323,12 +323,51 @@ class SSP_Settings {
 				),
 				array(
 					'id' 			=> 'data_subcategory',
-					'label'			=> __( 'Sub-Category' , 'seriously-simple-podcasting' ),
-					'description'	=> __( 'Your podcast\'s sub-category (if available) - must be a sub-category of the category selected above.', 'seriously-simple-podcasting' ),
+					'label'			=> __( 'Primary Sub-Category' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s primary sub-category (if available) - must be a sub-category of the primary category selected above.', 'seriously-simple-podcasting' ),
 					'type'			=> 'select',
 					'options'		=> $subcategory_options,
 					'default'		=> '',
 					'callback'		=> 'wp_strip_all_tags',
+					'parent_class'	=> 'subcat',
+				),
+				array(
+					'id' 			=> 'data_category2',
+					'label'			=> __( 'Secondary Category' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s secondary category.', 'seriously-simple-podcasting' ),
+					'type'			=> 'select',
+					'options'		=> $category_options,
+					'default'		=> '',
+					'callback'		=> 'wp_strip_all_tags',
+				),
+				array(
+					'id' 			=> 'data_subcategory2',
+					'label'			=> __( 'Secondary Sub-Category' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s secondary sub-category (if available) - must be a sub-category of the secondary category selected above.', 'seriously-simple-podcasting' ),
+					'type'			=> 'select',
+					'options'		=> $subcategory_options,
+					'default'		=> '',
+					'callback'		=> 'wp_strip_all_tags',
+					'parent_class'	=> 'subcat',
+				),
+				array(
+					'id' 			=> 'data_category3',
+					'label'			=> __( 'Tertiary Category' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s tertiary category.', 'seriously-simple-podcasting' ),
+					'type'			=> 'select',
+					'options'		=> $category_options,
+					'default'		=> '',
+					'callback'		=> 'wp_strip_all_tags',
+				),
+				array(
+					'id' 			=> 'data_subcategory3',
+					'label'			=> __( 'Tertiary Sub-Category' , 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Your podcast\'s tertiary sub-category (if available) - must be a sub-category of the tertiary category selected above.', 'seriously-simple-podcasting' ),
+					'type'			=> 'select',
+					'options'		=> $subcategory_options,
+					'default'		=> '',
+					'callback'		=> 'wp_strip_all_tags',
+					'parent_class'	=> 'subcat',
 				),
 				array(
 					'id' 			=> 'data_description',
@@ -687,10 +726,16 @@ class SSP_Settings {
 
 		}
 
-		// Get field class
+		// Get field class if supplied
 		$class = '';
 		if ( isset( $field['class'] ) ) {
 			$class = $field['class'];
+		}
+
+		// Get parent class if supplied
+		$parent_class = '';
+		if ( isset( $field['parent_class'] ) ) {
+			$parent_class = $field['parent_class'];
 		}
 
 		switch( $field['type'] ) {
@@ -830,6 +875,10 @@ class SSP_Settings {
 					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . wp_kses_post( $field['description'] ) . '</span></label>' . "\n";
 				break;
 			}
+		}
+
+		if( $parent_class ) {
+			$html = '<div class="' . $parent_class . '">' . $html . '</div>';
 		}
 
 		echo $html;

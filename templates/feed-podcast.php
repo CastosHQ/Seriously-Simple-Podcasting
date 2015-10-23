@@ -196,23 +196,65 @@ if ( $podcast_series ) {
 	}
 }
 
-// Podcast category and subcategory
-$category = get_option( 'ss_podcasting_data_category', '' );
+// Podcast category and subcategory (level 1)
+$category1 = get_option( 'ss_podcasting_data_category', '' );
 if ( $podcast_series ) {
 	$series_category = get_option( 'ss_podcasting_data_category_' . $series_id, 'no-category' );
 	if ( 'no-category' != $series_category ) {
-		$category = $series_category;
+		$category1 = $series_category;
 	}
 }
-if ( ! $category ) {
-	$category = false;
-	$subcategory = false;
+if ( ! $category1 ) {
+	$category1 = false;
+	$subcategory1 = false;
 } else {
-	$subcategory = get_option( 'ss_podcasting_data_subcategory', '' );
+	$subcategory1 = get_option( 'ss_podcasting_data_subcategory', '' );
 	if ( $podcast_series ) {
 		$series_subcategory = get_option( 'ss_podcasting_data_subcategory_' . $series_id, 'no-subcategory' );
 		if ( 'no-subcategory' != $series_subcategory ) {
-			$subcategory = $series_subcategory;
+			$subcategory1 = $series_subcategory;
+		}
+	}
+}
+
+// Podcast category and subcategory (level 2)
+$category2 = get_option( 'ss_podcasting_data_category2', '' );
+if ( $podcast_series ) {
+	$series_category = get_option( 'ss_podcasting_data_category2_' . $series_id, 'no-category' );
+	if ( 'no-category' != $series_category ) {
+		$category2 = $series_category;
+	}
+}
+if ( ! $category2 ) {
+	$category2 = false;
+	$subcategory2 = false;
+} else {
+	$subcategory2 = get_option( 'ss_podcasting_data_subcategory2', '' );
+	if ( $podcast_series ) {
+		$series_subcategory = get_option( 'ss_podcasting_data_subcategory2_' . $series_id, 'no-subcategory' );
+		if ( 'no-subcategory' != $series_subcategory ) {
+			$subcategory2 = $series_subcategory;
+		}
+	}
+}
+
+// Podcast category and subcategory (level 3)
+$category3 = get_option( 'ss_podcasting_data_category3', '' );
+if ( $podcast_series ) {
+	$series_category = get_option( 'ss_podcasting_data_category3_' . $series_id, 'no-category' );
+	if ( 'no-category' != $series_category ) {
+		$category3 = $series_category;
+	}
+}
+if ( ! $category3 ) {
+	$category3 = false;
+	$subcategory3 = false;
+} else {
+	$subcategory3 = get_option( 'ss_podcasting_data_subcategory3', '' );
+	if ( $podcast_series ) {
+		$series_subcategory = get_option( 'ss_podcasting_data_subcategory3_' . $series_id, 'no-subcategory' );
+		if ( 'no-subcategory' != $series_subcategory ) {
+			$subcategory3 = $series_subcategory;
 		}
 	}
 }
@@ -253,10 +295,24 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 	<?php if ( $image ) { ?>
 	<itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
 	<?php } ?>
-	<?php if ( $category ) { ?>
-	<itunes:category text="<?php echo esc_attr( $category ); ?>">
-		<?php if ( $subcategory ) { ?>
-		<itunes:category text="<?php echo esc_attr( $subcategory ); ?>"></itunes:category>
+	<?php if ( $category1 ) { ?>
+	<itunes:category text="<?php echo esc_attr( $category1 ); ?>">
+		<?php if ( $subcategory1 ) { ?>
+		<itunes:category text="<?php echo esc_attr( $subcategory1 ); ?>"></itunes:category>
+		<?php } ?>
+	</itunes:category>
+	<?php } ?>
+	<?php if ( $category2 ) { ?>
+	<itunes:category text="<?php echo esc_attr( $category2 ); ?>">
+		<?php if ( $subcategory2 ) { ?>
+		<itunes:category text="<?php echo esc_attr( $subcategory2 ); ?>"></itunes:category>
+		<?php } ?>
+	</itunes:category>
+	<?php } ?>
+	<?php if ( $category3 ) { ?>
+	<itunes:category text="<?php echo esc_attr( $category3 ); ?>">
+		<?php if ( $subcategory3 ) { ?>
+		<itunes:category text="<?php echo esc_attr( $subcategory3 ); ?>"></itunes:category>
 		<?php } ?>
 	</itunes:category>
 	<?php } ?>

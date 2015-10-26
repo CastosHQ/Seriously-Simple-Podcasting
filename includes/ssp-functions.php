@@ -112,31 +112,10 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 						$title = '<a href="' . esc_url( $post->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';
 					}
 
-					$template = str_replace( '%%CLASS%%', $class, $template );
-					$template = str_replace( '%%TITLE%%', $title, $template );
-
-					$link = $ss_podcasting->get_episode_download_link( $post->ID );
-					$duration = get_post_meta( $post->ID, 'duration', true );
-					$size = get_post_meta( $post->ID, 'filesize', true );
-					$date_recorded = get_post_meta( $post->ID, 'date_recorded', true );
-
-					if ( ! $size ) {
-						$file = $ss_podcasting->get_enclosure( $post->ID );
-						$size_data = $ss_podcasting->get_file_size( $file );
-						$size = $size_data['formatted'];
-						if ( $size ) {
-							if ( isset( $size_data['formatted'] ) ) {
-								update_post_meta( $post->ID, 'filesize', $size_data['formatted'] );
-							}
-
-							if ( isset( $size_data['raw'] ) ) {
-								update_post_meta( $post->ID, 'filesize_raw', $size_data['raw'] );
-							}
-						}
-					}
-
 					$meta = $ss_podcasting->episode_meta( $post->ID, 'shortcode' );
 
+					$template = str_replace( '%%CLASS%%', $class, $template );
+					$template = str_replace( '%%TITLE%%', $title, $template );
 					$template = str_replace( '%%META%%', $meta, $template );
 
 					$html .= $template;

@@ -118,6 +118,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$link = $ss_podcasting->get_episode_download_link( $post->ID );
 					$duration = get_post_meta( $post->ID, 'duration', true );
 					$size = get_post_meta( $post->ID, 'filesize', true );
+					$date_recorded = get_post_meta( $post->ID, 'date_recorded', true );
 
 					if ( ! $size ) {
 						$file = $ss_podcasting->get_enclosure( $post->ID );
@@ -134,10 +135,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 						}
 					}
 
-					$meta = '';
-					if ( $link && strlen( $link ) > 0 ) { $meta .= '<a href="' . esc_url( $link ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>'; }
-					if ( $duration && strlen( $duration ) > 0 ) { if ( $link && strlen( $link ) > 0 ) { $meta .= ' | '; } $meta .= __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $duration; }
-					if ( $size && strlen( $size ) > 0 ) { if ( ( $duration && strlen( $duration ) > 0 ) || ( $link && strlen( $link ) > 0 ) ) { $meta .= ' | '; } $meta .= __( 'Size' , 'seriously-simple-podcasting' ) . ': ' . $size; }
+					$meta = $ss_podcasting->episode_meta( $post->ID, 'shortcode' );
 
 					$template = str_replace( '%%META%%', $meta, $template );
 

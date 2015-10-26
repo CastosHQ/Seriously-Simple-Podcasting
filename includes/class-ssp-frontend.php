@@ -269,7 +269,7 @@ class SSP_Frontend {
 			$meta['link'] = $link;
 		}
 
-		if( $link && apply_filters( 'ssp_show_new_window_link', true ) ) {
+		if( $link && apply_filters( 'ssp_show_new_window_link', true, $context ) ) {
 			$meta['new_window'] = true;
 		}
 

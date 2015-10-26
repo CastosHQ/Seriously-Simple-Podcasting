@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav
 Requires at least: 4.2
 Tested up to: 4.3.1
-Stable tag: 1.12
+Stable tag: 1.12.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.12.1 =
+* 2015-10-27
+* [TWEAK] Ensuring that episode meta data display is the same in all locations
+
 = 1.12 =
 * 2015-10-23
 * [NEW] Added `manage_podcast` capability to allow editing of podcast settings (adds to Editors & Administrators by default)
@@ -502,5 +507,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.12 =
-* v1.12 contains a number of important updates and some helpful new features - all users are advised to update ASAP.
+= 1.12.1 =
+* v1.12.x contains a number of important updates and some helpful new features - all users are advised to update ASAP.

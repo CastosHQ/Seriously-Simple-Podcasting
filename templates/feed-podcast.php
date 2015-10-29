@@ -183,9 +183,21 @@ if ( $podcast_series ) {
 	$explicit_option = $series_explicit_option;
 }
 if ( $explicit_option && 'on' == $explicit_option ) {
-	$explicit = 'Yes';
+	$explicit = 'yes';
 } else {
-	$explicit = 'No';
+	$explicit = 'clean';
+}
+
+// Podcast complete setting
+$complete_option = get_option( 'ss_podcasting_complete', '' );
+if ( $podcast_series ) {
+	$series_complete_option = get_option( 'ss_podcasting_complete_' . $series_id, '' );
+	$complete_option = $series_complete_option;
+}
+if ( $complete_option && 'on' == $complete_option ) {
+	$complete = 'yes';
+} else {
+	$complete = '';
 }
 
 // Podcast cover image
@@ -235,6 +247,7 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>
 	</itunes:owner>
 	<itunes:explicit><?php echo esc_html( $explicit ); ?></itunes:explicit>
+	<?php if( $complete ) { ?><itunes:complete><?php echo esc_html( $complete ); ?></itunes:complete><?php } ?>
 	<?php if ( $image ) { ?>
 	<itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
 	<?php } ?>

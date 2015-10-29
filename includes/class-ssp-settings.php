@@ -434,6 +434,14 @@ class SSP_Settings {
 					'callback'		=> 'wp_strip_all_tags',
 				),
 				array(
+					'id' 			=> 'complete',
+					'label'			=> __( 'Complete', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Mark if this podcast is complete or not. Only do this if no more episodes are going to be added to this feed.', 'seriously-simple-podcasting' ),
+					'type'			=> 'checkbox',
+					'default'		=> '',
+					'callback'		=> 'wp_strip_all_tags',
+				),
+				array(
 					'id' 			=> 'redirect_feed',
 					'label'			=> __( 'Redirect this feed to new URL', 'seriously-simple-podcasting' ),
 					'description'	=> sprintf( __( 'Redirect your feed to a new URL (specified below).', 'seriously-simple-podcasting' ) , '<br/>' ),

@@ -143,7 +143,10 @@ class SSP_Admin {
 			'not_found' =>  sprintf( __( 'No %s Found' , 'seriously-simple-podcasting' ), __( 'Episodes' , 'seriously-simple-podcasting' ) ),
 			'not_found_in_trash' => sprintf( __( 'No %s Found In Trash' , 'seriously-simple-podcasting' ), __( 'Episodes' , 'seriously-simple-podcasting' ) ),
 			'parent_item_colon' => '',
-			'menu_name' => __( 'Podcast' , 'seriously-simple-podcasting' )
+			'menu_name' => __( 'Podcast' , 'seriously-simple-podcasting' ),
+			'filter_items_list' => sprintf( __( 'Filter %s list' , 'seriously-simple-podcasting' ), __( 'Episode' , 'seriously-simple-podcasting' ) ),
+			'items_list_navigation' => sprintf( __( '%s list navigation' , 'seriously-simple-podcasting' ), __( 'Episode' , 'seriously-simple-podcasting' ) ),
+			'items_list' => sprintf( __( '%s list' , 'seriously-simple-podcasting' ), __( 'Episode' , 'seriously-simple-podcasting' ) ),
 		);
 
 		$slug = apply_filters( 'ssp_archive_slug', __( 'podcast' , 'seriously-simple-podcasting' ) );
@@ -200,6 +203,8 @@ class SSP_Admin {
             'add_or_remove_items' => __( 'Add or remove Series' , 'seriously-simple-podcasting' ),
             'choose_from_most_used' => __( 'Choose from the most used Series' , 'seriously-simple-podcasting' ),
             'not_found' => __( 'No Series Found' , 'seriously-simple-podcasting' ),
+            'items_list_navigation' => __( 'Series list navigation' , 'seriously-simple-podcasting' ),
+            'items_list' => __( 'Series list' , 'seriously-simple-podcasting' ),
         );
 
         $series_args = array(

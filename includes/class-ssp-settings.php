@@ -971,7 +971,7 @@ class SSP_Settings {
 
 		// Build page HTML
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";
-			$html .= '<h2>' . __( 'Podcast Settings' , 'seriously-simple-podcasting' ) . '</h2>' . "\n";
+			$html .= '<h1>' . __( 'Podcast Settings' , 'seriously-simple-podcasting' ) . '</h1>' . "\n";
 
 			$tab = 'general';
 			if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {

@@ -456,7 +456,7 @@ class SSP_Admin {
 		}
 
 		// Security check
-		if ( ! isset( $_POST['seriouslysimple_' . $this->token . '_nonce'] ) && ! wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) {
+		if ( ! isset( $_POST['seriouslysimple_' . $this->token . '_nonce'] ) || ! ( isset( $_POST['seriouslysimple_' . $this->token . '_nonce'] ) && wp_verify_nonce( $_POST['seriouslysimple_' . $this->token . '_nonce'], plugin_basename( $this->dir ) ) ) ) {
 			return $post_id;
 		}
 

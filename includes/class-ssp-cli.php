@@ -6,7 +6,7 @@ WP_CLI::add_command( 'ssp', 'SSP_CLI' );
  * Wired Core CLI Functions
  */
 
-SSP_CLI extends WP_CLI_Command {
+class SSP_CLI extends WP_CLI_Command {
 
 
 	/**

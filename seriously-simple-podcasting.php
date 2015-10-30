@@ -22,6 +22,10 @@ require_once( 'includes/ssp-functions.php' );
 require_once( 'includes/class-ssp-admin.php' );
 require_once( 'includes/class-ssp-frontend.php' );
 
+if ( defined( 'WP_CLI' ) && WP_CLI ) {
+	require_once( 'includes/class-ssp-cli.php' );
+}
+
 global $ssp_admin, $ss_podcasting;
 $ssp_admin = new SSP_Admin( __FILE__, '1.12.1' );
 $ss_podcasting = new SSP_Frontend( __FILE__, '1.12.1' );

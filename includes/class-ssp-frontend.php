@@ -323,6 +323,22 @@ class SSP_Frontend {
 					$meta_display .= __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $data ) );
 				break;
 
+				// Allow for custom items to be added, but only allow a small amount of HTML tags
+				default:
+					$allowed_tags = array(
+						'strong' => array(),
+						'b' => array(),
+						'em' => array(),
+						'i' => array(),
+						'a' => array(
+							'href' => array(),
+							'title' => array(),
+							'target' => array(),
+						),
+					);
+					$meta_display .= wp_kses( $data, $allowed_tags );
+				break;
+
 			}
 		}
 

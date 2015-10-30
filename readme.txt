@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp
 Requires at least: 4.2
 Tested up to: 4.3.1
-Stable tag: 1.12.1
+Stable tag: 1.12.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -77,6 +77,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.12.2 =
+* 2015-11-02
+* [NEW] Adding option to mark feeds as complete (i.e. no more epiodes will ever be added)
+* [TWEAK] Adding notice for FastCGI servers on Security settings page
+* [TWEAK] Ensuring the episode update nonce never returns an 'undefined variable' error
+* [TWEAK] Updating `itunes:explicit` feed tag with correct values as per new iTunes specification
+* [TWEAK] Updating admin screen markup for WordPress 4.4+
+* [TWEAK] Updating post type and taxonomy registration arguments for WordPress 4.4+
 
 = 1.12.1 =
 * 2015-10-27
@@ -507,5 +516,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.12.1 =
+= 1.12.2 =
 * v1.12.x contains a number of important updates and some helpful new features - all users are advised to update ASAP.

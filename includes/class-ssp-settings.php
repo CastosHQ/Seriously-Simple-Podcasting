@@ -1023,7 +1023,7 @@ class SSP_Settings {
 					    </div>';
 			}
 
-			if( 'security' == $tab ) {
+			if( function_exists( 'php_sapi_name') && 'security' == $tab ) {
 				$sapi_type = php_sapi_name();
 				if ( strpos( $sapi_type, 'fcgi' ) !== false ) {
 				    $html .= '<br/><div class="update-nag">

@@ -207,7 +207,9 @@ class SSP_Frontend {
 				$file = $this->get_episode_download_link( $episode_id );
 			}
 
-			$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
+			if( 'shortcode' != $context ) {
+				$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
+			}
 
 			if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
 				$meta .= $this->episode_meta_details( $episode_id, $context );

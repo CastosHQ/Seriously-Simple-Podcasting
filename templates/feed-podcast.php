@@ -354,11 +354,18 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 			$content = get_the_content_feed( 'rss2' );
 			$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 
-			// iTunes summary does not allow any HTML and must be shorter than 4000 characters
-			$itunes_summary = strip_tags( strip_shortcodes( get_the_excerpt() ) );
-			$itunes_summary = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]' ), array( 'and', '', '', '', '', '', '', '' ), $itunes_summary );
-			$itunes_summary = mb_substr( $itunes_summary, 0, 3949 );
-			$itunes_excerpt = mb_substr( $itunes_summary, 0, 224 );
+			// iTunes summary is the full episode content, but must be shorter than 4000 characters
+			$itunes_summary = mb_substr( $content, 0, 3999 );
+
+			// Episode description
+			ob_start();
+			the_excerpt_rss();
+			$description = ob_get_clean();
+
+			// iTunes subtitle does not allow any HTML and must be shorter than 255 characters
+			$itunes_subtitle = strip_tags( strip_shortcodes( $description ) );
+			$itunes_subtitle = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]', '[&#8230;]' ), array( 'and', '', '', '', '', '', '', '', '' ), $itunes_subtitle );
+			$itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
 
 	?>
 	<item>
@@ -367,10 +374,10 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?'.'>'; ?
 		<pubDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) ); ?></pubDate>
 		<dc:creator><?php echo $author; ?></dc:creator>
 		<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
-		<description><![CDATA[<?php the_excerpt_rss(); ?>]]></description>
-		<itunes:subtitle><?php echo $itunes_excerpt; ?></itunes:subtitle>
+		<description><![CDATA[<?php echo $description; ?>]]></description>
+		<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
-		<itunes:summary><?php echo $itunes_summary; ?></itunes:summary><?php if ( $episode_image ) { ?>
+		<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary><?php if ( $episode_image ) { ?>
 		<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image><?php } ?>
 		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo esc_html( $explicit_flag ); ?></itunes:explicit>

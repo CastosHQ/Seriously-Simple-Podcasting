@@ -88,6 +88,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [TWEAK] Updating admin screen markup for WordPress 4.4+
 * [TWEAK] Updating post type and taxonomy registration arguments for WordPress 4.4+
 * [FIX] Making sure audio player does not show up in `ss_podcast` shortcode (issue introduced in v1.12.1)
+* [FIX] Fixing iTunes episode descriptions to be the correct length and include HTML correctly
 
 = 1.12.1 =
 * 2015-10-27

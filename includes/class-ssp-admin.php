@@ -99,7 +99,11 @@ class SSP_Admin {
 
 		}
 
+		// Add ajax action for plugin rating
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
+
+		// Add ajax action for customising episode embed code
+		add_action( 'wp_ajax_update_episode_embed_code', array( $this, 'update_episode_embed_code' ) );
 
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
@@ -379,12 +383,58 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function meta_box_setup ( $post ) {
+		global $pagenow;
 
 		add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details' , 'seriously-simple-podcasting' ), array( $this, 'meta_box_content' ), $post->post_type, 'normal', 'high' );
+
+		if( 'post.php' == $pagenow && 'publish' == $post->post_status && function_exists( 'get_post_embed_html' ) ) {
+			add_meta_box( 'episode-embed-code', __( 'Episode Embed Code' , 'seriously-simple-podcasting' ), array( $this, 'embed_code_meta_box_content' ), $post->post_type, 'side', 'low' );
+		}
 
 		// Allow more metaboxes to be added
 		do_action( 'ssp_meta_boxes', $post );
 
+	}
+
+	/**
+	 * Get content for episode embed code meta box
+	 * @param  object $post Current post object
+	 * @return void
+	 */
+	public function embed_code_meta_box_content ( $post ) {
+
+		// Get post embed code
+		$embed_code = get_post_embed_html( 500, 350, $post );
+
+		// Generate markup for meta box
+		$html = '<p><em>' . __( 'Customise the size of your episode embed below, then copy the HTML to your clipboard.', 'seriously-simple-podcasting' ) . '</em></p>';
+		$html .= '<p><label for="episode_embed_code_width">' . __( 'Width:', 'seriously-simple-podcasting' ) . '</label> <input id="episode_embed_code_width" class="episode_embed_code_size_option" type="number" value="500" length="3" min="0" step="1" /> &nbsp;&nbsp;&nbsp;&nbsp;<label for="episode_embed_code_height">' . __( 'Height:', 'seriously-simple-podcasting' ) . '</label> <input id="episode_embed_code_height" class="episode_embed_code_size_option" type="number" value="350" length="3" min="0" step="1" /></p>';
+		$html .= '<p><textarea readonly id="episode_embed_code">' . $embed_code . '</textarea></p>';
+
+		echo $html;
+	}
+
+	/**
+	 * Update the epiaode embed code via ajax
+	 * @return void
+	 */
+	public function update_episode_embed_code () {
+
+		// Make sure we have a valid post ID
+		if( ! isset( $_POST['post_id'] ) || ! $_POST['post_id'] ) {
+			return;
+		}
+
+		// Get info for embed code
+		$post_id = (int) $_POST['post_id'];
+		$width = (int) $_POST['width'];
+		$height = (int) $_POST['height'];
+
+		// Generate embed code
+		echo get_post_embed_html( $width, $height, $post_id );
+
+		// Exit after ajax request
+		exit;
 	}
 
 	/**
@@ -434,10 +484,6 @@ class SSP_Admin {
 					} elseif ( $v['type'] == 'datepicker' ) {
 						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td class="hasDatepicker"><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
 						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-						$html .= '</td><tr/>' . "\n";
-					} elseif( $v['type'] == 'embed_code' ) {
-						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td class="embed_code"><p class="description">' . $v['description'] . '</p><br/><textarea readonly ' . disabled( $disabled, true, false ) . ' id="episode_embed_code">' . $data . '</textarea>'. "\n";
-						$html .= '' . "\n";
 						$html .= '</td><tr/>' . "\n";
 					} else {
 						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
@@ -594,16 +640,6 @@ class SSP_Admin {
 		    'default' => '',
 		    'section' => 'info',
 		);
-
-		if( 'post.php' == $pagenow && function_exists( 'get_post_embed_html' ) ) {
-			$fields['embed_code'] = array(
-			    'name' => __( 'Embed this episode:' , 'seriously-simple-podcasting' ),
-			    'description' => __( 'Click the episode embed code below to highlight it then you can copy the HTML to your clipboard:' , 'seriously-simple-podcasting' ),
-			    'type' => 'embed_code',
-			    'default' => get_post_embed_html( 500, 350 ),
-			    'section' => 'info',
-			);
-		}
 
 		return apply_filters( 'ssp_episode_fields', $fields );
 	}

@@ -47,6 +47,29 @@ jQuery(document).ready(function($) {
 		jQuery(this).select();
 	});
 
+	jQuery( '.episode_embed_code_size_option' ).change(function() {
+
+		var width = jQuery( '#episode_embed_code_width' ).val();
+		var height = jQuery( '#episode_embed_code_height' ).val();
+		var post_id = jQuery( '#post_ID' ).val();
+
+		jQuery.post(
+		    ajaxurl,
+		    {
+		        'action': 'update_episode_embed_code',
+		        'width': width,
+		        'height': height,
+		        'post_id': post_id,
+		    },
+		    function( response ){
+		        if( response ) {
+		        	jQuery( '#episode_embed_code' ).val( response );
+		        	jQuery( '#episode_embed_code' ).select();
+		        }
+		    }
+		);
+	});
+
 	/* DATEPICKER */
 
 	jQuery('.ssp-datepicker').datepicker({

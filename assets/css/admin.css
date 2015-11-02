@@ -9,3 +9,4 @@
 .view-feed-link{text-decoration:none;}
 .view-feed-link span{font-size:100%;margin-top:2px;margin-bottom:-2px;}
 #podcast_settings .update-nag{margin:0;padding:1px 9pt;}
+textarea#episode_embed_code{width:100%;height:100px;}

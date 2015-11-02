@@ -418,6 +418,11 @@ class SSP_Admin {
 					$class = $v['class'];
 				}
 
+				$disabled = false;
+				if ( isset( $v['disabled'] ) && $v['disabled'] ) {
+					$disabled = true;
+				}
+
 				if ( $k == 'audio_file' ) {
 					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input type="button" class="button" id="upload_audio_file_button" value="'. __( 'Upload File' , 'seriously-simple-podcasting' ) . '" data-uploader_title="Choose a file" data-uploader_button_text="Insert audio file" /><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
@@ -429,6 +434,10 @@ class SSP_Admin {
 					} elseif ( $v['type'] == 'datepicker' ) {
 						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td class="hasDatepicker"><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
 						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
+						$html .= '</td><tr/>' . "\n";
+					} elseif( $v['type'] == 'embed_code' ) {
+						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td class="embed_code"><p class="description">' . $v['description'] . '</p><br/><textarea readonly ' . disabled( $disabled, true, false ) . ' id="episode_embed_code">' . $data . '</textarea>'. "\n";
+						$html .= '' . "\n";
 						$html .= '</td><tr/>' . "\n";
 					} else {
 						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
@@ -481,6 +490,10 @@ class SSP_Admin {
 
 		foreach ( $field_data as $k => $field ) {
 
+			if( 'embed_code' == $k ) {
+				continue;
+			}
+
 			$val = '';
 			if ( isset( $_POST[ $k ] ) ) {
 				$val = strip_tags( trim( $_POST[ $k ] ) );
@@ -531,6 +544,7 @@ class SSP_Admin {
 	 * @return array Custom fields
 	 */
 	public function custom_fields() {
+		global $pagenow;
 		$fields = array();
 
 		$fields['audio_file'] = array(
@@ -580,6 +594,16 @@ class SSP_Admin {
 		    'default' => '',
 		    'section' => 'info',
 		);
+
+		if( 'post.php' == $pagenow && function_exists( 'get_post_embed_html' ) ) {
+			$fields['embed_code'] = array(
+			    'name' => __( 'Embed this episode:' , 'seriously-simple-podcasting' ),
+			    'description' => __( 'Click the episode embed code below to highlight it then you can copy the HTML to your clipboard:' , 'seriously-simple-podcasting' ),
+			    'type' => 'embed_code',
+			    'default' => get_post_embed_html( 500, 350 ),
+			    'section' => 'info',
+			);
+		}
 
 		return apply_filters( 'ssp_episode_fields', $fields );
 	}

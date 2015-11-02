@@ -43,6 +43,10 @@ jQuery(document).ready(function($) {
 		jQuery.fn.ssp_upload_media_file( jQuery(this), false );
 	});
 
+	jQuery('#episode_embed_code').click(function() {
+		jQuery(this).select();
+	});
+
 	/* DATEPICKER */
 
 	jQuery('.ssp-datepicker').datepicker({

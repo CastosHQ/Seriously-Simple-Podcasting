@@ -82,7 +82,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * 2015-11-02
 * [NEW] Adding option to mark feeds as complete using `itunes:complete` feed tag if no more epiodes will ever be added to the feed
 * [NEW] Adding `ssp_episode_meta_details` filter to allow episode meta data to be easily modified on the fly
-* [NEW] Adding episode embed code field to episode edit screen for easy copying (available in WordPress 4.4+)
+* [NEW] Adding customisable episode embed code field to episode edit screen for easy copying (available in WordPress 4.4+)
 * [TWEAK] Adding notice for FastCGI servers on Security settings page
 * [TWEAK] Ensuring the episode update nonce never returns an 'undefined variable' error
 * [TWEAK] Updating `itunes:explicit` feed tag with correct values as per new iTunes specification

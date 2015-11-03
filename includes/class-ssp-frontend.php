@@ -47,11 +47,11 @@ class SSP_Frontend {
 		}
 
 		if ( in_array( 'excerpt', (array) $locations ) ) {
-			add_filter( 'the_excerpt', array( $this, 'excerpt_meta_data' ), 10, 1 );
+			add_filter( 'the_excerpt', array( $this, 'get_excerpt_meta_data' ), 10, 1 );
 		}
 
 		if ( in_array( 'excerpt_embed', (array) $locations ) ) {
-			add_filter( 'the_excerpt_embed', array( $this, 'excerpt_meta_data' ), 10, 1 );
+			add_filter( 'the_excerpt_embed', array( $this, 'get_embed_meta_data' ), 10, 1 );
 		}
 
 		// Add SSP label and version to generator tags
@@ -161,11 +161,29 @@ class SSP_Frontend {
 	}
 
 	/**
+	 * Add the meta data to the episode excerpt
+	 * @param  string $excerpt Existing excerpt
+	 * @return string          Modified excerpt
+	 */
+	public function get_excerpt_meta_data( $excerpt = '' ) {
+		return $this->excerpt_meta_data( $excerpt, 'excerpt' );
+	}
+
+	/**
+	 * Add the meta data to the embedded episode excerpt
+	 * @param  string $excerpt Existing excerpt
+	 * @return string          Modified excerpt
+	 */
+	public function get_embed_meta_data( $excerpt = '' ) {
+		return $this->excerpt_meta_data( $excerpt, 'embed' );
+	}
+
+	/**
 	 * Add episode meta data to the excerpt
 	 * @param  string $excerpt Existing excerpt
 	 * @return string          Modified excerpt
 	 */
-	public function excerpt_meta_data( $excerpt = '' ) {
+	public function excerpt_meta_data( $excerpt = '', $content = 'excerpt' ) {
 		global $post;
 
 		if( post_password_required( $post->ID ) ) {
@@ -176,7 +194,7 @@ class SSP_Frontend {
 
 		if ( ( in_array( $post->post_type, $podcast_post_types ) ) && ! is_feed() ) {
 
-			$meta = $this->episode_meta( $post->ID, 'excerpt' );
+			$meta = $this->episode_meta( $post->ID, $content );
 
 			$excerpt = $meta . $excerpt;
 
@@ -207,7 +225,17 @@ class SSP_Frontend {
 				$file = $this->get_episode_download_link( $episode_id );
 			}
 
-			if( 'shortcode' != $context ) {
+			// Hide audio player in `ss_podcast` shortcode by default
+			$show_player = true;
+			if( 'shortcode' == $context ) {
+				$show_player = false;
+			}
+
+			// Allow audio player to be dynamically hidden/displayed
+			$show_player = apply_filters( 'ssp_show_audio_player', $show_player, $context );
+
+			// Show audio player if requested
+			if( $show_player ) {
 				$meta .= '<div class="podcast_player">' . $this->audio_player( $file ) . '</div>';
 			}
 

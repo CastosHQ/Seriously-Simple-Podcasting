@@ -172,6 +172,7 @@ class SSP_Admin {
 			'supports' => array( 'title', 'editor', 'excerpt', 'thumbnail', 'page-attributes', 'comments', 'author', 'custom-fields', 'publicize' ),
 			'menu_position' => 5,
 			'menu_icon' => 'dashicons-microphone',
+			'show_in_rest' => true,
 		);
 
 		$args = apply_filters( 'ssp_register_post_type_args', $args );
@@ -215,7 +216,8 @@ class SSP_Admin {
             'public' => true,
             'hierarchical' => true,
             'rewrite' => array( 'slug' => apply_filters( 'ssp_series_slug', 'series' ) ),
-            'labels' => $series_labels
+            'labels' => $series_labels,
+            'show_in_rest' => true,
         );
 
         $series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );

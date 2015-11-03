@@ -10,7 +10,6 @@
  * Tested up to: 4.3.1
  *
  * Text Domain: seriously-simple-podcasting
- * Domain Path: /lang/
  */
 
 // Exit if accessed directly.

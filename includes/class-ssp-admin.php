@@ -118,9 +118,13 @@ class SSP_Admin {
 	 */
 	public function setup_permastruct() {
 
-		// Episode download links
+		// Episode download & player URLs
 		add_rewrite_rule( '^podcast-download/([^/]*)/([^/]*)/?', 'index.php?podcast_episode=$matches[1]', 'top' );
+		add_rewrite_rule( '^podcast-player/([^/]*)/([^/]*)/?', 'index.php?podcast_episode=$matches[1]&podcast_ref=player', 'top' );
+
+		// Custo query variables
 		add_rewrite_tag( '%podcast_episode%', '([^&]+)' );
+		add_rewrite_tag( '%podcast_ref%', '([^&]+)' );
 
 		// Series feed URLs
 		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
@@ -683,16 +687,9 @@ class SSP_Admin {
 			return $plugin_meta;
 		}
 
-		$donate_link = 'http://www.hughlashbrooke.com/donate';
-
-		$plugin_meta['docs'] = '<a href="http://www.seriouslysimplepodcasting.com/" target="_blank">' . __( 'Documentation', 'seriously-simple-podcasting' ) . '</a>';
+		$plugin_meta['docs'] = '<a href="http://www.seriouslysimplepodcasting.com/documentation/" target="_blank">' . __( 'Documentation', 'seriously-simple-podcasting' ) . '</a>';
+		$plugin_meta['addons'] = '<a href="http://www.seriouslysimplepodcasting.com/add-ons/" target="_blank">' . __( 'Add-ons', 'seriously-simple-podcasting' ) . '</a>';
 		$plugin_meta['review'] = '<a href="https://wordpress.org/support/view/plugin-reviews/' . $plugin_data['slug'] . '?rate=5#postform" target="_blank">' . __( 'Write a review', 'seriously-simple-podcasting' ) . '</a>';
-		$plugin_meta['donate'] = '<a href="' . esc_url( $donate_link ) . '" target="_blank">' . __( 'Donate', 'seriously-simple-podcasting' ) . '</a>';
-
-		if ( isset( $plugin_data['Version'] ) ) {
-			global $wp_version;
-			$plugin_meta['compatibility'] = '<a href="https://wordpress.org/plugins/' . $plugin_data['slug'] . '/?compatibility%5Bversion%5D=' . $wp_version . '&compatibility%5Btopic_version%5D=' . $plugin_data['Version'] . '&compatibility%5Bcompatible%5D=1" target="_blank">' . __( 'Confirm compatibility', 'seriously-simple-podcasting' ) . '</a>';
-		}
 
 		return $plugin_meta;
 	}
@@ -772,7 +769,6 @@ class SSP_Admin {
 
 	/**
 	 * Hide RSS footer created by WordPress SEO from podcast RSS feed
-	 * Will only work if/when my patch is accepted: https://github.com/Yoast/wordpress-seo/pull/1990
 	 * @param  boolean $include_footer Default inclusion value
 	 * @return boolean                 Modified inclusion value
 	 */
@@ -856,7 +852,7 @@ class SSP_Admin {
 
 		$previous_version = get_option( 'ssp_version', '1.0' );
 
-		if ( version_compare( $previous_version, '1.9.0', '<' ) ) {
+		if ( version_compare( $previous_version, '1.14.0', '<' ) ) {
 			flush_rewrite_rules();
 		}
 

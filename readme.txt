@@ -1,6 +1,6 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke, whyisjake
-Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp
+Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
 Requires at least: 4.2
 Tested up to: 4.3.1
 Stable tag: 1.13
@@ -29,6 +29,10 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 **Where to find help**
 
 Seriously Simple Podcasting comes with complete user and developer [documentation](http://www.seriouslysimplepodcasting.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
+
+**Add-ons**
+
+Seriously Simple Podcasting comes with a growing [library of add-ons](http://www.seriouslysimplepodcasting.com/add-ons/). Just like the core plugin itself, all of the add-ons are 100% free to use and will always remain that way.
 
 **How to contribute**
 
@@ -77,6 +81,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.14 =
+* 2015-11-28
+* [TWEAK] Adding new URL structure specifically for the audio player file URLs
+* [TWEAK] Updating related links in the plugin list table
 
 = 1.13 =
 * 2015-11-03

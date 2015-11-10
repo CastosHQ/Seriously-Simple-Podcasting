@@ -652,6 +652,10 @@ class SSP_Frontend {
 		$player = '';
 
 		if ( $src ) {
+
+			// Switch to podcast audio player URL
+			$src = str_replace( 'podcast-download', 'podcast-player', $src );
+
 			// Use built-in WordPress media player
 			$player = wp_audio_shortcode( array( 'src' => $src ) );
 
@@ -833,8 +837,12 @@ class SSP_Frontend {
 
 				// Get file referrer
 				$referrer = '';
-				if( isset( $_GET['ref'] ) ) {
-					$referrer = esc_attr( $_GET['ref'] );
+				if( isset( $wp_query->query_vars['podcast_ref'] ) && $wp_query->query_vars['podcast_ref'] ) {
+					$referrer = $wp_query->query_vars['podcast_ref'];
+				} else {
+					if( isset( $_GET['ref'] ) ) {
+						$referrer = esc_attr( $_GET['ref'] );
+					}
 				}
 
 				// Allow other actions - functions hooked on here must not output any data

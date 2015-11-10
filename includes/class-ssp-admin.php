@@ -488,7 +488,8 @@ class SSP_Admin {
 						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span class="description">' . $v['description'] . '</span></label>' . "\n";
 						$html .= '</td><tr/>' . "\n";
 					} elseif ( $v['type'] == 'datepicker' ) {
-						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td class="hasDatepicker"><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
+						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '_display">' . $v['name'] . '</label></th><td class="hasDatepicker"><input type="text" id="' . esc_attr( $k ) . '_display" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( date( 'j F, Y', strtotime( $data ) ) ) . '" />' . "\n";
+						$html .= '<input name="' . esc_attr( $k ) . '" id="' . esc_attr( $k ) . '_save" type="hidden" value="' . esc_attr( $data ) . '" />' . "\n";
 						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 						$html .= '</td><tr/>' . "\n";
 					} else {
@@ -852,7 +853,7 @@ class SSP_Admin {
 
 		$previous_version = get_option( 'ssp_version', '1.0' );
 
-		if ( version_compare( $previous_version, '1.14.0', '<' ) ) {
+		if ( version_compare( $previous_version, '1.13.1', '<' ) ) {
 			flush_rewrite_rules();
 		}
 

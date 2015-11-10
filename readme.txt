@@ -82,9 +82,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.14 =
-* 2015-11-28
-* [TWEAK] Adding new URL structure specifically for the audio player file URLs
+= 1.13.1 =
+* 2015-11-12
+* [TWEAK] Adjusting episode recorded date display to be more human readable on the episode edit screen
+* [TWEAK] Adding new URL structure specifically for the audio player file URLs (not publicly visible)
+* [TWEAK] Updating episode cache to cache series queries separately
 * [TWEAK] Updating related links in the plugin list table
 
 = 1.13 =

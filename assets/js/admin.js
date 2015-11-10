@@ -76,7 +76,15 @@ jQuery(document).ready(function($) {
 		changeMonth: true,
       	changeYear: true,
       	showAnim: 'slideDown',
-      	dateFormat: 'dd-mm-yy'
+      	dateFormat: 'd MM, yy',
+      	altField: '#date_recorded_save',
+      	altFormat: 'dd-mm-yy',
+      	onClose : function ( dateText, obj ) {
+		    var d = $.datepicker.parseDate("d MM, yy", dateText);
+		    var date = $.datepicker.formatDate("dd-mm-yy", d);
+		    var save_field = $(this).attr('id').replace( '_display', '' );
+		    $( '#' + save_field ).val( date );
+		}
 	});
 
 	/* SETTINGS PAGE */

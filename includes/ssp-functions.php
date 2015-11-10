@@ -305,7 +305,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		}
 
 		// Do we have anything in the cache here?
-		$key   = 'episodes';
+		$key   = 'episodes_' . $series;
 		$group = 'ssp';
 		$posts = wp_cache_get( $key, $group );
 

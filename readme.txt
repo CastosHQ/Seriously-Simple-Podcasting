@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
 Requires at least: 4.2
 Tested up to: 4.3.1
-Stable tag: 1.13
+Stable tag: 1.13.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -87,7 +87,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [TWEAK] Adjusting episode recorded date display to be more human readable on the episode edit screen
 * [TWEAK] Adding new URL structure specifically for the audio player file URLs (not publicly visible)
 * [TWEAK] Updating episode cache to cache series queries separately
-* [TWEAK] Updating related links in the plugin list table
+* [TWEAK] Updating plugin links in the plugin list table
 
 = 1.13 =
 * 2015-11-03
@@ -532,5 +532,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.13 =
-* v1.13 contains a number of important updates and some helpful new features - all users are advised to update ASAP.
+= 1.13.1 =
+* v1.13.x contains a number of important updates and some helpful new features - all users are advised to update ASAP.

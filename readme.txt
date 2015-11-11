@@ -24,7 +24,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your audio files on the same site or any other server
 - Complete user and developer [documentation](http://www.seriouslysimplepodcasting.com/)
-- Full i18n support (comes with English, German and Russian translations)
+- Full i18n support
 
 **Where to find help**
 

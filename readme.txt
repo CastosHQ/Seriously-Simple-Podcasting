@@ -2,7 +2,7 @@
 Contributors: hlashbrooke, whyisjake
 Tags: seriously simple podcasting, podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
 Requires at least: 4.2
-Tested up to: 4.3.1
+Tested up to: 4.4
 Stable tag: 1.13.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html

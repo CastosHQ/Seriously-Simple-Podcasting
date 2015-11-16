@@ -493,7 +493,7 @@ class SSP_Admin {
 							$display_date = date( 'j F, Y', strtotime( $data ) );
 						}
 						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '_display">' . $v['name'] . '</label></th><td class="hasDatepicker"><input type="text" id="' . esc_attr( $k ) . '_display" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( $display_date ) . '" />' . "\n";
-						$html .= '<input name="' . esc_attr( $k ) . '" id="' . esc_attr( $k ) . '_save" type="hidden" value="' . esc_attr( $data ) . '" />' . "\n";
+						$html .= '<input name="' . esc_attr( $k ) . '" id="' . esc_attr( $k ) . '" type="hidden" value="' . esc_attr( $data ) . '" />' . "\n";
 						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 						$html .= '</td><tr/>' . "\n";
 					} else {

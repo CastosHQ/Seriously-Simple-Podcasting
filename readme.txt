@@ -1,9 +1,9 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke, whyisjake
-Tags: podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
+Tags: seriously simple podcasting, podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
 Requires at least: 4.2
 Tested up to: 4.3.1
-Stable tag: 1.13.1
+Stable tag: 1.13.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -17,6 +17,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 - Simple settings so you can get your podcast up and running quickly
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
+- Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Use any post type for your podcast episodes
 - Highly configurable and robust RSS feed designed for *all* podcast services and feed readers, including iTunes and Stitcher
@@ -81,6 +82,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.13.2 =
+* 2015-11-16
+* [FIX] Making sure the 'Date Recorded' field is able to be populated and cleared correctly
 
 = 1.13.1 =
 * 2015-11-12
@@ -532,5 +537,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.13.1 =
+= 1.13.2 =
 * v1.13.x contains a number of important updates and some helpful new features - all users are advised to update ASAP.

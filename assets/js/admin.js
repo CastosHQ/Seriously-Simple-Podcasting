@@ -77,13 +77,22 @@ jQuery(document).ready(function($) {
       	changeYear: true,
       	showAnim: 'slideDown',
       	dateFormat: 'd MM, yy',
-      	altField: '#date_recorded_save',
+      	altField: '#date_recorded',
       	altFormat: 'dd-mm-yy',
       	onClose : function ( dateText, obj ) {
 		    var d = $.datepicker.parseDate("d MM, yy", dateText);
 		    var date = $.datepicker.formatDate("dd-mm-yy", d);
 		    var save_field = $(this).attr('id').replace( '_display', '' );
 		    $( '#' + save_field ).val( date );
+		}
+	});
+
+	jQuery('.ssp-datepicker').change( function () {
+		var value = jQuery( this ).val();
+		if( !value ) {
+			var id = jQuery( this ).attr( 'id' );
+			var save_field = id.replace( '_display', '' );
+			jQuery( '#' + save_field ).val( '' );
 		}
 	});
 

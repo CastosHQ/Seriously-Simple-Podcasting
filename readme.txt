@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: seriously simple podcasting, podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
 Requires at least: 4.2
 Tested up to: 4.4
-Stable tag: 1.13.2
+Stable tag: 1.13.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,6 +82,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.13.3 =
+* 2015-11-24
+* [FIX] Preventing preloading of audio in player
 
 = 1.13.2 =
 * 2015-11-16
@@ -537,5 +541,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.13.2 =
+= 1.13.3 =
 * v1.13.x contains a number of important updates and some helpful new features - all users are advised to update ASAP.

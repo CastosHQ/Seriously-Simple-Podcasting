@@ -657,7 +657,7 @@ class SSP_Frontend {
 			$src = str_replace( 'podcast-download', 'podcast-player', $src );
 
 			// Use built-in WordPress media player
-			$player = wp_audio_shortcode( array( 'src' => $src ) );
+			$player = wp_audio_shortcode( array( 'src' => $src, 'preload' => 'none' ) );
 
 			// Allow filtering so that alternative players can be used
 			$player = apply_filters( 'ssp_audio_player', $player, $src );

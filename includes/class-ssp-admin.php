@@ -242,24 +242,13 @@ class SSP_Admin {
 	public function register_custom_column_headings( $defaults ) {
 		$new_columns = apply_filters( 'ssp_admin_columns_episodes', array( 'series' => __( 'Series' , 'seriously-simple-podcasting' ) , 'image' => __( 'Image' , 'seriously-simple-podcasting' ) ) );
 
-		$last_item = '';
+		// remove date column
+		unset( $defaults['date'] );
 
-		if ( isset( $defaults['date'] ) ) { unset( $defaults['date'] ); }
+		// add new columns before last default one
+		$columns = array_slice( $defaults, 0, -1 ) + $new_columns + array_slice( $defaults, -1 );
 
-		if ( count( $defaults ) > 2 ) {
-			$last_item = array_slice( $defaults, -1 );
-			array_pop( $defaults );
-		}
-		$defaults = array_merge( $defaults, $new_columns );
-
-		if ( $last_item ) {
-			foreach ( (array) $last_item as $k => $v ) {
-				$defaults[$k] = $v;
-				break;
-			}
-		}
-
-		return $defaults;
+		return $columns;
 	}
 
     /**

@@ -308,9 +308,12 @@ class SSP_Admin {
 
     /**
      * Display column data in series list table
+     *
      * @param string  $column_data Default column content
      * @param string  $column_name Name of current column
      * @param integer $term_id     ID of term
+     *
+     * @return string
      */
     public function add_series_columns( $column_data , $column_name , $term_id ) {
 
@@ -416,7 +419,7 @@ class SSP_Admin {
 	public function update_episode_embed_code () {
 
 		// Make sure we have a valid post ID
-		if( ! isset( $_POST['post_id'] ) || ! $_POST['post_id'] ) {
+		if( empty( $_POST['post_id'] ) ) {
 			return;
 		}
 
@@ -503,7 +506,7 @@ class SSP_Admin {
 	/**
 	 * Save episoe meta box content
 	 * @param  integer $post_id ID of post
-	 * @return void
+	 * @return mixed
 	 */
 	public function meta_box_save( $post_id ) {
 		global $ss_podcasting;

@@ -334,10 +334,16 @@ class SSP_Admin {
 					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
 					$feed_url = $this->home_url . 'feed/' . $feed_slug . '/' . $series_slug;
 				} else {
-					$feed_url = $this->home_url . '?feed=' . $this->token . '&podcast_series=' . $series_slug;
+					$feed_url = add_query_arg(
+						array(
+							'feed' => $this->token,
+							'podcast_series' => $series_slug
+						),
+						$this->home_url
+					);
 				}
 
-                $column_data = '<a href="' . $feed_url . '" target="_blank">' . $feed_url . '</a>';
+                $column_data = '<a href="' . esc_attr( $feed_url ) . '" target="_blank">' . esc_html( $feed_url ) . '</a>';
             break;
         }
 

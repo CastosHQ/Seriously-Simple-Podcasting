@@ -263,18 +263,9 @@ class SSP_Admin {
 		switch ( $column_name ) {
 
 			case 'series':
-				$value = '';
-
 				$terms = wp_get_post_terms( $id , 'series' );
-
-				$i = 0;
-				foreach ( $terms as $term ) {
-					if ( $i > 0 ) { $value .= ', '; }
-					else { ++$i; }
-					$value .= $term->name;
-				}
-
-				echo $value;
+				$term_names = wp_list_pluck( $terms, 'name' );
+				echo join( ', ', $term_names );
 			break;
 
 			case 'image':

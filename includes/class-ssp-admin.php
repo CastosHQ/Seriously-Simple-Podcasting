@@ -427,7 +427,7 @@ class SSP_Admin {
 	public function update_episode_embed_code () {
 
 		// Make sure we have a valid post ID
-		if( ! isset( $_POST['post_id'] ) || ! $_POST['post_id'] ) {
+		if( empty( $_POST['post_id'] ) ) {
 			return;
 		}
 

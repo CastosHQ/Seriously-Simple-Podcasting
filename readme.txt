@@ -2,8 +2,8 @@
 Contributors: hlashbrooke, whyisjake
 Tags: seriously simple podcasting, podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
 Requires at least: 4.2
-Tested up to: 4.4
-Stable tag: 1.13.3
+Tested up to: 4.4.1
+Stable tag: 1.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -82,6 +82,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 12. Podcast series widget
 
 == Changelog ==
+
+= 1.14 =
+* 2016-01-25
+* [NEW] Adding support for the Google Play Podcast specification
+* [NEW] Adding a stylesheet for RSS feeds to make them readable in the browser and more easily shareable
+* [TWEAK] Correctly escaping HTML output in the dashboard (props [Danny van Kooten](https://profiles.wordpress.org/dvankooten/))
+* [TWEAK] Optimising code for clarity and performance (props [Danny van Kooten](https://profiles.wordpress.org/dvankooten/))
+* [TWEAK] Ensuring that the feed URL is always supplied correctly (props [Danny van Kooten](https://profiles.wordpress.org/dvankooten/))
 
 = 1.13.3 =
 * 2015-11-24

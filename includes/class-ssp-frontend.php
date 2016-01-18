@@ -20,6 +20,7 @@ class SSP_Frontend {
 	private $assets_dir;
 	private $assets_url;
 	private $template_path;
+	public $template_url;
 	public $token;
 	public $home_url;
 
@@ -36,6 +37,7 @@ class SSP_Frontend {
 		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
+		$this->template_url = esc_url( trailingslashit( plugins_url( '/templates/', $file ) ) );
 		$this->home_url = trailingslashit( home_url() );
 		$this->token = 'podcast';
 

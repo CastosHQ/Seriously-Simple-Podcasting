@@ -122,7 +122,7 @@ class SSP_Admin {
 		add_rewrite_rule( '^podcast-download/([^/]*)/([^/]*)/?', 'index.php?podcast_episode=$matches[1]', 'top' );
 		add_rewrite_rule( '^podcast-player/([^/]*)/([^/]*)/?', 'index.php?podcast_episode=$matches[1]&podcast_ref=player', 'top' );
 
-		// Custo query variables
+		// Custom query variables
 		add_rewrite_tag( '%podcast_episode%', '([^&]+)' );
 		add_rewrite_tag( '%podcast_ref%', '([^&]+)' );
 

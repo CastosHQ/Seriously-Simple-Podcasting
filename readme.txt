@@ -18,12 +18,13 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Simple settings so you can get your podcast up and running quickly
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
 - Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
+- Supports both audio *and* video podcasting
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Use any post type for your podcast episodes
-- Highly configurable and robust RSS feed designed for *all* podcast services and feed readers, including iTunes and Stitcher
+- Highly configurable and robust RSS feed designed for *all* podcast services and feed readers, including iTunes, Google Play and Stitcher
 - Shortcodes & widgets for displaying podcast episode lists as well as single episodes anywhere on your site
 - Playable episodes using the built-in WordPress media player
-- The freedom to host your audio files on the same site or any other server
+- The freedom to host your media files on the same site or any other server
 - Complete user and developer [documentation](http://www.seriouslysimplepodcasting.com/)
 - Full i18n support
 
@@ -47,7 +48,7 @@ If you would like to contribute translations to this plugin you can do so throug
 
 Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add new episodes and go to "Podcast > Settings" to customise your podcast.
 
-Podcast audio files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them in manually.*
+Podcast media files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them manually.*
 
 If you need help, you can find complete user and developer documentation [here](http://www.seriouslysimplepodcasting.com/).
 
@@ -68,7 +69,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Screenshots ==
 
-1. Audio player and episode details displayed on the frontend above post content.
+1. Media player and episode details displayed on the frontend above post content.
 2. The only info that you need to add to each podcast episode.
 3. Set up your podcast.
 4. Customise your podcast feed.
@@ -85,6 +86,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.14 =
 * 2016-01-25
+* [NEW] Adding support for video podcasting
 * [NEW] Adding support for the Google Play Podcast specification
 * [NEW] Adding a stylesheet for RSS feeds to make them readable in the browser and more easily shareable
 * [TWEAK] Correctly escaping HTML output in the dashboard (props [Danny van Kooten](https://profiles.wordpress.org/dvankooten/))
@@ -549,5 +551,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.13.3 =
-* v1.13.x contains a number of important updates and some helpful new features - all users are advised to update ASAP.
+= 1.14 =
+* v1.14 contains a number of great new features and optimisations - all users are advised to update ASAP.

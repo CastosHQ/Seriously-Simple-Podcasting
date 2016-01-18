@@ -469,12 +469,20 @@ class SSP_Admin {
 				}
 
 				if ( $k == 'audio_file' ) {
-					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input type="button" class="button" id="upload_audio_file_button" value="'. __( 'Upload File' , 'seriously-simple-podcasting' ) . '" data-uploader_title="Choose a file" data-uploader_button_text="Insert audio file" /><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" />' . "\n";
+					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" /> <input type="button" class="button" id="upload_audio_file_button" value="' . __( 'Upload File' , 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />' . "\n";
 					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 					$html .= '</td><tr/>' . "\n";
 				} else {
 					if ( $v['type'] == 'checkbox' ) {
 						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span class="description">' . $v['description'] . '</span></label>' . "\n";
+						$html .= '</td><tr/>' . "\n";
+					} elseif ( $v['type'] == 'radio' ) {
+						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td>' ."\n";
+						foreach( $v['options'] as $option => $label ) {
+
+							$html .= '<input style="vertical-align: bottom;" name="' . esc_attr( $k ) . '" type="radio" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '" ' . checked( $option , $data , false ) . ' value="' . esc_attr( $option ) . '" /> <label style="margin-right:10px;" for="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">' . esc_html( $label ) . '</label>' . "\n";
+						}
+						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 						$html .= '</td><tr/>' . "\n";
 					} elseif ( $v['type'] == 'datepicker' ) {
 						$display_date = '';
@@ -578,7 +586,7 @@ class SSP_Admin {
 				}
 			}
 
-			// Save audio file to 'enclosure' meta field for standards-sake
+			// Save podcast file to 'enclosure' meta field for standards-sake
 			update_post_meta( $post_id, 'enclosure', $enclosure );
 
 		}
@@ -593,9 +601,19 @@ class SSP_Admin {
 		global $pagenow;
 		$fields = array();
 
+		$fields['episode_type'] = array(
+			'name' => __( 'Episode type:' , 'seriously-simple-podcasting' ),
+		    'description' => '',
+		    'type' => 'radio',
+		    'default' => 'audio',
+		    'options' => array( 'audio' => __( 'Audio', 'seriously-simple-podcasting' ), 'video' => __( 'Video', 'seriously-simple-podcasting' ) ),
+		    'section' => 'info',
+		);
+
+		// In v1.14+ the `audio_file` field can actually be either audio or video, but we're keeping the field name here for backwards compatibility
 		$fields['audio_file'] = array(
-		    'name' => __( 'Audio file:' , 'seriously-simple-podcasting' ),
-		    'description' => __( 'Upload the primary podcast audio file. If the file is hosted on another server simply paste the URL here.' , 'seriously-simple-podcasting' ),
+		    'name' => __( 'Podcast file:' , 'seriously-simple-podcasting' ),
+		    'description' => __( 'Upload the primary podcast file (audio or video). If the file is hosted on another server simply paste the URL here.' , 'seriously-simple-podcasting' ),
 		    'type' => 'url',
 		    'default' => '',
 		    'section' => 'info',
@@ -603,7 +621,7 @@ class SSP_Admin {
 
 		$fields['duration'] = array(
 		    'name' => __( 'Duration:' , 'seriously-simple-podcasting' ),
-		    'description' => __( 'Duration of audio file for display (calculated automatically if possible).' , 'seriously-simple-podcasting' ),
+		    'description' => __( 'Duration of podcast file for display (calculated automatically if possible).' , 'seriously-simple-podcasting' ),
 		    'type' => 'text',
 		    'default' => '',
 		    'section' => 'info',
@@ -611,7 +629,7 @@ class SSP_Admin {
 
 		$fields['filesize'] = array(
 		    'name' => __( 'File size:' , 'seriously-simple-podcasting' ),
-		    'description' => __( 'Size of the audio file for display (calculated automatically if possible).' , 'seriously-simple-podcasting' ),
+		    'description' => __( 'Size of the podcast file for display (calculated automatically if possible).' , 'seriously-simple-podcasting' ),
 		    'type' => 'text',
 		    'default' => '',
 		    'section' => 'info',
@@ -634,8 +652,8 @@ class SSP_Admin {
 		);
 
 		$fields['block'] = array(
-		    'name' => __( 'Block from iTunes:' , 'seriously-simple-podcasting' ),
-		    'description' => __( 'Block this episode from appearing in iTunes.' , 'seriously-simple-podcasting' ),
+		    'name' => __( 'Block:' , 'seriously-simple-podcasting' ),
+		    'description' => __( 'Block this episode from appearing in the iTunes & Google Play podcast libraries.' , 'seriously-simple-podcasting' ),
 		    'type' => 'checkbox',
 		    'default' => '',
 		    'section' => 'info',

@@ -304,6 +304,9 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?>'; ?>
 		while ( $qry->have_posts()) {
 			$qry->the_post();
 
+			// Get the episode type (audio or video)
+			$episode_type = $ss_podcasting->get_episode_type( get_the_ID() );
+
 			// Audio file
 			$audio_file = $ss_podcasting->get_enclosure( get_the_ID() );
 			if ( get_option( 'permalink_structure' ) ) {
@@ -339,10 +342,13 @@ echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?>'; ?>
 				$size = 1;
 			}
 
-			// File MIME type (default to MP3 to ensure there is always a value for this)
+			// File MIME type (default to MP3/MP4 to ensure there is always a value for this)
 			$mime_type = $ss_podcasting->get_attachment_mimetype( $audio_file );
 			if ( ! $mime_type ) {
-				$mime_type = 'audio/mpeg';
+				switch( $episode_type ) {
+					case 'audio': $mime_type = 'audio/mpeg'; break;
+					case 'video': $mime_type = 'video/mp4'; break;
+				}
 			}
 
 			// Episode explicit flag

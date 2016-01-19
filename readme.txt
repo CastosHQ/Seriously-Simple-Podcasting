@@ -34,7 +34,7 @@ Seriously Simple Podcasting comes with complete user and developer [documentatio
 
 **Add-ons**
 
-Seriously Simple Podcasting comes with a growing [library of add-ons](http://www.seriouslysimplepodcasting.com/add-ons/). Just like the core plugin itself, all of the add-ons are 100% free to use and will always remain that way.
+Seriously Simple Podcasting comes with a growing [library of add-ons](http://www.seriouslysimplepodcasting.com/add-ons/). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
 
 **How to contribute**
 
@@ -86,12 +86,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.14 =
 * 2016-01-25
-* [NEW] Adding support for video podcasting
-* [NEW] Adding support for the Google Play Podcast specification
+* [NEW] Adding full support for video podcasting
+* [NEW] Adding full support for the Google Play Podcast specification
 * [NEW] Adding a stylesheet for RSS feeds to make them readable in the browser and more easily shareable
 * [TWEAK] Correctly escaping HTML output in the dashboard (props [Danny van Kooten](https://profiles.wordpress.org/dvankooten/))
 * [TWEAK] Optimising code for clarity and performance (props [Danny van Kooten](https://profiles.wordpress.org/dvankooten/))
 * [TWEAK] Ensuring that the feed URL is always supplied correctly (props [Danny van Kooten](https://profiles.wordpress.org/dvankooten/))
+* [TWEAK] Improving inline comments all round
 
 = 1.13.3 =
 * 2015-11-24

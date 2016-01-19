@@ -216,7 +216,8 @@ $category1 = ssp_get_feed_category_output( 1, $series_id );
 $category2 = ssp_get_feed_category_output( 2, $series_id );
 $category3 = ssp_get_feed_category_output( 3, $series_id );
 
-$stylehseet_url = apply_filters( 'ssp_xml_stylesheet', $ss_podcasting->template_url . 'feed-stylesheet.xsl' );
+// Get stylehseet URL (filterable to allow custom RSS stylesheets)
+$stylehseet_url = apply_filters( 'ssp_rss_stylesheet', $ss_podcasting->template_url . 'feed-stylesheet.xsl' );
 
 // Set RSS header
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );

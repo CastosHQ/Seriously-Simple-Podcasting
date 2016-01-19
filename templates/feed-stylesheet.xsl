@@ -95,9 +95,6 @@
                             </xsl:if>
                             <xsl:value-of select="/rss/channel/title"/>
                         </h1>
-                        <h3>
-                            <xsl:value-of select="/rss/channel/subtitle"/>
-                        </h3>
                         <p>
                             <xsl:value-of select="/rss/channel/description"/>
                         </p>

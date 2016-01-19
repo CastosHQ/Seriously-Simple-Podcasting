@@ -249,7 +249,6 @@ if( $stylehseet_url ) {
 	<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>
 	<language><?php echo esc_html( $language ); ?></language>
 	<copyright><?php echo esc_html( $copyright ); ?></copyright>
-	<subtitle><?php echo esc_html( $subtitle ); ?></subtitle>
 	<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>
 	<itunes:author><?php echo esc_html( $author ); ?></itunes:author>
 	<googleplay:author><?php echo esc_html( $author ); ?></googleplay:author>

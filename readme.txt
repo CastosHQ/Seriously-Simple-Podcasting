@@ -1,6 +1,6 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke, whyisjake
-Tags: seriously simple podcasting, podcast, audio, video, vodcast, vodcasting, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
+Tags: seriously simple podcasting, podcast, audio, video, vodcast, vodcasting, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons, google play
 Requires at least: 4.2
 Tested up to: 4.4.1
 Stable tag: 1.14.1
@@ -21,7 +21,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Supports both audio *and* video podcasting
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Use any post type for your podcast episodes
-- Highly configurable and robust RSS feed designed for *all* podcast services and feed readers, including iTunes, Google Play and Stitcher
+- Highly configurable and robust RSS feed designed for *all* podcast services and feed readers - including iTunes, Google Play and Stitcher
 - Shortcodes & widgets for displaying podcast episode lists as well as single episodes anywhere on your site
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your media files on the same site or any other server
@@ -86,9 +86,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.14.1 =
-* 2016-01-20
-* [TWEAK] Adding the latest podcast categories permitted on iTunes
+* 2016-01-19
+* [TWEAK] Updating available podcast categories to use the latest specified by iTunes
 * [FIX] Removing erroneous `subtitle` tag from RSS feed
+* [FIX] Adding Google Play namespace definition to RSS feed header
 
 = 1.14 =
 * 2016-01-19

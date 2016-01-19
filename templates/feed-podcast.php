@@ -238,6 +238,7 @@ if( $stylehseet_url ) {
 	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
 	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
 	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+	xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 	<?php do_action( 'rss2_ns' ); ?>
 >
 

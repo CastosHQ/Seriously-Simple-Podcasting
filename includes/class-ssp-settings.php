@@ -221,6 +221,10 @@ class SSP_Settings {
 			'Other' => array( 'label' => __( 'Other', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
 			'Spirituality' => array( 'label' => __( 'Spirituality', 'seriously-simple-podcasting' ), 'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ) ),
 
+			'Medicine' => array( 'label' => __( 'Medicine', 'seriously-simple-podcasting' ), 'group' => __( 'Science & Medicine', 'seriously-simple-podcasting' ) ),
+			'Natural Sciences' => array( 'label' => __( 'Natural Sciences', 'seriously-simple-podcasting' ), 'group' => __( 'Science & Medicine', 'seriously-simple-podcasting' ) ),
+			'Social Sciences' => array( 'label' => __( 'Social Sciences', 'seriously-simple-podcasting' ), 'group' => __( 'Science & Medicine', 'seriously-simple-podcasting' ) ),
+
 			'History' => array( 'label' => __( 'History', 'seriously-simple-podcasting' ), 'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ) ),
 			'Personal Journals' => array( 'label' => __( 'Personal Journals', 'seriously-simple-podcasting' ), 'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ) ),
 			'Philosophy' => array( 'label' => __( 'Philosophy', 'seriously-simple-podcasting' ), 'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ) ),

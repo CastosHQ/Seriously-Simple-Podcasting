@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: seriously simple podcasting, podcast, audio, video, vodcast, vodcasting, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
 Requires at least: 4.2
 Tested up to: 4.4.1
-Stable tag: 1.14
+Stable tag: 1.14.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -78,11 +78,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 7. Publish your podcast.
 8. The podcast admin menu location.
 9. Podcast episodes are shown in the At a Glance dashboard widget.
-10. Recent episodes widget
-11. Single episode widget
-12. Podcast series widget
+10. Recent episodes widget.
+11. Single episode widget.
+12. Podcast series widget.
+13. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.14.1 =
+* 2016-01-20
+* [TWEAK] Adding the latest podcast categories permitted on iTunes
 
 = 1.14 =
 * 2016-01-19
@@ -552,5 +557,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14 =
-* v1.14 contains a number of great new features and optimisations - all users are advised to update ASAP.
+= 1.14.1 =
+* v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.

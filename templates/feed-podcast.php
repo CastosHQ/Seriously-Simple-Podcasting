@@ -223,11 +223,13 @@ $stylehseet_url = apply_filters( 'ssp_rss_stylesheet', $ss_podcasting->template_
 header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
 // Use `echo` for first line to prevent any extra characters at start of document
-echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?>'; ?>
+echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?>' . "\n";
 
-<?php if( $stylehseet_url ) { ?>
-<?xml-stylesheet type="text/xsl" href="<?php echo esc_url( $stylehseet_url ); ?>"?>
-<?php } ?>
+// Include RSS stylesheet
+if( $stylehseet_url ) {
+	echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( $stylehseet_url ) . '"?>';
+} ?>
+
 <rss version="2.0"
 	xmlns:content="http://purl.org/rss/1.0/modules/content/"
 	xmlns:wfw="http://wellformedweb.org/CommentAPI/"

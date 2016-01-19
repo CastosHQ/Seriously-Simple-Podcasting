@@ -88,6 +88,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 = 1.14.1 =
 * 2016-01-20
 * [TWEAK] Adding the latest podcast categories permitted on iTunes
+* [FIX] Removing erroneous `subtitle` tag from RSS feed
 
 = 1.14 =
 * 2016-01-19

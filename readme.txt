@@ -1,6 +1,6 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke, whyisjake
-Tags: seriously simple podcasting, podcast, audio, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
+Tags: seriously simple podcasting, podcast, audio, video, vodcast, vodcasting, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons
 Requires at least: 4.2
 Tested up to: 4.4.1
 Stable tag: 1.14
@@ -85,7 +85,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.14 =
-* 2016-01-25
+* 2016-01-19
 * [NEW] Adding full support for video podcasting
 * [NEW] Adding full support for the Google Play Podcast specification
 * [NEW] Adding a stylesheet for RSS feeds to make them readable in the browser and more easily shareable

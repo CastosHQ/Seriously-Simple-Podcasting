@@ -1,6 +1,6 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke, whyisjake
-Tags: seriously simple podcasting, podcast, audio, video, vodcast, vodcasting, rss, rss2, m4a, mp3, feed, itunes, media player, podcasting, radio, audio player, media, id3, stitcher, show, shows, series, simple, docs, documentation, wav, oembed, embed, ssp, free, add-ons, extensions, addons, google play
+Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
 Requires at least: 4.2
 Tested up to: 4.4.1
 Stable tag: 1.14.1

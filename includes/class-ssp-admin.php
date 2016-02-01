@@ -806,7 +806,7 @@ class SSP_Admin {
 
     	$file_name = 'feed-podcast.php';
 
-    	$user_template_file = apply_filters( 'ssp_feed_template_file', trailingslashit( get_template_directory() ) . $file_name );
+    	$user_template_file = apply_filters( 'ssp_feed_template_file', trailingslashit( get_stylesheet_directory() ) . $file_name );
 
 		// Any functions hooked in here must NOT output any data or else feed will break
 		do_action( 'ssp_before_feed' );

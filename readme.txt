@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
 Requires at least: 4.2
 Tested up to: 4.4.1
-Stable tag: 1.14.1
+Stable tag: 1.14.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 13. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.14.2 =
+* 2016-02-05
+* [FIX] Making sure that the custom feed template file is taken from child theme if one exists (props [Justin Fletcher](https://github.com/justinticktock))
 
 = 1.14.1 =
 * 2016-01-19
@@ -559,5 +563,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14.1 =
+= 1.14.2 =
 * v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.

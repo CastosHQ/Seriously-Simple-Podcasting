@@ -647,7 +647,7 @@ class SSP_Admin {
 		    'name' => __( 'Explicit:' , 'seriously-simple-podcasting' ),
 		    'description' => __( 'Mark this episode as explicit.' , 'seriously-simple-podcasting' ),
 		    'type' => 'checkbox',
-		    'default' => '',
+		    'default' => get_option( 'ss_podcasting_explicit' ),
 		    'section' => 'info',
 		);
 

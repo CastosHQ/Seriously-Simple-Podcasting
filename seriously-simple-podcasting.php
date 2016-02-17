@@ -7,7 +7,7 @@
  * Author: Hugh Lashbrooke
  * Author URI: http://www.hughlashbrooke.com/
  * Requires at least: 4.2
- * Tested up to: 4.4.1
+ * Tested up to: 4.4.2
  *
  * Text Domain: seriously-simple-podcasting
  */

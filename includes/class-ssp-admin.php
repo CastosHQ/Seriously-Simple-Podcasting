@@ -613,7 +613,7 @@ class SSP_Admin {
 		// In v1.14+ the `audio_file` field can actually be either audio or video, but we're keeping the field name here for backwards compatibility
 		$fields['audio_file'] = array(
 		    'name' => __( 'Podcast file:' , 'seriously-simple-podcasting' ),
-		    'description' => __( 'Upload the primary podcast file (audio or video). If the file is hosted on another server simply paste the URL here.' , 'seriously-simple-podcasting' ),
+		    'description' => __( 'Upload the primary podcast file or paste the file URL here.' , 'seriously-simple-podcasting' ),
 		    'type' => 'url',
 		    'default' => '',
 		    'section' => 'info',

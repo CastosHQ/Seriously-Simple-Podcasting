@@ -21,8 +21,9 @@ class SSP_Frontend {
 	private $assets_url;
 	private $template_path;
 	public $template_url;
-	public $token;
 	public $home_url;
+	public $site_url;
+	public $token;
 
 	/**
 	 * Constructor
@@ -39,6 +40,7 @@ class SSP_Frontend {
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
 		$this->template_url = esc_url( trailingslashit( plugins_url( '/templates/', $file ) ) );
 		$this->home_url = trailingslashit( home_url() );
+		$this->site_url = trailingslashit( site_url() );
 		$this->token = 'podcast';
 
 		// Add meta data to start of podcast content
@@ -514,7 +516,7 @@ class SSP_Frontend {
 
 			// Identify file by root path and not URL (required for getID3 class)
 			$site_root = trailingslashit( ABSPATH );
-			$file = str_replace( $this->home_url, $site_root, $file );
+			$file = str_replace( $this->site_url, $site_root, $file );
 
 			// Get file data (will only work for local files)
 			$data = wp_read_audio_metadata( $file );

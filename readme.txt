@@ -86,7 +86,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.14.2 =
-* 2016-02-05
+* 2016-02-17
 * [TWEAK] Updating and improving admin field names, descriptions and labels
 * [FIX] Making sure that the custom feed template file is taken from child theme if one exists (props [Justin Fletcher](https://github.com/justinticktock))
 * [FIX] Making sure the file durations can be calculated for sites with WordPress installed in a different folder

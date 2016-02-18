@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
 Requires at least: 4.2
 Tested up to: 4.4.2
-Stable tag: 1.14.2
+Stable tag: 1.14.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 13. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.14.3 =
+* 2016-02-18
+* [TWEAK] Making sure that the episode recorded date is internationalised corrently
+* [TWEAK] Adding filters to feed item content, description and subtitle fields (see the [filter reference](https://www.seriouslysimplepodcasting.com/documentation/filter-reference/) for details)
+* [FIX] Fixing dislay of ampersands in episode content in feeds
 
 = 1.14.2 =
 * 2016-02-17
@@ -565,5 +571,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14.2 =
+= 1.14.3 =
 * v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.

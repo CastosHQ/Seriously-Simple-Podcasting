@@ -378,19 +378,24 @@ if( $stylehseet_url ) {
 			// Episode content (with iframes removed)
 			$content = get_the_content_feed( 'rss2' );
 			$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
+			$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 
 			// iTunes summary is the full episode content, but must be shorter than 4000 characters
 			$itunes_summary = mb_substr( $content, 0, 3999 );
+			$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, get_the_ID() );
+			$gp_description = apply_filters( 'ssp_feed_item_gp_description', $itunes_summary, get_the_ID() );
 
 			// Episode description
 			ob_start();
 			the_excerpt_rss();
 			$description = ob_get_clean();
+			$description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
 
 			// iTunes subtitle does not allow any HTML and must be shorter than 255 characters
 			$itunes_subtitle = strip_tags( strip_shortcodes( $description ) );
-			$itunes_subtitle = str_replace( array( '&', '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]', '[&#8230;]' ), array( 'and', '', '', '', '', '', '', '', '' ), $itunes_subtitle );
+			$itunes_subtitle = str_replace( array( '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]', '[&#8230;]' ), array( '', '', '', '', '', '', '', '' ), $itunes_subtitle );
 			$itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
+			$itunes_subtitle = apply_filters( 'ssp_feed_item_itunes_subtitle', $itunes_subtitle, get_the_ID() );
 
 	?>
 	<item>
@@ -403,7 +408,7 @@ if( $stylehseet_url ) {
 		<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
 		<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
-		<googleplay:description><![CDATA[<?php echo $itunes_summary; ?>]]></googleplay:description><?php if ( $episode_image ) { ?>
+		<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description><?php if ( $episode_image ) { ?>
 		<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
 		<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
 		<image href="<?php echo esc_url( $episode_image ); ?>"></image><?php } ?>

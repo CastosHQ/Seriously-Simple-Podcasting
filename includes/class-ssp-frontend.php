@@ -374,7 +374,7 @@ class SSP_Frontend {
 				break;
 
 				case 'date_recorded':
-					$meta_display .= __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date( get_option( 'date_format' ), strtotime( $data ) );
+					$meta_display .= __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) );
 				break;
 
 				// Allow for custom items to be added, but only allow a small amount of HTML tags

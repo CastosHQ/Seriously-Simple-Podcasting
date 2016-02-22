@@ -913,9 +913,11 @@ class SSP_Frontend {
 				header( "Content-Transfer-Encoding: binary" );
 
 				// Set size of file
-		        if ( $size = @filesize( $file ) ) {
-		        	header( "Content-Length: " . $size );
-		        }
+			if ( $size = @filesize( $file ) ) {
+				header( "Content-Length: " . $size );
+			} else if ( $size = get_post_meta( $episode_id, "filesize_raw", true) ) {
+				header( "Content-Length: " . $size );
+			}
 
 		        // Check file referrer
 		        if( 'download' == $referrer ) {

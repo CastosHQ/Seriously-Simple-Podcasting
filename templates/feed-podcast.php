@@ -266,7 +266,11 @@ if( $stylehseet_url ) {
 	if ( $image ) {
 	?><itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
 	<googleplay:image href="<?php echo esc_url( $image ); ?>"></googleplay:image>
-	<image href="<?php echo esc_url( $image ); ?>"></image>
+	<image>
+		<url><?php echo esc_url( $image ); ?></url>
+		<title><?php echo esc_html( $title ); ?></title>
+		<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $ss_podcasting->home_url, $podcast_series ) ) ?></link>
+	</image>
 	<?php } ?>
 	<?php if ( isset( $category1['category'] ) && $category1['category'] ) { ?>
 	<itunes:category text="<?php echo esc_attr( $category1['category'] ); ?>">

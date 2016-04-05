@@ -915,9 +915,30 @@ class SSP_Frontend {
 				header( "Content-Transfer-Encoding: binary" );
 
 				// Set size of file
-		        if ( $size = @filesize( $file ) ) {
-		        	header( "Content-Length: " . $size );
-		        }
+				// Do we have anything in Cache/DB?
+				$size = wp_cache_get( $episode_id, 'filesize_raw' );
+
+				// Nothing in the cache, let's see if we can figure it out.
+				if ( false === $size ) {
+					// Do we have anything in post_meta?
+					$size = get_post_meta( $episode_id, "filesize_raw", true );
+					if ( empty( $size ) ) {
+						// Let's see if we can figure out the path...
+						$attachment_id = get_attachment_id_from_url( $file );
+						if ( ! empty( $attachment_id )  ) {
+							$size = filesize( get_attached_file( $attachment_id ) );
+							// This could be problematic...
+							update_post_meta( $episode_id, 'filesize_raw', $size );
+						}
+					}
+					// Update the cache
+					wp_cache_set( $episode_id, $size, 'filesize_raw' );
+				}
+
+				if ( ! empty( $size ) ) {
+					// Send the header
+					header( "Content-Length: " . $size );
+				}
 
 		        // Check file referrer
 		        if( 'download' == $referrer ) {

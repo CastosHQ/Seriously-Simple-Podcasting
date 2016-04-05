@@ -297,6 +297,9 @@ if( $stylehseet_url ) {
 	<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 	<?php }
 
+	// Prevent WP core from outputting an <image> element
+	remove_action( 'rss2_head', 'rss2_site_icon' );
+
 	// Add RSS2 headers
 	do_action( 'rss2_head' );
 

@@ -1,9 +1,9 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
-Requires at least: 4.2
-Tested up to: 4.4.2
-Stable tag: 1.14.3
+Requires at least: 4.3
+Tested up to: 4.5
+Stable tag: 1.14.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,9 +85,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.14.4 =
+* 2016-04-06
+* [TWEAK] Adding `customize_selective_refresh` flag to all widget options for WordPress 4.5+ compatibility
+* [FIX] Updating file location function to properly allow media files to live outside of the WordPress directory (props [stoney](https://github.com/stoney))
+* [FIX] Correctly finding media file size and setting content headers accordingly (props [Jake Spurlock](https://github.com/whyisjake) and [sharky44](https://github.com/sharky44))
+* [FIX] Fixing `image` tag output in feeds - this was causing many feeds to be invalidated (props [Travis Northcutt](https://github.com/tnorthcutt))
+
 = 1.14.3 =
 * 2016-02-18
-* [TWEAK] Making sure that the episode recorded date is internationalised corrently
+* [TWEAK] Making sure that the episode recorded date is internationalised correctly
 * [TWEAK] Adding filters to feed item content, description and subtitle fields (see the [filter reference](https://www.seriouslysimplepodcasting.com/documentation/filter-reference/) for details)
 * [FIX] Fixing dislay of ampersands in episode content in feeds
 
@@ -571,5 +578,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14.3 =
+= 1.14.4 =
 * v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.

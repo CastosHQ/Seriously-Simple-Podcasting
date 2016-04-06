@@ -24,14 +24,18 @@ class SSP_Widget_Single_Episode extends WP_Widget {
 	 * @since  1.9.0
 	 */
 	public function __construct() {
-		/* Widget variable settings. */
+		// Widget variable settings
 		$this->widget_cssclass = 'widget_podcast_episode';
 		$this->widget_description = __( 'Display a single podcast episode.', 'seriously-simple-podcasting' );
 		$this->widget_idbase = 'ss_podcast';
 		$this->widget_title = __( 'Podcast: Single Episode', 'seriously-simple-podcasting' );
 
-		/* Widget settings. */
-		$widget_ops = array( 'classname' => $this->widget_cssclass, 'description' => $this->widget_description );
+		// Widget settings
+		$widget_ops = array(
+			'classname' => $this->widget_cssclass,
+			'description' => $this->widget_description,
+			'customize_selective_refresh' => true,
+		);
 
 		parent::__construct('single-podcast-episode', $this->widget_title, $widget_ops);
 

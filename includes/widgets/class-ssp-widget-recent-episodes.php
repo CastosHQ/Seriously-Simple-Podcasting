@@ -24,14 +24,18 @@ class SSP_Widget_Recent_Episodes extends WP_Widget {
 	 * @since  1.8.0
 	 */
 	public function __construct() {
-		/* Widget variable settings. */
+		// Widget variable settings
 		$this->widget_cssclass = 'widget_recent_entries widget_recent_episodes';
 		$this->widget_description = __( 'Display a list of your most recent podcast episodes.', 'seriously-simple-podcasting' );
 		$this->widget_idbase = 'ss_podcast';
 		$this->widget_title = __( 'Podcast: Recent Episodes', 'seriously-simple-podcasting' );
 
-		/* Widget settings. */
-		$widget_ops = array( 'classname' => $this->widget_cssclass, 'description' => $this->widget_description );
+		// Widget settings
+		$widget_ops = array(
+			'classname' => $this->widget_cssclass,
+			'description' => $this->widget_description,
+			'customize_selective_refresh' => true,
+		);
 
 		parent::__construct('recent-podcast-episodes', $this->widget_title, $widget_ops);
 

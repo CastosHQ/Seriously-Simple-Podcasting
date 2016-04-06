@@ -920,17 +920,23 @@ class SSP_Frontend {
 
 				// Nothing in the cache, let's see if we can figure it out.
 				if ( false === $size ) {
+
 					// Do we have anything in post_meta?
 					$size = get_post_meta( $episode_id, "filesize_raw", true );
+
 					if ( empty( $size ) ) {
+
 						// Let's see if we can figure out the path...
 						$attachment_id = get_attachment_id_from_url( $file );
+
 						if ( ! empty( $attachment_id )  ) {
 							$size = filesize( get_attached_file( $attachment_id ) );
 							// This could be problematic...
 							update_post_meta( $episode_id, 'filesize_raw', $size );
 						}
+
 					}
+
 					// Update the cache
 					wp_cache_set( $episode_id, $size, 'filesize_raw' );
 				}
@@ -1158,30 +1164,29 @@ class SSP_Frontend {
 	 * @return   string    file or local file path
 	 */
 	function get_local_file_path( $file ) {
+
 		// Identify file by root path and not URL (required for getID3 class)
 		$site_root = trailingslashit( ABSPATH );
-		// remove common dirs from the ends of site_url and site_root, so that
-		// file can be outside of the wordpress installation
-		$root_chunks = explode('/', $site_root);
-		$url_chunks  = explode('/', $this->site_url);
 
-		end($root_chunks);
-		end($url_chunks);
+		// Remove common dirs from the ends of site_url and site_root, so that file can be outside of the wordpress installation
+		$root_chunks = explode( '/', $site_root );
+		$url_chunks  = explode( '/', $this->site_url );
 
-		while (!is_null(key($root_chunks)) && !is_null(key($url_chunks)) &&
-			   (current($root_chunks) == current($url_chunks))) {
+		end( $root_chunks );
+		end( $url_chunks );
 
-			array_pop($root_chunks);
-			array_pop($url_chunks);
-
-			end($root_chunks);
-			end($url_chunks);
+		while ( ! is_null( key( $root_chunks ) ) && ! is_null( key( $url_chunks ) ) && ( current( $root_chunks ) == current( $url_chunks ) ) ) {
+			array_pop( $root_chunks );
+			array_pop( $url_chunks );
+			end( $root_chunks );
+			end( $url_chunks );
 		}
+
 		$site_root = implode('/', $root_chunks);
 		$site_url  = implode('/', $url_chunks);
 
 		$file = str_replace( $site_url, $site_root, $file );
-		
+
 		return $file;
 	}
 }

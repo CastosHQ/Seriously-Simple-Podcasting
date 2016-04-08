@@ -1168,7 +1168,7 @@ class SSP_Frontend {
 		// Identify file by root path and not URL (required for getID3 class)
 		$site_root = trailingslashit( ABSPATH );
 
-		// Remove common dirs from the ends of site_url and site_root, so that file can be outside of the wordpress installation
+		// Remove common dirs from the ends of site_url and site_root, so that file can be outside of the WordPress installation
 		$root_chunks = explode( '/', $site_root );
 		$url_chunks  = explode( '/', $this->site_url );
 

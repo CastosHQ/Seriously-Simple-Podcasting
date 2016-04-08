@@ -83,14 +83,19 @@
                         <h1>
                             <xsl:if test="/rss/channel/image">
                                 <div id="channel-image">
-                                    <img>
-                                        <xsl:attribute name="src">
-                                            <xsl:value-of select="/rss/channel/image/@href"/>
+                                    <a>
+                                        <xsl:attribute name="href">
+                                            <xsl:value-of select="/rss/channel/image/link"/>
                                         </xsl:attribute>
-                                        <xsl:attribute name="title">
-                                            <xsl:value-of select="/rss/channel/title"/>
-                                        </xsl:attribute>
-                                    </img>
+                                        <img>
+                                            <xsl:attribute name="src">
+                                                <xsl:value-of select="/rss/channel/image/url"/>
+                                            </xsl:attribute>
+                                            <xsl:attribute name="title">
+                                                <xsl:value-of select="/rss/channel/image/title"/>
+                                            </xsl:attribute>
+                                        </img>
+                                    </a>
                                 </div>
                             </xsl:if>
                             <xsl:value-of select="/rss/channel/title"/>

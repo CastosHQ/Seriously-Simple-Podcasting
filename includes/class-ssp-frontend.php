@@ -922,16 +922,15 @@ class SSP_Frontend {
 				if ( false === $size ) {
 
 					// Do we have anything in post_meta?
-					$size = get_post_meta( $episode_id, "filesize_raw", true );
+					$size = get_post_meta( $episode_id, 'filesize_raw', true );
 
 					if ( empty( $size ) ) {
 
 						// Let's see if we can figure out the path...
-						$attachment_id = get_attachment_id_from_url( $file );
+						$attachment_id = $this->get_attachment_id_from_url( $file );
 
 						if ( ! empty( $attachment_id )  ) {
 							$size = filesize( get_attached_file( $attachment_id ) );
-							// This could be problematic...
 							update_post_meta( $episode_id, 'filesize_raw', $size );
 						}
 

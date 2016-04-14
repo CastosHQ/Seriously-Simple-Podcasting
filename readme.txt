@@ -86,7 +86,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.14.5 =
-* 2016-04-11
+* 2016-04-14
+* [FIX] Fixing scope of `get_attachment_id_from_url` function reference - this was breaking file downloads and file size calculations
 * [FIX] Fixing podcast cover image display on feed page
 
 = 1.14.4 =

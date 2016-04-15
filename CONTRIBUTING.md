@@ -6,7 +6,7 @@ When contributing please ensure you follow the guidelines below so that we can k
 
 __Note:__
 
-GitHub is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](http://wordpress.org/support/plugin/seriously-simple-podcasting) instead for general support, but make sure to read through the [documentation](http://www.seriouslysimplepodcasting.com/) first.
+GitHub is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](http://wordpress.org/support/plugin/seriously-simple-podcasting) instead for general support, but make sure to read through the [documentation](http://www.seriouslysimplepodcasting.com/documentation/) first.
 
 ## Getting Started
 
@@ -19,14 +19,16 @@ GitHub is for *bug reports and contributions only* - if you have a support quest
 
 * Fork the repository on GitHub.
 * Make the changes to your forked repository.
-  * **Ensure you stick to the [WordPress Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/php/).**
+  * **Ensure you stick to the [WordPress Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/) for all languages.**
 * When committing, reference your issue (#1234) and include a note about the fix.
 * Push the changes to your fork and submit a pull request on the master branch of the Seriously Simple Podcasting repository.
 * Please **don't** modify the changelog - this will be maintained by the Seriously Simple Podcasting developers.
-* Please **don't** update the .pot file - this will be maintanied by the Seriously Simple Podcasting developers.
-* You may add your localisations to the `/lang` directory.
 
 At this point you're waiting on us to merge your pull request. We'll review all pull requests, and make suggestions and changes if necessary.
+
+## Submitting Translations
+
+Translations for Seriously Simple Podcasting are managed directly on WordPress.org. Please visit [the localisation management page](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting) to submit translations. A WordPress.org account is required in order to do this.
 
 # Additional Resources
 

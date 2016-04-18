@@ -126,19 +126,6 @@
                             </h2>
                             <xsl:if test="description">
                                 <p>
-                                    <xsl:if test="image">
-                                        <div class="episode-image">
-                                            <img>
-                                                <xsl:attribute name="src">
-                                                    <xsl:value-of select="image/@href"/>
-                                                </xsl:attribute>
-                                                <xsl:attribute name="title">
-                                                    <xsl:value-of select="title"/>
-                                                </xsl:attribute>
-                                                <xsl:attribute name="align">left</xsl:attribute>
-                                            </img>
-                                        </div>
-                                    </xsl:if>
                                     <xsl:value-of select="description" disable-output-escaping="yes"/>
                                 </p>
                             </xsl:if>

@@ -820,6 +820,8 @@ class SSP_Admin {
 
     	// Any functions hooked in here must NOT output any data or else feed will break
     	do_action( 'ssp_after_feed' );
+
+    	exit;
 	}
 
 	/**

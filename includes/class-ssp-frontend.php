@@ -80,6 +80,8 @@ class SSP_Frontend {
 
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
+
+		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
 	}
 
 	/**
@@ -1187,5 +1189,21 @@ class SSP_Frontend {
 		$file = str_replace( $site_url, $site_root, $file );
 
 		return $file;
+	}
+
+	/**
+	 * Set RSS content type for podcast feed
+	 *
+	 * @param  string $content_type Current content type
+	 * @param  string $type         Type of feed
+	 * @return string               Updated content type
+	 */
+	public function feed_content_type ( $content_type = '', $type = '' ) {
+
+		if( 'podcast' == $type ) {
+			$content_type = 'application/rss+xml';
+		}
+
+		return $content_type;
 	}
 }

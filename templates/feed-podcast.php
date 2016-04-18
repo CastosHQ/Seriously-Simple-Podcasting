@@ -219,8 +219,8 @@ $category3 = ssp_get_feed_category_output( 3, $series_id );
 // Get stylehseet URL (filterable to allow custom RSS stylesheets)
 $stylehseet_url = apply_filters( 'ssp_rss_stylesheet', $ss_podcasting->template_url . 'feed-stylesheet.xsl' );
 
-// Set RSS header
-header( 'Content-Type: ' . feed_content_type( 'rss-http' ) . '; charset=' . get_option( 'blog_charset' ), true );
+// Set RSS content type and charset headers
+header( 'Content-Type: ' . feed_content_type( 'podcast' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
 // Use `echo` for first line to prevent any extra characters at start of document
 echo '<?xml version="1.0" encoding="' . get_option('blog_charset') . '"?>' . "\n";
@@ -417,7 +417,7 @@ if( $stylehseet_url ) {
 		<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
 		<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description><?php if ( $episode_image ) { ?>
 		<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
-		<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
+		<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image><?php } ?>
 		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
 		<googleplay:explicit><?php echo esc_html( $googleplay_explicit_flag ); ?></googleplay:explicit>
@@ -428,4 +428,4 @@ if( $stylehseet_url ) {
 	</item><?php }
 	} ?>
 </channel>
-</rss><?php exit; ?>
+</rss>

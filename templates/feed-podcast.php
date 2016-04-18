@@ -418,7 +418,6 @@ if( $stylehseet_url ) {
 		<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description><?php if ( $episode_image ) { ?>
 		<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
 		<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
-		<image href="<?php echo esc_url( $episode_image ); ?>"></image><?php } ?>
 		<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 		<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
 		<googleplay:explicit><?php echo esc_html( $googleplay_explicit_flag ); ?></googleplay:explicit>

@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
 Requires at least: 4.3
 Tested up to: 4.5
-Stable tag: 1.14.5
+Stable tag: 1.14.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 13. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.14.6 =
+* 2016-04-19
+* [FIX] Removing unused tags from RSS feed items
 
 = 1.14.5 =
 * 2016-04-14
@@ -583,5 +587,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14.5 =
+= 1.14.6 =
 * v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.

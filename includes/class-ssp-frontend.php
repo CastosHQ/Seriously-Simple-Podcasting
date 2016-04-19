@@ -1201,7 +1201,7 @@ class SSP_Frontend {
 	public function feed_content_type ( $content_type = '', $type = '' ) {
 
 		if( 'podcast' == $type ) {
-			$content_type = 'application/rss+xml';
+			$content_type = 'text/xml';
 		}
 
 		return $content_type;

@@ -87,7 +87,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.14.6 =
 * 2016-04-19
+* UPDATE SUMMARY: Fixing feed validation errors and making sure that feeds can be viewed instead always being forced to be downloaded.
 * [FIX] Removing unused tags from RSS feed items
+* [FIX] Correcting RSS feed MIME type
+* [TWEAK] Improving RSS feed XML formatting
 
 = 1.14.5 =
 * 2016-04-14

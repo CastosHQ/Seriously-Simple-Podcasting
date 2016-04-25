@@ -212,7 +212,7 @@ if ( $podcast_series ) {
 }
 
 // Image URL (filterable to allow custom images)
-$image = apply_filters( 'ssp_feed_image', $image );
+$image = apply_filters( 'ssp_feed_image', $image, $series_id );
 
 // Podcast category and subcategory (all levels)
 $category1 = ssp_get_feed_category_output( 1, $series_id );

@@ -889,6 +889,16 @@ class SSP_Frontend {
 				// Get audio file for download
 				$file = $this->get_enclosure( $episode_id );
 
+				// Do we have newlines?
+				$parts = explode( "\n", $episode );
+
+				if ( is_array( $parts ) && count( $parts ) > 1 ) {
+					$file = $parts[0];
+				} else {
+					// Get audio file for download
+					$file = $this->get_enclosure( $episode_id );
+				}
+
 				// Exit if no file is found
 				if ( ! $file ) {
 					return;

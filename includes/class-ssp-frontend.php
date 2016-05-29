@@ -912,9 +912,6 @@ class SSP_Frontend {
 				header( "Expires: 0" );
 				header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
 				header( "Robots: none" );
-				header( "Content-Description: File Transfer" );
-				header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
-				header( "Content-Transfer-Encoding: binary" );
 
 				// Set size of file
 				// Do we have anything in Cache/DB?
@@ -952,6 +949,11 @@ class SSP_Frontend {
 
 		        	// Force file download
 		        	header( "Content-Type: application/force-download" );
+
+							// Set other relevant headers
+							header( "Content-Description: File Transfer" );
+							header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
+							header( "Content-Transfer-Encoding: binary" );
 
 			        // Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 					@ssp_readfile_chunked( "$file" ) or header( 'Location: ' . $file );

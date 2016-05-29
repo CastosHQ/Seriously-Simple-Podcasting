@@ -950,10 +950,10 @@ class SSP_Frontend {
 		        	// Force file download
 		        	header( "Content-Type: application/force-download" );
 
-							// Set other relevant headers
-							header( "Content-Description: File Transfer" );
-							header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
-							header( "Content-Transfer-Encoding: binary" );
+			        // Set other relevant headers
+			        header( "Content-Description: File Transfer" );
+			        header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
+			        header( "Content-Transfer-Encoding: binary" );
 
 			        // Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 					@ssp_readfile_chunked( "$file" ) or header( 'Location: ' . $file );

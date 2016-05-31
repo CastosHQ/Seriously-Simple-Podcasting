@@ -886,9 +886,6 @@ class SSP_Frontend {
 					return;
 				}
 
-				// Get audio file for download
-				$file = $this->get_enclosure( $episode_id );
-
 				// Do we have newlines?
 				$parts = explode( "\n", $episode );
 

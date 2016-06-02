@@ -887,7 +887,9 @@ class SSP_Frontend {
 				}
 
 				// Do we have newlines?
-				$parts = explode( "\n", $episode );
+				if( is_string( $episode ) ) {
+					$parts = explode( "\n", $episode );
+				}
 
 				if ( is_array( $parts ) && count( $parts ) > 1 ) {
 					$file = $parts[0];
@@ -962,15 +964,22 @@ class SSP_Frontend {
 			        header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
 			        header( "Content-Transfer-Encoding: binary" );
 
+			        // Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
+					$file = str_replace( ' ', '%20', $file );
+
 			        // Use ssp_readfile_chunked() if allowed on the server or simply access file directly
-					@ssp_readfile_chunked( "$file" ) or header( 'Location: ' . $file );
+					@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
 				} else {
+
+					// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
+					$file = str_replace( ' ', '%20', $file );
+
 					// For all other referrers redirect to the raw file
 					wp_redirect( $file, 302 );
 				}
 
 				// Exit to prevent other processes running later on
-				exit();
+				exit;
 
 			}
 		}

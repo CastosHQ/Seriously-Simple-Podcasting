@@ -914,45 +914,45 @@ class SSP_Frontend {
 				// Allow other actions - functions hooked on here must not output any data
 			    do_action( 'ssp_file_download', $file, $episode, $referrer );
 
-			    // Set necessary headers for download
+			    // Set necessary headers
 				header( "Pragma: no-cache" );
 				header( "Expires: 0" );
 				header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
 				header( "Robots: none" );
 
-				// Set size of file
-				// Do we have anything in Cache/DB?
-				$size = wp_cache_get( $episode_id, 'filesize_raw' );
-
-				// Nothing in the cache, let's see if we can figure it out.
-				if ( false === $size ) {
-
-					// Do we have anything in post_meta?
-					$size = get_post_meta( $episode_id, 'filesize_raw', true );
-
-					if ( empty( $size ) ) {
-
-						// Let's see if we can figure out the path...
-						$attachment_id = $this->get_attachment_id_from_url( $file );
-
-						if ( ! empty( $attachment_id )  ) {
-							$size = filesize( get_attached_file( $attachment_id ) );
-							update_post_meta( $episode_id, 'filesize_raw', $size );
-						}
-
-					}
-
-					// Update the cache
-					wp_cache_set( $episode_id, $size, 'filesize_raw' );
-				}
-
-				if ( ! empty( $size ) ) {
-					// Send the header
-					header( "Content-Length: " . $size );
-				}
-
 		        // Check file referrer
 		        if( 'download' == $referrer ) {
+
+		        	// Set size of file
+					// Do we have anything in Cache/DB?
+					$size = wp_cache_get( $episode_id, 'filesize_raw' );
+
+					// Nothing in the cache, let's see if we can figure it out.
+					if ( false === $size ) {
+
+						// Do we have anything in post_meta?
+						$size = get_post_meta( $episode_id, 'filesize_raw', true );
+
+						if ( empty( $size ) ) {
+
+							// Let's see if we can figure out the path...
+							$attachment_id = $this->get_attachment_id_from_url( $file );
+
+							if ( ! empty( $attachment_id )  ) {
+								$size = filesize( get_attached_file( $attachment_id ) );
+								update_post_meta( $episode_id, 'filesize_raw', $size );
+							}
+
+						}
+
+						// Update the cache
+						wp_cache_set( $episode_id, $size, 'filesize_raw' );
+					}
+
+					// Send Content-Length header
+		        	if ( ! empty( $size ) ) {
+						header( "Content-Length: " . $size );
+					}
 
 		        	// Force file download
 		        	header( "Content-Type: application/force-download" );
@@ -965,7 +965,7 @@ class SSP_Frontend {
 			        // Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 					@ssp_readfile_chunked( "$file" ) or header( 'Location: ' . $file );
 				} else {
-					// For all other referrers simply access the file directly
+					// For all other referrers redirect to the raw file
 					wp_redirect( $file, 302 );
 				}
 

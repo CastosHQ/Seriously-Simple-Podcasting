@@ -950,10 +950,10 @@ class SSP_Frontend {
 			        header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
 			        header( "Content-Transfer-Encoding: binary" );
 
-							if ( ! empty( $size ) ) {
-								// Send the header
-								header( "Content-Length: " . $size );
-							}
+			        if ( ! empty( $size ) ) {
+			          // Send the header
+			          header( "Content-Length: " . $size );
+			        }
 
 			        // Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 					@ssp_readfile_chunked( "$file" ) or header( 'Location: ' . $file );

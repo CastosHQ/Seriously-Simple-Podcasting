@@ -939,11 +939,6 @@ class SSP_Frontend {
 					wp_cache_set( $episode_id, $size, 'filesize_raw' );
 				}
 
-				if ( ! empty( $size ) ) {
-					// Send the header
-					header( "Content-Length: " . $size );
-				}
-
 		        // Check file referrer
 		        if( 'download' == $referrer ) {
 
@@ -954,6 +949,11 @@ class SSP_Frontend {
 			        header( "Content-Description: File Transfer" );
 			        header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
 			        header( "Content-Transfer-Encoding: binary" );
+
+							if ( ! empty( $size ) ) {
+								// Send the header
+								header( "Content-Length: " . $size );
+							}
 
 			        // Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 					@ssp_readfile_chunked( "$file" ) or header( 'Location: ' . $file );

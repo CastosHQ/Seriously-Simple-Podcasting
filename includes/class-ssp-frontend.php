@@ -887,11 +887,12 @@ class SSP_Frontend {
 				}
 
 				// Do we have newlines?
+				$parts = false;
 				if( is_string( $episode ) ) {
 					$parts = explode( "\n", $episode );
 				}
 
-				if ( is_array( $parts ) && count( $parts ) > 1 ) {
+				if ( $parts && is_array( $parts ) && count( $parts ) > 1 ) {
 					$file = $parts[0];
 				} else {
 					// Get audio file for download

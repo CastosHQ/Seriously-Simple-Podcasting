@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
 Requires at least: 4.3
 Tested up to: 4.5.2
-Stable tag: 1.14.7
+Stable tag: 1.14.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 13. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.14.8 =
+* 2016-06-06
+* UPDATE SUMMARY: Improving loading of episode details in dashboard to allow for more extensibility, as well as making sure that translations are applied correctly.
+* [TWEAK] Improving generation of episode details fields on episode edit screen
+* [FIX] Ensuring full localisation support works correctly
 
 = 1.14.7 =
 * 2016-06-02
@@ -598,5 +604,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14.7 =
+= 1.14.8 =
 * v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.

@@ -468,23 +468,28 @@ class SSP_Admin {
 					$disabled = true;
 				}
 
-				if ( $k == 'audio_file' ) {
-					$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="upload_audio_file" class="regular-text" value="' . esc_attr( $data ) . '" /> <input type="button" class="button" id="upload_audio_file_button" value="' . __( 'Upload File' , 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />' . "\n";
-					$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-					$html .= '</td><tr/>' . "\n";
-				} else {
-					if ( $v['type'] == 'checkbox' ) {
+				switch( $v['type'] ) {
+					case 'file':
+						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="upload_' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" /> <input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File' , 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />' . "\n";
+						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
+						$html .= '</td><tr/>' . "\n";
+					break;
+
+					case 'checkbox':
 						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span class="description">' . $v['description'] . '</span></label>' . "\n";
 						$html .= '</td><tr/>' . "\n";
-					} elseif ( $v['type'] == 'radio' ) {
+					break;
+
+					case 'radio':
 						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td>' ."\n";
 						foreach( $v['options'] as $option => $label ) {
-
 							$html .= '<input style="vertical-align: bottom;" name="' . esc_attr( $k ) . '" type="radio" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '" ' . checked( $option , $data , false ) . ' value="' . esc_attr( $option ) . '" /> <label style="margin-right:10px;" for="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">' . esc_html( $label ) . '</label>' . "\n";
 						}
 						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 						$html .= '</td><tr/>' . "\n";
-					} elseif ( $v['type'] == 'datepicker' ) {
+					break;
+
+					case 'datepicker':
 						$display_date = '';
 						if( $data ) {
 							$display_date = date( 'j F, Y', strtotime( $data ) );
@@ -493,12 +498,15 @@ class SSP_Admin {
 						$html .= '<input name="' . esc_attr( $k ) . '" id="' . esc_attr( $k ) . '" type="hidden" value="' . esc_attr( $data ) . '" />' . "\n";
 						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 						$html .= '</td><tr/>' . "\n";
-					} else {
+					break;
+
+					default:
 						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
 						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
 						$html .= '</td><tr/>' . "\n";
-					}
+					break;
 				}
+
 			}
 
 			$html .= '</tbody>' . "\n";
@@ -614,7 +622,7 @@ class SSP_Admin {
 		$fields['audio_file'] = array(
 		    'name' => __( 'Podcast file:' , 'seriously-simple-podcasting' ),
 		    'description' => __( 'Upload the primary podcast file or paste the file URL here.' , 'seriously-simple-podcasting' ),
-		    'type' => 'url',
+		    'type' => 'file',
 		    'default' => '',
 		    'section' => 'info',
 		);

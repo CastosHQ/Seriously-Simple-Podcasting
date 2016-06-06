@@ -82,6 +82,9 @@ class SSP_Frontend {
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
 
 		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
+
+		// Handle localisation
+		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 	}
 
 	/**
@@ -1224,5 +1227,9 @@ class SSP_Frontend {
 		}
 
 		return $content_type;
+	}
+
+	public function load_localisation () {
+		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
 	}
 }

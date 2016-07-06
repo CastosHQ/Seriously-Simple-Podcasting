@@ -362,7 +362,7 @@ class SSP_Frontend {
 			switch( $key ) {
 
 				case 'link':
-					$meta_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' ">' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
+					$meta_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " download>' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
 				break;
 
 				case 'new_window':

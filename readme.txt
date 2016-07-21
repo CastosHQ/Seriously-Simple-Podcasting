@@ -24,7 +24,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Highly configurable and robust RSS feed designed for *all* podcast services and feed readers - including iTunes, Google Play and Stitcher
 - Shortcodes & widgets for displaying podcast episode lists as well as single episodes anywhere on your site
 - Playable episodes using the built-in WordPress media player
-- The freedom to host your media files on the same site or any other server
+- The freedom to host your media files wherever you like - on the same site or any other server
 - Complete user and developer [documentation](https://www.seriouslysimplepodcasting.com/)
 - [Full i18n support](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting)
 

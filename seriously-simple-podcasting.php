@@ -1,13 +1,13 @@
 <?php
 /*
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.14.8
+ * Version: 1.14.9
  * Plugin URI: https://www.seriouslysimplepodcasting.com/
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Hugh Lashbrooke
  * Author URI: https://hughlashbrooke.com/
- * Requires at least: 4.3
- * Tested up to: 4.5.2
+ * Requires at least: 4.4
+ * Tested up to: 4.5.3
  *
  * Text Domain: seriously-simple-podcasting
  */
@@ -22,8 +22,8 @@ require_once( 'includes/class-ssp-admin.php' );
 require_once( 'includes/class-ssp-frontend.php' );
 
 global $ssp_admin, $ss_podcasting;
-$ssp_admin = new SSP_Admin( __FILE__, '1.14.8' );
-$ss_podcasting = new SSP_Frontend( __FILE__, '1.14.8' );
+$ssp_admin = new SSP_Admin( __FILE__, '1.14.9' );
+$ss_podcasting = new SSP_Frontend( __FILE__, '1.14.9' );
 
 if ( is_admin() ) {
 	global $ssp_settings;

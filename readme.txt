@@ -1,9 +1,9 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
-Requires at least: 4.3
-Tested up to: 4.5.2
-Stable tag: 1.14.8
+Requires at least: 4.4
+Tested up to: 4.5.3
+Stable tag: 1.14.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 13. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.14.9 =
+* 2016-07-21
+* UPDATE SUMMARY: Improving accessibility and allowing for more frontend customisation.
+* [TWEAK] Adding `download` attribute to episode download links
+* [TWEAK] Adding HTML tags and classes to episode meta details
 
 = 1.14.8 =
 * 2016-06-06
@@ -604,5 +610,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14.8 =
+= 1.14.9 =
 * v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.

@@ -446,8 +446,6 @@ class SSP_Admin {
 		$html .= '<input type="hidden" name="seriouslysimple_' . $this->token . '_nonce" id="seriouslysimple_' . $this->token . '_nonce" value="' . wp_create_nonce( plugin_basename( $this->dir ) ) . '" />';
 
 		if ( 0 < count( $field_data ) ) {
-			$html .= '<table class="form-table">' . "\n";
-			$html .= '<tbody>' . "\n";
 
 			$html .= '<input id="seriouslysimple_post_id" type="hidden" value="'. $post_id . '" />';
 
@@ -470,23 +468,29 @@ class SSP_Admin {
 
 				switch( $v['type'] ) {
 					case 'file':
-						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="upload_' . esc_attr( $k ) . '" class="regular-text" value="' . esc_attr( $data ) . '" /> <input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File' , 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />' . "\n";
-						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-						$html .= '</td><tr/>' . "\n";
+						$html .= '<p>
+									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . $v['name'] . '</label>
+									<br/>
+									<input name="' . esc_attr( $k ) . '" type="text" id="upload_' . esc_attr( $k ) . '" value="' . esc_attr( $data ) . '" />
+									<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File' , 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />
+									<br/>
+									<span class="description">' . $v['description'] . '</span>
+								</p>' . "\n";
 					break;
 
 					case 'checkbox':
-						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span class="description">' . $v['description'] . '</span></label>' . "\n";
-						$html .= '</td><tr/>' . "\n";
+						$html .= '<p><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span>' . $v['description'] . '</span></label></p>' . "\n";
 					break;
 
 					case 'radio':
-						$html .= '<tr valign="top"><th scope="row">' . $v['name'] . '</th><td>' ."\n";
-						foreach( $v['options'] as $option => $label ) {
-							$html .= '<input style="vertical-align: bottom;" name="' . esc_attr( $k ) . '" type="radio" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '" ' . checked( $option , $data , false ) . ' value="' . esc_attr( $option ) . '" /> <label style="margin-right:10px;" for="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">' . esc_html( $label ) . '</label>' . "\n";
-						}
-						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-						$html .= '</td><tr/>' . "\n";
+						$html .= '<p>
+									<span class="ssp-episode-details-label">' . $v['name'] . '</span><br/>';
+										foreach( $v['options'] as $option => $label ) {
+											$html .= '<input style="vertical-align: bottom;" name="' . esc_attr( $k ) . '" type="radio" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '" ' . checked( $option , $data , false ) . ' value="' . esc_attr( $option ) . '" />
+											<label style="margin-right:10px;" for="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">' . esc_html( $label ) . '</label>' . "\n";
+										}
+						$html .= '<span class="description">' . $v['description'] . '</span>
+								</p>' . "\n";
 					break;
 
 					case 'datepicker':
@@ -494,23 +498,28 @@ class SSP_Admin {
 						if( $data ) {
 							$display_date = date( 'j F, Y', strtotime( $data ) );
 						}
-						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '_display">' . $v['name'] . '</label></th><td class="hasDatepicker"><input type="text" id="' . esc_attr( $k ) . '_display" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( $display_date ) . '" />' . "\n";
-						$html .= '<input name="' . esc_attr( $k ) . '" id="' . esc_attr( $k ) . '" type="hidden" value="' . esc_attr( $data ) . '" />' . "\n";
-						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-						$html .= '</td><tr/>' . "\n";
+						$html .= '<p class="hasDatepicker">
+									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '_display">' . $v['name'] . '</label>
+									<br/>
+									<input type="text" id="' . esc_attr( $k ) . '_display" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( $display_date ) . '" />
+									<input name="' . esc_attr( $k ) . '" id="' . esc_attr( $k ) . '" type="hidden" value="' . esc_attr( $data ) . '" />
+									<br/>
+									<span class="description">' . $v['description'] . '</span>
+								</p>' . "\n";
 					break;
 
 					default:
-						$html .= '<tr valign="top"><th scope="row"><label for="' . esc_attr( $k ) . '">' . $v['name'] . '</label></th><td><input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />' . "\n";
-						$html .= '<p class="description">' . $v['description'] . '</p>' . "\n";
-						$html .= '</td><tr/>' . "\n";
+						$html .= '<p>
+									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . $v['name'] . '</label>
+									<br/>
+									<input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />
+									<br/>
+									<span class="description">' . $v['description'] . '</span>
+								</p>' . "\n";
 					break;
 				}
 
 			}
-
-			$html .= '</tbody>' . "\n";
-			$html .= '</table>' . "\n";
 		}
 
 		echo $html;

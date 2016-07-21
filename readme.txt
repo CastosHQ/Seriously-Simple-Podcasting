@@ -88,8 +88,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 = 1.14.9 =
 * 2016-07-21
 * UPDATE SUMMARY: Improving accessibility and allowing for more frontend customisation.
-* [TWEAK] Adding `download` attribute to episode download links
+* [TWEAK] Adding `download` attribute to episode download links (props [Chris Christoff](https://github.com/chriscct7))
 * [TWEAK] Adding HTML tags and classes to episode meta details
+* [TWEAK] Improving layout of episode details fields on edit screen for design and accessibility
 
 = 1.14.8 =
 * 2016-06-06

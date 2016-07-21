@@ -362,24 +362,24 @@ class SSP_Frontend {
 			switch( $key ) {
 
 				case 'link':
-					$meta_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " download>' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
+					$meta_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " class="podcast-meta-download" download>' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
 				break;
 
 				case 'new_window':
 					$play_link = add_query_arg( 'ref', 'new_window', $link );
-					$meta_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' ">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
+					$meta_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
 				break;
 
 				case 'duration':
-					$meta_display .= __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $data;
+					$meta_display .= '<span class="podcast-meta-duration">' . __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
 				break;
 
 				case 'size':
-					$meta_display .= __( 'Size' , 'seriously-simple-podcasting' ) . ': ' . $data;
+					$meta_display .= '<span class="podcast-meta-size">' . __( 'Size' , 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
 				break;
 
 				case 'date_recorded':
-					$meta_display .= __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) );
+					$meta_display .= '<span class="podcast-meta-date">' . __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) ) . '</span>';
 				break;
 
 				// Allow for custom items to be added, but only allow a small amount of HTML tags

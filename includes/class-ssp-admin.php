@@ -255,7 +255,7 @@ class SSP_Admin {
 
     		$args = array(
 				'type' => 'string',
-				'description' => $data->meta_description,
+				'description' => $data['meta_description'],
 				'single' => true,
 				'show_in_rest' => true,
 			);

@@ -2,8 +2,8 @@
 Contributors: hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
 Requires at least: 4.4
-Tested up to: 4.5.3
-Stable tag: 1.14.9
+Tested up to: 4.6
+Stable tag: 1.14.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,6 +84,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 13. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.14.10 =
+* 2016-08-30
+* UPDATE SUMMARY: Improving feed customisability and employing improved WordPress core functions
+* [TWEAK] Adding loads of filters to the feed template, so all tags can now be modified dynamically
+* [TWEAK] Registering all meta keys with the enhanced `register_meta()` function included in WordPress 4.6+
 
 = 1.14.9 =
 * 2016-07-21
@@ -611,5 +617,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14.9 =
+= 1.14.10 =
 * v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.

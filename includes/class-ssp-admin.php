@@ -46,7 +46,7 @@ class SSP_Admin {
 		$this->load_plugin_textdomain();
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
-		// Regsiter podcast post type and taxonomies
+		// Regsiter podcast post type, taxonomies and meta fields
 		add_action( 'init', array( $this, 'register_post_type' ), 1 );
 
 		// Register podcast feed
@@ -184,6 +184,7 @@ class SSP_Admin {
 		register_post_type( $this->token, $args );
 
 		$this->register_taxonomies();
+		$this->register_meta();
 	}
 
 	/**
@@ -232,6 +233,36 @@ class SSP_Admin {
         if ( apply_filters( 'ssp_use_post_tags', true ) ) {
         	register_taxonomy_for_object_type( 'post_tag', $this->token );
         }
+    }
+
+    public function register_meta() {
+    	global $wp_version;
+
+    	// The enhanced register_meta function is only available for WordPress 4.6+
+    	if( version_compare( $wp_version, '4.6', '<' ) ) {
+    		return;
+    	}
+
+    	// Get all displayed custom fields
+    	$fields = $this->custom_fields();
+
+    	// Add 'filesize_raw' as this is not included in the displayed field options
+    	$fields['filesize_raw'] = array(
+    		'meta_description' => __( 'The raw file size of the podcast episode media file in bytes.', 'seriously-simple-podcasting' ),
+		);
+
+    	foreach( $fields as $key => $data ) {
+
+    		$args = array(
+				'type' => 'string',
+				'description' => $data->meta_description,
+				'single' => true,
+				'show_in_rest' => true,
+			);
+
+    		register_meta( 'post', $key, $args );
+    	}
+
     }
 
     /**
@@ -625,6 +656,7 @@ class SSP_Admin {
 		    'default' => 'audio',
 		    'options' => array( 'audio' => __( 'Audio', 'seriously-simple-podcasting' ), 'video' => __( 'Video', 'seriously-simple-podcasting' ) ),
 		    'section' => 'info',
+		    'meta_description' => __( 'The type of podcast episode - either Audio or Video', 'seriously-simple-podcasting' ),
 		);
 
 		// In v1.14+ the `audio_file` field can actually be either audio or video, but we're keeping the field name here for backwards compatibility
@@ -634,6 +666,7 @@ class SSP_Admin {
 		    'type' => 'file',
 		    'default' => '',
 		    'section' => 'info',
+		    'meta_description' => __( 'The full URL for the podcast episode media file.', 'seriously-simple-podcasting' ),
 		);
 
 		$fields['duration'] = array(
@@ -642,6 +675,7 @@ class SSP_Admin {
 		    'type' => 'text',
 		    'default' => '',
 		    'section' => 'info',
+		    'meta_description' => __( 'The duration of the file for display purposes.', 'seriously-simple-podcasting' ),
 		);
 
 		$fields['filesize'] = array(
@@ -650,6 +684,7 @@ class SSP_Admin {
 		    'type' => 'text',
 		    'default' => '',
 		    'section' => 'info',
+		    'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 
 		$fields['date_recorded'] = array(
@@ -658,6 +693,7 @@ class SSP_Admin {
 		    'type' => 'datepicker',
 		    'default' => '',
 		    'section' => 'info',
+		    'meta_description' => __( 'The date on which the podcast episode was recorded.', 'seriously-simple-podcasting' ),
 		);
 
 		$fields['explicit'] = array(
@@ -666,6 +702,7 @@ class SSP_Admin {
 		    'type' => 'checkbox',
 		    'default' => '',
 		    'section' => 'info',
+		    'meta_description' => __( 'Indicates whether the episode is explicit or not.', 'seriously-simple-podcasting' ),
 		);
 
 		$fields['block'] = array(
@@ -674,6 +711,7 @@ class SSP_Admin {
 		    'type' => 'checkbox',
 		    'default' => '',
 		    'section' => 'info',
+		    'meta_description' => __( 'Indicates whether this specific episode should be blocked from the iTunes and Google Play Podcast libraries.', 'seriously-simple-podcasting' ),
 		);
 
 		return apply_filters( 'ssp_episode_fields', $fields );

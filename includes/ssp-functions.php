@@ -359,7 +359,7 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 if( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 
 	/**
-	 * Get the XML markup for the feed category st the specified level
+	 * Get the XML markup for the feed category at the specified level
 	 * @param  int    $level Category level
 	 * @return string        XML output for feed vategory
 	 */

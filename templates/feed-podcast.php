@@ -13,22 +13,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $ss_podcasting, $wp_query;
 
-
 // Hide all errors
 error_reporting( 0 );
+
+// Allow feed access by default
+$give_access = true;
 
 // Check if feed is password protected
 $protection = get_option( 'ss_podcasting_protect', '' );
 
+// Handle feed protection if required
 if ( $protection && $protection == 'on' ) {
 
 	$give_access = false;
-
-	$message_option = get_option('ss_podcasting_protection_no_access_message');
-	$message = __( 'You are not permitted to view this podcast feed.' , 'seriously-simple-podcasting' );
-	if ( $message_option && strlen( $message_option ) > 0 && $message_option != '' ) {
-		$message = $message_option;
-	}
 
 	// Request password and give access if correct
 	if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) && ! isset( $_SERVER['PHP_AUTH_PW'] ) ) {
@@ -43,17 +40,47 @@ if ( $protection && $protection == 'on' ) {
 			}
 		}
 	}
+}
 
-	// Send 401 status and display no access message
-	if ( ! $give_access ) {
+// Get specified podcast series
+$podcast_series = '';
+if ( isset( $_GET['podcast_series'] ) && $_GET['podcast_series'] ) {
+	$podcast_series = esc_attr( $_GET['podcast_series'] );
+} elseif ( isset( $wp_query->query_vars['podcast_series'] ) && $wp_query->query_vars['podcast_series'] ) {
+	$podcast_series = esc_attr( $wp_query->query_vars['podcast_series'] );
+}
 
-		$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
+// Get series ID
+$series_id = 0;
+if ( $podcast_series ) {
+	$series = get_term_by( 'slug', $podcast_series, 'series' );
+	$series_id = $series->term_id;
+}
 
-		header('WWW-Authenticate: Basic realm="Podcast Feed"');
-	    header('HTTP/1.0 401 Unauthorized');
+// Allow dynamic access control
+$give_access = apply_filters( 'ssp_feed_access', $give_access, $series_id );
 
-		die( $no_access_message );
+// Send 401 status and display no access message if access has been denied
+if ( ! $give_access ) {
+
+	// Set default message
+	$message = __( 'You are not permitted to view this podcast feed.' , 'seriously-simple-podcasting' );
+
+	// Check message option from plugin settings
+	$message_option = get_option('ss_podcasting_protection_no_access_message');
+	if ( $message_option ) {
+		$message = $message_option;
 	}
+
+	// Allow message to be filtered dynamically
+	$message = apply_filters( 'ssp_feed_no_access_message', $message );
+
+	$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
+
+	header('WWW-Authenticate: Basic realm="Podcast Feed"');
+    header('HTTP/1.0 401 Unauthorized');
+
+	die( $no_access_message );
 }
 
 // If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
@@ -77,20 +104,8 @@ if ( $redirect && $redirect == 'on' ) {
 	}
 }
 
-// Get specified podcast series
-$podcast_series = '';
-if ( isset( $_GET['podcast_series'] ) && $_GET['podcast_series'] ) {
-	$podcast_series = esc_attr( $_GET['podcast_series'] );
-} elseif ( isset( $wp_query->query_vars['podcast_series'] ) && $wp_query->query_vars['podcast_series'] ) {
-	$podcast_series = esc_attr( $wp_query->query_vars['podcast_series'] );
-}
-
-$series_id = 0;
-if ( $podcast_series ) {
-	$series = get_term_by( 'slug', $podcast_series, 'series' );
-	$series_id = $series->term_id;
-
-	// Do we need to redirect a single feed?
+// If this is a series-sepcific feed, then check if we need to redirect
+if( $series_id ) {
 	$redirect = get_option( 'ss_podcasting_redirect_feed_' . $series_id );
 	$new_feed_url = false;
 	if ( $redirect && $redirect == 'on' ) {

@@ -171,7 +171,14 @@ class SSP_Frontend {
 
 		$podcast_post_types = ssp_post_types( true );
 
-		if ( in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
+		$player_visibility = get_option( 'ss_podcasting_player_content_visibility' );
+
+		switch( $player_visibility ) {
+			case 'all': $player_visibility_bool = true; break;
+			case 'membersonly': $player_visibility_bool = is_user_logged_in(); break;
+		}
+
+		if ( $player_visibility_bool && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
 
 			// Get episode meta data
 			$meta = $this->episode_meta( $post->ID, 'content' );

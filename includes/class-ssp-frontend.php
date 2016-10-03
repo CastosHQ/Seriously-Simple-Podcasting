@@ -1096,8 +1096,18 @@ class SSP_Frontend {
 
 		extract( $atts );
 
+		// If no episode ID is specified then use the current post's ID
 	    if ( ! $episode ) {
-	    	return;
+
+	    	global $post;
+	    	if( isset( $post->ID ) ) {
+	    		$episode = intval( $post->ID );
+	    	}
+
+	    	if ( ! $episode ) {
+	    		return;
+	    	}
+
 	    }
 
 	    // Setup array of content items and trim whitespace

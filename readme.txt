@@ -81,7 +81,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 10. Recent episodes widget.
 11. Single episode widget.
 12. Podcast series widget.
-13. An example of the styled podcast RSS feed when viewed directly in the browser.
+13. Podcast playlist widget.
+14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
 

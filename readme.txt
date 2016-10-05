@@ -90,7 +90,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * UPDATE SUMMARY: Adding podcast playlists as well as much greater flexibility when protecting your podcast feed
 * [NEW] Podcast playlists! You can display a playlist using the "Podcast: Playlist" widget or the `podcast_playlist` shortcode
 * [NEW] You can now add custom access rules for your podcast feeds using the new `ssp_feed_access` filter
-* [NEW] You can now choose to hide the media player from logged out users with a simple plugin setting
+* [NEW] You can now choose to hide the media player from logged out users with a simple plugin setting (props [Matt Sephton](https://github.com/gingerbeardman))
 * [NEW] The `podcast_episode` shortcode now used the current episode by default if no episode is specified
 * [TWEAK] Rearranging files so that different function types are more easily findable
 * [TWEAK] Improving customisability of all shortcodes

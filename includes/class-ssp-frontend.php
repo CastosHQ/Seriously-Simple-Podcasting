@@ -74,12 +74,11 @@ class SSP_Frontend {
 		// Download podcast episode
 		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
-		// Add shortcodes
-		add_shortcode( 'ss_podcast', 'ss_podcast_shortcode' );
-		add_shortcode( 'podcast_episode', array( $this, 'podcast_episode_shortcode' ) );
-
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
+
+		// Add shortcodes
+		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
 
 		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
 
@@ -1083,41 +1082,21 @@ class SSP_Frontend {
 	}
 
 	/**
-	 * Shortcode function to display single podcast episode
-	 * @param  array  $params Shortcode paramaters
-	 * @return string         HTML output
+	 * Register plugin shortcodes
+	 * @return void
 	 */
-	public function podcast_episode_shortcode ( $params ) {
+	public function register_shortcodes () {
 
-		$atts = shortcode_atts( array(
-	        'episode' => 0,
-	        'content' => 'title,player,details',
-	    ), $params );
+		$shortcodes = array(
+			'podcast_episode',
+			'podcast_playlist',
+			'ss_podcast',
+		);
 
-		extract( $atts );
-
-		// If no episode ID is specified then use the current post's ID
-	    if ( ! $episode ) {
-
-	    	global $post;
-	    	if( isset( $post->ID ) ) {
-	    		$episode = intval( $post->ID );
-	    	}
-
-	    	if ( ! $episode ) {
-	    		return;
-	    	}
-
-	    }
-
-	    // Setup array of content items and trim whitespace
-	    $content_items = explode( ',', $content );
-	    $content_items = array_map( 'trim', $content_items );
-
-	    // Get episode for display
-	    $html = $this->podcast_episode( $episode, $content_items, 'shortcode' );
-
-	    return $html;
+		foreach ( $shortcodes as $shortcode ) {
+			require_once( $this->dir . '/includes/shortcodes/class-ssp-shortcode-' . $shortcode . '.php' );
+			add_shortcode( $shortcode, array( $GLOBALS['ssp_shortcodes'][ $shortcode ], 'shortcode' ) );
+		}
 
 	}
 

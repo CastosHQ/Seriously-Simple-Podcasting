@@ -173,33 +173,6 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ss_podcast_shortcode' ) ) {
-
-	/**
-	 * Load podcast shortcode
-	 * @param  array  $atts    Shortcode attributes
-	 * @return string          HTML output
-	 */
-	function ss_podcast_shortcode ( $atts ) {
-
-		$defaults = array(
-			'title' => '',
-			'content' => 'series',
-			'series' => '',
-			'echo' => false,
-			'size' => 100,
-			'link_title' => true
-		);
-
-		$args = shortcode_atts( $defaults, $atts );
-
-		// Make sure we return and don't echo.
-		$args['echo'] = false;
-
-		return ss_podcast( $args );
-	}
-}
-
 if ( ! function_exists( 'ssp_episode_ids' ) ) {
 
 	/**

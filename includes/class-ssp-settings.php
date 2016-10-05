@@ -279,6 +279,14 @@ class SSP_Settings {
 					'options'		=> array( 'above' => __( 'Above content', 'seriously-simple-podcasting' ), 'below' => __( 'Below content', 'seriously-simple-podcasting' ) ),
 					'default'		=> 'above',
 				),
+				array(
+					'id' 			=> 'player_content_visibility',
+					'label'			=> __( 'Media player visibility', 'seriously-simple-podcasting' ),
+					'description'	=> __( 'Select whether to display the media player to everybody or only logged in users.', 'seriously-simple-podcasting' ),
+					'type'			=> 'radio',
+					'options'		=> array( 'all' => __( 'Everybody', 'seriously-simple-podcasting' ), 'membersonly' => __( 'Only logged in users', 'seriously-simple-podcasting' ) ),
+					'default'		=> 'all',
+				),
 			),
 		);
 

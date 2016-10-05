@@ -175,6 +175,7 @@ class SSP_Frontend {
 		switch( $player_visibility ) {
 			case 'all': $show_player = true; break;
 			case 'membersonly': $show_player = is_user_logged_in(); break;
+			default: $show_player = true; break;
 		}
 
 		if ( $show_player && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
@@ -232,6 +233,7 @@ class SSP_Frontend {
 		switch( $player_visibility ) {
 			case 'all': $show_player = true; break;
 			case 'membersonly': $show_player = is_user_logged_in(); break;
+			default: $show_player = true; break;
 		}
 
 		if ( $show_player && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {

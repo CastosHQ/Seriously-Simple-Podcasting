@@ -1,9 +1,9 @@
 === Seriously Simple Podcasting ===
 Contributors: hlashbrooke, whyisjake
-Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play
+Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 4.6
-Stable tag: 1.14.10
+Tested up to: 4.6.1
+Stable tag: 1.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -22,7 +22,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - New `podcast` post type and `series` taxonomy for managing your podcast episodes
 - Use any post type for your podcast episodes
 - Highly configurable and robust RSS feed designed for *all* podcast services and feed readers - including iTunes, Google Play and Stitcher
-- Shortcodes & widgets for displaying podcast episode lists as well as single episodes anywhere on your site
+- Shortcodes & widgets for displaying podcast episode lists, single episodes and podcast playlists anywhere on your site
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your media files wherever you like - on the same site or any other server
 - Complete user and developer [documentation](https://www.seriouslysimplepodcasting.com/)
@@ -84,6 +84,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 13. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.15 =
+* 2016-10-05
+* UPDATE SUMMARY: Adding podcast playlists as well as much greater flexibility when protecting your podcast feed
+* [NEW] Podcast playlists! You can display a playlist using the "Podcast: Playlist" widget or the `podcast_playlist` shortcode
+* [NEW] You can now add custom access rules for your podcast feeds using the new `ssp_feed_access` filter
+* [NEW] You can now choose to hide the media player from logged out users with a simple plugin setting
+* [NEW] The `podcast_episode` shortcode now used the current episode by default if no episode is specified
+* [TWEAK] Rearranging files so that different function types are more easily findable
+* [TWEAK] Improving customisability of all shortcodes
+* [TWEAK] Updating review link for new plugin directory structure
 
 = 1.14.10 =
 * 2016-08-30
@@ -617,5 +628,5 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Upgrade Notice ==
 
-= 1.14.10 =
-* v1.14.x contains a number of great new features and optimisations - all users are advised to update ASAP.
+= 1.15 =
+* v1.15 includes support for podcast playlists as well as much greater flexibility for protecting your podcast feed.

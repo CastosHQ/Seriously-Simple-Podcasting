@@ -170,14 +170,14 @@ class SSP_Frontend {
 
 		$podcast_post_types = ssp_post_types( true );
 
-		$player_visibility = get_option( 'ss_podcasting_player_content_visibility' );
+		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );
 
 		switch( $player_visibility ) {
-			case 'all': $player_visibility_bool = true; break;
-			case 'membersonly': $player_visibility_bool = is_user_logged_in(); break;
+			case 'all': $show_player = true; break;
+			case 'membersonly': $show_player = is_user_logged_in(); break;
 		}
 
-		if ( $player_visibility_bool && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
+		if ( $show_player && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
 
 			// Get episode meta data
 			$meta = $this->episode_meta( $post->ID, 'content' );
@@ -227,7 +227,14 @@ class SSP_Frontend {
 
 		$podcast_post_types = ssp_post_types( true );
 
-		if ( ( in_array( $post->post_type, $podcast_post_types ) ) && ! is_feed() ) {
+		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );
+
+		switch( $player_visibility ) {
+			case 'all': $show_player = true; break;
+			case 'membersonly': $show_player = is_user_logged_in(); break;
+		}
+
+		if ( $show_player && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
 
 			$meta = $this->episode_meta( $post->ID, $content );
 

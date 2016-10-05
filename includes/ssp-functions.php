@@ -303,7 +303,7 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 	 */
 	function ssp_post_types ( $include_podcast = true ) {
 
-		// Get saved podcast post type option
+		// Get saved podcast post type option (default to empty array)
 		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
 
 		// Add `podcast` post type to array if required

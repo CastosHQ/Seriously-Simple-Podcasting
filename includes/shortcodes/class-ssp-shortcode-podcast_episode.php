@@ -25,7 +25,7 @@ class SSP_Shortcode_Podcast_Episode {
 		$atts = shortcode_atts( array(
 	        'episode' => 0,
 	        'content' => 'title,player,details',
-	    ), $params );
+	    ), $params, 'podcast_episode' );
 
 		extract( $atts );
 

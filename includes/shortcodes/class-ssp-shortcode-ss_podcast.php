@@ -15,11 +15,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SSP_Shortcode_SS_Podcast {
 
 	/**
-	 * Load podcast shortcode
-	 * @param  array  $atts    Shortcode attributes
+	 * Load ss_podcast shortcode
+	 * @param  array  $params  Shortcode attributes
 	 * @return string          HTML output
 	 */
-	function shortcode ( $atts ) {
+	function shortcode ( $params ) {
 
 		$defaults = array(
 			'title' => '',
@@ -30,7 +30,7 @@ class SSP_Shortcode_SS_Podcast {
 			'link_title' => true
 		);
 
-		$args = shortcode_atts( $defaults, $atts );
+		$args = shortcode_atts( $defaults, $params, 'ss_podcast' );
 
 		// Make sure we return and don't echo.
 		$args['echo'] = false;

@@ -1072,6 +1072,7 @@ class SSP_Frontend {
 			'recent-episodes' => 'Recent_Episodes',
 			'single-episode' => 'Single_Episode',
 			'series' => 'Series',
+			'playlist' => 'Playlist',
 		);
 
 		foreach ( $widgets as $id => $name ) {

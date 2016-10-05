@@ -16,97 +16,84 @@ class SSP_Shortcode_Podcast_Playlist {
 
 	/**
 	 * Shortcode function to display podcast playlist
-	 * @param  array  $attr Shortcode paramaters
+	 * @param  array  $params Shortcode paramaters
 	 * @return string         HTML output
 	 */
-	function shortcode( $attr ) {
-		global $content_width;
-		$post = get_post();
+	function shortcode( $params ) {
+		global $content_width, $ss_podcasting;
 
 		static $instance = 0;
 		$instance++;
 
-		if ( ! empty( $attr['ids'] ) ) {
-			// 'ids' is explicitly ordered, unless you specify otherwise.
-			if ( empty( $attr['orderby'] ) ) {
-				$attr['orderby'] = 'post__in';
+		// Get all podcast post types
+		$podcast_post_types = ssp_post_types( true );
+
+		// Get list of episode IDs for display from `episodes` parameter
+		if ( ! empty( $params['episodes'] ) ) {
+			// 'episodes' is explicitly ordered, unless you specify otherwise.
+			if ( empty( $params['orderby'] ) ) {
+				$params['orderby'] = 'post__in';
 			}
-			$attr['include'] = $attr['ids'];
+			$params['include'] = $params['episodes'];
 		}
 
-		/**
-		 * Filters the playlist output.
-		 *
-		 * Passing a non-empty value to the filter will short-circuit generation
-		 * of the default playlist output, returning the passed value instead.
-		 *
-		 * @since 3.9.0
-		 * @since 4.2.0 The `$instance` parameter was added.
-		 *
-		 * @param string $output   Playlist output. Default empty.
-		 * @param array  $attr     An array of shortcode attributes.
-		 * @param int    $instance Unique numeric ID of this playlist shortcode instance.
-		 */
-		$output = apply_filters( 'post_playlist', '', $attr, $instance );
-		if ( $output != '' ) {
-			return $output;
-		}
-
+		// Parse shortcode attributes
 		$atts = shortcode_atts( array(
 			'type'		=> 'audio',
+			'series'	=> '',
 			'order'		=> 'ASC',
 			'orderby'	=> 'menu_order ID',
-			'id'		=> $post ? $post->ID : 0,
 			'include'	=> '',
 			'exclude'   => '',
 			'style'		=> 'light',
 			'tracklist' => true,
 			'tracknumbers' => true,
 			'images'	=> true,
-			'artists'	=> true
-		), $attr, 'playlist' );
+		), $params, 'podcast_playlist' );
 
-		$id = intval( $atts['id'] );
-
-		if ( $atts['type'] !== 'audio' ) {
-			$atts['type'] = 'video';
+		// Included posts must be passed as an array
+		if( $atts['include'] ) {
+			$atts['include'] = explode( ',', $atts['include'] );
 		}
 
-		$args = array(
-			'post_status' => 'inherit',
-			'post_type' => 'attachment',
-			'post_mime_type' => $atts['type'],
-			'order' => $atts['order'],
-			'orderby' => $atts['orderby']
+		// Excluded posts must be passed as an array
+		if( $atts['exclude'] ) {
+			$atts['exclude'] = explode( ',', $atts['exclude'] );
+		}
+
+		// Set up query rguments for fetching podcast episodes
+		$query_args = array(
+			'post_status'         => 'publish',
+			'post_type'           => $podcast_post_types,
+			'posts_per_page'      => -1,
+			'order'				  => $atts['order'],
+			'orderby'			  => $atts['orderby'],
+			'ignore_sticky_posts' => true,
+			'post__in'            => $atts['include'],
+			'post__not_in'        => $atts['exclude'],
 		);
 
-		if ( ! empty( $atts['include'] ) ) {
-			$args['include'] = $atts['include'];
-			$_attachments = get_posts( $args );
+		// Limit query to episodes in defined series only
+		if ( $atts['series'] ) {
 
-			$attachments = array();
-			foreach ( $_attachments as $key => $val ) {
-				$attachments[$val->ID] = $_attachments[$key];
-			}
-		} elseif ( ! empty( $atts['exclude'] ) ) {
-			$args['post_parent'] = $id;
-			$args['exclude'] = $atts['exclude'];
-			$attachments = get_children( $args );
-		} else {
-			$args['post_parent'] = $id;
-			$attachments = get_children( $args );
+			$query_args['tax_query'] = array(
+				array(
+					'taxonomy' => 'series',
+					'field' => 'slug',
+					'terms' => $atts['series'],
+				),
+			);
+
 		}
 
-		if ( empty( $attachments ) ) {
-			return '';
-		}
+		// Allow dynamic filtering of query args
+		$query_args = apply_filters( 'ssp_podcast_playlist_query_args', $query_args );
 
-		if ( is_feed() ) {
-			$output = "\n";
-			foreach ( $attachments as $att_id => $attachment ) {
-				$output .= wp_get_attachment_link( $att_id ) . "\n";
-			}
-			return $output;
+		// Fetch all episodes for display
+		$episodes = get_posts( $query_args );
+
+		if( empty ( $episodes ) ) {
+			return;
 		}
 
 		$outer = 22; // default padding and border of wrapper
@@ -123,64 +110,61 @@ class SSP_Shortcode_Podcast_Playlist {
 			'tracklist' => wp_validate_boolean( $atts['tracklist'] ),
 			'tracknumbers' => wp_validate_boolean( $atts['tracknumbers'] ),
 			'images' => wp_validate_boolean( $atts['images'] ),
-			'artists' => wp_validate_boolean( $atts['artists'] ),
+			'artists' => false,
 		);
 
 		$tracks = array();
-		foreach ( $attachments as $attachment ) {
-			$url = wp_get_attachment_url( $attachment->ID );
+		foreach ( $episodes as $episode ) {
+
+			$url = $ss_podcasting->get_enclosure( $episode->ID );
+			if ( get_option( 'permalink_structure' ) ) {
+				$url = $ss_podcasting->get_episode_download_link( $episode->ID );
+				$url = str_replace( 'podcast-download', 'podcast-player', $url );
+			}
+
+			// Get episode file type
 			$ftype = wp_check_filetype( $url, wp_get_mime_types() );
+
+			if( $episode->post_excerpt ) {
+				$episode_excerpt = $episode->post_excerpt;
+			} else {
+				$episode_excerpt = $episode->post_title;
+			}
+
+			// Setup episode data for media player
 			$track = array(
 				'src' => $url,
 				'type' => $ftype['type'],
-				'title' => $attachment->post_title,
-				'caption' => $attachment->post_excerpt,
-				'description' => $attachment->post_content
+				'caption' => $episode->post_title,
+				'title' => $episode_excerpt,
+				'description' => $episode->post_content,
 			);
 
+			// We don't need the ID3 meta data here, but still need to set an empty array
 			$track['meta'] = array();
-			$meta = wp_get_attachment_metadata( $attachment->ID );
-			if ( ! empty( $meta ) ) {
 
-				foreach ( wp_get_attachment_id3_keys( $attachment ) as $key => $label ) {
-					if ( ! empty( $meta[ $key ] ) ) {
-						$track['meta'][ $key ] = $meta[ $key ];
-					}
-				}
-
-				if ( 'video' === $atts['type'] ) {
-					if ( ! empty( $meta['width'] ) && ! empty( $meta['height'] ) ) {
-						$width = $meta['width'];
-						$height = $meta['height'];
-						$theme_height = round( ( $height * $theme_width ) / $width );
-					} else {
-						$width = $default_width;
-						$height = $default_height;
-					}
-
-					$track['dimensions'] = array(
-						'original' => compact( 'width', 'height' ),
-						'resized' => array(
-							'width' => $theme_width,
-							'height' => $theme_height
-						)
-					);
-				}
+			// Set video dimensions for player
+			if ( 'video' === $atts['type'] ) {
+				$track['dimensions'] = array(
+					'original' => compact( $default_width, $default_height ),
+					'resized' => array(
+						'width' => $theme_width,
+						'height' => $theme_height
+					)
+				);
 			}
 
+			// Get episode image
 			if ( $atts['images'] ) {
-				$thumb_id = get_post_thumbnail_id( $attachment->ID );
+				$thumb_id = get_post_thumbnail_id( $episode->ID );
 				if ( ! empty( $thumb_id ) ) {
 					list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'full' );
 					$track['image'] = compact( 'src', 'width', 'height' );
 					list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'thumbnail' );
 					$track['thumb'] = compact( 'src', 'width', 'height' );
 				} else {
-					$src = wp_mime_type_icon( $attachment->ID );
-					$width = 48;
-					$height = 64;
-					$track['image'] = compact( 'src', 'width', 'height' );
-					$track['thumb'] = compact( 'src', 'width', 'height' );
+					$track['image'] = '';
+					$track['thumb'] = '';
 				}
 			}
 
@@ -217,8 +201,13 @@ class SSP_Shortcode_Podcast_Playlist {
 		<div class="wp-playlist-prev"></div>
 		<noscript>
 		<ol><?php
-		foreach ( $attachments as $att_id => $attachment ) {
-			printf( '<li>%s</li>', wp_get_attachment_link( $att_id ) );
+		foreach ( $episodes as $episode ) {
+			$url = $ss_podcasting->get_enclosure( $episode->ID );
+			if ( get_option( 'permalink_structure' ) ) {
+				$url = $ss_podcasting->get_episode_download_link( $episode->ID );
+				$url = str_replace( 'podcast-download', 'podcast-player', $url );
+			}
+			printf( '<li>%s</li>', $url );
 		}
 		?></ol>
 		</noscript>

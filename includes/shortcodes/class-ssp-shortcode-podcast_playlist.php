@@ -15,18 +15,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SSP_Shortcode_Podcast_Playlist {
 
 	/**
-	 * Shortcode function to display podcast playlist
+	 * Shortcode function to display podcast playlist (copied and modified from wp-includes/media.php)
 	 * @param  array  $params Shortcode paramaters
 	 * @return string         HTML output
 	 */
 	function shortcode( $params ) {
 		global $content_width, $ss_podcasting;
-
-		static $instance = 0;
-		$instance++;
-
-		// Get all podcast post types
-		$podcast_post_types = ssp_post_types( true );
 
 		// Get list of episode IDs for display from `episodes` parameter
 		if ( ! empty( $params['episodes'] ) ) {
@@ -61,7 +55,10 @@ class SSP_Shortcode_Podcast_Playlist {
 			$atts['exclude'] = explode( ',', $atts['exclude'] );
 		}
 
-		// Set up query rguments for fetching podcast episodes
+		// Get all podcast post types
+		$podcast_post_types = ssp_post_types( true );
+
+		// Set up query arguments for fetching podcast episodes
 		$query_args = array(
 			'post_status'         => 'publish',
 			'post_type'           => $podcast_post_types,
@@ -71,6 +68,15 @@ class SSP_Shortcode_Podcast_Playlist {
 			'ignore_sticky_posts' => true,
 			'post__in'            => $atts['include'],
 			'post__not_in'        => $atts['exclude'],
+		);
+
+		// Make sure to only fetch episodes that have a media file
+		$query_args['meta_query'] = array(
+			array(
+				'key'     => 'audio_file',
+				'compare' => '!=',
+				'value'   => '',
+			),
 		);
 
 		// Limit query to episodes in defined series only
@@ -175,17 +181,13 @@ class SSP_Shortcode_Podcast_Playlist {
 		$safe_type = esc_attr( $atts['type'] );
 		$safe_style = esc_attr( $atts['style'] );
 
+		static $instance = 0;
+		$instance++;
+
 		ob_start();
 
 		if ( 1 === $instance ) {
-			/**
-			 * Prints and enqueues playlist scripts, styles, and JavaScript templates.
-			 *
-			 * @since 3.9.0
-			 *
-			 * @param string $type  Type of playlist. Possible values are 'audio' or 'video'.
-			 * @param string $style The 'theme' for the playlist. Core provides 'light' and 'dark'.
-			 */
+			/* This hook is defined in wp-includes/media.php */
 			do_action( 'wp_playlist_scripts', $atts['type'], $atts['style'] );
 		} ?>
 	<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?>">

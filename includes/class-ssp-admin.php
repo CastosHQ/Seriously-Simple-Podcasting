@@ -539,6 +539,15 @@ class SSP_Admin {
 								</p>' . "\n";
 					break;
 
+					case 'textarea':
+						ob_start();
+						echo '<p><label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . $v['name'] . '</label><br/>';
+						wp_editor( $data, $k, array( 'editor_class' => esc_attr( $class ) ) );
+						echo '<br/><span class="description">' . $v['description'] . '</span></p>' . "\n";
+						$html .= ob_get_clean();
+
+					break;
+
 					default:
 						$html .= '<p>
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . $v['name'] . '</label>
@@ -598,7 +607,11 @@ class SSP_Admin {
 
 			$val = '';
 			if ( isset( $_POST[ $k ] ) ) {
-				$val = strip_tags( trim( $_POST[ $k ] ) );
+				if ( isset( $field['callback'] ) ) {
+					$val = call_user_func( $field['callback'], $_POST[ $k ] );
+				} else {
+					$val = strip_tags( trim( $_POST[ $k ] ) );
+				}
 			}
 
 			if ( $k == 'audio_file' ) {

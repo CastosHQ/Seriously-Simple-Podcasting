@@ -500,27 +500,27 @@ class SSP_Admin {
 				switch( $v['type'] ) {
 					case 'file':
 						$html .= '<p>
-									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . $v['name'] . '</label>
+									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>
 									<br/>
 									<input name="' . esc_attr( $k ) . '" type="text" id="upload_' . esc_attr( $k ) . '" value="' . esc_attr( $data ) . '" />
 									<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File' , 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />
 									<br/>
-									<span class="description">' . $v['description'] . '</span>
+									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
 					break;
 
 					case 'checkbox':
-						$html .= '<p><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span>' . $v['description'] . '</span></label></p>' . "\n";
+						$html .= '<p><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on' , $data , false ) . ' /> <label for="' . esc_attr( $k ) . '"><span>' . wp_kses_post( $v['description'] ) . '</span></label></p>' . "\n";
 					break;
 
 					case 'radio':
 						$html .= '<p>
-									<span class="ssp-episode-details-label">' . $v['name'] . '</span><br/>';
+									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>';
 										foreach( $v['options'] as $option => $label ) {
 											$html .= '<input style="vertical-align: bottom;" name="' . esc_attr( $k ) . '" type="radio" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '" ' . checked( $option , $data , false ) . ' value="' . esc_attr( $option ) . '" />
 											<label style="margin-right:10px;" for="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">' . esc_html( $label ) . '</label>' . "\n";
 										}
-						$html .= '<span class="description">' . $v['description'] . '</span>
+						$html .= '<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
 					break;
 
@@ -530,22 +530,31 @@ class SSP_Admin {
 							$display_date = date( 'j F, Y', strtotime( $data ) );
 						}
 						$html .= '<p class="hasDatepicker">
-									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '_display">' . $v['name'] . '</label>
+									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '_display">' . wp_kses_post( $v['name'] ) . '</label>
 									<br/>
 									<input type="text" id="' . esc_attr( $k ) . '_display" class="ssp-datepicker ' . esc_attr( $class ) . '" value="' . esc_attr( $display_date ) . '" />
 									<input name="' . esc_attr( $k ) . '" id="' . esc_attr( $k ) . '" type="hidden" value="' . esc_attr( $data ) . '" />
 									<br/>
-									<span class="description">' . $v['description'] . '</span>
+									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
+					break;
+
+					case 'textarea':
+						ob_start();
+						echo '<p><label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label><br/>';
+						wp_editor( $data, $k, array( 'editor_class' => esc_attr( $class ) ) );
+						echo '<br/><span class="description">' . wp_kses_post( $v['description'] ) . '</span></p>' . "\n";
+						$html .= ob_get_clean();
+
 					break;
 
 					default:
 						$html .= '<p>
-									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . $v['name'] . '</label>
+									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>
 									<br/>
 									<input name="' . esc_attr( $k ) . '" type="text" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />
 									<br/>
-									<span class="description">' . $v['description'] . '</span>
+									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
 					break;
 				}
@@ -598,7 +607,11 @@ class SSP_Admin {
 
 			$val = '';
 			if ( isset( $_POST[ $k ] ) ) {
-				$val = strip_tags( trim( $_POST[ $k ] ) );
+				if ( isset( $field['callback'] ) ) {
+					$val = call_user_func( $field['callback'], $_POST[ $k ] );
+				} else {
+					$val = strip_tags( trim( $_POST[ $k ] ) );
+				}
 			}
 
 			if ( $k == 'audio_file' ) {

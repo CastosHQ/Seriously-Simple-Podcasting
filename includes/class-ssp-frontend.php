@@ -840,7 +840,7 @@ class SSP_Frontend {
 	public function get_enclosure( $episode_id = 0 ) {
 
 		if ( $episode_id ) {
-			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, 'audio_file', true ), $episode_id );
+			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ), true ), $episode_id );
 		}
 
 		return '';

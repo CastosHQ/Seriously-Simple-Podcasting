@@ -8,7 +8,7 @@
 
 Welcome to the Seriously Simple Podcasting repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
 
-[Seriously Simple Podcasting](http://www.seriouslysimplepodcasting.com/) is a podcasting plugin for WordPress that aims to take the complexity out of running your own podcast without sacrificing any powerful (and necessary) features. It is developed and maintained by Hugh Lashbrooke and is neither owned nor run by any team or company. If you would like to know more about the plugin you can get in touch with [Hugh on Twitter](https://twitter.com/hlashbrooke) or follow [@SSPodcasting](https://twitter.com/SSPodcasting) directly.
+[Seriously Simple Podcasting](http://www.seriouslysimplepodcasting.com/) is a podcasting plugin for WordPress that aims to take the complexity out of running your own podcast without sacrificing any powerful (and necessary) features. It is developed and maintained by Craig Hewitt and our great team of developers. If you would like to know more about the plugin you can get in touch with [Craig on Twitter](https://twitter.com/thecraighewitt) or follow [@SSPodcasting](https://twitter.com/SSPodcasting) directly.
 
 If you are not a developer, please visit the [Seriously Simple Podcasting plugin page](https://wordpress.org/plugins/seriously-simple-podcasting/) on WordPress.org where you can download the plugin and find more info.
 
@@ -21,7 +21,7 @@ This repository is not suitable for support. Please don't use the issue tracker 
 Support requests in issues on this repository will be closed on sight.
 
 ## Contributing to Seriously Simple Podcasting
-If you have a patch, or you have stumbled upon an issue with Seriously Simple Podcasting core, you can contribute this back to the code. Please read the [contributor guidelines](https://github.com/hlashbrooke/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information how you can do this.
+If you have a patch, or you have stumbled upon an issue with Seriously Simple Podcasting core, you can contribute this back to the code. Please read the [contributor guidelines](https://github.com/thecraighewitt/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information how you can do this.
 
 If you have an idea for Seriously Simple Podcasting, feel free to suggest it in an issue on this repo.
 

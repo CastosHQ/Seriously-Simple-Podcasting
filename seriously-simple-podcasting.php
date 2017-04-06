@@ -4,8 +4,8 @@
  * Version: 1.15.1
  * Plugin URI: https://www.seriouslysimplepodcasting.com/
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
- * Author: Hugh Lashbrooke
- * Author URI: https://hughlashbrooke.com/
+ * Author: Craig Hewitt
+ * Author URI: https://craighewitt.me/
  * Requires at least: 4.4
  * Tested up to: 4.6.1
  *

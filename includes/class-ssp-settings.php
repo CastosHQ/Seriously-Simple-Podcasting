@@ -471,6 +471,16 @@ class SSP_Settings {
 					'callback'		=> 'esc_url_raw',
 					'class'			=> 'regular-text',
 				),
+				array(
+					'id'          => 'itunes_url',
+					'label'       => __( 'iTunes URL', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your podcast\'s iTunes URL.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'iTunes URL', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_url_raw',
+					'class'       => 'regular-text',
+				),
 			)
 		);
 

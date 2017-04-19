@@ -335,7 +335,6 @@ class SSP_Frontend {
 			'link' => '',
 			'new_window' => false,
 			'duration' => 0,
-			'size' => 0,
 			'date_recorded' => '',
 		);
 
@@ -349,10 +348,6 @@ class SSP_Frontend {
 
 		if( $link ) {
 			$meta['duration'] = $duration;
-		}
-
-		if( $size ) {
-			$meta['size'] = $size;
 		}
 
 		if( $date_recorded ) {
@@ -389,10 +384,6 @@ class SSP_Frontend {
 					$meta_display .= '<span class="podcast-meta-duration">' . __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
 				break;
 
-				case 'size':
-					$meta_display .= '<span class="podcast-meta-size">' . __( 'Size' , 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
-				break;
-
 				case 'date_recorded':
 					$meta_display .= '<span class="podcast-meta-date">' . __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) ) . '</span>';
 				break;
@@ -415,7 +406,12 @@ class SSP_Frontend {
 
 			}
 		}
-
+		
+		$itunes_url = get_option( 'ss_podcasting_itunes_url', '' );
+		if ( ! empty( $itunes_url ) ) {
+			$meta_display .= $meta_sep . '<a href="' . esc_url( $itunes_url ) . '" title="' . __( 'Leave a review', 'seriously-simple-podcasting' ) . '" class="podcast-meta-itunes">' . __( 'Leave a review', 'seriously-simple-podcasting' ) . '</a>';
+		}
+		
 		$meta_display = '<div class="podcast_meta"><aside>' . $meta_display . '</aside></div>';
 
 		return $meta_display;

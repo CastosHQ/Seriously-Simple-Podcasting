@@ -2,8 +2,8 @@
 Contributors: hlashbrooke, whyisjake, thecraighewitt, jonathanbossenger
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 4.6.1
-Stable tag: 1.15.1
+Tested up to: 4.7.3
+Stable tag: 1.15.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,6 +85,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.15.2 =
+* 2017-04-19
+* [NEW] Adding iTunes url to Feed Details
+* [NEW] Adding filter for the key that holds the mp3 value (props [Brian Hogg](https://github.com/brianhogg))
 
 = 1.15.1 =
 * 2016-10-06

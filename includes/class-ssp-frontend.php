@@ -74,11 +74,18 @@ class SSP_Frontend {
 		// Download podcast episode
 		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
+		// Trigger import podcast process (if active)
+		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor') );
+
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
 
 		// Add shortcodes
 		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
+
+		// @todo test and remove if nessecary
+        // Add Custom Feed Template Redirect
+        add_action('template_redirect', array( $this, 'feed_template_redirect' ) );
 
 		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
 
@@ -100,19 +107,21 @@ class SSP_Frontend {
 			return;
 		}
 
-		// Get download link based on permalink structure
-		if ( get_option( 'permalink_structure' ) ) {
-			$episode = get_post( $episode_id );
-
-			// Get file extension - default to MP3 to prevent empty extension strings
-			$ext = pathinfo( $file, PATHINFO_EXTENSION );
-			if( ! $ext ) {
-				$ext = 'mp3';
-			}
-
-			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
+		if ( ssp_is_connected_to_podcastmotor() ) {
+			$link = $file;
 		} else {
-			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
+			// Get download link based on permalink structure
+			if ( get_option( 'permalink_structure' ) ) {
+				$episode = get_post( $episode_id );
+				// Get file extension - default to MP3 to prevent empty extension strings
+				$ext = pathinfo( $file, PATHINFO_EXTENSION );
+				if ( ! $ext ) {
+					$ext = 'mp3';
+				}
+				$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
+			} else {
+				$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
+			}
 		}
 
 		// Allow for dyamic referrer
@@ -406,12 +415,12 @@ class SSP_Frontend {
 
 			}
 		}
-		
+
 		$itunes_url = get_option( 'ss_podcasting_itunes_url', '' );
 		if ( ! empty( $itunes_url ) ) {
 			$meta_display .= $meta_sep . '<a href="' . esc_url( $itunes_url ) . '" title="' . __( 'Leave a review', 'seriously-simple-podcasting' ) . '" class="podcast-meta-itunes">' . __( 'Leave a review', 'seriously-simple-podcasting' ) . '</a>';
 		}
-		
+
 		$meta_display = '<div class="podcast_meta"><aside>' . $meta_display . '</aside></div>';
 
 		return $meta_display;
@@ -878,6 +887,20 @@ class SSP_Frontend {
 
 	}
 
+	public function import_existing_podcast_to_podmotor(){
+		$podcast_importer = filter_input( INPUT_GET, 'podcast_importer', FILTER_SANITIZE_STRING );
+		if ( ! empty( $podcast_importer ) && 'true' == $podcast_importer ){
+			$continue = import_existing_podcast();
+			if ($continue){
+				$reponse = array( 'continue' => 'true', 'response' => 'There are still podcasts to be imported' );
+			}else {
+				$reponse = array( 'continue' => 'false', 'response' => 'There are no more podcasts to be imported' );
+			}
+			wp_send_json( $reponse );
+		}
+	}
+
+
 	/**
 	 * Download file from `podcast_episode` query variable
 	 * @return void
@@ -1230,6 +1253,52 @@ class SSP_Frontend {
 
 		return $content_type;
 	}
+
+    /**
+     * Custom feed template redirect
+     */
+	public function feed_template_redirect () {
+        if ( is_feed() ) {
+            $feed = get_query_var( 'feed' );
+            if ( 'podcast' == $feed ){
+                $this->custom_podcast_feed();
+                exit();
+            }
+        }
+    }
+
+    /**
+     * Renders the custom Podcast Feed
+     */
+    public function custom_podcast_feed(){
+        global $wp_query;
+
+        $feed = get_query_var( 'feed' );
+
+        // Remove the pad, if present.
+        $feed = preg_replace( '/^_+/', '', $feed );
+
+        if ( $feed == '' || $feed == 'feed' )
+            $feed = get_default_feed();
+
+        if ( ! has_action( "do_feed_{$feed}" ) ) {
+            wp_die( __( 'ERROR: This is not a valid feed template.' ), '', array( 'response' => 404 ) );
+        }
+
+        /**
+         * Fires once the given feed is loaded.
+         *
+         * The dynamic portion of the hook name, `$feed`, refers to the feed template name.
+         * Possible values include: 'rdf', 'rss', 'rss2', and 'atom'.
+         *
+         * @since 2.1.0
+         * @since 4.4.0 The `$feed` parameter was added.
+         *
+         * @param bool   $is_comment_feed Whether the feed is a comment feed.
+         * @param string $feed            The feed name.
+         */
+        do_action( "do_feed_{$feed}", $wp_query->is_comment_feed, $feed );
+    }
 
 	public function load_localisation () {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );

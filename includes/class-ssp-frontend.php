@@ -74,6 +74,9 @@ class SSP_Frontend {
 		// Download podcast episode
 		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
+		// Trigger import podcast process (if active)
+		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor') );
+
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
 
@@ -100,19 +103,21 @@ class SSP_Frontend {
 			return;
 		}
 
-		// Get download link based on permalink structure
-		if ( get_option( 'permalink_structure' ) ) {
-			$episode = get_post( $episode_id );
-
-			// Get file extension - default to MP3 to prevent empty extension strings
-			$ext = pathinfo( $file, PATHINFO_EXTENSION );
-			if( ! $ext ) {
-				$ext = 'mp3';
-			}
-
-			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
+		if ( ssp_is_connected_to_podcastmotor() ) {
+			$link = $file;
 		} else {
-			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
+			// Get download link based on permalink structure
+			if ( get_option( 'permalink_structure' ) ) {
+				$episode = get_post( $episode_id );
+				// Get file extension - default to MP3 to prevent empty extension strings
+				$ext = pathinfo( $file, PATHINFO_EXTENSION );
+				if ( ! $ext ) {
+					$ext = 'mp3';
+				}
+				$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
+			} else {
+				$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
+			}
 		}
 
 		// Allow for dyamic referrer
@@ -406,12 +411,12 @@ class SSP_Frontend {
 
 			}
 		}
-		
+
 		$itunes_url = get_option( 'ss_podcasting_itunes_url', '' );
 		if ( ! empty( $itunes_url ) ) {
 			$meta_display .= $meta_sep . '<a href="' . esc_url( $itunes_url ) . '" title="' . __( 'Leave a review', 'seriously-simple-podcasting' ) . '" class="podcast-meta-itunes">' . __( 'Leave a review', 'seriously-simple-podcasting' ) . '</a>';
 		}
-		
+
 		$meta_display = '<div class="podcast_meta"><aside>' . $meta_display . '</aside></div>';
 
 		return $meta_display;
@@ -877,6 +882,20 @@ class SSP_Frontend {
 		return apply_filters( 'ssp_episode_from_file', $episode, $file );
 
 	}
+
+	public function import_existing_podcast_to_podmotor(){
+		$podcast_importer = filter_input( INPUT_GET, 'podcast_importer', FILTER_SANITIZE_STRING );
+		if ( ! empty( $podcast_importer ) && 'true' == $podcast_importer ){
+			$continue = import_existing_podcast();
+			if ($continue){
+				$reponse = array( 'continue' => 'true', 'response' => 'There are still podcasts to be imported' );
+			}else {
+				$reponse = array( 'continue' => 'false', 'response' => 'There are no more podcasts to be imported' );
+			}
+			wp_send_json( $reponse );
+		}
+	}
+
 
 	/**
 	 * Download file from `podcast_episode` query variable

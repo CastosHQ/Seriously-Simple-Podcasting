@@ -23,9 +23,14 @@ jQuery(document).ready(function($) {
 		  multiple: false
 		});
 
+		console.log( file_frame );
+
 		// When an image is selected, run a callback.
 		file_frame.on( 'select', function() {
 		  var attachment = file_frame.state().get('selection').first().toJSON();
+
+		  console.log(attachment);
+
 		  jQuery("#"+field_id).val(attachment.url);
 		  if ( preview_media ) {
 		  	jQuery("#"+preview_id).attr('src',attachment.url);

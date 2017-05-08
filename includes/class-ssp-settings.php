@@ -158,7 +158,7 @@ class SSP_Settings {
 		) );
 
 		// @todo remove this on launch
-		add_submenu_page( 'edit.php?post_type=podcast', __( 'Development', 'seriously-simple-podcasting' ), __( 'Development', 'seriously-simple-podcasting' ), 'manage_podcast', 'reset', array(
+		add_submenu_page( null, __( 'Development', 'seriously-simple-podcasting' ), __( 'Development', 'seriously-simple-podcasting' ), 'manage_podcast', 'reset', array(
 			$this,
 			'reset_development_settings',
 		) );

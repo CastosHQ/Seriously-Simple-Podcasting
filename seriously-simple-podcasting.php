@@ -30,8 +30,7 @@ define( 'SSP_UPLOADS_DIR', ABSPATH . 'wp-content/ssp/' );
 define( 'SSP_LOG_PATH', SSP_PLUGIN_PATH . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 define( 'SSP_LOG_URL', SSP_PLUGIN_URL . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 
-//define( 'SSP_PODMOTOR_APP_URL', 'http://app.seriouslysimplepodcasting.com/' );
-define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
+define( 'SSP_PODMOTOR_APP_URL', 'http://app.seriouslysimplepodcasting.com/' );
 
 require_once( 'includes/ssp-functions.php' );
 require_once( 'includes/class-ssp-admin.php' );

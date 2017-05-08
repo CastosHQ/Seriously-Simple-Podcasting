@@ -83,10 +83,6 @@ class SSP_Frontend {
 		// Add shortcodes
 		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
 
-		// @todo test and remove if nessecary
-        // Add Custom Feed Template Redirect
-        add_action('template_redirect', array( $this, 'feed_template_redirect' ) );
-
 		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
 
 		// Handle localisation
@@ -1253,52 +1249,6 @@ class SSP_Frontend {
 
 		return $content_type;
 	}
-
-    /**
-     * Custom feed template redirect
-     */
-	public function feed_template_redirect () {
-        if ( is_feed() ) {
-            $feed = get_query_var( 'feed' );
-            if ( 'podcast' == $feed ){
-                $this->custom_podcast_feed();
-                exit();
-            }
-        }
-    }
-
-    /**
-     * Renders the custom Podcast Feed
-     */
-    public function custom_podcast_feed(){
-        global $wp_query;
-
-        $feed = get_query_var( 'feed' );
-
-        // Remove the pad, if present.
-        $feed = preg_replace( '/^_+/', '', $feed );
-
-        if ( $feed == '' || $feed == 'feed' )
-            $feed = get_default_feed();
-
-        if ( ! has_action( "do_feed_{$feed}" ) ) {
-            wp_die( __( 'ERROR: This is not a valid feed template.' ), '', array( 'response' => 404 ) );
-        }
-
-        /**
-         * Fires once the given feed is loaded.
-         *
-         * The dynamic portion of the hook name, `$feed`, refers to the feed template name.
-         * Possible values include: 'rdf', 'rss', 'rss2', and 'atom'.
-         *
-         * @since 2.1.0
-         * @since 4.4.0 The `$feed` parameter was added.
-         *
-         * @param bool   $is_comment_feed Whether the feed is a comment feed.
-         * @param string $feed            The feed name.
-         */
-        do_action( "do_feed_{$feed}", $wp_query->is_comment_feed, $feed );
-    }
 
 	public function load_localisation () {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );

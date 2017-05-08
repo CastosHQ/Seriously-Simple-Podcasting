@@ -4,6 +4,7 @@
  * Copyright 2015 Kunal Nagar
  * Available under MIT license
  */
+
 ;(function($) {
 
 	/** Enable strict mode. */

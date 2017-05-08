@@ -5,7 +5,6 @@
 
 jQuery(document).ready(function($) {
 
-
     if ( $("#podmotor_account_email").length > 0 && $("#podmotor_account_api_token").length > 0 ){
 
         /**

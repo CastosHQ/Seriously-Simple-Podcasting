@@ -86,6 +86,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.16 =
+* 2017-05-08
+* [NEW] Support for Seriously Simple Hosting(http://app.seriouslysimplepodcasting.com/)
+
+= 1.15.2 =
+* 2017-04-19
+* [NEW] Adding iTunes url to Feed Details
+* [NEW] Adding filter for the key that holds the mp3 value (props [Brian Hogg](https://github.com/brianhogg))
+
 = 1.15.1 =
 * 2016-10-06
 * [FIX] Making sure that playlist episodes are only loaded if they have a valid media file

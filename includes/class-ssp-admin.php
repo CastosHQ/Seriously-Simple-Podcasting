@@ -1261,8 +1261,6 @@ class SSP_Admin {
 
 				$response = array( 'file_upload' => 'true' );
 
-				
-				
 				try {
 					$podmotor_handler  = new Podmotor_Handler();
 					$podmotor_response = $podmotor_handler->upload_file_to_podmotor_storage( $uploaded_file );

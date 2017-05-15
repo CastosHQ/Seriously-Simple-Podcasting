@@ -7,7 +7,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Require SDK
  */
-require_once( SSP_PLUGIN_PATH . 'includes/aws/aws-autoloader.php' );
+if ( '5.5.0' === PHP_VERSION ) {
+	require_once( SSP_PLUGIN_PATH . 'includes/aws/aws-autoloader.php' );
+} else {
+	require_once( SSP_PLUGIN_PATH . 'includes/aws-sdk-2.0/aws-autoloader.php' );
+}
 
 class Podmotor_Handler {
 	

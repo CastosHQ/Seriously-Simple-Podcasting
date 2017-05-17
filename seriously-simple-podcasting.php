@@ -20,28 +20,25 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( version_compare( PHP_VERSION, '5.5.0', '>=' ) ) { // PHP 5.5.0 or greater
-	define( 'SSP_PHP_VERSION', '5.5.0' );
-} elseif ( version_compare( PHP_VERSION, '5.3.3', '>=' ) ) { // PHP 5.3.3 or greater
-	define( 'SSP_PHP_VERSION', '5.3.3' );
-} else {
+if ( version_compare( PHP_VERSION, '5.3.3', '<=' ) ) { // PHP 5.3.3 or greater
 	/**
-	 * We are running under PHP 5.3.x
+	 * We are running under PHP 5.3.3
 	 * Display an admin notice and gracefully do nothing.
 	 */
 	is_admin() && add_action( 'admin_notices', create_function( '', "
 	echo '
 		<div class=\"error\">
 			<p>
-				<strong>The Seriously Simple Podcasting plugin requires PHP version 5.3 or later. Please contact your web host to upgrade your PHP version or deactivate the plugin.</strong>.
+				<strong>The Seriously Simple Podcasting plugin requires PHP version 5.3.3 or later. Please contact your web host to upgrade your PHP version or deactivate the plugin.</strong>.
 			</p>
 			<p>We apologise for any inconvenience.</p>
 		</div>
 	';"
 	) );
+	return;
 }
 
-define( 'SSP_DEBUG', true );
+define( 'SSP_DEBUG', false );
 
 define( 'SSP_VERSION', '1.16.1' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -52,8 +49,7 @@ define( 'SSP_UPLOADS_DIR', ABSPATH . 'wp-content/ssp/' );
 define( 'SSP_LOG_PATH', SSP_PLUGIN_PATH . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 define( 'SSP_LOG_URL', SSP_PLUGIN_URL . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 
-//define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
-define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
+define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
 
 require_once( 'includes/ssp-functions.php' );
 require_once( 'includes/class-ssp-admin.php' );

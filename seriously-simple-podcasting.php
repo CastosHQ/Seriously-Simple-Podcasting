@@ -41,7 +41,7 @@ if ( version_compare( PHP_VERSION, '5.5.0', '>=' ) ) { // PHP 5.5.0 or greater
 	) );
 }
 
-define( 'SSP_DEBUG', false );
+define( 'SSP_DEBUG', true );
 
 define( 'SSP_VERSION', '1.16.1' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -52,7 +52,8 @@ define( 'SSP_UPLOADS_DIR', ABSPATH . 'wp-content/ssp/' );
 define( 'SSP_LOG_PATH', SSP_PLUGIN_PATH . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 define( 'SSP_LOG_URL', SSP_PLUGIN_URL . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 
-define( 'SSP_PODMOTOR_APP_URL', 'http://app.seriouslysimplepodcasting.com/' );
+//define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
+define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
 
 require_once( 'includes/ssp-functions.php' );
 require_once( 'includes/class-ssp-admin.php' );
@@ -69,5 +70,3 @@ if ( is_admin() ) {
 	require_once( 'includes/class-ssp-settings.php' );
 	$ssp_settings = new SSP_Settings( __FILE__, SSP_VERSION );
 }
-
-

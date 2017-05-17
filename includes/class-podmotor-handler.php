@@ -7,7 +7,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Require SDK
  */
-require_once( SSP_PLUGIN_PATH . 'includes/aws/aws-autoloader.php' );
+require_once( SSP_PLUGIN_PATH . 'includes/aws-sdk-2.0/aws-autoloader.php' );
+
+use Aws\S3\S3Client;
 
 class Podmotor_Handler {
 	
@@ -38,8 +40,7 @@ class Podmotor_Handler {
 		$this->podmotor_config    = $response['config'];
 		$this->podmotor_bucket    = $response['bucket'];
 		$this->podmotor_show_slug = $response['show_slug'];
-		$sdk                      = new Aws\Sdk( $this->podmotor_config );
-		$this->podmotor_client    = $sdk->createS3();
+		$this->podmotor_client    = S3Client::factory( $this->podmotor_config );
 	}
 	
 	/**
@@ -228,11 +229,11 @@ class Podmotor_Handler {
 					'ACL'          => 'public-read',
 					'StorageClass' => 'REDUCED_REDUNDANCY',
 				] );
-				$result_metadata = $result['@metadata'];
-				if ( 200 === $result_metadata['statusCode'] ) {
+				$podmotor_uploaded_file = $result['ObjectURL'];
+				if ( ! empty( $podmotor_uploaded_file ) ) {
 					$this->update_response( 'status', 'success' );
 					$this->update_response( 'message', 'File uploaded to Seriously Simple Hosting successfully' );
-					$this->update_response( 'podmotor_file', $result_metadata['effectiveUri'] );
+					$this->update_response( 'podmotor_file', $podmotor_uploaded_file );
 					if ( $duration ) {
 						$this->update_response( 'podmotor_file_duration', $duration );
 					}

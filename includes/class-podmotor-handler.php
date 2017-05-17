@@ -40,8 +40,6 @@ class Podmotor_Handler {
 		$this->podmotor_config    = $response['config'];
 		$this->podmotor_bucket    = $response['bucket'];
 		$this->podmotor_show_slug = $response['show_slug'];
-		//$sdk                      = new Aws\Sdk( $this->podmotor_config );
-		//$this->podmotor_client    = $sdk->createS3();
 		$this->podmotor_client    = S3Client::factory( $this->podmotor_config );
 	}
 	

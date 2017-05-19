@@ -1011,7 +1011,7 @@ class SSP_Settings {
 				$series_id  = 0;
 				if ( 'feed-details' === $section ) {
 
-					$feed_series = filter_input( INPUT_GET, 'feed-series', FILTER_SANITIZE_STRING );
+					$feed_series = filter_var( $_REQUEST['feed-series'], FILTER_SANITIZE_STRING );
 					if ( ! empty( $feed_series ) && 'default' !== $feed_series ) {
 
 						// Get selected series.

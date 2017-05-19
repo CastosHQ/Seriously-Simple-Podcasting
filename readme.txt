@@ -3,7 +3,7 @@ Contributors: hlashbrooke, whyisjake, psykro, PodcastMotor
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
 Tested up to: 4.7.3
-Stable tag: 1.16.1
+Stable tag: 1.16.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -85,6 +85,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.16.1 =
+* 2017-05-19
+* [CHANGE] PHP version 5.3.0 or greater now required for Seriously Simple Hosting support
+* [CHANGE] Implemented version 2 of the S3 SDK
+* [FIX] Fixed a bug where Feed details were not being updated correctly
+* [TWEAK] Cleaned up some legacy code from the 1.16 release
 
 = 1.16.1 =
 * 2017-05-08

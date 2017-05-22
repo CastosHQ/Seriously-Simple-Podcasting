@@ -114,9 +114,6 @@ class SSP_Admin {
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
 			
-			// Show upgrade screen
-			add_action( 'init', array( $this, 'show_upgrade_screen' ), 12 );
-			
 		} // End if().
 
 		// Add ajax action for plugin rating
@@ -1264,8 +1261,6 @@ class SSP_Admin {
 
 				$response = array( 'file_upload' => 'true' );
 
-				
-				
 				try {
 					$podmotor_handler  = new Podmotor_Handler();
 					$podmotor_response = $podmotor_handler->upload_file_to_podmotor_storage( $uploaded_file );
@@ -1416,38 +1411,6 @@ class SSP_Admin {
 			<p><?php _e( $message, 'ssp' ); ?></p>
 		</div>
 		<?php
-	}
-
-	public function show_upgrade_screen() {
-		// first check that we should show the screen
-		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_STRING );
-		if ( empty( $post_type ) || 'podcast' !== $post_type ) {
-			return;
-		}
-		
-		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
-		if ( ! empty( $page ) && 'upgrade' === $page ) {
-			return;
-		}
-		
-		// check user has already visited this page once
-		$ssp_upgrade_page_visited = get_option( 'ssp_upgrade_page_visited', '' );
-		if ( 'true' === $ssp_upgrade_page_visited ) {
-			return;
-		}
-		
-		// check version number is upgraded
-		$ssp_version = get_option( 'ssp_version', '' );
-		// The enhanced register_meta function is only available for WordPress 4.6+
-		if ( version_compare( $ssp_version, '1.15.1', '<' ) ) {
-			return;
-		}
-		
-		update_option( 'ssp_upgrade_page_visited', 'true' );
-		// redirect
-		$url = add_query_arg( array( 'post_type' => 'podcast', 'page' => 'upgrade' ), admin_url( 'edit.php' ) );
-		wp_redirect( $url );
-		exit;
 	}
 	
 }

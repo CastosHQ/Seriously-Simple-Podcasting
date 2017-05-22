@@ -87,12 +87,20 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.16.1 =
+* 2017-05-19
+* [CHANGE] PHP version 5.3.0 or greater now required for Seriously Simple Hosting support
+* [CHANGE] Implemented version 2 of the S3 SDK
+* [FIX] Fixed a bug where Feed details were not being updated correctly
+* [TWEAK] Cleaned up some legacy code from the 1.16 release
+
+= 1.16.1 =
 * 2017-05-08
-* [TWEAK] Added PHP version requirements
+* [NEW] Updated the plugin to display PHP version requirements to the user or gracefully stop the plugin from loading
 
 = 1.16 =
 * 2017-05-08
-* [NEW] Support for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
+* [NEW] Added Support for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
+* [CHANGE] PHP version 5.5.0 or greater now required for Seriously Simple Hosting support
 
 = 1.15.2 =
 * 2017-04-19

@@ -110,12 +110,12 @@ class SSP_Admin {
 			add_action( 'admin_init', array( $this, 'start_importing_existing_podcasts' ) );
 			
 			add_action( 'current_screen', array( $this, 'check_existing_podcasts' ) );
+			
+			// Show upgrade screen
+			add_action( 'current_screen', array( $this, 'show_upgrade_screen' ), 12 );
 
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
-			
-			// Show upgrade screen
-			add_action( 'init', array( $this, 'show_upgrade_screen' ), 12 );
 			
 		} // End if().
 
@@ -133,6 +133,10 @@ class SSP_Admin {
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
 
 		add_action( 'init', array( $this, 'update' ), 11 );
+		
+		// Dismiss the upgrade screen and redirect to the last screen the user was on
+		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
+		
 	}
 
 	/**
@@ -1264,8 +1268,6 @@ class SSP_Admin {
 
 				$response = array( 'file_upload' => 'true' );
 
-				
-				
 				try {
 					$podmotor_handler  = new Podmotor_Handler();
 					$podmotor_response = $podmotor_handler->upload_file_to_podmotor_storage( $uploaded_file );
@@ -1417,20 +1419,23 @@ class SSP_Admin {
 		</div>
 		<?php
 	}
-
+	
+	/**
+	 * Show upgrade screen when users upgrade from 1.15.1
+	 */
 	public function show_upgrade_screen() {
 		// first check that we should show the screen
-		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_STRING );
+		$post_type = ( isset( $_GET['post_type'] ) ? filter_var( $_GET['post_type'], FILTER_SANITIZE_STRING ) : '' );
 		if ( empty( $post_type ) || 'podcast' !== $post_type ) {
 			return;
 		}
 		
-		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
+		$page = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
 		if ( ! empty( $page ) && 'upgrade' === $page ) {
 			return;
 		}
 		
-		// check user has already visited this page once
+		// check if the user has dismissed this page previously
 		$ssp_upgrade_page_visited = get_option( 'ssp_upgrade_page_visited', '' );
 		if ( 'true' === $ssp_upgrade_page_visited ) {
 			return;
@@ -1443,11 +1448,28 @@ class SSP_Admin {
 			return;
 		}
 		
-		update_option( 'ssp_upgrade_page_visited', 'true' );
+		$current_url = rawurlencode( ( isset( $_SERVER['HTTPS'] ) ? 'https' : 'http' ) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+		
 		// redirect
-		$url = add_query_arg( array( 'post_type' => 'podcast', 'page' => 'upgrade' ), admin_url( 'edit.php' ) );
+		$url = add_query_arg( array( 'post_type' => 'podcast', 'page' => 'upgrade', 'ssp_redirect' => $current_url ), admin_url( 'edit.php' ) );
 		wp_redirect( $url );
 		exit;
 	}
 	
+	/**
+	 * Dismiss upgrade screen when user clicks 'Dismiss' link
+	 */
+	public function dismiss_upgrade_screen(){
+		// Check if the ssp_dismiss_upgrade variable exists
+		$ssp_dismiss_upgrade = ( isset( $_GET['ssp_dismiss_upgrade'] ) ? filter_var( $_GET['ssp_dismiss_upgrade'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $ssp_dismiss_upgrade ) ) {
+			return;
+		}
+		
+		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
+		
+		update_option( 'ssp_upgrade_page_visited', 'true' );
+		wp_redirect( $ssp_redirect );
+		exit;
+	}
 }

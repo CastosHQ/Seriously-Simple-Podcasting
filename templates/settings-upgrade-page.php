@@ -1,9 +1,9 @@
 <style media="screen" type="text/css">
 	/* <!-- */
 	
-	#header h1,
-	#header h2,
-	#header p {
+	#header h1, #footer h1,
+	#header h2, #footer h2,
+	#header p,  #footer p,  {
 		margin-left: 2%;
 		padding-right: 2%;
 		text-align: center;
@@ -50,7 +50,7 @@
 		vertical-align: center;
 	}
 	
-	#header {
+	#header, #footer {
 		padding: 10px;
 	}
 	
@@ -125,5 +125,8 @@
 			</div>
 		
 		</form>
+	</div>
+	<div id="footer">
+		<p><a href="<?php echo $ssp_dismiss_url; ?>">Dismiss this message</a></p>
 	</div>
 </div>

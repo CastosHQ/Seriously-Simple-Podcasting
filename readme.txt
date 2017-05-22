@@ -1,9 +1,9 @@
 === Seriously Simple Podcasting ===
-Contributors: hlashbrooke, whyisjake, psykro, PodcastMotor
+Contributors: hlashbrooke, whyisjake, psykro, PodcastMotor, simondowdles
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
 Tested up to: 4.7.3
-Stable tag: 1.16.1
+Stable tag: 1.16.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,13 +86,23 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.16.2 =
+* 2017-05-22
+* UPDATE SUMMARY:  Adding backwards compatibility to PHP 5.3.3 and improving Feed Details functionality when Series are being used.
+* [FIX] Incorporated an updated AWS library to be compatible with other S3 plugins such as Offload to S3
+* [FIX] Added PHP compatibility back to PHP 5.3.3
+* [FIX] Resolved error with Feed Details for Series not saving correctly
+* [TWEAK] Added Dismiss button to Podcast Welcome Page
+* [TWEAK] Cleaned up some legacy code from the 1.16 release
+
 = 1.16.1 =
 * 2017-05-08
-* [TWEAK] Added PHP version requirements
+* [NEW] Updated the plugin to display PHP version requirements to the user or gracefully stop the plugin from loading
 
 = 1.16 =
 * 2017-05-08
-* [NEW] Support for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
+* [NEW] Added Support for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
+* [CHANGE] PHP version 5.5.0 or greater now required for Seriously Simple Hosting support
 
 = 1.15.2 =
 * 2017-04-19

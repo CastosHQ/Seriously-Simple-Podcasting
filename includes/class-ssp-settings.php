@@ -173,8 +173,7 @@ class SSP_Settings {
 		echo '<div class="wrap">';
 		echo '<h1>Development settings</h1>';
 
-		$dev_reset = filter_var( $_GET['dev_reset'], FILTER_SANITIZE_STRING );
-		
+		$dev_reset = ( isset( $_GET['dev_reset'] ) ? filter_var( $_GET['dev_reset'], FILTER_SANITIZE_STRING ) : '' );
 
 		if ( 'reset' === $dev_reset ) {
 			global $wpdb;
@@ -192,8 +191,7 @@ class SSP_Settings {
 			echo '<p>Database settings reset.</p>';
 		}
 
-		$dev_email = filter_var( $_GET['dev_email'], FILTER_SANITIZE_STRING );
-
+		$dev_email = ( isset( $_GET['dev_email'] ) ? filter_var( $_GET['dev_email'], FILTER_SANITIZE_STRING ) : '' );
 		if ( 'email' === $dev_email ) {
 			$mailed = ssp_email_podcasts_imported();
 			if ( $mailed ) {
@@ -283,7 +281,7 @@ class SSP_Settings {
 	 */
 	public function enqueue_scripts() {
 		global $pagenow;
-		$page  = filter_var( $_GET['page'], FILTER_SANITIZE_STRING );
+		$page = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
 		$pages = array( 'post-new.php', 'post.php' );
 		if ( in_array( $pagenow, $pages, true ) || ( ! empty( $page ) && 'podcast_settings' === $page ) ) {
 			wp_enqueue_media();
@@ -990,13 +988,13 @@ class SSP_Settings {
 	 */
 	public function register_settings() {
 		if ( is_array( $this->settings ) ) {
-			$tab = filter_var( $_POST['tab'], FILTER_SANITIZE_STRING );
+			$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_SANITIZE_STRING ) : '' );
 			// Check posted/selected tab.
 			$current_section = 'general';
 			if ( ! empty( $tab ) ) {
 				$current_section = $tab;
 			} else {
-				$tab = filter_var( $_GET['tab'], FILTER_SANITIZE_STRING );
+				$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_SANITIZE_STRING ) : '' );
 				if ( ! empty( $tab ) ) {
 					$current_section = $tab;
 				}
@@ -1012,7 +1010,7 @@ class SSP_Settings {
 				$title_tail = '';
 				$series_id  = 0;
 				if ( 'feed-details' === $section ) {
-					$feed_series = filter_var( $_GET['feed-series'], FILTER_SANITIZE_STRING );
+					$feed_series = ( isset( $_GET['feed-series'] ) ? filter_var( $_GET['feed-series'], FILTER_SANITIZE_STRING ) : '' );
 					if ( ! empty( $feed_series ) && 'default' !== $feed_series ) {
 
 						// Get selected series.
@@ -1422,8 +1420,9 @@ class SSP_Settings {
 	 * Validate the Seriously Simple Hosting api credentials
 	 */
 	public function validate_podmotor_api_credentials() {
-		$podmotor_account_api_token = filter_var( $_GET['api_token'], FILTER_SANITIZE_STRING );
-		$podmotor_account_email     = filter_input( $_GET['email'], FILTER_SANITIZE_STRING );
+		$podmotor_account_api_token = ( isset( $_GET['api_token'] ) ? filter_var( $_GET['api_token'], FILTER_SANITIZE_STRING ) : '' );
+		$podmotor_account_email     = ( isset( $_GET['email'] ) ? filter_var( $_GET['email'], FILTER_SANITIZE_STRING ) : '' );
+
 		$podmotor_handler           = new Podmotor_Handler();
 		$response                   = $podmotor_handler->validate_api_credentials( $podmotor_account_api_token, $podmotor_account_email );
 		wp_send_json( $response );
@@ -1657,7 +1656,7 @@ class SSP_Settings {
 	}
 
 	public function submit_import_form() {
-		$action = filter_var( $_POST['action'], FILTER_SANITIZE_STRING );
+		$action = ( isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : '' );
 		
 		if ( ! empty( $action ) && 'post_import_form' === $action ) {
 			check_admin_referer( 'ss_podcasting-import' );

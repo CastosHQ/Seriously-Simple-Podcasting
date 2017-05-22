@@ -217,6 +217,8 @@ class SSP_Settings {
 
 	public function show_upgrade_page() {
 		//ob_start();
+		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
+		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
 		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
 		//return ob_get_clean();
 	}

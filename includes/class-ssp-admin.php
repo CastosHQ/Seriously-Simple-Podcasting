@@ -130,6 +130,10 @@ class SSP_Admin {
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
 
 		add_action( 'init', array( $this, 'update' ), 11 );
+		
+		// Show upgrade screen
+		add_action( 'init', array( $this, 'show_upgrade_screen' ), 12 );
+		
 	}
 
 	/**
@@ -1413,4 +1417,38 @@ class SSP_Admin {
 		<?php
 	}
 	
+	/**
+	 * Show upgrade screen when users upgrade from 1.15.1
+	 */
+	public function show_upgrade_screen() {
+		// first check that we should show the screen
+		$post_type = filter_input( INPUT_GET, 'post_type', FILTER_SANITIZE_STRING );
+		if ( empty( $post_type ) || 'podcast' !== $post_type ) {
+			return;
+		}
+		
+		$page = filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING );
+		if ( ! empty( $page ) && 'upgrade' === $page ) {
+			return;
+		}
+		
+		// check user has already visited this page once
+		$ssp_upgrade_page_visited = get_option( 'ssp_upgrade_page_visited', '' );
+		if ( 'true' === $ssp_upgrade_page_visited ) {
+			return;
+		}
+		
+		// check version number is upgraded
+		$ssp_version = get_option( 'ssp_version', '' );
+		// The enhanced register_meta function is only available for WordPress 4.6+
+		if ( version_compare( $ssp_version, '1.15.1', '<' ) ) {
+			return;
+		}
+		
+		update_option( 'ssp_upgrade_page_visited', 'true' );
+		// redirect
+		$url = add_query_arg( array( 'post_type' => 'podcast', 'page' => 'upgrade' ), admin_url( 'edit.php' ) );
+		wp_redirect( $url );
+		exit;
+	}
 }

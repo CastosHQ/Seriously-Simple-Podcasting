@@ -110,6 +110,9 @@ class SSP_Admin {
 			add_action( 'admin_init', array( $this, 'start_importing_existing_podcasts' ) );
 			
 			add_action( 'current_screen', array( $this, 'check_existing_podcasts' ) );
+			
+			// Show upgrade screen
+			add_action( 'current_screen', array( $this, 'show_upgrade_screen' ), 12 );
 
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
@@ -130,6 +133,10 @@ class SSP_Admin {
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
 
 		add_action( 'init', array( $this, 'update' ), 11 );
+		
+		// Dismiss the upgrade screen and redirect to the last screen the user was on
+		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
+		
 	}
 
 	/**
@@ -1413,4 +1420,56 @@ class SSP_Admin {
 		<?php
 	}
 	
+	/**
+	 * Show upgrade screen when users upgrade from 1.15.1
+	 */
+	public function show_upgrade_screen() {
+		// first check that we should show the screen
+		$post_type = ( isset( $_GET['post_type'] ) ? filter_var( $_GET['post_type'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $post_type ) || 'podcast' !== $post_type ) {
+			return;
+		}
+		
+		$page = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
+		if ( ! empty( $page ) && 'upgrade' === $page ) {
+			return;
+		}
+		
+		// check if the user has dismissed this page previously
+		$ssp_upgrade_page_visited = get_option( 'ssp_upgrade_page_visited', '' );
+		if ( 'true' === $ssp_upgrade_page_visited ) {
+			return;
+		}
+		
+		// check version number is upgraded
+		$ssp_version = get_option( 'ssp_version', '' );
+		// The enhanced register_meta function is only available for WordPress 4.6+
+		if ( version_compare( $ssp_version, '1.15.1', '<' ) ) {
+			return;
+		}
+		
+		$current_url = rawurlencode( ( isset( $_SERVER['HTTPS'] ) ? 'https' : 'http' ) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
+		
+		// redirect
+		$url = add_query_arg( array( 'post_type' => 'podcast', 'page' => 'upgrade', 'ssp_redirect' => $current_url ), admin_url( 'edit.php' ) );
+		wp_redirect( $url );
+		exit;
+	}
+	
+	/**
+	 * Dismiss upgrade screen when user clicks 'Dismiss' link
+	 */
+	public function dismiss_upgrade_screen(){
+		// Check if the ssp_dismiss_upgrade variable exists
+		$ssp_dismiss_upgrade = ( isset( $_GET['ssp_dismiss_upgrade'] ) ? filter_var( $_GET['ssp_dismiss_upgrade'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $ssp_dismiss_upgrade ) ) {
+			return;
+		}
+		
+		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
+		
+		update_option( 'ssp_upgrade_page_visited', 'true' );
+		wp_redirect( $ssp_redirect );
+		exit;
+	}
 }

@@ -86,11 +86,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.16.1 =
-* 2017-05-19
-* [CHANGE] PHP version 5.3.0 or greater now required for Seriously Simple Hosting support
-* [CHANGE] Implemented version 2 of the S3 SDK
-* [FIX] Fixed a bug where Feed details were not being updated correctly
+= 1.16.2 =
+* 2017-05-22
+* UPDATE SUMMARY:  Adding backwards compatibility to PHP 5.3.3 and improving Feed Details functionality when Series are being used.
+* [FIX] Incorporated an updated AWS library to be compatible with other S3 plugins such as Offload to S3
+* [FIX] Added PHP compatibility back to PHP 5.3.3
+* [FIX] Resolved error with Feed Details for Series not saving correctly
+* [TWEAK] Added Dismiss button to Podcast Welcome Page
 * [TWEAK] Cleaned up some legacy code from the 1.16 release
 
 = 1.16.1 =

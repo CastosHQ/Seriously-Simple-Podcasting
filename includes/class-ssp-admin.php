@@ -1258,6 +1258,13 @@ class SSP_Admin {
 	 */
 	public function upload_file_to_podmotor() {
 		
+		if ( ! is_dir( SSP_UPLOADS_DIR ) ) {
+			wp_send_json( array(
+				'status'        => 'error',
+				'message'       => 'An error occurred uploading your file, please contact hello@seriouslysimplepodcasting.com for assistance.',
+			) );
+		}
+		
 		$file_type       = $_FILES["file"]["type"];
 		$file_type_array = explode( '/', $file_type );
 		

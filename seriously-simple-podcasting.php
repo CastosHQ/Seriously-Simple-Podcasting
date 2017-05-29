@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.16.2
+ * Version: 1.16.3
  * Plugin URI: https://www.seriouslysimplepodcasting.com/
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: PodcastMotor
@@ -40,7 +40,7 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<=' ) ) { // PHP 5.3.3 or greater
 
 define( 'SSP_DEBUG', false );
 
-define( 'SSP_VERSION', '1.16.2' );
+define( 'SSP_VERSION', '1.16.3' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 

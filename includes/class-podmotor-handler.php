@@ -41,6 +41,7 @@ class Podmotor_Handler {
 		$this->podmotor_bucket    = $response['bucket'];
 		$this->podmotor_show_slug = $response['show_slug'];
 		$this->podmotor_client    = S3Client::factory( $this->podmotor_config );
+		
 	}
 	
 	/**
@@ -185,10 +186,8 @@ class Podmotor_Handler {
 		if ( empty( $remote_file ) ) {
 			$this->update_response( 'message', 'The remote file url is empty' );
 		}
-		ssp_debug( 'Download remote file ' . $remote_file );
 		$downloaded_file = ssp_download_remote_file( $remote_file );
 		if ( $downloaded_file ) {
-			ssp_debug( 'Uploading downloaded file to S3 ' . $downloaded_file );
 			$podmotor_response = $this->upload_file_to_podmotor_storage( $downloaded_file );
 			if ( 'success' === $podmotor_response['status'] ) {
 				$this->update_response( 'status', 'success' );
@@ -197,7 +196,6 @@ class Podmotor_Handler {
 			} else {
 				$this->update_response( 'message', 'An error occurred uploading the file to Seriously Simple Hosting' );
 			}
-			ssp_debug( 'Clearing local download file ' . $downloaded_file );
 			@unlink( $downloaded_file );
 		} else {
 			$this->update_response( 'message', 'An error occurred downloading the remote file' );
@@ -222,13 +220,13 @@ class Podmotor_Handler {
 			$file_info      = pathinfo( $file );
 			$base_file_name = $file_info['basename'];
 			try {
-				$result          = $this->podmotor_client->putObject( [
+				$result = $this->podmotor_client->putObject( array(
 					'Bucket'       => $this->podmotor_bucket,
 					'Key'          => $this->podmotor_show_slug . '/' . sanitize_file_name( $base_file_name ),
 					'Body'         => fopen( $file, 'r' ),
 					'ACL'          => 'public-read',
 					'StorageClass' => 'REDUCED_REDUNDANCY',
-				] );
+				) );
 				$podmotor_uploaded_file = $result['ObjectURL'];
 				if ( ! empty( $podmotor_uploaded_file ) ) {
 					$this->update_response( 'status', 'success' );
@@ -290,7 +288,6 @@ class Podmotor_Handler {
 					$this->update_response( 'file_id', $responseObject->file_id );
 					$this->update_response( 'file_path', $responseObject->file_path );
 				} else {
-					ssp_debug( $responseObject );
 					$this->update_response( 'message', 'An error occurred uploading the file data to Seriously Simple Hosting' );
 				}
 			} else {
@@ -445,7 +442,11 @@ class Podmotor_Handler {
 			list( $original_string, $encrypted_string, $encoding_iv ) = $regs;
 			$encoding_method = 'AES-128-CTR';
 			$encoding_key    = crypt( $unique_key, sha1( $unique_key ) );
-			$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, hex2bin( $encoding_iv ) );
+			if ( version_compare( PHP_VERSION, '5.4.0', '<' ) ) {
+				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, pack( 'H*', $encoding_iv ) );
+			} else {
+				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, hex2bin( $encoding_iv ) );
+			}
 			$config          = unserialize( $decrypted_token );
 			return $config;
 		} else {

@@ -88,7 +88,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.16.3 =
 * 2017-05-29
-* UPDATE SUMMARY:  Bugfix release for older versions of PHP 5.3.3
+* UPDATE SUMMARY:  Bugfix release for backward compatibility
 * [FIX] Fixed a parse error causing the plugin not to be activated
 * [FIX] Fixed an error with the plugin upgrade process
 

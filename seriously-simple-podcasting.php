@@ -38,7 +38,7 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<=' ) ) { // PHP 5.3.3 or greater
 	return;
 }
 
-define( 'SSP_DEBUG', true );
+define( 'SSP_DEBUG', false );
 
 define( 'SSP_VERSION', '1.16.3' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

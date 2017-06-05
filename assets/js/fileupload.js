@@ -5,6 +5,17 @@
 
 jQuery(document).ready(function($) {
 
+	$('#tb_button').on('click', function(){
+		tb_show('This is Podcastmotor in a thickbox', 'http://podcastmotor.app/pages/upload?TB_iframe=true');
+		$('#TB_window').on("tb_unload", function(){
+			console.log( $(this) );
+			console.log( $('#TB_iframeContent').find('.s3-file-path') );
+			alert('Triggered!');
+		});
+	});
+
+
+
 	function notificationBar( message ){
 		$('.peek-a-bar').hide().remove();
 		var notification_bar = new $.peekABar({

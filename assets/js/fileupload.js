@@ -14,8 +14,6 @@ jQuery(document).ready(function($) {
 		});
 	});
 
-
-
 	function notificationBar( message ){
 		$('.peek-a-bar').hide().remove();
 		var notification_bar = new $.peekABar({

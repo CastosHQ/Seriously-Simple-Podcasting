@@ -1662,10 +1662,10 @@ class SSP_Settings {
 		
 		if ( ! empty( $action ) && 'post_import_form' === $action ) {
 			check_admin_referer( 'ss_podcasting-import' );
-			$name        = filter_input( $_POST['name'], FILTER_SANITIZE_STRING );
-			$website     = filter_input( $_POST['website'], FILTER_SANITIZE_STRING );
-			$email       = filter_input( $_POST['email'], FILTER_SANITIZE_EMAIL );
-			$podcast_url = filter_input( $_POST['podcast_url'], FILTER_SANITIZE_URL );
+			$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
+			$website     = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
+			$email       = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
+			$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
 
 			$new_line    = "\n";
 			$site_name   = $name;

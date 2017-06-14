@@ -44,8 +44,6 @@ define( 'SSP_VERSION', '1.16.4-0.0.1' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
-define( 'SSP_UPLOADS_DIR', ABSPATH . 'wp-content/ssp/' );
-
 define( 'SSP_LOG_PATH', SSP_PLUGIN_PATH . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 define( 'SSP_LOG_URL', SSP_PLUGIN_URL . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 

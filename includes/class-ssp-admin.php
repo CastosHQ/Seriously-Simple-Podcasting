@@ -143,9 +143,7 @@ class SSP_Admin {
 	 * Setup the PodcastMotor Uploads directory
 	 */
 	public function setup_directories() {
-		if ( ! is_dir( SSP_UPLOADS_DIR ) ) {
-			wp_mkdir_p( SSP_UPLOADS_DIR );
-		}
+		$ssp_upload_dir = ssp_get_upload_directory();
 	}
 	
 	/**
@@ -1058,8 +1056,6 @@ class SSP_Admin {
 		$this->add_feed();
 		$this->setup_permastruct();
 		
-		$this->setup_directories();
-		
 		// Flush permalinks
 		flush_rewrite_rules( true );
 	}
@@ -1084,9 +1080,7 @@ class SSP_Admin {
 			flush_rewrite_rules();
 		}
 		
-		if ( version_compare( $previous_version, '1.16.3', '<' ) ) {
-			$this->setup_directories();
-		}
+		ssp_get_upload_directory();
 		
 		update_option( 'ssp_version', $this->version );
 		
@@ -1258,7 +1252,9 @@ class SSP_Admin {
 	 */
 	public function upload_file_to_podmotor() {
 		
-		if ( ! is_dir( SSP_UPLOADS_DIR ) ) {
+		$ssp_uploads_dir = ssp_get_upload_directory();
+		
+		if ( ! is_dir( $ssp_uploads_dir ) ) {
 			wp_send_json( array(
 				'status'        => 'error',
 				'message'       => 'An error occurred uploading your file, please contact hello@seriouslysimplepodcasting.com for assistance.',
@@ -1271,7 +1267,7 @@ class SSP_Admin {
 		if ( 'audio' == $file_type_array[0] || 'video' == $file_type_array[0] ) {
 			
 			$file_name     = $_FILES["file"]["name"];
-			$uploaded_file = SSP_UPLOADS_DIR . $file_name;
+			$uploaded_file = ssp_get_upload_directory() . $file_name;
 			$tmp_name      = $_FILES["file"]["tmp_name"];
 			
 			$file_uploaded_locally = move_uploaded_file( $tmp_name, $uploaded_file );
@@ -1288,7 +1284,6 @@ class SSP_Admin {
 					$response['message'] = 'An unknown error occurred: ' . $e->getMessage();
 					wp_send_json( $response );
 				}
-				
 				if ( 'success' == $podmotor_response['status'] ) {
 					$duration             = $podmotor_response['podmotor_file_duration'];
 					$response             = $podmotor_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_response['podmotor_file'] );

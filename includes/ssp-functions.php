@@ -32,6 +32,51 @@ function ssp_debug_clear() {
 	file_put_contents( $file, '' );
 }
 
+if ( ! function_exists( 'ssp_get_upload_directory' ) ) {
+	/**
+	 * Gets the temporary Seriously Simple Podcasting upload directory
+	 * Typically ../wp-content/uploads/ssp
+	 * If it does not already exist, attempts to create it
+	 *
+	 * @return bool|string
+	 */
+	function ssp_get_upload_directory() {
+		$time = current_time( 'mysql' );
+		if ( ! ( ( $uploads = wp_upload_dir( $time ) ) && false === $uploads['error'] ) ) {
+			add_action( 'admin_notices', 'ssp_cannot_write_uploads_dir_error' );
+		} else {
+			$ssp_upload_dir = trailingslashit( $uploads['basedir'] ) . trailingslashit( 'ssp' );
+			$ssp_upload_dir_exists = true;
+			if ( ! is_dir( $ssp_upload_dir ) ) {
+				$ssp_upload_dir_exists = wp_mkdir_p( $ssp_upload_dir );
+			}
+			if ( ! $ssp_upload_dir_exists ) {
+				return false;
+			}
+			return $ssp_upload_dir;
+		}
+	}
+}
+
+if ( ! function_exists( 'ssp_cannot_write_uploads_dir_error' ) ) {
+	function ssp_cannot_write_uploads_dir_error() {
+		$time    = current_time( 'mysql' );
+		$uploads = wp_upload_dir( $time );
+		if ( 0 === strpos( $uploads['basedir'], ABSPATH ) ) {
+			$error_path = str_replace( ABSPATH, '', $uploads['basedir'] );
+		} else {
+			$error_path = basename( $uploads['basedir'] );
+		}
+		$class   = 'notice notice-error';
+		$message = sprintf(
+			/* translators: %s: Error path */
+			__( 'Unable to create directory %s. Is its parent directory writable by the server?' ),
+			esc_html( $error_path )
+		);
+		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+	}
+}
+
 if ( ! function_exists( 'is_podcast_download' ) ) {
 	/**
 	 * Check if podcast file is being downloaded
@@ -687,7 +732,7 @@ if ( ! function_exists( 'ssp_download_remote_file' ) ) {
 		$response = false;
 		if ( ! empty( $remote_file ) ) {
 			$remote_file_info = pathinfo( $remote_file );
-			$file_path        = SSP_UPLOADS_DIR . $remote_file_info['basename'];
+			$file_path        = ssp_get_upload_directory() . $remote_file_info['basename'];
 			if ( ! empty( $extension_override ) ) {
 				$file_path = $file_path . '.' . $extension_override;
 			}

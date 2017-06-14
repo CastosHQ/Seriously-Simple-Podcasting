@@ -158,21 +158,22 @@ class SSP_Settings {
 		) );
 
 		// @todo remove this on launch
-		add_submenu_page( null, __( 'Development', 'seriously-simple-podcasting' ), __( 'Development', 'seriously-simple-podcasting' ), 'manage_podcast', 'reset', array(
+		add_submenu_page( 'edit.php?post_type=podcast', __( 'Development', 'seriously-simple-podcasting' ), __( 'Development', 'seriously-simple-podcasting' ), 'manage_podcast', 'reset', array(
 			$this,
-			'reset_development_settings',
+			'development_settings',
 		) );
 
 	}
 
 	// @todo remove this on launch
 	/**
-	 * Reset development settings
+	 * Development settings
 	 */
-	public function reset_development_settings() {
+	public function development_settings() {
+		
 		echo '<div class="wrap">';
 		echo '<h1>Development settings</h1>';
-
+		
 		$dev_reset = ( isset( $_GET['dev_reset'] ) ? filter_var( $_GET['dev_reset'], FILTER_SANITIZE_STRING ) : '' );
 
 		if ( 'reset' === $dev_reset ) {

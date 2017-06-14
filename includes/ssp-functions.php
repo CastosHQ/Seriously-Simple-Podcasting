@@ -38,27 +38,30 @@ if ( ! function_exists( 'ssp_get_upload_directory' ) ) {
 	 * Typically ../wp-content/uploads/ssp
 	 * If it does not already exist, attempts to create it
 	 *
+	 * @param bool $return Whether to return the path or not
+	 *
 	 * @return bool|string
 	 */
-	function ssp_get_upload_directory() {
+	function ssp_get_upload_directory( $return = true ) {
 		$time = current_time( 'mysql' );
 		if ( ! ( ( $uploads = wp_upload_dir( $time ) ) && false === $uploads['error'] ) ) {
 			add_action( 'admin_notices', 'ssp_cannot_write_uploads_dir_error' );
 		} else {
-			$ssp_upload_dir = trailingslashit( $uploads['basedir'] ) . trailingslashit( 'ssp' );
-			$ssp_upload_dir_exists = true;
-			if ( ! is_dir( $ssp_upload_dir ) ) {
-				$ssp_upload_dir_exists = wp_mkdir_p( $ssp_upload_dir );
+			if ( $return ) {
+				$ssp_upload_dir        = trailingslashit( $uploads['basedir'] ) . trailingslashit( 'ssp' );
+				if ( ! is_dir( $ssp_upload_dir ) ) {
+					wp_mkdir_p( $ssp_upload_dir );
+				}
+				return $ssp_upload_dir;
 			}
-			if ( ! $ssp_upload_dir_exists ) {
-				return false;
-			}
-			return $ssp_upload_dir;
 		}
 	}
 }
 
 if ( ! function_exists( 'ssp_cannot_write_uploads_dir_error' ) ) {
+	/**
+	 * Displays an admin error of the wp-content folder permissions are incorrect
+	 */
 	function ssp_cannot_write_uploads_dir_error() {
 		$time    = current_time( 'mysql' );
 		$uploads = wp_upload_dir( $time );

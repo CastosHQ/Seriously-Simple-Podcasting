@@ -140,13 +140,6 @@ class SSP_Admin {
 	}
 	
 	/**
-	 * Setup the PodcastMotor Uploads directory
-	 */
-	public function setup_directories() {
-		$ssp_upload_dir = ssp_get_upload_directory();
-	}
-	
-	/**
 	 * Setup custom permalink structures
 	 * @return void
 	 */
@@ -1080,7 +1073,8 @@ class SSP_Admin {
 			flush_rewrite_rules();
 		}
 		
-		ssp_get_upload_directory();
+		// always just check if the directory is ok
+		ssp_get_upload_directory( false );
 		
 		update_option( 'ssp_version', $this->version );
 		

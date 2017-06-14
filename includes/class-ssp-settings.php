@@ -156,72 +156,15 @@ class SSP_Settings {
 			$this,
 			'show_upgrade_page',
 		) );
-
-		// @todo remove this on launch
-		add_submenu_page( 'edit.php?post_type=podcast', __( 'Development', 'seriously-simple-podcasting' ), __( 'Development', 'seriously-simple-podcasting' ), 'manage_podcast', 'reset', array(
-			$this,
-			'development_settings',
-		) );
-
 	}
-
-	// @todo remove this on launch
+	
 	/**
-	 * Development settings
+	 * Show the upgrade page
 	 */
-	public function development_settings() {
-		
-		echo '<div class="wrap">';
-		echo '<h1>Development settings</h1>';
-		
-		$dev_reset = ( isset( $_GET['dev_reset'] ) ? filter_var( $_GET['dev_reset'], FILTER_SANITIZE_STRING ) : '' );
-
-		if ( 'reset' === $dev_reset ) {
-			global $wpdb;
-			$options  = $wpdb->prefix . 'options';
-			$postmeta = $wpdb->prefix . 'postmeta';
-			// clear out podcast options.
-			$sql = "DELETE FROM `$postmeta` WHERE `meta_key` = 'podmotor_episode_id'";
-			$wpdb->query( $sql );
-			$wpdb->flush();
-			// clear out episode meta.
-			$sql = "DELETE FROM  `$options` WHERE  `option_name` LIKE  '%podmotor%'";
-			$wpdb->query( $sql );
-			$wpdb->flush();
-			update_option( 'ssp_upgrade_page_visited', '' );
-			echo '<p>Database settings reset.</p>';
-		}
-
-		$dev_email = ( isset( $_GET['dev_email'] ) ? filter_var( $_GET['dev_email'], FILTER_SANITIZE_STRING ) : '' );
-		if ( 'email' === $dev_email ) {
-			$mailed = ssp_email_podcasts_imported();
-			if ( $mailed ) {
-				echo '<p>Mail sent.</p>';
-			} else {
-				echo '<p>Mail not sent.</p>';
-			}
-		}
-
-		$email_url = add_query_arg( 'dev_email', 'email' );
-		echo '<p><a href="' . esc_url( $email_url ) . '">Send email test</a></p>';
-
-		$reset_url = add_query_arg( 'dev_reset', 'reset' );
-		echo '<p><a href="' . esc_url( $reset_url ) . '">Reset database settings</a></p>';
-
-		if ( is_file( SSP_LOG_PATH ) ) {
-			$log_url = SSP_LOG_URL;
-			echo '<p><a href="' . esc_url( $log_url ) . '">Download current log file</a></p>';
-		}
-
-		echo '</div>';
-	}
-
 	public function show_upgrade_page() {
-		//ob_start();
 		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
 		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
 		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
-		//return ob_get_clean();
 	}
 
 	/**

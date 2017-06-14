@@ -1698,8 +1698,9 @@ class SSP_Settings {
 			'connect'     => array(
 				'title'       => 'NEW - ***Premium*** Seriously Simple Hosting',
 				'image'       => $image_dir . 'ssp-PM-connect.jpg',
-				'url'         => SSP_PODMOTOR_APP_URL . '?TB_iframe=true&width=772&height=859',
+				'url'         => SSP_PODMOTOR_APP_URL,
 				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Seriously Simple Hosting.',
+				'new_window'  => true,
 			),
 			'stats'       => array(
 				'title'       => 'Seriously Simple Podcasting Stats',
@@ -1729,13 +1730,21 @@ class SSP_Settings {
 
 		$html = '<div id="ssp-extensions">';
 		foreach ( $extensions as $extension ) {
-			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>
-				<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>
-				<p></p>
-				<p>' . $extension['description'] . '</p>
-				<p></p>
-				<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">Get this Extension</a>
-			</div>';
+			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>';
+			if (isset($extension['new_window']) && $extension['new_window']){
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+			}else {
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+			}
+			$html .= '<p></p>';
+			$html .= '<p>' . $extension['description'] . '</p>';
+			$html .= '<p></p>';
+			if (isset($extension['new_window']) && $extension['new_window']){
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">Get this Extension</a>';
+			}else {
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">Get this Extension</a>';
+			}
+			$html .= '</div>';
 		}
 		$html .= '</div>';
 

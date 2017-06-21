@@ -103,21 +103,17 @@ class SSP_Frontend {
 			return;
 		}
 
-		if ( ssp_is_connected_to_podcastmotor() ) {
-			$link = $file;
-		} else {
-			// Get download link based on permalink structure
-			if ( get_option( 'permalink_structure' ) ) {
-				$episode = get_post( $episode_id );
-				// Get file extension - default to MP3 to prevent empty extension strings
-				$ext = pathinfo( $file, PATHINFO_EXTENSION );
-				if ( ! $ext ) {
-					$ext = 'mp3';
-				}
-				$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
-			} else {
-				$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
+		// Get download link based on permalink structure
+		if ( get_option( 'permalink_structure' ) ) {
+			$episode = get_post( $episode_id );
+			// Get file extension - default to MP3 to prevent empty extension strings
+			$ext = pathinfo( $file, PATHINFO_EXTENSION );
+			if ( ! $ext ) {
+				$ext = 'mp3';
 			}
+			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
+		} else {
+			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
 		}
 
 		// Allow for dyamic referrer

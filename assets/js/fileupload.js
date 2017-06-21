@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
 				$('#upload_audio_file').siblings('span.description').html('Your media file has been successfully uploaded.');
 				$('.peek-a-bar').fadeOut(5000);
 			}else {
-				var notification_message = 'An error occurred, please try again.' + close_anchor;
+				var notification_message = 'An error occurred, please try again. ' + close_anchor;
 				if ( result.message !== ''){
 					notification_message = result.message + close_anchor;
 				}

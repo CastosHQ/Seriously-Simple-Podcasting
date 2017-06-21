@@ -156,71 +156,15 @@ class SSP_Settings {
 			$this,
 			'show_upgrade_page',
 		) );
-
-		// @todo remove this on launch
-		add_submenu_page( null, __( 'Development', 'seriously-simple-podcasting' ), __( 'Development', 'seriously-simple-podcasting' ), 'manage_podcast', 'reset', array(
-			$this,
-			'reset_development_settings',
-		) );
-
 	}
-
-	// @todo remove this on launch
+	
 	/**
-	 * Reset development settings
+	 * Show the upgrade page
 	 */
-	public function reset_development_settings() {
-		echo '<div class="wrap">';
-		echo '<h1>Development settings</h1>';
-
-		$dev_reset = ( isset( $_GET['dev_reset'] ) ? filter_var( $_GET['dev_reset'], FILTER_SANITIZE_STRING ) : '' );
-
-		if ( 'reset' === $dev_reset ) {
-			global $wpdb;
-			$options  = $wpdb->prefix . 'options';
-			$postmeta = $wpdb->prefix . 'postmeta';
-			// clear out podcast options.
-			$sql = "DELETE FROM `$postmeta` WHERE `meta_key` = 'podmotor_episode_id'";
-			$wpdb->query( $sql );
-			$wpdb->flush();
-			// clear out episode meta.
-			$sql = "DELETE FROM  `$options` WHERE  `option_name` LIKE  '%podmotor%'";
-			$wpdb->query( $sql );
-			$wpdb->flush();
-			update_option( 'ssp_upgrade_page_visited', '' );
-			echo '<p>Database settings reset.</p>';
-		}
-
-		$dev_email = ( isset( $_GET['dev_email'] ) ? filter_var( $_GET['dev_email'], FILTER_SANITIZE_STRING ) : '' );
-		if ( 'email' === $dev_email ) {
-			$mailed = ssp_email_podcasts_imported();
-			if ( $mailed ) {
-				echo '<p>Mail sent.</p>';
-			} else {
-				echo '<p>Mail not sent.</p>';
-			}
-		}
-
-		$email_url = add_query_arg( 'dev_email', 'email' );
-		echo '<p><a href="' . esc_url( $email_url ) . '">Send email test</a></p>';
-
-		$reset_url = add_query_arg( 'dev_reset', 'reset' );
-		echo '<p><a href="' . esc_url( $reset_url ) . '">Reset database settings</a></p>';
-
-		if ( is_file( SSP_LOG_PATH ) ) {
-			$log_url = SSP_LOG_URL;
-			echo '<p><a href="' . esc_url( $log_url ) . '">Download current log file</a></p>';
-		}
-
-		echo '</div>';
-	}
-
 	public function show_upgrade_page() {
-		//ob_start();
 		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
 		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
 		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
-		//return ob_get_clean();
 	}
 
 	/**
@@ -1662,10 +1606,10 @@ class SSP_Settings {
 		
 		if ( ! empty( $action ) && 'post_import_form' === $action ) {
 			check_admin_referer( 'ss_podcasting-import' );
-			$name        = filter_input( $_POST['name'], FILTER_SANITIZE_STRING );
-			$website     = filter_input( $_POST['website'], FILTER_SANITIZE_STRING );
-			$email       = filter_input( $_POST['email'], FILTER_SANITIZE_EMAIL );
-			$podcast_url = filter_input( $_POST['podcast_url'], FILTER_SANITIZE_URL );
+			$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
+			$website     = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
+			$email       = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
+			$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
 
 			$new_line    = "\n";
 			$site_name   = $name;
@@ -1698,8 +1642,9 @@ class SSP_Settings {
 			'connect'     => array(
 				'title'       => 'NEW - ***Premium*** Seriously Simple Hosting',
 				'image'       => $image_dir . 'ssp-PM-connect.jpg',
-				'url'         => SSP_PODMOTOR_APP_URL . '?TB_iframe=true&width=772&height=859',
+				'url'         => SSP_PODMOTOR_APP_URL,
 				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Seriously Simple Hosting.',
+				'new_window'  => true,
 			),
 			'stats'       => array(
 				'title'       => 'Seriously Simple Podcasting Stats',
@@ -1729,13 +1674,21 @@ class SSP_Settings {
 
 		$html = '<div id="ssp-extensions">';
 		foreach ( $extensions as $extension ) {
-			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>
-				<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>
-				<p></p>
-				<p>' . $extension['description'] . '</p>
-				<p></p>
-				<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">Get this Extension</a>
-			</div>';
+			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>';
+			if (isset($extension['new_window']) && $extension['new_window']){
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+			}else {
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+			}
+			$html .= '<p></p>';
+			$html .= '<p>' . $extension['description'] . '</p>';
+			$html .= '<p></p>';
+			if (isset($extension['new_window']) && $extension['new_window']){
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">Get this Extension</a>';
+			}else {
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">Get this Extension</a>';
+			}
+			$html .= '</div>';
 		}
 		$html .= '</div>';
 

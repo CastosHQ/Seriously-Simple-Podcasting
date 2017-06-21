@@ -88,7 +88,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.16.4 =
 * 2017-06-21
-* [FIX] Fixed a bug causing issues with file uploads for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
+* [FIX] Improved file uploads for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
 * [FIX] Fixed a bug causing problems with tracking stats [Seriously Simple Stats](https://en-za.wordpress.org/plugins/seriously-simple-stats/)
 
 = 1.16.3 =

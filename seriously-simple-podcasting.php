@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( version_compare( PHP_VERSION, '5.3.3', '<=' ) ) { // PHP 5.3.3 or greater
+if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	/**
 	 * We are running under PHP 5.3.3
 	 * Display an admin notice and gracefully do nothing.

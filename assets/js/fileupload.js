@@ -3,15 +3,36 @@
  * Created by Jonathan Bossenger on 2017/01/20.
  */
 
+// Add a listener for a response
+window.addEventListener('message', function(evt) {
+	console.log(evt);
+	// IMPORTANT: Check the origin of the data!
+	if (event.origin.indexOf('http://podcastmotor.app') == 0) {
+
+		// Check the response
+		console.log(evt.data);
+		/* ... */
+	}
+});
+
 jQuery(document).ready(function($) {
 
-	$('#tb_button').on('click', function(){
-		tb_show('This is Podcastmotor in a thickbox', 'http://podcastmotor.app/pages/upload?TB_iframe=true');
+	$('#tb_button').on('click', function() {
+		// get all of these from WP localize_script
+		var upload_url = 'http://podcastmotor.app/pages/upload'
+		var origin = 'http%3A%2F%2Fjonspodcast';
+		var api_token = '2y10Mq3b9EFQUpun2ySGVZBolOI51ISBfPrDzeJ5gbQHcTzCy52mg1OG';
+
+		var thickbox = tb_show( 'Seriously Simple Hosting', upload_url + '?origin=' + origin + '&api_token=' + api_token + 'TB_iframe=true&width=800&height=600' );
+
+		// this triggers on window close
+		/*
 		$('#TB_window').on("tb_unload", function(){
 			console.log( $(this) );
 			console.log( $('#TB_iframeContent').find('.s3-file-path') );
 			alert('Triggered!');
 		});
+		*/
 	});
 
 	function notificationBar( message ){

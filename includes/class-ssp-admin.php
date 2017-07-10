@@ -569,12 +569,11 @@ class SSP_Admin {
 						
 						$upload_button = '<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File', 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />';
 						if ( ssp_is_connected_to_podcastmotor() ) {
-							$upload_button = '<input id="fileupload" type="file" name="file"><span class="podmotor_upload_message"></span>';
+							//$upload_button = '<input id="fileupload" type="file" name="file"><span class="podmotor_upload_message"></span>';
+							$upload_button = '<input id="tb_button" type="button" value="Upload file" />';
 						}
 						
-						$html = '<input id="tb_button" type="button" value="Click to open thickbox" />';
-						
-						//$html = '<a href="http://podcastmotor.app/pages/upload" title="login" class="thickbox">Login</a>';
+						//$html = '<input id="tb_button" type="button" value="Click to open thickbox" />';
 						
 						$html .= '<p>
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>

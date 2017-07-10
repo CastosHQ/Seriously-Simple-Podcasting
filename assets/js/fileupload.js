@@ -8,10 +8,14 @@ window.addEventListener('message', function(evt) {
 	console.log(evt);
 	// IMPORTANT: Check the origin of the data!
 	if (event.origin.indexOf('http://podcastmotor.app') == 0) {
-
 		// Check the response
 		console.log(evt.data);
-		/* ... */
+		var result = evt.data;
+		if ('' !== result.audio_file){
+			console.log(result.audio_file);
+			document.getElementById('upload_audio_file').value = result.audio_file;
+			tb_remove();
+		}
 	}
 });
 
@@ -19,11 +23,13 @@ jQuery(document).ready(function($) {
 
 	$('#tb_button').on('click', function() {
 		// get all of these from WP localize_script
-		var upload_url = 'http://podcastmotor.app/pages/upload'
+		var upload_url = 'http://podcastmotor.app/upload/';
 		var origin = 'http%3A%2F%2Fjonspodcast';
-		var api_token = '2y10Mq3b9EFQUpun2ySGVZBolOI51ISBfPrDzeJ5gbQHcTzCy52mg1OG';
+		var api_token = '2y10m12uYMP1nnd9OrwZXndeS9BI05GSKxJp75Itq2faYnOgERE3kE6';
 
-		var thickbox = tb_show( 'Seriously Simple Hosting', upload_url + '?origin=' + origin + '&api_token=' + api_token + 'TB_iframe=true&width=800&height=600' );
+		console.log( upload_url + '?origin=' + origin + '&api_token=' + api_token + '&TB_iframe=true&width=800&height=600' );
+
+		var thickbox = tb_show( 'Seriously Simple Hosting', upload_url + '?origin=' + origin + '&api_token=' + api_token + '&TB_iframe=true&width=800&height=600' );
 
 		// this triggers on window close
 		/*

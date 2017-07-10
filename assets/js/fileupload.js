@@ -3,16 +3,25 @@
  * Created by Jonathan Bossenger on 2017/01/20.
  */
 
+// console.log(sshObject);
+/**
+ 'ssh_url' => SSP_PODMOTOR_APP_URL,
+ 'ssh_api_token' => get_option( 'ss_podcasting_podmotor_account_api_token', '' )
+ */
+
 // Add a listener for a response
 window.addEventListener('message', function(evt) {
 	console.log(evt);
 	// IMPORTANT: Check the origin of the data!
-	if (event.origin.indexOf('http://podcastmotor.app') == 0) {
+	var origin_url_to_check = sshObject.ssh_url;
+	origin_url_to_check = origin_url_to_check.slice(0, -1);
+	//console.log( origin_url_to_check );
+	if (event.origin.indexOf(origin_url_to_check) == 0) {
 		// Check the response
-		console.log(evt.data);
+		//console.log(evt.data);
 		var result = evt.data;
 		if ('' !== result.audio_file){
-			console.log(result.audio_file);
+			//console.log(result.audio_file);
 			document.getElementById('upload_audio_file').value = result.audio_file;
 			tb_remove();
 		}
@@ -23,13 +32,10 @@ jQuery(document).ready(function($) {
 
 	$('#tb_button').on('click', function() {
 		// get all of these from WP localize_script
-		var upload_url = 'http://podcastmotor.app/upload/';
-		var origin = 'http%3A%2F%2Fjonspodcast';
-		var api_token = '2y10m12uYMP1nnd9OrwZXndeS9BI05GSKxJp75Itq2faYnOgERE3kE6';
+		var upload_url = sshObject.ssh_url + 'upload/';
+		var api_token = sshObject.ssh_api_token;
 
-		console.log( upload_url + '?origin=' + origin + '&api_token=' + api_token + '&TB_iframe=true&width=800&height=600' );
-
-		var thickbox = tb_show( 'Seriously Simple Hosting', upload_url + '?origin=' + origin + '&api_token=' + api_token + '&TB_iframe=true&width=800&height=600' );
+		var thickbox = tb_show( 'Seriously Simple Hosting', upload_url + '?api_token=' + api_token + '&width=200&height=200&TB_iframe=true' );
 
 		// this triggers on window close
 		/*

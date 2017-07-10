@@ -943,6 +943,11 @@ class SSP_Admin {
 			'jquery',
 			'jquery-fileupload'
 		), $this->version );
+		$data = array(
+			'ssh_url' => SSP_PODMOTOR_APP_URL,
+			'ssh_api_token' => get_option( 'ss_podcasting_podmotor_account_api_token', '' )
+		);
+		wp_localize_script( 'ssp-fileupload', 'sshObject', $data );
 		wp_enqueue_script( 'ssp-fileupload' );
 		
 		wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );

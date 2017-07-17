@@ -535,8 +535,9 @@ if ( ! function_exists( 'ssp_get_existing_podcast' ) ) {
 	 * @return WP_Query
 	 */
 	function ssp_get_existing_podcast() {
+		$podcast_post_types = ssp_post_types( true );
 		$args     = array(
-			'post_type'      => 'podcast',
+			'post_type'      => $podcast_post_types,
 			'posts_per_page' => 1,
 			'post_status'    => 'any',
 			'meta_query'     => array(
@@ -565,8 +566,9 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 		if ( 'true' === $podmotor_import_podcasts ) {
 
 			global $wpdb;
+			$podcast_post_types = ssp_post_types( true );
 			$args     = array(
-				'post_type'      => 'podcast',
+				'post_type'      => $podcast_post_types,
 				'posts_per_page' => - 1,
 				'post_status'    => 'any',
 				'meta_query'     => array(

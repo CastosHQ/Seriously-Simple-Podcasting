@@ -1613,7 +1613,7 @@ class SSP_Settings {
 
 			$new_line    = "\n";
 			$site_name   = $name;
-			$to          = 'hello@podcastmotor.com';
+			$to          = 'hello@seriouslysimplepodcasting.com';
 			$subject     = sprintf( __( 'Podcast import request' ), $site_name );
 			$message     = sprintf( __( 'Hi Craig %1$s' ), $new_line );
 			$message    .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );

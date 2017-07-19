@@ -79,8 +79,8 @@ class SSP_Admin {
 			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 			
 			// Admin JS & CSS.
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ), 10 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ), 10, 1 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10, 1 );
 			
 			// Episodes list table.
 			add_filter( 'manage_edit-' . $this->token . '_columns', array(
@@ -525,6 +525,7 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function meta_box_content() {
+		//add_thickbox();
 		global $post_id;
 		
 		$field_data = $this->custom_fields();
@@ -559,19 +560,23 @@ class SSP_Admin {
 						
 						$upload_button = '<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File', 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />';
 						if ( ssp_is_connected_to_podcastmotor() ) {
-							$upload_button = '<input id="fileupload" type="file" name="file"><span class="podmotor_upload_message"></span>';
-							
+
+							$upload_button = '<div id="ssp_upload_container" style="display: inline;">';
+							$upload_button .= '  <button id="ssp_select_file" href="javascript:">Select podcast file</button>';
+							//$upload_button .= '  <button id="uploadfiles" href="javascript:">Upload</button>';
+							//$upload_button .= '<div id="progressbar"></div>';
+							//$upload_button .= '<pre id="console"></pre>';
+							$upload_button .= '</div>';
 						}
 						
 						$html .= '<p>
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>
-									<br/>
+								    <div id="ssp_upload_notification">Your browser doesn\'t have HTML5 support.</div>
 									<input name="' . esc_attr( $k ) . '" type="text" id="upload_' . esc_attr( $k ) . '" value="' . esc_attr( $data ) . '" />
 									' . $upload_button . '
 									<br/>
 									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
-						
 						break;
 					
 					case 'checkbox':
@@ -583,7 +588,7 @@ class SSP_Admin {
 									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>';
 						foreach ( $v['options'] as $option => $label ) {
 							$html .= '<input style="vertical-align: bottom;" name="' . esc_attr( $k ) . '" type="radio" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '" ' . checked( $option, $data, false ) . ' value="' . esc_attr( $option ) . '" />
-											<label style="margin-right:10px;" for="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">' . esc_html( $label ) . '</label>' . "\n";
+										<label style="margin-right:10px;" for="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">' . esc_html( $label ) . '</label>' . "\n";
 						}
 						$html .= '<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
@@ -883,26 +888,31 @@ class SSP_Admin {
 	 * Load admin CSS
 	 * @return void
 	 */
-	public function enqueue_admin_styles() {
+	public function enqueue_admin_styles( $hook ) {
+		
 		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
-		
-		wp_register_style( 'ssp-fileupload', esc_url( $this->assets_url . 'css/jquery.fileupload.css' ), array(), $this->version );
-		wp_enqueue_style( 'ssp-fileupload' );
-		
-		wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery.peekabar.css' ), array(), $this->version );
-		wp_enqueue_style( 'jquery-peekabar' );
 		
 		// Datepicker
 		wp_enqueue_style( 'jquery-ui-datepicker', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css' );
 		
+		/**
+		 * Only load the peekabar styles when adding/editing podcasts
+		 */
+		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
+			global $post;
+			if ( 'podcast' === $post->post_type ) {
+				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery.peekabar.css' ), array(), $this->version );
+				wp_enqueue_style( 'jquery-peekabar' );
+			}
+		}
 	}
 	
 	/**
 	 * Load admin JS
 	 * @return void
 	 */
-	public function enqueue_admin_scripts() {
+	public function enqueue_admin_scripts( $hook ) {
 		
 		wp_register_script( 'ssp-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array(
 			'jquery',
@@ -914,30 +924,21 @@ class SSP_Admin {
 		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'ssp-settings' );
 		
-		wp_register_script( 'jquery-iframe-transport', esc_url( $this->assets_url . 'js/jquery-file-upload/jquery.iframe-transport' . $this->script_suffix . '.js' ), array(
-			'jquery',
-			'jquery-ui-core',
-			'jquery-ui-widget'
-		), $this->version );
-		wp_enqueue_script( 'jquery-iframe-transport' );
-		
-		wp_register_script( 'jquery-fileupload', esc_url( $this->assets_url . 'js/jquery-file-upload/jquery.fileupload' . $this->script_suffix . '.js' ), array(
-			'jquery',
-			'jquery-ui-core',
-			'jquery-ui-widget'
-		), $this->version );
-		wp_enqueue_script( 'jquery-fileupload' );
-		
-		wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(
-			'jquery',
-			'jquery-fileupload'
-		), $this->version );
-		wp_enqueue_script( 'ssp-fileupload' );
-		
-		wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
-		wp_enqueue_script( 'jquery-peekabar' );
-		
-		
+		/**
+		 * Only load the upload scripts when adding/editing podcasts
+		 */
+		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
+			global $post;
+			if ( 'podcast' === $post->post_type ) {
+				wp_enqueue_script('plupload-all');
+				$upload_credentials = ssp_setup_upload_credentials();
+				wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );
+				wp_localize_script( 'ssp-fileupload', 'upload_credentials', $upload_credentials );
+				wp_enqueue_script( 'ssp-fileupload' );
+				wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
+				wp_enqueue_script( 'jquery-peekabar' );
+			}
+		}
 	}
 	
 	/**

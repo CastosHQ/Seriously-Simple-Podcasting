@@ -74,7 +74,7 @@ class Podmotor_Handler {
 	 */
 	public function get_podmotor_bucket_credentials( $podmotor_account_id, $podmotor_account_email ) {
 		
-		$podmotor_array = $this->podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
+		$podmotor_array = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
 
 		$config = array(
 			'version'     => $podmotor_array['version'],
@@ -428,30 +428,4 @@ class Podmotor_Handler {
 		return $this->response;
 		
 	}
-	
-	/**
-	 * Decrypt data
-	 *
-	 * @param $encrypted_string
-	 * @param $unique_key
-	 *
-	 * @return bool|mixed
-	 */
-	public function podmotor_decrypt_config( $encrypted_string, $unique_key ) {
-		if ( preg_match( "/^(.*)::(.*)$/", $encrypted_string, $regs ) ) {
-			list( $original_string, $encrypted_string, $encoding_iv ) = $regs;
-			$encoding_method = 'AES-128-CTR';
-			$encoding_key    = crypt( $unique_key, sha1( $unique_key ) );
-			if ( version_compare( PHP_VERSION, '5.4.0', '<' ) ) {
-				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, pack( 'H*', $encoding_iv ) );
-			} else {
-				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, hex2bin( $encoding_iv ) );
-			}
-			$config          = unserialize( $decrypted_token );
-			return $config;
-		} else {
-			return false;
-		}
-	}
-	
 }

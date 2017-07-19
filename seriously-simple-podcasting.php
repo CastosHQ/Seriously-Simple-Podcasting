@@ -52,9 +52,9 @@ define( 'SSP_LOG_URL', SSP_PLUGIN_URL . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt
 // Live
 //define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
 // Staging
-define( 'SSP_PODMOTOR_APP_URL', 'https://staging.seriouslysimplepodcasting.com/' );
+//define( 'SSP_PODMOTOR_APP_URL', 'https://staging.seriouslysimplepodcasting.com/' );
 // Development
-//define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
+define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
 
 require_once( 'includes/ssp-functions.php' );
 require_once( 'includes/class-ssp-admin.php' );

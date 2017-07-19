@@ -803,24 +803,8 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		$podmotor_account_email = get_option( 'ss_podcasting_podmotor_account_email', '' );
 		$podmotor_array         = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
 		
-		/*
-		$config = array(
-			'version'     => $podmotor_array['version'],
-			'region'      => $podmotor_array['region'],
-			'credentials' => array(
-				'key'    => $podmotor_array['credentials_key'],
-				'secret' => $podmotor_array['credentials_secret'],
-			),
-		);
-		
-		$response = array(
-			'config'    => $config,
-			'bucket'    => $podmotor_array['bucket'],
-			'show_slug' => $podmotor_array['show_slug'],
-		);
-		*/
-		
 		$bucket        = $podmotor_array['bucket'];
+		$show_slug     = $podmotor_array['show_slug'];
 		$access_key_id = $podmotor_array['credentials_key'];
 		$secret        = $podmotor_array['credentials_secret'];
 		
@@ -842,7 +826,7 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		
 		$signature = base64_encode( hash_hmac( 'sha1', $policy, $secret, true ) );
 		
-		return compact( 'bucket', 'access_key_id', 'policy', 'signature' );
+		return compact( 'bucket', 'show_slug', 'access_key_id', 'policy', 'signature' );
 		
 	}
 }

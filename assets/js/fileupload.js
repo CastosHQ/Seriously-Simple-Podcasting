@@ -3,8 +3,6 @@
  * Created by Jonathan Bossenger on 2017/01/20.
  */
 
-// console.log(sshObject);
-
 jQuery( document ).ready( function ( $ ) {
 
 	// upload notification bar
@@ -40,89 +38,89 @@ jQuery( document ).ready( function ( $ ) {
 	}
 
 	/**
-	 * Creates instance of plupload
-	 * @type {module:plupload.Uploader}
+	 * Of the upload_credentials object isn't available
 	 */
-	var uploader = new plupload.Uploader( {
-		runtimes: 'html5',
-		browse_button: 'ssp_select_file',
-		multi_selection: false,
-		container: 'ssp_upload_container',
-		url: 'https://' + upload_credentials.bucket + '.s3.amazonaws.com:443/',
-		multipart_params: {
-			'key': 'jons-podcast-on-staging/${filename}', // use filename as a key
-			'Filename': 'jons-podcast-on-staging/${filename}', // adding this to keep consistency across the runtimes
-			'acl': 'public-read',
-			'Content-Type': '',
-			'AWSAccessKeyId': upload_credentials.access_key_id,
-			'policy': upload_credentials.policy,
-			'signature': upload_credentials.signature
-		}
-	} );
+	if ( typeof upload_credentials != "undefined" ) {
 
-	// Init ////////////////////////////////////////////////////
-	uploader.init();
-
-	uploader.bind( 'Init', function ( up, params ) {
-		$( '#ssp_upload_notification' ).remove();
-		//document.getElementById('filelist').innerHTML = '';
-	} );
-
-	/**
-	uploader.bind('PostInit', function() {
-		document.getElementById('uploadfiles').onclick = function() {
-			uploader.start();
-			return false;
-		};
-	});
-	*/
-
-	// Selected Files
-	uploader.bind( 'FilesAdded', function ( up, files ) {
-		console.log( files );
-		// we've turned off multi file select so we're only expecting one file
-		var file = files[ 0 ];
-		if ( isFileAllowed( file ) ) {
-			notificationBar( 'Uploading file to Seriously Simple Hosting. You can continue editing this post while the file uploads.<b id="ssp_upload_progress"></b>' );
-			uploader.start();
-		} else {
-			notificationBar( 'You have selected an invalid file type, please select a valid audio or video file.' );
-		}
+		var bucket = upload_credentials.bucket;
+		var show_slug = upload_credentials.show_slug;
+		var access_key_id = upload_credentials.access_key_id;
+		var policy = upload_credentials.policy;
+		var signature = upload_credentials.signature;
 
 		/**
-		plupload.each( files, function ( file ) {
-			//document.getElementById('filelist').innerHTML += '<div id="' + file.id + '">' + file.name + ' (' + plupload.formatSize(file.size) + ') <b></b></div>';
+		 * Creates instance of plupload
+		 * @type {module:plupload.Uploader}
+		 */
+		var uploader = new plupload.Uploader( {
+			runtimes: 'html5',
+			browse_button: 'ssp_select_file',
+			multi_selection: false,
+			container: 'ssp_upload_container',
+			url: 'https://' + bucket + '.s3.amazonaws.com:443/',
+			multipart_params: {
+				'key': show_slug + '/${filename}',
+				'Filename': show_slug + '/${filename}',
+				'acl': 'public-read',
+				'Content-Type': '',
+				'AWSAccessKeyId': access_key_id,
+				'policy': policy,
+				'signature': signature
+			}
+		} );
+
+		/**
+		 * Init Uploader
+		 */
+		uploader.init();
+
+		/**
+		 * Remove html5 not supported message if uploader inits successfully
+		 */
+		uploader.bind( 'Init', function () {
+			$( '#ssp_upload_notification' ).remove();
+		} );
+
+		/**
+		 * Checks for a valid file type triggers upload if successful
+		 */
+		uploader.bind( 'FilesAdded', function ( up, files ) {
+			console.log( files );
+			// we've turned off multi file select so we're only expecting one file
+			var file = files[ 0 ];
 			if ( isFileAllowed( file ) ) {
 				notificationBar( 'Uploading file to Seriously Simple Hosting. You can continue editing this post while the file uploads.<b id="ssp_upload_progress"></b>' );
-				//uploader.start();
+				uploader.start();
+			} else {
+				notificationBar( 'You have selected an invalid file type, please select a valid audio or video file.' );
 			}
-			var fileType = file.type;
-			var fileTypeParts = fileType.split( "/" );
-			console.log( fileTypeParts );
 		} );
-		*/
-		return false;
-	} );
 
-	// Error Alert
-	uploader.bind( 'Error', function ( up, err ) {
-		alert( 'Error #' + err.code + ': ' + err.message );
-	} );
+		/**
+		 * Show an error if anything goes wrong
+		 */
+		uploader.bind( 'Error', function ( up, err ) {
+			alert( 'Error #' + err.code + ': ' + err.message );
+		} );
 
-	// Progress bar
-	uploader.bind( 'UploadProgress', function ( up, file ) {
-		//notificationBar('Uploading file to Seriously Simple Hosting. You can continue editing this post while the file uploads. <b>' + file.percent + '%</b>');
-		//document.getElementById(file.id).getElementsByTagName('b')[0].innerHTML = '<span>' + file.percent + '%</span>';
-		$( '#ssp_upload_progress' ).html( file.percent + '%' );
-	} );
+		/**
+		 * Update the notification bar on upload progress
+		 */
+		uploader.bind( 'UploadProgress', function ( up, file ) {
+			$( '#ssp_upload_progress' ).html( file.percent + '%' );
+		} );
 
-	// Upload Complete
-	uploader.bind( 'UploadComplete', function ( up, files ) {
-		//'https://episodes.seriouslysimplepodcasting.com/jons-podcast-on-staging/'
-		notificationBar( 'Uploading file to Seriously Simple Hosting Complete.' );
-		$( '#upload_audio_file' ).val( 'https://s3.amazonaws.com/seriouslysimplestaging/jons-podcast-on-staging/' + files[ 0 ].name );
-		$( '.peek-a-bar' ).fadeOut( 5000 );
-	} );
+		/**
+		 * Return the file upload and display a complete message on complete
+		 */
+		uploader.bind( 'UploadComplete', function ( up, files ) {
+			//'https://episodes.seriouslysimplepodcasting.com/jons-podcast-on-staging/'
+			notificationBar( 'Uploading file to Seriously Simple Hosting Complete.' );
+			$( '#upload_audio_file' ).val( 'https://s3.amazonaws.com/seriouslysimplestaging/' + bucket + '/' + files[ 0 ].name );
+			$( '.peek-a-bar' ).fadeOut( 5000 );
+		} );
+
+	}
 
 } );
 

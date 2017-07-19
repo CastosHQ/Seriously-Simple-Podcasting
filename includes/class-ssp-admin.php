@@ -916,7 +916,7 @@ class SSP_Admin {
 	 * Load admin JS
 	 * @return void
 	 */
-	public function enqueue_admin_scripts() {
+	public function enqueue_admin_scripts( $hook ) {
 		
 		wp_register_script( 'ssp-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array(
 			'jquery',
@@ -928,43 +928,10 @@ class SSP_Admin {
 		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'ssp-settings' );
 		
-		
-		/* old file uploader
-		wp_register_script( 'jquery-iframe-transport', esc_url( $this->assets_url . 'js/jquery-file-upload/jquery.iframe-transport' . $this->script_suffix . '.js' ), array(
-			'jquery',
-			'jquery-ui-core',
-			'jquery-ui-widget'
-		), $this->version );
-		wp_enqueue_script( 'jquery-iframe-transport' );
-		
-		wp_register_script( 'jquery-fileupload', esc_url( $this->assets_url . 'js/jquery-file-upload/jquery.fileupload' . $this->script_suffix . '.js' ), array(
-			'jquery',
-			'jquery-ui-core',
-			'jquery-ui-widget'
-		), $this->version );
-		wp_enqueue_script( 'jquery-fileupload' );
-		
-		wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(
-			'jquery',
-			'jquery-fileupload'
-		), $this->version );
-		$data = array(
-			'ssh_url' => SSP_PODMOTOR_APP_URL,
-			'ssh_api_token' => get_option( 'ss_podcasting_podmotor_account_api_token', '' )
-		);
-		wp_localize_script( 'ssp-fileupload', 'sshObject', $data );
-		wp_enqueue_script( 'ssp-fileupload' );
-		*/
-		
-		//wp_register_script( 'ssp-moxie', esc_url( $this->assets_url . 'js/plupload/moxie' . $this->script_suffix . '.js' ), null, $this->version );
-		//wp_enqueue_script( 'ssp-moxie' );
-		
-		//wp_register_script( 'ssp-plupload', esc_url( $this->assets_url . 'js/plupload/plupload' . $this->script_suffix . '.js' ), null, $this->version );
-		//wp_enqueue_script( 'ssp-plupload' );
 		wp_enqueue_script('plupload-all');
 		
 		$upload_credentials = ssp_setup_upload_credentials();
-		//compact( 'bucket', 'access_key_id', 'policy', 'signature' )
+		
 		wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );
 		wp_localize_script( 'ssp-fileupload', 'upload_credentials', $upload_credentials );
 		wp_enqueue_script( 'ssp-fileupload' );

@@ -875,7 +875,7 @@ class SSP_Settings {
 			),
 		);
 
-		$settings['Seriously-Simple-Hosting'] = array(
+		$settings['podcastmotor-connect'] = array(
 			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
 			'description' => sprintf( __( 'Connect your blog to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
 			'fields'      => array(

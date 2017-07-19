@@ -125,6 +125,9 @@ class SSP_Admin {
 		// Add ajax action for uploading to Seriously Simple Hosting
 		add_action( 'wp_ajax_ssp_upload_to_podmotor', array( $this, 'upload_file_to_podmotor' ) );
 		
+		// Add ajax action for uploading file data to Seriously Simple Hosting that has been uploaded already via plupload
+		add_action( 'wp_ajax_ssp_store_podmotor_file', array( $this, 'store_podmotor_file' ) );
+		
 		// Add ajax action for customising episode embed code
 		add_action( 'wp_ajax_update_episode_embed_code', array( $this, 'update_episode_embed_code' ) );
 		
@@ -1305,6 +1308,36 @@ class SSP_Admin {
 			wp_send_json( $response );
 		}
 		
+	}
+	
+	/**
+	 * Store the file uploaded via plupload to the Seriously Simple Hosting account
+	 */
+	public function store_podmotor_file() {
+		if ( ! isset( $_GET['podmotor_file_path'] ) ) {
+			wp_send_json( array(
+				'status'  => 'error',
+				'message' => 'An error occurred storing your file to your Seriously Simple Hosting account, please contact hello@seriouslysimplepodcasting.com for assistance.',
+			) );
+		}
+		
+		$podmotor_file_path = filter_var( $_GET['podmotor_file_path'], FILTER_SANITIZE_STRING );
+		
+		$response = array( 'status' => 'error', 'message' => 'Error storing file to offsite storage account' );
+		
+		try {
+			$podmotor_handler  = new Podmotor_Handler();
+			$podmotor_response = $podmotor_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
+		} catch ( Exception $e ) {
+			$response['status']  = 'error';
+			$response['message'] = 'An unknown error occurred: ' . $e->getMessage();
+			wp_send_json( $response );
+		}
+		
+		if ( 'success' == $podmotor_response['status'] ) {
+			$response = $podmotor_response ;
+		}
+		wp_send_json( $response );
 	}
 	
 	/**

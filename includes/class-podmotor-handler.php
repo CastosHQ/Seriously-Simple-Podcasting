@@ -266,14 +266,13 @@ class Podmotor_Handler {
 		$this->setup_response();
 		if ( empty( $podmotor_file_path ) ) {
 			$this->update_response( 'message', 'No file to upload' );
-			
 			return $this->response;
 		}
 		$api_url                    = SSP_PODMOTOR_APP_URL . 'api/file';
 		$podmotor_account_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		$post_body                  = array(
 			'api_token'          => $podmotor_account_api_token,
-			'podmotor_file_path' => $podmotor_file_path
+			'podmotor_file_path' => $podmotor_file_path,
 		);
 		$app_response               = wp_remote_post( $api_url, array(
 				'timeout' => 45,
@@ -281,13 +280,13 @@ class Podmotor_Handler {
 			)
 		);
 		if ( ! is_wp_error( $app_response ) ) {
-			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
-			if ( ! empty( $responseObject ) ) {
-				if ( 'success' == $responseObject->status ) {
+			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
+			if ( ! empty( $response_object ) ) {
+				if ( 'success' == $response_object->status ) {
 					$this->update_response( 'status', 'success' );
-					$this->update_response( 'message', 'File successfully .' );
-					$this->update_response( 'file_id', $responseObject->file_id );
-					$this->update_response( 'file_path', $responseObject->file_path );
+					$this->update_response( 'message', 'File successfully uploaded.' );
+					$this->update_response( 'file_id', $response_object->file_id );
+					$this->update_response( 'file_path', $response_object->file_path );
 				} else {
 					$this->update_response( 'message', 'An error occurred uploading the file data to Seriously Simple Hosting' );
 				}
@@ -334,13 +333,13 @@ class Podmotor_Handler {
 		}
 		
 		/**
-		 * Don't trigger this unless we have a valid PodcastMotor file id
+		 * If we dont have a valid PodcastMotor file id, get one
 		 */
 		$podmotor_file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
+		
 		if ( empty( $podmotor_file_id ) ) {
-			$this->update_response( 'message', 'Invalid Podcast file data' );
+			// check if the post has an audio file
 			
-			return $this->response;
 		}
 		
 		$podmotor_api_token = get_option( "ss_podcasting_podmotor_account_api_token", "" );

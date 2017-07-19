@@ -42,8 +42,6 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	if ( typeof upload_credentials != "undefined" ) {
 
-		console.log(upload_credentials);
-
 		var bucket = upload_credentials.bucket;
 		var show_slug = upload_credentials.show_slug;
 		var access_key_id = upload_credentials.access_key_id;

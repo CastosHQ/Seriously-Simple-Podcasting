@@ -85,7 +85,6 @@ jQuery( document ).ready( function ( $ ) {
 		 * Checks for a valid file type triggers upload if successful
 		 */
 		uploader.bind( 'FilesAdded', function ( up, files ) {
-			console.log( files );
 			// we've turned off multi file select so we're only expecting one file
 			var file = files[ 0 ];
 			if ( isFileAllowed( file ) ) {
@@ -114,12 +113,27 @@ jQuery( document ).ready( function ( $ ) {
 		 * Return the file upload and display a complete message on complete
 		 */
 		uploader.bind( 'UploadComplete', function ( up, files ) {
-			//'https://episodes.seriouslysimplepodcasting.com/jons-podcast-on-staging/'
-			notificationBar( 'Uploading file to Seriously Simple Hosting Complete.' );
-			$( '#upload_audio_file' ).val( 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + files[ 0 ].name );
-			$( '.peek-a-bar' ).fadeOut( 5000 );
+
+			// we're only expecting one file to be uploaded
+			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + files[ 0 ].name;
+			var episode_file = uploaded_file; // this will be replaced with the episodes url once live
+
+			// push podmotor_file_path to wp_ajax_ssp_store_podmotor_file
+			$.ajax( {
+				method: "GET",
+				url: ajaxurl,
+				data: { action: "ssp_store_podmotor_file", podmotor_file_path: uploaded_file }
+			} )
+				.done( function ( response ) {
+					if ( response.status == 'success' ) {
+						$( "#podmotor_file_id" ).val( response.file_id );
+						notificationBar( 'Uploading file to Seriously Simple Hosting Complete.' );
+						$( '#upload_audio_file' ).val( episode_file );
+						$( '.peek-a-bar' ).fadeOut( 5000 );
+					} else {
+						notificationBar( response.message );
+					}
+				} );
 		} );
-
 	}
-
 } );

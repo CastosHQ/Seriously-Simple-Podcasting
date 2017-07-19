@@ -79,8 +79,8 @@ class SSP_Admin {
 			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 			
 			// Admin JS & CSS.
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ), 10 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ), 10, 1 );
+			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10, 1 );
 			
 			// Episodes list table.
 			add_filter( 'manage_edit-' . $this->token . '_columns', array(
@@ -897,19 +897,24 @@ class SSP_Admin {
 	 * Load admin CSS
 	 * @return void
 	 */
-	public function enqueue_admin_styles() {
+	public function enqueue_admin_styles( $hook ) {
+		
 		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
-		
-		//wp_register_style( 'ssp-fileupload', esc_url( $this->assets_url . 'css/jquery.fileupload.css' ), array(), $this->version );
-		//wp_enqueue_style( 'ssp-fileupload' );
-		
-		wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery.peekabar.css' ), array(), $this->version );
-		wp_enqueue_style( 'jquery-peekabar' );
 		
 		// Datepicker
 		wp_enqueue_style( 'jquery-ui-datepicker', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css' );
 		
+		/**
+		 * Only load the peekabar styles when adding/editing podcasts
+		 */
+		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
+			global $post;
+			if ( 'podcast' === $post->post_type ) {
+				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery.peekabar.css' ), array(), $this->version );
+				wp_enqueue_style( 'jquery-peekabar' );
+			}
+		}
 	}
 	
 	/**
@@ -928,17 +933,21 @@ class SSP_Admin {
 		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'ssp-settings' );
 		
-		wp_enqueue_script('plupload-all');
-		
-		$upload_credentials = ssp_setup_upload_credentials();
-		
-		wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );
-		wp_localize_script( 'ssp-fileupload', 'upload_credentials', $upload_credentials );
-		wp_enqueue_script( 'ssp-fileupload' );
-		
-		wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
-		wp_enqueue_script( 'jquery-peekabar' );
-		
+		/**
+		 * Only load the upload scripts when adding/editing podcasts
+		 */
+		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
+			global $post;
+			if ( 'podcast' === $post->post_type ) {
+				wp_enqueue_script('plupload-all');
+				$upload_credentials = ssp_setup_upload_credentials();
+				wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );
+				wp_localize_script( 'ssp-fileupload', 'upload_credentials', $upload_credentials );
+				wp_enqueue_script( 'ssp-fileupload' );
+				wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
+				wp_enqueue_script( 'jquery-peekabar' );
+			}
+		}
 	}
 	
 	/**

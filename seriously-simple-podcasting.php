@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.16.5-0.0.2
+ * Version: 1.16.5-0.0.3
  * Plugin URI: https://www.seriouslysimplepodcasting.com/
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: PodcastMotor
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( version_compare( PHP_VERSION, '5.3.3', '<=' ) ) { // PHP 5.3.3 or greater
+if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	/**
 	 * We are running under PHP 5.3.3
 	 * Display an admin notice and gracefully do nothing.
@@ -40,7 +40,7 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<=' ) ) { // PHP 5.3.3 or greater
 
 define( 'SSP_DEBUG', true );
 
-define( 'SSP_VERSION', '1.16.5-0.0.2' );
+define( 'SSP_VERSION', '1.16.5-0.0.3' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -52,9 +52,9 @@ define( 'SSP_LOG_URL', SSP_PLUGIN_URL . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt
 // Live
 //define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
 // Staging
-//define( 'SSP_PODMOTOR_APP_URL', 'https://staging.seriouslysimplepodcasting.com/' );
+define( 'SSP_PODMOTOR_APP_URL', 'https://staging.seriouslysimplepodcasting.com/' );
 // Development
-define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
+// define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
 
 require_once( 'includes/ssp-functions.php' );
 require_once( 'includes/class-ssp-admin.php' );

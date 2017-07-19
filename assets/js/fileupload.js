@@ -42,6 +42,8 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	if ( typeof upload_credentials != "undefined" ) {
 
+		console.log(upload_credentials);
+
 		var bucket = upload_credentials.bucket;
 		var show_slug = upload_credentials.show_slug;
 		var access_key_id = upload_credentials.access_key_id;
@@ -89,7 +91,7 @@ jQuery( document ).ready( function ( $ ) {
 			// we've turned off multi file select so we're only expecting one file
 			var file = files[ 0 ];
 			if ( isFileAllowed( file ) ) {
-				notificationBar( 'Uploading file to Seriously Simple Hosting. You can continue editing this post while the file uploads.<b id="ssp_upload_progress"></b>' );
+				notificationBar( 'Uploading file to Seriously Simple Hosting. You can continue editing this post while the file uploads. <b id="ssp_upload_progress"></b>' );
 				uploader.start();
 			} else {
 				notificationBar( 'You have selected an invalid file type, please select a valid audio or video file.' );
@@ -116,88 +118,10 @@ jQuery( document ).ready( function ( $ ) {
 		uploader.bind( 'UploadComplete', function ( up, files ) {
 			//'https://episodes.seriouslysimplepodcasting.com/jons-podcast-on-staging/'
 			notificationBar( 'Uploading file to Seriously Simple Hosting Complete.' );
-			$( '#upload_audio_file' ).val( 'https://s3.amazonaws.com/seriouslysimplestaging/' + bucket + '/' + files[ 0 ].name );
+			$( '#upload_audio_file' ).val( 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + files[ 0 ].name );
 			$( '.peek-a-bar' ).fadeOut( 5000 );
 		} );
 
 	}
 
 } );
-
-/**
- // Add a listener for a response
- window.addEventListener('message', function(evt) {
-		console.log(evt);
-		// IMPORTANT: Check the origin of the data!
-		var origin_url_to_check = sshObject.ssh_url;
-		origin_url_to_check = origin_url_to_check.slice(0, -1);
-		//console.log( origin_url_to_check );
-		if (event.origin.indexOf(origin_url_to_check) == 0) {
-			// Check the response
-			//console.log(evt.data);
-			var result = evt.data;
-			if ('' !== result.audio_file){
-				//console.log(result.audio_file);
-				document.getElementById('upload_audio_file').value = result.audio_file;
-				tb_remove();
-			}
-		}
-	});
- */
-
-/**
- * Old file uploader
-
- jQuery(document).ready(function($) {
-
-	function notificationBar( message ){
-		$('.peek-a-bar').hide().remove();
-		var notification_bar = new $.peekABar({
-			padding: '1em',
-			animation: {
-				type: 'fade',
-				duration: 1000,
-			},
-			cssClass: 'ssp-notification-bar',
-			backgroundColor: '#4aa3df'
-		});
-		notification_bar.show({
-			html: message
-		});
-	}
-
-	$('#fileupload').fileupload({
-		url: ajaxurl,
-		formData: {
-			action: 'ssp_upload_to_podmotor'
-		},
-		dataType: 'json',
-		start: function ( ) {
-			notificationBar('Uploading file to Seriously Simple Hosting. You can continue editing this post while the file uploads.');
-		},
-		done: function (e, data) {
-			var result = data.result;
-			var close_anchor = ' <a class=\'close-ssp-notification\'>x</a>';
-			if ( result.status === 'success' ){
-				notificationBar('Uploading file to Seriously Simple Hosting Complete.' + close_anchor);
-				$('#upload_audio_file').val( result.file_path );
-				$('#podmotor_file_id').val( result.file_id );
-				$('#duration').val( result.duration );
-				$('#upload_audio_file').siblings('span.description').html('Your media file has been successfully uploaded.');
-				$('.peek-a-bar').fadeOut(5000);
-			}else {
-				var notification_message = 'An error occurred, please try again. ' + close_anchor;
-				if ( result.message !== ''){
-					notification_message = result.message + close_anchor;
-				}
-				notificationBar(notification_message);
-			}
-		}
-	});
-
-	$( 'body' ).on( 'click', 'a.close-ssp-notification', function() {
-		$('.peek-a-bar').hide().remove();
-	});
-
-});
- */

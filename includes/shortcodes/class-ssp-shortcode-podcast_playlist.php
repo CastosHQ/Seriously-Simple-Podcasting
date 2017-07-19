@@ -43,6 +43,7 @@ class SSP_Shortcode_Podcast_Playlist {
 			'tracklist' => true,
 			'tracknumbers' => true,
 			'images'	=> true,
+            'limit'     => -1
 		), $params, 'podcast_playlist' );
 
 		// Included posts must be passed as an array
@@ -62,7 +63,7 @@ class SSP_Shortcode_Podcast_Playlist {
 		$query_args = array(
 			'post_status'         => 'publish',
 			'post_type'           => $podcast_post_types,
-			'posts_per_page'      => -1,
+			'posts_per_page'      => (int) $atts['limit'] > 0 ? $atts['limit'] : -1,
 			'order'				  => $atts['order'],
 			'orderby'			  => $atts['orderby'],
 			'ignore_sticky_posts' => true,

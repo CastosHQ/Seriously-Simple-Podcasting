@@ -333,13 +333,13 @@ class Podmotor_Handler {
 		}
 		
 		/**
-		 * If we dont have a valid PodcastMotor file id, get one
+		 * Don't trigger this unless we have a valid PodcastMotor file id
 		 */
 		$podmotor_file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
 		
 		if ( empty( $podmotor_file_id ) ) {
-			// check if the post has an audio file
-			
+			$this->update_response( 'message', 'Invalid Podcast file data' );
+			return $this->response;
 		}
 		
 		$podmotor_api_token = get_option( "ss_podcasting_podmotor_account_api_token", "" );

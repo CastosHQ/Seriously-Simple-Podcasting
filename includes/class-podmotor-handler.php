@@ -241,6 +241,7 @@ class Podmotor_Handler {
 							update_post_meta( $podcast_id, 'duration', $duration );
 						}
 					}
+					$this->clear_local_podmotor_file( $file );
 				} else {
 					$this->update_response( 'message', 'An error occured uploading the file to Seriously Simple Hosting' );
 				}
@@ -307,7 +308,8 @@ class Podmotor_Handler {
 	 */
 	public function clear_local_podmotor_file( $podmotor_file_path = '' ) {
 		$file_info          = pathinfo( $podmotor_file_path );
-		$file_to_be_deleted = SSP_UPLOADS_DIR . $file_info['basename'];
+		$file_to_be_deleted = ssp_get_upload_directory() . $file_info['basename'];
+		ssp_debug( $file_to_be_deleted );
 		if ( is_file( $file_to_be_deleted ) ) {
 			unlink( $file_to_be_deleted );
 		}

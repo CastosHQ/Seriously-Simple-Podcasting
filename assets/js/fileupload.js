@@ -117,7 +117,7 @@ jQuery( document ).ready( function ( $ ) {
 
 			// we're only expecting one file to be uploaded
 			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + files[ 0 ].name;
-			var episode_file = episodes_url + bucket + '/' + show_slug + '/' + files[ 0 ].name;
+			var episode_file = episodes_url + show_slug + '/' + files[ 0 ].name;
 
 			// push podmotor_file_path to wp_ajax_ssp_store_podmotor_file
 			$.ajax( {

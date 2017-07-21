@@ -86,6 +86,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.17.0-beta =
+* 2017-07-21
+* UPDATE SUMMARY:  Improved file uploading for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
+* [NEW] File uploads to Seriously Simple Hosting display a percentage indicator
+* [FIX] Fixed a bug where attempting to upload large files to Seriously Simple Hosting caused the upload to time out
+* [FIX] Fixed a bug related to the minimum PHP version for the plugin
+
+
 = 1.16.4 =
 * 2017-06-21
 * [FIX] Improved file uploads for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)

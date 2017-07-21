@@ -44,6 +44,7 @@ jQuery( document ).ready( function ( $ ) {
 
 		var bucket = upload_credentials.bucket;
 		var show_slug = upload_credentials.show_slug;
+		var episodes_url = upload_credentials.episodes_url;
 		var access_key_id = upload_credentials.access_key_id;
 		var policy = upload_credentials.policy;
 		var signature = upload_credentials.signature;
@@ -116,7 +117,7 @@ jQuery( document ).ready( function ( $ ) {
 
 			// we're only expecting one file to be uploaded
 			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + files[ 0 ].name;
-			var episode_file = uploaded_file; // this will be replaced with the episodes url once live
+			var episode_file = episodes_url + bucket + '/' + show_slug + '/' + files[ 0 ].name;
 
 			// push podmotor_file_path to wp_ajax_ssp_store_podmotor_file
 			$.ajax( {

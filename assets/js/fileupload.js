@@ -115,9 +115,13 @@ jQuery( document ).ready( function ( $ ) {
 		 */
 		uploader.bind( 'UploadComplete', function ( up, files ) {
 
+			notificationBar( 'Processing Seriously Simple Hosting file.' );
+
+			var file = files[ 0 ];
+			var file_size = plupload.formatSize(file.size);
 			// we're only expecting one file to be uploaded
-			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + files[ 0 ].name;
-			var episode_file = episodes_url + show_slug + '/' + files[ 0 ].name;
+			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + file.name;
+			var episode_file = episodes_url + show_slug + '/' + file.name;
 
 			// push podmotor_file_path to wp_ajax_ssp_store_podmotor_file
 			$.ajax( {
@@ -127,8 +131,11 @@ jQuery( document ).ready( function ( $ ) {
 			} )
 				.done( function ( response ) {
 					if ( response.status == 'success' ) {
-						$( "#podmotor_file_id" ).val( response.file_id );
+						console.log( response );
 						notificationBar( 'Uploading file to Seriously Simple Hosting Complete.' );
+						$( "#podmotor_file_id" ).val( response.file_id );
+						$( "#filesize" ).val( file_size );
+						$( "#duration" ).val( response.file_duration );
 						$( '#upload_audio_file' ).val( episode_file );
 						$( '.peek-a-bar' ).fadeOut( 5000 );
 					} else {

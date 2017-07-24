@@ -38,7 +38,7 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	return;
 }
 
-define( 'SSP_DEBUG', false );
+define( 'SSP_DEBUG', true );
 
 define( 'SSP_VERSION', '1.17.0-beta' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -47,8 +47,16 @@ define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 define( 'SSP_LOG_PATH', SSP_PLUGIN_PATH . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 define( 'SSP_LOG_URL', SSP_PLUGIN_URL . 'log/ssp.log.' . date( 'd-m-y' ) . '.txt' );
 
+// live
+/*
 define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
 define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.seriouslysimplepodcasting.com/' );
+*/
+
+// local
+define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
+define( 'SSP_PODMOTOR_EPISODES_URL', 'https://s3.amazonaws.com/seriouslysimplestaging/' );
+
 
 require_once( 'includes/ssp-functions.php' );
 require_once( 'includes/class-ssp-admin.php' );

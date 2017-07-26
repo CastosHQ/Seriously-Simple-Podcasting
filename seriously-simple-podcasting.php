@@ -53,8 +53,8 @@ define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
 define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.seriouslysimplepodcasting.com/' );
 */
 
-// local
-define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
+// staging
+define( 'SSP_PODMOTOR_APP_URL', 'https://staging.seriouslysimplepodcasting.com/' );
 define( 'SSP_PODMOTOR_EPISODES_URL', 'https://s3.amazonaws.com/seriouslysimplestaging/' );
 
 

@@ -287,6 +287,7 @@ class Podmotor_Handler {
 					$this->update_response( 'message', 'File successfully uploaded.' );
 					$this->update_response( 'file_id', $response_object->file_id );
 					$this->update_response( 'file_path', $response_object->file_path );
+					$this->update_response( 'file_duration', $response_object->file_duration );
 				} else {
 					$this->update_response( 'message', 'An error occurred uploading the file data to Seriously Simple Hosting' );
 				}

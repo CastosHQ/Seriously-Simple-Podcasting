@@ -269,16 +269,20 @@ class Podmotor_Handler {
 			return $this->response;
 		}
 		$api_url                    = SSP_PODMOTOR_APP_URL . 'api/file';
-		$podmotor_account_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		ssp_debug($api_url);
+		$podmotor_api_token         = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		ssp_debug($podmotor_api_token);
 		$post_body                  = array(
-			'api_token'          => $podmotor_account_api_token,
+			'api_token'          => $podmotor_api_token,
 			'podmotor_file_path' => $podmotor_file_path,
 		);
+		ssp_debug($post_body);
 		$app_response               = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
+		ssp_debug($app_response);
 		if ( ! is_wp_error( $app_response ) ) {
 			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( ! empty( $response_object ) ) {
@@ -343,7 +347,7 @@ class Podmotor_Handler {
 			return $this->response;
 		}
 		
-		$podmotor_api_token = get_option( "ss_podcasting_podmotor_account_api_token", "" );
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/episode';
 		

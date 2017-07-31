@@ -95,7 +95,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.17.0=
+= 1.17.0 =
 * 2017-07-31
 * UPDATE SUMMARY:  Improved file uploading for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
 * [NEW] File uploads to Seriously Simple Hosting display a percentage indicator

@@ -74,7 +74,7 @@ class Podmotor_Handler {
 	 */
 	public function get_podmotor_bucket_credentials( $podmotor_account_id, $podmotor_account_email ) {
 		
-		$podmotor_array = $this->podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
+		$podmotor_array = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
 
 		$config = array(
 			'version'     => $podmotor_array['version'],
@@ -266,28 +266,32 @@ class Podmotor_Handler {
 		$this->setup_response();
 		if ( empty( $podmotor_file_path ) ) {
 			$this->update_response( 'message', 'No file to upload' );
-			
 			return $this->response;
 		}
 		$api_url                    = SSP_PODMOTOR_APP_URL . 'api/file';
-		$podmotor_account_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		ssp_debug($api_url);
+		$podmotor_api_token         = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		ssp_debug($podmotor_api_token);
 		$post_body                  = array(
-			'api_token'          => $podmotor_account_api_token,
-			'podmotor_file_path' => $podmotor_file_path
+			'api_token'          => $podmotor_api_token,
+			'podmotor_file_path' => $podmotor_file_path,
 		);
+		ssp_debug($post_body);
 		$app_response               = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
+		ssp_debug($app_response);
 		if ( ! is_wp_error( $app_response ) ) {
-			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
-			if ( ! empty( $responseObject ) ) {
-				if ( 'success' == $responseObject->status ) {
+			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
+			if ( ! empty( $response_object ) ) {
+				if ( 'success' == $response_object->status ) {
 					$this->update_response( 'status', 'success' );
-					$this->update_response( 'message', 'File successfully .' );
-					$this->update_response( 'file_id', $responseObject->file_id );
-					$this->update_response( 'file_path', $responseObject->file_path );
+					$this->update_response( 'message', 'File successfully uploaded.' );
+					$this->update_response( 'file_id', $response_object->file_id );
+					$this->update_response( 'file_path', $response_object->file_path );
+					$this->update_response( 'file_duration', $response_object->file_duration );
 				} else {
 					$this->update_response( 'message', 'An error occurred uploading the file data to Seriously Simple Hosting' );
 				}
@@ -337,13 +341,13 @@ class Podmotor_Handler {
 		 * Don't trigger this unless we have a valid PodcastMotor file id
 		 */
 		$podmotor_file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
+		
 		if ( empty( $podmotor_file_id ) ) {
 			$this->update_response( 'message', 'Invalid Podcast file data' );
-			
 			return $this->response;
 		}
 		
-		$podmotor_api_token = get_option( "ss_podcasting_podmotor_account_api_token", "" );
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/episode';
 		
@@ -430,30 +434,4 @@ class Podmotor_Handler {
 		return $this->response;
 		
 	}
-	
-	/**
-	 * Decrypt data
-	 *
-	 * @param $encrypted_string
-	 * @param $unique_key
-	 *
-	 * @return bool|mixed
-	 */
-	public function podmotor_decrypt_config( $encrypted_string, $unique_key ) {
-		if ( preg_match( "/^(.*)::(.*)$/", $encrypted_string, $regs ) ) {
-			list( $original_string, $encrypted_string, $encoding_iv ) = $regs;
-			$encoding_method = 'AES-128-CTR';
-			$encoding_key    = crypt( $unique_key, sha1( $unique_key ) );
-			if ( version_compare( PHP_VERSION, '5.4.0', '<' ) ) {
-				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, pack( 'H*', $encoding_iv ) );
-			} else {
-				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, hex2bin( $encoding_iv ) );
-			}
-			$config          = unserialize( $decrypted_token );
-			return $config;
-		} else {
-			return false;
-		}
-	}
-	
 }

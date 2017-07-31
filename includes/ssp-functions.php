@@ -535,8 +535,9 @@ if ( ! function_exists( 'ssp_get_existing_podcast' ) ) {
 	 * @return WP_Query
 	 */
 	function ssp_get_existing_podcast() {
+		$podcast_post_types = ssp_post_types( true );
 		$args     = array(
-			'post_type'      => 'podcast',
+			'post_type'      => $podcast_post_types,
 			'posts_per_page' => 1,
 			'post_status'    => 'any',
 			'meta_query'     => array(
@@ -565,8 +566,9 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 		if ( 'true' === $podmotor_import_podcasts ) {
 
 			global $wpdb;
+			$podcast_post_types = ssp_post_types( true );
 			$args     = array(
-				'post_type'      => 'podcast',
+				'post_type'      => $podcast_post_types,
 				'posts_per_page' => - 1,
 				'post_status'    => 'any',
 				'meta_query'     => array(
@@ -797,6 +799,11 @@ if ( ! function_exists( 'ssp_import_external_rss_feed_to_ssp' ) ) {
 }
 
 if ( ! function_exists( 'ssp_email_podcasts_imported' ) ) {
+	/**
+	 * Send podcasts imported email
+	 *
+	 * @return mixed
+	 */
 	function ssp_email_podcasts_imported() {
 		$new_line         = "\n";
 		$site_name        = get_bloginfo( 'name' );
@@ -809,5 +816,68 @@ if ( ! function_exists( 'ssp_email_podcasts_imported' ) ) {
 		$from = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
 
 		return wp_mail( $to, $subject, $message, $from );
+	}
+}
+
+if ( ! function_exists( 'ssp_podmotor_decrypt_config' ) ) {
+	/**
+	 * Decrypt data
+	 *
+	 * @param $encrypted_string
+	 * @param $unique_key
+	 *
+	 * @return bool|mixed
+	 */
+	function ssp_podmotor_decrypt_config( $encrypted_string, $unique_key ) {
+		if ( preg_match( "/^(.*)::(.*)$/", $encrypted_string, $regs ) ) {
+			list( $original_string, $encrypted_string, $encoding_iv ) = $regs;
+			$encoding_method = 'AES-128-CTR';
+			$encoding_key    = crypt( $unique_key, sha1( $unique_key ) );
+			if ( version_compare( PHP_VERSION, '5.4.0', '<' ) ) {
+				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, pack( 'H*', $encoding_iv ) );
+			} else {
+				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, hex2bin( $encoding_iv ) );
+			}
+			$config = unserialize( $decrypted_token );
+			return $config;
+		} else {
+			return false;
+		}
+	}
+}
+
+if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
+	function ssp_setup_upload_credentials() {
+		
+		$podmotor_account_id    = get_option( 'ss_podcasting_podmotor_account_id', '' );
+		$podmotor_account_email = get_option( 'ss_podcasting_podmotor_account_email', '' );
+		$podmotor_array         = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
+		
+		$bucket        = $podmotor_array['bucket'];
+		$show_slug     = $podmotor_array['show_slug'];
+		$access_key_id = $podmotor_array['credentials_key'];
+		$secret        = $podmotor_array['credentials_secret'];
+		
+		$policy = base64_encode( json_encode( array(
+			'expiration' => date( 'Y-m-d\TH:i:s.000\Z', strtotime( '+1 day' ) ),
+			// ISO 8601 - date('c'); generates uncompatible date, so better do it manually
+			'conditions' => array(
+				array( 'bucket' => $bucket ),
+				array( 'acl' => 'public-read' ),
+				array( 'starts-with', '$key', '' ),
+				array( 'starts-with', '$Content-Type', '' ),
+				// accept all files
+				array( 'starts-with', '$name', '' ),
+				// Plupload internally adds name field, so we need to mention it here
+				array( 'starts-with', '$Filename', '' ),
+				// One more field to take into account: Filename - gets silently sent by FileReference.upload() in Flash http://docs.amazonwebservices.com/AmazonS3/latest/dev/HTTPPOSTFlash.html
+			),
+		) ) );
+		
+		$signature = base64_encode( hash_hmac( 'sha1', $policy, $secret, true ) );
+		$episodes_url = SSP_PODMOTOR_EPISODES_URL;
+		
+		return compact( 'bucket', 'show_slug', 'episodes_url', 'access_key_id', 'policy', 'signature' );
+		
 	}
 }

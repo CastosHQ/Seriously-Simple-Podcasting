@@ -1,9 +1,9 @@
 === Seriously Simple Podcasting ===
-Contributors: hlashbrooke, whyisjake, psykro, PodcastMotor, simondowdles
+Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
 Tested up to: 4.8
-Stable tag: 1.16.4
+Stable tag: 1.17.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -16,6 +16,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 **Primary Features**
 
 - Simple settings so you can get your podcast up and running quickly
+- Integrated podcast hosting platform, [Seriously Simple Hosting](https://app.seriouslysimplepodcasting.com), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
 - Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
 - Supports both audio *and* video podcasting
@@ -27,6 +28,14 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - The freedom to host your media files wherever you like - on the same site or any other server
 - Complete user and developer [documentation](https://www.seriouslysimplepodcasting.com/)
 - [Full i18n support](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting)
+
+**Podcast Hosting Platform**
+
+If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Seriously Simple Hosting](https://app.seriouslysimplepodcasting.com).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
+
+https://youtu.be/CE9zhOGirhY
+
+Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrifc listening experience at the same time.
 
 **Where to find help**
 
@@ -85,6 +94,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.17.0 =
+* 2017-07-31
+* UPDATE SUMMARY:  Improved file uploading for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
+* [NEW] File uploads to Seriously Simple Hosting display a percentage indicator
+* [FIX] Fixed a bug where attempting to upload large files to Seriously Simple Hosting caused the upload to time out
+* [FIX] Fixed a bug related to the minimum PHP version for the plugin
+* [FIX] Fixed a bug where the new uploading system does not return file size or duration
 
 = 1.16.4 =
 * 2017-06-21

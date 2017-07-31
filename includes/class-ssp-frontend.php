@@ -1250,3 +1250,148 @@ class SSP_Frontend {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
 	}
 }
+
+function example_mejs_add_container_class() {
+    if ( ! wp_script_is( 'wp-mediaelement', 'done' ) ) {
+        return;
+    }
+    ?>
+    <script>
+        (function() {
+
+            var sspTickerBanner, sspTickerBannerContainer, sspTickerOffset;
+
+            var settings = window._wpmejsSettings || {};
+            settings.features = settings.features || mejs.MepDefaults.features;
+            settings.features.push( 'addsspclass' );
+            settings.features.push( 'addcustomcontrol' );
+
+            MediaElementPlayer.prototype.buildaddsspclass = function( player ) {
+                player.container.addClass( 'ssp-mejs-container' );
+            };
+
+            MediaElementPlayer.prototype.buildaddcustomcontrol = function(player, controls, layers, media) {
+
+                var sspCustomControls = jQuery('' +
+                    '<div class="ssp-controls">\n' +
+'                        <ul class="ssp-sub-controls">\n' +
+'                            <li>- 30s</li>\n' +
+'                            <li>+ 30s</li>\n' +
+'                            <li>DL</li>\n' +
+'                        </ul>\n' +
+'                        <ul class="ssp-ticker">\n' +
+'                            <li>\n' +
+'                                <div class="ssp-ticker-banner">\n' +
+'                                    Some Series, Episode 1 - Dr. Dove & Company Talk Organic\n' +
+'                                </div>\n' +
+'                            </li>\n' +
+'                        </ul>\n' +
+'                    </div>');
+
+                player.container.after( sspCustomControls );
+
+                sspTickerBanner = jQuery( '.ssp-ticker-banner' );
+                sspTickerBannerContainer = sspTickerBanner.parent();
+                sspTickerOffset = Math.floor( ( sspTickerBannerContainer.width() - sspTickerBanner.width() ) );
+
+                var moved = 0;
+                var offset,
+                    tickInterval;
+
+                function doTickBanner(){
+                    sspTickerBanner.css( 'left','0' );
+                    tickInterval = setInterval( function(){
+                        moved = moved-10;
+                        if( moved <= sspTickerOffset ){
+                            sspTickerBanner.css( 'left', sspTickerOffset + 'px' );
+                            offset = 0;
+                            moved = 0;
+                            clearInterval( tickInterval );
+                            setTimeout( function(){ doTickBanner() }, 2000 );
+                            return;
+                        }else{
+                            offset = moved;
+                        }
+                        moved--;
+                        sspTickerBanner.css( 'left', offset + 'px' );
+                    }, 500 );
+                }
+
+                setTimeout( function(){
+                    doTickBanner();
+                }, 2000 );
+            }
+
+        })();
+    </script>
+    <?php
+}
+add_action( 'wp_print_footer_scripts', 'example_mejs_add_container_class' );
+
+add_action( 'wp_print_footer_scripts', function(){
+    ?>
+
+    <style type="text/css">
+
+        .ssp-controls{
+            overflow:hidden;
+            padding: 5px 10px;
+            background:#333;
+            color: #999;
+            font-size: 0.75em;
+        }
+
+        .ssp-controls ul.ssp-sub-controls{
+            list-style:none;
+            margin:0;
+            padding:0;
+            display: inline-block;
+            float:left;
+            clear:none;
+            width: 40%;
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        .ssp-controls ul li{
+            display: inline-block;
+            padding: 3px;
+            cursor: pointer;
+            border-left: 1px solid #666;
+        }
+        .ssp-controls ul li:first-child{
+            border-left: none;
+        }
+        .ssp-controls ul li:hover{
+            color: #fff;
+        }
+
+        ul.ssp-ticker{
+            display:inline-block;
+            overflow:hidden;
+            position: relative;
+            width:60%;
+            float:right;
+            clear:none;
+            margin:2px 0 0 0;
+            padding:0;
+        }
+
+        ul.ssp-ticker li{
+            overflow:hidden;
+            width: 100%;
+        }
+
+        ul.ssp-ticker li .ssp-ticker-banner{
+            position: absolute;
+            white-space: nowrap;
+            overflow: hidden;
+            top: 0;
+            left: 0;
+        }
+
+    </style>
+
+    <?php
+} );

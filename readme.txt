@@ -1,5 +1,5 @@
 === Seriously Simple Podcasting ===
-Contributors: hlashbrooke, whyisjake, psykro, PodcastMotor, simondowdles
+Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
 Tested up to: 4.8
@@ -85,6 +85,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.17.0=
+* 2017-07-31
+* UPDATE SUMMARY:  Improved file uploading for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
+* [NEW] File uploads to Seriously Simple Hosting display a percentage indicator
+* [FIX] Fixed a bug where attempting to upload large files to Seriously Simple Hosting caused the upload to time out
+* [FIX] Fixed a bug related to the minimum PHP version for the plugin
+* [FIX] Fixed a bug where the new uploading system does not return file size or duration
 
 = 1.16.4 =
 * 2017-06-21

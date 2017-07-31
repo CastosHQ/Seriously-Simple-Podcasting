@@ -1334,7 +1334,7 @@ class SSP_Admin {
 			wp_send_json( $response );
 		}
 		
-		if ( 'success' == $podmotor_response['status'] ) {
+		if ( $podmotor_response ) {
 			$response = $podmotor_response ;
 		}
 		wp_send_json( $response );

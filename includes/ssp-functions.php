@@ -875,8 +875,9 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		) ) );
 		
 		$signature = base64_encode( hash_hmac( 'sha1', $policy, $secret, true ) );
+		$episodes_url = SSP_PODMOTOR_EPISODES_URL;
 		
-		return compact( 'bucket', 'show_slug', 'access_key_id', 'policy', 'signature' );
+		return compact( 'bucket', 'show_slug', 'episodes_url', 'access_key_id', 'policy', 'signature' );
 		
 	}
 }

@@ -928,11 +928,11 @@ class SSP_Admin {
 		wp_enqueue_script( 'ssp-settings' );
 		
 		/**
-		 * Only load the upload scripts when adding/editing podcasts
+		 * Only load the upload scripts when adding/editing posts/podcasts
 		 */
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			global $post;
-			if ( 'podcast' === $post->post_type ) {
+			if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
 				wp_enqueue_script('plupload-all');
 				$upload_credentials = ssp_setup_upload_credentials();
 				wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );

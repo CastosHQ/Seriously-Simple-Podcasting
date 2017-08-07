@@ -3,7 +3,7 @@ Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
 Tested up to: 4.8
-Stable tag: 1.16.4
+Stable tag: 1.17.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -86,7 +86,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.17.0=
+= 1.17.1 =
+* 2017-08-07
+* [FIX] Fixed a bug causing problems uploading podcasts on regular Posts
+
+= 1.17.0 =
 * 2017-07-31
 * UPDATE SUMMARY:  Improved file uploading for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/)
 * [NEW] File uploads to Seriously Simple Hosting display a percentage indicator

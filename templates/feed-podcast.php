@@ -375,8 +375,15 @@ if ( isset( $category1['category'] ) && $category1['category'] ) { ?>
 
 				// File size
 				$size = get_post_meta( get_the_ID(), 'filesize_raw', true );
+				
 				if ( ! $size ) {
-					$size = 1;
+					
+					if ( ssp_is_connected_to_podcastmotor() ) {
+						$formatted_size = get_post_meta( get_the_ID(), 'filesize', true );
+						$size = convert_human_readable_to_bytes($formatted_size);
+					}else {
+						$size = 1;
+					}
 				}
 				$size = apply_filters( 'ssp_feed_item_size', $size, get_the_ID() );
 

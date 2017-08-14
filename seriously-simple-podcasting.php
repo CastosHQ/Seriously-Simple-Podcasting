@@ -46,7 +46,7 @@ if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
 	define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
 }
 if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
-	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://app.seriouslysimplepodcasting.com/' );
+	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.seriouslysimplepodcasting.com/' );
 }
 
 require_once( 'includes/ssp-functions.php' );

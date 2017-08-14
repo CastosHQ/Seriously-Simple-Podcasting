@@ -8,11 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Simple Logging function
  *
- * @param $data
+ * @param $message string debug message
+ * @param $data mixed debug data
  *
  * @return bool
  */
-function ssp_debug( $data ) {
+function ssp_debug( $message, $data = '' ) {
 	if ( ! defined( 'SSP_DEBUG' ) || ! SSP_DEBUG ) {
 		return false;
 	}
@@ -20,7 +21,10 @@ function ssp_debug( $data ) {
 	if ( ! is_file( $file ) ) {
 		file_put_contents( $file, '' );
 	}
-	$data_string = print_r( $data, true ) . "\n";
+	if ( ! empty( $data ) ) {
+		$message = array( $message => $data );
+	}
+	$data_string = print_r( $message, true ) . "\n";
 	file_put_contents( $file, $data_string, FILE_APPEND );
 }
 

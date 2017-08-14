@@ -572,20 +572,33 @@ if ( ! function_exists( 'ssp_get_existing_podcast' ) ) {
 	 */
 	function ssp_get_existing_podcast() {
 		$podcast_post_types = ssp_post_types( true );
-		$args     = array(
+		
+		$args = array(
 			'post_type'      => $podcast_post_types,
 			'posts_per_page' => 1,
 			'post_status'    => 'any',
 			'meta_query'     => array(
 				array(
-					'key'     => 'podmotor_episode_id',
-					'compare' => 'NOT EXISTS',
-					'value'   => ''
+					'key'     => 'audio_file',
+					'compare' => 'EXISTS',
 				),
-			)
+				array(
+					'relation' => 'OR',
+					array(
+						'key'     => 'podmotor_episode_id',
+						'compare' => 'NOT EXISTS',
+					),
+					array(
+						'key'     => 'podmotor_episode_id',
+						'value'   => '0',
+						'compare' => '=',
+					),
+				),
+			),
 		);
+		
 		$podcasts = new WP_Query( $args );
-
+		
 		return $podcasts;
 	}
 

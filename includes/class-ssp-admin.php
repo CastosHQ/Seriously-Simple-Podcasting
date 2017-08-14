@@ -794,6 +794,16 @@ class SSP_Admin {
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 		
+		$fields['filesize_raw'] = array(
+			'name'             => __( 'Raw File size:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'Raw Size of the podcast file.', 'seriously-simple-podcasting' ),
+			'type'             => 'text',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
+		);
+		
+		
 		$fields['date_recorded'] = array(
 			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),
 			'description'      => __( 'The date on which this episode was recorded.', 'seriously-simple-podcasting' ),

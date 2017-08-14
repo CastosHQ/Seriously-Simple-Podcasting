@@ -614,7 +614,6 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 		$podmotor_import_podcasts = get_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		if ( 'true' === $podmotor_import_podcasts ) {
 
-			global $wpdb;
 			$podcast_post_types = ssp_post_types( true );
 			$args     = array(
 				'post_type'      => $podcast_post_types,
@@ -622,11 +621,22 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 				'post_status'    => 'any',
 				'meta_query'     => array(
 					array(
-						'key'     => 'podmotor_episode_id',
-						'compare' => 'NOT EXISTS',
-						'value'   => ''
+						'key'     => 'audio_file',
+						'compare' => 'EXISTS',
 					),
-				)
+					array(
+						'relation' => 'OR',
+						array(
+							'key'     => 'podmotor_episode_id',
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'key'     => 'podmotor_episode_id',
+							'value'   => '0',
+							'compare' => '=',
+						),
+					),
+				),
 			);
 			$podcasts = new WP_Query( $args );
 

@@ -8,11 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Simple Logging function
  *
- * @param $data
+ * @param $message string debug message
+ * @param $data mixed debug data
  *
  * @return bool
  */
-function ssp_debug( $data ) {
+function ssp_debug( $message, $data = '' ) {
 	if ( ! defined( 'SSP_DEBUG' ) || ! SSP_DEBUG ) {
 		return false;
 	}
@@ -20,7 +21,10 @@ function ssp_debug( $data ) {
 	if ( ! is_file( $file ) ) {
 		file_put_contents( $file, '' );
 	}
-	$data_string = print_r( $data, true ) . "\n";
+	if ( ! empty( $data ) ) {
+		$message = array( $message => $data );
+	}
+	$data_string = print_r( $message, true ) . "\n";
 	file_put_contents( $file, $data_string, FILE_APPEND );
 }
 
@@ -505,6 +509,38 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 		return $status;
 	}
 }
+
+if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
+	
+	/**
+	 * Converts human readable file size (eg 280 kb) to bytes (286720)
+	 *
+	 * @param $formatted_size
+	 *
+	 * @return string
+	 */
+	function convert_human_readable_to_bytes( $formatted_size ) {
+		
+		$formatted_size_type  = preg_replace( '/[^a-z]/', '', $formatted_size );
+		$formatted_size_value = trim( str_replace( $formatted_size_type, '', $formatted_size ) );
+		
+		switch ( strtoupper( $formatted_size_type ) ) {
+			case 'KB':
+				return $formatted_size_value * 1024;
+			case 'MB':
+				return $formatted_size_value * pow( 1024, 2 );
+			case 'GB':
+				return $formatted_size_value * pow( 1024, 3 );
+			case 'TB':
+				return $formatted_size_value * pow( 1024, 4 );
+			case 'PB':
+				return $formatted_size_value * pow( 1024, 5 );
+			default:
+				return $formatted_size_value;
+		}
+	}
+}
+
 
 if ( ! function_exists( 'ssp_is_connected_to_podcastmotor' ) ) {
 

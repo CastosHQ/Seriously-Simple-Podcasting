@@ -111,6 +111,9 @@ class Podmotor_Handler {
 		}
 		
 		$api_url      = SSP_PODMOTOR_APP_URL . 'api/users/validate';
+		
+		ssp_debug( 'Validate Credentials : API URL', $api_url );
+		
 		$app_response = wp_remote_get( $api_url, array(
 				'timeout' => 45,
 				'body'    => array(
@@ -119,6 +122,8 @@ class Podmotor_Handler {
 				),
 			)
 		);
+		
+		ssp_debug( 'Validate Credentials : App Response', $app_response );
 		
 		if ( ! is_wp_error( $app_response ) ) {
 			

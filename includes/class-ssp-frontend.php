@@ -475,7 +475,7 @@ class SSP_Frontend {
 	 * @return boolean       File size on success, boolean false on failure
 	 */
 	public function get_file_size( $file = '' ) {
-
+		
 		if ( $file ) {
 
 			// Include media functions if necessary

@@ -572,7 +572,6 @@ if ( ! function_exists( 'ssp_get_existing_podcast' ) ) {
 	 */
 	function ssp_get_existing_podcast() {
 		$podcast_post_types = ssp_post_types( true );
-		
 		$args = array(
 			'post_type'      => $podcast_post_types,
 			'posts_per_page' => 1,
@@ -596,12 +595,9 @@ if ( ! function_exists( 'ssp_get_existing_podcast' ) ) {
 				),
 			),
 		);
-		
 		$podcasts = new WP_Query( $args );
-		
 		return $podcasts;
 	}
-
 }
 
 if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {

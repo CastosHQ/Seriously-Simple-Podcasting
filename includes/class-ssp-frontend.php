@@ -76,7 +76,10 @@ class SSP_Frontend {
 
 		// Trigger import podcast process (if active)
 		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor') );
-
+		
+		// Update podmotor_episode_id and audio file values from import process
+		add_action( 'wp_loaded', array( $this, 'update_episode_data_from_podmotor') );
+		
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
 
@@ -880,26 +883,45 @@ class SSP_Frontend {
 	}
 	
 	/**
-	 * Public action which is trigger from the Seriously Simple Hosting queue
+	 * Public action which is triggered from the Seriously Simple Hosting queue
 	 * Imports episodes to Serioulsy Simple Hosting
 	 */
 	public function import_existing_podcast_to_podmotor(){
 		// this will soon be deprecated
 		$podcast_importer = ( isset( $_GET['podcast_importer'] ) ? filter_var( $_GET['podcast_importer'], FILTER_SANITIZE_STRING ) : '' );
-		if (empty($podcast_importer)){
+		if ( empty( $podcast_importer ) ) {
 			$podcast_importer = ( isset( $_GET['ssp_podcast_importer'] ) ? filter_var( $_GET['ssp_podcast_importer'], FILTER_SANITIZE_STRING ) : '' );
 		}
-		if ( ! empty( $podcast_importer ) && 'true' == $podcast_importer ){
+		if ( ! empty( $podcast_importer ) && 'true' == $podcast_importer ) {
 			$continue = import_existing_podcast();
-			if ($continue){
+			if ( $continue ) {
 				$reponse = array( 'continue' => 'true', 'response' => 'There are still podcasts to be imported' );
-			}else {
+			} else {
 				$reponse = array( 'continue' => 'false', 'response' => 'There are no more podcasts to be imported' );
 			}
 			wp_send_json( $reponse );
 		}
 	}
-
+	
+	/**
+	 * Public facing action which is triggered from Seriously Simple Hosting
+	 * Updates episode_id and audio_file data from import process
+	 */
+	public function update_episode_data_from_podmotor(){
+		// to do, add api key verification
+		
+		wp_send_json( $_REQUEST );
+		
+		$podcast_updater = ( isset( $_POST['ssp_podcast_updater'] ) ? filter_var( $_POST['ssp_podcast_updater'], FILTER_SANITIZE_STRING ) : '' );
+		
+		if ( ! empty( $podcast_updater ) && 'true' == $podcast_updater ) {
+			$post_ids = ( isset( $_POST['post_ids'] ) ? filter_var( $_POST['post_ids'], FILTER_SANITIZE_STRING ) : '' );
+			$episode_ids = ( isset( $_POST['episode_ids'] ) ? filter_var( $_POST['episode_ids'], FILTER_SANITIZE_STRING ) : '' );
+			$audio_files = ( isset( $_POST['audio_files'] ) ? filter_var( $_POST['audio_files'], FILTER_SANITIZE_STRING ) : '' );
+			
+			wp_send_json( array($post_ids, $episode_ids, $audio_files) );
+		}
+	}
 
 	/**
 	 * Download file from `podcast_episode` query variable

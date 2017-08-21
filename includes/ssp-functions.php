@@ -700,7 +700,7 @@ if ( ! function_exists( 'ssp_trigger_import_existing_podcast_to_podmotor' ) ) {
 
 	    $unique = mktime();
 		ssp_debug( 'Triggering Curl for #' . $unique . ' at ' . date( 'd-m-Y H:i:s' ) );
-		$curl_url = add_query_arg( array( 'podcast_importer' => 'true' ), trailingslashit( site_url() ) );
+		$curl_url = add_query_arg( array( 'ssp_podcast_importer' => 'true' ), trailingslashit( site_url() ) );
 		$curl     = curl_init();
 		curl_setopt_array(
 			$curl,

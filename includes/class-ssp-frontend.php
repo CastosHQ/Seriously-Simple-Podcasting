@@ -878,9 +878,17 @@ class SSP_Frontend {
 		return apply_filters( 'ssp_episode_from_file', $episode, $file );
 
 	}
-
+	
+	/**
+	 * Public action which is trigger from the Seriously Simple Hosting queue
+	 * Imports episodes to Serioulsy Simple Hosting
+	 */
 	public function import_existing_podcast_to_podmotor(){
+		// this will soon be deprecated
 		$podcast_importer = ( isset( $_GET['podcast_importer'] ) ? filter_var( $_GET['podcast_importer'], FILTER_SANITIZE_STRING ) : '' );
+		if (empty($podcast_importer)){
+			$podcast_importer = ( isset( $_GET['ssp_podcast_importer'] ) ? filter_var( $_GET['ssp_podcast_importer'], FILTER_SANITIZE_STRING ) : '' );
+		}
 		if ( ! empty( $podcast_importer ) && 'true' == $podcast_importer ){
 			$continue = import_existing_podcast();
 			if ($continue){

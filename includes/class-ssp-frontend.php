@@ -906,20 +906,29 @@ class SSP_Frontend {
 	/**
 	 * Public facing action which is triggered from Seriously Simple Hosting
 	 * Updates episode_id and audio_file data from import process
+	 * Expects ssp_podcast_updater, ssp_podcast_api_token form fields
+	 * and ssp_podcast_file csv data file
 	 */
-	public function update_episode_data_from_podmotor(){
-		// to do, add api key verification
-		
-		wp_send_json( $_REQUEST );
-		
+	public function update_episode_data_from_podmotor() {
 		$podcast_updater = ( isset( $_POST['ssp_podcast_updater'] ) ? filter_var( $_POST['ssp_podcast_updater'], FILTER_SANITIZE_STRING ) : '' );
 		
 		if ( ! empty( $podcast_updater ) && 'true' == $podcast_updater ) {
-			$post_ids = ( isset( $_POST['post_ids'] ) ? filter_var( $_POST['post_ids'], FILTER_SANITIZE_STRING ) : '' );
-			$episode_ids = ( isset( $_POST['episode_ids'] ) ? filter_var( $_POST['episode_ids'], FILTER_SANITIZE_STRING ) : '' );
-			$audio_files = ( isset( $_POST['audio_files'] ) ? filter_var( $_POST['audio_files'], FILTER_SANITIZE_STRING ) : '' );
 			
-			wp_send_json( array($post_ids, $episode_ids, $audio_files) );
+			$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_SANITIZE_STRING ) : '' );
+			$podmotor_api_token    = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+			
+			if ( $ssp_podcast_api_token === $podmotor_api_token ) {
+				
+				if ( isset( $_FILES['ssp_podcast_file'] ) ) {
+					
+					$episode_data_array = array_map( 'str_getcsv', file( $_FILES['ssp_podcast_file']['tmp_name'] ) );
+					foreach ( $episode_data_array as $episode_data ) {
+						update_post_meta( $episode_data[0], 'podmotor_episode_id', $episode_data[1] );
+						update_post_meta( $episode_data[0], 'audio_file', $episode_data[2] );
+					}
+					wp_send_json( array( 'Completed' ) );
+				}
+			}
 		}
 	}
 

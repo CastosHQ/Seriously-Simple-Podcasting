@@ -8,11 +8,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Simple Logging function
  *
- * @param $data
+ * @param $message string debug message
+ * @param $data mixed debug data
  *
  * @return bool
  */
-function ssp_debug( $data ) {
+function ssp_debug( $message, $data = '' ) {
 	if ( ! defined( 'SSP_DEBUG' ) || ! SSP_DEBUG ) {
 		return false;
 	}
@@ -20,7 +21,10 @@ function ssp_debug( $data ) {
 	if ( ! is_file( $file ) ) {
 		file_put_contents( $file, '' );
 	}
-	$data_string = print_r( $data, true ) . "\n";
+	if ( ! empty( $data ) ) {
+		$message = array( $message => $data );
+	}
+	$data_string = print_r( $message, true ) . "\n";
 	file_put_contents( $file, $data_string, FILE_APPEND );
 }
 
@@ -535,10 +539,11 @@ if ( ! function_exists( 'ssp_get_existing_podcasts' ) ) {
 	 */
 	function ssp_get_existing_podcasts() {
 		$podcast_post_types = ssp_post_types( true );
-		$args               = array(
+		$args = array(
 			'post_type'      => $podcast_post_types,
 			'posts_per_page' => - 1,
 			'post_status'    => 'any',
+			'orderby'        => 'ID',
 			'meta_query'     => array(
 				array(
 					'key'     => 'audio_file',
@@ -573,9 +578,7 @@ if ( ! function_exists( 'ssp_build_podcast_data' ) ) {
 	 */
 	function ssp_build_podcast_data( $podcast_query ) {
 		$podcasts     = $podcast_query->get_posts();
-		echo '<pre>';
-		print_r( $podcasts );
-		echo '</pre>';
+
 		$podcast_data = array();
 		foreach ( $podcasts as $podcast ) {
 			$podcast_data[ $podcast->ID ] = array(
@@ -586,9 +589,7 @@ if ( ! function_exists( 'ssp_build_podcast_data' ) ) {
 				'audio_file'   => get_post_meta( $podcast->ID, 'audio_file', true ),
 			);
 		}
-		echo '<pre>';
-		print_r( $podcast_data );
-		echo '</pre>';
+
 		return $podcast_data;
 	}
 }
@@ -651,9 +652,8 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 			 */
 			if ( $podcast_query->have_posts() ) {
 				ssp_debug( 'Podcasts exist to import' );
-
+				
 				$podcast_data = ssp_build_podcast_data( $podcast_query );
-				ssp_debug( 'Podcast Data ', $podcast_data );
 				
 				$podmotor_handler = new Podmotor_Handler();
 				$upload_podcasts_response = $podmotor_handler->upload_podcasts_to_podmotor( $podcast_data );
@@ -877,5 +877,41 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		
 		return compact( 'bucket', 'show_slug', 'episodes_url', 'access_key_id', 'policy', 'signature' );
 		
+	}
+}
+
+
+if ( ! function_exists( 'ssp_str_putcsv' ) ) {
+	/**
+	 * Convert an array to a CSV string
+	 *
+	 * @param $input_array
+	 * @param string $delimiter
+	 * @param string $enclosure
+	 *
+	 * @return string
+	 */
+	function ssp_str_putcsv( $list ) {
+		
+		$upload_dir = wp_upload_dir();
+		$podcast_file_directory = $upload_dir['basedir'] . DIRECTORY_SEPARATOR . 'podcast_episodes' . DIRECTORY_SEPARATOR;
+		$podcast_file_url = $upload_dir['baseurl'] . DIRECTORY_SEPARATOR . 'podcast_episodes' . DIRECTORY_SEPARATOR;
+		
+		if ( ! file_exists( $podcast_file_directory ) ) {
+			wp_mkdir_p( $podcast_file_directory );
+		}
+		
+		$podcast_import_file = $podcast_file_directory . 'ssp_episodes.csv';
+		
+		$fp = fopen($podcast_import_file, 'w');
+		
+		foreach ($list as $fields) {
+			fputcsv($fp, $fields);
+		}
+		
+		fclose($fp);
+		
+		$podcast_import_file_url = $podcast_file_url . 'ssp_episodes.csv';
+		return $podcast_import_file_url;
 	}
 }

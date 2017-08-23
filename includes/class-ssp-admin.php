@@ -1368,7 +1368,7 @@ class SSP_Admin {
 		}
 		
 		// check if there is at least one podcast to import
-		$podcast_query = ssp_get_existing_podcast();
+		$podcast_query = ssp_get_existing_podcasts();
 		if ( $podcast_query->have_posts() ) {
 			add_action( 'admin_notices', array( $this, 'existing_podcasts_notice' ) );
 		}

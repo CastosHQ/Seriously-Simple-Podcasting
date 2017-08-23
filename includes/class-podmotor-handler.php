@@ -400,27 +400,32 @@ class Podmotor_Handler {
 		
 		$this->setup_response();
 		
-		if ( empty( $post ) ) {
+		if ( empty( $podcast_data ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
 			
 			return $this->response;
 		}
 		
+		$podcast_file = ssp_str_putcsv( $podcast_data );
 		
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		
-		$api_url = SSP_PODMOTOR_APP_URL . 'api/episode';
+		$api_url = SSP_PODMOTOR_APP_URL . 'api/import_episodes';
 		
 		$post_body = array(
 			'api_token'    => $podmotor_api_token,
-			'podcast_data' => json_encode( $podcast_data ),
+			'podcast_file' => $podcast_file,
 		);
+		
+		ssp_debug( $post_body );
 		
 		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
+		
+		ssp_debug($app_response);
 		
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );

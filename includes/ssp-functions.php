@@ -527,32 +527,70 @@ if ( ! function_exists( 'ssp_is_connected_to_podcastmotor' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_get_existing_podcast' ) ) {
-
+if ( ! function_exists( 'ssp_get_existing_podcasts' ) ) {
 	/**
-	 * Check if one podcast exists that can be uploaded to PodcastMotor
+	 * Get all available posts that are registered as podcasts
 	 *
 	 * @return WP_Query
 	 */
-	function ssp_get_existing_podcast() {
+	function ssp_get_existing_podcasts() {
 		$podcast_post_types = ssp_post_types( true );
-		$args     = array(
+		$args               = array(
 			'post_type'      => $podcast_post_types,
-			'posts_per_page' => 1,
+			'posts_per_page' => - 1,
 			'post_status'    => 'any',
 			'meta_query'     => array(
 				array(
-					'key'     => 'podmotor_episode_id',
-					'compare' => 'NOT EXISTS',
-					'value'   => ''
+					'key'     => 'audio_file',
+					'compare' => 'EXISTS',
 				),
-			)
+				array(
+					'relation' => 'OR',
+					array(
+						'key'     => 'podmotor_episode_id',
+						'compare' => 'NOT EXISTS',
+					),
+					array(
+						'key'     => 'podmotor_episode_id',
+						'value'   => '0',
+						'compare' => '=',
+					),
+				),
+			),
 		);
-		$podcasts = new WP_Query( $args );
-
+		$podcasts           = new WP_Query( $args );
 		return $podcasts;
 	}
+} // End if().
 
+if ( ! function_exists( 'ssp_build_podcast_data' ) ) {
+	/**
+	 * Generate the podcast data to be send via the SSH API
+	 *
+	 * @param $podcast_query
+	 *
+	 * @return $podcast_data array
+	 */
+	function ssp_build_podcast_data( $podcast_query ) {
+		$podcasts     = $podcast_query->get_posts();
+		echo '<pre>';
+		print_r( $podcasts );
+		echo '</pre>';
+		$podcast_data = array();
+		foreach ( $podcasts as $podcast ) {
+			$podcast_data[ $podcast->ID ] = array(
+				'post_id'      => $podcast->ID,
+				'post_title'   => $podcast->post_title,
+				'post_content' => $podcast->post_content,
+				'post_date'    => $podcast->post_date,
+				'audio_file'   => get_post_meta( $podcast->ID, 'audio_file', true ),
+			);
+		}
+		echo '<pre>';
+		print_r( $podcast_data );
+		echo '</pre>';
+		return $podcast_data;
+	}
 }
 
 if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
@@ -606,7 +644,7 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 		 */
 		if ( 'true' == $podmotor_import_podcasts ) {
 			ssp_debug( 'Import podcasts is on' );
-			$podcast_query = ssp_get_existing_podcast();
+			$podcast_query = ssp_get_existing_podcasts();
 
 			/**
 			 * Only if there are posts to import
@@ -614,69 +652,29 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 			if ( $podcast_query->have_posts() ) {
 				ssp_debug( 'Podcasts exist to import' );
 
-				$podcasts   = $podcast_query->get_posts();
-				$podcast    = $podcasts[0]; // there will always only ever be one
-				$podcast_id = $podcast->ID;
-				ssp_debug( 'Importing Podcast ' . $podcast_id );
-				/**
-				 * Update the podmotor_episode_id, in case this gets triggered again
-				 */
-				update_post_meta( $podcast_id, 'podmotor_episode_id', '0' );
-				$podmotor_handler = new Podmotor_Handler();
-				$podcast_url      = get_post_meta( $podcast_id, 'audio_file', true );
-
-				if ( ! strstr( $podcast_url, site_url() ) ) {
-					ssp_debug( 'Uploading external file ' . $podcast_url . ' for Podcast ' . $podcast_id );
-					$file_upload_response = $podmotor_handler->upload_file_from_external_source( $podcast_url );
-				} else {
-					// convert the local url to a directory path
-					$podcast_file = str_replace( WP_CONTENT_URL, WP_CONTENT_DIR, $podcast_url );
-					ssp_debug( 'Uploading local file ' . $podcast_file . ' for Podcast ' . $podcast_id );
-					$file_upload_response = $podmotor_handler->upload_file_to_podmotor_storage( $podcast_file, $podcast_id );
-				}
+				$podcast_data = ssp_build_podcast_data( $podcast_query );
+				ssp_debug( 'Podcast Data ', $podcast_data );
 				
-				if ( 'success' === $file_upload_response['status'] ) {
+				$podmotor_handler = new Podmotor_Handler();
+				$upload_podcasts_response = $podmotor_handler->upload_podcasts_to_podmotor( $podcast_data );
+				
+				if ( 'success' === $upload_podcasts_response['status'] ) {
 
-					ssp_debug( 'Success uploading file for Podcast ' . $podcast_id );
-					$file_data_response = $podmotor_handler->upload_podmotor_storage_file_data_to_podmotor( $file_upload_response['podmotor_file'] );
-					if ( 'success' === $file_data_response['status'] ) {
-
-						ssp_debug( 'Success uploading file data for Podcast ' . $podcast_id );
-						update_post_meta( $podcast_id, 'audio_file', $file_data_response['file_path'] );
-						update_post_meta( $podcast_id, 'podmotor_file_id', $file_data_response['file_id'] );
-						$episode_data_response = $podmotor_handler->upload_podcast_to_podmotor( $podcast );
-						if ( 'success' === $episode_data_response['status'] ) {
-
-							ssp_debug( 'Success uploading podcast data for Podcast ' . $podcast_id );
-							update_post_meta( $podcast_id, 'podmotor_episode_id', $episode_data_response['episode_id'] );
-
-						} else {
-							ssp_debug( 'Error uploading podcast data for Podcast ' . $podcast_id );
-							ssp_debug( $episode_data_response );
-						}
-
-					} else {
-						ssp_debug( 'Error uploading file data for Podcast ' . $podcast_id );
-						ssp_debug( $file_data_response );
-					}
+					ssp_debug( 'Success uploading podcast data, switching off podcast importer' );
+					update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 
 				} else {
-					ssp_debug( 'Error uploading file for Podcast ' . $podcast_id );
-					ssp_debug( $file_upload_response );
-				}
-
-				$podmotor_episode_id = get_post_meta( $podcast_id, 'podmotor_episode_id', '0' );
-				if ( empty( $podmotor_episode_id ) ) {
-					delete_post_meta( $podcast_id, 'podmotor_episode_id' );
+					ssp_debug( 'Error uploading podcast data' );
+					ssp_debug( $upload_podcasts_response );
 				}
 
 			} else {
 				/**
-				 * There are no more posts to import, disable import
+				 * There are no posts to import, disable import
 				 */
 				ssp_debug( 'Switching off podcast import' );
 				update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-				ssp_email_podcasts_imported();
+				//ssp_email_podcasts_imported();
 
 				return false;
 			}

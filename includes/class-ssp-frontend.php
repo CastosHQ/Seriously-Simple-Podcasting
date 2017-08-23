@@ -895,9 +895,9 @@ class SSP_Frontend {
 		if ( ! empty( $podcast_importer ) && 'true' == $podcast_importer ) {
 			$continue = import_existing_podcast();
 			if ( $continue ) {
-				$reponse = array( 'continue' => 'true', 'response' => 'There are still podcasts to be imported' );
+				$reponse = array( 'continue' => 'true', 'response' => 'Podcast data imported' );
 			} else {
-				$reponse = array( 'continue' => 'false', 'response' => 'There are no more podcasts to be imported' );
+				$reponse = array( 'continue' => 'false', 'response' => 'An error occurred importing the podcast data' );
 			}
 			wp_send_json( $reponse );
 		}

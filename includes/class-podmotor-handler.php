@@ -390,8 +390,56 @@ class Podmotor_Handler {
 	}
 	
 	/**
-	 * Upload Podcast episode data to Seriously Simple Hosting
-	 * Should only happen once the file has been uploaded to Seriously Simple Hosting Storage
+	 * Upload Podcasts episode data to Seriously Simple Hosting
+	 *
+	 * @param $podcast_data array of post values
+	 *
+	 * @return bool
+	 */
+	public function upload_podcasts_to_podmotor( $podcast_data ) {
+		
+		$this->setup_response();
+		
+		if ( empty( $post ) ) {
+			$this->update_response( 'message', 'Invalid Podcast data' );
+			
+			return $this->response;
+		}
+		
+		
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		
+		$api_url = SSP_PODMOTOR_APP_URL . 'api/episode';
+		
+		$post_body = array(
+			'api_token'    => $podmotor_api_token,
+			'podcast_data' => json_encode( $podcast_data ),
+		);
+		
+		$app_response = wp_remote_post( $api_url, array(
+				'timeout' => 45,
+				'body'    => $post_body,
+			)
+		);
+		
+		if ( ! is_wp_error( $app_response ) ) {
+			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
+			if ( 'success' == $responseObject->status ) {
+				$this->update_response( 'status', 'success' );
+				$this->update_response( 'message', 'Pocast episode data successfully uploaded to Seriously Simple Hosting' );
+			} else {
+				$this->update_response( 'message', 'An error occurred uploading the episode data to Seriously Simple Hosting' );
+			}
+		} else {
+			// $todo this should be logged somewhere
+			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
+		}
+		
+		return $this->response;
+	}
+	
+	/**
+	 * Creates the podcast import queue with Seriously Simple Hosting
 	 *
 	 * @param $post
 	 *

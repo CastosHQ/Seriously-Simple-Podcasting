@@ -911,20 +911,14 @@ class SSP_Frontend {
 	 */
 	public function update_episode_data_from_podmotor() {
 		$podcast_updater = ( isset( $_POST['podcast_updater'] ) ? filter_var( $_POST['podcast_updater'], FILTER_SANITIZE_STRING ) : '' );
-		ssp_debug( 'Updating Podcasts' );
 		if ( ! empty( $podcast_updater ) && 'true' == $podcast_updater ) {
-			ssp_debug( 'Confirmed Updating Podcasts' );
 			$reponse = array( 'updated' => 'false' );
 			$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_SANITIZE_STRING ) : '' );
 			$podmotor_api_token    = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 			if ( $ssp_podcast_api_token === $podmotor_api_token ) {
-				ssp_debug( 'Token match' );
 				if ( isset( $_FILES['ssp_podcast_file'] ) ) {
-					ssp_debug( 'File exists' );
 					$episode_data_array = array_map( 'str_getcsv', file( $_FILES['ssp_podcast_file']['tmp_name'] ) );
-					ssp_debug( $episode_data_array );
 					foreach ( $episode_data_array as $episode_data ) {
-						ssp_debug( 'Updating post meta' );
 						update_post_meta( $episode_data[0], 'podmotor_episode_id', $episode_data[1] );
 						update_post_meta( $episode_data[0], 'audio_file', $episode_data[2] );
 					}

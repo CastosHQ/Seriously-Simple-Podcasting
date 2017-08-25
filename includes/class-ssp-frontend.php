@@ -925,6 +925,7 @@ class SSP_Frontend {
 						update_post_meta( $episode_data[0], 'podmotor_episode_id', $episode_data[1] );
 						update_post_meta( $episode_data[0], 'audio_file', $episode_data[2] );
 					}
+					ssp_email_podcasts_imported();
 					$reponse['updated'] = 'true';
 				}
 			}

@@ -510,6 +510,38 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 	}
 }
 
+if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
+	
+	/**
+	 * Converts human readable file size (eg 280 kb) to bytes (286720)
+	 *
+	 * @param $formatted_size
+	 *
+	 * @return string
+	 */
+	function convert_human_readable_to_bytes( $formatted_size ) {
+		
+		$formatted_size_type  = preg_replace( '/[^a-z]/', '', $formatted_size );
+		$formatted_size_value = trim( str_replace( $formatted_size_type, '', $formatted_size ) );
+		
+		switch ( strtoupper( $formatted_size_type ) ) {
+			case 'KB':
+				return $formatted_size_value * 1024;
+			case 'MB':
+				return $formatted_size_value * pow( 1024, 2 );
+			case 'GB':
+				return $formatted_size_value * pow( 1024, 3 );
+			case 'TB':
+				return $formatted_size_value * pow( 1024, 4 );
+			case 'PB':
+				return $formatted_size_value * pow( 1024, 5 );
+			default:
+				return $formatted_size_value;
+		}
+	}
+}
+
+
 if ( ! function_exists( 'ssp_is_connected_to_podcastmotor' ) ) {
 
 	/**
@@ -604,7 +636,6 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 		$podmotor_import_podcasts = get_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		if ( 'true' === $podmotor_import_podcasts ) {
 
-			global $wpdb;
 			$podcast_post_types = ssp_post_types( true );
 			$args     = array(
 				'post_type'      => $podcast_post_types,
@@ -612,11 +643,22 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 				'post_status'    => 'any',
 				'meta_query'     => array(
 					array(
-						'key'     => 'podmotor_episode_id',
-						'compare' => 'NOT EXISTS',
-						'value'   => ''
+						'key'     => 'audio_file',
+						'compare' => 'EXISTS',
 					),
-				)
+					array(
+						'relation' => 'OR',
+						array(
+							'key'     => 'podmotor_episode_id',
+							'compare' => 'NOT EXISTS',
+						),
+						array(
+							'key'     => 'podmotor_episode_id',
+							'value'   => '0',
+							'compare' => '=',
+						),
+					),
+				),
 			);
 			$podcasts = new WP_Query( $args );
 

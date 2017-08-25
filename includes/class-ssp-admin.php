@@ -678,6 +678,9 @@ class SSP_Admin {
 		}
 		
 		$field_data = $this->custom_fields();
+		
+		ssp_debug( 'Field Data',  $field_data );
+		
 		$enclosure  = '';
 		
 		foreach ( $field_data as $k => $field ) {
@@ -704,27 +707,31 @@ class SSP_Admin {
 		
 		if ( $enclosure ) {
 			
-			// Get file duration
-			if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
-				$duration = $ss_podcasting->get_file_duration( $enclosure );
-				if ( $duration ) {
-					update_post_meta( $post_id, 'duration', $duration );
-				}
-			}
+			ssp_debug( 'File Enclosure',  $enclosure );
 			
-			// Get file size
-			if ( get_post_meta( $post_id, 'filesize', true ) == '' ) {
-				$filesize = $ss_podcasting->get_file_size( $enclosure );
-				if ( $filesize ) {
-					
-					if ( isset( $filesize['formatted'] ) ) {
-						update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+			if ( ! ssp_is_connected_to_podcastmotor() ) {
+				// Get file duration
+				if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
+					$duration = $ss_podcasting->get_file_duration( $enclosure );
+					if ( $duration ) {
+						update_post_meta( $post_id, 'duration', $duration );
 					}
-					
-					if ( isset( $filesize['raw'] ) ) {
-						update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+				}
+				
+				// Get file size
+				if ( get_post_meta( $post_id, 'filesize', true ) == '' ) {
+					$filesize = $ss_podcasting->get_file_size( $enclosure );
+					if ( $filesize ) {
+						
+						if ( isset( $filesize['formatted'] ) ) {
+							update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+						}
+						
+						if ( isset( $filesize['raw'] ) ) {
+							update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+						}
+						
 					}
-					
 				}
 			}
 			
@@ -793,6 +800,15 @@ class SSP_Admin {
 			'section'          => 'info',
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
+		
+		if ( ssp_is_connected_to_podcastmotor() ) {
+			$fields['filesize_raw'] = array(
+				'type'             => 'hidden',
+				'default'          => '',
+				'section'          => 'info',
+				'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
+			);
+		}
 		
 		$fields['date_recorded'] = array(
 			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),

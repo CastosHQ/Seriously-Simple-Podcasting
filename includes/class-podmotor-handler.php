@@ -411,7 +411,7 @@ class Podmotor_Handler {
 			return $this->response;
 		}
 		
-		$podcast_file = ssp_str_putcsv( $podcast_data );
+		$podcast_data_json = wp_json_encode( $podcast_data );
 		
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		
@@ -419,7 +419,7 @@ class Podmotor_Handler {
 		
 		$post_body = array(
 			'api_token'    => $podmotor_api_token,
-			'podcast_file' => $podcast_file,
+			'podcast_data' => $podcast_data_json,
 		);
 		
 		ssp_debug( $post_body );

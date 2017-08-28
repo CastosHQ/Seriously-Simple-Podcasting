@@ -3,7 +3,8 @@ Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
 Tested up to: 4.8
-Stable tag: 1.17.1
+Requires PHP: 5.3.3
+Stable tag: 1.17.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -94,6 +95,19 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.17.3 =
+* 2017-08-29
+* [FIX] Fixed a bug with the importer process sending the incorrect data format
+
+= 1.17.2 =
+* 2017-08-28
+* UPDATE SUMMARY:  Updates and improvements for [Seriously Simple Hosting](http://app.seriouslysimplepodcasting.com/) as well as general plugin bug fixes
+* [IMPROVEMENT] Improved the Seriously Simple Hosting import procedure
+* [FIX] Fixed a bug where the file size and duration was not being returned correctly
+* [FIX] Fixed a bug where the stored file size of podcasts was not displaying correctly on the podcast feed
+* [NEW] Updated the plugin readme to display the new PHP version for the WordPress.org plugin repository
+* [NEW] Add option for pubDate to respect "Date recorded" field per episode (props [Magnus Sjögren](https://github.com/magnus-sjogren))
 
 = 1.17.1 =
 * 2017-08-07

@@ -48,7 +48,6 @@ if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
 if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
 	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.seriouslysimplepodcasting.com/' );
 }
-
 define( 'SSP_LOG_DIR_PATH', SSP_PLUGIN_PATH . 'log' . DIRECTORY_SEPARATOR );
 define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );
 define( 'SSP_LOG_PATH', SSP_LOG_DIR_PATH . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );

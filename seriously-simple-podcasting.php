@@ -1,13 +1,13 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.17.2-0.0.2
+ * Version: 1.17.2
  * Plugin URI: https://www.seriouslysimplepodcasting.com/
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: PodcastMotor
  * Author URI: https://www.podcastmotor.com/
+ * Requires PHP: 5.3.3
  * Requires at least: 4.4
- * Required PHP version: 5.3.3
  * Tested up to: 4.8
  *
  * Text Domain: seriously-simple-podcasting

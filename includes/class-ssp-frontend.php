@@ -87,7 +87,16 @@ class SSP_Frontend {
 
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
+
+		// Load fonts
+        add_action( 'wp_enqueue_scripts', array( $this, 'load_styles' ) );
+
 	}
+
+	public function load_styles(){
+	    wp_enqueue_style( 'ssp-player-styles', SSP_PLUGIN_URL . 'assets/css/icon_fonts.css', [], SSP_VERSION );
+	    wp_enqueue_script( 'ssp-player-waveform', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', [ 'jquery' ], SSP_VERSION );
+    }
 
 	/**
 	 * Get download link for episode
@@ -153,6 +162,7 @@ class SSP_Frontend {
 	 * @return string          Modified content
 	 */
 	public function content_meta_data( $content = '' ) {
+
 		global $post, $wp_current_filter, $episode_context;
 
 		// Don't output unformatted data on excerpts
@@ -221,7 +231,8 @@ class SSP_Frontend {
 	 * @return string          Modified excerpt
 	 */
 	public function excerpt_meta_data( $excerpt = '', $content = 'excerpt' ) {
-		global $post;
+
+	    global $post;
 
 		if( post_password_required( $post->ID ) ) {
 			return $excerpt;
@@ -290,7 +301,6 @@ class SSP_Frontend {
 		}
 
 		$meta = apply_filters( 'ssp_episode_meta', $meta, $episode_id, $context );
-
 		return $meta;
 	}
 
@@ -300,7 +310,7 @@ class SSP_Frontend {
 	 * @param  string  $context    Context for display
 	 * @return string              Episode meta details
 	 */
-	public function episode_meta_details ( $episode_id = 0, $context = 'content' ) {
+	public function episode_meta_details ( $episode_id = 0, $context = 'content', $return = false ) {
 
 		if ( ! $episode_id ) {
 			return;
@@ -358,6 +368,10 @@ class SSP_Frontend {
 		// Allow dynamic filtering of meta data - to remove, add or reorder meta items
 		$meta = apply_filters( 'ssp_episode_meta_details', $meta, $episode_id, $context );
 
+		if( true === $return ){
+		    return $meta;
+        }
+
 		$meta_display = '';
 		$meta_sep = apply_filters( 'ssp_episode_meta_separator', ' | ' );
 		foreach ( $meta as $key => $data ) {
@@ -412,7 +426,6 @@ class SSP_Frontend {
 		if ( ! empty( $itunes_url ) ) {
 			$meta_display .= $meta_sep . '<a href="' . esc_url( $itunes_url ) . '" title="' . __( 'Leave a review', 'seriously-simple-podcasting' ) . '" class="podcast-meta-itunes">' . __( 'Leave a review', 'seriously-simple-podcasting' ) . '</a>';
 		}
-
 		$meta_display = '<div class="podcast_meta"><aside>' . $meta_display . '</aside></div>';
 
 		return $meta_display;
@@ -702,6 +715,7 @@ class SSP_Frontend {
 	 * @return string              Media player HTML on success, empty string on failure
 	 */
 	public function media_player ( $src = '', $episode_id = 0 ) {
+
 		$player = '';
 
 		if ( $src ) {
@@ -1134,7 +1148,7 @@ class SSP_Frontend {
 	 * @param  array   $content_items Orderd array of content items to display
 	 * @return string                 HTML of episode with specified content items
 	 */
-	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '' ) {
+	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '', $style = 'mini' ) {
 		global $post, $episode_context;
 
 		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
@@ -1155,6 +1169,325 @@ class SSP_Frontend {
 			setup_postdata( $post );
 
 			$episode_context = $context;
+
+			// Get episode album art
+            $thumb_id = get_post_thumbnail_id( $episode_id );
+            if ( ! empty( $thumb_id ) ) {
+                list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'full' );
+                $albumArt = compact( 'src', 'width', 'height' );
+            } else {
+                $albumArt['src'] = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
+                $albumArt['width'] = 300;
+                $albumArt['height'] = 300;
+            }
+
+			// Render different player styles
+            /**
+             * This is very much the start of what needs to become a more integrated player.
+             * This player needs to also adapt for embeds, and needs to look presentable in many sizes
+             * @author Simon Dowdles - SSP <simon.dowdles@gmail.com>
+             * @todo Seperate logic into own js file
+             * @todo Work on styles
+             * @todo Work on feedback on player
+             * @todo Move CSS to own file
+             * @todo Add filters
+             * @todo Add settings pages to customize layout / colours
+             */
+            $meta = $this->episode_meta_details( $episode_id, $episode_context, true );
+            $file = $this->get_enclosure( $episode_id );
+
+            if( 'mini' !== $style ){
+                if( 'large' == $style ){
+                    ?>
+                        <div class="ssp-player ssp-player-large">
+                            <div style="width:auto; float:left; clear:none;">
+                               <div style="width: 150px; height: 150px; background: url( <?php echo $albumArt['src']; ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
+                            </div>
+                            <div style="overflow: hidden">
+                                <div style="padding: 15px;overflow: hidden;">
+                                    <div class="ssp-player-info">
+                                        <div style="width: 80%; float:left;">
+                                            <h3 class="ssp-player-title episode-title"><?php echo get_the_title(); ?></h3>
+                                        </div>
+                                        <div class="ssp-download-edpisode" style="overflow: hidden;text-align:right;">
+                                            <a href="<?php echo $file; ?>?ref=download" target="_blank">
+                                                <span style="display:inline-block;color:#fff;cursor:pointer;width:17px;height:17px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_download.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;"></span>
+                                            </a>
+                                        </div>
+                                        <div>&nbsp;</div>
+                                        <!--<div class="ssp-player-episode-details">
+                                            <?php /*echo $this->episode_meta_details( $episode_id, $episode_context ); */?>
+                                        </div>-->
+                                        <div class="ssp-media-player">
+                                            <div class="ssp-custom-player-controls">
+                                                <div class="ssp-play-pause" id="ssp-play-pause">
+                                                    <span class="icon icon-play2">&nbsp;</span>
+                                                </div>
+                                                <div class="ssp-wave-form">
+                                                    <div class="ssp-inner">
+                                                        <div id="waveform" class="ssp-wave"></div>
+                                                        <div class="ssp-time-volume">
+
+                                                            <div class="ssp-duration">
+                                                                <span id="sspPlayedDuration">00:00</span> / <span id="sspTotalDuration"><?php echo $meta['duration']; ?></span>
+                                                            </div>
+
+                                                            <div class="ssp-volume">
+
+                                                                <div class="ssp-back-thirty-container" id="ssp-back-thirty" style="float:left;">
+                                                                    <div style="display:inline-block;margin:2px 4px;text-align:center;color:#fff;cursor:pointer;width:16px;height:16px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_back_30.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;"></div>
+                                                                </div>
+
+                                                                <div class="ssp-playback-speed-container" id="ssp-playback-speed" style="float:left;">
+                                                                    <div style="display:inline-block;margin:2px 4px 2px 0;text-align:center;color:#fff;cursor:pointer;width:16px;height:16px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;"></div>
+                                                                </div>
+
+                                                                <div class="ssp-playback-speed-label-container" style="float:left;">
+                                                                    <div style="display:inline-block;margin: 4px 0 0 0;text-align:center;color:#fff;cursor:pointer;">
+                                                                        <span id="ssp_playback_speed" data-ssp-playback-rate="1" style="display:inline-block;padding:0 3px;margin-right: 2px;">1x</span>
+                                                                    </div>
+                                                                </div>
+
+                                                                <!--<div class="volume" title="Set Volume" style="margin-left: 10px;">
+                                                                   <span class="volumeBar"></span>
+                                                                </div>-->
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <script>
+
+                            String.prototype.toFormattedDuration = function () {
+                                var sec_num = parseInt(this, 10); // don't forget the second param
+                                var hours   = Math.floor(sec_num / 3600);
+                                var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
+                                var seconds = sec_num - (hours * 3600) - (minutes * 60);
+
+                                if (hours   < 10) {hours   = "0"+hours;}
+                                if (minutes < 10) {minutes = "0"+minutes;}
+                                if (seconds < 10) {seconds = "0"+seconds;}
+                                return hours > 0 ? ( hours+':'+ minutes+':'+seconds) : (minutes+':'+seconds);
+                            }
+
+                            var sspUpdateDuration;
+
+                            var ssp_player = WaveSurfer.create({
+                                container: '#waveform',
+                                waveColor: '#eee',
+                                progressColor: '#28c0e1',
+                                barWidth: 3,
+                                barHeight: 15,
+                                height: 30,
+                                hideScrollbar: true,
+                                skipLength: 30
+                            });
+
+                            ssp_player.load('<?php echo $file; ?>');
+
+                            ssp_player.on( 'ready', function(e){
+                                $( '#sspTotalDuration' ).text( ssp_player.getDuration().toString().toFormattedDuration() );
+                            } );
+
+                            ssp_player.on( 'play', function(e){
+                                $( '#ssp-play-pause .icon' ).removeClass().addClass( 'icon icon-pause' );
+                                $( '#sspPlayedDuration' ).text( ssp_player.getCurrentTime().toString().toFormattedDuration() )
+                                sspUpdateDuration = setInterval( function(){
+                                    $( '#sspPlayedDuration' ).text( ssp_player.getCurrentTime().toString().toFormattedDuration() );
+                                }, 100 );
+                            } );
+
+                            ssp_player.on( 'pause', function(e){
+                                $( '#ssp-play-pause .icon' ).removeClass().addClass( 'icon icon-play2' );
+                                clearInterval( sspUpdateDuration );
+                            } );
+
+                            var $ = jQuery.noConflict();
+
+                            $( document ).ready( function(){
+
+                                $('#ssp-play-pause').on( 'click', function(e){
+                                    ssp_player.playPause();
+                                } );
+
+                                $('#ssp-back-thirty').on( 'click', function(e){
+                                    ssp_player.skipBackward();
+                                } );
+
+                                $('#ssp-playback-speed').on( 'click', function(e){
+                                    switch( $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate' ) ){
+                                        case "1":
+                                            $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' );
+                                            $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1.5x' );
+                                            ssp_player.setPlaybackRate(1.5);
+                                            break;
+                                        case "1.5":
+                                            $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' );
+                                            $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('2x' );
+                                            ssp_player.setPlaybackRate(2);
+                                            break;
+                                        case "2":
+                                            $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' );
+                                            $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1x' );
+                                            ssp_player.setPlaybackRate(1);
+                                        default:
+                                            break;
+                                    }
+                                } );
+
+                                /*var volumeDrag = false;
+                                $('.volume').on('mousedown', function (e) {
+                                    volumeDrag = true;
+                                    audio.muted = false;
+                                    $('.sound').removeClass('muted');
+                                    updateVolume(e.pageX);
+                                });
+                                $(document).on('mouseup', function (e) {
+                                    if (volumeDrag) {
+                                        volumeDrag = false;
+                                        updateVolume(e.pageX);
+                                    }
+                                });
+                                $(document).on('mousemove', function (e) {
+                                    if (volumeDrag) {
+                                        updateVolume(e.pageX);
+                                    }
+                                });
+                                var updateVolume = function (x, vol) {
+                                    var volume = $('.ssp-volume .volume');
+                                    var percentage;
+                                    //if only volume have specificed
+                                    //then direct update volume
+                                    if (vol) {
+                                        percentage = vol * 100;
+                                    } else {
+                                        var position = x - volume.offset().left;
+                                        percentage = 100 * position / volume.width();
+                                    }
+
+                                    if (percentage > 100) {
+                                        percentage = 100;
+                                    }
+                                    if (percentage < 0) {
+                                        percentage = 0;
+                                    }
+
+                                    //update volume bar and video volume
+                                    $('.volumeBar').css('width', percentage + '%');
+                                    audio.volume = percentage / 100;
+
+                                    //change sound icon based on volume
+                                    if ( audio.volume == 0 ) {
+                                        $('.sound').removeClass('sound2').addClass('muted');
+                                    } else if (audio.volume > 0.5) {
+                                        $('.sound').removeClass('muted').addClass('sound2');
+                                    } else {
+                                        $('.sound').removeClass('muted').removeClass('sound2');
+                                    }
+                                }*/
+                            } );
+
+                        </script>
+
+                        <style type="text/css">
+
+                            .ssp-player.ssp-player-large{
+                                overflow:hidden;
+                                clear:both;
+                                background:#222;
+                                color: #ccc;
+                                position: relative;
+                                font-size: 10px;
+                            }
+
+                            .ssp-player.ssp-player-large h3.episode-title{
+                                margin:0;
+                                padding:0;
+                                font-size: 16px;
+                                color:#fff;
+                            }
+                            .ssp-player-episode-details{
+                                font-size: 10px;
+                            }
+                            .ssp-player-episode-details .podcast_meta a,
+                            .ssp-player-episode-details .podcast_meta a:hover{
+                                color: #ccc;
+                                text-decoration: none;
+                                -webkit-box-shadow: none;
+                                -moz-box-shadow: none;
+                                box-shadow: none;
+                            }
+
+                            /* Custom Player Controls */
+
+                            .ssp-custom-player-controls{
+                                margin-top: 10px;
+                            }
+
+                            .ssp-play-pause{
+                                font-size: 30px;
+                                width: 30px;
+                                float:left;
+                                color: #fff;
+                            }
+
+                            .ssp-wave-form{
+                                overflow: hidden;
+                            }
+
+                                .ssp-wave-form .ssp-inner{
+                                    overflow: hidden;
+                                    padding: 8px 0 8px 15px;
+                                }
+
+                            .ssp-wave-form .ssp-time-volume{
+                                color: #ccc;
+                                padding-top: 5px;
+                            }
+
+                            .ssp-wave-form .ssp-time-volume .ssp-duration{
+                                float:left;
+                                font-size: 8px;
+                                padding-top:5px;
+                            }
+
+                            .ssp-wave-form .ssp-time-volume .ssp-volume{
+                                float:right;
+                                font-size: 9px;
+                            }
+
+                            .ssp-wave-form .ssp-time-volume .ssp-volume .volume {
+                                position:relative;
+                                cursor:pointer;
+                                width:100px;
+                                height:4px;
+                                float:right;
+                                margin-top:10px;
+                                background-color:#666;
+                            }
+                            .ssp-wave-form .ssp-time-volume .ssp-volume .volumeBar {
+                                display:block;
+                                height:4px;
+                                position:absolute;
+                                top:0;
+                                left:0;
+                                background-color:#28c0e1;
+                                z-index:10;
+                                width: 90%;
+                            }
+
+
+                        </style>
+                    <?php
+                }
+            }
 
 			// Display specified content items in the order supplied
 			foreach ( $content_items as $item ) {
@@ -1251,11 +1584,30 @@ class SSP_Frontend {
 	}
 }
 
+add_action( 'wp_enqueue_scripts', 'ssp_enqueue_wave_surfer' );
+
+function ssp_enqueue_wave_surfer(){
+    wp_enqueue_script( 'ssp-wavesurfer', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', SSP_VERSION, [ 'jquery' ] );
+}
+
 function example_mejs_add_container_class() {
     if ( ! wp_script_is( 'wp-mediaelement', 'done' ) ) {
         return;
     }
     ?>
+    <script type="text/javascript">
+        var _paq = _paq || [];
+        /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
+        _paq.push(['trackPageView']);
+        _paq.push(['enableLinkTracking']);
+        (function() {
+            var u="//piwik.dev/";
+            _paq.push(['setTrackerUrl', u+'piwik.php']);
+            _paq.push(['setSiteId', '1']);
+            var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
+            g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
+        })();
+    </script>
     <script>
         (function() {
 
@@ -1265,19 +1617,141 @@ function example_mejs_add_container_class() {
             settings.features = settings.features || mejs.MepDefaults.features;
             settings.features.push( 'addsspclass' );
             settings.features.push( 'addcustomcontrol' );
+            settings.features.push( 'addcustomtracking' );
 
-            MediaElementPlayer.prototype.buildaddsspclass = function( player ) {
-                player.container.addClass( 'ssp-mejs-container' );
+            MediaElementPlayer.prototype.buildaddcustomtracking = function( player, controls, layers, media ) {
+                // Play Episode
+                jQuery(media).bind( 'play', function(){
+                    window.sspTrackProgress = setInterval(
+                        function(){
+                            _paq.push(['trackEvent', 'Podcast', 'Play-' + Math.floor( ( media.currentTime / media.duration ) * 100 ) + '%', 'Generic'])
+                            console.log( 'track' );
+                        },
+                        1000
+                    );
+                } );
+
+                // Pause Episode
+                jQuery(media).bind( 'pause', function(){
+                    _paq.push(['trackEvent', 'Podcast', 'Pause', 'Generic']);
+                        clearInterval(window.sspTrackProgress);
+                } );
+
+                // End Episode
+                jQuery(media).bind( 'ended', function(){
+                    _paq.push(['trackEvent', 'Podcast', 'Play-100%', 'Generic']);
+                    clearInterval(window.sspTrackProgress);
+                } );
             };
 
-            MediaElementPlayer.prototype.buildaddcustomcontrol = function(player, controls, layers, media) {
+            MediaElementPlayer.prototype.buildaddsspclass = function( player ) {
+                player.container.addClass( 'ssp-mejs-container ssp-dark' );
+            };
+
+            MediaElementPlayer.prototype.buildaddcustomcontrol = function( player, controls, layers, media ) {
+
+                var backThirtySeconds = jQuery(
+                    '<div style="display:inline-block;margin:7px 3px 7px 5px !important;text-align:center;color:#fff;cursor:pointer;width:16px;height:16px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_back_30.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
+                        '&nbsp;' +
+                    '</div>'
+                    ).on( 'click', function(e){
+                    media.currentTime -= 30;
+                } );
+
+                var expanCollapseButton = jQuery(
+                    '<div style="display:inline-block;float:right;margin:7px 7px 5px !important;text-align:center;color:#fff;cursor:pointer;width:17px;height:17px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_download.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
+                        '&nbsp;' +
+                    '</div>'
+                ).on( 'click', function( e ){
+                   if( jQuery( '#ssp-expanded-controls' ).is( ':hidden' ) ){
+                       //jQuery( e.currentTarget ).css( 'background', 'url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp-expand.svg"); ?>) center center no-repeat' );
+                       jQuery( '#ssp-expanded-controls:hidden' ).css( 'display', 'block' );
+                       sspTickerBanner = jQuery( '.ssp-ticker-banner' );
+                       sspTickerBannerContainer = sspTickerBanner.parent();
+                       sspTickerOffset = Math.floor( ( sspTickerBannerContainer.width() - sspTickerBanner.width() ) );
+
+                       var moved = 0;
+                       var offset,
+                           tickInterval;
+
+                       function doTickBanner(){
+                           sspTickerBanner.css( 'left','0' );
+                           window.tickInterval = setInterval( function(){
+                               moved = moved-10;
+                               if( moved <= sspTickerOffset ){
+                                   sspTickerBanner.css( 'left', sspTickerOffset + 'px' );
+                                   offset = 0;
+                                   moved = 0;
+                                   clearInterval( window.tickInterval );
+                                   window.tickTimeout = setTimeout( function(){ doTickBanner() }, 2000 );
+                                   return;
+                               }else{
+                                   offset = moved;
+                               }
+                               moved--;
+                               sspTickerBanner.css( 'left', offset + 'px' );
+                           }, 500 );
+                       }
+                       doTickBanner();
+                   }else{
+                       //jQuery( e.currentTarget ).css( 'background', 'url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp-collapse.svg"); ?>) center center no-repeat' );
+                       jQuery( '#ssp-expanded-controls:visible' ).css( 'display', 'none' );
+                       clearInterval( window.tickInterval );
+                       clearTimeout( window.tickTimeout );
+                   };
+
+                } );
+
+                var playSpeed = jQuery(
+                    '<div style="display:inline-block;margin:7px 0 7px 3px !important;text-align:center;color:#fff;cursor:pointer;width:16px;height:16px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
+                        '&nbsp;' +
+                    '</div>' +
+                    '<div style="display:inline-block;margin:10px 8px 7px 0 !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;">' +
+                        ' <span id="ssp_playback_speed" data-ssp-playback-rate="1" style="display:inline-block;padding:0 3px;margin-right: 2px;">1x</span>' +
+                    '</div>'
+                    ).on( 'click', function( e ){
+                        switch( jQuery( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate' ) ){
+                            case "1":
+                                jQuery( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' );
+                                jQuery( '[data-ssp-playback-rate]' ).text('1.5x' );
+                                media.playbackRate = 1.5;
+                                break;
+                            case "1.5":
+                                jQuery( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' );
+                                jQuery( '[data-ssp-playback-rate]' ).text('2x' );
+                                media.playbackRate = 2.0;
+                                break;
+                            case "2":
+                                jQuery( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' );
+                                jQuery( '[data-ssp-playback-rate]' ).text('1x' );
+                                media.playbackRate = 1.0;
+                            default:
+                                break;
+                        }
+                    } );
+
+                jQuery(controls).find('.mejs-duration-container').after( backThirtySeconds, playSpeed );
+                jQuery(controls).find('.mejs-horizontal-volume-slider').after( expanCollapseButton );
 
                 var sspCustomControls = jQuery('' +
-                    '<div class="ssp-controls">\n' +
+                    '<div class="ssp-controls" id="ssp-expanded-controls" style="display:none;">\n' +
 '                        <ul class="ssp-sub-controls">\n' +
-'                            <li>- 30s</li>\n' +
-'                            <li>+ 30s</li>\n' +
-'                            <li>DL</li>\n' +
+'                            <li>' +
+                                '<div style="display:inline-block;margin:0 3px 0 5px !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_back_30.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
+                                    '&nbsp;' +
+                                '</div>' +
+                                '<div style="display:none;margin:0 5px 0 0 !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;">' +
+                                    ' <span id="ssp_back_thirty">-30</span>' +
+                                '</div>' +
+                            '</li>\n' +
+                            '<li>' +
+                                '<div style="display:inline-block;margin::0 3px 0 5px !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
+                                '&nbsp;' +
+                                '</div>' +
+                                '<div style="display:inline-block;margin:0 5px 0 0 !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;">' +
+                                ' <span id="ssp_playback_speed" data-ssp-playback-rate="1" style="display:inline-block;padding-left:3px;">1x</span>' +
+                                '</div>' +
+                            '</li>\n' +
 '                        </ul>\n' +
 '                        <ul class="ssp-ticker">\n' +
 '                            <li>\n' +
@@ -1288,38 +1762,7 @@ function example_mejs_add_container_class() {
 '                        </ul>\n' +
 '                    </div>');
 
-                player.container.after( sspCustomControls );
-
-                sspTickerBanner = jQuery( '.ssp-ticker-banner' );
-                sspTickerBannerContainer = sspTickerBanner.parent();
-                sspTickerOffset = Math.floor( ( sspTickerBannerContainer.width() - sspTickerBanner.width() ) );
-
-                var moved = 0;
-                var offset,
-                    tickInterval;
-
-                function doTickBanner(){
-                    sspTickerBanner.css( 'left','0' );
-                    tickInterval = setInterval( function(){
-                        moved = moved-10;
-                        if( moved <= sspTickerOffset ){
-                            sspTickerBanner.css( 'left', sspTickerOffset + 'px' );
-                            offset = 0;
-                            moved = 0;
-                            clearInterval( tickInterval );
-                            setTimeout( function(){ doTickBanner() }, 2000 );
-                            return;
-                        }else{
-                            offset = moved;
-                        }
-                        moved--;
-                        sspTickerBanner.css( 'left', offset + 'px' );
-                    }, 500 );
-                }
-
-                setTimeout( function(){
-                    doTickBanner();
-                }, 2000 );
+                // player.container.after( sspCustomControls );
             }
 
         })();
@@ -1332,6 +1775,14 @@ add_action( 'wp_print_footer_scripts', function(){
     ?>
 
     <style type="text/css">
+
+        .ssp-mejs-container .mejs-time-rail{
+            width: 170px !important;
+        }
+
+        .ssp-mejs-container .mejs-time-slider{
+            width: 160px !important;
+        }
 
         .ssp-controls{
             overflow:hidden;

@@ -116,7 +116,10 @@ class SSP_Admin {
 			
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
-			
+
+			// Filter Embed HTML Code
+            add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
+
 		} // End if().
 		
 		// Add ajax action for plugin rating
@@ -141,6 +144,10 @@ class SSP_Admin {
 		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
 		
 	}
+
+	public function ssp_filter_embed_code( $code ){
+	    return str_replace( 'sandbox="allow-scripts"', 'sandbox="allow-scripts allow-same-origin"', $code );
+    }
 	
 	/**
 	 * Setup custom permalink structures
@@ -515,7 +522,7 @@ class SSP_Admin {
 		$post_id = (int) $_POST['post_id'];
 		$width   = (int) $_POST['width'];
 		$height  = (int) $_POST['height'];
-		
+
 		// Generate embed code
 		echo get_post_embed_html( $width, $height, $post_id );
 		

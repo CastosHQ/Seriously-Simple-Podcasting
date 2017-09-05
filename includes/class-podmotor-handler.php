@@ -111,6 +111,9 @@ class Podmotor_Handler {
 		}
 		
 		$api_url      = SSP_PODMOTOR_APP_URL . 'api/users/validate';
+		
+		ssp_debug( 'Validate Credentials : API URL', $api_url );
+		
 		$app_response = wp_remote_get( $api_url, array(
 				'timeout' => 45,
 				'body'    => array(
@@ -119,6 +122,8 @@ class Podmotor_Handler {
 				),
 			)
 		);
+		
+		ssp_debug( 'Validate Credentials : App Response', $app_response );
 		
 		if ( ! is_wp_error( $app_response ) ) {
 			
@@ -390,8 +395,61 @@ class Podmotor_Handler {
 	}
 	
 	/**
-	 * Upload Podcast episode data to Seriously Simple Hosting
-	 * Should only happen once the file has been uploaded to Seriously Simple Hosting Storage
+	 * Upload Podcasts episode data to Seriously Simple Hosting
+	 *
+	 * @param $podcast_data array of post values
+	 *
+	 * @return bool
+	 */
+	public function upload_podcasts_to_podmotor( $podcast_data ) {
+		
+		$this->setup_response();
+		
+		if ( empty( $podcast_data ) ) {
+			$this->update_response( 'message', 'Invalid Podcast data' );
+			
+			return $this->response;
+		}
+		
+		$podcast_data_json = wp_json_encode( $podcast_data );
+		
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		
+		$api_url = SSP_PODMOTOR_APP_URL . 'api/import_episodes';
+		
+		$post_body = array(
+			'api_token'    => $podmotor_api_token,
+			'podcast_data' => $podcast_data_json,
+		);
+		
+		ssp_debug( $post_body );
+		
+		$app_response = wp_remote_post( $api_url, array(
+				'timeout' => 45,
+				'body'    => $post_body,
+			)
+		);
+		
+		ssp_debug($app_response);
+		
+		if ( ! is_wp_error( $app_response ) ) {
+			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
+			if ( 'success' == $responseObject->status ) {
+				$this->update_response( 'status', 'success' );
+				$this->update_response( 'message', 'Pocast episode data successfully uploaded to Seriously Simple Hosting' );
+			} else {
+				$this->update_response( 'message', 'An error occurred uploading the episode data to Seriously Simple Hosting' );
+			}
+		} else {
+			// $todo this should be logged somewhere
+			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
+		}
+		
+		return $this->response;
+	}
+	
+	/**
+	 * Creates the podcast import queue with Seriously Simple Hosting
 	 *
 	 * @param $post
 	 *
@@ -401,24 +459,30 @@ class Podmotor_Handler {
 		
 		$this->setup_response();
 		
-		$podmotor_api_token = get_option( "ss_podcasting_podmotor_account_api_token", "" );
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		ssp_debug($podmotor_api_token);
 		
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/insert_queue';
+		ssp_debug($api_url);
 		
 		$post_body = array(
 			'api_token'   => $podmotor_api_token,
 			'site_name'   => get_bloginfo( 'name' ),
-			'site_action' => add_query_arg( 'podcast_importer', 'true', site_url() ),
+			'site_action' => add_query_arg( 'podcast_importer', 'true', trailingslashit( site_url() ) ),
 		);
+		ssp_debug($post_body);
 		
 		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
+		ssp_debug($app_response);
 		
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
+			ssp_debug( $responseObject );
+			
 			if ( 'success' == $responseObject->status ) {
 				$this->update_response( 'status', $responseObject->status );
 				$this->update_response( 'message', $responseObject->message );

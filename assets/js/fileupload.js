@@ -119,6 +119,7 @@ jQuery( document ).ready( function ( $ ) {
 
 			// we're only expecting one file to be uploaded
 			var file = files[ 0 ];
+			var filesize_raw = file.size;
 			var file_size = plupload.formatSize(file.size);
 			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + file.name;
 			var episode_file = episodes_url + show_slug + '/' + file.name;
@@ -133,6 +134,7 @@ jQuery( document ).ready( function ( $ ) {
 					if ( response.status == 'success' ) {
 						notificationBar( 'Uploading file to Seriously Simple Hosting Complete.' );
 						$( "#podmotor_file_id" ).val( response.file_id );
+						$( "#filesize_raw" ).val( filesize_raw );
 						$( "#filesize" ).val( file_size );
 						$( "#duration" ).val( response.file_duration );
 						$( '#upload_audio_file' ).val( episode_file );

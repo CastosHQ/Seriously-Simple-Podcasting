@@ -375,8 +375,14 @@ if ( isset( $category1['category'] ) && $category1['category'] ) { ?>
 
 				// File size
 				$size = get_post_meta( get_the_ID(), 'filesize_raw', true );
+				
 				if ( ! $size ) {
-					$size = 1;
+					if ( ssp_is_connected_to_podcastmotor() ) {
+						$formatted_size = get_post_meta( get_the_ID(), 'filesize', true );
+						$size = convert_human_readable_to_bytes($formatted_size);
+					}else {
+						$size = 1;
+					}
 				}
 				$size = apply_filters( 'ssp_feed_item_size', $size, get_the_ID() );
 
@@ -439,12 +445,19 @@ if ( isset( $category1['category'] ) && $category1['category'] ) { ?>
 				$itunes_subtitle = str_replace( array( '>', '<', '\'', '"', '`', '[andhellip;]', '[&hellip;]', '[&#8230;]' ), array( '', '', '', '', '', '', '', '' ), $itunes_subtitle );
 				$itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
 				$itunes_subtitle = apply_filters( 'ssp_feed_item_itunes_subtitle', $itunes_subtitle, get_the_ID() );
+				
+				// Date recorded
+				$pubDateType = get_option( 'ss_podcasting_publish_date', 'published' );
+				if ($pubDateType === 'published' )
+					$pubDate = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) );
+				else	// 'recorded'
+					$pubDate = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_meta(  get_the_ID(), 'date_recorded', true ), false ) );
 
 		?>
 		<item>
 			<title><?php esc_html( the_title_rss() ); ?></title>
 			<link><?php esc_url( the_permalink_rss() ); ?></link>
-			<pubDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) ); ?></pubDate>
+			<pubDate><?php echo $pubDate; ?></pubDate>
 			<dc:creator><?php echo $author; ?></dc:creator>
 			<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
 			<description><![CDATA[<?php echo $description; ?>]]></description>

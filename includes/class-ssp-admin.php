@@ -685,6 +685,9 @@ class SSP_Admin {
 		}
 		
 		$field_data = $this->custom_fields();
+		
+		ssp_debug( 'Field Data',  $field_data );
+		
 		$enclosure  = '';
 		
 		foreach ( $field_data as $k => $field ) {
@@ -711,27 +714,31 @@ class SSP_Admin {
 		
 		if ( $enclosure ) {
 			
-			// Get file duration
-			if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
-				$duration = $ss_podcasting->get_file_duration( $enclosure );
-				if ( $duration ) {
-					update_post_meta( $post_id, 'duration', $duration );
-				}
-			}
+			ssp_debug( 'File Enclosure',  $enclosure );
 			
-			// Get file size
-			if ( get_post_meta( $post_id, 'filesize', true ) == '' ) {
-				$filesize = $ss_podcasting->get_file_size( $enclosure );
-				if ( $filesize ) {
-					
-					if ( isset( $filesize['formatted'] ) ) {
-						update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+			if ( ! ssp_is_connected_to_podcastmotor() ) {
+				// Get file duration
+				if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
+					$duration = $ss_podcasting->get_file_duration( $enclosure );
+					if ( $duration ) {
+						update_post_meta( $post_id, 'duration', $duration );
 					}
-					
-					if ( isset( $filesize['raw'] ) ) {
-						update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+				}
+				
+				// Get file size
+				if ( get_post_meta( $post_id, 'filesize', true ) == '' ) {
+					$filesize = $ss_podcasting->get_file_size( $enclosure );
+					if ( $filesize ) {
+						
+						if ( isset( $filesize['formatted'] ) ) {
+							update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+						}
+						
+						if ( isset( $filesize['raw'] ) ) {
+							update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+						}
+						
 					}
-					
 				}
 			}
 			
@@ -800,6 +807,15 @@ class SSP_Admin {
 			'section'          => 'info',
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
+		
+		if ( ssp_is_connected_to_podcastmotor() ) {
+			$fields['filesize_raw'] = array(
+				'type'             => 'hidden',
+				'default'          => '',
+				'section'          => 'info',
+				'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
+			);
+		}
 		
 		$fields['date_recorded'] = array(
 			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),
@@ -911,7 +927,7 @@ class SSP_Admin {
 		 */
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			global $post;
-			if ( 'podcast' === $post->post_type ) {
+			if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
 				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery.peekabar.css' ), array(), $this->version );
 				wp_enqueue_style( 'jquery-peekabar' );
 			}
@@ -935,11 +951,11 @@ class SSP_Admin {
 		wp_enqueue_script( 'ssp-settings' );
 		
 		/**
-		 * Only load the upload scripts when adding/editing podcasts
+		 * Only load the upload scripts when adding/editing posts/podcasts
 		 */
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			global $post;
-			if ( 'podcast' === $post->post_type ) {
+			if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
 				wp_enqueue_script('plupload-all');
 				$upload_credentials = ssp_setup_upload_credentials();
 				wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );
@@ -1375,7 +1391,7 @@ class SSP_Admin {
 		}
 		
 		// check if there is at least one podcast to import
-		$podcast_query = ssp_get_existing_podcast();
+		$podcast_query = ssp_get_existing_podcasts();
 		if ( $podcast_query->have_posts() ) {
 			add_action( 'admin_notices', array( $this, 'existing_podcasts_notice' ) );
 		}

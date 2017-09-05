@@ -1265,6 +1265,8 @@ class SSP_Frontend {
 
                         <script>
 
+                            var $ = jQuery.noConflict();
+
                             String.prototype.toFormattedDuration = function () {
                                 var sec_num = parseInt(this, 10); // don't forget the second param
                                 var hours   = Math.floor(sec_num / 3600);
@@ -1308,8 +1310,6 @@ class SSP_Frontend {
                                 $( '#ssp-play-pause .icon' ).removeClass().addClass( 'icon icon-play2' );
                                 clearInterval( sspUpdateDuration );
                             } );
-
-                            var $ = jQuery.noConflict();
 
                             $( document ).ready( function(){
 

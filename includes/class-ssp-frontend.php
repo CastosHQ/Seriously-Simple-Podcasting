@@ -31,6 +31,9 @@ class SSP_Frontend {
 	 */
 	public function __construct( $file, $version ) {
 
+	    global $largePlayerInstanceNumber;
+        $largePlayerInstanceNumber = 0;
+
 		$this->version = $version;
 
 		$this->dir = dirname( $file );
@@ -91,15 +94,16 @@ class SSP_Frontend {
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 
-		// Load fonts
-        add_action( 'wp_enqueue_scripts', array( $this, 'load_styles' ) );
-
+		// Load fonts, styles and javascript
+        add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_and_scripts' ) );
 	}
 
-	public function load_styles(){
+	public function load_styles_and_scripts(){
 	    wp_enqueue_style( 'ssp-player-styles', SSP_PLUGIN_URL . 'assets/css/icon_fonts.css', [], SSP_VERSION );
 	    wp_enqueue_script( 'ssp-player-waveform', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', [ 'jquery' ], SSP_VERSION );
+        wp_enqueue_style( 'ssp-large-player-styles', SSP_PLUGIN_URL . 'assets/css/frontend.css', [ 'ssp-player-styles' ], SSP_VERSION );
     }
+
 
 	/**
 	 * Get download link for episode
@@ -1186,7 +1190,14 @@ class SSP_Frontend {
 	 * @return string                 HTML of episode with specified content items
 	 */
 	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '', $style = 'mini' ) {
-		global $post, $episode_context;
+
+	    global $post, $episode_context, $largePlayerInstanceNumber;
+
+	    $player_background_colour = get_option( 'ss_podcasting_player_background_skin_colour', false );
+        $player_wave_form_colour = get_option( 'ss_podcasting_player_wave_form_colour', false );
+        $player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
+
+        $largePlayerInstanceNumber+= 1;
 
 		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
 			return;
@@ -1194,6 +1205,9 @@ class SSP_Frontend {
 
 		// Get episode object
 		$episode = get_post( $episode_id );
+
+		$episode_series = get_the_terms( $episode_id, 'series' );
+        $episode_series = !empty( $episode_series ) ? $episode_series[0]->term_id : false;
 
 		if ( ! $episode || is_wp_error( $episode ) ) {
 			return;
@@ -1235,20 +1249,24 @@ class SSP_Frontend {
 
             if( 'mini' !== $style ){
                 if( 'large' == $style ){
+                    ob_start();
                     ?>
-                        <div class="ssp-player ssp-player-large">
-                            <div style="width:auto; float:left; clear:none;">
-                               <div style="width: 150px; height: 150px; background: url( <?php echo $albumArt['src']; ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
+                        <div class="ssp-player ssp-player-large" id="ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?>"<?php echo $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : null ;?>>
+                            <div class="ssp-album-art-container">
+                               <div class="ssp-album-art" style="background: url( <?php echo $albumArt['src']; ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
                             </div>
                             <div style="overflow: hidden">
-                                <div style="padding: 15px;overflow: hidden;">
+                                <div class="ssp-player-inner" style="overflow: hidden;">
                                     <div class="ssp-player-info">
                                         <div style="width: 80%; float:left;">
                                             <h3 class="ssp-player-title episode-title"><?php echo get_the_title(); ?></h3>
                                         </div>
-                                        <div class="ssp-download-edpisode" style="overflow: hidden;text-align:right;">
+                                        <div class="ssp-download-episode" style="overflow: hidden;text-align:right;">
+                                            <span class="ssp-open-in-new-window">
+                                                <span class="icon-new-tab">&nbsp;</span>
+                                            </span>
                                             <a href="<?php echo $file; ?>?ref=download" target="_blank">
-                                                <span style="display:inline-block;color:#fff;cursor:pointer;width:17px;height:17px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_download.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;"></span>
+                                                <span class="icon-cloud-download">&nbsp;</span>
                                             </a>
                                         </div>
                                         <div>&nbsp;</div>
@@ -1262,7 +1280,7 @@ class SSP_Frontend {
                                                 </div>
                                                 <div class="ssp-wave-form">
                                                     <div class="ssp-inner">
-                                                        <div id="waveform" class="ssp-wave"></div>
+                                                        <div id="waveform<?php echo $episode_id . $largePlayerInstanceNumber; ?>" class="ssp-wave"></div>
                                                         <div class="ssp-time-volume">
 
                                                             <div class="ssp-duration">
@@ -1271,17 +1289,17 @@ class SSP_Frontend {
 
                                                             <div class="ssp-volume">
 
-                                                                <div class="ssp-back-thirty-container" id="ssp-back-thirty" style="float:left;">
-                                                                    <div style="display:inline-block;margin:2px 4px;text-align:center;color:#fff;cursor:pointer;width:16px;height:16px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_back_30.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;"></div>
+                                                                <div class="ssp-back-thirty-container" id="ssp-back-thirty">
+                                                                    <div class="ssp-back-thirty-control" style="background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_back_30.svg"); ?>) center center no-repeat;"></div>
                                                                 </div>
 
                                                                 <div class="ssp-playback-speed-container" id="ssp-playback-speed" style="float:left;">
-                                                                    <div style="display:inline-block;margin:2px 4px 2px 0;text-align:center;color:#fff;cursor:pointer;width:16px;height:16px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;"></div>
+                                                                    <div class="ssp-playback-speed-control" style="background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); ?>) center center no-repeat;"></div>
                                                                 </div>
 
-                                                                <div class="ssp-playback-speed-label-container" style="float:left;">
-                                                                    <div style="display:inline-block;margin: 4px 0 0 0;text-align:center;color:#fff;cursor:pointer;">
-                                                                        <span id="ssp_playback_speed" data-ssp-playback-rate="1" style="display:inline-block;padding:0 3px;margin-right: 2px;">1x</span>
+                                                                <div class="ssp-playback-speed-label-container">
+                                                                    <div class="ssp-playback-speed-label-wrapper">
+                                                                        <span id="ssp_playback_speed" data-ssp-playback-rate="1">1x</span>
                                                                     </div>
                                                                 </div>
 
@@ -1302,8 +1320,6 @@ class SSP_Frontend {
 
                         <script>
 
-                            var $ = jQuery.noConflict();
-
                             String.prototype.toFormattedDuration = function () {
                                 var sec_num = parseInt(this, 10); // don't forget the second param
                                 var hours   = Math.floor(sec_num / 3600);
@@ -1316,68 +1332,75 @@ class SSP_Frontend {
                                 return hours > 0 ? ( hours+':'+ minutes+':'+seconds) : (minutes+':'+seconds);
                             }
 
-                            var sspUpdateDuration;
+                            jQuery( document ).ready( function($){
 
-                            var ssp_player = WaveSurfer.create({
-                                container: '#waveform',
-                                waveColor: '#eee',
-                                progressColor: '#28c0e1',
-                                barWidth: 3,
-                                barHeight: 15,
-                                height: 30,
-                                hideScrollbar: true,
-                                skipLength: 30
-                            });
+                                var sspUpdateDuration<?php echo $episode_id . $largePlayerInstanceNumber; ?>;
 
-                            ssp_player.load('<?php echo $file; ?>');
+                                var ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?> = WaveSurfer.create({
+                                    container: '#waveform<?php echo $episode_id . $largePlayerInstanceNumber; ?>',
+                                    waveColor: '<?php echo $player_wave_form_colour ? $player_wave_form_colour : "#eee"; ?>',
+                                    progressColor: '<?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?>',
+                                    barWidth: 3,
+                                    barHeight: 15,
+                                    height: 30,
+                                    hideScrollbar: true,
+                                    skipLength: 30
+                                });
 
-                            ssp_player.on( 'ready', function(e){
-                                $( '#sspTotalDuration' ).text( ssp_player.getDuration().toString().toFormattedDuration() );
-                            } );
+                                ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.load('<?php echo $file; ?>');
 
-                            ssp_player.on( 'play', function(e){
-                                $( '#ssp-play-pause .icon' ).removeClass().addClass( 'icon icon-pause' );
-                                $( '#sspPlayedDuration' ).text( ssp_player.getCurrentTime().toString().toFormattedDuration() )
-                                sspUpdateDuration = setInterval( function(){
-                                    $( '#sspPlayedDuration' ).text( ssp_player.getCurrentTime().toString().toFormattedDuration() );
-                                }, 100 );
-                            } );
-
-                            ssp_player.on( 'pause', function(e){
-                                $( '#ssp-play-pause .icon' ).removeClass().addClass( 'icon icon-play2' );
-                                clearInterval( sspUpdateDuration );
-                            } );
-
-                            $( document ).ready( function(){
-
-                                $('#ssp-play-pause').on( 'click', function(e){
-                                    ssp_player.playPause();
+                                ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.on( 'ready', function(e){
+                                    $( '#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #sspTotalDuration' ).text( ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.getDuration().toString().toFormattedDuration() );
                                 } );
 
-                                $('#ssp-back-thirty').on( 'click', function(e){
-                                    ssp_player.skipBackward();
+                                ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.on( 'play', function(e){
+                                    $( '#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #ssp-play-pause .icon' ).removeClass().addClass( 'icon icon-pause' );
+                                    $( '#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #sspPlayedDuration' ).text( ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.getCurrentTime().toString().toFormattedDuration() )
+                                    sspUpdateDuration<?php echo $episode_id . $largePlayerInstanceNumber; ?> = setInterval( function(){
+                                        $( '#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #sspPlayedDuration' ).text( ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.getCurrentTime().toString().toFormattedDuration() );
+                                    }, 100 );
                                 } );
 
-                                $('#ssp-playback-speed').on( 'click', function(e){
+                                ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.on( 'pause', function(e){
+                                    $( '#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #ssp-play-pause .icon' ).removeClass().addClass( 'icon icon-play2' );
+                                    clearInterval( sspUpdateDuration<?php echo $episode_id . $largePlayerInstanceNumber; ?> );
+                                } );
+
+                                $('#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #ssp-play-pause').on( 'click', function(e){
+                                    ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.playPause();
+                                } );
+
+                                $('#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #ssp-back-thirty').on( 'click', function(e){
+                                    ssp_player<?php echo $episode_id. $largePlayerInstanceNumber; ?>.skipBackward();
+                                } );
+
+                                $('#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #ssp-playback-speed').on( 'click', function(e){
                                     switch( $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate' ) ){
                                         case "1":
                                             $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' );
                                             $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1.5x' );
-                                            ssp_player.setPlaybackRate(1.5);
+                                            ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.setPlaybackRate(1.5);
                                             break;
                                         case "1.5":
                                             $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' );
                                             $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('2x' );
-                                            ssp_player.setPlaybackRate(2);
+                                            ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.setPlaybackRate(2);
                                             break;
                                         case "2":
                                             $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' );
                                             $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1x' );
-                                            ssp_player.setPlaybackRate(1);
+                                            ssp_player<?php echo $episode_id . $largePlayerInstanceNumber; ?>.setPlaybackRate(1);
                                         default:
                                             break;
                                     }
                                 } );
+
+                                /*$( '#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> .ssp-open-in-new-window' ).on( 'click', function( e ){
+                                    var sspNewWindow<?php echo $episode_id . $largePlayerInstanceNumber; ?> = window.open('','sspPlayerWindow<?php echo $episode_id . $largePlayerInstanceNumber; ?>');
+                                    sspNewWindow<?php echo $episode_id . $largePlayerInstanceNumber; ?>.document.write('<html><head>' + ( $('head').html() ) +'</head><body>');
+                                    sspNewWindow<?php echo $episode_id . $largePlayerInstanceNumber; ?>.document.write( $( e.currentTarget ).parents( '.ssp-player' ).html() );
+                                    sspNewWindow<?php echo $episode_id . $largePlayerInstanceNumber; ?>.document.write('</body></html>');
+                                } );*/
 
                                 /*var volumeDrag = false;
                                 $('.volume').on('mousedown', function (e) {
@@ -1433,130 +1456,71 @@ class SSP_Frontend {
 
                         </script>
 
-                        <style type="text/css">
-
-                            .ssp-player.ssp-player-large{
-                                overflow:hidden;
-                                clear:both;
-                                background:#222;
-                                color: #ccc;
-                                position: relative;
-                                font-size: 10px;
-                            }
-
-                            .ssp-player.ssp-player-large h3.episode-title{
-                                margin:0;
-                                padding:0;
-                                font-size: 16px;
-                                color:#fff;
-                            }
-                            .ssp-player-episode-details{
-                                font-size: 10px;
-                            }
-                            .ssp-player-episode-details .podcast_meta a,
-                            .ssp-player-episode-details .podcast_meta a:hover{
-                                color: #ccc;
-                                text-decoration: none;
-                                -webkit-box-shadow: none;
-                                -moz-box-shadow: none;
-                                box-shadow: none;
-                            }
-
-                            /* Custom Player Controls */
-
-                            .ssp-custom-player-controls{
-                                margin-top: 10px;
-                            }
-
-                            .ssp-play-pause{
-                                font-size: 30px;
-                                width: 30px;
-                                float:left;
-                                color: #fff;
-                            }
-
-                            .ssp-wave-form{
-                                overflow: hidden;
-                            }
-
-                                .ssp-wave-form .ssp-inner{
-                                    overflow: hidden;
-                                    padding: 8px 0 8px 15px;
-                                }
-
-                            .ssp-wave-form .ssp-time-volume{
-                                color: #ccc;
-                                padding-top: 5px;
-                            }
-
-                            .ssp-wave-form .ssp-time-volume .ssp-duration{
-                                float:left;
-                                font-size: 8px;
-                                padding-top:5px;
-                            }
-
-                            .ssp-wave-form .ssp-time-volume .ssp-volume{
-                                float:right;
-                                font-size: 9px;
-                            }
-
-                            .ssp-wave-form .ssp-time-volume .ssp-volume .volume {
-                                position:relative;
-                                cursor:pointer;
-                                width:100px;
-                                height:4px;
-                                float:right;
-                                margin-top:10px;
-                                background-color:#666;
-                            }
-                            .ssp-wave-form .ssp-time-volume .ssp-volume .volumeBar {
-                                display:block;
-                                height:4px;
-                                position:absolute;
-                                top:0;
-                                left:0;
-                                background-color:#28c0e1;
-                                z-index:10;
-                                width: 90%;
-                            }
-
-
-                        </style>
                     <?php
+                    $html .= ob_get_clean();
                 }
+
+                $share_url_array = [];
+
+                if( $itunes_share_url = get_option( 'ss_podcasting_itunes_url_' . $episode_series ) ){
+                    $share_url_array['Apple iTunes'] = $itunes_share_url;
+                }
+
+                if( $stitcher_share_url = get_option( 'ss_podcasting_stitcher_url_' . $episode_series ) ){
+                    $share_url_array['Stitcher'] = $stitcher_share_url;
+                }
+
+                if( $google_play_share_url = get_option( 'ss_podcasting_google_play_url_' . $episode_series ) ){
+                    $share_url_array['Google Play'] = $google_play_share_url;
+                }
+
+                if( !empty( $share_url_array ) ){
+                    $sh = 0;
+                    $html .= '<aside class="ssp-subscribe-controls">';
+                    $html .= 'Subscribe on: ';
+                    foreach( $share_url_array as $share_title => $share_url ){
+                        $html .= '<a href="' . $share_url . '" target="_blank">' . $share_title . '</a>';
+                        $sh++;
+                        $html .= ( $sh < count( $share_url_array ) ? ' | ' : NULL );
+                    }
+                    $html .= '</aside>';
+                }
+
             }
 
-			// Display specified content items in the order supplied
-			foreach ( $content_items as $item ) {
+            if( 'mini' === $style ){
+                // Display specified content items in the order supplied
+                foreach ( $content_items as $item ) {
 
-				switch( $item ) {
+                    switch( $item ) {
 
-					case 'title':
-						$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
-					break;
+                        case 'title':
+                            $html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
+                            break;
 
-					case 'excerpt':
-						$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
-					break;
+                        case 'excerpt':
+                            $html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
+                            break;
 
-					case 'content':
-						$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
-					break;
+                        case 'content':
+                            $html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
+                            break;
 
-					case 'player':
-						$file = $this->get_enclosure( $episode_id );
-						if ( get_option( 'permalink_structure' ) ) {
-							$file = $this->get_episode_download_link( $episode_id );
-						}
-		    			$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id ) . '</div>' . "\n";
-					break;
+                        case 'player':
+                            $file = $this->get_enclosure( $episode_id );
+                            if ( get_option( 'permalink_structure' ) ) {
+                                $file = $this->get_episode_download_link( $episode_id );
+                            }
+                            $html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id ) . '</div>' . "\n";
+                            break;
 
-					case 'details':
-						$html .= $this->episode_meta_details( $episode_id, $episode_context );
-					break;
+                        case 'details':
+                            $html .= $this->episode_meta_details( $episode_id, $episode_context );
+                            break;
 
-				}
-			}
+                    }
+                }
+            }
 
 			// Reset post data after fetching episode details
 			wp_reset_postdata();

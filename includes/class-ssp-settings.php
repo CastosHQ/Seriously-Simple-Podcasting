@@ -115,7 +115,7 @@ class SSP_Settings {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
 
-		// Mark date on which feed redirection was activated.
+        // Mark date on which feed redirection was activated.
 		add_action( 'update_option', array( $this, 'mark_feed_redirect_date' ), 10, 3 );
 
 		// Add ajax action for plugin rating.
@@ -126,6 +126,20 @@ class SSP_Settings {
 
 		// process the import form submission
 		add_action( 'admin_init', array( $this, 'submit_import_form' ) );
+
+		// Quick and dirty colour picker implementation
+        // If we do not have the WordPress core colour picker field, then we don't break anything
+		add_action( 'admin_footer', function(){
+		    ?>
+                <script>
+                    jQuery( document ).ready( function( $ ){
+                        if( "function" === typeof $.fn.wpColorPicker ){
+                            $('.ssp-color-picker').wpColorPicker();
+                        }
+                    });
+                </script>
+            <?php
+        }, 99 );
 
 	}
 
@@ -226,12 +240,17 @@ class SSP_Settings {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
+
 		global $pagenow;
 		$page = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
 		$pages = array( 'post-new.php', 'post.php' );
 		if ( in_array( $pagenow, $pages, true ) || ( ! empty( $page ) && 'podcast_settings' === $page ) ) {
 			wp_enqueue_media();
 		}
+
+        wp_enqueue_style( 'wp-color-picker');
+        wp_enqueue_script( 'wp-color-picker');
+
 	}
 
 	/**
@@ -570,6 +589,41 @@ class SSP_Settings {
 					),
 					'default'     => 'all',
 				),
+                array(
+                    'id'          => 'player_style',
+                    'label'       => __( 'Media player style', 'seriously-simple-podcasting' ),
+                    'description' => __( 'Select the style of media player you wish to display on your site.', 'seriously-simple-podcasting' ),
+                    'type'        => 'radio',
+                    'options'     => array(
+                        'standard'         => __( 'Standard Compact Player', 'seriously-simple-podcasting' ),
+                        'larger' => __( 'Larger Player With Wave Form', 'seriously-simple-podcasting' ),
+                    ),
+                    'default'     => 'all',
+                ),
+                array(
+                    'id'          => 'player_background_skin_colour',
+                    'label'       => __( 'Background skin colour', 'seriously-simple-podcasting' ),
+                    'description' => '<br>' . __( 'Only applicable if using the larger player with wave form', 'seriously-simple-podcasting' ),
+                    'type'        => 'colour-picker',
+                    'default'     => '#222222',
+                    'class'       => 'ssp-color-picker'
+                ),
+                array(
+                    'id'          => 'player_wave_form_colour',
+                    'label'       => __( 'Player wave form colour', 'seriously-simple-podcasting' ),
+                    'description' => '<br>' . __( 'Only applicable if using the larger player with wave form', 'seriously-simple-podcasting' ),
+                    'type'        => 'colour-picker',
+                    'default'     => '#fff',
+                    'class'       => 'ssp-color-picker'
+                ),
+                array(
+                    'id'          => 'player_wave_form_progress_colour',
+                    'label'       => __( 'Player wave form progress colour', 'seriously-simple-podcasting' ),
+                    'description' => '<br>' . __( 'Only applicable if using the larger player with wave form', 'seriously-simple-podcasting' ),
+                    'type'        => 'colour-picker',
+                    'default'     => '#00d4f7',
+                    'class'       => 'ssp-color-picker'
+                ),
 			),
 		);
 
@@ -772,6 +826,26 @@ class SSP_Settings {
 					'callback'    => 'esc_url_raw',
 					'class'       => 'regular-text',
 				),
+                array(
+                    'id'          => 'google_play_url',
+                    'label'       => __( 'Google Play URL', 'seriously-simple-podcasting' ),
+                    'description' => __( 'Your podcast\'s Google Play URL.', 'seriously-simple-podcasting' ),
+                    'type'        => 'text',
+                    'default'     => '',
+                    'placeholder' => __( 'Google Play URL', 'seriously-simple-podcasting' ),
+                    'callback'    => 'esc_url_raw',
+                    'class'       => 'regular-text',
+                ),
+                array(
+                    'id'          => 'stitcher_url',
+                    'label'       => __( 'Stitcher URL', 'seriously-simple-podcasting' ),
+                    'description' => __( 'Your podcast\'s Stitcher URL.', 'seriously-simple-podcasting' ),
+                    'type'        => 'text',
+                    'default'     => '',
+                    'placeholder' => __( 'Stitcher URL', 'seriously-simple-podcasting' ),
+                    'callback'    => 'esc_url_raw',
+                    'class'       => 'regular-text',
+                ),
 			),
 		);
 
@@ -882,6 +956,21 @@ class SSP_Settings {
 				),
 			),
 		);
+
+		$settings['analytics'] = array(
+            'title' => __('Analytics', 'seriously-simple-podcasting'),
+            'description' => sprintf( __( 'Connect your %s analytics application with your podcast site'), '<a target="_blank" href=" ' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
+            'fields' => array(
+                array(
+                    'id'          => 'ssp_analytics_token',
+                    'label'       => __( 'Analytics Token', 'seriously-simple-podcasting' ),
+                    'description' => '',
+                    'type'        => 'text',
+                    'callback'    => 'esc_url_raw',
+                    'class'    => 'regular-text',
+                ),
+            ),
+        );
 
 		$settings['podcastmotor-connect'] = array(
 			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
@@ -1144,6 +1233,9 @@ class SSP_Settings {
 			case 'number':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
 				break;
+            case 'colour-picker':
+                $html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
+                break;
 
 			case 'text_secret':
 				$placeholder = $field['placeholder'];

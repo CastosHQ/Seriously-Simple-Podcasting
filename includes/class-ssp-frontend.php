@@ -1296,13 +1296,13 @@ class SSP_Frontend {
                                                                     <div class="ssp-back-thirty-control" style="background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_back_30.svg"); ?>) center center no-repeat;"></div>
                                                                 </div>
 
-                                                                <div class="ssp-playback-speed-container" id="ssp-playback-speed" style="float:left;">
-                                                                    <div class="ssp-playback-speed-control" style="background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); ?>) center center no-repeat;"></div>
-                                                                </div>
+                                                                <!--<div class="ssp-playback-speed-container" id="ssp-playback-speed" style="float:left;">
+                                                                    <div class="ssp-playback-speed-control" style="background: url(<?php /*echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); */?>) center center no-repeat;"></div>
+                                                                </div>-->
 
                                                                 <div class="ssp-playback-speed-label-container">
                                                                     <div class="ssp-playback-speed-label-wrapper">
-                                                                        <span id="ssp_playback_speed" data-ssp-playback-rate="1">1x</span>
+                                                                        <span id="ssp_playback_speed<?php echo $episode_id . $largePlayerInstanceNumber; ?>" data-ssp-playback-rate="1">1x</span>
                                                                     </div>
                                                                 </div>
 
@@ -1377,7 +1377,7 @@ class SSP_Frontend {
                                     ssp_player<?php echo $episode_id. $largePlayerInstanceNumber; ?>.skipBackward();
                                 } );
 
-                                $('#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #ssp-playback-speed').on( 'click', function(e){
+                                $('#ssp_player_id_<?php echo $episode_id . $largePlayerInstanceNumber; ?> #ssp_playback_speed<?php echo $episode_id . $largePlayerInstanceNumber; ?>').on( 'click', function(e){
                                     switch( $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate' ) ){
                                         case "1":
                                             $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' );

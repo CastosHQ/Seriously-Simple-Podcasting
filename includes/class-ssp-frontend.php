@@ -1259,7 +1259,10 @@ class SSP_Frontend {
                                 <div class="ssp-player-inner" style="overflow: hidden;">
                                     <div class="ssp-player-info">
                                         <div style="width: 80%; float:left;">
-                                            <h3 class="ssp-player-title episode-title"><?php echo get_the_title(); ?></h3>
+                                            <h3 class="ssp-player-title episode-title">
+                                                <?php echo get_the_title(); ?>
+                                            </h3>
+                                            <div>&nbsp;</div>
                                         </div>
                                         <div class="ssp-download-episode" style="overflow: hidden;text-align:right;">
                                             <span class="ssp-open-in-new-window">

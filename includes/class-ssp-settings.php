@@ -166,6 +166,11 @@ class SSP_Settings {
 			'settings_page',
 		) );
 
+        add_submenu_page( 'edit.php?post_type=podcast', __( 'Analytics', 'seriously-simple-podcasting' ), __( 'Analytics', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings&view=analytics', array(
+            $this,
+            'settings_page',
+        ) );
+
 		add_submenu_page( null, __( 'Upgrade', 'seriously-simple-podcasting' ), __( 'Upgrade', 'seriously-simple-podcasting' ), 'manage_podcast', 'upgrade', array(
 			$this,
 			'show_upgrade_page',
@@ -242,14 +247,21 @@ class SSP_Settings {
 	public function enqueue_scripts() {
 
 		global $pagenow;
+
 		$page = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
 		$pages = array( 'post-new.php', 'post.php' );
+
 		if ( in_array( $pagenow, $pages, true ) || ( ! empty( $page ) && 'podcast_settings' === $page ) ) {
 			wp_enqueue_media();
 		}
 
+        wp_enqueue_script('jquery-ui-datepicker');
+        wp_register_style('jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css');
+        wp_enqueue_style('jquery-ui');
+
         wp_enqueue_style( 'wp-color-picker');
         wp_enqueue_script( 'wp-color-picker');
+        wp_enqueue_script( 'plotly', 'https://cdn.plot.ly/plotly-latest.min.js', SSP_VERSION, true );
 
 	}
 
@@ -1479,6 +1491,25 @@ class SSP_Settings {
 	 * @return void
 	 */
 	public function settings_page() {
+
+	    $q_args = wp_parse_args( $_GET, array(
+            'post_type' => null,
+            'page' => null,
+            'view' => null,
+            'tab' => null
+        ) );
+
+	    array_walk( $q_args, function( &$entry ){
+            $entry = sanitize_title( $entry );
+        } );
+
+	    if( "analytics" === $q_args['view'] ){
+            ob_start();
+            $simon = "simon moo";
+            include SSP_PLUGIN_PATH . 'includes/views/ssp-analytics.php';
+            echo ob_get_clean();
+            return;
+        }
 
 		// Build page HTML
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";

@@ -71,7 +71,7 @@ if ( ! empty( $series ) ) {
 
     <div style="overflow:hidden;padding:20px;">
         <h3 style="margin-bottom: 5px;text-align: left;">Total Listens</h3>
-        <div id="tester" style="height:250px;"></div>
+        <div id="tester" style="height:350px;"></div>
     </div>
 
     <div style="overflow:hidden">
@@ -80,6 +80,7 @@ if ( ! empty( $series ) ) {
             <div style="padding: 20px; overflow:hidden;">
                 <div style="overflow: hidden; background:#fff;">
                     <h3 style="padding: 5px 0; text-align: center">Episode Stats</h3>
+                    <div id="ssp_episode_stats" style="width: 100%;"></div>
                 </div>
             </div>
         </div>
@@ -88,6 +89,7 @@ if ( ! empty( $series ) ) {
             <div style="padding: 20px; overflow:hidden;">
                 <div style="overflow: hidden; background:#fff;">
                     <h3 style="padding: 5px 0; text-align: center">Listening Source</h3>
+                    <div id="ssp_listening_sources" style="width: 100%;"></div>
                 </div>
             </div>
         </div>
@@ -96,6 +98,7 @@ if ( ! empty( $series ) ) {
             <div style="padding: 20px; overflow:hidden;">
                 <div style="overflow: hidden; background:#fff;">
                     <h3 style="padding: 5px 0; text-align: center">Geographic</h3>
+                    <div id="ssp_global_stats" style="width:100%;"></div>
                 </div>
             </div>
         </div>
@@ -108,25 +111,139 @@ if ( ! empty( $series ) ) {
     add_action( 'admin_footer', function(){
         ?>
             <script>
+
+                var SspChartColours = [
+                    ['rgb(0, 207, 207)', 'rgb(255, 201, 0)', 'rgb(237, 0, 104)']
+                ];
+
                 TESTER = document.getElementById('tester');
+
                 Plotly.plot(
-                    TESTER, [
+
+                    TESTER,
+
+                    [
                         {
                             x: [1, 2, 3, 4, 5],
-                            y: [1, 2, 4, 8, 16],
+                            y: [1, 2, 4, 8, 16]
                         }
                     ],
+
                     {
                         margin: {
                             t: 25,
                             b: 25,
                             r: 25,
                             l: 25
-                        },
-
+                        }
                     }
+
                 );
+
+                var ssp_listening_sources_data = [{
+                    values: [19, 26, 55],
+                    labels: ['Web', 'Mobile', 'Apps'],
+                    hole: .5    ,
+                    type: 'pie',
+                    marker: {
+                        colors: SspChartColours[0]
+                    },
+                    hoverinfo: "label+percent",
+                    hoverlabel: {
+                        bgcolor: '#222',
+                        font: {
+                            color: '#fff'
+                        }
+                    },
+                    textfont: {
+                        color: '#fff'
+                    }
+                }];
+
+                var ssp_listening_sources_layout = {
+                    height: 400,
+                    margin: {
+                        t: 25,
+                        b: 25,
+                        r: 25,
+                        l: 25
+                    },
+                    font: {
+                        size: 14,
+                    },
+                    legend: {
+                        orientation: "h"
+                    }
+                };
+
+                // ----- LISTENING SOURCES
+
+                var ssp_listening_sources = document.getElementById('ssp_listening_sources');
+
+                Plotly.plot('ssp_listening_sources', ssp_listening_sources_data, ssp_listening_sources_layout);
+
+                var ssp_episode_stats = document.getElementById('ssp_listening_sources');
+
+                var ssp_episode_stats_data = [
+                    {
+                        x: ['plays', 'complete', 'avg time'],
+                        y: [999, 450, 67],
+                        type: 'bar'
+                    }
+                ];
+
+                var ssp_episode_stats_layout = {
+                    xaxis: {
+                        tickangle: 0
+                    },
+                    barmode: 'group'
+                };
+
+                Plotly.plot( 'ssp_episode_stats', ssp_episode_stats_data, ssp_episode_stats_layout );
+
+                // ----- GLOBAL STATS
+
+                var ssp_global_stats_data = [{
+                    type: 'scattergeo',
+                    mode: 'markers',
+                    locations: ['FRA', 'DEU', 'RUS', 'ESP'],
+                    marker: {
+                        size: [20, 30, 15, 10],
+                        color: [10, 20, 40, 50],
+                        cmin: 0,
+                        cmax: 50,
+                        colorscale: 'Greens',
+                        colorbar: {
+                            title: 'Some rate',
+                            ticksuffix: '%',
+                            showticksuffix: 'last'
+                        },
+                        line: {
+                            color: 'black'
+                        }
+                    },
+                    name: 'europe data'
+                }];
+
+                var ssp_global_stats_layout = {
+                    'geo': {
+                        'scope': 'all',
+                        'resolution': 50
+                    },
+                    margin: {
+                        t: 25,
+                        b: 25,
+                        r: 25,
+                        l: 25
+                    }
+                };
+
+                var ssp_global_stats = document.getElementById('ssp_global_stats');
+
+                Plotly.plot( 'ssp_global_stats', ssp_global_stats_data, ssp_global_stats_layout );
+
                 jQuery( '.ssp-date' ).datepicker();
+
             </script>
         <?php
     } );

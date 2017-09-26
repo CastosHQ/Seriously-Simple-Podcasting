@@ -753,10 +753,11 @@ class SSP_Settings {
                     'description' => __( 'The order in which you want your episodes to be consumed by iTunes', 'seriously-simple-podcasting' ),
                     'type'        => 'select',
                     'options'     => array(
+                            '' => __( 'Please Select', 'seriously-simple-podcasting' ),
                             'episodic' => __( 'Latest Episode First', 'seriously-simple-podcasting' ),
                             'serial' => __( 'Oldest to Newest', 'seriously-simple-podcasting' )
                     ),
-                    'default'     => 'episodic',
+                    'default'     => '',
                 ),
 				array(
 					'id'          => 'redirect_feed',

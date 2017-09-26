@@ -780,7 +780,7 @@ class SSP_Admin {
             'name'             => __( 'iTunes Episode Type:', 'seriously-simple-podcasting' ),
             'description'      => '',
             'type'             => 'radio',
-            'default'          => 'full',
+            'default'          => '',
             'options'          => array(
                 'full' => __( 'Full: For Normal Episodes', 'seriously-simple-podcasting' ),
                 'trailer' => __( 'Trailer: Promote an Upcoming Show', 'seriously-simple-podcasting' ),
@@ -797,7 +797,7 @@ class SSP_Admin {
             'name'             => __( 'iTunes Episode Title (Exclude Your Series / Show Number):', 'seriously-simple-podcasting' ),
             'description'      => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included.', 'seriously-simple-podcasting' ),
             'type'             => 'text',
-            'default'          => get_the_title(),
+            'default'          => '',
             'section'          => 'info',
             'meta_description' => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included', 'seriously-simple-podcasting' ),
         );

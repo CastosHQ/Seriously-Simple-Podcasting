@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.17.3
+ * Version: 1.18.0
  * Plugin URI: https://www.seriouslysimplepodcasting.com/
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: PodcastMotor

@@ -596,6 +596,18 @@ class SSP_Admin {
 						$html .= '<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
 						break;
+
+                    case 'select':
+                        $html .= '<p>
+									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>';
+                        $html .= '<select name="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">';
+                        foreach ( $v['options'] as $option => $label ) {
+                            $html .= '<option ' . selected( $option, $data, false ) . ' value="' . esc_attr( $option ) . '">' . esc_attr( $label ) . '</option>';
+                        }
+                        $html .= '</select>';
+                        $html .= '<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
+								</p>' . "\n";
+                        break;
 					
 					case 'datepicker':
 						$display_date = '';
@@ -626,6 +638,16 @@ class SSP_Admin {
 									<input name="' . esc_attr( $k ) . '" type="hidden" id="' . esc_attr( $k ) . '" value="' . esc_attr( $data ) . '" />
 								</p>' . "\n";
 						break;
+
+                    case 'number':
+                        $html .= '<p>
+									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>
+									<br/>
+									<input name="' . esc_attr( $k ) . '" type="number" min="0" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />
+									<br/>
+									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
+								</p>' . "\n";
+                        break;
 					
 					default:
 						$html .= '<p>
@@ -678,6 +700,9 @@ class SSP_Admin {
 		}
 		
 		$field_data = $this->custom_fields();
+		
+		ssp_debug( 'Field Data',  $field_data );
+		
 		$enclosure  = '';
 		
 		foreach ( $field_data as $k => $field ) {
@@ -704,27 +729,31 @@ class SSP_Admin {
 		
 		if ( $enclosure ) {
 			
-			// Get file duration
-			if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
-				$duration = $ss_podcasting->get_file_duration( $enclosure );
-				if ( $duration ) {
-					update_post_meta( $post_id, 'duration', $duration );
-				}
-			}
+			ssp_debug( 'File Enclosure',  $enclosure );
 			
-			// Get file size
-			if ( get_post_meta( $post_id, 'filesize', true ) == '' ) {
-				$filesize = $ss_podcasting->get_file_size( $enclosure );
-				if ( $filesize ) {
-					
-					if ( isset( $filesize['formatted'] ) ) {
-						update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+			if ( ! ssp_is_connected_to_podcastmotor() ) {
+				// Get file duration
+				if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
+					$duration = $ss_podcasting->get_file_duration( $enclosure );
+					if ( $duration ) {
+						update_post_meta( $post_id, 'duration', $duration );
 					}
-					
-					if ( isset( $filesize['raw'] ) ) {
-						update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+				}
+				
+				// Get file size
+				if ( get_post_meta( $post_id, 'filesize', true ) == '' ) {
+					$filesize = $ss_podcasting->get_file_size( $enclosure );
+					if ( $filesize ) {
+						
+						if ( isset( $filesize['formatted'] ) ) {
+							update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+						}
+						
+						if ( isset( $filesize['raw'] ) ) {
+							update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+						}
+						
 					}
-					
 				}
 			}
 			
@@ -755,6 +784,48 @@ class SSP_Admin {
 			'section'          => 'info',
 			'meta_description' => __( 'The type of podcast episode - either Audio or Video', 'seriously-simple-podcasting' ),
 		);
+
+        /**
+         * New iTunes Tag Announced At WWDC 2017
+         */
+        $fields['itunes_title'] = array(
+            'name'             => __( 'iTunes Episode Title (Exclude Your Series / Show Number):', 'seriously-simple-podcasting' ),
+            'description'      => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included.', 'seriously-simple-podcasting' ),
+            'type'             => 'text',
+            'default'          => '',
+            'section'          => 'info',
+            'meta_description' => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included', 'seriously-simple-podcasting' ),
+        );
+
+        /**
+         * New iTunes Tag Announced At WWDC 2017
+         */
+        $fields['itunes_season_number'] = array(
+            'name'             => __( 'iTunes Season Number:', 'seriously-simple-podcasting' ),
+            'description'      => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+            'type'             => 'number',
+            'default'          => '',
+            'section'          => 'info',
+            'meta_description' => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+        );
+
+        /**
+         * New iTunes Tag Announced At WWDC 2017
+         */
+        $fields['itunes_episode_type'] = array(
+            'name'             => __( 'iTunes Episode Type:', 'seriously-simple-podcasting' ),
+            'description'      => '',
+            'type'             => 'select',
+            'default'          => '',
+            'options'          => array(
+                '' => __( 'Please Select', 'seriously-simple-podcasting' ),
+                'full' => __( 'Full: For Normal Episodes', 'seriously-simple-podcasting' ),
+                'trailer' => __( 'Trailer: Promote an Upcoming Show', 'seriously-simple-podcasting' ),
+                'bonus' => __( 'Bonus: For Extra Content Related To a Show', 'seriously-simple-podcasting' )
+            ),
+            'section'          => 'info',
+            'meta_description' => __( 'The iTunes Episode Type', 'seriously-simple-podcasting' ),
+        );
 		
 		// In v1.14+ the `audio_file` field can actually be either audio or video, but we're keeping the field name here for backwards compatibility
 		$fields['audio_file'] = array(
@@ -793,6 +864,27 @@ class SSP_Admin {
 			'section'          => 'info',
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
+
+        /**
+         * New iTunes Tag Announced At WWDC 2017
+         */
+        $fields['itunes_episode_number'] = array(
+            'name'             => __( 'iTunes Episode Number:', 'seriously-simple-podcasting' ),
+            'description'      => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+            'type'             => 'number',
+            'default'          => '',
+            'section'          => 'info',
+            'meta_description' => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+        );
+		
+		if ( ssp_is_connected_to_podcastmotor() ) {
+			$fields['filesize_raw'] = array(
+				'type'             => 'hidden',
+				'default'          => '',
+				'section'          => 'info',
+				'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
+			);
+		}
 		
 		$fields['date_recorded'] = array(
 			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),
@@ -1368,7 +1460,7 @@ class SSP_Admin {
 		}
 		
 		// check if there is at least one podcast to import
-		$podcast_query = ssp_get_existing_podcast();
+		$podcast_query = ssp_get_existing_podcasts();
 		if ( $podcast_query->have_posts() ) {
 			add_action( 'admin_notices', array( $this, 'existing_podcasts_notice' ) );
 		}

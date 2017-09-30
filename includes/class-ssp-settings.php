@@ -737,6 +737,29 @@ class SSP_Settings {
 					'callback'    => 'wp_strip_all_tags',
 				),
 				array(
+					'id'          => 'publish_date',
+					'label'       => __( 'Source for publish date', 'seriously-simple-podcasting' ),
+					'description' => __( 'Use the "Published date" of the post or use "Date recorded" from the Podcast episode details.', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array( 'published' => __( 'Published date', 'seriously-simple-podcasting' ), 'recorded' => __( 'Recorded date', 'seriously-simple-podcasting' ) ),
+					'default'     => 'published',
+				),
+                /**
+                 * New iTunes Tag Announced At WWDC 2017
+                 */
+                array(
+                    'id'          => 'consume_order',
+                    'label'       => __( 'Series Consume Order', 'seriously-simple-podcasting' ),
+                    'description' => __( 'The order in which you want your episodes to be consumed by iTunes', 'seriously-simple-podcasting' ),
+                    'type'        => 'select',
+                    'options'     => array(
+                            '' => __( 'Please Select', 'seriously-simple-podcasting' ),
+                            'episodic' => __( 'Latest Episode First', 'seriously-simple-podcasting' ),
+                            'serial' => __( 'Oldest to Newest', 'seriously-simple-podcasting' )
+                    ),
+                    'default'     => '',
+                ),
+				array(
 					'id'          => 'redirect_feed',
 					'label'       => __( 'Redirect this feed to new URL', 'seriously-simple-podcasting' ),
 					'description' => sprintf( __( 'Redirect your feed to a new URL (specified below).', 'seriously-simple-podcasting' ), '<br/>' ),

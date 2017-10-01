@@ -901,7 +901,7 @@ class SSP_Admin {
 			'type'             => 'checkbox',
 			'default'          => '',
 			'section'          => 'info',
-			'meta_description' => __( 'Indicates whether the episode is explicit or not.', 'seriously-simple-podcasting' ),
+			'meta_description' => __( 'Indicates whether the episode is explicit.', 'seriously-simple-podcasting' ),
 		);
 		
 		$fields['block'] = array(

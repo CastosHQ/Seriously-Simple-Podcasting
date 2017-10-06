@@ -90,6 +90,8 @@ class SSP_Frontend {
 
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}
 
 	/**
@@ -284,7 +286,7 @@ class SSP_Frontend {
 
 			// Show audio player if requested
 			if( $show_player ) {
-				$meta .= '<div class="podcast_player" style="margin: 15px 0;">' . $this->media_player( $file, $episode_id ) . '</div>';
+				$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id ) . '</div>';
 			}
 
 			if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
@@ -379,7 +381,7 @@ class SSP_Frontend {
 			switch( $key ) {
 
 				case 'link':
-					$podcast_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " class="podcast-meta-download" download>' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
+					$podcast_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " class="podcast-meta-download">' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
 				break;
 
 				case 'new_window':
@@ -419,19 +421,19 @@ class SSP_Frontend {
 
 		$itunes_url = get_option( 'ss_podcasting_itunes_url', '' );
 		if ( ! empty( $itunes_url ) ) {
-			$subscribe_display .= '<a href="' . esc_url( $itunes_url ) . '" target="_BLANK" title="' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '</a>';
+			$subscribe_display .= '<a href="' . esc_url( $itunes_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '</a>';
 		}
 
 		$stitcher_url = get_option( 'ss_podcasting_stitcher_url', '' );
 		if ( ! empty( $stitcher_url ) ) {
 			if( empty( $itunes_url ) ) { $meta_sep = ''; } else { $meta_sep = ' | '; }
-			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $stitcher_url ) . '" target="_BLANK" title="' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '</a>';
+			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $stitcher_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '</a>';
 		}
 
 		$google_play_url = get_option( 'ss_podcasting_google_play_url', '' );
 		if ( ! empty( $google_play_url ) ) {
 			if( empty( $stitcher_url ) ) { $meta_sep = ''; } else { $meta_sep = ' | '; }
-			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $google_play_url ) . '" target="_BLANK" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
+			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $google_play_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
 		}
 
 		$meta_display .= "<p>".__( 'Subscribe:', 'seriously-simple-podcasting' )." ".$subscribe_display."</p>";
@@ -1306,4 +1308,15 @@ class SSP_Frontend {
 	public function load_localisation () {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
 	}
+
+	/**
+	 * 
+	 */
+	public function load_scripts(){
+
+		wp_register_style( 'ssp-frontend-player', $this->assets_url.'css/player.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-frontend-player' );
+
+	}
+
 }

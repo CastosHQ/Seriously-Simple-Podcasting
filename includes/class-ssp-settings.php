@@ -723,7 +723,7 @@ class SSP_Settings {
 				array(
 					'id'          => 'explicit',
 					'label'       => __( 'Explicit', 'seriously-simple-podcasting' ),
-					'description' => __( 'Mark if your podcast is explicit or not.', 'seriously-simple-podcasting' ),
+					'description' => sprintf(__( 'To mark this podcast as an explicit podcast, check this box. Explicit content rules can be found %s.', 'seriously-simple-podcasting' ), '<a href="https://discussions.apple.com/thread/1079151">here</a>'),
 					'type'        => 'checkbox',
 					'default'     => '',
 					'callback'    => 'wp_strip_all_tags',

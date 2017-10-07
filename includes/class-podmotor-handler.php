@@ -150,56 +150,6 @@ class Podmotor_Handler {
 	
 
 	/**
-	 * Upload a local file to PodcastMotor offsite storage
-	 *
-	 * @param $file
-	 *
-	 * @return array
-	 */
-	public function upload_file_to_podmotor_storage( $file, $podcast_id = 0 ) {
-		$this->setup_response();
-		if ( ! is_file( $file ) ) {
-			$this->update_response( 'message', 'File to upload is not valid' );
-		} else {
-			$duration = $this->get_local_file_duration( $file );
-			$file_info      = pathinfo( $file );
-			$base_file_name = $file_info['basename'];
-			try {
-				$result = $this->podmotor_client->putObject( array(
-					'Bucket'       => $this->podmotor_bucket,
-					'Key'          => $this->podmotor_show_slug . '/' . sanitize_file_name( $base_file_name ),
-					'Body'         => fopen( $file, 'r' ),
-					'ACL'          => 'public-read',
-					'StorageClass' => 'REDUCED_REDUNDANCY',
-				) );
-				$podmotor_uploaded_file = $result['ObjectURL'];
-				if ( ! empty( $podmotor_uploaded_file ) ) {
-					$this->update_response( 'status', 'success' );
-					$this->update_response( 'message', 'File uploaded to Seriously Simple Hosting successfully' );
-					$this->update_response( 'podmotor_file', $podmotor_uploaded_file );
-					if ( $duration ) {
-						$this->update_response( 'podmotor_file_duration', $duration );
-					}
-					if ( ! empty( $podcast_id ) && $duration ) {
-						$current_duration = get_post_meta( $podcast_id, 'duration', true );
-						if ( empty( $current_duration ) ) {
-							update_post_meta( $podcast_id, 'duration', $duration );
-						}
-					}
-					$this->clear_local_podmotor_file( $file );
-				} else {
-					$this->update_response( 'message', 'An error occured uploading the file to Seriously Simple Hosting' );
-				}
-			} catch ( Exception $e ) {
-				ssp_debug( 'An unknown error occurred uploading the file to S3:' . $e->getMessage() );
-				$this->update_response( 'message', 'An unknown error occurred:' . $e->getMessage() );
-			}
-		}
-		
-		return $this->response;
-	}
-	
-	/**
 	 * Upload PodcastMotor file stored in offsite hosting to Seriously Simple Hosting database
 	 *
 	 * @param string $podmotor_file_path

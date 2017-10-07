@@ -386,7 +386,7 @@ class Podmotor_Handler {
 				$this->update_response( 'message', 'An error occurred uploading the episode data to Seriously Simple Hosting' );
 			}
 		} else {
-			// @todo this should be logged somewhere
+			// @todo somone should be notified about this
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
 		

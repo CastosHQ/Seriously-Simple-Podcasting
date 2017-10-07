@@ -4,19 +4,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-/**
- * Require SDK
- */
-require_once( SSP_PLUGIN_PATH . 'includes/aws-sdk-2.0/aws-autoloader.php' );
-
-use Aws\S3\S3Client;
 
 class Podmotor_Handler {
 	
 	private $podmotor_config = array();
 	private $podmotor_bucket = '';
 	private $podmotor_show_slug = '';
-	public $podmotor_client = null;
 	
 	public $response = array();
 	
@@ -26,22 +19,20 @@ class Podmotor_Handler {
 	public function __construct() {
 		$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
 		if ( ! empty( $podmotor_account_id ) ) {
-			$this->init_podmotor_client();
+			$this->init_podmotor_handler();
 		}
 	}
 	
 	/**
-	 * Sets up the PodcastMotor AWS client
+	 * Sets up the PodcastMotor Handler
 	 */
-	private function init_podmotor_client() {
+	private function init_podmotor_handler() {
 		$podmotor_account_id      = get_option( 'ss_podcasting_podmotor_account_id', '' );
 		$podmotor_account_email   = get_option( 'ss_podcasting_podmotor_account_email', '' );
 		$response                 = $this->get_podmotor_bucket_credentials( $podmotor_account_id, $podmotor_account_email );
 		$this->podmotor_config    = $response['config'];
 		$this->podmotor_bucket    = $response['bucket'];
 		$this->podmotor_show_slug = $response['show_slug'];
-		$this->podmotor_client    = S3Client::factory( $this->podmotor_config );
-		
 	}
 	
 	/**
@@ -75,7 +66,7 @@ class Podmotor_Handler {
 	public function get_podmotor_bucket_credentials( $podmotor_account_id, $podmotor_account_email ) {
 		
 		$podmotor_array = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
-
+		
 		$config = array(
 			'version'     => $podmotor_array['version'],
 			'region'      => $podmotor_array['region'],
@@ -110,7 +101,7 @@ class Podmotor_Handler {
 			$this->update_response( 'message', 'Invalid API Token or email.' );
 		}
 		
-		$api_url      = SSP_PODMOTOR_APP_URL . 'api/users/validate';
+		$api_url = SSP_PODMOTOR_APP_URL . 'api/users/validate';
 		
 		ssp_debug( 'Validate Credentials : API URL', $api_url );
 		
@@ -148,7 +139,7 @@ class Podmotor_Handler {
 		return $this->response;
 	}
 	
-
+	
 	/**
 	 * Upload PodcastMotor file stored in offsite hosting to Seriously Simple Hosting database
 	 *
@@ -161,23 +152,24 @@ class Podmotor_Handler {
 		$this->setup_response();
 		if ( empty( $podmotor_file_path ) ) {
 			$this->update_response( 'message', 'No file to upload' );
+			
 			return $this->response;
 		}
-		$api_url                    = SSP_PODMOTOR_APP_URL . 'api/file';
-		ssp_debug($api_url);
-		$podmotor_api_token         = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		ssp_debug($podmotor_api_token);
-		$post_body                  = array(
+		$api_url = SSP_PODMOTOR_APP_URL . 'api/file';
+		ssp_debug( $api_url );
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		ssp_debug( $podmotor_api_token );
+		$post_body = array(
 			'api_token'          => $podmotor_api_token,
 			'podmotor_file_path' => $podmotor_file_path,
 		);
-		ssp_debug($post_body);
-		$app_response               = wp_remote_post( $api_url, array(
+		ssp_debug( $post_body );
+		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
-		ssp_debug($app_response);
+		ssp_debug( $app_response );
 		if ( ! is_wp_error( $app_response ) ) {
 			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( ! empty( $response_object ) ) {
@@ -225,6 +217,7 @@ class Podmotor_Handler {
 		
 		if ( empty( $podmotor_file_id ) ) {
 			$this->update_response( 'message', 'Invalid Podcast file data' );
+			
 			return $this->response;
 		}
 		
@@ -306,7 +299,7 @@ class Podmotor_Handler {
 			)
 		);
 		
-		ssp_debug($app_response);
+		ssp_debug( $app_response );
 		
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
@@ -336,24 +329,24 @@ class Podmotor_Handler {
 		$this->setup_response();
 		
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		ssp_debug($podmotor_api_token);
+		ssp_debug( $podmotor_api_token );
 		
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/insert_queue';
-		ssp_debug($api_url);
+		ssp_debug( $api_url );
 		
 		$post_body = array(
 			'api_token'   => $podmotor_api_token,
 			'site_name'   => get_bloginfo( 'name' ),
 			'site_action' => add_query_arg( 'podcast_importer', 'true', trailingslashit( site_url() ) ),
 		);
-		ssp_debug($post_body);
+		ssp_debug( $post_body );
 		
 		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
-		ssp_debug($app_response);
+		ssp_debug( $app_response );
 		
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );

@@ -150,37 +150,6 @@ class Podmotor_Handler {
 	
 
 	/**
-	 * Takes an external file and downloads it to the server
-	 * then uploads it to the PodcastMotor offsite storage
-	 *
-	 * @param string $remote_file
-	 *
-	 * @return bool|mixed
-	 */
-	public function upload_file_from_external_source( $remote_file = '' ) {
-		$this->setup_response();
-		if ( empty( $remote_file ) ) {
-			$this->update_response( 'message', 'The remote file url is empty' );
-		}
-		$downloaded_file = ssp_download_remote_file( $remote_file );
-		if ( $downloaded_file ) {
-			$podmotor_response = $this->upload_file_to_podmotor_storage( $downloaded_file );
-			if ( 'success' === $podmotor_response['status'] ) {
-				$this->update_response( 'status', 'success' );
-				$this->update_response( 'message', 'Remote file uploaded to Seriously Simple Hosting' );
-				$this->update_response( 'podmotor_file', $podmotor_response['podmotor_file'] );
-			} else {
-				$this->update_response( 'message', 'An error occurred uploading the file to Seriously Simple Hosting' );
-			}
-			@unlink( $downloaded_file );
-		} else {
-			$this->update_response( 'message', 'An error occurred downloading the remote file' );
-		}
-		
-		return $this->response;
-	}
-	
-	/**
 	 * Upload a local file to PodcastMotor offsite storage
 	 *
 	 * @param $file

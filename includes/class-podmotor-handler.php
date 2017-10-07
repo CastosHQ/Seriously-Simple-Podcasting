@@ -201,20 +201,6 @@ class Podmotor_Handler {
 	}
 	
 	/**
-	 * Clear out the file uploaded locally
-	 *
-	 * @param string $podmotor_file_path
-	 */
-	public function clear_local_podmotor_file( $podmotor_file_path = '' ) {
-		$file_info          = pathinfo( $podmotor_file_path );
-		$file_to_be_deleted = ssp_get_upload_directory() . $file_info['basename'];
-		ssp_debug( $file_to_be_deleted );
-		if ( is_file( $file_to_be_deleted ) ) {
-			unlink( $file_to_be_deleted );
-		}
-	}
-	
-	/**
 	 * Upload Podcast episode data to Seriously Simple Hosting
 	 * Should only happen once the file has been uploaded to Seriously Simple Hosting Storage
 	 *

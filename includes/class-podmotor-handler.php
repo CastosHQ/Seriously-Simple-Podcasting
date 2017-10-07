@@ -148,36 +148,7 @@ class Podmotor_Handler {
 		return $this->response;
 	}
 	
-	/**
-	 * Get the duration of a local file before uploading it to S3
-	 *
-	 * @param $file
-	 *
-	 * @return bool|false|string
-	 */
-	public function get_local_file_duration( $file ) {
-		$duration = false;
-		if ( $file ) {
-			// Include media functions if necessary
-			if ( ! function_exists( 'wp_read_audio_metadata' ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/media.php' );
-			}
 
-			$data = wp_read_audio_metadata( $file );
-
-			if ( $data ) {
-				if ( isset( $data['length_formatted'] ) && strlen( $data['length_formatted'] ) > 0 ) {
-					$duration = $data['length_formatted'];
-				} else {
-					if ( isset( $data['length'] ) && strlen( $data['length'] ) > 0 ) {
-						$duration = gmdate( 'H:i:s', $data['length'] );
-					}
-				}
-			}
-		}
-		return $duration;
-	}
-	
 	/**
 	 * Takes an external file and downloads it to the server
 	 * then uploads it to the PodcastMotor offsite storage

@@ -426,9 +426,11 @@ class SSP_Frontend {
 			if( empty( $stitcher_url ) ) { $meta_sep = ''; } else { $meta_sep = ' | '; }
 			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $google_play_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
 		}
-
-		$meta_display .= "<p>".__( 'Subscribe:', 'seriously-simple-podcasting' )." ".$subscribe_display."</p>";
-
+		
+		if ( ! empty( $subscribe_display ) ) {
+			$meta_display .= '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
+		}
+		
 		$meta_display = '<div class="podcast_meta"><aside>' . $meta_display . '</aside></div>';
 
 		return $meta_display;

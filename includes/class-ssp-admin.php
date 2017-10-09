@@ -784,48 +784,6 @@ class SSP_Admin {
 			'section'          => 'info',
 			'meta_description' => __( 'The type of podcast episode - either Audio or Video', 'seriously-simple-podcasting' ),
 		);
-
-        /**
-         * New iTunes Tag Announced At WWDC 2017
-         */
-        $fields['itunes_title'] = array(
-            'name'             => __( 'iTunes Episode Title (Exclude Your Series / Show Number):', 'seriously-simple-podcasting' ),
-            'description'      => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included.', 'seriously-simple-podcasting' ),
-            'type'             => 'text',
-            'default'          => '',
-            'section'          => 'info',
-            'meta_description' => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included', 'seriously-simple-podcasting' ),
-        );
-
-        /**
-         * New iTunes Tag Announced At WWDC 2017
-         */
-        $fields['itunes_season_number'] = array(
-            'name'             => __( 'iTunes Season Number:', 'seriously-simple-podcasting' ),
-            'description'      => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-            'type'             => 'number',
-            'default'          => '',
-            'section'          => 'info',
-            'meta_description' => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-        );
-
-        /**
-         * New iTunes Tag Announced At WWDC 2017
-         */
-        $fields['itunes_episode_type'] = array(
-            'name'             => __( 'iTunes Episode Type:', 'seriously-simple-podcasting' ),
-            'description'      => '',
-            'type'             => 'select',
-            'default'          => '',
-            'options'          => array(
-                '' => __( 'Please Select', 'seriously-simple-podcasting' ),
-                'full' => __( 'Full: For Normal Episodes', 'seriously-simple-podcasting' ),
-                'trailer' => __( 'Trailer: Promote an Upcoming Show', 'seriously-simple-podcasting' ),
-                'bonus' => __( 'Bonus: For Extra Content Related To a Show', 'seriously-simple-podcasting' )
-            ),
-            'section'          => 'info',
-            'meta_description' => __( 'The iTunes Episode Type', 'seriously-simple-podcasting' ),
-        );
 		
 		// In v1.14+ the `audio_file` field can actually be either audio or video, but we're keeping the field name here for backwards compatibility
 		$fields['audio_file'] = array(
@@ -864,18 +822,61 @@ class SSP_Admin {
 			'section'          => 'info',
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
-
-        /**
-         * New iTunes Tag Announced At WWDC 2017
-         */
-        $fields['itunes_episode_number'] = array(
-            'name'             => __( 'iTunes Episode Number:', 'seriously-simple-podcasting' ),
-            'description'      => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-            'type'             => 'number',
-            'default'          => '',
-            'section'          => 'info',
-            'meta_description' => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-        );
+		
+		/**
+		 * New iTunes Tag Announced At WWDC 2017
+		 */
+		$fields['itunes_episode_number'] = array(
+			'name'             => __( 'iTunes Episode Number:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+			'type'             => 'number',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+		);
+		
+		/**
+		 * New iTunes Tag Announced At WWDC 2017
+		 */
+		$fields['itunes_title'] = array(
+			'name'             => __( 'iTunes Episode Title (Exclude Your Series / Show Number):', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included.', 'seriously-simple-podcasting' ),
+			'type'             => 'text',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included', 'seriously-simple-podcasting' ),
+		);
+		
+		/**
+		 * New iTunes Tag Announced At WWDC 2017
+		 */
+		$fields['itunes_season_number'] = array(
+			'name'             => __( 'iTunes Season Number:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+			'type'             => 'number',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+		);
+		
+		/**
+		 * New iTunes Tag Announced At WWDC 2017
+		 */
+		$fields['itunes_episode_type'] = array(
+			'name'             => __( 'iTunes Episode Type:', 'seriously-simple-podcasting' ),
+			'description'      => '',
+			'type'             => 'select',
+			'default'          => '',
+			'options'          => array(
+				'' => __( 'Please Select', 'seriously-simple-podcasting' ),
+				'full' => __( 'Full: For Normal Episodes', 'seriously-simple-podcasting' ),
+				'trailer' => __( 'Trailer: Promote an Upcoming Show', 'seriously-simple-podcasting' ),
+				'bonus' => __( 'Bonus: For Extra Content Related To a Show', 'seriously-simple-podcasting' )
+			),
+			'section'          => 'info',
+			'meta_description' => __( 'The iTunes Episode Type', 'seriously-simple-podcasting' ),
+		);
+		
 		
 		if ( ssp_is_connected_to_podcastmotor() ) {
 			$fields['filesize_raw'] = array(

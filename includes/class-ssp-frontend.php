@@ -352,10 +352,6 @@ class SSP_Frontend {
 			$meta['new_window'] = true;
 		}
 
-		if( $link ) {
-			$meta['duration'] = $duration;
-		}
-
 		if( $date_recorded ) {
 			$meta['date_recorded'] = $date_recorded;
 		}
@@ -387,11 +383,6 @@ class SSP_Frontend {
 				case 'new_window':
 					$play_link = add_query_arg( 'ref', 'new_window', $link );
 					$podcast_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
-				break;
-
-				case 'duration':
-					// Keeping the check in place to prevent it from being automatically added further down
-					// $podcast_display .= '<span class="podcast-meta-duration">' . __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
 				break;
 
 				case 'date_recorded':

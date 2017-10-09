@@ -787,6 +787,26 @@ class SSP_Settings {
 					'callback'    => 'esc_url_raw',
 					'class'       => 'regular-text',
 				),
+				array(
+					'id'          => 'stitcher_url',
+					'label'       => __( 'Stitcher URL', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your podcast\'s Stitcher URL.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'Stitcher URL', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_url_raw',
+					'class'       => 'regular-text',
+				),
+				array(
+					'id'          => 'google_play_url',
+					'label'       => __( 'Google Play URL', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your podcast\'s Google Play URL.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'Google Play URL', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_url_raw',
+					'class'       => 'regular-text',
+				),
 			),
 		);
 

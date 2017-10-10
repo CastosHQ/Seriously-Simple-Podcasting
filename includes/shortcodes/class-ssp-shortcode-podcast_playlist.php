@@ -177,6 +177,7 @@ class SSP_Shortcode_Podcast_Playlist {
 
 			$tracks[] = $track;
 		}
+
 		$data['tracks'] = $tracks;
 
 		$safe_type = esc_attr( $atts['type'] );
@@ -187,35 +188,123 @@ class SSP_Shortcode_Podcast_Playlist {
 
 		ob_start();
 
-		if ( 1 === $instance ) {
+        $player_style = (string) get_option( 'ss_podcasting_player_style' );
+
+		if ( 1 === $instance && "larger" !== $player_style ) {
 			/* This hook is defined in wp-includes/media.php */
 			do_action( 'wp_playlist_scripts', $atts['type'], $atts['style'] );
 		} ?>
-	<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?>">
-		<?php if ( 'audio' === $atts['type'] ): ?>
-		<div class="wp-playlist-current-item"></div>
-		<?php endif ?>
-		<<?php echo $safe_type ?> controls="controls" preload="none" width="<?php
-			echo (int) $theme_width;
-		?>"<?php if ( 'video' === $safe_type ):
-			echo ' height="', (int) $theme_height, '"';
-		endif; ?>></<?php echo $safe_type ?>>
-		<div class="wp-playlist-next"></div>
-		<div class="wp-playlist-prev"></div>
-		<noscript>
-		<ol><?php
-		foreach ( $episodes as $episode ) {
-			$url = $ss_podcasting->get_enclosure( $episode->ID );
-			if ( get_option( 'permalink_structure' ) ) {
-				$url = $ss_podcasting->get_episode_download_link( $episode->ID );
-				$url = str_replace( 'podcast-download', 'podcast-player', $url );
-			}
-			printf( '<li>%s</li>', $url );
-		}
-		?></ol>
-		</noscript>
-		<script type="application/json" class="wp-playlist-script"><?php echo wp_json_encode( $data ) ?></script>
-	</div>
+        <div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?>">
+
+            <?php
+
+                if( 'audio' === $atts['type'] && "larger" == $player_style ){
+                    echo $ss_podcasting->media_player( $ss_podcasting->get_episode_download_link( $episodes[0]->ID ), $episodes[0]->ID );
+                }else{
+                    ?>
+                        <<?php echo $safe_type ?> controls="controls" preload="none" width="<?php
+                        echo (int) $theme_width;
+                        ?>"<?php if ( 'video' === $safe_type ):
+                            echo ' height="', (int) $theme_height, '"';
+                        endif; ?>></<?php echo $safe_type ?>>
+                    <?php
+                }
+
+                if( "larger" == $player_style ) :
+                    global $largePlayerInstanceNumber;
+                    add_action( 'wp_footer', function(){
+                        global $largePlayerInstanceNumber;
+                        ?>
+                            <script>
+                                (function($){
+                                    $( document ).ready( function(){
+                                        $( '#sspPlayListTracks<?php echo $largePlayerInstanceNumber; ?> .ssp-playlist-item a' ).on( 'click', function(e){
+                                            $( '#sspPlayListTracks<?php echo $largePlayerInstanceNumber; ?>' ).find( '.ssp-playlist-playing' ).removeClass( 'ssp-playlist-playing' );
+                                            $( e.currentTarget ).parents( '.ssp-playlist-item' ).addClass( 'ssp-playlist-playing' );
+                                            window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.load( $( e.currentTarget ).attr( 'href' ) );
+                                            $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> .ssp-player-title' ).html(
+                                                $( e.currentTarget ).data( 'ssp-title' ) +
+                                                ( $( e.currentTarget ).data( 'ssp-series' ) ? '<br><span class="ssp-player-series">' + $( e.currentTarget ).data( 'ssp-series' ) + '</span>' : '' )
+                                            );
+                                            $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> a.ssp-episode-download' ).attr( 'href', $( e.currentTarget ).data( 'ssp-download' ) );
+                                            e.returnValue = false;
+                                            e.preventDefault();
+                                            return false;
+                                        } );
+                                    } );
+                                }(jQuery))
+                            </script>
+                        <?php
+                    } );
+                    ?>
+                        <div class="ssp-playlist-tracks" id="sspPlayListTracks<?php echo $largePlayerInstanceNumber; ?>">
+                            <?php
+                                $pc = 0;
+
+                                foreach ( $episodes as $episode ) {
+
+                                    if( $series = get_the_terms( $episode->ID, 'series' ) ){
+                                        $episode_series =  ( !empty( $series ) && isset( $series[0] ) ) ? substr( $series[0]->name, 0, 35) . ( strlen( $series[0]->name ) > 35 ? '...' : '' ) : '';
+                                    }else{
+                                        $episode_series = '';
+                                    }
+
+                                    $pc++;
+                                    $url = $ss_podcasting->get_enclosure( $episode->ID );
+
+                                    if ( get_option( 'permalink_structure' ) ) {
+                                        $url = $ss_podcasting->get_episode_download_link( $episode->ID );
+                                        $url = str_replace( 'podcast-download', 'podcast-player', $url );
+                                    }
+                                    printf(
+                                        '
+                                            <div class="ssp-playlist-item' . ( 1 === $pc ? " ssp-playlist-playing" : "" ) . '">
+                                                <a class="ssp-playlist-caption" href="%s" data-ssp-title="%s" data-ssp-series="%s" data-ssp-download="%s">
+                                                    %s
+                                                </a>
+                                            </div>
+                                        ',
+                                        $url,
+                                        $episode->post_title,
+                                        $episode_series,
+                                        $ss_podcasting->get_episode_download_link( $episode->ID, 'download' ),
+                                        $pc . '. ' . $episode->post_title
+                                    );
+                                }
+                            ?>
+                        </div>
+                    <?php
+                else :
+            ?>
+
+                <?php if ( 'audio' === $atts['type'] ) : ?>
+                    <div class="wp-playlist-current-item"></div>
+                <?php endif ?>
+
+                <div class="wp-playlist-next"></div>
+                <div class="wp-playlist-prev"></div>
+
+                <noscript>
+                <ol>
+                    <?php
+                        foreach ( $episodes as $episode ) {
+                            $url = $ss_podcasting->get_enclosure( $episode->ID );
+                            if ( get_option( 'permalink_structure' ) ) {
+                                $url = $ss_podcasting->get_episode_download_link( $episode->ID );
+                                $url = str_replace( 'podcast-download', 'podcast-player', $url );
+                            }
+                            printf( '<li>%s</li>', $url );
+                        }
+                    ?>
+                </ol>
+                </noscript>
+                <script type="application/json" class="wp-playlist-script"><?php echo wp_json_encode( $data ) ?></script>
+
+            <?php
+                endif; // Only show the above if it is core WordPress Media Player
+            ?>
+
+        </div>
 		<?php
 		return ob_get_clean();
 	}

@@ -9,7 +9,7 @@
   font-style: normal;
 }
 
-[class^="icon-"], [class*=" icon-"] {
+[class^="icon-"], [class*=" ssp-icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
   speak: none;
@@ -24,15 +24,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-cloud-download:before {
-  content: "\e9c2";
+.ssp-icon-pause_icon:before {
+  content: "\e900";
+  line-height:1.5;
 }
-.icon-play2:before {
-  content: "\ea15";
-}
-.icon-pause:before {
-  content: "\ea16";
-}
-.icon-new-tab:before {
-  content: "\ea7e";
+.ssp-icon-play_icon:before {
+  content: "\e901";
+  line-height:1.5;
 }

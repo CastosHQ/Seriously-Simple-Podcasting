@@ -96,6 +96,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+
+= 1.18.0 =
+* 2017-10-10
+* [NEW] New HTML5 Media Player
+* [NEW] New HTML5 Playlist Media Player
+* [IMPROVEMENT] Ability to choose standard vs. new player on episode shortcodes
+
 = 1.17.3 =
 * 2017-08-29
 * [FIX] Fixed a bug with the importer process sending the incorrect data format

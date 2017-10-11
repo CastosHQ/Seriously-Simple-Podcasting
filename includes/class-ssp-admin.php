@@ -20,21 +20,8 @@ class SSP_Admin {
 	private $assets_dir;
 	private $assets_url;
 	private $template_path;
-	private $token;
 	private $home_url;
 	private $script_suffix;
-	
-	/**
-	 * Unique identifier for your plugin.
-	 *
-	 * The variable name is used as the text domain when internationalizing strings of text.
-	 * Its value should match the Text Domain file header in the main plugin file.
-	 *
-	 * @since    1.0.0
-	 *
-	 * @var      string
-	 */
-	protected $plugin_slug = 'seriously-simple-podcasting';
 	
 	/**
 	 * Constructor
@@ -51,7 +38,8 @@ class SSP_Admin {
 		$this->assets_url    = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
 		$this->home_url      = trailingslashit( home_url() );
-		$this->token         = 'podcast';
+		$this->plugin_slug      = 'seriously-simple-podcasting';
+		$this->plugin_post_type = 'podcast';
 		
 		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 		
@@ -95,7 +83,7 @@ class SSP_Admin {
 			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10, 1 );
 			
 			// Episodes list table.
-			add_filter( 'manage_edit-' . $this->token . '_columns', array(
+			add_filter( 'manage_edit-' . $this->plugin_post_type . '_columns', array(
 				$this,
 				'register_custom_column_headings',
 			), 10, 1 );
@@ -172,7 +160,7 @@ class SSP_Admin {
 		add_rewrite_tag( '%podcast_ref%', '([^&]+)' );
 		
 		// Series feed URLs
-		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+		$feed_slug = apply_filters( 'ssp_feed_slug', $this->plugin_post_type );
 		add_rewrite_rule( '^feed/' . $feed_slug . '/([^/]*)/?', 'index.php?feed=podcast&podcast_series=$matches[1]', 'top' );
 		add_rewrite_tag( '%podcast_series%', '([^&]+)' );
 	}
@@ -185,7 +173,7 @@ class SSP_Admin {
 	public function register_post_type() {
 		
 		$labels = array(
-			'name'                  => _x( 'Podcast', 'post type general name', $this->plugin_slug
+			'name'                  => _x( 'Podcast', 'post type general name', $this->plugin_slug ),
 			'singular_name'         => _x( 'Podcast', 'post type singular name', $this->plugin_slug ),
 			'add_new'               => _x( 'Add New', 'podcast', $this->plugin_slug ),
 			'add_new_item'          => sprintf( __( 'Add New %s', $this->plugin_slug ), __( 'Episode', $this->plugin_slug ) ),
@@ -237,7 +225,7 @@ class SSP_Admin {
 		
 		$args = apply_filters( 'ssp_register_post_type_args', $args );
 		
-		register_post_type( $this->token, $args );
+		register_post_type( $this->plugin_post_type, $args );
 		
 		$this->register_taxonomies();
 		$this->register_meta();
@@ -287,43 +275,48 @@ class SSP_Admin {
 		
 		// Add Tags to podcast post type
 		if ( apply_filters( 'ssp_use_post_tags', true ) ) {
-			register_taxonomy_for_object_type( 'post_tag', $this->token );
+			register_taxonomy_for_object_type( 'post_tag', $this->plugin_post_type );
 		}
 	}
 	
-	private function add_series_image_field($taxonomy) {
+	public function add_series_image_field($taxonomy) {
 			$this->series_image_uploader( $taxonomy, $width = 100, $height = 100 );
 	}
 	
 	/**
 	 * Series Image Uploader
 	 */
-	private function series_image_uploader( $name, $width, $height ) {
-			// Define a default image.
-			$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
+	public function series_image_uploader( $name, $width, $height ) {
+		// Define a default image.
+		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
 
-			if ( !empty( $options[$name] ) ) {
-					$image_attributes = wp_get_attachment_image_src( $options[$name], array( $width, $height ) );
-					$src = $image_attributes[0];
-					$value = $options[$name];
-			} else {
-					$src = $default_image;
-					$value = '';
-			}
+		if ( !empty( $options[$name] ) ) {
+				$image_attributes = wp_get_attachment_image_src( $options[$name], array( $width, $height ) );
+				$src = $image_attributes[0];
+				$value = $options[$name];
+		} else {
+				$src = $default_image;
+				$value = '';
+		}
 
-			$text = __( 'Upload', RSSFI_TEXT );
+		$series_img_title = __( 'Series Image', $this->plugin_slug );
+		$series_img_setting = __( $this->plugin_post_type . '_settings', $this->plugin_slug );
+		$upload_btn_text = __( 'Upload', $this->plugin_slug );
+		$series_img_desc = __( "Set an image as the artwork for the series. No image will be set if not provided.", $this->plugin_slug);
 
-			// Print HTML field
-			echo '
-					<div class="upload">
-							<img data-src="' . $default_image . '" src="' . $src . '" width="' . $width . 'px" height="' . $height . 'px" />
-							<div>
-									<input type="hidden" name="RssFeedIcon_settings[' . $name . ']" id="RssFeedIcon_settings[' . $name . ']" value="' . $value . '" />
-									<button type="submit" class="upload_image_button button">' . $text . '</button>
-									<button type="submit" class="remove_image_button button">&times;</button>
-							</div>
-					</div>
-			';
+		// Print HTML field
+		echo <<<HTML
+<div class="form-field term-upload-wrap">
+	<label>{$series_img_title}</label>
+	<img data-src="{$default_image}" src="$src" width="{$width}px" height="{$height}px" />
+	<div>
+		<input type="hidden" name="{$series_img_setting}[{$name}]" id="{$series_img_setting}[{$name}]" value="{$value}" />
+		<button type="submit" class="upload_image_button button">{$upload_btn_text}</button>
+		<button type="submit" class="remove_image_button button">&times;</button>
+	</div>
+	<p>{$series_img_desc}</p>
+</div>
+HTML;
 	}
 	
 	public function register_meta() {
@@ -445,12 +438,12 @@ class SSP_Admin {
 				$series_slug = $series->slug;
 				
 				if ( get_option( 'permalink_structure' ) ) {
-					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+					$feed_slug = apply_filters( 'ssp_feed_slug', $this->plugin_post_type );
 					$feed_url  = $this->home_url . 'feed/' . $feed_slug . '/' . $series_slug;
 				} else {
 					$feed_url = add_query_arg(
 						array(
-							'feed'           => $this->token,
+							'feed'           => $this->plugin_post_type,
 							'podcast_series' => $series_slug,
 						),
 						$this->home_url
@@ -474,7 +467,7 @@ class SSP_Admin {
 	public function updated_messages( $messages ) {
 		global $post, $post_ID;
 		
-		$messages[ $this->token ] = array(
+		$messages[ $this->plugin_post_type ] = array(
 			0  => '',
 			1  => sprintf( __( 'Episode updated. %sView episode%s.', $this->plugin_slug ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			2  => __( 'Custom field updated.', $this->plugin_slug ),
@@ -585,7 +578,7 @@ class SSP_Admin {
 		
 		$html = '';
 		
-		$html .= '<input type="hidden" name="seriouslysimple_' . $this->token . '_nonce" id="seriouslysimple_' . $this->token . '_nonce" value="' . wp_create_nonce( plugin_basename( $this->dir ) ) . '" />';
+		$html .= '<input type="hidden" name="seriouslysimple_' . $this->plugin_post_type . '_nonce" id="seriouslysimple_' . $this->plugin_post_type . '_nonce" value="' . wp_create_nonce( plugin_basename( $this->dir ) ) . '" />';
 		
 		if ( 0 < count( $field_data ) ) {
 			
@@ -734,7 +727,7 @@ class SSP_Admin {
 		}
 		
 		// Security check
-		if ( ! isset( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ] ) || ! ( isset( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ] ) && wp_verify_nonce( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ], plugin_basename( $this->dir ) ) ) ) {
+		if ( ! isset( $_POST[ 'seriouslysimple_' . $this->plugin_post_type . '_nonce' ] ) || ! ( isset( $_POST[ 'seriouslysimple_' . $this->plugin_post_type . '_nonce' ] ) && wp_verify_nonce( $_POST[ 'seriouslysimple_' . $this->plugin_post_type . '_nonce' ], plugin_basename( $this->dir ) ) ) ) {
 			return $post_id;
 		}
 		
@@ -977,15 +970,15 @@ class SSP_Admin {
 		
 		$num_posts = count( ssp_episodes( - 1, '', false, 'glance' ) );
 		
-		$post_type_object = get_post_type_object( $this->token );
+		$post_type_object = get_post_type_object( $this->plugin_post_type );
 		
 		$text = _n( '%s Episode', '%s Episodes', $num_posts, $this->plugin_slug );
 		$text = sprintf( $text, number_format_i18n( $num_posts ) );
 		
 		if ( $post_type_object && current_user_can( $post_type_object->cap->edit_posts ) ) {
-			$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $this->token, $text ) . "\n";
+			$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $this->plugin_post_type, $text ) . "\n";
 		} else {
-			$items[] = sprintf( '<span class="%1$s-count">%2$s</span>', $this->token, $text ) . "\n";
+			$items[] = sprintf( '<span class="%1$s-count">%2$s</span>', $this->plugin_post_type, $text ) . "\n";
 		}
 		
 		return $items;
@@ -1022,7 +1015,7 @@ class SSP_Admin {
 	 * @return string        Modified text
 	 */
 	public function enter_title_here( $title ) {
-		if ( get_post_type() == $this->token ) {
+		if ( get_post_type() == $this->plugin_post_type ) {
 			$title = __( 'Enter episode title here', $this->plugin_slug );
 		}
 		
@@ -1122,7 +1115,7 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function add_feed() {
-		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+		$feed_slug = apply_filters( 'ssp_feed_slug', $this->plugin_post_type );
 		add_feed( $feed_slug, array( $this, 'feed_template' ) );
 	}
 	
@@ -1135,7 +1128,7 @@ class SSP_Admin {
 	 */
 	public function hide_wp_seo_rss_footer( $include_footer = true ) {
 		
-		if ( is_feed( 'podcast' ) ) {
+		if ( is_feed( $this->plugin_post_type ) ) {
 			$include_footer = false;
 		}
 		
@@ -1178,7 +1171,7 @@ class SSP_Admin {
 	 * @return void
 	 */
 	public function redirect_old_feed() {
-		if ( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( 'podcast', 'itunes' ) ) ) {
+		if ( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( $this->plugin_post_type, 'itunes' ) ) ) {
 			$this->feed_template();
 			exit;
 		}
@@ -1603,7 +1596,7 @@ class SSP_Admin {
 	public function show_upgrade_screen() {
 		// first check that we should show the screen
 		$post_type = ( isset( $_GET['post_type'] ) ? filter_var( $_GET['post_type'], FILTER_SANITIZE_STRING ) : '' );
-		if ( empty( $post_type ) || 'podcast' !== $post_type ) {
+		if ( empty( $post_type ) || $this->plugin_post_type !== $post_type ) {
 			return;
 		}
 		
@@ -1628,7 +1621,7 @@ class SSP_Admin {
 		$current_url = rawurlencode( ( isset( $_SERVER['HTTPS'] ) ? 'https' : 'http' ) . '://' . $_SERVER['HTTP_HOST'] . $_SERVER['REQUEST_URI'] );
 		
 		// redirect
-		$url = add_query_arg( array( 'post_type'    => 'podcast',
+		$url = add_query_arg( array( 'post_type'    => $this->plugin_post_type,
 		                             'page'         => 'upgrade',
 		                             'ssp_redirect' => $current_url
 		), admin_url( 'edit.php' ) );

@@ -24,6 +24,24 @@ class SSP_Admin {
 	private $script_suffix;
 	
 	/**
+	 * Default series thumbnail width. Used on admin screens.
+	 *
+	 * @since   1.18.0
+	 *
+	 * @var     integer
+	 */
+	const SERIES_THUMB_WIDTH = 100;
+	
+	/**
+	 * Default series thumbnail height. Used on admin screens.
+	 *
+	 * @since   1.18.0
+	 *
+	 * @var     integer
+	 */
+	const SERIES_THUMB_HEIGHT = 100;
+	
+	/**
 	 * Constructor
 	 *
 	 * @param    string $file Plugin base file
@@ -93,8 +111,9 @@ class SSP_Admin {
 			add_filter( 'manage_edit-series_columns', array( $this, 'edit_series_columns' ) );
 			add_filter( 'manage_series_custom_column', array( $this, 'add_series_columns' ), 1, 3 );
 			
-			// Add the series image upload term meta form
+			// Series image upload term meta forms
 			add_action( 'series_add_form_fields', array( $this, 'add_series_image_field' ), 10, 2 );
+			add_action( 'series_edit_form_fields', array( $this, 'edit_series_image_field'), 10, 2) ;
 		
 			// Dashboard widgets.
 			add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
@@ -279,24 +298,35 @@ class SSP_Admin {
 		}
 	}
 	
-	public function add_series_image_field($taxonomy) {
-			$this->series_image_uploader( $taxonomy, $width = 100, $height = 100 );
+	public function add_series_image_field( $taxonomy ) {
+		$this->series_image_uploader( $taxonomy );
+	}
+	
+	public function edit_series_image_field( $taxonomy ) {
+		$this->series_image_uploader ( $taxonomy->name, $width = self::SERIES_THUMB_WIDTH, $height = self::SERIES_THUMB_HEIGHT, $mode = 'UPDATE' );
+	}
+	
+	public function save_series_meta( $term_id, $tt_id ){
+    if ( isset( $_POST['feature-group'] ) && '' !== $_POST['feature-group'] ) {
+			$group = sanitize_title( $_POST['feature-group'] );
+			add_term_meta( $term_id, 'feature-group', $group, true );
+    }
 	}
 	
 	/**
 	 * Series Image Uploader
 	 */
-	public function series_image_uploader( $name, $width, $height ) {
+	public function series_image_uploader( $taxonomy_name, $width = self::SERIES_THUMB_WIDTH, $height = self::SERIES_THUMB_HEIGHT, $mode = 'CREATE' ) {
 		// Define a default image.
 		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
 
-		if ( !empty( $options[$name] ) ) {
-				$image_attributes = wp_get_attachment_image_src( $options[$name], array( $width, $height ) );
-				$src = $image_attributes[0];
-				$value = $options[$name];
+		if ( !empty( $options[$taxonomy_name] ) ) {
+			$image_attributes = wp_get_attachment_image_src( $options[$taxonomy_name], array( $width, $height ) );
+			$src = $image_attributes[0];
+			$value = $options[$taxonomy_name];
 		} else {
-				$src = $default_image;
-				$value = '';
+			$src = $default_image;
+			$value = '';
 		}
 
 		$series_img_title = __( 'Series Image', $this->plugin_slug );
@@ -304,19 +334,37 @@ class SSP_Admin {
 		$upload_btn_text = __( 'Upload', $this->plugin_slug );
 		$series_img_desc = __( "Set an image as the artwork for the series. No image will be set if not provided.", $this->plugin_slug);
 
-		// Print HTML field
-		echo <<<HTML
+		$series_img_form_label = <<<HTML
+<label>{$series_img_title}</label>
+HTML;
+		
+		$series_img_form_fields = <<<HTML
+<img data-src="{$default_image}" src="$src" width="{$width}px" height="{$height}px" />
+<div>
+	<input type="hidden" name="{$series_img_setting}[{$taxonomy_name}]" id="{$series_img_setting}[{$taxonomy_name}]" value="{$value}" />
+	<button type="submit" class="upload_image_button button">{$upload_btn_text}</button>
+	<button type="submit" class="remove_image_button button">&times;</button>
+</div>
+<p class="description">{$series_img_desc}</p>
+HTML;
+		
+		if ( $mode == 'CREATE' ) {
+			echo <<<HTML
 <div class="form-field term-upload-wrap">
-	<label>{$series_img_title}</label>
-	<img data-src="{$default_image}" src="$src" width="{$width}px" height="{$height}px" />
-	<div>
-		<input type="hidden" name="{$series_img_setting}[{$name}]" id="{$series_img_setting}[{$name}]" value="{$value}" />
-		<button type="submit" class="upload_image_button button">{$upload_btn_text}</button>
-		<button type="submit" class="remove_image_button button">&times;</button>
-	</div>
-	<p>{$series_img_desc}</p>
+	{$series_img_form_label}
+	{$series_img_form_fields}
 </div>
 HTML;
+		} else if ( $mode == 'UPDATE' ) {
+			echo <<<HTML
+<tr class="form-field term-upload-wrap">
+	<th scope="row">{$series_img_form_label}</th>
+	<td>
+		{$series_img_form_fields}
+	</td>
+</tr>
+HTML;
+		}
 	}
 	
 	public function register_meta() {

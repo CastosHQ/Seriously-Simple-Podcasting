@@ -292,7 +292,7 @@ class SSP_Admin {
 	}
 	
 	private function add_series_image_field($taxonomy) {
-			$this->series_image_uploader()
+			$this->series_image_uploader( $taxonomy, $width = 100, $height = 100 );
 	}
 	
 	/**

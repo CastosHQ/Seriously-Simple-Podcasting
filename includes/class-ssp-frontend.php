@@ -910,6 +910,8 @@ class SSP_Frontend {
 
                         <script>
 
+                            var _paq = _paq || [];
+
                             String.prototype.toFormattedDuration = function () {
                                 var sec_num = parseInt(this, 10); // don't forget the second param
                                 var hours   = Math.floor(sec_num / 3600);

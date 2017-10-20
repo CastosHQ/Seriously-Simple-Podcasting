@@ -339,11 +339,11 @@ class SSP_Admin {
 HTML;
 		
 		$series_img_form_fields = <<<HTML
-<img data-src="{$default_image}" src="$src" width="{$width}px" height="{$height}px" />
+<img id="{$taxonomy_name}_image_preview" data-src="{$default_image}" src="$src" width="{$width}px" height="{$height}px" />
 <div>
-	<input type="hidden" name="{$series_img_setting}[{$taxonomy_name}]" id="{$series_img_setting}[{$taxonomy_name}]" value="{$value}" />
-	<button type="submit" class="upload_image_button button">{$upload_btn_text}</button>
-	<button type="submit" class="remove_image_button button">&times;</button>
+	<input type="hidden" id="{$taxonomy_name}_image_id" name="{$series_img_setting}[{$taxonomy_name}]" value="{$value}" />
+	<button type="submit" id="{$taxonomy_name}_upload_image_button" class="button">{$upload_btn_text}</button>
+	<button type="submit" id="{$taxonomy_name}_remove_image_button" class="button">&times;</button>
 </div>
 <p class="description">{$series_img_desc}</p>
 HTML;
@@ -1109,6 +1109,14 @@ HTML;
 		
 		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'ssp-settings' );
+		
+		// Only e
+		if ( 'edit-tags.php' === $hook || 'term.php' === $hook ) {
+			global $post_type;
+			if ( in_array( $post_type, ssp_post_types( true ) ) ) {
+				wp_enqueue_media();
+			}
+		}
 		
 		/**
 		 * Only load the upload scripts when adding/editing posts/podcasts

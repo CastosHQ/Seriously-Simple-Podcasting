@@ -41,6 +41,38 @@ jQuery(document).ready(function($) {
 		file_frame.open();
 	};
 
+  /* Add/Edit Series Image */
+	jQuery('#series_upload_image_button').click(function( event ){
+		event.preventDefault();
+		var send_attachment_bkp = wp.media.editor.send.attachment;
+    var button = $(this);
+		var button_id = button.attr('id');
+		console.log( button_id );
+		var preview_id = button_id.replace( '_upload', '' ).replace( '_button', '_preview' );
+		console.log( preview_id );
+		var field_id = button_id.replace( '_upload', '' ).replace( '_button', '_id' );
+		console.log( field_id );
+    wp.media.editor.send.attachment = function(props, attachment) {
+        $('#' + preview_id).attr('src', attachment.url);
+        $('#' + field_id).val(attachment.id);
+        wp.media.editor.send.attachment = send_attachment_bkp;
+    }
+    wp.media.editor.open(button);
+	});
+	
+	jQuery('#series_remove_image_button').click(function( event ){
+		event.preventDefault();
+		var button = $(this);
+		var button_id = button.attr('id');
+		var preview_id = button_id.replace( '_remove', '' ).replace( '_button', '_preview' );
+		var field_id = button_id.replace( '_remove', '' ).replace( '_button', '_id' );
+    if ( confirm('Are you sure?') ) {
+        var src = $('#' + preview_id).attr('data-src');
+        $('#' + preview_id).attr('src', src);
+        $('#' + field_id).prev().prev().val('');
+    }
+	});
+	
 	/* ADD/EDIT EPISODE */
 
 	jQuery('#upload_audio_file_button').click(function( event ){

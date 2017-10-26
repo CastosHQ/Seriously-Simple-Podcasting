@@ -24,24 +24,6 @@ class SSP_Admin {
 	private $script_suffix;
 	
 	/**
-	 * Default series thumbnail width. Used on admin screens.
-	 *
-	 * @since   1.18.0
-	 *
-	 * @var     integer
-	 */
-	const SERIES_THUMB_WIDTH = 100;
-	
-	/**
-	 * Default series thumbnail height. Used on admin screens.
-	 *
-	 * @since   1.18.0
-	 *
-	 * @var     integer
-	 */
-	const SERIES_THUMB_HEIGHT = 100;
-	
-	/**
 	 * Constructor
 	 *
 	 * @param    string $file Plugin base file
@@ -114,6 +96,8 @@ class SSP_Admin {
 			// Series image upload term meta forms
 			add_action( 'series_add_form_fields', array( $this, 'add_series_image_field' ), 10, 2 );
 			add_action( 'series_edit_form_fields', array( $this, 'edit_series_image_field'), 10, 2) ;
+			add_action( 'created_series', array( $this, 'save_series_meta'), 10, 2 );
+			add_action( 'edited_series', array( $this, 'update_series_meta'), 10, 2 );
 		
 			// Dashboard widgets.
 			add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
@@ -298,40 +282,45 @@ class SSP_Admin {
 		}
 	}
 	
+	/**
+	 * Intializes the add Series image metabox.
+	 */
 	public function add_series_image_field( $taxonomy ) {
 		$this->series_image_uploader( $taxonomy );
 	}
 	
-	public function edit_series_image_field( $taxonomy ) {
-		$this->series_image_uploader ( $taxonomy->name, $width = self::SERIES_THUMB_WIDTH, $height = self::SERIES_THUMB_HEIGHT, $mode = 'UPDATE' );
-	}
-	
-	public function save_series_meta( $term_id, $tt_id ){
-    if ( isset( $_POST['feature-group'] ) && '' !== $_POST['feature-group'] ) {
-			$group = sanitize_title( $_POST['feature-group'] );
-			add_term_meta( $term_id, 'feature-group', $group, true );
-    }
+	/**
+	 * Initializes the edit Series image metabox.
+	 */
+	public function edit_series_image_field( $term, $taxonomy ) {
+		$this->series_image_uploader ( $taxonomy, $mode = 'UPDATE', $term = $term );
 	}
 	
 	/**
 	 * Series Image Uploader
 	 */
-	public function series_image_uploader( $taxonomy_name, $width = self::SERIES_THUMB_WIDTH, $height = self::SERIES_THUMB_HEIGHT, $mode = 'CREATE' ) {
+	public function series_image_uploader( $taxonomy, $mode = 'CREATE', $term = null ) {
+		$series_settings = $this->plugin_post_type . '_series_settings';
 		// Define a default image.
 		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
+		if ( $term !== null ) {
+			$media_id = get_term_meta( $term->term_id, $series_settings, true );
+		}
+		$image_width = "auto";
+		$image_height = "auto";
 
-		if ( !empty( $options[$taxonomy_name] ) ) {
-			$image_attributes = wp_get_attachment_image_src( $options[$taxonomy_name], array( $width, $height ) );
+		if ( $mode == 'UPDATE' && !empty( $media_id ) ) {
+			$image_attributes = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
 			$src = $image_attributes[0];
-			$value = $options[$taxonomy_name];
 		} else {
 			$src = $default_image;
-			$value = '';
+			$media_id = '';
 		}
 
 		$series_img_title = __( 'Series Image', $this->plugin_slug );
-		$series_img_setting = __( $this->plugin_post_type . '_settings', $this->plugin_slug );
-		$upload_btn_text = __( 'Upload', $this->plugin_slug );
+		$upload_btn_text = __( 'Choose series image', $this->plugin_slug );
+		$upload_btn_value = __( 'Add Image', $this->plugin_slug );
+		$upload_btn_title = __( 'Choose an image file', $this->plugin_slug );
 		$series_img_desc = __( "Set an image as the artwork for the series. No image will be set if not provided.", $this->plugin_slug);
 
 		$series_img_form_label = <<<HTML
@@ -339,11 +328,11 @@ class SSP_Admin {
 HTML;
 		
 		$series_img_form_fields = <<<HTML
-<img id="{$taxonomy_name}_image_preview" data-src="{$default_image}" src="$src" width="{$width}px" height="{$height}px" />
+<img id="{$taxonomy}_image_preview" data-src="{$default_image}" src="$src" width="{$image_width}" height="{$image_height}" />
 <div>
-	<input type="hidden" id="{$taxonomy_name}_image_id" name="{$series_img_setting}[{$taxonomy_name}]" value="{$value}" />
-	<button type="submit" id="{$taxonomy_name}_upload_image_button" class="button">{$upload_btn_text}</button>
-	<button type="submit" id="{$taxonomy_name}_remove_image_button" class="button">&times;</button>
+	<input type="hidden" id="{$taxonomy}_image_id" name="{$series_settings}" value="{$media_id}" />
+	<button id="{$taxonomy}_upload_image_button" class="button" data-uploader_title="{$upload_btn_title}" data-uploader_button_text="{$upload_btn_text}"><span class="dashicons dashicons-format-image"></span> {$upload_btn_value}</button>
+	<button id="{$taxonomy}_remove_image_button" class="button">&times;</button>
 </div>
 <p class="description">{$series_img_desc}</p>
 HTML;
@@ -365,6 +354,30 @@ HTML;
 </tr>
 HTML;
 		}
+	}
+	
+	/**
+	 * Hook to allow saving the attached Series image.
+	 */
+	public function save_series_meta( $term_id, $tt_id ) {
+		$this->insert_update_series_meta( $term_id, $tt_id );
+	}
+	
+	/**
+	 * Hook to allow updating the attached Series image.
+	 */
+	public function update_series_meta( $term_id, $tt_id ) {
+		$this->insert_update_series_meta( $term_id, $tt_id );
+	}
+	
+	/**
+	 * Main method for saving or updating Series data.
+	 */
+	public function insert_update_series_meta( $term_id, $tt_id ) {
+		$series_settings = $this->plugin_post_type . '_series_settings';
+		$prev_media_id = get_term_meta( $term_id, $series_settings, true );
+		$media_id = sanitize_title( $_POST[$series_settings] );
+		update_term_meta( $term_id, $series_settings, $media_id, $prev_media_id );
 	}
 	
 	public function register_meta() {
@@ -450,7 +463,7 @@ HTML;
 	}
 	
 	/**
-	 * Register solumns for series list table
+	 * Register columns for series list table
 	 *
 	 * @param  array $columns Default columns
 	 *
@@ -461,6 +474,7 @@ HTML;
 		unset( $columns['description'] );
 		unset( $columns['posts'] );
 		
+		$columns['series_image'] = __( 'Series Image', $this->plugin_slug );
 		$columns['series_feed_url'] = __( 'Series feed URL', $this->plugin_slug );
 		$columns['posts']           = __( 'Episodes', $this->plugin_slug );
 		
@@ -499,6 +513,17 @@ HTML;
 				}
 				
 				$column_data = '<a href="' . esc_attr( $feed_url ) . '" target="_blank">' . esc_html( $feed_url ) . '</a>';
+				break;
+			case 'series_image':
+				$series      = get_term( $term_id, 'series' );
+				$series_settings = $this->plugin_post_type . '_series_settings';
+				$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
+				$media_id = get_term_meta( $term_id, $series_settings, true );
+				$image_attributes = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
+				$source = ( !is_null($image_attributes[0]) ) ? $image_attributes[0] : $default_image;
+				$column_data = <<<HTML
+<img id="{$series->name}_image_preview" src="{$source}" width="auto" height="auto" style="max-width:50px;" />
+HTML;
 				break;
 		}
 		
@@ -1110,10 +1135,9 @@ HTML;
 		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'ssp-settings' );
 		
-		// Only e
+		// Only enqueue the WordPress Media Library picker for adding and editing SSP tags/terms post types.
 		if ( 'edit-tags.php' === $hook || 'term.php' === $hook ) {
-			global $post_type;
-			if ( in_array( $post_type, ssp_post_types( true ) ) ) {
+			if ( 'series' == $_REQUEST['taxonomy'] ) {
 				wp_enqueue_media();
 			}
 		}

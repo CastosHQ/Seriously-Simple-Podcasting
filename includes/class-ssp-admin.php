@@ -372,14 +372,14 @@ HTML;
 	}
 	
 	/**
-	 * Hook to allow saving the attached Series image.
+	 * Hook to allow saving series meta data.
 	 */
 	public function save_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
 	}
 	
 	/**
-	 * Hook to allow updating the attached Series image.
+	 * Hook to allow updating the series meta data.
 	 */
 	public function update_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
@@ -389,9 +389,9 @@ HTML;
 	 * Main method for saving or updating Series data.
 	 */
 	public function insert_update_series_meta( $term_id, $tt_id ) {
-		$series_settings = $this->token . '_series_settings';
-		$prev_media_id = get_term_meta( $term_id, $series_settings, true );
-		$media_id = sanitize_title( $_POST[$series_settings] );
+		$series_settings 	= $this->token . '_series_image_settings';
+		$prev_media_id 		= get_term_meta( $term_id, $series_settings, true );
+		$media_id 				= sanitize_title( $_POST[$series_settings] );
 		update_term_meta( $term_id, $series_settings, $media_id, $prev_media_id );
 	}
 	
@@ -531,7 +531,7 @@ HTML;
 				break;
 			case 'series_image':
 				$series      			= get_term( $term_id, 'series' );
-				$series_settings 	= $this->token . '_series_settings';
+				$series_settings 	= $this->token . '_series_image_settings';
 				$default_image 		= esc_url( $this->assets_url . 'images/no-image.png' );
 				$media_id 				= get_term_meta( $term_id, $series_settings, true );
 				$image_attributes = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );

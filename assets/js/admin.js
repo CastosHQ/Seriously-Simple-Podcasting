@@ -83,6 +83,7 @@ jQuery(document).ready(function($) {
     series_img_frame.open();
 	});
 	
+	/* Remove/clear Series Image */
 	jQuery('#series_remove_image_button').click(function( event ){
 		event.preventDefault();
 		var button = $(this);

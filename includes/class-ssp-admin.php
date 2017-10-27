@@ -23,7 +23,18 @@ class SSP_Admin {
 	private $token;
 	private $home_url;
 	private $script_suffix;
-	private $plugin_slug;
+	
+	/**
+	 * Unique identifier for the plugin.
+	 *
+	 * The variable name is used as the text domain when internationalizing strings of text.
+	 * Its value should match the Text Domain file header in the main plugin file.
+	 *
+	 * @since    1.0.0
+	 *
+	 * @var      string
+	 */
+	protected $plugin_slug;
 	
 	/**
 	 * Constructor
@@ -95,9 +106,9 @@ class SSP_Admin {
 			add_filter( 'manage_edit-series_columns', array( $this, 'edit_series_columns' ) );
 			add_filter( 'manage_series_custom_column', array( $this, 'add_series_columns' ), 1, 3 );
 			
-			// Series image upload term meta forms
-			add_action( 'series_add_form_fields', array( $this, 'add_series_image_field' ), 10, 2 );
-			add_action( 'series_edit_form_fields', array( $this, 'edit_series_image_field'), 10, 2) ;
+			// Series term meta forms
+			add_action( 'series_add_form_fields', array( $this, 'add_series_term_meta_fields' ), 10, 2 );
+			add_action( 'series_edit_form_fields', array( $this, 'edit_series_term_meta_fields'), 10, 2) ;
 			add_action( 'created_series', array( $this, 'save_series_meta'), 10, 2 );
 			add_action( 'edited_series', array( $this, 'update_series_meta'), 10, 2 );
 		
@@ -285,24 +296,26 @@ class SSP_Admin {
 	}
 	
 	/**
-	 * Intializes the add Series image metabox.
+	 * Adds series term metaboxes to the new series form.
 	 */
-	public function add_series_image_field( $taxonomy ) {
+	public function add_series_term_meta_fields( $taxonomy ) {
+		// Add series image upload metabox.
 		$this->series_image_uploader( $taxonomy );
 	}
 	
 	/**
-	 * Initializes the edit Series image metabox.
+	 * Adds series term metaboxes to the edit series form.
 	 */
-	public function edit_series_image_field( $term, $taxonomy ) {
+	public function edit_series_term_meta_fields( $term, $taxonomy ) {
+		// Add series image edit/upload metabox.
 		$this->series_image_uploader ( $taxonomy, $mode = 'UPDATE', $term = $term );
 	}
 	
 	/**
-	 * Series Image Uploader
+	 * Series Image Uploader metabox for add/edit.
 	 */
 	public function series_image_uploader( $taxonomy, $mode = 'CREATE', $term = null ) {
-		$series_settings = $this->token . '_series_settings';
+		$series_settings = $this->token . '_series_image_settings';
 		// Define a default image.
 		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
 		if ( $term !== null ) {
@@ -517,13 +530,13 @@ HTML;
 				$column_data = '<a href="' . esc_attr( $feed_url ) . '" target="_blank">' . esc_html( $feed_url ) . '</a>';
 				break;
 			case 'series_image':
-				$series      = get_term( $term_id, 'series' );
-				$series_settings = $this->token . '_series_settings';
-				$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
-				$media_id = get_term_meta( $term_id, $series_settings, true );
+				$series      			= get_term( $term_id, 'series' );
+				$series_settings 	= $this->token . '_series_settings';
+				$default_image 		= esc_url( $this->assets_url . 'images/no-image.png' );
+				$media_id 				= get_term_meta( $term_id, $series_settings, true );
 				$image_attributes = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
-				$source = ( !is_null($image_attributes[0]) ) ? $image_attributes[0] : $default_image;
-				$column_data = <<<HTML
+				$source 					= ( !is_null($image_attributes[0]) ) ? $image_attributes[0] : $default_image;
+				$column_data 			= <<<HTML
 <img id="{$series->name}_image_preview" src="{$source}" width="auto" height="auto" style="max-width:50px;" />
 HTML;
 				break;
@@ -1139,7 +1152,7 @@ HTML;
 		
 		// Only enqueue the WordPress Media Library picker for adding and editing SSP tags/terms post types.
 		if ( 'edit-tags.php' === $hook || 'term.php' === $hook ) {
-			if ( 'series' == $_REQUEST['taxonomy'] ) {
+			if ( 'series' === $_REQUEST['taxonomy'] ) {
 				wp_enqueue_media();
 			}
 		}

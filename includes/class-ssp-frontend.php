@@ -129,7 +129,8 @@ class SSP_Frontend {
      * Enqueue styles and scripts
      */
 	public function load_styles_and_scripts(){
-	    wp_enqueue_style( 'ssp-player-styles', SSP_PLUGIN_URL . 'assets/css/icon_fonts.css', [], SSP_VERSION );
+	    wp_enqueue_style( 'google-font-robotto' , '//fonts.googleapis.com/css?family=Roboto:400,700', [], SSP_VERSION);
+	    wp_enqueue_style( 'ssp-player-styles', SSP_PLUGIN_URL . 'assets/css/icon_fonts.css', [ 'google-font-robotto' ], SSP_VERSION );
         wp_enqueue_style( 'ssp-player-gizmo', SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css', [ 'ssp-player-styles' ], SSP_VERSION );
 	    wp_enqueue_script( 'ssp-player-waveform', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', [ 'jquery' ], SSP_VERSION );
         wp_enqueue_style( 'ssp-large-player-styles', SSP_PLUGIN_URL . 'assets/css/frontend.css', [ 'ssp-player-styles' ], SSP_VERSION );
@@ -818,13 +819,28 @@ class SSP_Frontend {
 
                         // Get episode album art
                         $thumb_id = get_post_thumbnail_id( $episode_id );
+
                         if ( ! empty( $thumb_id ) ) {
                             list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'full' );
                             $albumArt = compact( 'src', 'width', 'height' );
                         } else {
-                            $albumArt['src'] = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
-                            $albumArt['width'] = 300;
-                            $albumArt['height'] = 300;
+
+                            // First fall back to series image, and then finally a no album art image
+                            $series_id = false;
+
+                            if( $series = get_the_terms( $episode_id, 'series' ) ){
+                                $series_id = ( !empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : false;
+                            }
+
+                            if( $series_id && $series_image = get_option( "ss_podcasting_data_image_{$series_id}" ) ){
+                                $series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
+                                list( $src, $width, $height ) = wp_get_attachment_image_src( $series_image_attachment_id, 'medium' );
+                                $albumArt = compact( 'src', 'width', 'height' );
+                            }else{
+                                $albumArt['src'] = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
+                                $albumArt['width'] = 300;
+                                $albumArt['height'] = 300;
+                            }
                         }
 
                         $player_background_colour = get_option( 'ss_podcasting_player_background_skin_colour', false );

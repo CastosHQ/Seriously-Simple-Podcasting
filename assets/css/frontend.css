@@ -1,4 +1,5 @@
 .ssp-player.ssp-player-large{
+    font-family: 'Roboto', sans-serif;
     overflow:hidden;
     clear:both;
     margin-bottom: 15px;
@@ -6,6 +7,13 @@
     color: #ccc;
     position: relative;
     font-size: 10px;
+}
+
+.ssp-player.ssp-player-large a,
+.ssp-player.ssp-player-large a:hover{
+    -webkit-box-shadow: none !important;
+    -moz-box-shadow: none !important;
+    box-shadow: none !important;
 }
 
 .ssp-player.ssp-player-large .ssp-album-art-container{

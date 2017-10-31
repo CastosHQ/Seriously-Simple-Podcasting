@@ -608,30 +608,30 @@ class SSP_Settings {
                     'type'        => 'radio',
                     'options'     => array(
                         'standard'         => __( 'Standard Compact Player', 'seriously-simple-podcasting' ),
-                        'larger' => __( 'Larger Player With Wave Form', 'seriously-simple-podcasting' ),
+                        'larger' => __( 'HTML5 Player With Album Art', 'seriously-simple-podcasting' ),
                     ),
                     'default'     => 'all',
                 ),
                 array(
                     'id'          => 'player_background_skin_colour',
                     'label'       => __( 'Background skin colour', 'seriously-simple-podcasting' ),
-                    'description' => '<br>' . __( 'Only applicable if using the larger player with wave form', 'seriously-simple-podcasting' ),
+                    'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
                     'type'        => 'colour-picker',
                     'default'     => '#222222',
                     'class'       => 'ssp-color-picker'
                 ),
                 array(
                     'id'          => 'player_wave_form_colour',
-                    'label'       => __( 'Player wave form colour', 'seriously-simple-podcasting' ),
-                    'description' => '<br>' . __( 'Only applicable if using the larger player with wave form', 'seriously-simple-podcasting' ),
+                    'label'       => __( 'Player progress bar colour', 'seriously-simple-podcasting' ),
+                    'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
                     'type'        => 'colour-picker',
                     'default'     => '#fff',
                     'class'       => 'ssp-color-picker'
                 ),
                 array(
                     'id'          => 'player_wave_form_progress_colour',
-                    'label'       => __( 'Player wave form progress colour', 'seriously-simple-podcasting' ),
-                    'description' => '<br>' . __( 'Only applicable if using the larger player with wave form', 'seriously-simple-podcasting' ),
+                    'label'       => __( 'Player progress bar progress colour', 'seriously-simple-podcasting' ),
+                    'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
                     'type'        => 'colour-picker',
                     'default'     => '#00d4f7',
                     'class'       => 'ssp-color-picker'

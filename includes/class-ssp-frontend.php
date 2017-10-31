@@ -777,18 +777,18 @@ class SSP_Frontend {
 
 	/**
 	 * Load media player for given file
-	 * @param  string  $src        Source of file
+	 * @param  string  $srcFile        Source of file
 	 * @param  integer $episode_id Episode ID for audio file
 	 * @return string              Media player HTML on success, empty string on failure
 	 */
-	public function media_player ( $src = '', $episode_id = 0 ) {
+	public function media_player ( $srcFile = '', $episode_id = 0 ) {
 
         global $largePlayerInstanceNumber;
         $largePlayerInstanceNumber++;
 
 		$player = '';
 
-		if ( $src ) {
+		if ( $srcFile ) {
 
 			// Get episode type and default to audio
 			$type = $this->get_episode_type( $episode_id );
@@ -797,10 +797,10 @@ class SSP_Frontend {
 			}
 
 			// Switch to podcast player URL
-			$src = str_replace( 'podcast-download', 'podcast-player', $src );
+            $srcFile = str_replace( 'podcast-download', 'podcast-player', $srcFile );
 
 			// Set up parameters for media player
-			$params = array( 'src' => $src, 'preload' => 'none' );
+			$params = array( 'src' => $srcFile, 'preload' => 'none' );
 
 			// Use built-in WordPress media player
             // Or use new custom player if user has selected as such
@@ -926,7 +926,7 @@ class SSP_Frontend {
 
                         <script>
 
-                            var _paq = _paq || [];
+                            //var _paq = _paq || [];
 
                             String.prototype.toFormattedDuration = function () {
                                 var sec_num = parseInt(this, 10); // don't forget the second param
@@ -956,7 +956,7 @@ class SSP_Frontend {
                                     backend: 'MediaElement'
                                 });
 
-                                window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.load('<?php echo $src; ?>');
+                                window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.load('<?php echo $srcFile; ?>');
 
                                 window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'ready', function(e){
                                     $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #sspTotalDuration' ).text( window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.getDuration().toString().toFormattedDuration() );
@@ -967,18 +967,18 @@ class SSP_Frontend {
                                 window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'play', function(e){
 
                                     // Track Podcast Specific Play
-                                    _paq.push(
+                                    /*_paq.push(
                                         [
                                             'trackEvent', 'Player', 'Play', '<?php echo get_the_title( $episode_id ); ?>'
                                         ]
-                                    );
+                                    );*/
 
                                     // Track Global Play
-                                    _paq.push(
+                                    /*_paq.push(
                                         [
                                             'trackEvent', 'Player', 'Play', 'Global Stats'
                                         ]
-                                    );
+                                    );*/
 
                                     $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-pause_icon' );
                                     $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #sspPlayedDuration' ).text( window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.getCurrentTime().toString().toFormattedDuration() )
@@ -993,18 +993,18 @@ class SSP_Frontend {
                                 window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'pause', function(e){
 
                                     // Track Podcast Specific Pause
-                                    _paq.push(
+                                    /*_paq.push(
                                         [
                                             'trackEvent', 'Player', 'Pause', '<?php echo get_the_title( $episode_id ); ?>'
                                         ]
-                                    );
+                                    );*/
 
                                     // Track Global Pause
-                                    _paq.push(
+                                    /*_paq.push(
                                         [
                                             'trackEvent', 'Player', 'Pause', 'Global Stats'
                                         ]
-                                    );
+                                    );*/
 
                                     $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
 
@@ -1016,18 +1016,18 @@ class SSP_Frontend {
                                 window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'finish', function(e){
 
                                     // Track Podcast Specific Finish
-                                    _paq.push(
+                                    /*_paq.push(
                                         [
                                             'trackEvent', 'Player', 'Finish', '<?php echo get_the_title( $episode_id ); ?>'
                                         ]
-                                    );
+                                    );*/
 
                                     // Track Global Finish
-                                    _paq.push(
+                                    /*_paq.push(
                                         [
                                             'trackEvent', 'Player', 'Finish', 'Global Stats'
                                         ]
-                                    );
+                                    );*/
 
                                 } );
 
@@ -1038,18 +1038,18 @@ class SSP_Frontend {
                                 $('#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-back-thirty').on( 'click', function(e){
 
                                     // Track Podcast Specific Back 30
-                                    _paq.push(
+                                    /*_paq.push(
                                         [
                                             'trackEvent', 'Player', 'Back 30 Seconds', '<?php echo get_the_title( $episode_id ); ?>'
                                         ]
-                                    );
+                                    );*/
 
                                     // Track Global Back 30
-                                    _paq.push(
+                                    /*_paq.push(
                                         [
                                             'trackEvent', 'Player', 'Back 30 Seconds', 'Global Stats'
                                         ]
-                                    );
+                                    );*/
 
                                     window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.skipBackward();
 
@@ -1949,7 +1949,7 @@ function example_mejs_add_container_class() {
         return;
     }
     ?>
-    <script type="text/javascript">
+<!--    <script type="text/javascript">
         var _paq = _paq || [];
         /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
         _paq.push(['trackPageView']);
@@ -1961,7 +1961,7 @@ function example_mejs_add_container_class() {
             var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
             g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
         })();
-    </script>
+    </script>-->
     <script>
         (function() {
 
@@ -1978,8 +1978,7 @@ function example_mejs_add_container_class() {
                 jQuery(media).bind( 'play', function(){
                     window.sspTrackProgress = setInterval(
                         function(){
-                            _paq.push(['trackEvent', 'Podcast', 'Play-' + Math.floor( ( media.currentTime / media.duration ) * 100 ) + '%', 'Generic'])
-                            console.log( 'track' );
+                            //_paq.push(['trackEvent', 'Podcast', 'Play-' + Math.floor( ( media.currentTime / media.duration ) * 100 ) + '%', 'Generic'])
                         },
                         1000
                     );
@@ -1987,13 +1986,13 @@ function example_mejs_add_container_class() {
 
                 // Pause Episode
                 jQuery(media).bind( 'pause', function(){
-                    _paq.push(['trackEvent', 'Podcast', 'Pause', 'Generic']);
+                    //_paq.push(['trackEvent', 'Podcast', 'Pause', 'Generic']);
                         clearInterval(window.sspTrackProgress);
                 } );
 
                 // End Episode
                 jQuery(media).bind( 'ended', function(){
-                    _paq.push(['trackEvent', 'Podcast', 'Play-100%', 'Generic']);
+                    //_paq.push(['trackEvent', 'Podcast', 'Play-100%', 'Generic']);
                     clearInterval(window.sspTrackProgress);
                 } );
             };

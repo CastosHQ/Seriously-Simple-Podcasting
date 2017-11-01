@@ -22,6 +22,12 @@
     clear:none;
 }
 
+@media only screen and ( max-width: 480px ){
+    .ssp-player.ssp-player-large .ssp-album-art-container{
+        display: none;
+    }
+}
+
 .ssp-player.ssp-player-large .ssp-album-art{
     width: 150px;
     height: 150px;
@@ -36,6 +42,9 @@
     padding:0;
     font-size: 14px;
     color:#D8D8D8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ssp-player.ssp-player-large h3.episode-title .ssp-player-series{
@@ -44,6 +53,9 @@
     display: block;
     clear: both;
     margin-top: 5px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 .ssp-player.ssp-player-large .ssp-download-episode,

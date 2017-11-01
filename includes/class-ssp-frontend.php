@@ -111,6 +111,8 @@ class SSP_Frontend {
 
         // Apply filters to the style guide so that users may swap out colours of the player
         Self::$style_guide = apply_filters( 'ssp_filter_style_guide', Self::$style_guide );
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}
 
 	public function ssp_override_player_styles(){
@@ -396,10 +398,6 @@ class SSP_Frontend {
 			$meta['new_window'] = true;
 		}
 
-		if( $link ) {
-			$meta['duration'] = $duration;
-		}
-
 		if( $date_recorded ) {
 			$meta['date_recorded'] = $date_recorded;
 		}
@@ -412,6 +410,9 @@ class SSP_Frontend {
         }
 
 		$meta_display = '';
+		$podcast_display = '';
+		$subscribe_display = '';
+
 		$meta_sep = apply_filters( 'ssp_episode_meta_separator', ' | ' );
 		foreach ( $meta as $key => $data ) {
 
@@ -419,27 +420,23 @@ class SSP_Frontend {
 				continue;
 			}
 
-			if( $meta_display ) {
-				$meta_display .= $meta_sep;
+			if( $podcast_display ) {
+				$podcast_display .= $meta_sep;
 			}
-
+			
 			switch( $key ) {
 
 				case 'link':
-					$meta_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " class="podcast-meta-download" download>' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
+					$podcast_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " class="podcast-meta-download">' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
 				break;
 
 				case 'new_window':
 					$play_link = add_query_arg( 'ref', 'new_window', $link );
-					$meta_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
-				break;
-
-				case 'duration':
-					$meta_display .= '<span class="podcast-meta-duration">' . __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
+					$podcast_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
 				break;
 
 				case 'date_recorded':
-					$meta_display .= '<span class="podcast-meta-date">' . __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) ) . '</span>';
+					$podcast_display .= $meta_sep.'<span class="podcast-meta-date">' . __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) ) . '</span>';
 				break;
 
 				// Allow for custom items to be added, but only allow a small amount of HTML tags
@@ -461,7 +458,6 @@ class SSP_Frontend {
 			}
 		}
 
-
         $series = get_the_terms( $episode_id, 'series' );
         $episode_series = !empty( $series ) && isset( $series[0] ) ? $series[0]->term_id : false;
         $share_url_array = [];
@@ -481,18 +477,44 @@ class SSP_Frontend {
             //$meta_display .= $meta_sep . '<a href="' . esc_url( $stitcher_share_url ) . '" title="' . __( 'View on Stitcher', 'seriously-simple-podcasting' ) . '" class="podcast-meta-itunes">' . __( 'Stitcher', 'seriously-simple-podcasting' ) . '</a>';
         }
 
-        if( !empty( $share_url_array ) ){
-            $sh = 0;
-            $meta_display = '<aside class="ssp-subscribe-controls">';
-            $meta_display .= 'Subscribe on: ';
-            foreach( $share_url_array as $share_title => $share_url ){
-                $meta_display .= '<a href="' . $share_url . '" target="_blank">' . $share_title . '</a>';
-                $sh++;
-                $meta_display .= ( $sh < count( $share_url_array ) ? ' | ' : NULL );
-            }
-            $meta_display .= '</aside>';
-        }
+		$terms = get_the_terms( $episode_id, 'series' );
 
+		$itunes_url = get_option( 'ss_podcasting_itunes_url', '' );
+		$stitcher_url = get_option( 'ss_podcasting_stitcher_url', '' );
+		$google_play_url = get_option( 'ss_podcasting_google_play_url', '' );
+		
+		if ( is_array( $terms ) ) {
+			if ( isset( $terms[0] ) ) {
+				if ( false !== get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id, '' ) ) {
+					$itunes_url = get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id, '' );
+				}
+				if ( false !== get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id, '' ) ) {
+					$stitcher_url = get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id, '' );
+				}
+				if ( false !== get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id, '' ) ) {
+					$google_play_url = get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id, '' );
+				}
+			}
+		}
+		
+		if ( ! empty( $itunes_url ) ) {
+			$subscribe_display .= '<a href="' . esc_url( $itunes_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '</a>';
+		}
+		
+		if ( ! empty( $stitcher_url ) ) {
+			if( empty( $itunes_url ) ) { $meta_sep = ''; } else { $meta_sep = ' | '; }
+			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $stitcher_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '</a>';
+		}
+		
+		if ( ! empty( $google_play_url ) ) {
+			if( empty( $stitcher_url ) ) { $meta_sep = ''; } else { $meta_sep = ' | '; }
+			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $google_play_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
+		}
+		
+		if ( ! empty( $subscribe_display ) ) {
+			$meta_display .= '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
+		}
+		
 		$meta_display = '<div class="podcast_meta"><aside>' . $meta_display . '</aside></div>';
 
 		return $meta_display;
@@ -1935,6 +1957,17 @@ class SSP_Frontend {
 	public function load_localisation () {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
 	}
+
+	/**
+	 * 
+	 */
+	public function load_scripts(){
+
+		wp_register_style( 'ssp-frontend-player', $this->assets_url.'css/player.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-frontend-player' );
+
+	}
+
 }
 
 add_action( 'wp_enqueue_scripts', 'ssp_enqueue_wave_surfer' );

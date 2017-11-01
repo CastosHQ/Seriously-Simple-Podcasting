@@ -166,10 +166,11 @@ class SSP_Settings {
 			'settings_page',
 		) );
 
-        add_submenu_page( 'edit.php?post_type=podcast', __( 'Analytics', 'seriously-simple-podcasting' ), __( 'Analytics', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings&view=analytics', array(
+       /* @todo Add Back In When Doing New Analytics Pages */
+       /* add_submenu_page( 'edit.php?post_type=podcast', __( 'Analytics', 'seriously-simple-podcasting' ), __( 'Analytics', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings&view=analytics', array(
             $this,
             'settings_page',
-        ) );
+        ) );*/
 
 		add_submenu_page( null, __( 'Upgrade', 'seriously-simple-podcasting' ), __( 'Upgrade', 'seriously-simple-podcasting' ), 'manage_podcast', 'upgrade', array(
 			$this,
@@ -1518,13 +1519,13 @@ class SSP_Settings {
             $entry = sanitize_title( $entry );
         } );
 
-	    if( "analytics" === $q_args['view'] ){
+        /* @todo Add Back For Stats Later On */
+	    /*if( "analytics" === $q_args['view'] ){
             ob_start();
-            $simon = "simon moo";
             include SSP_PLUGIN_PATH . 'includes/views/ssp-analytics.php';
             echo ob_get_clean();
             return;
-        }
+        }*/
 
 		// Build page HTML
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";

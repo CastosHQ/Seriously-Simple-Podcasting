@@ -12,12 +12,12 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 == Description ==
 
-[Seriously Simple Podcasting](http://www.seriouslysimplepodcasting.com/) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+[Seriously Simple Podcasting](http://www.castos.com/seriously-simple-podcasting) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
 **Primary Features**
 
 - Simple settings so you can get your podcast up and running quickly
-- Integrated podcast hosting platform, [Seriously Simple Hosting](https://app.seriouslysimplepodcasting.com), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
+- Integrated podcast hosting platform, [Castos](https://www.castos.com), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
 - Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
 - Supports both audio *and* video podcasting
@@ -27,7 +27,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Shortcodes & widgets for displaying podcast episode lists, single episodes and podcast playlists anywhere on your site
 - Playable episodes using the built-in WordPress media player
 - The freedom to host your media files wherever you like - on the same site or any other server
-- Complete user and developer [documentation](https://www.seriouslysimplepodcasting.com/)
+- Complete user and developer [documentation](https://support.castos.com/)
 - [Full i18n support](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting)
 
 **Podcast Hosting Platform**
@@ -40,15 +40,15 @@ Give your website a performance boost by offloading all of your media files to a
 
 **Where to find help**
 
-Seriously Simple Podcasting comes with complete user and developer [documentation](https://www.seriouslysimplepodcasting.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
+Seriously Simple Podcasting comes with complete user and developer [documentation](https://support.castos.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
 
 **Add-ons**
 
-Seriously Simple Podcasting comes with a growing [library of add-ons](https://www.seriouslysimplepodcasting.com/add-ons/). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
+Seriously Simple Podcasting comes with a growing [library of add-ons](https://www.castos.com/seriously-simple-podcasting/add-ons/). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
 
 **How to contribute**
 
-If you want to contribute to Seriously Simple Podcasting, you can [fork the GitHub repository](https://github.com/hlashbrooke/Seriously-Simple-Podcasting) - please read the [contributor guidelines](https://github.com/hlashbrooke/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information on how you can do this.
+If you want to contribute to Seriously Simple Podcasting, you can [fork the GitHub repository](https://github.com/thecraighewitt/Seriously-Simple-Podcasting) - please read the [contributor guidelines](https://github.com/thecraighewitt/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information on how you can do this.
 
 **Help translate this plugin**
 
@@ -58,7 +58,7 @@ If you would like to contribute translations to this plugin you can do so throug
 
 Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add new episodes and go to "Podcast > Settings" to customise your podcast.
 
-Podcast media files can be uploaded directly into WordPress or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them manually.*
+Podcast media files can be uploaded directly into WordPress, hosted on the integrated [Castos](https://www.castos.com) platform,  or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them manually.*
 
 If you need help, you can find complete user and developer documentation [here](https://www.seriouslysimplepodcasting.com/).
 
@@ -75,7 +75,7 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 = Where are the FAQs? =
 
-You can find complete user and developer documentation (along with the FAQs) on [the Seriously Simple Podcasting documentation site](https://www.seriouslysimplepodcasting.com/).
+You can find complete user and developer documentation (along with the FAQs) on [the Seriously Simple Podcasting documentation site](https://support.castos.com/).
 
 == Screenshots ==
 

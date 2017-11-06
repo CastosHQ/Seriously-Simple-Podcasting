@@ -723,7 +723,7 @@ class SSP_Settings {
 				array(
 					'id'          => 'explicit',
 					'label'       => __( 'Explicit', 'seriously-simple-podcasting' ),
-					'description' => __( 'Mark if your podcast is explicit or not.', 'seriously-simple-podcasting' ),
+					'description' => sprintf(__( 'To mark this podcast as an explicit podcast, check this box. Explicit content rules can be found %s.', 'seriously-simple-podcasting' ), '<a href="https://discussions.apple.com/thread/1079151">here</a>'),
 					'type'        => 'checkbox',
 					'default'     => '',
 					'callback'    => 'wp_strip_all_tags',
@@ -744,21 +744,21 @@ class SSP_Settings {
 					'options'     => array( 'published' => __( 'Published date', 'seriously-simple-podcasting' ), 'recorded' => __( 'Recorded date', 'seriously-simple-podcasting' ) ),
 					'default'     => 'published',
 				),
-                /**
-                 * New iTunes Tag Announced At WWDC 2017
-                 */
-                array(
-                    'id'          => 'consume_order',
-                    'label'       => __( 'Series Consume Order', 'seriously-simple-podcasting' ),
-                    'description' => __( 'The order in which you want your episodes to be consumed by iTunes', 'seriously-simple-podcasting' ),
-                    'type'        => 'select',
-                    'options'     => array(
-                            '' => __( 'Please Select', 'seriously-simple-podcasting' ),
-                            'episodic' => __( 'Latest Episode First', 'seriously-simple-podcasting' ),
-                            'serial' => __( 'Oldest to Newest', 'seriously-simple-podcasting' )
-                    ),
-                    'default'     => '',
-                ),
+				/**
+				 * New iTunes Tag Announced At WWDC 2017
+				 */
+				array(
+					'id'          => 'consume_order',
+					'label'       => __( 'Show Type', 'seriously-simple-podcasting' ),
+					'description' => sprintf( __( 'The order your podcast episodes will be listed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://www.seriouslysimplepodcasting.com/ios-11-podcast-tags/' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+					'type'        => 'select',
+					'options'     => array(
+						''         => __( 'Please Select', 'seriously-simple-podcasting' ),
+						'episodic' => __( 'Episodic', 'seriously-simple-podcasting' ),
+						'serial'   => __( 'Serial', 'seriously-simple-podcasting' )
+					),
+					'default'     => '',
+				),
 				array(
 					'id'          => 'redirect_feed',
 					'label'       => __( 'Redirect this feed to new URL', 'seriously-simple-podcasting' ),
@@ -784,6 +784,26 @@ class SSP_Settings {
 					'type'        => 'text',
 					'default'     => '',
 					'placeholder' => __( 'iTunes URL', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_url_raw',
+					'class'       => 'regular-text',
+				),
+				array(
+					'id'          => 'stitcher_url',
+					'label'       => __( 'Stitcher URL', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your podcast\'s Stitcher URL.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'Stitcher URL', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_url_raw',
+					'class'       => 'regular-text',
+				),
+				array(
+					'id'          => 'google_play_url',
+					'label'       => __( 'Google Play URL', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your podcast\'s Google Play URL.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'Google Play URL', 'seriously-simple-podcasting' ),
 					'callback'    => 'esc_url_raw',
 					'class'       => 'regular-text',
 				),

@@ -1026,7 +1026,8 @@ class SSP_Admin {
 		wp_enqueue_style( 'ssp-admin' );
 		
 		// Datepicker
-		wp_enqueue_style( 'jquery-ui-datepicker', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css' );
+		wp_register_style( 'jquery-ui-datepicker-wp', esc_url( $this->assets_url . 'css/datepicker.css' ), array(), $this->version );
+		wp_enqueue_style( 'jquery-ui-datepicker-wp' );
 		
 		/**
 		 * Only load the peekabar styles when adding/editing podcasts

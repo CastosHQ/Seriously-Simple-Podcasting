@@ -270,10 +270,46 @@ class SSP_Admin {
 		
 		register_taxonomy( 'series', $podcast_post_types, $series_args );
 		
+		$labels = array(
+			'name'                       => __( 'Tags', 'seriously-simple-podcasting' ),
+			'singular_name'              => __( 'Tag', 'seriously-simple-podcasting' ),
+			'search_items'               => __( 'Search Tags', 'seriously-simple-podcasting' ),
+			'popular_items'              => __( 'Popular Tags', 'seriously-simple-podcasting' ),
+			'all_items'                  => __( 'All Tags', 'seriously-simple-podcasting' ),
+			'parent_item'                => null,
+			'parent_item_colon'          => null,
+			'edit_item'                  => __( 'Edit Tag', 'seriously-simple-podcasting' ),
+			'update_item'                => __( 'Update Tag', 'seriously-simple-podcasting' ),
+			'add_new_item'               => __( 'Add New Tag', 'seriously-simple-podcasting' ),
+			'new_item_name'              => __( 'New Tag Name', 'seriously-simple-podcasting' ),
+			'separate_items_with_commas' => __( 'Separate tags with commas', 'seriously-simple-podcasting' ),
+			'add_or_remove_items'        => __( 'Add or remove tags', 'seriously-simple-podcasting' ),
+			'choose_from_most_used'      => __( 'Choose from the most used tags', 'seriously-simple-podcasting' ),
+			'not_found'                  => __( 'No tags found.', 'seriously-simple-podcasting' ),
+			'menu_name'                  => __( 'Tags', 'seriously-simple-podcasting' ),
+		);
+
+		$args = array(
+			'hierarchical'          => false,
+			'labels'                => $labels,
+			'show_ui'               => true,
+			'show_admin_column'     => true,
+			'update_count_callback' => '_update_post_term_count',
+			'query_var'             => true,
+			'rewrite'               => array( 'slug' => 'podcast_tags' ),
+		);
+
 		// Add Tags to podcast post type
 		if ( apply_filters( 'ssp_use_post_tags', true ) ) {
 			register_taxonomy_for_object_type( 'post_tag', $this->token );
+		} else {
+			/**
+			 * Uses post tags by default. Alternative option added in as some users 
+			 * want to filter by podcast tags only
+			 */
+			register_taxonomy( 'podcast_tags', $podcast_post_types, $args );
 		}
+		
 	}
 	
 	public function register_meta() {

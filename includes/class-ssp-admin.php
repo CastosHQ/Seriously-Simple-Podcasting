@@ -122,9 +122,6 @@ class SSP_Admin {
 		// Add ajax action for plugin rating
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 		
-		// Add ajax action for uploading to Seriously Simple Hosting
-		add_action( 'wp_ajax_ssp_upload_to_podmotor', array( $this, 'upload_file_to_podmotor' ) );
-		
 		// Add ajax action for uploading file data to Seriously Simple Hosting that has been uploaded already via plupload
 		add_action( 'wp_ajax_ssp_store_podmotor_file', array( $this, 'store_podmotor_file' ) );
 		
@@ -859,16 +856,40 @@ class SSP_Admin {
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 		
-		/**
-		 * New iTunes Tag Announced At WWDC 2017
-		 */
-		$fields['itunes_episode_number'] = array(
-			'name'             => __( 'iTunes Episode Number:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-			'type'             => 'number',
+		if ( ssp_is_connected_to_podcastmotor() ) {
+			$fields['filesize_raw'] = array(
+				'type'             => 'hidden',
+				'default'          => '',
+				'section'          => 'info',
+				'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
+			);
+		}
+		
+		$fields['date_recorded'] = array(
+			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The date on which this episode was recorded.', 'seriously-simple-podcasting' ),
+			'type'             => 'datepicker',
 			'default'          => '',
 			'section'          => 'info',
-			'meta_description' => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+			'meta_description' => __( 'The date on which the podcast episode was recorded.', 'seriously-simple-podcasting' ),
+		);
+		
+		$fields['explicit'] = array(
+			'name'             => __( 'Explicit:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'Mark this episode as explicit.', 'seriously-simple-podcasting' ),
+			'type'             => 'checkbox',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Indicates whether the episode is explicit.', 'seriously-simple-podcasting' ),
+		);
+		
+		$fields['block'] = array(
+			'name'             => __( 'Block:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'Block this episode from appearing in the iTunes & Google Play podcast libraries.', 'seriously-simple-podcasting' ),
+			'type'             => 'checkbox',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Indicates whether this specific episode should be blocked from the iTunes and Google Play Podcast libraries.', 'seriously-simple-podcasting' ),
 		);
 		
 		/**
@@ -912,42 +933,16 @@ class SSP_Admin {
 			'section'          => 'info',
 			'meta_description' => __( 'The iTunes Episode Type', 'seriously-simple-podcasting' ),
 		);
-		
-		
-		if ( ssp_is_connected_to_podcastmotor() ) {
-			$fields['filesize_raw'] = array(
-				'type'             => 'hidden',
-				'default'          => '',
-				'section'          => 'info',
-				'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
-			);
-		}
-		
-		$fields['date_recorded'] = array(
-			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'The date on which this episode was recorded.', 'seriously-simple-podcasting' ),
-			'type'             => 'datepicker',
+		/**
+		 * New iTunes Tag Announced At WWDC 2017
+		 */
+		$fields['itunes_episode_number'] = array(
+			'name'             => __( 'iTunes Episode Number:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+			'type'             => 'number',
 			'default'          => '',
 			'section'          => 'info',
-			'meta_description' => __( 'The date on which the podcast episode was recorded.', 'seriously-simple-podcasting' ),
-		);
-		
-		$fields['explicit'] = array(
-			'name'             => __( 'Explicit:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'Mark this episode as explicit.', 'seriously-simple-podcasting' ),
-			'type'             => 'checkbox',
-			'default'          => '',
-			'section'          => 'info',
-			'meta_description' => __( 'Indicates whether the episode is explicit.', 'seriously-simple-podcasting' ),
-		);
-		
-		$fields['block'] = array(
-			'name'             => __( 'Block:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'Block this episode from appearing in the iTunes & Google Play podcast libraries.', 'seriously-simple-podcasting' ),
-			'type'             => 'checkbox',
-			'default'          => '',
-			'section'          => 'info',
-			'meta_description' => __( 'Indicates whether this specific episode should be blocked from the iTunes and Google Play Podcast libraries.', 'seriously-simple-podcasting' ),
+			'meta_description' => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
 		);
 		
 		return apply_filters( 'ssp_episode_fields', $fields );
@@ -1371,71 +1366,6 @@ class SSP_Admin {
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $post->ID, 'podmotor_episode_id', $podmotor_episode_id );
 			}
-		}
-		
-	}
-	
-	/**
-	 * Upload file to PodcastMotor
-	 */
-	public function upload_file_to_podmotor() {
-		
-		$ssp_uploads_dir = ssp_get_upload_directory();
-		
-		if ( ! is_dir( $ssp_uploads_dir ) ) {
-			wp_send_json( array(
-				'status'        => 'error',
-				'message'       => 'An error occurred uploading your file, please contact hello@seriouslysimplepodcasting.com for assistance.',
-			) );
-		}
-		
-		$file_type       = $_FILES["file"]["type"];
-		$file_type_array = explode( '/', $file_type );
-		
-		if ( 'audio' == $file_type_array[0] || 'video' == $file_type_array[0] ) {
-			
-			$file_name     = $_FILES["file"]["name"];
-			$uploaded_file = ssp_get_upload_directory() . $file_name;
-			$tmp_name      = $_FILES["file"]["tmp_name"];
-			
-			$file_uploaded_locally = move_uploaded_file( $tmp_name, $uploaded_file );
-			
-			if ( $file_uploaded_locally ) {
-				
-				$response = array( 'file_upload' => 'true' );
-				
-				try {
-					$podmotor_handler  = new Podmotor_Handler();
-					$podmotor_response = $podmotor_handler->upload_file_to_podmotor_storage( $uploaded_file );
-				} catch ( Exception $e ) {
-					$response['upload']  = 'failed';
-					$response['message'] = 'An unknown error occurred: ' . $e->getMessage();
-					wp_send_json( $response );
-				}
-				if ( 'success' == $podmotor_response['status'] ) {
-					$duration             = $podmotor_response['podmotor_file_duration'];
-					$response             = $podmotor_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_response['podmotor_file'] );
-					$response['duration'] = $duration;
-					wp_send_json( $response );
-				} else {
-					wp_send_json( array(
-						'status'  => 'error',
-						'message' => 'Error uploading file to offsite storage',
-					) );
-				}
-			} else {
-				wp_send_json( array(
-					'status'        => 'error',
-					'message'       => 'Error uploading file to local storage',
-					'tmp_name'      => $tmp_name,
-					'uploaded_file' => $uploaded_file,
-				) );
-			}
-			
-		} else {
-			$response['status']  = 'error';
-			$response['message'] = 'Please upload a valid audio or video file.';
-			wp_send_json( $response );
 		}
 		
 	}

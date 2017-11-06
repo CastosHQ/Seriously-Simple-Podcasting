@@ -824,6 +824,42 @@ class SSP_Admin {
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 		
+		if ( ssp_is_connected_to_podcastmotor() ) {
+			$fields['filesize_raw'] = array(
+				'type'             => 'hidden',
+				'default'          => '',
+				'section'          => 'info',
+				'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
+			);
+		}
+		
+		$fields['date_recorded'] = array(
+			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The date on which this episode was recorded.', 'seriously-simple-podcasting' ),
+			'type'             => 'datepicker',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'The date on which the podcast episode was recorded.', 'seriously-simple-podcasting' ),
+		);
+		
+		$fields['explicit'] = array(
+			'name'             => __( 'Explicit:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'Mark this episode as explicit.', 'seriously-simple-podcasting' ),
+			'type'             => 'checkbox',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Indicates whether the episode is explicit.', 'seriously-simple-podcasting' ),
+		);
+		
+		$fields['block'] = array(
+			'name'             => __( 'Block:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'Block this episode from appearing in the iTunes & Google Play podcast libraries.', 'seriously-simple-podcasting' ),
+			'type'             => 'checkbox',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Indicates whether this specific episode should be blocked from the iTunes and Google Play Podcast libraries.', 'seriously-simple-podcasting' ),
+		);
+		
 		if ( $is_itunes_fields_enabled && $is_itunes_fields_enabled == 'on' ) {
 			/**
 			 * New iTunes Tag Announced At WWDC 2017
@@ -879,42 +915,6 @@ class SSP_Admin {
 				'meta_description' => __( 'The iTunes Episode Type', 'seriously-simple-podcasting' ),
 			);
 		}
-		
-		if ( ssp_is_connected_to_podcastmotor() ) {
-			$fields['filesize_raw'] = array(
-				'type'             => 'hidden',
-				'default'          => '',
-				'section'          => 'info',
-				'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
-			);
-		}
-		
-		$fields['date_recorded'] = array(
-			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'The date on which this episode was recorded.', 'seriously-simple-podcasting' ),
-			'type'             => 'datepicker',
-			'default'          => '',
-			'section'          => 'info',
-			'meta_description' => __( 'The date on which the podcast episode was recorded.', 'seriously-simple-podcasting' ),
-		);
-		
-		$fields['explicit'] = array(
-			'name'             => __( 'Explicit:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'Mark this episode as explicit.', 'seriously-simple-podcasting' ),
-			'type'             => 'checkbox',
-			'default'          => '',
-			'section'          => 'info',
-			'meta_description' => __( 'Indicates whether the episode is explicit.', 'seriously-simple-podcasting' ),
-		);
-		
-		$fields['block'] = array(
-			'name'             => __( 'Block:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'Block this episode from appearing in the iTunes & Google Play podcast libraries.', 'seriously-simple-podcasting' ),
-			'type'             => 'checkbox',
-			'default'          => '',
-			'section'          => 'info',
-			'meta_description' => __( 'Indicates whether this specific episode should be blocked from the iTunes and Google Play Podcast libraries.', 'seriously-simple-podcasting' ),
-		);
 		
 		return apply_filters( 'ssp_episode_fields', $fields );
 	}

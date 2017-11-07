@@ -1254,6 +1254,10 @@ class SSP_Frontend {
 						$html .= $this->episode_meta_details( $episode_id, $episode_context );
 					break;
 
+					case 'image':
+						$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
+						break;
+
 				}
 			}
 

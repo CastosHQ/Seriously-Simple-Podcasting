@@ -463,13 +463,15 @@ if ( isset( $category1['category'] ) && $category1['category'] ) { ?>
 					$pubDate = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) );
 				else	// 'recorded'
 					$pubDate = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_meta(  get_the_ID(), 'date_recorded', true ), false ) );
-
-				// New iTunes WWDC 2017 Tags
-                $itunes_episode_type = get_post_meta( get_the_ID(), 'itunes_episode_type', true );
-                $itunes_title = get_post_meta( get_the_ID(), 'itunes_title', true );
-                $itunes_episode_number = get_post_meta( get_the_ID(), 'itunes_episode_number', true );
-                $itunes_season_number = get_post_meta( get_the_ID(), 'itunes_season_number', true );
-
+				
+				$is_itunes_fields_enabled = get_option('ss_podcasting_itunes_fields_enabled');
+				if ( $is_itunes_fields_enabled && $is_itunes_fields_enabled == 'on' ) {
+					// New iTunes WWDC 2017 Tags
+					$itunes_episode_type   = get_post_meta( get_the_ID(), 'itunes_episode_type', true );
+					$itunes_title          = get_post_meta( get_the_ID(), 'itunes_title', true );
+					$itunes_episode_number = get_post_meta( get_the_ID(), 'itunes_episode_number', true );
+					$itunes_season_number  = get_post_meta( get_the_ID(), 'itunes_season_number', true );
+				}
 		?>
 		<item>
             <title><?php esc_html( the_title_rss() ); ?></title>

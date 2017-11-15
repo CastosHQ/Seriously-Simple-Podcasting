@@ -38,6 +38,14 @@ https://youtu.be/CE9zhOGirhY
 
 Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrifc listening experience at the same time.
 
+**Beautifully Designed Media Player**
+
+No need to look around for a premium podcast player for your website, we've built in an industry leading podcast player right into Seriously Simple Podcasting, for Free!  Here's a sneak peak at the player options you can find in the new Seriously Simple Podcasting:
+
+
+
+Choose from a compact or full size design, complete with your podcast cover image proudly displayed right alongside your player.
+
 **Where to find help**
 
 Seriously Simple Podcasting comes with complete user and developer [documentation](https://support.castos.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).

@@ -1684,7 +1684,7 @@ class SSP_Settings {
 		$extensions = array(
 			'connect'     => array(
 				'title'       => 'NEW - Castos Podcast Hosting',
-				'image'       => $image_dir . 'ssp-PM-connect.jpg',
+				'image'       => $image_dir . 'castos-icon-extension.jpg',
 				'url'         => SSP_PODMOTOR_APP_URL,
 				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Castos.',
 				'new_window'  => true,

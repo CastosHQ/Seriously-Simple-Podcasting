@@ -1,6 +1,6 @@
 <div id="ssp-sidebar">
 	<div class="sidebar-content">
-		<img src="<?php echo $image_dir ?>pm-connect-knot.jpg" src="https://www.castos.com">
+		<img src="<?php echo $image_dir ?>castos-knot.jpg" src="https://www.castos.com">
 		<form action="https://www.getdrip.com/forms/49904156/submissions" method="post" data-drip-embedded-form="49904156">
 			<h1>Get 20% off</h1>
 			<h4>Drop in your name and email and we’ll send you a coupon for 20% off your subscription to Castos Podcast Hosting.</h4>

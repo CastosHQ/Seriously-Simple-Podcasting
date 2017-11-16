@@ -18,6 +18,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 - Simple settings so you can get your podcast up and running quickly
 - Integrated podcast hosting platform, [Castos](https://www.castos.com), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
+- Newly redesigned, customizable media player that includes your podcast cover image
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
 - Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
 - Supports both audio *and* video podcasting
@@ -25,8 +26,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Use any post type for your podcast episodes
 - Highly configurable and robust RSS feed designed for *all* podcast services and feed readers - including iTunes, Google Play and Stitcher
 - Shortcodes & widgets for displaying podcast episode lists, single episodes and podcast playlists anywhere on your site
-- Playable episodes using the built-in WordPress media player
-- The freedom to host your media files wherever you like - on the same site or any other server
+- The freedom to host your media files wherever you like - on the same site, our integrated Castos hosting platform, or any other server
 - Complete user and developer [documentation](https://support.castos.com/)
 - [Full i18n support](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting)
 
@@ -40,9 +40,7 @@ Give your website a performance boost by offloading all of your media files to a
 
 **Beautifully Designed Media Player**
 
-No need to look around for a premium podcast player for your website, we've built in an industry leading podcast player right into Seriously Simple Podcasting, for Free!  Here's a sneak peak at the player options you can find in the new Seriously Simple Podcasting:
-
-
+No need to look around for a premium podcast player for your website, we've built in an industry leading podcast player right into Seriously Simple Podcasting, for Free! 
 
 Choose from a compact or full size design, complete with your podcast cover image proudly displayed right alongside your player.
 

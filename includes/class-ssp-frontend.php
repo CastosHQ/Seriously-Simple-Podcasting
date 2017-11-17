@@ -386,7 +386,7 @@ class SSP_Frontend {
 				break;
 
 				case 'date_recorded':
-					$podcast_display .= $meta_sep.'<span class="podcast-meta-date">' . __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) ) . '</span>';
+					$podcast_display .= '<span class="podcast-meta-date">' . __( 'Recorded on' , 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) ) . '</span>';
 				break;
 
 				// Allow for custom items to be added, but only allow a small amount of HTML tags
@@ -402,7 +402,7 @@ class SSP_Frontend {
 							'target' => array(),
 						),
 					);
-					$meta_display .= wp_kses( $data, $allowed_tags );
+					$podcast_display .= wp_kses( $data, $allowed_tags );
 				break;
 
 			}
@@ -429,19 +429,56 @@ class SSP_Frontend {
 				}
 			}
 		}
-		
-		if ( ! empty( $itunes_url ) ) {
-			$subscribe_display .= '<a href="' . esc_url( $itunes_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '</a>';
-		}
-		
-		if ( ! empty( $stitcher_url ) ) {
-			if( empty( $itunes_url ) ) { $meta_sep = ''; } else { $meta_sep = ' | '; }
-			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $stitcher_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '</a>';
-		}
-		
-		if ( ! empty( $google_play_url ) ) {
-			if( empty( $stitcher_url ) ) { $meta_sep = ''; } else { $meta_sep = ' | '; }
-			$subscribe_display .= $meta_sep . '<a href="' . esc_url( $google_play_url ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
+
+		$subscribe_array = array(
+			'itunes_url' => $itunes_url,
+			'stitcher_url' => $stitcher_url,
+			'google_play_url' => $google_play_url 
+		);
+
+		$subscribe_urls = apply_filters( 'ssp_episode_subscribe_details', $subscribe_array, $episode_id, $context );
+
+		foreach( $subscribe_urls as $key => $data ){
+
+			if( !$data ){
+				continue;
+			}
+
+			if( $subscribe_display ){
+				$subscribe_display .= $meta_sep;
+			}
+
+			switch( $key ) {
+
+				case 'itunes_url':
+					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '</a>';
+				break;
+
+				case 'stitcher_url':
+					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '</a>';
+				break;
+
+				case 'google_play_url':
+					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
+				break;
+
+				default:
+					$allowed_tags = array(
+						'strong' => array(),
+						'b' => array(),
+						'em' => array(),
+						'i' => array(),
+						'a' => array(
+							'href' => array(),
+							'title' => array(),
+							'target' => array(),
+						),
+					);
+					$subscribe_display .= wp_kses( $data, $allowed_tags );
+				break;
+
+			}
+
 		}
 		
 		if ( ! empty( $subscribe_display ) ) {

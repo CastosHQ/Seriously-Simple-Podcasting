@@ -927,12 +927,12 @@ class SSP_Settings {
 
 		$settings['podcastmotor-connect'] = array(
 			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Connect your blog to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
+			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
 			'fields'      => array(
 				array(
 					'id'          => 'podmotor_account_email',
-					'label'       => __( 'Seriously Simple Hosting email', 'seriously-simple-podcasting' ),
-					'description' => __( 'The email address you used to register your Seriously Simple Hosting account.', 'seriously-simple-podcasting' ),
+					'label'       => __( 'Your email', 'seriously-simple-podcasting' ),
+					'description' => __( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ),
 					'type'        => 'text',
 					'default'     => '',
 					'placeholder' => __( 'email@domain.com', 'seriously-simple-podcasting' ),
@@ -941,8 +941,8 @@ class SSP_Settings {
 				),
 				array(
 					'id'          => 'podmotor_account_api_token',
-					'label'       => __( 'Seriously Simple Hosting api token', 'seriously-simple-podcasting' ),
-					'description' => __( 'Your Seriously Simple Hosting api token. Available from your Seriously Simple Hosting account dashboard.', 'seriously-simple-podcasting' ),
+					'label'       => __( 'Castos API token', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your Castos API token. Available from your Castos account dashboard.', 'seriously-simple-podcasting' ),
 					'type'        => 'text',
 					'default'     => '',
 					'placeholder' => __( 'Enter your api token', 'seriously-simple-podcasting' ),
@@ -959,8 +959,8 @@ class SSP_Settings {
 
 		if ( ssp_is_connected_to_podcastmotor() ) {
 			$settings['import'] = array(
-				'title'       => __( 'Podcast Import', 'seriously-simple-podcasting' ),
-				'description' => sprintf( __( 'Import and upload your externally hosted podcast files to your %s account.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
+				'title'       => __( 'Import', 'seriously-simple-podcasting' ),
+				'description' => sprintf( __( 'Import and upload your externally hosted podcast files to your %s account.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
 				'fields'      => array(),
 			);
 		}
@@ -1672,7 +1672,7 @@ class SSP_Settings {
 			wp_mail( $to, $subject, $message, $from );
 			?>
 			<div class="notice notice-info is-dismissible">
-				<p><?php esc_attr_e( 'Thanks, someone from Seriously Simple Hosting will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
+				<p><?php esc_attr_e( 'Thanks, someone from Castos will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
 			</div>
 			<?php
 		}
@@ -1690,10 +1690,10 @@ class SSP_Settings {
 		$image_dir  = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
 		$extensions = array(
 			'connect'     => array(
-				'title'       => 'NEW - ***Premium*** Seriously Simple Hosting',
-				'image'       => $image_dir . 'ssp-PM-connect.jpg',
+				'title'       => 'NEW - Castos Podcast Hosting',
+				'image'       => $image_dir . 'castos-icon-extension.jpg',
 				'url'         => SSP_PODMOTOR_APP_URL,
-				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Seriously Simple Hosting.',
+				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Castos.',
 				'new_window'  => true,
 			),
 			'stats'       => array(

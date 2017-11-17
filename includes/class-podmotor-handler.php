@@ -78,7 +78,7 @@ class Podmotor_Handler {
 	}
 	
 	/**
-	 * Get the Handler credentials from the Seriously Simple Hosting API
+	 * Get the Handler credentials from the Castos API
 	 *
 	 * @param $podmotor_account_id
 	 * @param $podmotor_account_email
@@ -108,7 +108,7 @@ class Podmotor_Handler {
 	}
 	
 	/**
-	 * Connect to Seriously Simple Hosting API and validate API credentials
+	 * Connect to Castos API and validate API credentials
 	 *
 	 * @param string $podmotor_account_api_token
 	 * @param string $podmotor_account_email
@@ -161,9 +161,8 @@ class Podmotor_Handler {
 		return $this->response;
 	}
 	
-	
 	/**
-	 * Upload PodcastMotor file stored in offsite hosting to Seriously Simple Hosting database
+	 * Upload PodcastMotor file stored in offsite hosting to Castos database
 	 *
 	 * @param string $podmotor_file_path
 	 *
@@ -206,10 +205,10 @@ class Podmotor_Handler {
 					$this->update_response( 'file_path', $response_object->file_path );
 					$this->update_response( 'file_duration', $response_object->file_duration );
 				} else {
-					$this->update_response( 'message', 'An error occurred uploading the file data to Seriously Simple Hosting' );
+					$this->update_response( 'message', 'An error occurred uploading the file data to Castos' );
 				}
 			} else {
-				$this->update_response( 'message', 'An unknown error occurred uploading the file data to Seriously Simple Hosting' );
+				$this->update_response( 'message', 'An unknown error occurred uploading the file data to Castos' );
 			}
 		} else {
 			$this->update_response( 'message', $app_response->get_error_message() );
@@ -217,7 +216,7 @@ class Podmotor_Handler {
 		
 		return $this->response;
 	}
-	
+
 	/**
 	 * Upload Podcast episode data to Seriously Simple Hosting
 	 * Should only happen once the file has been uploaded to Seriously Simple Hosting Storage
@@ -276,10 +275,10 @@ class Podmotor_Handler {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( 'success' == $responseObject->status ) {
 				$this->update_response( 'status', 'success' );
-				$this->update_response( 'message', 'Pocast episode successfully uploaded to Seriously Simple Hosting' );
+				$this->update_response( 'message', 'Pocast episode successfully uploaded to Castos' );
 				$this->update_response( 'episode_id', $responseObject->episode_id );
 			} else {
-				$this->update_response( 'message', 'An error occurred uploading the episode data to Seriously Simple Hosting' );
+				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 			}
 		} else {
 			// $todo this should be logged somewhere
@@ -290,7 +289,7 @@ class Podmotor_Handler {
 	}
 	
 	/**
-	 * Upload Podcasts episode data to Seriously Simple Hosting
+	 * Upload Podcasts episode data to Castos
 	 *
 	 * @param $podcast_data array of post values
 	 *
@@ -331,9 +330,9 @@ class Podmotor_Handler {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( 'success' == $responseObject->status ) {
 				$this->update_response( 'status', 'success' );
-				$this->update_response( 'message', 'Pocast episode data successfully uploaded to Seriously Simple Hosting' );
+				$this->update_response( 'message', 'Pocast episode data successfully uploaded to Castos' );
 			} else {
-				$this->update_response( 'message', 'An error occurred uploading the episode data to Seriously Simple Hosting' );
+				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 			}
 		} else {
 			// $todo this should be logged somewhere
@@ -344,7 +343,7 @@ class Podmotor_Handler {
 	}
 	
 	/**
-	 * Creates the podcast import queue with Seriously Simple Hosting
+	 * Creates the podcast import queue with Castos
 	 *
 	 * @param $post
 	 *
@@ -383,7 +382,7 @@ class Podmotor_Handler {
 				$this->update_response( 'message', $responseObject->message );
 				$this->update_response( 'queue_id', $responseObject->queue_id );
 			} else {
-				$this->update_response( 'message', 'An error occurred uploading the episode data to Seriously Simple Hosting' );
+				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 			}
 		} else {
 			// @todo somone should be notified about this

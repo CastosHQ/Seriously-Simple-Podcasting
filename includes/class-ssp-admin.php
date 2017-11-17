@@ -70,7 +70,7 @@ class SSP_Admin {
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 			
-			// Update podcast details to Seriously Simple Hosting.
+			// Update podcast details to Castos.
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 			
@@ -122,7 +122,7 @@ class SSP_Admin {
 		// Add ajax action for plugin rating
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 		
-		// Add ajax action for uploading file data to Seriously Simple Hosting that has been uploaded already via plupload
+		// Add ajax action for uploading file data to Castos that has been uploaded already via plupload
 		add_action( 'wp_ajax_ssp_store_podmotor_file', array( $this, 'store_podmotor_file' ) );
 		
 		// Add ajax action for customising episode embed code
@@ -1375,13 +1375,13 @@ class SSP_Admin {
 	}
 	
 	/**
-	 * Store the file uploaded via plupload to the Seriously Simple Hosting account
+	 * Store the file uploaded via plupload to the Castos account
 	 */
 	public function store_podmotor_file() {
 		if ( ! isset( $_GET['podmotor_file_path'] ) ) {
 			wp_send_json( array(
 				'status'  => 'error',
-				'message' => 'An error occurred storing your file to your Seriously Simple Hosting account, please contact hello@seriouslysimplepodcasting.com for assistance.',
+				'message' => 'An error occurred storing your file to your Castos account, please contact hello@castos.com for assistance.',
 			) );
 		}
 		
@@ -1470,8 +1470,8 @@ class SSP_Admin {
 		$podcast_import_url = add_query_arg( array( 'podcast_import_action' => 'start' ) );
 		$ignore_message_url = add_query_arg( array( 'podcast_import_action' => 'ignore' ) );
 		$message            = '';
-		$message            .= '<p>You\'ve connected to your Seriously Simple Hosting account and you have existing podcasts that can be imported.</p>';
-		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Seriously Simple Hosting.</a></p>';
+		$message            .= '<p>You\'ve connected to your Castos account and you have existing podcasts that can be imported.</p>';
+		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Castos.</a></p>';
 		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
 		
 		?>
@@ -1486,7 +1486,7 @@ class SSP_Admin {
 	 */
 	public function importing_podcasts_notice() {
 		$message = '';
-		$message .= '<p>We\'re importing your podcast episodes and media files to Seriously Simple Hosting now. Check your email for an update when this process is finished</p>';
+		$message .= '<p>We\'re importing your podcast episodes and media files to Castos now. Check your email for an update when this process is finished</p>';
 		$message .= '<p>The import process takes place as a background task, so you may dismiss this message.</p>';
 		?>
 		<div class="notice notice-info is-dismissible">

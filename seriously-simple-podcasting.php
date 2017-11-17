@@ -1,13 +1,8 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
-<<<<<<< HEAD
- * Version: 1.18.0
+ * Version: 1.19.0-alpha
  * Plugin URI: https://www.castos.com/seriously-simple-podcasting
-=======
- * Version: 1.18.2
- * Plugin URI: https://www.seriouslysimplepodcasting.com/
->>>>>>> develop
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
  * Author URI: https://www.castos.com/
@@ -43,7 +38,7 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	return;
 }
 
-define( 'SSP_VERSION', '1.18.2' );
+define( 'SSP_VERSION', '1.19.0-alpha' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 

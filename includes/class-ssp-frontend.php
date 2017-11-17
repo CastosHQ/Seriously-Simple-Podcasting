@@ -614,7 +614,7 @@ class SSP_Frontend {
 			}
 
 			// Allow filtering so that alternative players can be used
-			$player = apply_filters( 'ssp_media_player', $player, $src, $episode_id );
+			$player = apply_filters( 'ssp_media_player', $player, $srcFile, $episode_id );
 		}
 
 		return $player;

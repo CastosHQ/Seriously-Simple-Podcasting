@@ -70,7 +70,7 @@ class SSP_Admin {
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 			
-			// Update podcast details to Seriously Simple Hosting.
+			// Update podcast details to Castos.
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 			
@@ -125,10 +125,7 @@ class SSP_Admin {
 		// Add ajax action for plugin rating
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 		
-		// Add ajax action for uploading to Seriously Simple Hosting
-		add_action( 'wp_ajax_ssp_upload_to_podmotor', array( $this, 'upload_file_to_podmotor' ) );
-		
-		// Add ajax action for uploading file data to Seriously Simple Hosting that has been uploaded already via plupload
+		// Add ajax action for uploading file data to Castos that has been uploaded already via plupload
 		add_action( 'wp_ajax_ssp_store_podmotor_file', array( $this, 'store_podmotor_file' ) );
 		
 		// Add ajax action for customising episode embed code
@@ -277,10 +274,46 @@ class SSP_Admin {
 		
 		register_taxonomy( 'series', $podcast_post_types, $series_args );
 		
+		$labels = array(
+			'name'                       => __( 'Tags', 'seriously-simple-podcasting' ),
+			'singular_name'              => __( 'Tag', 'seriously-simple-podcasting' ),
+			'search_items'               => __( 'Search Tags', 'seriously-simple-podcasting' ),
+			'popular_items'              => __( 'Popular Tags', 'seriously-simple-podcasting' ),
+			'all_items'                  => __( 'All Tags', 'seriously-simple-podcasting' ),
+			'parent_item'                => null,
+			'parent_item_colon'          => null,
+			'edit_item'                  => __( 'Edit Tag', 'seriously-simple-podcasting' ),
+			'update_item'                => __( 'Update Tag', 'seriously-simple-podcasting' ),
+			'add_new_item'               => __( 'Add New Tag', 'seriously-simple-podcasting' ),
+			'new_item_name'              => __( 'New Tag Name', 'seriously-simple-podcasting' ),
+			'separate_items_with_commas' => __( 'Separate tags with commas', 'seriously-simple-podcasting' ),
+			'add_or_remove_items'        => __( 'Add or remove tags', 'seriously-simple-podcasting' ),
+			'choose_from_most_used'      => __( 'Choose from the most used tags', 'seriously-simple-podcasting' ),
+			'not_found'                  => __( 'No tags found.', 'seriously-simple-podcasting' ),
+			'menu_name'                  => __( 'Tags', 'seriously-simple-podcasting' ),
+		);
+
+		$args = array(
+			'hierarchical'          => false,
+			'labels'                => $labels,
+			'show_ui'               => true,
+			'show_admin_column'     => true,
+			'update_count_callback' => '_update_post_term_count',
+			'query_var'             => true,
+			'rewrite'               => array( 'slug' => 'podcast_tags' ),
+		);
+
 		// Add Tags to podcast post type
 		if ( apply_filters( 'ssp_use_post_tags', true ) ) {
 			register_taxonomy_for_object_type( 'post_tag', $this->token );
+		} else {
+			/**
+			 * Uses post tags by default. Alternative option added in as some users 
+			 * want to filter by podcast tags only
+			 */
+			register_taxonomy( 'podcast_tags', $podcast_post_types, $args );
 		}
+		
 	}
 	
 	public function register_meta() {
@@ -303,7 +336,7 @@ class SSP_Admin {
 			
 			$args = array(
 				'type'         => 'string',
-				'description'  => $data['meta_description'],
+				'description'  => isset( $data['meta_description'] ) ? $data['meta_description'] : "",
 				'single'       => true,
 				'show_in_rest' => true,
 			);
@@ -777,6 +810,7 @@ class SSP_Admin {
 	 */
 	public function custom_fields() {
 		global $pagenow;
+		$is_itunes_fields_enabled = get_option('ss_podcasting_itunes_fields_enabled');
 		$fields = array();
 		
 		$fields['episode_type'] = array(
@@ -830,61 +864,6 @@ class SSP_Admin {
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 		
-		/**
-		 * New iTunes Tag Announced At WWDC 2017
-		 */
-		$fields['itunes_episode_number'] = array(
-			'name'             => __( 'iTunes Episode Number:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-			'type'             => 'number',
-			'default'          => '',
-			'section'          => 'info',
-			'meta_description' => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-		);
-		
-		/**
-		 * New iTunes Tag Announced At WWDC 2017
-		 */
-		$fields['itunes_title'] = array(
-			'name'             => __( 'iTunes Episode Title (Exclude Your Series / Show Number):', 'seriously-simple-podcasting' ),
-			'description'      => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included.', 'seriously-simple-podcasting' ),
-			'type'             => 'text',
-			'default'          => '',
-			'section'          => 'info',
-			'meta_description' => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included', 'seriously-simple-podcasting' ),
-		);
-		
-		/**
-		 * New iTunes Tag Announced At WWDC 2017
-		 */
-		$fields['itunes_season_number'] = array(
-			'name'             => __( 'iTunes Season Number:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-			'type'             => 'number',
-			'default'          => '',
-			'section'          => 'info',
-			'meta_description' => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
-		);
-		
-		/**
-		 * New iTunes Tag Announced At WWDC 2017
-		 */
-		$fields['itunes_episode_type'] = array(
-			'name'             => __( 'iTunes Episode Type:', 'seriously-simple-podcasting' ),
-			'description'      => '',
-			'type'             => 'select',
-			'default'          => '',
-			'options'          => array(
-				'' => __( 'Please Select', 'seriously-simple-podcasting' ),
-				'full' => __( 'Full: For Normal Episodes', 'seriously-simple-podcasting' ),
-				'trailer' => __( 'Trailer: Promote an Upcoming Show', 'seriously-simple-podcasting' ),
-				'bonus' => __( 'Bonus: For Extra Content Related To a Show', 'seriously-simple-podcasting' )
-			),
-			'section'          => 'info',
-			'meta_description' => __( 'The iTunes Episode Type', 'seriously-simple-podcasting' ),
-		);
-		
-		
 		if ( ssp_is_connected_to_podcastmotor() ) {
 			$fields['filesize_raw'] = array(
 				'type'             => 'hidden',
@@ -920,6 +899,62 @@ class SSP_Admin {
 			'section'          => 'info',
 			'meta_description' => __( 'Indicates whether this specific episode should be blocked from the iTunes and Google Play Podcast libraries.', 'seriously-simple-podcasting' ),
 		);
+		
+		if ( $is_itunes_fields_enabled && $is_itunes_fields_enabled == 'on' ) {
+			/**
+			 * New iTunes Tag Announced At WWDC 2017
+			 */
+			$fields['itunes_episode_number'] = array(
+				'name'             => __( 'iTunes Episode Number:', 'seriously-simple-podcasting' ),
+				'description'      => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+				'type'             => 'number',
+				'default'          => '',
+				'section'          => 'info',
+				'meta_description' => __( 'The iTunes Episode Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+			);
+			
+			/**
+			 * New iTunes Tag Announced At WWDC 2017
+			 */
+			$fields['itunes_title'] = array(
+				'name'             => __( 'iTunes Episode Title (Exclude Your Series / Show Number):', 'seriously-simple-podcasting' ),
+				'description'      => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included.', 'seriously-simple-podcasting' ),
+				'type'             => 'text',
+				'default'          => '',
+				'section'          => 'info',
+				'meta_description' => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included', 'seriously-simple-podcasting' ),
+			);
+			
+			/**
+			 * New iTunes Tag Announced At WWDC 2017
+			 */
+			$fields['itunes_season_number'] = array(
+				'name'             => __( 'iTunes Season Number:', 'seriously-simple-podcasting' ),
+				'description'      => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+				'type'             => 'number',
+				'default'          => '',
+				'section'          => 'info',
+				'meta_description' => __( 'The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting' ),
+			);
+			
+			/**
+			 * New iTunes Tag Announced At WWDC 2017
+			 */
+			$fields['itunes_episode_type'] = array(
+				'name'             => __( 'iTunes Episode Type:', 'seriously-simple-podcasting' ),
+				'description'      => '',
+				'type'             => 'select',
+				'default'          => '',
+				'options'          => array(
+					'' => __( 'Please Select', 'seriously-simple-podcasting' ),
+					'full' => __( 'Full: For Normal Episodes', 'seriously-simple-podcasting' ),
+					'trailer' => __( 'Trailer: Promote an Upcoming Show', 'seriously-simple-podcasting' ),
+					'bonus' => __( 'Bonus: For Extra Content Related To a Show', 'seriously-simple-podcasting' )
+				),
+				'section'          => 'info',
+				'meta_description' => __( 'The iTunes Episode Type', 'seriously-simple-podcasting' ),
+			);
+		}
 		
 		return apply_filters( 'ssp_episode_fields', $fields );
 	}
@@ -997,7 +1032,8 @@ class SSP_Admin {
 		wp_enqueue_style( 'ssp-admin' );
 		
 		// Datepicker
-		wp_enqueue_style( 'jquery-ui-datepicker', '//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css' );
+		wp_register_style( 'jquery-ui-datepicker-wp', esc_url( $this->assets_url . 'css/datepicker.css' ), array(), $this->version );
+		wp_enqueue_style( 'jquery-ui-datepicker-wp' );
 		
 		/**
 		 * Only load the peekabar styles when adding/editing podcasts
@@ -1346,78 +1382,13 @@ class SSP_Admin {
 	}
 	
 	/**
-	 * Upload file to PodcastMotor
-	 */
-	public function upload_file_to_podmotor() {
-		
-		$ssp_uploads_dir = ssp_get_upload_directory();
-		
-		if ( ! is_dir( $ssp_uploads_dir ) ) {
-			wp_send_json( array(
-				'status'        => 'error',
-				'message'       => 'An error occurred uploading your file, please contact hello@seriouslysimplepodcasting.com for assistance.',
-			) );
-		}
-		
-		$file_type       = $_FILES["file"]["type"];
-		$file_type_array = explode( '/', $file_type );
-		
-		if ( 'audio' == $file_type_array[0] || 'video' == $file_type_array[0] ) {
-			
-			$file_name     = $_FILES["file"]["name"];
-			$uploaded_file = ssp_get_upload_directory() . $file_name;
-			$tmp_name      = $_FILES["file"]["tmp_name"];
-			
-			$file_uploaded_locally = move_uploaded_file( $tmp_name, $uploaded_file );
-			
-			if ( $file_uploaded_locally ) {
-				
-				$response = array( 'file_upload' => 'true' );
-				
-				try {
-					$podmotor_handler  = new Podmotor_Handler();
-					$podmotor_response = $podmotor_handler->upload_file_to_podmotor_storage( $uploaded_file );
-				} catch ( Exception $e ) {
-					$response['upload']  = 'failed';
-					$response['message'] = 'An unknown error occurred: ' . $e->getMessage();
-					wp_send_json( $response );
-				}
-				if ( 'success' == $podmotor_response['status'] ) {
-					$duration             = $podmotor_response['podmotor_file_duration'];
-					$response             = $podmotor_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_response['podmotor_file'] );
-					$response['duration'] = $duration;
-					wp_send_json( $response );
-				} else {
-					wp_send_json( array(
-						'status'  => 'error',
-						'message' => 'Error uploading file to offsite storage',
-					) );
-				}
-			} else {
-				wp_send_json( array(
-					'status'        => 'error',
-					'message'       => 'Error uploading file to local storage',
-					'tmp_name'      => $tmp_name,
-					'uploaded_file' => $uploaded_file,
-				) );
-			}
-			
-		} else {
-			$response['status']  = 'error';
-			$response['message'] = 'Please upload a valid audio or video file.';
-			wp_send_json( $response );
-		}
-		
-	}
-	
-	/**
-	 * Store the file uploaded via plupload to the Seriously Simple Hosting account
+	 * Store the file uploaded via plupload to the Castos account
 	 */
 	public function store_podmotor_file() {
 		if ( ! isset( $_GET['podmotor_file_path'] ) ) {
 			wp_send_json( array(
 				'status'  => 'error',
-				'message' => 'An error occurred storing your file to your Seriously Simple Hosting account, please contact hello@seriouslysimplepodcasting.com for assistance.',
+				'message' => 'An error occurred storing your file to your Castos account, please contact hello@castos.com for assistance.',
 			) );
 		}
 		
@@ -1506,8 +1477,8 @@ class SSP_Admin {
 		$podcast_import_url = add_query_arg( array( 'podcast_import_action' => 'start' ) );
 		$ignore_message_url = add_query_arg( array( 'podcast_import_action' => 'ignore' ) );
 		$message            = '';
-		$message            .= '<p>You\'ve connected to your Seriously Simple Hosting account and you have existing podcasts that can be imported.</p>';
-		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Seriously Simple Hosting.</a></p>';
+		$message            .= '<p>You\'ve connected to your Castos account and you have existing podcasts that can be imported.</p>';
+		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Castos.</a></p>';
 		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
 		
 		?>
@@ -1522,7 +1493,7 @@ class SSP_Admin {
 	 */
 	public function importing_podcasts_notice() {
 		$message = '';
-		$message .= '<p>We\'re importing your podcast episodes and media files to Seriously Simple Hosting now. Check your email for an update when this process is finished</p>';
+		$message .= '<p>We\'re importing your podcast episodes and media files to Castos now. Check your email for an update when this process is finished</p>';
 		$message .= '<p>The import process takes place as a background task, so you may dismiss this message.</p>';
 		?>
 		<div class="notice notice-info is-dismissible">

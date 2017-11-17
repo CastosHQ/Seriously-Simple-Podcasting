@@ -51,7 +51,7 @@ class SSP_Settings {
 	 * @var string
 	 */
 	private $home_url;
-
+	
 	/**
 	 * Templates Directory
 	 *
@@ -177,16 +177,13 @@ class SSP_Settings {
 			'show_upgrade_page',
 		) );
 	}
-
+	
 	/**
 	 * Show the upgrade page
 	 */
 	public function show_upgrade_page() {
-		$ssp_redirect    = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
-		$ssp_dismiss_url = add_query_arg( array(
-			'ssp_dismiss_upgrade' => 'dismiss',
-			'ssp_redirect'        => rawurlencode( $ssp_redirect )
-		), admin_url( 'index.php' ) );
+		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
+		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
 		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
 	}
 
@@ -249,23 +246,22 @@ class SSP_Settings {
 	 * @return void
 	 */
 	public function enqueue_scripts() {
-
 		global $pagenow;
-
-		$page  = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
+		$page = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
 		$pages = array( 'post-new.php', 'post.php' );
-
 		if ( in_array( $pagenow, $pages, true ) || ( ! empty( $page ) && 'podcast_settings' === $page ) ) {
 			wp_enqueue_media();
 		}
 
-		wp_enqueue_script( 'jquery-ui-datepicker' );
-		wp_register_style( 'jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' );
-		wp_enqueue_style( 'jquery-ui' );
+		// // @todo add back for analytics launch
+		// wp_enqueue_script( 'jquery-ui-datepicker' );
+		// wp_register_style( 'jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' );
+		// wp_enqueue_style( 'jquery-ui' );
 
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );
-		wp_enqueue_script( 'plotly', 'https://cdn.plot.ly/plotly-latest.min.js', SSP_VERSION, true );
+
+		// wp_enqueue_script( 'plotly', 'https://cdn.plot.ly/plotly-latest.min.js', SSP_VERSION, true );
 
 	}
 
@@ -606,6 +602,13 @@ class SSP_Settings {
 					'default'     => 'all',
 				),
 				array(
+					'id'          => 'itunes_fields_enabled',
+					'label'       => __( 'Enable iTunes fields ', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+				),
+				array(
 					'id'          => 'player_style',
 					'label'       => __( 'Media player style', 'seriously-simple-podcasting' ),
 					'description' => __( 'Select the style of media player you wish to display on your site.', 'seriously-simple-podcasting' ),
@@ -793,7 +796,7 @@ class SSP_Settings {
 				array(
 					'id'          => 'explicit',
 					'label'       => __( 'Explicit', 'seriously-simple-podcasting' ),
-					'description' => sprintf( __( 'To mark this podcast as an explicit podcast, check this box. Explicit content rules can be found %s.', 'seriously-simple-podcasting' ), '<a href="https://discussions.apple.com/thread/1079151">here</a>' ),
+					'description' => sprintf(__( 'To mark this podcast as an explicit podcast, check this box. Explicit content rules can be found %s.', 'seriously-simple-podcasting' ), '<a href="https://discussions.apple.com/thread/1079151">here</a>'),
 					'type'        => 'checkbox',
 					'default'     => '',
 					'callback'    => 'wp_strip_all_tags',
@@ -811,10 +814,7 @@ class SSP_Settings {
 					'label'       => __( 'Source for publish date', 'seriously-simple-podcasting' ),
 					'description' => __( 'Use the "Published date" of the post or use "Date recorded" from the Podcast episode details.', 'seriously-simple-podcasting' ),
 					'type'        => 'radio',
-					'options'     => array(
-						'published' => __( 'Published date', 'seriously-simple-podcasting' ),
-						'recorded'  => __( 'Recorded date', 'seriously-simple-podcasting' )
-					),
+					'options'     => array( 'published' => __( 'Published date', 'seriously-simple-podcasting' ), 'recorded' => __( 'Recorded date', 'seriously-simple-podcasting' ) ),
 					'default'     => 'published',
 				),
 				/**
@@ -990,30 +990,30 @@ class SSP_Settings {
 				),
 			),
 		);
-
-		$settings['analytics'] = array(
-			'title'       => __( 'Analytics', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Connect your %s analytics application with your podcast site' ), '<a target="_blank" href=" ' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
-			'fields'      => array(
-				array(
-					'id'          => 'ssp_analytics_token',
-					'label'       => __( 'Analytics Token', 'seriously-simple-podcasting' ),
-					'description' => '',
-					'type'        => 'text',
-					'callback'    => 'esc_url_raw',
-					'class'       => 'regular-text',
-				),
-			),
-		);
+// @todo add back for analytics launch
+//		$settings['analytics'] = array(
+//			'title'       => __( 'Analytics', 'seriously-simple-podcasting' ),
+//			'description' => sprintf( __( 'Connect your %s analytics application with your podcast site' ), '<a target="_blank" href=" ' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
+//			'fields'      => array(
+//				array(
+//					'id'          => 'ssp_analytics_token',
+//					'label'       => __( 'Analytics Token', 'seriously-simple-podcasting' ),
+//					'description' => '',
+//					'type'        => 'text',
+//					'callback'    => 'esc_url_raw',
+//					'class'       => 'regular-text',
+//				),
+//			),
+//		);
 
 		$settings['podcastmotor-connect'] = array(
 			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Connect your blog to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
+			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
 			'fields'      => array(
 				array(
 					'id'          => 'podmotor_account_email',
-					'label'       => __( 'Seriously Simple Hosting email', 'seriously-simple-podcasting' ),
-					'description' => __( 'The email address you used to register your Seriously Simple Hosting account.', 'seriously-simple-podcasting' ),
+					'label'       => __( 'Your email', 'seriously-simple-podcasting' ),
+					'description' => __( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ),
 					'type'        => 'text',
 					'default'     => '',
 					'placeholder' => __( 'email@domain.com', 'seriously-simple-podcasting' ),
@@ -1022,8 +1022,8 @@ class SSP_Settings {
 				),
 				array(
 					'id'          => 'podmotor_account_api_token',
-					'label'       => __( 'Seriously Simple Hosting api token', 'seriously-simple-podcasting' ),
-					'description' => __( 'Your Seriously Simple Hosting api token. Available from your Seriously Simple Hosting account dashboard.', 'seriously-simple-podcasting' ),
+					'label'       => __( 'Castos API token', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your Castos API token. Available from your Castos account dashboard.', 'seriously-simple-podcasting' ),
 					'type'        => 'text',
 					'default'     => '',
 					'placeholder' => __( 'Enter your api token', 'seriously-simple-podcasting' ),
@@ -1040,8 +1040,8 @@ class SSP_Settings {
 
 		if ( ssp_is_connected_to_podcastmotor() ) {
 			$settings['import'] = array(
-				'title'       => __( 'Podcast Import', 'seriously-simple-podcasting' ),
-				'description' => sprintf( __( 'Import and upload your externally hosted podcast files to your %s account.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
+				'title'       => __( 'Import', 'seriously-simple-podcasting' ),
+				'description' => sprintf( __( 'Import and upload your externally hosted podcast files to your %s account.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
 				'fields'      => array(),
 			);
 		}
@@ -1313,7 +1313,7 @@ class SSP_Settings {
 
 			case 'select':
 
-				$html       .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
+				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
 				$prev_group = '';
 				foreach ( $field['options'] as $k => $v ) {
 
@@ -1503,8 +1503,8 @@ class SSP_Settings {
 		$podmotor_account_api_token = ( isset( $_GET['api_token'] ) ? filter_var( $_GET['api_token'], FILTER_SANITIZE_STRING ) : '' );
 		$podmotor_account_email     = ( isset( $_GET['email'] ) ? filter_var( $_GET['email'], FILTER_SANITIZE_STRING ) : '' );
 
-		$podmotor_handler = new Podmotor_Handler();
-		$response         = $podmotor_handler->validate_api_credentials( $podmotor_account_api_token, $podmotor_account_email );
+		$podmotor_handler           = new Podmotor_Handler();
+		$response                   = $podmotor_handler->validate_api_credentials( $podmotor_account_api_token, $podmotor_account_email );
 		wp_send_json( $response );
 	}
 
@@ -1657,9 +1657,9 @@ class SSP_Settings {
 				),
 				admin_url( 'edit.php' )
 			);
-			$html              .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
-			$html              .= '<input type="hidden" name="action" value="post_import_form" />';
-			$html              .= wp_nonce_field( 'ss_podcasting-import' );
+			$html .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
+			$html .= '<input type="hidden" name="action" value="post_import_form" />';
+			$html .= wp_nonce_field( 'ss_podcasting-import' );
 		} else {
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 		}
@@ -1672,7 +1672,7 @@ class SSP_Settings {
 
 		if ( isset( $tab ) && 'podcastmotor-connect' == $tab ) {
 			$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
-			$html                .= '<input id="podmotor_account_id" type="hidden" name="ss_podcasting_podmotor_account_id" placeholder="" value="' . $podmotor_account_id . '" class="regular-text disabled" readonly="">' . "\n";
+			$html .= '<input id="podmotor_account_id" type="hidden" name="ss_podcasting_podmotor_account_id" placeholder="" value="' . $podmotor_account_id . '" class="regular-text disabled" readonly="">' . "\n";
 		}
 
 		// Get settings fields
@@ -1717,54 +1717,46 @@ class SSP_Settings {
 		$current_user = wp_get_current_user();
 		ob_start();
 		?>
-        <p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) send us a message
-            below and our team will personally import all of your media files and associated posts for you.</p>
-        <table class="form-table">
-            <tbody>
-            <tr>
-                <th scope="row">Your name</th>
-                <td>
-                    <input id="name" name="name" type="text" placeholder="Name"
-                           value="<?php echo esc_attr( $current_user->user_firstname ) . ' ' . esc_attr( $current_user->user_lastname ) ?>"
-                           class="regular-text">
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">Your website name</th>
-                <td>
-                    <input id="website" name="website" type="text" placeholder="Website"
-                           value="<?php echo esc_attr( $site_name ) ?>" class="regular-text">
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">Your email address</th>
-                <td>
-                    <input id="email" name="email" type="text" placeholder="email@domain.com"
-                           value="<?php echo esc_attr( $current_user->user_email ) ?>" class="regular-text">
-                </td>
-            </tr>
-            <tr>
-                <th scope="row">Your external podcast url</th>
-                <td>
-                    <input id="podcast_url" name="podcast_url" type="text" placeholder="https://example.com/rss"
-                           value="" class="regular-text">
-                </td>
-            </tr>
-            </tbody>
-        </table>
-        <p class="submit">
-            <input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary"
-                   value="<?php echo esc_attr( __( 'Submit Form', 'seriously-simple-podcasting' ) ) ?>"/>
-        </p>
+		<p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) send us a message below and our team will personally import all of your media files and associated posts for you.</p>
+		<table class="form-table">
+			<tbody>
+			<tr>
+				<th scope="row">Your name</th>
+				<td>
+					<input id="name" name="name" type="text" placeholder="Name" value="<?php echo esc_attr( $current_user->user_firstname ) . ' ' . esc_attr( $current_user->user_lastname ) ?>" class="regular-text">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Your website name</th>
+				<td>
+					<input id="website" name="website" type="text" placeholder="Website" value="<?php echo esc_attr( $site_name ) ?>" class="regular-text">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Your email address</th>
+				<td>
+					<input id="email" name="email" type="text" placeholder="email@domain.com" value="<?php echo esc_attr( $current_user->user_email ) ?>" class="regular-text">
+				</td>
+			</tr>
+			<tr>
+				<th scope="row">Your external podcast url</th>
+				<td>
+					<input id="podcast_url" name="podcast_url" type="text" placeholder="https://example.com/rss" value="" class="regular-text">
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<p class="submit">
+			<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Submit Form', 'seriously-simple-podcasting' ) ) ?>" />
+		</p>
 		<?php
 		$html = ob_get_clean();
-
 		return $html;
 	}
 
 	public function submit_import_form() {
 		$action = ( isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : '' );
-
+		
 		if ( ! empty( $action ) && 'post_import_form' === $action ) {
 			check_admin_referer( 'ss_podcasting-import' );
 			$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
@@ -1772,19 +1764,19 @@ class SSP_Settings {
 			$email       = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
 			$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
 
-			$new_line  = "\n";
-			$site_name = $name;
-			$to        = 'hello@seriouslysimplepodcasting.com';
-			$subject   = sprintf( __( 'Podcast import request' ), $site_name );
-			$message   = sprintf( __( 'Hi Craig %1$s' ), $new_line );
-			$message   .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
-			$message   .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
-			$from      = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
+			$new_line    = "\n";
+			$site_name   = $name;
+			$to          = 'hello@seriouslysimplepodcasting.com';
+			$subject     = sprintf( __( 'Podcast import request' ), $site_name );
+			$message     = sprintf( __( 'Hi Craig %1$s' ), $new_line );
+			$message    .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
+			$message    .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
+			$from        = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
 			wp_mail( $to, $subject, $message, $from );
 			?>
-            <div class="notice notice-info is-dismissible">
-                <p><?php esc_attr_e( 'Thanks, someone from Seriously Simple Hosting will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
-            </div>
+			<div class="notice notice-info is-dismissible">
+				<p><?php esc_attr_e( 'Thanks, someone from Castos will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
+			</div>
 			<?php
 		}
 	}
@@ -1792,8 +1784,7 @@ class SSP_Settings {
 	public function render_seriously_simple_sidebar() {
 		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
 		ob_start();
-		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-sidebar.php' );
-
+		include ( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-sidebar.php' );
 		return ob_get_clean();
 	}
 
@@ -1802,58 +1793,34 @@ class SSP_Settings {
 		$image_dir  = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
 		$extensions = array(
 			'connect'     => array(
-				'title'       => 'NEW - ***Premium*** Seriously Simple Hosting',
-				'image'       => $image_dir . 'ssp-PM-connect.jpg',
+				'title'       => 'NEW - Castos Podcast Hosting',
+				'image'       => $image_dir . 'castos-icon-extension.jpg',
 				'url'         => SSP_PODMOTOR_APP_URL,
-				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Seriously Simple Hosting.',
+				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Castos.',
 				'new_window'  => true,
 			),
 			'stats'       => array(
 				'title'       => 'Seriously Simple Podcasting Stats',
 				'image'       => $image_dir . 'ssp-stats.jpg',
-				'url'         => add_query_arg( array(
-					'tab'       => 'plugin-information',
-					'plugin'    => 'seriously-simple-stats',
-					'TB_iframe' => 'true',
-					'width'     => '772',
-					'height'    => '859'
-				), admin_url( 'plugin-install.php' ) ),
+				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-stats', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
 				'description' => 'Seriously Simple Stats offers integrated analytics for your podcast, giving you access to incredibly useful information about who is listening to your podcast and how they are accessing it.',
 			),
 			'transcripts' => array(
 				'title'       => 'Seriously Simple Podcasting Transcripts',
 				'image'       => $image_dir . 'ssp-transcripts.jpg',
-				'url'         => add_query_arg( array(
-					'tab'       => 'plugin-information',
-					'plugin'    => 'seriously-simple-transcripts',
-					'TB_iframe' => 'true',
-					'width'     => '772',
-					'height'    => '859'
-				), admin_url( 'plugin-install.php' ) ),
+				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-transcripts', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
 				'description' => 'Seriously Simple Transcripts gives you a simple and automated way for you to add downloadable transcripts to your podcast episodes. It’s an easy way for you to provide episode transcripts to your listeners without taking up valuable space in your episode content.',
 			),
 			'speakers'    => array(
 				'title'       => 'Seriously Simple Podcasting Speakers',
 				'image'       => $image_dir . 'ssp-speakers.jpg',
-				'url'         => add_query_arg( array(
-					'tab'       => 'plugin-information',
-					'plugin'    => 'seriously-simple-speakers',
-					'TB_iframe' => 'true',
-					'width'     => '772',
-					'height'    => '859'
-				), admin_url( 'plugin-install.php' ) ),
+				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-speakers', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
 				'description' => 'Does your podcast have a number of different speakers? Or maybe a different guest each week? Perhaps you have unique hosts for each episode? If any of those options describe your podcast then Seriously Simple Speakers is the add-on for you!',
 			),
 			'genesis'     => array(
 				'title'       => 'Seriously Simple Podcasting Genesis Support ',
 				'image'       => $image_dir . 'ssp-genesis.jpg',
-				'url'         => add_query_arg( array(
-					'tab'       => 'plugin-information',
-					'plugin'    => 'seriously-simple-podcasting-genesis-support',
-					'TB_iframe' => 'true',
-					'width'     => '772',
-					'height'    => '859'
-				), admin_url( 'plugin-install.php' ) ),
+				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-podcasting-genesis-support', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
 				'description' => 'The Genesis compatibility add-on for Seriously Simple Podcasting gives you full support for the Genesis theme framework. It adds support to the podcast post type for the features that Genesis requires. If you are using Genesis and Seriously Simple Podcasting together then this plugin will make your website look and work much more smoothly.',
 			),
 		);
@@ -1861,17 +1828,17 @@ class SSP_Settings {
 		$html = '<div id="ssp-extensions">';
 		foreach ( $extensions as $extension ) {
 			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>';
-			if ( isset( $extension['new_window'] ) && $extension['new_window'] ) {
+			if (isset($extension['new_window']) && $extension['new_window']){
 				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
-			} else {
+			}else {
 				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
 			}
 			$html .= '<p></p>';
 			$html .= '<p>' . $extension['description'] . '</p>';
 			$html .= '<p></p>';
-			if ( isset( $extension['new_window'] ) && $extension['new_window'] ) {
+			if (isset($extension['new_window']) && $extension['new_window']){
 				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">Get this Extension</a>';
-			} else {
+			}else {
 				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">Get this Extension</a>';
 			}
 			$html .= '</div>';

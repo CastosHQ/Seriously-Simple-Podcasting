@@ -855,7 +855,7 @@ if ( ! function_exists( 'ssp_email_podcasts_imported' ) ) {
 		$subject          = sprintf( __( 'Podcast import completed for %s' ), $site_name );
 		$message          = '';
 		$message          .= sprintf( __( 'The Podcast import for %1$s has completed.%2$s' ), $site_name, $new_line );
-		$message          .= sprintf( __( 'Thank you for using Seriously Simple Hosting to host your podcasts.%1$s' ), $new_line );
+		$message          .= sprintf( __( 'Thank you for using Castos to host your podcasts.%1$s' ), $new_line );
 		$from             = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
 		
 		return wp_mail( $to, $subject, $message, $from );

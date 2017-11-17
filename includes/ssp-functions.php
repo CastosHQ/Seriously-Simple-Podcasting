@@ -937,6 +937,6 @@ if( !function_exists( 'ssp_get_image_id_from_url' ) ){
     function ssp_get_image_id_from_url( $image_url ){
         global $wpdb;
         $attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $image_url ) );
-        return $attachment[0];
+        return isset( $attachment[0] ) ? $attachment[0] : false;
     }
 }

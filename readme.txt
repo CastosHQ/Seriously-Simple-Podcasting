@@ -40,7 +40,7 @@ Give your website a performance boost by offloading all of your media files to a
 
 **Beautifully Designed Media Player**
 
-No need to look around for a premium podcast player for your website, we've built in an industry leading podcast player right into Seriously Simple Podcasting, for Free! 
+No need to look around for a premium podcast player for your website, we've built in an industry leading podcast player right into Seriously Simple Podcasting, for Free!
 
 Choose from a compact or full size design, complete with your podcast cover image proudly displayed right alongside your player.
 

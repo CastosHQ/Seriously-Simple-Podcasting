@@ -116,7 +116,10 @@ class SSP_Admin {
 			
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
-			
+
+			// Filter Embed HTML Code
+			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
+
 		} // End if().
 		
 		// Add ajax action for plugin rating
@@ -137,6 +140,10 @@ class SSP_Admin {
 		// Dismiss the upgrade screen and redirect to the last screen the user was on
 		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
 		
+	}
+
+	public function ssp_filter_embed_code( $code ){
+		return str_replace( 'sandbox="allow-scripts"', 'sandbox="allow-scripts allow-same-origin"', $code );
 	}
 	
 	/**
@@ -548,7 +555,7 @@ class SSP_Admin {
 		$post_id = (int) $_POST['post_id'];
 		$width   = (int) $_POST['width'];
 		$height  = (int) $_POST['height'];
-		
+
 		// Generate embed code
 		echo get_post_embed_html( $width, $height, $post_id );
 		
@@ -630,17 +637,17 @@ class SSP_Admin {
 								</p>' . "\n";
 						break;
 
-                    case 'select':
-                        $html .= '<p>
+					case 'select':
+						$html .= '<p>
 									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>';
-                        $html .= '<select name="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">';
-                        foreach ( $v['options'] as $option => $label ) {
-                            $html .= '<option ' . selected( $option, $data, false ) . ' value="' . esc_attr( $option ) . '">' . esc_attr( $label ) . '</option>';
-                        }
-                        $html .= '</select>';
-                        $html .= '<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
+						$html .= '<select name="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">';
+						foreach ( $v['options'] as $option => $label ) {
+							$html .= '<option ' . selected( $option, $data, false ) . ' value="' . esc_attr( $option ) . '">' . esc_attr( $label ) . '</option>';
+						}
+						$html .= '</select>';
+						$html .= '<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
-                        break;
+						break;
 					
 					case 'datepicker':
 						$display_date = '';
@@ -672,15 +679,15 @@ class SSP_Admin {
 								</p>' . "\n";
 						break;
 
-                    case 'number':
-                        $html .= '<p>
+					case 'number':
+						$html .= '<p>
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>
 									<br/>
 									<input name="' . esc_attr( $k ) . '" type="number" min="0" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />
 									<br/>
 									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
-                        break;
+						break;
 					
 					default:
 						$html .= '<p>
@@ -1551,8 +1558,8 @@ class SSP_Admin {
 		
 		// redirect
 		$url = add_query_arg( array( 'post_type'    => 'podcast',
-		                             'page'         => 'upgrade',
-		                             'ssp_redirect' => $current_url
+									 'page'         => 'upgrade',
+									 'ssp_redirect' => $current_url
 		), admin_url( 'edit.php' ) );
 		wp_redirect( $url );
 		exit;

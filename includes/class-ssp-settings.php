@@ -127,6 +127,20 @@ class SSP_Settings {
 		// process the import form submission
 		add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
+		// Quick and dirty colour picker implementation
+		// If we do not have the WordPress core colour picker field, then we don't break anything
+		add_action( 'admin_footer', function () {
+			?>
+            <script>
+                jQuery(document).ready(function ($) {
+                    if ("function" === typeof $.fn.wpColorPicker) {
+                        $('.ssp-color-picker').wpColorPicker();
+                    }
+                });
+            </script>
+			<?php
+		}, 99 );
+
 	}
 
 	/**
@@ -151,6 +165,12 @@ class SSP_Settings {
 			$this,
 			'settings_page',
 		) );
+
+		/* @todo Add Back In When Doing New Analytics Pages */
+		/* add_submenu_page( 'edit.php?post_type=podcast', __( 'Analytics', 'seriously-simple-podcasting' ), __( 'Analytics', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings&view=analytics', array(
+			 $this,
+			 'settings_page',
+		 ) );*/
 
 		add_submenu_page( null, __( 'Upgrade', 'seriously-simple-podcasting' ), __( 'Upgrade', 'seriously-simple-podcasting' ), 'manage_podcast', 'upgrade', array(
 			$this,
@@ -232,6 +252,17 @@ class SSP_Settings {
 		if ( in_array( $pagenow, $pages, true ) || ( ! empty( $page ) && 'podcast_settings' === $page ) ) {
 			wp_enqueue_media();
 		}
+
+		// // @todo add back for analytics launch
+		// wp_enqueue_script( 'jquery-ui-datepicker' );
+		// wp_register_style( 'jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' );
+		// wp_enqueue_style( 'jquery-ui' );
+
+		wp_enqueue_style( 'wp-color-picker' );
+		wp_enqueue_script( 'wp-color-picker' );
+
+		// wp_enqueue_script( 'plotly', 'https://cdn.plot.ly/plotly-latest.min.js', SSP_VERSION, true );
+
 	}
 
 	/**
@@ -576,6 +607,41 @@ class SSP_Settings {
 					'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
 					'type'        => 'checkbox',
 					'default'     => '',
+				),
+				array(
+					'id'          => 'player_style',
+					'label'       => __( 'Media player style', 'seriously-simple-podcasting' ),
+					'description' => __( 'Select the style of media player you wish to display on your site.', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array(
+						'standard' => __( 'Standard Compact Player', 'seriously-simple-podcasting' ),
+						'larger'   => __( 'HTML5 Player With Album Art', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'all',
+				),
+				array(
+					'id'          => 'player_background_skin_colour',
+					'label'       => __( 'Background skin colour', 'seriously-simple-podcasting' ),
+					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
+					'type'        => 'colour-picker',
+					'default'     => '#222222',
+					'class'       => 'ssp-color-picker'
+				),
+				array(
+					'id'          => 'player_wave_form_colour',
+					'label'       => __( 'Player progress bar colour', 'seriously-simple-podcasting' ),
+					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
+					'type'        => 'colour-picker',
+					'default'     => '#fff',
+					'class'       => 'ssp-color-picker'
+				),
+				array(
+					'id'          => 'player_wave_form_progress_colour',
+					'label'       => __( 'Player progress bar progress colour', 'seriously-simple-podcasting' ),
+					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
+					'type'        => 'colour-picker',
+					'default'     => '#00d4f7',
+					'class'       => 'ssp-color-picker'
 				),
 			),
 		);
@@ -924,6 +990,21 @@ class SSP_Settings {
 				),
 			),
 		);
+// @todo add back for analytics launch
+//		$settings['analytics'] = array(
+//			'title'       => __( 'Analytics', 'seriously-simple-podcasting' ),
+//			'description' => sprintf( __( 'Connect your %s analytics application with your podcast site' ), '<a target="_blank" href=" ' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
+//			'fields'      => array(
+//				array(
+//					'id'          => 'ssp_analytics_token',
+//					'label'       => __( 'Analytics Token', 'seriously-simple-podcasting' ),
+//					'description' => '',
+//					'type'        => 'text',
+//					'callback'    => 'esc_url_raw',
+//					'class'       => 'regular-text',
+//				),
+//			),
+//		);
 
 		$settings['podcastmotor-connect'] = array(
 			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
@@ -1186,6 +1267,9 @@ class SSP_Settings {
 			case 'number':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
 				break;
+			case 'colour-picker':
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
+				break;
 
 			case 'text_secret':
 				$placeholder = $field['placeholder'];
@@ -1429,6 +1513,25 @@ class SSP_Settings {
 	 * @return void
 	 */
 	public function settings_page() {
+
+		$q_args = wp_parse_args( $_GET, array(
+			'post_type' => null,
+			'page'      => null,
+			'view'      => null,
+			'tab'       => null
+		) );
+
+		array_walk( $q_args, function ( &$entry ) {
+			$entry = sanitize_title( $entry );
+		} );
+
+		/* @todo Add Back For Stats Later On */
+		/*if( "analytics" === $q_args['view'] ){
+			ob_start();
+			include SSP_PLUGIN_PATH . 'includes/views/ssp-analytics.php';
+			echo ob_get_clean();
+			return;
+		}*/
 
 		// Build page HTML
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";

@@ -930,13 +930,13 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
  * Get image ID when only the URL of the image is known
  */
 if( !function_exists( 'ssp_get_image_id_from_url' ) ){
-    /**
-     * @param $image_url
-     * @return mixed
-     */
-    function ssp_get_image_id_from_url( $image_url ){
-        global $wpdb;
-        $attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $image_url ) );
-        return isset( $attachment[0] ) ? $attachment[0] : false;
-    }
+	/**
+	 * @param $image_url
+	 * @return mixed
+	 */
+	function ssp_get_image_id_from_url( $image_url ){
+		global $wpdb;
+		$attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $image_url ) );
+		return isset( $attachment[0] ) ? $attachment[0] : false;
+	}
 }

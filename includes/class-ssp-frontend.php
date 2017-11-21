@@ -89,10 +89,10 @@ class SSP_Frontend {
 
 		// Trigger import podcast process (if active)
 		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor') );
-		
+
 		// Update podmotor_episode_id and audio file values from import process
 		add_action( 'wp_loaded', array( $this, 'update_episode_data_from_podmotor') );
-		
+
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
 
@@ -348,6 +348,10 @@ class SSP_Frontend {
                                 $series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
                                 list( $src, $width, $height ) = wp_get_attachment_image_src( $series_image_attachment_id, 'medium' );
                                 $albumArt = compact( 'src', 'width', 'height' );
+                            }elseif( $series_image = get_option( "ss_podcasting_data_image" ) ){
+	                            $series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
+	                            list( $src, $width, $height ) = wp_get_attachment_image_src( $series_image_attachment_id, 'medium' );
+	                            $albumArt = compact( 'src', 'width', 'height' );
                             }else{
                                 $albumArt['src'] = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
                                 $albumArt['width'] = 300;
@@ -537,6 +541,8 @@ class SSP_Frontend {
 
                                     // On Media Finished
                                     window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'finish', function(e){
+
+                                        $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
 
                                         // Track Podcast Specific Finish
                                         /*_paq.push(
@@ -1272,7 +1278,7 @@ class SSP_Frontend {
 			wp_send_json( $reponse );
 		}
 	}
-	
+
 	/**
 	 * Public facing action which is triggered from Seriously Simple Hosting
 	 * Updates episode_id and audio_file data from import process
@@ -1979,7 +1985,7 @@ class SSP_Frontend {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public function load_scripts(){
 

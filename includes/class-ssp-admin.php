@@ -114,9 +114,6 @@ class SSP_Admin {
 			// Show upgrade screen
 			add_action( 'current_screen', array( $this, 'show_upgrade_screen' ), 12 );
 			
-			// Dismiss the upgrade screen and redirect to the last screen the user was on
-			add_action( 'admin_init', array( $this, 'dismiss_upgrade_screen' ) );
-			
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
 
@@ -124,10 +121,8 @@ class SSP_Admin {
 			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
 			
 			// Check and trigger 1.19 update notice
-			add_action( 'admin_init', array( $this, 'check_and_trigger_119_update_notice' ) );
+			add_action( 'init', array( $this, 'check_and_trigger_119_update_notice' ) );
 			
-			// Dismiss the 1.19 update notice
-			add_action( 'admin_init', array( $this, 'dismiss_119_update_notice' ) );
 
 		} // End if().
 		
@@ -146,6 +141,11 @@ class SSP_Admin {
 		
 		add_action( 'init', array( $this, 'update' ), 11 );
 		
+		// Dismiss the upgrade screen and redirect to the last screen the user was on
+		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
+		
+		// Dismiss the 1.19 update notice
+		add_action( 'init', array( $this, 'dismiss_119_update_notice' ) );
 	}
 
 	public function ssp_filter_embed_code( $code ){
@@ -1593,6 +1593,8 @@ class SSP_Admin {
 	 */
 	public function check_and_trigger_119_update_notice() {
 		// check if this notice has been dismissed previously
+		
+		
 		$ssp_dismiss_119_update_notice = get_option( 'ssp_dismiss_119_update_notice', '' );
 		if ( 'true' === $ssp_dismiss_119_update_notice ) {
 			return;
@@ -1600,11 +1602,13 @@ class SSP_Admin {
 		
 		// check version number is upgraded
 		$ssp_version = get_option( 'ssp_version', '' );
-		if ( version_compare( $ssp_version, '1.19.0', '<' ) ) {
+		//die($ssp_version);
+		if ( version_compare( $ssp_version, '1.18.9', '<' ) ) {
+			die($ssp_version);
 			return;
 		}
 		
-		add_action( 'admin_notices', array( $this, 'show_119_update_notice' ) );
+		add_action( '', array( $this, 'show_119_update_notice' ) );
 		
 	}
 	

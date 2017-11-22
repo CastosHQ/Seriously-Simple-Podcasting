@@ -121,7 +121,7 @@ class SSP_Admin {
 			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
 			
 			// Check and trigger 1.19 update notice
-			add_action( 'init', array( $this, 'check_and_trigger_119_update_notice' ) );
+			add_action( 'admin_init', array( $this, 'check_and_trigger_119_update_notice' ) );
 			
 
 		} // End if().
@@ -1602,21 +1602,24 @@ class SSP_Admin {
 		
 		// check version number is upgraded
 		$ssp_version = get_option( 'ssp_version', '' );
-		//die($ssp_version);
+		// check if the version is less than 1.18.9
 		if ( version_compare( $ssp_version, '1.18.9', '<' ) ) {
 			die($ssp_version);
 			return;
 		}
 		
-		add_action( '', array( $this, 'show_119_update_notice' ) );
+		add_action( 'admin_notices', array( $this, 'show_119_update_notice' ) );
 		
 	}
 	
+	/**
+	 * Show 1.19.0 update message, including dismiss url
+	 */
 	public function show_119_update_notice(){
 		$dismiss_119_update_notice_url = add_query_arg( array( 'ssp_dismiss_119_update_notice' => 'dimiss' ) );
 		$message = '';
-		$message .= '<p>You\'ve not set a valid permalink structure. This will affect your Podcast feed url.</p>';
-		$message .= '<p>Please set a permalink structure in the <em>\'Settings -> Permalinks\'</em> admin menu.</p>';
+		$message .= '<p>Seriously Simple Podcasting just got some awesome new upgrades.</p>';
+		$message .= '<p><a href="https://www.castos.com/new-seriously-simple-podcasting-features" target="_blank">Click here to read the blog post</a> about what the new Seriously Simple Podcasting can do.</p>';
 		$message .= '<p><a href="' . $dismiss_119_update_notice_url . '">Dismiss this message.</a></p>';
 		?>
 		<div class="notice notice-info">
@@ -1626,7 +1629,7 @@ class SSP_Admin {
 	}
 	
 	/**
-	 * Dismiss upgrade screen when user clicks 'Dismiss' link
+	 * Dismiss 1.19.0 update message when user clicks 'Dismiss' link
 	 */
 	public function dismiss_119_update_notice() {
 		// Check if the ssp_dismiss_upgrade variable exists

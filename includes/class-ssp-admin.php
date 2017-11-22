@@ -114,11 +114,20 @@ class SSP_Admin {
 			// Show upgrade screen
 			add_action( 'current_screen', array( $this, 'show_upgrade_screen' ), 12 );
 			
+			// Dismiss the upgrade screen and redirect to the last screen the user was on
+			add_action( 'admin_init', array( $this, 'dismiss_upgrade_screen' ) );
+			
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
 
 			// Filter Embed HTML Code
 			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
+			
+			// Check and trigger 1.19 update notice
+			add_action( 'admin_init', array( $this, 'check_and_trigger_119_update_notice' ) );
+			
+			// Dismiss the 1.19 update notice
+			add_action( 'admin_init', array( $this, 'dismiss_119_update_notice' ) );
 
 		} // End if().
 		
@@ -136,9 +145,6 @@ class SSP_Admin {
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
 		
 		add_action( 'init', array( $this, 'update' ), 11 );
-		
-		// Dismiss the upgrade screen and redirect to the last screen the user was on
-		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
 		
 	}
 
@@ -1580,5 +1586,53 @@ class SSP_Admin {
 		update_option( 'ssp_upgrade_page_visited', 'true' );
 		wp_redirect( $ssp_redirect );
 		exit;
+	}
+	
+	/**
+	 * Check if plugin has been updated to  1.19.0 and trigger update notice
+	 */
+	public function check_and_trigger_119_update_notice() {
+		// check if this notice has been dismissed previously
+		$ssp_dismiss_119_update_notice = get_option( 'ssp_dismiss_119_update_notice', '' );
+		if ( 'true' === $ssp_dismiss_119_update_notice ) {
+			return;
+		}
+		
+		// check version number is upgraded
+		$ssp_version = get_option( 'ssp_version', '' );
+		if ( version_compare( $ssp_version, '1.19.0', '<' ) ) {
+			return;
+		}
+		
+		add_action( 'admin_notices', array( $this, 'show_119_update_notice' ) );
+		
+	}
+	
+	public function show_119_update_notice(){
+		$dismiss_119_update_notice_url = add_query_arg( array( 'ssp_dismiss_119_update_notice' => 'dimiss' ) );
+		$message = '';
+		$message .= '<p>You\'ve not set a valid permalink structure. This will affect your Podcast feed url.</p>';
+		$message .= '<p>Please set a permalink structure in the <em>\'Settings -> Permalinks\'</em> admin menu.</p>';
+		$message .= '<p><a href="' . $dismiss_119_update_notice_url . '">Dismiss this message.</a></p>';
+		?>
+		<div class="notice notice-info">
+			<p><?php _e( $message, 'ssp' ); ?></p>
+		</div>
+		<?php
+	}
+	
+	/**
+	 * Dismiss upgrade screen when user clicks 'Dismiss' link
+	 */
+	public function dismiss_119_update_notice() {
+		// Check if the ssp_dismiss_upgrade variable exists
+		$ssp_dismiss_119_update_notice = ( isset( $_GET['ssp_dismiss_119_update_notice'] ) ? filter_var( $_GET['ssp_dismiss_119_update_notice'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $ssp_dismiss_119_update_notice ) ) {
+			return;
+		}
+		
+		//$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
+		
+		update_option( 'ssp_dismiss_119_update_notice', 'true' );
 	}
 }

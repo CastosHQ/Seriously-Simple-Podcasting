@@ -205,10 +205,14 @@ class Podmotor_Handler {
 					$this->update_response( 'file_path', $response_object->file_path );
 					$this->update_response( 'file_duration', $response_object->file_duration );
 				} else {
-					$this->update_response( 'message', 'An error occurred uploading the file data to Castos' );
+					if ( isset( $response_object->message ) ) {
+						$this->update_response( 'message', $response_object->message );
+					} else {
+						$this->update_response( 'message', 'An error occurred uploading the file data to Castos.' );
+					}
 				}
 			} else {
-				$this->update_response( 'message', 'An unknown error occurred uploading the file data to Castos' );
+				$this->update_response( 'message', 'An unknown error occurred uploading the file data to Castos.' );
 			}
 		} else {
 			$this->update_response( 'message', $app_response->get_error_message() );

@@ -1638,8 +1638,6 @@ class SSP_Admin {
 			return;
 		}
 		
-		//$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
-		
 		update_option( 'ssp_dismiss_119_update_notice', 'true' );
 	}
 }

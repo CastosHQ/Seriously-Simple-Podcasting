@@ -102,6 +102,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.0-alpha.3 =
+* 2017-11-21
+* [NEW] Added a 1.19.0 upgrade notice
+
 = 1.19.0-alpha.2 =
 * 2017-11-21
 * [FIX] Increased width and height of new player album art to avoid 1px line under player wrapper

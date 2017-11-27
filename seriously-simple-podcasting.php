@@ -43,12 +43,10 @@ define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
-	define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplepodcasting.com/' );
-	//define( 'SSP_PODMOTOR_APP_URL', 'https://app.castos.com/' );
+	define( 'SSP_PODMOTOR_APP_URL', 'https://app.seriouslysimplehosting.com/' );
 }
 if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
-	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.seriouslysimplepodcasting.com/' );
-	//define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.castos.com/' );
+	define( 'SSP_PODMOTOR_EPISODES_URL', 'http://episodes.seriouslysimplehosting.com/' );
 }
 define( 'SSP_LOG_DIR_PATH', SSP_PLUGIN_PATH . 'log' . DIRECTORY_SEPARATOR );
 define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );

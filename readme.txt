@@ -32,9 +32,9 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 **Podcast Hosting Platform**
 
-If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Seriously Simple Hosting](https://app.seriouslysimplepodcasting.com).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
+If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://www.castos.com).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
 
-https://youtu.be/CE9zhOGirhY
+https://youtu.be/WFJQbarJbBs
 
 Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrifc listening experience at the same time.
 
@@ -66,7 +66,7 @@ Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add
 
 Podcast media files can be uploaded directly into WordPress, hosted on the integrated [Castos](https://www.castos.com) platform,  or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them manually.*
 
-If you need help, you can find complete user and developer documentation [here](https://www.seriouslysimplepodcasting.com/).
+If you need help, you can find complete user and developer documentation [here](https://support.castos.com/).
 
 == Installation ==
 

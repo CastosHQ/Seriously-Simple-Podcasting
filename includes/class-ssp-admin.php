@@ -83,7 +83,7 @@ class SSP_Admin {
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 			
-			// Update podcast details to Seriously Simple Hosting.
+			// Update podcast details to Castos.
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 			
@@ -135,13 +135,20 @@ class SSP_Admin {
 			
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
+
+			// Filter Embed HTML Code
+			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
 			
+			// Check and trigger 1.19 update notice
+			add_action( 'admin_init', array( $this, 'check_and_trigger_119_update_notice' ) );
+			
+
 		} // End if().
 		
 		// Add ajax action for plugin rating
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 		
-		// Add ajax action for uploading file data to Seriously Simple Hosting that has been uploaded already via plupload
+		// Add ajax action for uploading file data to Castos that has been uploaded already via plupload
 		add_action( 'wp_ajax_ssp_store_podmotor_file', array( $this, 'store_podmotor_file' ) );
 		
 		// Add ajax action for customising episode embed code
@@ -156,6 +163,12 @@ class SSP_Admin {
 		// Dismiss the upgrade screen and redirect to the last screen the user was on
 		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
 		
+		// Dismiss the 1.19 update notice
+		add_action( 'init', array( $this, 'dismiss_119_update_notice' ) );
+	}
+
+	public function ssp_filter_embed_code( $code ){
+		return str_replace( 'sandbox="allow-scripts"', 'sandbox="allow-scripts allow-same-origin"', $code );
 	}
 	
 	/**
@@ -448,7 +461,7 @@ HTML;
 			
 			$args = array(
 				'type'         => 'string',
-				'description'  => $data['meta_description'],
+				'description'  => isset( $data['meta_description'] ) ? $data['meta_description'] : "",
 				'single'       => true,
 				'show_in_rest' => true,
 			);
@@ -679,7 +692,7 @@ HTML;
 		$post_id = (int) $_POST['post_id'];
 		$width   = (int) $_POST['width'];
 		$height  = (int) $_POST['height'];
-		
+
 		// Generate embed code
 		echo get_post_embed_html( $width, $height, $post_id );
 		
@@ -761,17 +774,17 @@ HTML;
 								</p>' . "\n";
 						break;
 
-                    case 'select':
-                        $html .= '<p>
+					case 'select':
+						$html .= '<p>
 									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>';
-                        $html .= '<select name="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">';
-                        foreach ( $v['options'] as $option => $label ) {
-                            $html .= '<option ' . selected( $option, $data, false ) . ' value="' . esc_attr( $option ) . '">' . esc_attr( $label ) . '</option>';
-                        }
-                        $html .= '</select>';
-                        $html .= '<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
+						$html .= '<select name="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '_' . esc_attr( $option ) . '">';
+						foreach ( $v['options'] as $option => $label ) {
+							$html .= '<option ' . selected( $option, $data, false ) . ' value="' . esc_attr( $option ) . '">' . esc_attr( $label ) . '</option>';
+						}
+						$html .= '</select>';
+						$html .= '<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
-                        break;
+						break;
 					
 					case 'datepicker':
 						$display_date = '';
@@ -803,15 +816,15 @@ HTML;
 								</p>' . "\n";
 						break;
 
-                    case 'number':
-                        $html .= '<p>
+					case 'number':
+						$html .= '<p>
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>
 									<br/>
 									<input name="' . esc_attr( $k ) . '" type="number" min="0" id="' . esc_attr( $k ) . '" class="' . esc_attr( $class ) . '" value="' . esc_attr( $data ) . '" />
 									<br/>
 									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
-                        break;
+						break;
 					
 					default:
 						$html .= '<p>
@@ -1513,13 +1526,13 @@ HTML;
 	}
 	
 	/**
-	 * Store the file uploaded via plupload to the Seriously Simple Hosting account
+	 * Store the file uploaded via plupload to the Castos account
 	 */
 	public function store_podmotor_file() {
 		if ( ! isset( $_GET['podmotor_file_path'] ) ) {
 			wp_send_json( array(
 				'status'  => 'error',
-				'message' => 'An error occurred storing your file to your Seriously Simple Hosting account, please contact hello@seriouslysimplepodcasting.com for assistance.',
+				'message' => 'An error occurred storing your file to your Castos account, please contact hello@castos.com for assistance.',
 			) );
 		}
 		
@@ -1608,8 +1621,8 @@ HTML;
 		$podcast_import_url = add_query_arg( array( 'podcast_import_action' => 'start' ) );
 		$ignore_message_url = add_query_arg( array( 'podcast_import_action' => 'ignore' ) );
 		$message            = '';
-		$message            .= '<p>You\'ve connected to your Seriously Simple Hosting account and you have existing podcasts that can be imported.</p>';
-		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Seriously Simple Hosting.</a></p>';
+		$message            .= '<p>You\'ve connected to your Castos account and you have existing podcasts that can be imported.</p>';
+		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Castos.</a></p>';
 		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
 		
 		?>
@@ -1624,7 +1637,7 @@ HTML;
 	 */
 	public function importing_podcasts_notice() {
 		$message = '';
-		$message .= '<p>We\'re importing your podcast episodes and media files to Seriously Simple Hosting now. Check your email for an update when this process is finished</p>';
+		$message .= '<p>We\'re importing your podcast episodes and media files to Castos now. Check your email for an update when this process is finished</p>';
 		$message .= '<p>The import process takes place as a background task, so you may dismiss this message.</p>';
 		?>
 		<div class="notice notice-info is-dismissible">
@@ -1689,8 +1702,8 @@ HTML;
 		
 		// redirect
 		$url = add_query_arg( array( 'post_type'    => $this->token,
-		                             'page'         => 'upgrade',
-		                             'ssp_redirect' => $current_url
+									 'page'         => 'upgrade',
+									 'ssp_redirect' => $current_url
 		), admin_url( 'edit.php' ) );
 		wp_redirect( $url );
 		exit;
@@ -1711,5 +1724,58 @@ HTML;
 		update_option( 'ssp_upgrade_page_visited', 'true' );
 		wp_redirect( $ssp_redirect );
 		exit;
+	}
+	
+	/**
+	 * Check if plugin has been updated to  1.19.0 and trigger update notice
+	 */
+	public function check_and_trigger_119_update_notice() {
+		// check if this notice has been dismissed previously
+		
+		
+		$ssp_dismiss_119_update_notice = get_option( 'ssp_dismiss_119_update_notice', '' );
+		if ( 'true' === $ssp_dismiss_119_update_notice ) {
+			return;
+		}
+		
+		// check version number is upgraded
+		$ssp_version = get_option( 'ssp_version', '' );
+		// check if the version is less than 1.18.9
+		if ( version_compare( $ssp_version, '1.18.9', '<' ) ) {
+			die($ssp_version);
+			return;
+		}
+		
+		add_action( 'admin_notices', array( $this, 'show_119_update_notice' ) );
+		
+	}
+	
+	/**
+	 * Show 1.19.0 update message, including dismiss url
+	 */
+	public function show_119_update_notice(){
+		$dismiss_119_update_notice_url = add_query_arg( array( 'ssp_dismiss_119_update_notice' => 'dimiss' ) );
+		$message = '';
+		$message .= '<p>Seriously Simple Podcasting just got some awesome new upgrades.</p>';
+		$message .= '<p><a href="https://www.castos.com/new-seriously-simple-podcasting-features" target="_blank">Click here to read the blog post</a> about what the new Seriously Simple Podcasting can do.</p>';
+		$message .= '<p><a href="' . $dismiss_119_update_notice_url . '">Dismiss this message.</a></p>';
+		?>
+		<div class="notice notice-info">
+			<p><?php _e( $message, 'ssp' ); ?></p>
+		</div>
+		<?php
+	}
+	
+	/**
+	 * Dismiss 1.19.0 update message when user clicks 'Dismiss' link
+	 */
+	public function dismiss_119_update_notice() {
+		// Check if the ssp_dismiss_upgrade variable exists
+		$ssp_dismiss_119_update_notice = ( isset( $_GET['ssp_dismiss_119_update_notice'] ) ? filter_var( $_GET['ssp_dismiss_119_update_notice'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $ssp_dismiss_119_update_notice ) ) {
+			return;
+		}
+		
+		update_option( 'ssp_dismiss_119_update_notice', 'true' );
 	}
 }

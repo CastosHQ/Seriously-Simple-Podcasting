@@ -43,10 +43,12 @@ define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
-	define( 'SSP_PODMOTOR_APP_URL', 'https://staging.castos.com/' );
+	//define( 'SSP_PODMOTOR_APP_URL', 'https://staging.castos.com/' );
+	define( 'SSP_PODMOTOR_APP_URL', 'http://192.168.10.10/' );
 }
 if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
-	define( 'SSP_PODMOTOR_EPISODES_URL', 'http://episodes.castos.com/' );
+	//define( 'SSP_PODMOTOR_EPISODES_URL', 'http://episodes.castos.com/' );
+	define( 'SSP_PODMOTOR_EPISODES_URL', 'http://s3.amazonaws.com/seriouslysimplestaging/' );
 }
 define( 'SSP_LOG_DIR_PATH', SSP_PLUGIN_PATH . 'log' . DIRECTORY_SEPARATOR );
 define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );

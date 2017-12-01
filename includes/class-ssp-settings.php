@@ -1006,7 +1006,7 @@ class SSP_Settings {
 //			),
 //		);
 
-		$settings['podcastmotor-connect'] = array(
+		$settings['castos-hosting'] = array(
 			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
 			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
 			'fields'      => array(
@@ -1670,7 +1670,7 @@ class SSP_Settings {
 			$html .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
 		}
 
-		if ( isset( $tab ) && 'podcastmotor-connect' == $tab ) {
+		if ( isset( $tab ) && 'castos-hosting' == $tab ) {
 			$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
 			$html .= '<input id="podmotor_account_id" type="hidden" name="ss_podcasting_podmotor_account_id" placeholder="" value="' . $podmotor_account_id . '" class="regular-text disabled" readonly="">' . "\n";
 		}
@@ -1683,7 +1683,7 @@ class SSP_Settings {
 		do_settings_sections( 'ss_podcasting' );
 		$html .= ob_get_clean();
 
-		if ( isset( $tab ) && 'podcastmotor-connect' == $tab ) {
+		if ( isset( $tab ) && 'castos-hosting' == $tab ) {
 			// Validate button
 			$html .= '<p class="submit">' . "\n";
 			$html .= '<input id="validate_api_credentials" type="button" class="button-primary" value="' . esc_attr( __( 'Validate Credentials', 'seriously-simple-podcasting' ) ) . '" />' . "\n";

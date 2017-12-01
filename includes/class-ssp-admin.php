@@ -1381,7 +1381,7 @@ class SSP_Admin {
 		if ( 'success' == $response['status'] ) {
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
-				update_post_meta( $post->ID, 'podmotor_episode_id', $podmotor_episode_id );
+				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
 		}
 		

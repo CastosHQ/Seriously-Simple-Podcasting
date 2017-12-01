@@ -235,7 +235,7 @@ class Podmotor_Handler {
 		
 		if ( empty( $post ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
-			
+			ssp_debug('Invalid Podcast data when uploading podcast data');
 			return $this->response;
 		}
 		
@@ -243,10 +243,9 @@ class Podmotor_Handler {
 		 * Don't trigger this unless we have a valid PodcastMotor file id
 		 */
 		$podmotor_file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
-		
 		if ( empty( $podmotor_file_id ) ) {
 			$this->update_response( 'message', 'Invalid Podcast file data' );
-			
+			ssp_debug( 'Invalid Podcast file data when uploading podcast data' );
 			return $this->response;
 		}
 		
@@ -254,13 +253,15 @@ class Podmotor_Handler {
 		
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/episode';
 		
+		ssp_debug( 'API URL', $api_url );
+		
 		$post_body = array(
 			'api_token'    => $podmotor_api_token,
 			'post_id'      => $post->ID,
 			'post_title'   => $post->post_title,
 			'post_content' => $post->post_content,
 			'post_date'    => $post->post_date,
-			'file_id'      => $podmotor_file_id
+			'file_id'      => $podmotor_file_id,
 		);
 		
 		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
@@ -268,6 +269,8 @@ class Podmotor_Handler {
 		if ( ! empty( $podmotor_episode_id ) ) {
 			$post_body['id'] = $podmotor_episode_id;
 		}
+		
+		ssp_debug( 'Parameter post_body Contents', $post_body );
 		
 		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
@@ -278,14 +281,16 @@ class Podmotor_Handler {
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( 'success' == $responseObject->status ) {
+				ssp_debug( 'Pocast episode successfully uploaded to Castos with episode id ' . $responseObject->episode_id );
 				$this->update_response( 'status', 'success' );
 				$this->update_response( 'message', 'Pocast episode successfully uploaded to Castos' );
 				$this->update_response( 'episode_id', $responseObject->episode_id );
 			} else {
+				ssp_debug( 'An error occurred uploading the episode data to Castos', $responseObject );
 				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 			}
 		} else {
-			// $todo this should be logged somewhere
+			ssp_debug( 'An unknown error occurred sending podcast data to castos: ' . $app_response->get_error_message() );
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
 		

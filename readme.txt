@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 4.9
+Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.1
+Stable tag: 1.19.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,21 +102,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.19.0-alpha.3 =
-* 2017-11-21
+= 1.19.0-beta =
+* 2017-12-01
 * [NEW] Added a 1.19.0 upgrade notice
-
-= 1.19.0-alpha.2 =
-* 2017-11-21
 * [FIX] Increased width and height of new player album art to avoid 1px line under player wrapper
 * [FIX] Fixed bug where default feed image was not showing for the album art if not series image was set
-
-= 1.19.0-alpha.1 =
-* 2017-11-20
 * [NEW] Added new HTML5 Media Player
-
-= 1.19.0-alpha =
-* 2017-11-17
 * [NEW] Added support for featured images
 * [FIX] Removed unnecessary dependencies
 * [FIX] Fixed bugs related to podcast meta and subscribe links

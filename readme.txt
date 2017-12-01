@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 4.9
+Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.1
+Stable tag: 1.19.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -32,9 +32,9 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 **Podcast Hosting Platform**
 
-If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Seriously Simple Hosting](https://app.seriouslysimplepodcasting.com).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
+If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://www.castos.com).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
 
-https://youtu.be/CE9zhOGirhY
+https://youtu.be/WFJQbarJbBs
 
 Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrifc listening experience at the same time.
 
@@ -66,7 +66,7 @@ Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add
 
 Podcast media files can be uploaded directly into WordPress, hosted on the integrated [Castos](https://www.castos.com) platform,  or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them manually.*
 
-If you need help, you can find complete user and developer documentation [here](https://www.seriouslysimplepodcasting.com/).
+If you need help, you can find complete user and developer documentation [here](https://support.castos.com/).
 
 == Installation ==
 
@@ -102,21 +102,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.19.0-alpha.3 =
-* 2017-11-21
+= 1.19.0-beta =
+* 2017-12-01
 * [NEW] Added a 1.19.0 upgrade notice
-
-= 1.19.0-alpha.2 =
-* 2017-11-21
 * [FIX] Increased width and height of new player album art to avoid 1px line under player wrapper
 * [FIX] Fixed bug where default feed image was not showing for the album art if not series image was set
-
-= 1.19.0-alpha.1 =
-* 2017-11-20
 * [NEW] Added new HTML5 Media Player
-
-= 1.19.0-alpha =
-* 2017-11-17
 * [NEW] Added support for featured images
 * [FIX] Removed unnecessary dependencies
 * [FIX] Fixed bugs related to podcast meta and subscribe links

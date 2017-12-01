@@ -619,7 +619,7 @@ if ( ! function_exists( 'ssp_build_podcast_data' ) ) {
 			$podcast_data[ $podcast->ID ] = array(
 				'post_id'      => $podcast->ID,
 				'post_title'   => $podcast->post_title,
-				'post_content' => $podcast->post_content,
+				'post_content' => '', // leaving out the content for now
 				'post_date'    => $podcast->post_date,
 				'audio_file'   => get_post_meta( $podcast->ID, 'audio_file', true ),
 			);

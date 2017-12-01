@@ -20,11 +20,13 @@ class SSP_Shortcode_Podcast_Episode {
 	 * @return string         HTML output
 	 */
 	public function shortcode ( $params ) {
+
 		global $ss_podcasting;
 
 		$atts = shortcode_atts( array(
 	        'episode' => 0,
 	        'content' => 'title,player,details',
+            'style' => 'mini',
 	    ), $params, 'podcast_episode' );
 
 		extract( $atts );
@@ -33,6 +35,7 @@ class SSP_Shortcode_Podcast_Episode {
 	    if ( ! $episode ) {
 
 	    	global $post;
+
 	    	if( isset( $post->ID ) ) {
 	    		$episode = intval( $post->ID );
 	    	}
@@ -48,7 +51,7 @@ class SSP_Shortcode_Podcast_Episode {
 	    $content_items = array_map( 'trim', $content_items );
 
 	    // Get episode for display
-	    $html = $ss_podcasting->podcast_episode( $episode, $content_items, 'shortcode' );
+	    $html = $ss_podcasting->podcast_episode( $episode, $content_items, 'shortcode', $style );
 
 	    return $html;
 

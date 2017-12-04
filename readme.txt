@@ -34,7 +34,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://www.castos.com).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
 
-https://youtu.be/WFJQbarJbBs
+https://youtu.be/Se3H1IDAYtw
 
 Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrifc listening experience at the same time.
 

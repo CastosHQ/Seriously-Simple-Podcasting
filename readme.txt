@@ -102,6 +102,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.1-beta =
+* 2017-12-07
+* [NEW] Added `ssp_player_show_logo` filter for new media player
+* [New] Added `ssp_player_logo_class` filter for new media player
+* [New] Added `ssp_player_logo_src` filter for new media player
+* [New] Added `ssp_player_logo_width` filter for new media player
+* [New] Added `ssp_podcast_title` filter for new media player
+* [New] Added `ssp_album_art_cover` filter for new media player
+* [New] Added `ssp_show_album_art` filter for new media player
+* [FIX] Changed $style_from static to non static property, and reference with `$this` instead of `self`
+
 = 1.19.0-beta =
 * 2017-12-01
 * [NEW] Added a 1.19.0 upgrade notice

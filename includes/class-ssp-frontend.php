@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SSP_Frontend {
 
 	// @todo reference prior to analytics launch
-	public static $style_guide = [
+	public $style_guide = [
 		'dark'      => '#3A3A3A',
 		'medium'    => '#666666',
 		'light'     => '#939393',
@@ -111,7 +111,7 @@ class SSP_Frontend {
 		add_action( 'wp_footer', array( $this, 'ssp_override_player_styles' ) );
 
 		// Apply filters to the style guide so that users may swap out colours of the player
-		Self::$style_guide = apply_filters( 'ssp_filter_style_guide', Self::$style_guide );
+		$this->style_guide = apply_filters( 'ssp_filter_style_guide', $this->style_guide );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}
@@ -369,16 +369,18 @@ class SSP_Frontend {
 
 						?>
 						<div class="ssp-player ssp-player-large" id="ssp_player_id_<?php echo $largePlayerInstanceNumber; ?>"<?php echo $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : 'background: #333;' ;?>>
-							<div class="ssp-album-art-container">
-								<div class="ssp-album-art" style="background: url( <?php echo $albumArt['src']; ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
+							<?php if( apply_filters( 'ssp_show_album_art', true, get_the_ID() ) ) { ?>
+                            <div class="ssp-album-art-container">
+								<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
 							</div>
+                            <?php }; ?>
 							<div style="overflow: hidden">
 								<div class="ssp-player-inner" style="overflow: hidden;">
 									<div class="ssp-player-info">
 										<div style="width: 80%; float:left;">
 											<h3 class="ssp-player-title episode-title">
 												<?php
-													echo get_the_title( $episode_id );
+													echo apply_filters( 'ssp_podcast_title', get_the_title( $episode_id ), get_the_ID() );
 													if( $series = get_the_terms( $episode_id, 'series' ) ){
 														echo ( !empty( $series ) && isset( $series[0] ) ) ? '<br><span class="ssp-player-series">' . substr( $series[0]->name, 0, 35) . ( strlen( $series[0]->name ) > 35 ? '...' : '' ) . '</span>' : '';
 													}
@@ -386,8 +388,10 @@ class SSP_Frontend {
 											</h3>
 										</div>
 										<div class="ssp-download-episode" style="overflow: hidden;text-align:right;">
-											<img class="ssp-player-branding" src="<?php echo SSP_PLUGIN_URL; ?>/assets/svg/castos_logo_white.svg" width="68" />
-										</div>
+                                            <?php if( apply_filters( 'ssp_player_show_logo', true ) ) { ?>
+											    <img class="<?php echo apply_filters( 'ssp_player_logo_class', 'ssp-player-branding' ); ?>" src="<?php echo apply_filters( 'ssp_player_logo_src', SSP_PLUGIN_URL . '/assets/svg/castos_logo_white.svg' ); ?>" width="<?php echo apply_filters( 'ssp_player_logo_width', 68 ); ?>" />
+                                            <?php }; ?>
+                                        </div>
 										<div>&nbsp;</div>
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
@@ -397,9 +401,6 @@ class SSP_Frontend {
 												<div class="ssp-wave-form">
 													<div class="ssp-inner">
 														<div id="waveform<?php echo $largePlayerInstanceNumber; ?>" class="ssp-wave"></div>
-														<!--<div class="sspProgressBar" id="sspProgressBar<?php /*echo $episode_id . $largePlayerInstanceNumber; */?>" style="background: <?php /*echo $player_wave_form_colour ?: '#444' ;*/?>;">
-															<div class="sspProgressFill" style="background: <?php /*echo $player_wave_form_progress_colour ?: '#fff'; */?>">&nbsp;</div>
-														</div>-->
 													</div>
 												</div>
 

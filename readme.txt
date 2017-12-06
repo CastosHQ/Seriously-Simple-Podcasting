@@ -102,8 +102,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.19.0-beta =
-* 2017-12-01
+= 1.19.0 =
+* 2017-12-06
 * [NEW] Added a 1.19.0 upgrade notice
 * [FIX] Increased width and height of new player album art to avoid 1px line under player wrapper
 * [FIX] Fixed bug where default feed image was not showing for the album art if not series image was set

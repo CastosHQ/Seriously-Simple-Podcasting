@@ -1,11 +1,14 @@
 /**
- * Plupload implementation for Seriously Simple Hosting integration
+ * Plupload implementation for Castos Hosting integration
  * Created by Jonathan Bossenger on 2017/01/20.
  */
 
 jQuery( document ).ready( function ( $ ) {
 
-	// upload notification bar
+	/**
+	 * Upload notification bar
+	 */
+	upload notification bar
 	function notificationBar( message ) {
 		$( '.peek-a-bar' ).hide().remove();
 		var notification_bar = new $.peekABar( {
@@ -89,7 +92,7 @@ jQuery( document ).ready( function ( $ ) {
 			// we've turned off multi file select so we're only expecting one file
 			var file = files[ 0 ];
 			if ( isFileAllowed( file ) ) {
-				notificationBar( 'Uploading file to Seriously Simple Hosting. You can continue editing this post while the file uploads. <b id="ssp_upload_progress"></b>' );
+				notificationBar( 'Uploading file to Castos Hosting. You can continue editing this post while the file uploads. <b id="ssp_upload_progress"></b>' );
 				uploader.start();
 			} else {
 				notificationBar( 'You have selected an invalid file type, please select a valid audio or video file.' );
@@ -115,7 +118,7 @@ jQuery( document ).ready( function ( $ ) {
 		 */
 		uploader.bind( 'UploadComplete', function ( up, files ) {
 
-			notificationBar( 'Processing Seriously Simple Hosting file.' );
+			notificationBar( 'Processing Castos Hosting file.' );
 
 			// we're only expecting one file to be uploaded
 			var file = files[ 0 ];
@@ -132,7 +135,7 @@ jQuery( document ).ready( function ( $ ) {
 			} )
 				.done( function ( response ) {
 					if ( response.status == 'success' ) {
-						notificationBar( 'Uploading file to Seriously Simple Hosting Complete.' );
+						notificationBar( 'Uploading file to Castos Hosting Complete.' );
 						$( "#podmotor_file_id" ).val( response.file_id );
 						$( "#filesize_raw" ).val( filesize_raw );
 						$( "#filesize" ).val( file_size );

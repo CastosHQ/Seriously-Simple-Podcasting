@@ -619,7 +619,7 @@ if ( ! function_exists( 'ssp_build_podcast_data' ) ) {
 			$podcast_data[ $podcast->ID ] = array(
 				'post_id'      => $podcast->ID,
 				'post_title'   => $podcast->post_title,
-				'post_content' => $podcast->post_content,
+				'post_content' => '', // leaving out the content for now
 				'post_date'    => $podcast->post_date,
 				'audio_file'   => get_post_meta( $podcast->ID, 'audio_file', true ),
 			);
@@ -855,7 +855,7 @@ if ( ! function_exists( 'ssp_email_podcasts_imported' ) ) {
 		$subject          = sprintf( __( 'Podcast import completed for %s' ), $site_name );
 		$message          = '';
 		$message          .= sprintf( __( 'The Podcast import for %1$s has completed.%2$s' ), $site_name, $new_line );
-		$message          .= sprintf( __( 'Thank you for using Seriously Simple Hosting to host your podcasts.%1$s' ), $new_line );
+		$message          .= sprintf( __( 'Thank you for using Castos to host your podcasts.%1$s' ), $new_line );
 		$from             = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
 		
 		return wp_mail( $to, $subject, $message, $from );
@@ -923,5 +923,20 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		
 		return compact( 'bucket', 'show_slug', 'episodes_url', 'access_key_id', 'policy', 'signature' );
 		
+	}
+}
+
+/**
+ * Get image ID when only the URL of the image is known
+ */
+if( !function_exists( 'ssp_get_image_id_from_url' ) ){
+	/**
+	 * @param $image_url
+	 * @return mixed
+	 */
+	function ssp_get_image_id_from_url( $image_url ){
+		global $wpdb;
+		$attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $image_url ) );
+		return isset( $attachment[0] ) ? $attachment[0] : false;
 	}
 }

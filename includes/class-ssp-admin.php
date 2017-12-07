@@ -1437,10 +1437,10 @@ class SSP_Admin {
 		}
 		
 		/**
-		 * Only trigger this if we're allowed to
+		 * Only trigger this if the ss_podcasting_podmotor_import_podcasts option hasn't been set
 		 */
 		$ss_podcasting_podmotor_import_podcasts = get_option( 'ss_podcasting_podmotor_import_podcasts', '' );
-		if ( ! empty( $ss_podcasting_podmotor_import_podcasts ) && 'true' == $ss_podcasting_podmotor_import_podcasts ) {
+		if ( ! empty( $ss_podcasting_podmotor_import_podcasts ) ) {
 			return;
 		}
 		

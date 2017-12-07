@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.19.0-beta
+ * Version: 1.19.1
  * Plugin URI: https://www.castos.com/seriously-simple-podcasting
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
@@ -38,15 +38,15 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	return;
 }
 
-define( 'SSP_VERSION', '1.19.0-beta' );
+define( 'SSP_VERSION', '1.19.1' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
-	define( 'SSP_PODMOTOR_APP_URL', 'https://staging.castos.com/' );
+	define( 'SSP_PODMOTOR_APP_URL', 'https://app.castos.com/' );
 }
 if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
-	define( 'SSP_PODMOTOR_EPISODES_URL', 'http://episodes.castos.com/' );
+	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.castos.com/' );
 }
 define( 'SSP_LOG_DIR_PATH', SSP_PLUGIN_PATH . 'log' . DIRECTORY_SEPARATOR );
 define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );

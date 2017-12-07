@@ -16,13 +16,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 class SSP_Frontend {
 
 	// @todo reference prior to analytics launch
-	public static $style_guide = [
+	public $style_guide = array(
 		'dark'      => '#3A3A3A',
 		'medium'    => '#666666',
 		'light'     => '#939393',
 		'lightest'  => '#f9f9f9',
 		'accent'    => '#ea5451'
-	];
+	);
 
 	public $version;
 	public $template_url;
@@ -111,7 +111,7 @@ class SSP_Frontend {
 		add_action( 'wp_footer', array( $this, 'ssp_override_player_styles' ) );
 
 		// Apply filters to the style guide so that users may swap out colours of the player
-		Self::$style_guide = apply_filters( 'ssp_filter_style_guide', Self::$style_guide );
+		$this->style_guide = apply_filters( 'ssp_filter_style_guide', $this->style_guide );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}
@@ -132,11 +132,11 @@ class SSP_Frontend {
 	 * Enqueue styles and scripts
 	 */
 	public function load_styles_and_scripts(){
-		wp_enqueue_style( 'google-font-robotto' , '//fonts.googleapis.com/css?family=Roboto:400,700', [], SSP_VERSION);
-		wp_enqueue_style( 'ssp-player-styles', SSP_PLUGIN_URL . 'assets/css/icon_fonts.css', [ 'google-font-robotto' ], SSP_VERSION );
-		wp_enqueue_style( 'ssp-player-gizmo', SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css', [ 'ssp-player-styles' ], SSP_VERSION );
-		wp_enqueue_script( 'ssp-player-waveform', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', [ 'jquery' ], SSP_VERSION );
-		wp_enqueue_style( 'ssp-large-player-styles', SSP_PLUGIN_URL . 'assets/css/frontend.css', [ 'ssp-player-styles' ], SSP_VERSION );
+		wp_enqueue_style( 'google-font-robotto' , '//fonts.googleapis.com/css?family=Roboto:400,700', array(), SSP_VERSION);
+		wp_enqueue_style( 'ssp-player-styles', SSP_PLUGIN_URL . 'assets/css/icon_fonts.css', array( 'google-font-robotto' ), SSP_VERSION );
+		wp_enqueue_style( 'ssp-player-gizmo', SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css', array( 'ssp-player-styles' ), SSP_VERSION );
+		wp_enqueue_script( 'ssp-player-waveform', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', array( 'jquery' ), SSP_VERSION );
+		wp_enqueue_style( 'ssp-large-player-styles', SSP_PLUGIN_URL . 'assets/css/frontend.css', array( 'ssp-player-styles' ), SSP_VERSION );
 	}
 
 	/**
@@ -776,7 +776,7 @@ class SSP_Frontend {
 
 		$series = get_the_terms( $episode_id, 'series' );
 		$episode_series = !empty( $series ) && isset( $series[0] ) ? $series[0]->term_id : false;
-		$share_url_array = [];
+		$share_url_array = array();
 
 		if( $itunes_share_url = get_option( 'ss_podcasting_itunes_url_' . $episode_series ) ){
 			$share_url_array['iTunes'] = $itunes_share_url;
@@ -1918,7 +1918,7 @@ class SSP_Frontend {
 					$html .= ob_get_clean();
 				}
 
-				$share_url_array = [];
+				$share_url_array = array();
 
 				if( $itunes_share_url = get_option( 'ss_podcasting_itunes_url_' . $episode_series ) ){
 					$share_url_array['Apple iTunes'] = $itunes_share_url;
@@ -2027,7 +2027,7 @@ class SSP_Frontend {
 add_action( 'wp_enqueue_scripts', 'ssp_enqueue_wave_surfer' );
 
 function ssp_enqueue_wave_surfer(){
-	wp_enqueue_script( 'ssp-wavesurfer', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', SSP_VERSION, [ 'jquery' ] );
+	wp_enqueue_script( 'ssp-wavesurfer', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', SSP_VERSION, array( 'jquery' ) );
 }
 
 function example_mejs_add_container_class() {

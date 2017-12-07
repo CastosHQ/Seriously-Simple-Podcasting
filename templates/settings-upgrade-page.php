@@ -81,14 +81,13 @@
 <div class="wrap">
 	<div id="header">
 		
-		<h1>Welcome to the brand new Seriously Simple Podcasting</h1>
+		<h1>Welcome to Seriously Simple Podcasting by Castos</h1>
 	</div>
 	<div id="container2">
 		<div id="container1">
 			<div id="col1">
 				
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/i_EOez6ZPpY?ecver=1" frameborder="0" allowfullscreen></iframe>
-			
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/Se3H1IDAYtw?rel=0&amp;showinfo=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
 			</div>
 			<div id="col2">
 				

@@ -34,7 +34,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://www.castos.com).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
 
-https://youtu.be/WFJQbarJbBs
+https://youtu.be/Se3H1IDAYtw
 
 Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrifc listening experience at the same time.
 
@@ -102,8 +102,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.19.0-beta =
-* 2017-12-01
+= 1.19.0 =
+* 2017-12-06
 * [NEW] Added a 1.19.0 upgrade notice
 * [FIX] Increased width and height of new player album art to avoid 1px line under player wrapper
 * [FIX] Fixed bug where default feed image was not showing for the album art if not series image was set

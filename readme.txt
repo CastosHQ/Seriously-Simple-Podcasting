@@ -102,6 +102,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.3 =
+* 2017-12-08
+* [FIX] Namespaced CSS classes for icons to avoid conflicts with FontAwesome and Gizmo
+
 = 1.19.2 =
 * 2017-12-07
 * [FIX] Fixed a bug breaking sites on PHP versions older than 5.6

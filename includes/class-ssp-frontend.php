@@ -1935,6 +1935,8 @@ class SSP_Frontend {
 					$html .= ob_get_clean();
 				}
 
+				$series = get_the_terms( $episode_id, 'series' );
+				$episode_series = !empty( $series ) && isset( $series[0] ) ? $series[0]->term_id : false;
 				$share_url_array = array();
 
 				if( $itunes_share_url = get_option( 'ss_podcasting_itunes_url_' . $episode_series ) ){

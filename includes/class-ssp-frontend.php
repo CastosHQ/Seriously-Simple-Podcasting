@@ -396,7 +396,7 @@ class SSP_Frontend {
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
 												<div class="ssp-play-pause" id="ssp-play-pause">
-													<span class="ssp-icon ssp-icon-play_icon">&nbsp;</span>
+													<span class="ssp-custom-icon ssp-custom-icon-play_icon">&nbsp;</span>
 												</div>
 												<div class="ssp-wave-form">
 													<div class="ssp-inner">
@@ -414,7 +414,7 @@ class SSP_Frontend {
 
 														<div class="ssp-back-thirty-container">
 															<div class="ssp-back-thirty-control" id="ssp-back-thirty">
-																<i class="icon icon-replay">&nbsp;</i>
+																<i class="ssp-icon ssp-icon-replay">&nbsp;</i>
 															</div>
 														</div>
 
@@ -426,7 +426,7 @@ class SSP_Frontend {
 
 														<div class="ssp-download-container">
 															<div class="ssp-download-control">
-																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="icon icon-cloud-download">&nbsp;</i></a>
+																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon ssp-icon-cloud-download">&nbsp;</i></a>
 															</div>
 														</div>
 
@@ -508,7 +508,7 @@ class SSP_Frontend {
 											]
 										);*/
 
-										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-pause_icon' );
+										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-custom-icon' ).removeClass().addClass( 'ssp-custom-icon ssp-custom-icon-pause_icon' );
 										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #sspPlayedDuration' ).text( window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.getCurrentTime().toString().toFormattedDuration() )
 
 										sspUpdateDuration<?php echo $largePlayerInstanceNumber; ?> = setInterval( function(){
@@ -534,7 +534,7 @@ class SSP_Frontend {
 											]
 										);*/
 
-										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
+										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-custom-icon' ).removeClass().addClass( 'ssp-custom-icon ssp-custom-icon-play_icon' );
 
 										clearInterval( sspUpdateDuration<?php echo $largePlayerInstanceNumber; ?> );
 
@@ -543,7 +543,7 @@ class SSP_Frontend {
 									// On Media Finished
 									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'finish', function(e){
 
-                                        $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
+                                        $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-custom-icon' ).removeClass().addClass( 'ssp-custom-icon ssp-custom-icon-play_icon' );
 
                                         // Track Podcast Specific Finish
                                         /*_paq.push(

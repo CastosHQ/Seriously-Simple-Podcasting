@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.2
+Stable tag: 1.19.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -104,7 +104,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.19.3 =
 * 2017-12-08
-* [FIX] Namespaced CSS classes for icons to avoid conflicts with FontAwesome and Gizmo
+* [FIX] Namespaced CSS classes for icons to avoid conflicts with themes using font frameworks
+* [FIX] Fixed a bug where the player meta wasn't displayed on the classic player
+* [TWEAK] New Player Enhancements - added additional filters to the new HTML5 player to allow developers / site owners more flexibility.
 
 = 1.19.2 =
 * 2017-12-07

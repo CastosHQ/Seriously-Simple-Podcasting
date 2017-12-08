@@ -5,7 +5,10 @@
 
 jQuery( document ).ready( function ( $ ) {
 
-	// upload notification bar
+	/**
+	 * Upload notification bar
+	 */
+	upload notification bar
 	function notificationBar( message ) {
 		$( '.peek-a-bar' ).hide().remove();
 		var notification_bar = new $.peekABar( {

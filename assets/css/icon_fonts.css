@@ -9,7 +9,7 @@
   font-style: normal;
 }
 
-[class^="ssp-custom-icon-"], [class*=" ssp-custom-icon-"] {
+[class^="icon-"], [class*=" ssp-icon-"] {
   /* use !important to prevent issues with browser extensions that change fonts */
   font-family: 'icomoon' !important;
   speak: none;
@@ -24,11 +24,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.ssp-custom-icon-pause_icon:before {
+.ssp-icon-pause_icon:before {
   content: "\e900";
   line-height:1.5;
 }
-.ssp-custom-icon-play_icon:before {
+.ssp-icon-play_icon:before {
   content: "\e901";
   line-height:1.5;
 }

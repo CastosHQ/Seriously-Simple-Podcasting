@@ -103,8 +103,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.19.4 =
-* 2017-12-08
+* 2017-12-11
 * [FIX] Fixed a bug where the single player widget was loading the new html 5 player instead of the standard player
+* [FIX] Fixed a bug where the subscribe links aren't shown on the compact player
 
 = 1.19.3 =
 * 2017-12-08

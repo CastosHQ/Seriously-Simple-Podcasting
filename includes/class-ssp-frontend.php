@@ -880,17 +880,27 @@ class SSP_Frontend {
 			}
 
 		}
-
-		if ( ! empty( $subscribe_display ) ) {
-			$meta_display .= '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
+		
+		if ( ! empty( $podcast_display ) || ! empty( $subscribe_display ) ) {
+			
+			$meta_display .= '<div class="podcast_meta"><aside>';
+			
+			if ( ! empty( $podcast_display ) ) {
+				$meta_display .= '<p>' . $podcast_display . '</p>';
+			}
+			
+			if ( ! empty( $subscribe_display ) ) {
+				$meta_display .= '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
+			}
+			
+			$meta_display .= '</aside></div>';
 		}
-
-		$meta_display = '<div class="podcast_meta"><aside>' . $podcast_display . '</aside></div>';
 
 		return $meta_display;
 
 	}
-
+	
+	
 	/**
 	 * Get size of media file
 	 * @param  string  $file File name & path

@@ -33,17 +33,18 @@ class SSP_Shortcode_Podcast_Playlist {
 
 		// Parse shortcode attributes
 		$atts = shortcode_atts( array(
-			'type'		=> 'audio',
-			'series'	=> '',
-			'order'		=> 'ASC',
-			'orderby'	=> 'menu_order ID',
-			'include'	=> '',
-			'exclude'   => '',
-			'style'		=> 'light',
-			'tracklist' => true,
-			'tracknumbers' => true,
-			'images'	=> true,
-            'limit'     => -1
+			'type'		    => 'audio',
+			'series'	    => '',
+			'order'		    => 'ASC',
+			'orderby'	    => 'menu_order ID',
+			'include'	    => '',
+			'exclude'       => '',
+			'style'		    => 'light',
+			'player_style'  => 'mini',
+			'tracklist'     => true,
+			'tracknumbers'  => true,
+			'images'	    => true,
+            'limit'         => -1
 		), $params, 'podcast_playlist' );
 
 		// Included posts must be passed as an array
@@ -188,7 +189,9 @@ class SSP_Shortcode_Podcast_Playlist {
 
 		ob_start();
 
-        $player_style = (string) get_option( 'ss_podcasting_player_style' );
+        //$player_style = (string) get_option( 'ss_podcasting_player_style' ); // Not taking into account global settings for now
+        //$player_style = $atts['player_style'];
+		$player_style = "mini";
 
 		if ( 1 === $instance && "larger" !== $player_style ) {
 			/* This hook is defined in wp-includes/media.php */
@@ -199,7 +202,7 @@ class SSP_Shortcode_Podcast_Playlist {
             <?php
 
                 if( 'audio' === $atts['type'] && "larger" == $player_style ){
-                    echo $ss_podcasting->media_player( $ss_podcasting->get_episode_download_link( $episodes[0]->ID ), $episodes[0]->ID );
+                    echo $ss_podcasting->media_player( $ss_podcasting->get_episode_download_link( $episodes[0]->ID ), $episodes[0]->ID, "large" );
                 }else{
                     ?>
                         <<?php echo $safe_type ?> controls="controls" preload="none" width="<?php

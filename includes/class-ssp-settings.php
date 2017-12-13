@@ -613,7 +613,7 @@ class SSP_Settings {
 					'label'       => __( 'Enable Player meta data ', 'seriously-simple-podcasting' ),
 					'description' => __( 'Turn this on to enable player meta data underneath the player. (download link, episode duration and date recorded).', 'seriously-simple-podcasting' ),
 					'type'        => 'checkbox',
-					'default'     => '',
+					'default'     => 'on',
 				),
 				array(
 					'id'          => 'player_style',

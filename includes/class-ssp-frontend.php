@@ -236,19 +236,14 @@ class SSP_Frontend {
 			$show_player = apply_filters( 'ssp_show_media_player', $show_player, $context );
 
 			// Show audio player if requested
-			if( $show_player ) {
-				$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id ) . '</div>';
-			}
-			
 			$player_style = get_option( 'ss_podcasting_player_style' );
 			
-			/**
-			 * If the player hasn't been explicitly set to the new html5 player
-			 */
-			if( 'larger' !== $player_style ){
-				if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
-					$meta .= $this->episode_meta_details( $episode_id, $context );
-				}
+			if( $show_player ) {
+				$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
+			}
+			
+			if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
+				$meta .= $this->episode_meta_details( $episode_id, $context );
 			}
 		}
 
@@ -951,7 +946,7 @@ class SSP_Frontend {
 			
 			$meta_display .= '<div class="podcast_meta"><aside>';
 			
-			$ss_podcasting_player_meta_data_enabled = get_option('ss_podcasting_player_meta_data_enabled');
+			$ss_podcasting_player_meta_data_enabled = get_option('ss_podcasting_player_meta_data_enabled', 'on');
 
 			if ( $ss_podcasting_player_meta_data_enabled && $ss_podcasting_player_meta_data_enabled == 'on' ) {
 				if ( ! empty( $podcast_display ) ) {

@@ -886,17 +886,19 @@ class SSP_Frontend {
 			$meta_display .= '<div class="podcast_meta"><aside>';
 			
 			if ( ! empty( $podcast_display ) ) {
-				$meta_display .= '<p>' . $podcast_display . '</p>';
+				$podcast_display = '<p>' . $podcast_display . '</p>';
+				$meta_display .= apply_filters('ssp_include_episode_meta_data', $podcast_display );
 			}
 			
 			if ( ! empty( $subscribe_display ) ) {
-				$meta_display .= '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
+				$subscribe_display = '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
+				$meta_display .= apply_filters('ssp_include_podcast_subscribe_links', $subscribe_display );
 			}
 			
 			$meta_display .= '</aside></div>';
 		}
 
-		return $meta_display;
+		return apply_filters('ssp_include_player_meta', $meta_display );
 
 	}
 	

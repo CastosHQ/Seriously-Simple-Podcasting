@@ -353,7 +353,7 @@ class SSP_Frontend {
 			}
 			
 			return compact( 'src', 'width', 'height' );
-		} elseif ( $series_id && $series_image = get_option( "ss_podcasting_data_image" ) ) {
+		} elseif ( !$series_id && $series_image = get_option( "ss_podcasting_data_image" ) ) {
 			$series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
 			list( $src, $width, $height ) = wp_get_attachment_image_src( $series_image_attachment_id, 'medium' );
 			if ( ( $width / $height ) !== 1 ) {

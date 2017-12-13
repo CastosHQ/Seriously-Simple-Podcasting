@@ -302,66 +302,72 @@ class SSP_Frontend {
 
 		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
 	}
-
+	
 	/**
-     * Get Album Art for Player
-     *
-     * Iteratively tries to find the correct album art based on whether the desired image is of square aspect ratio.
-     * Falls back to default album art if it can not find the correct ones.
-     *
+	 * Get Album Art for Player
+	 *
+	 * Iteratively tries to find the correct album art based on whether the desired image is of square aspect ratio.
+	 * Falls back to default album art if it can not find the correct ones.
+	 *
 	 * @param $episode_id ID of the episode being loaded into the player
-     *
+	 *
 	 * @return array [ $src, $width, $height ]
-     *
-     * @since 1.19.4
+	 *
+	 * @since 1.19.4
 	 */
 	public function get_album_art( $episode_id = false ) {
-
-	    if( !$episode_id ){
-		    $src = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
-		    $width  = 300;
-		    $height = 300;
-		    return compact( 'src', 'width', 'height' );
-        }
-
+		
+		if ( ! $episode_id ) {
+			$src    = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
+			$width  = 300;
+			$height = 300;
+			
+			return compact( 'src', 'width', 'height' );
+		}
+		
 		$series_id = false;
-
+		
 		if ( $series = get_the_terms( $episode_id, 'series' ) ) {
 			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : false;
 		}
-
+		
 		if ( $series_id && $series_image = get_option( "ss_podcasting_data_image_{$series_id}" ) ) {
 			$series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
 			list( $src, $width, $height ) = wp_get_attachment_image_src( $series_image_attachment_id, 'medium' );
-
-			if( ( $width / $height ) !== 1 ){
-				if( $series_image = get_option( "ss_podcasting_data_image" ) ) {
+			
+			if ( ( $width / $height ) !== 1 ) {
+				if ( $series_image = get_option( "ss_podcasting_data_image" ) ) {
 					$series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
 					list( $src, $width, $height ) = wp_get_attachment_image_src( $series_image_attachment_id, 'medium' );
-
+					
 					if ( ( $width / $height ) !== 1 ) {
-						$src = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
+						$src    = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
 						$width  = 300;
 						$height = 300;
+						
 						return compact( 'src', 'width', 'height' );
 					}
+					
 					return compact( 'src', 'width', 'height' );
 				}
 			}
+			
 			return compact( 'src', 'width', 'height' );
-		}elseif( $series_id && $series_image = get_option( "ss_podcasting_data_image" ) ) {
+		} elseif ( $series_id && $series_image = get_option( "ss_podcasting_data_image" ) ) {
 			$series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
 			list( $src, $width, $height ) = wp_get_attachment_image_src( $series_image_attachment_id, 'medium' );
 			if ( ( $width / $height ) !== 1 ) {
-				$src = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
+				$src    = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
 				$width  = 300;
 				$height = 300;
 			}
+			
 			return compact( 'src', 'width', 'height' );
-		}else{
-			$src = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
+		} else {
+			$src    = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
 			$width  = 300;
 			$height = 300;
+			
 			return compact( 'src', 'width', 'height' );
 		}
 	}
@@ -414,17 +420,19 @@ class SSP_Frontend {
 
 						// Get episode album art
 						$thumb_id = get_post_thumbnail_id( $episode_id );
-
+						
 						if ( ! empty( $thumb_id ) ) {
-
-						    list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'full' );
-
+							
+							list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'full' );
+							
 							$albumArt = compact( 'src', 'width', 'height' );
-
-							if( ( $width / $height ) !== 1 ){
+							
+							if ( ( $width / $height ) !== 1 ) {
 								$albumArt = $this->get_album_art( $episode_id );
-                            }
-
+							}
+							
+						}else {
+							$albumArt = $this->get_album_art( $episode_id );
 						}
 
 						$player_background_colour = get_option( 'ss_podcasting_player_background_skin_colour', false );

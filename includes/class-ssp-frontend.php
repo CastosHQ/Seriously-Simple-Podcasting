@@ -946,17 +946,39 @@ class SSP_Frontend {
 			}
 
 		}
+		
+		if ( ! empty( $podcast_display ) || ! empty( $subscribe_display ) ) {
+			
+			$meta_display .= '<div class="podcast_meta"><aside>';
+			
+			$ss_podcasting_player_meta_data_enabled = get_option('ss_podcasting_player_meta_data_enabled');
 
-		if ( ! empty( $subscribe_display ) ) {
-			$meta_display .= '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
+			if ( $ss_podcasting_player_meta_data_enabled && $ss_podcasting_player_meta_data_enabled == 'on' ) {
+				if ( ! empty( $podcast_display ) ) {
+					$podcast_display = '<p>' . $podcast_display . '</p>';
+					$podcast_display = apply_filters( 'ssp_include_episode_meta_data', $podcast_display );
+					if ( $podcast_display && ! empty( $podcast_display ) ) {
+						$meta_display .= $podcast_display;
+					}
+				}
+			}
+			
+			if ( ! empty( $subscribe_display ) ) {
+				$subscribe_display = '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
+				$subscribe_display = apply_filters( 'ssp_include_podcast_subscribe_links', $subscribe_display );
+				if ( $subscribe_display && ! empty( $subscribe_display ) ) {
+					$meta_display .= $subscribe_display;
+				}
+			}
+			
+			$meta_display .= '</aside></div>';
 		}
 
-		$meta_display = '<div class="podcast_meta"><aside>' . $podcast_display . '</aside></div>';
-
-		return $meta_display;
+		return apply_filters('ssp_include_player_meta', $meta_display );
 
 	}
-
+	
+	
 	/**
 	 * Get size of media file
 	 * @param  string  $file File name & path

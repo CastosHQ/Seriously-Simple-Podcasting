@@ -102,6 +102,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.20.0 =
+* 2017-12-12
+* [TWEAK] Iterate over various album art options for the HTML5 player, and use the first most appropriate one that is of square aspect ratio.
+* [TWEAK] Deferred loading of scripts and styles for new HTML5 player to the end of the <body> element, and only if at least one HTML5 player instance is present on the page, to avoid unnecessary loading of scripts.
+* [TWEAK] Updated podcast_episode shortcode to allow the use of a "style" shortcode attribute, with a value of "mini" or "large" to either use the compact native WordPress player or the new larger HTML5 media player.
+* [TWEAK] Updated podcast_playlist shortcode to force use of default WordPress media player instead of the new HTML5 player until some minor bugs are ironed out.
+
+
 = 1.19.3 =
 * 2017-12-08
 * [FIX] Namespaced CSS classes for icons to avoid conflicts with themes using font frameworks

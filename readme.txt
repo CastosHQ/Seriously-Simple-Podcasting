@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.4-beta
+Stable tag: 1.19.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,13 +103,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.19.4 =
-* 2017-12-13
-* [FIX] Fixed a bug where the single player widget was loading the new html 5 player instead of the standard player
+* 2017-12-15
+* [FIX] Fixed a bug where the single player widget was loading the incorrect html 5 player
 * [FIX] Fixed a bug where the subscribe links aren't shown on the compact player
 * [TWEAK] Iterate over various album art options for the HTML5 player, and use the first most appropriate one that is of square aspect ratio.
 * [TWEAK] Deferred loading of scripts and styles for new HTML5 player to the end of the <body> element, and only if at least one HTML5 player instance is present on the page, to avoid unnecessary loading of scripts.
 * [TWEAK] Updated podcast_episode shortcode to allow the use of a "style" shortcode attribute, with a value of "mini" or "large" to either use the compact native WordPress player or the new larger HTML5 media player.
 * [TWEAK] Updated podcast_playlist shortcode to force use of default WordPress media player instead of the new HTML5 player until some minor bugs are ironed out.
+* [NEW] Added ssp_include_episode_meta_data, ssp_include_podcast_subscribe_links and ssp_include_player_meta filters to give greater programmatic control over player meta data and subscribe links.
 
 = 1.19.3 =
 * 2017-12-08

@@ -12,12 +12,12 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 == Description ==
 
-[Seriously Simple Podcasting](http://www.castos.com/seriously-simple-podcasting) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+[Seriously Simple Podcasting](https://castos.com/seriously-simple-podcasting) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
 **Primary Features**
 
 - Simple settings so you can get your podcast up and running quickly
-- Integrated podcast hosting platform, [Castos](https://www.castos.com/ssp), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
+- Integrated podcast hosting platform, [Castos](https://castos.com/ssp), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
 - Newly redesigned, customizable media player that includes your podcast cover image
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
 - Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
@@ -32,7 +32,7 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 **Podcast Hosting Platform**
 
-If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://www.castos.com/ssp).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
+If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://castos.com/ssp).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
 
 https://youtu.be/Se3H1IDAYtw
 
@@ -50,7 +50,7 @@ Seriously Simple Podcasting comes with complete user and developer [documentatio
 
 **Add-ons**
 
-Seriously Simple Podcasting comes with a growing [library of add-ons](https://www.castos.com/seriously-simple-podcasting/add-ons/). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
+Seriously Simple Podcasting comes with a growing [library of add-ons](https://castos.com/seriously-simple-podcasting/add-ons/). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
 
 **How to contribute**
 

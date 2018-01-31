@@ -8,7 +8,7 @@
 
 Welcome to the Seriously Simple Podcasting repository on GitHub. Here you can browse the source, look at open issues and keep track of development.
 
-[Seriously Simple Podcasting](http://www.castos.com/seriously-simple-podcasting) is a podcasting plugin for WordPress that takes the complexity out of running your own podcast without sacrificing any powerful (and necessary) features. It is developed and maintained by Craig Hewitt and our great team of developers at [Castos](https://www.castos.com/team). If you would like to know more about the plugin you can follow [@CastosHQ](https://twitter.com/castoshq) directly.
+[Seriously Simple Podcasting](http://www.castos.com/seriously-simple-podcasting) is a podcasting plugin for WordPress that takes the complexity out of running your own podcast without sacrificing any powerful (and necessary) features. It is developed and maintained by Craig Hewitt and our great team of developers at Castos. If you would like to know more about the plugin you can follow [@CastosHQ](https://twitter.com/castoshq) directly.
 
 If you are not a developer, please visit the [Seriously Simple Podcasting plugin page](https://wordpress.org/plugins/seriously-simple-podcasting/) on WordPress.org where you can download the plugin and find more info.
 

@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.3
+Stable tag: 1.19.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,12 +12,12 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 == Description ==
 
-[Seriously Simple Podcasting](http://www.castos.com/seriously-simple-podcasting) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+[Seriously Simple Podcasting](https://castos.com/seriously-simple-podcasting) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
 **Primary Features**
 
 - Simple settings so you can get your podcast up and running quickly
-- Integrated podcast hosting platform, [Castos](https://www.castos.com), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
+- Integrated podcast hosting platform, [Castos](https://castos.com/ssp), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
 - Newly redesigned, customizable media player that includes your podcast cover image
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
 - Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
@@ -27,12 +27,12 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Highly configurable and robust RSS feed designed for *all* podcast services and feed readers - including iTunes, Google Play and Stitcher
 - Shortcodes & widgets for displaying podcast episode lists, single episodes and podcast playlists anywhere on your site
 - The freedom to host your media files wherever you like - on the same site, our integrated Castos hosting platform, or any other server
-- Complete user and developer [documentation](https://support.castos.com/)
+- Complete user and developer [documentation](http://support.castos.com/)
 - [Full i18n support](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting)
 
 **Podcast Hosting Platform**
 
-If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://www.castos.com).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
+If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://castos.com/ssp).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
 
 https://youtu.be/Se3H1IDAYtw
 
@@ -46,11 +46,11 @@ Choose from a compact or full size design, complete with your podcast cover imag
 
 **Where to find help**
 
-Seriously Simple Podcasting comes with complete user and developer [documentation](https://support.castos.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
+Seriously Simple Podcasting comes with complete user and developer [documentation](http://support.castos.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
 
 **Add-ons**
 
-Seriously Simple Podcasting comes with a growing [library of add-ons](https://www.castos.com/seriously-simple-podcasting/add-ons/). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
+Seriously Simple Podcasting comes with a growing [library of add-ons](https://castos.com/seriously-simple-podcasting/add-ons/). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
 
 **How to contribute**
 
@@ -66,7 +66,7 @@ Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add
 
 Podcast media files can be uploaded directly into WordPress, hosted on the integrated [Castos](https://www.castos.com) platform,  or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them manually.*
 
-If you need help, you can find complete user and developer documentation [here](https://support.castos.com/).
+If you need help, you can find complete user and developer documentation [here](http://support.castos.com/).
 
 == Installation ==
 
@@ -81,7 +81,7 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 = Where are the FAQs? =
 
-You can find complete user and developer documentation (along with the FAQs) on [the Seriously Simple Podcasting documentation site](https://support.castos.com/).
+You can find complete user and developer documentation (along with the FAQs) on [the Seriously Simple Podcasting documentation site](http://support.castos.com/).
 
 == Screenshots ==
 
@@ -101,6 +101,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.4 =
+* 2017-12-15
+* [FIX] Fixed a bug where the single player widget was loading the incorrect html 5 player
+* [FIX] Fixed a bug where the subscribe links aren't shown on the compact player
+* [TWEAK] Iterate over various album art options for the HTML5 player, and use the first most appropriate one that is of square aspect ratio.
+* [TWEAK] Deferred loading of scripts and styles for new HTML5 player to the end of the <body> element, and only if at least one HTML5 player instance is present on the page, to avoid unnecessary loading of scripts.
+* [TWEAK] Updated podcast_episode shortcode to allow the use of a "style" shortcode attribute, with a value of "mini" or "large" to either use the compact native WordPress player or the new larger HTML5 media player.
+* [TWEAK] Updated podcast_playlist shortcode to force use of default WordPress media player instead of the new HTML5 player until some minor bugs are ironed out.
+* [NEW] Added ssp_include_episode_meta_data, ssp_include_podcast_subscribe_links and ssp_include_player_meta filters to give greater programmatic control over player meta data and subscribe links.
 
 = 1.19.3 =
 * 2017-12-08

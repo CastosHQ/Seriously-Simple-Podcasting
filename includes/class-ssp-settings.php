@@ -609,6 +609,13 @@ class SSP_Settings {
 					'default'     => '',
 				),
 				array(
+					'id'          => 'player_meta_data_enabled',
+					'label'       => __( 'Enable Player meta data ', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn this on to enable player meta data underneath the player. (download link, episode duration and date recorded).', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
 					'id'          => 'player_style',
 					'label'       => __( 'Media player style', 'seriously-simple-podcasting' ),
 					'description' => __( 'Select the style of media player you wish to display on your site.', 'seriously-simple-podcasting' ),

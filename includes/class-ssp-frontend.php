@@ -146,11 +146,7 @@ class SSP_Frontend {
 	 * Enqueue styles and scripts
 	 */
 	public function load_styles_and_scripts(){
-		/*wp_enqueue_style( 'google-font-robotto' , '//fonts.googleapis.com/css?family=Roboto:400,700', array(), SSP_VERSION);
-		wp_enqueue_style( 'ssp-player-styles', SSP_PLUGIN_URL . 'assets/css/icon_fonts.css', array( 'google-font-robotto' ), SSP_VERSION );
-		wp_enqueue_style( 'ssp-player-gizmo', SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css', array( 'ssp-player-styles' ), SSP_VERSION );
-		wp_enqueue_script( 'ssp-player-waveform', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', array( 'jquery' ), SSP_VERSION );
-		wp_enqueue_style( 'ssp-large-player-styles', SSP_PLUGIN_URL . 'assets/css/frontend.css', array( 'ssp-player-styles' ), SSP_VERSION );*/
+		// @todo load styles and scripts here
 	}
 
 	/**
@@ -1943,19 +1939,7 @@ function example_mejs_add_container_class() {
 		return;
 	}
 	?>
-<!--    <script type="text/javascript">
-		var _paq = _paq || [];
-		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-		_paq.push(['trackPageView']);
-		_paq.push(['enableLinkTracking']);
-		(function() {
-			var u="//piwik.dev/";
-			_paq.push(['setTrackerUrl', u+'piwik.php']);
-			_paq.push(['setSiteId', '1']);
-			var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-			g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-		})();
-	</script>-->
+	<?php //@todo add piwik.js setup ?>
 	<script>
 		(function() {
 
@@ -2018,8 +2002,7 @@ function example_mejs_add_container_class() {
 					   sspTickerOffset = Math.floor( ( sspTickerBannerContainer.width() - sspTickerBanner.width() ) );
 
 					   var moved = 0;
-					   var offset,
-						   tickInterval;
+					   var offset, tickInterval;
 
 					   function doTickBanner(){
 						   sspTickerBanner.css( 'left','0' );
@@ -2080,6 +2063,7 @@ function example_mejs_add_container_class() {
 				jQuery(controls).find('.mejs-duration-container').after( backThirtySeconds, playSpeed );
 				jQuery(controls).find('.mejs-horizontal-volume-slider').after( expanCollapseButton );
 
+				// @todo player custom controls
 				var sspCustomControls = jQuery('' +
 					'<div class="ssp-controls" id="ssp-expanded-controls" style="display:none;">\n' +
 '                        <ul class="ssp-sub-controls">\n' +
@@ -2109,7 +2093,7 @@ function example_mejs_add_container_class() {
 '                        </ul>\n' +
 '                    </div>');
 
-				// player.container.after( sspCustomControls );
+				player.container.after( sspCustomControls );
 			}
 
 		})();

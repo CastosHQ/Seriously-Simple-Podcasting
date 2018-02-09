@@ -108,7 +108,7 @@ class SSP_Frontend {
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_and_scripts' ) );
 
 		// Enqueue HTML5 scripts only if the page has an HTML5 player on it
-        add_action( 'wp_print_footer_scripts', array( $this, 'html5_player_conditional_scripts' ) );
+		add_action( 'wp_print_footer_scripts', array( $this, 'html5_player_conditional_scripts' ) );
 
 		// Add overridable styles to footer
 		add_action( 'wp_footer', array( $this, 'ssp_override_player_styles' ) );
@@ -122,13 +122,13 @@ class SSP_Frontend {
 	public function html5_player_conditional_scripts(){
 		global $largePlayerInstanceNumber;
 		if( (int) $largePlayerInstanceNumber > 0 ){
-		    echo '<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=' . SSP_VERSION . '" />';
-		    echo '<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/css/icon_fonts.css?v=' . SSP_VERSION . '" />';
-		    echo '<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css?v=' . SSP_VERSION . '" />';
+			echo '<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=' . SSP_VERSION . '" />';
+			echo '<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/css/icon_fonts.css?v=' . SSP_VERSION . '" />';
+			echo '<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css?v=' . SSP_VERSION . '" />';
 			echo '<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/css/frontend.css?v=' . SSP_VERSION . '" />';
-		    echo '<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=' . SSP_VERSION . '"></script>';
-        }
-    }
+			echo '<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=' . SSP_VERSION . '"></script>';
+		}
+	}
 
 	public function ssp_override_player_styles(){
 		$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
@@ -146,11 +146,7 @@ class SSP_Frontend {
 	 * Enqueue styles and scripts
 	 */
 	public function load_styles_and_scripts(){
-		/*wp_enqueue_style( 'google-font-robotto' , '//fonts.googleapis.com/css?family=Roboto:400,700', array(), SSP_VERSION);
-		wp_enqueue_style( 'ssp-player-styles', SSP_PLUGIN_URL . 'assets/css/icon_fonts.css', array( 'google-font-robotto' ), SSP_VERSION );
-		wp_enqueue_style( 'ssp-player-gizmo', SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css', array( 'ssp-player-styles' ), SSP_VERSION );
-		wp_enqueue_script( 'ssp-player-waveform', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', array( 'jquery' ), SSP_VERSION );
-		wp_enqueue_style( 'ssp-large-player-styles', SSP_PLUGIN_URL . 'assets/css/frontend.css', array( 'ssp-player-styles' ), SSP_VERSION );*/
+		// @todo load styles and scripts here
 	}
 
 	/**
@@ -425,7 +421,7 @@ class SSP_Frontend {
 	 * Load media player for given file
 	 * @param  string  $srcFile        Source of file
 	 * @param  integer $episode_id Episode ID for audio file
-     * @param  string $player_size mini or large
+	 * @param  string $player_size mini or large
 	 * @return string              Media player HTML on success, empty string on failure
 	 */
 	public function media_player ( $srcFile = '', $episode_id = 0, $player_size = "large" ) {
@@ -459,7 +455,7 @@ class SSP_Frontend {
 					$player_style = (string) get_option( 'ss_podcasting_player_style' );
 					if( $player_size == "large" ){
 						$player_style = "larger";
-                    }
+					}
 
 					if( "larger" !== $player_style || "mini" === $player_size ){
 						$player = wp_audio_shortcode( $params );
@@ -481,10 +477,10 @@ class SSP_Frontend {
 						?>
 						<div class="ssp-player ssp-player-large" id="ssp_player_id_<?php echo $largePlayerInstanceNumber; ?>"<?php echo $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : 'background: #333;' ;?>>
 							<?php if( apply_filters( 'ssp_show_album_art', true, get_the_ID() ) ) { ?>
-                            <div class="ssp-album-art-container">
+							<div class="ssp-album-art-container">
 								<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
 							</div>
-                            <?php }; ?>
+							<?php }; ?>
 							<div style="overflow: hidden">
 								<div class="ssp-player-inner" style="overflow: hidden;">
 									<div class="ssp-player-info">
@@ -499,10 +495,10 @@ class SSP_Frontend {
 											</h3>
 										</div>
 										<div class="ssp-download-episode" style="overflow: hidden;text-align:right;">
-                                            <?php if( apply_filters( 'ssp_player_show_logo', true ) ) { ?>
-											    <img class="<?php echo apply_filters( 'ssp_player_logo_class', 'ssp-player-branding' ); ?>" src="<?php echo apply_filters( 'ssp_player_logo_src', SSP_PLUGIN_URL . '/assets/svg/castos_logo_white.svg' ); ?>" width="<?php echo apply_filters( 'ssp_player_logo_width', 68 ); ?>" />
-                                            <?php }; ?>
-                                        </div>
+											<?php if( apply_filters( 'ssp_player_show_logo', true ) ) { ?>
+												<img class="<?php echo apply_filters( 'ssp_player_logo_class', 'ssp-player-branding' ); ?>" src="<?php echo apply_filters( 'ssp_player_logo_src', SSP_PLUGIN_URL . '/assets/svg/castos_logo_white.svg' ); ?>" width="<?php echo apply_filters( 'ssp_player_logo_width', 68 ); ?>" />
+											<?php }; ?>
+										</div>
 										<div>&nbsp;</div>
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
@@ -554,7 +550,7 @@ class SSP_Frontend {
 
 						<script>
 
-							//var _paq = _paq || [];
+							// @todo _paq variable declaration
 
 							String.prototype.toFormattedDuration = function () {
 								var sec_num = parseInt(this, 10); // don't forget the second param
@@ -574,6 +570,7 @@ class SSP_Frontend {
 
 									var sspUpdateDuration<?php echo $largePlayerInstanceNumber; ?>;
 
+									// Create Player
 									window.ssp_player<?php echo $largePlayerInstanceNumber; ?> = WaveSurfer.create({
 										container: '#waveform<?php echo $largePlayerInstanceNumber; ?>',
 										waveColor: '#444',
@@ -586,18 +583,31 @@ class SSP_Frontend {
 										backend: 'MediaElement'
 									});
 
-									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.load('<?php echo $srcFile; ?>');
+									//Set player track
+									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.track = '<?php echo $srcFile; ?>';
 
-									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( "error", function( e ){
-										/*_paq.push(
-											[
-												'trackEvent', 'Player', 'Error', e
-											]
-										);*/
-										return;
-									} );
+									/**
+									 * Setting and drawing the peaks seems to be required for the 'load on play' functionality to work
+									 */
+									//Set peaks
+									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.backend.peaks = [0.0218, 0.0183, 0.0165, 0.0198, 0.2137, 0.2888, 0.2313, 0.15, 0.2542, 0.2538, 0.2358, 0.1195, 0.1591, 0.2599, 0.2742, 0.1447, 0.2328, 0.1878, 0.1988, 0.1645, 0.1218, 0.2005, 0.2828, 0.2051, 0.1664, 0.1181, 0.1621, 0.2966, 0.189, 0.246, 0.2445, 0.1621, 0.1618, 0.189, 0.2354, 0.1561, 0.1638, 0.2799, 0.0923, 0.1659, 0.1675, 0.1268, 0.0984, 0.0997, 0.1248, 0.1495, 0.1431, 0.1236, 0.1755, 0.1183, 0.1349, 0.1018, 0.1109, 0.1833, 0.1813, 0.1422, 0.0961, 0.1191, 0.0791, 0.0631, 0.0315, 0.0157, 0.0166, 0.0108];
 
+									//Draw peaks
+									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.drawBuffer();
+
+									//Variable to check if the track is loaded
+									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.loaded = false;
+
+									// @todo Track Player errors
+
+									// On Media Ready
 									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'ready', function(e){
+
+										if(!window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.loaded) {
+											window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.loaded = true;
+											window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.play();
+										}
+
 										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #sspTotalDuration' ).text( window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.getDuration().toString().toFormattedDuration() );
 										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #sspPlayedDuration' ).text( window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.getCurrentTime().toString().toFormattedDuration() );
 									} );
@@ -605,19 +615,11 @@ class SSP_Frontend {
 									// On Media Played
 									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'play', function(e){
 
-										// Track Podcast Specific Play
-										/*_paq.push(
-											[
-												'trackEvent', 'Player', 'Play', '<?php echo get_the_title( $episode_id ); ?>'
-											]
-										);*/
+										if(!window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.loaded) {
+											window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.load(window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.track, window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.backend.peaks);
+										}
 
-										// Track Global Play
-										/*_paq.push(
-											[
-												'trackEvent', 'Player', 'Play', 'Global Stats'
-											]
-										);*/
+										// @todo Track Podcast Specific Play
 
 										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-pause_icon' );
 										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #sspPlayedDuration' ).text( window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.getCurrentTime().toString().toFormattedDuration() )
@@ -631,19 +633,7 @@ class SSP_Frontend {
 									// On Media Paused
 									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'pause', function(e){
 
-										// Track Podcast Specific Pause
-										/*_paq.push(
-											[
-												'trackEvent', 'Player', 'Pause', '<?php echo get_the_title( $episode_id ); ?>'
-											]
-										);*/
-
-										// Track Global Pause
-										/*_paq.push(
-											[
-												'trackEvent', 'Player', 'Pause', 'Global Stats'
-											]
-										);*/
+										// @todo Track Podcast Specific Pause
 
 										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
 
@@ -654,21 +644,9 @@ class SSP_Frontend {
 									// On Media Finished
 									window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.on( 'finish', function(e){
 
-                                        $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
+										$( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
 
-                                        // Track Podcast Specific Finish
-                                        /*_paq.push(
-                                            [
-                                                'trackEvent', 'Player', 'Finish', '<?php echo get_the_title( $episode_id ); ?>'
-                                            ]
-                                        );*/
-
-										// Track Global Finish
-										/*_paq.push(
-											[
-												'trackEvent', 'Player', 'Finish', 'Global Stats'
-											]
-										);*/
+										// @todo Track Podcast Specific Finish
 
 									} );
 
@@ -678,19 +656,7 @@ class SSP_Frontend {
 
 									$('#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> #ssp-back-thirty').on( 'click', function(e){
 
-										// Track Podcast Specific Back 30
-										/*_paq.push(
-											[
-												'trackEvent', 'Player', 'Back 30 Seconds', '<?php echo get_the_title( $episode_id ); ?>'
-											]
-										);*/
-
-										// Track Global Back 30
-										/*_paq.push(
-											[
-												'trackEvent', 'Player', 'Back 30 Seconds', 'Global Stats'
-											]
-										);*/
+										// @todo Track Podcast Specific Back 30
 
 										window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.skipBackward();
 
@@ -1880,7 +1846,7 @@ class SSP_Frontend {
 
 						}
 					}
-        }
+		}
 			}
 
 			if( 'mini' === $style ){
@@ -1973,19 +1939,7 @@ function example_mejs_add_container_class() {
 		return;
 	}
 	?>
-<!--    <script type="text/javascript">
-		var _paq = _paq || [];
-		/* tracker methods like "setCustomDimension" should be called before "trackPageView" */
-		_paq.push(['trackPageView']);
-		_paq.push(['enableLinkTracking']);
-		(function() {
-			var u="//piwik.dev/";
-			_paq.push(['setTrackerUrl', u+'piwik.php']);
-			_paq.push(['setSiteId', '1']);
-			var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
-			g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'piwik.js'; s.parentNode.insertBefore(g,s);
-		})();
-	</script>-->
+	<?php //@todo add piwik.js setup ?>
 	<script>
 		(function() {
 
@@ -2048,8 +2002,7 @@ function example_mejs_add_container_class() {
 					   sspTickerOffset = Math.floor( ( sspTickerBannerContainer.width() - sspTickerBanner.width() ) );
 
 					   var moved = 0;
-					   var offset,
-						   tickInterval;
+					   var offset, tickInterval;
 
 					   function doTickBanner(){
 						   sspTickerBanner.css( 'left','0' );
@@ -2110,6 +2063,7 @@ function example_mejs_add_container_class() {
 				jQuery(controls).find('.mejs-duration-container').after( backThirtySeconds, playSpeed );
 				jQuery(controls).find('.mejs-horizontal-volume-slider').after( expanCollapseButton );
 
+				// @todo player custom controls
 				var sspCustomControls = jQuery('' +
 					'<div class="ssp-controls" id="ssp-expanded-controls" style="display:none;">\n' +
 '                        <ul class="ssp-sub-controls">\n' +
@@ -2139,7 +2093,7 @@ function example_mejs_add_container_class() {
 '                        </ul>\n' +
 '                    </div>');
 
-				// player.container.after( sspCustomControls );
+				player.container.after( sspCustomControls );
 			}
 
 		})();

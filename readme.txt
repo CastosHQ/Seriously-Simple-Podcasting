@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.4
+Stable tag: 1.19.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.5 =
+* 2018-02-09
+* [TWEAK] Only load the HTML5 media player track when the user clicks play
 
 = 1.19.4 =
 * 2017-12-15

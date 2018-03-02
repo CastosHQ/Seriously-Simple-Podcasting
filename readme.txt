@@ -105,6 +105,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 = 1.19.6 =
 * 2018-03-02
 * [FIX] Sanatize file name on upload to Castos service
+* [NEW] Add ss_player shortcode to embed html player within content via a shortcode.
 
 = 1.19.5 =
 * 2018-02-09

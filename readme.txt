@@ -104,8 +104,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.19.6 =
 * 2018-03-02
-* [FIX] Sanatize file name on upload to Castos service
+* [FIX] Sanitize file name on upload to Castos service
 * [NEW] Add ss_player shortcode to embed html player within content via a shortcode.
+* [NEW] Added a Feature/series graphic (props @timnolte)
+* [UPDATE] Update ssp-shortcode-podcast_playlist, adds parameter "tracklist" to show the list of episodes below the player. (props @robertogcalle)
 
 = 1.19.5 =
 * 2018-02-09

@@ -52,9 +52,6 @@ jQuery( document ).ready( function ( $ ) {
 		var bucket = upload_credentials.bucket;
 		var show_slug = upload_credentials.show_slug;
 		var episodes_url = upload_credentials.episodes_url;
-		//var access_key_id = upload_credentials.access_key_id;
-		//var policy = upload_credentials.policy;
-		//var signature = upload_credentials.signature;
 
 		/**
 		 * Creates instance of plupload
@@ -68,16 +65,6 @@ jQuery( document ).ready( function ( $ ) {
 			url: 'https://' + bucket + '.s3.amazonaws.com:443/',
 			multipart_params: {}
 		} );
-
-		/*
-		'key': show_slug + '/${filename}',
-				'Filename': show_slug + '/${filename}',
-				'acl': 'public-read',
-				'Content-Type': '',
-				'AWSAccessKeyId': access_key_id,
-				'policy': policy,
-				'signature': signature
-		 */
 
 		/**
 		 * Init Uploader
@@ -111,13 +98,13 @@ jQuery( document ).ready( function ( $ ) {
 		uploader.bind('BeforeUpload', function (up, file) {
 			var file_name = sanitizeName(file.name);
 			var multipart_params = {
-				'key': upload_configs.show_slug + '/' + file_name,
-				'Filename': upload_configs.show_slug + '/' + file_name,
+				'key': upload_credentials.show_slug + '/' + file_name,
+				'Filename': upload_credentials.show_slug + '/' + file_name,
 				'acl': 'public-read',
 				'Content-Type': '',
-				'AWSAccessKeyId': upload_configs.access_key,
-				'policy': upload_configs.policy,
-				'signature': upload_configs.signature
+				'AWSAccessKeyId': upload_credentials.access_key_id,
+				'policy': upload_credentials.policy,
+				'signature': upload_credentials.signature
 			}
 			uploader.settings.multipart_params = multipart_params;
 		});

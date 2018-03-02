@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.6-beta
+Stable tag: 1.19.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,9 +102,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-
-= 1.19.6-beta =
-* 2018-02-26
+= 1.19.6 =
+* 2018-03-02
+* [FIX] Sanatize file name on upload to Castos service
 * [NEW] Add ss_player shortcode to embed html player within content via a shortcode.
 
 = 1.19.5 =

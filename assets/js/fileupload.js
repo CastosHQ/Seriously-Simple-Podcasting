@@ -39,6 +39,11 @@ jQuery( document ).ready( function ( $ ) {
 		return isValid;
 	}
 
+	function sanitizeName(name) {
+		var punctuationlessName = name.replace(/[,\/#!$%\^&\*;:{}=\-_`'~()+"|? ]/g," ");
+		return punctuationlessName.replace(/\s{1,}/g,"-");
+	}
+
 	/**
 	 * Of the upload_credentials object isn't available
 	 */
@@ -47,9 +52,6 @@ jQuery( document ).ready( function ( $ ) {
 		var bucket = upload_credentials.bucket;
 		var show_slug = upload_credentials.show_slug;
 		var episodes_url = upload_credentials.episodes_url;
-		var access_key_id = upload_credentials.access_key_id;
-		var policy = upload_credentials.policy;
-		var signature = upload_credentials.signature;
 
 		/**
 		 * Creates instance of plupload
@@ -61,15 +63,7 @@ jQuery( document ).ready( function ( $ ) {
 			multi_selection: false,
 			container: 'ssp_upload_container',
 			url: 'https://' + bucket + '.s3.amazonaws.com:443/',
-			multipart_params: {
-				'key': show_slug + '/${filename}',
-				'Filename': show_slug + '/${filename}',
-				'acl': 'public-read',
-				'Content-Type': '',
-				'AWSAccessKeyId': access_key_id,
-				'policy': policy,
-				'signature': signature
-			}
+			multipart_params: {}
 		} );
 
 		/**
@@ -99,6 +93,23 @@ jQuery( document ).ready( function ( $ ) {
 		} );
 
 		/**
+		 * Sanatizes the file name for upload
+		 */
+		uploader.bind('BeforeUpload', function (up, file) {
+			var file_name = sanitizeName(file.name);
+			var multipart_params = {
+				'key': upload_credentials.show_slug + '/' + file_name,
+				'Filename': upload_credentials.show_slug + '/' + file_name,
+				'acl': 'public-read',
+				'Content-Type': '',
+				'AWSAccessKeyId': upload_credentials.access_key_id,
+				'policy': upload_credentials.policy,
+				'signature': upload_credentials.signature
+			}
+			uploader.settings.multipart_params = multipart_params;
+		});
+
+		/**
 		 * Show an error if anything goes wrong
 		 */
 		uploader.bind( 'Error', function ( up, err ) {
@@ -121,10 +132,11 @@ jQuery( document ).ready( function ( $ ) {
 
 			// we're only expecting one file to be uploaded
 			var file = files[ 0 ];
+			var file_name = sanitizeName(file.name);
 			var filesize_raw = file.size;
 			var file_size = plupload.formatSize(file.size);
-			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + file.name;
-			var episode_file = episodes_url + show_slug + '/' + file.name;
+			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + file_name;
+			var episode_file = episodes_url + show_slug + '/' + file_name;
 
 			// push podmotor_file_path to wp_ajax_ssp_store_podmotor_file
 			$.ajax( {

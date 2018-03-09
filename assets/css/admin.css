@@ -73,3 +73,11 @@ textarea#episode_embed_code {
 .ssp-episode-details-label {
     font-weight: bold;
 }
+
+#series_image_preview {
+    max-width: 160px;
+}
+
+#series_upload_image_button .dashicons {
+    vertical-align: middle;
+}

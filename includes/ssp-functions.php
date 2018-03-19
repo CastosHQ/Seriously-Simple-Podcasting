@@ -940,3 +940,27 @@ if( !function_exists( 'ssp_get_image_id_from_url' ) ){
 		return isset( $attachment[0] ) ? $attachment[0] : false;
 	}
 }
+
+if ( ! function_exists( 'ssp_check_if_podcast_has_shortcode' ) ) {
+	/**
+	 * Check if the podcast content has a specific shortcode
+	 *
+	 * @param $podcast_id
+	 * @param $shortcode
+	 *
+	 * @return bool
+	 */
+	function ssp_check_if_podcast_has_shortcode( $podcast_id = 0, $shortcode = '' ) {
+		if ( empty( $podcast_id ) ) {
+			return false;
+		}
+		$podcast         = get_post( $podcast_id );
+		$podcast_content = $podcast->post_content;
+		//$podcast_content = apply_filters( 'the_content', $podcast_content );
+		if ( has_shortcode( $podcast_content, $shortcode ) ) {
+			return true;
+		}
+
+		return false;
+	}
+}

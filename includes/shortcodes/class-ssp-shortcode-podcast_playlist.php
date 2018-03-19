@@ -239,6 +239,7 @@ class SSP_Shortcode_Podcast_Playlist {
                             </script>
                         <?php
                     } );
+			if ( true === $data['tracklist']) :
                     ?>
                         <div class="ssp-playlist-tracks" id="sspPlayListTracks<?php echo $largePlayerInstanceNumber; ?>">
                             <?php
@@ -277,6 +278,7 @@ class SSP_Shortcode_Podcast_Playlist {
                             ?>
                         </div>
                     <?php
+			endif;
                 else :
             ?>
 

@@ -337,7 +337,8 @@ class SSP_Frontend {
 		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
 		 */
 		$series_id = false;
-		
+		$series_image = '';
+
 		$series = get_the_terms( $episode_id, 'series' );
 		if ( $series ) {
 			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : false;
@@ -416,7 +417,23 @@ class SSP_Frontend {
 		
 		return compact( 'src', 'width', 'height' );
 	}
-	
+
+
+	/**
+	 * Return media player for a given file. Used to enable other checks or to prevent the player from loading
+	 * @param string $srcFile
+	 * @param int $episode_id
+	 * @param string $player_size
+	 *
+	 * @return string
+	 */
+	public function media_player( $srcFile = '', $episode_id = 0, $player_size = "large" ) {
+		// check if the ss_player shortcode has been used in the episode already
+		if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
+			return $this->load_media_player( $srcFile, $episode_id, $player_size );
+		}
+	}
+
 	/**
 	 * Load media player for given file
 	 * @param  string  $srcFile        Source of file
@@ -424,8 +441,7 @@ class SSP_Frontend {
 	 * @param  string $player_size mini or large
 	 * @return string              Media player HTML on success, empty string on failure
 	 */
-	public function media_player ( $srcFile = '', $episode_id = 0, $player_size = "large" ) {
-
+	public function load_media_player($srcFile = '', $episode_id = 0, $player_size){
 		global $largePlayerInstanceNumber;
 		$largePlayerInstanceNumber++;
 
@@ -477,9 +493,9 @@ class SSP_Frontend {
 						?>
 						<div class="ssp-player ssp-player-large" id="ssp_player_id_<?php echo $largePlayerInstanceNumber; ?>"<?php echo $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : 'background: #333;' ;?>>
 							<?php if( apply_filters( 'ssp_show_album_art', true, get_the_ID() ) ) { ?>
-							<div class="ssp-album-art-container">
-								<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
-							</div>
+								<div class="ssp-album-art-container">
+									<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
+								</div>
 							<?php }; ?>
 							<div style="overflow: hidden">
 								<div class="ssp-player-inner" style="overflow: hidden;">
@@ -487,10 +503,10 @@ class SSP_Frontend {
 										<div style="width: 80%; float:left;">
 											<h3 class="ssp-player-title episode-title">
 												<?php
-													echo apply_filters( 'ssp_podcast_title', get_the_title( $episode_id ), get_the_ID() );
-													if( $series = get_the_terms( $episode_id, 'series' ) ){
-														echo ( !empty( $series ) && isset( $series[0] ) ) ? '<br><span class="ssp-player-series">' . substr( $series[0]->name, 0, 35) . ( strlen( $series[0]->name ) > 35 ? '...' : '' ) . '</span>' : '';
-													}
+												echo apply_filters( 'ssp_podcast_title', get_the_title( $episode_id ), get_the_ID() );
+												if( $series = get_the_terms( $episode_id, 'series' ) ){
+													echo ( !empty( $series ) && isset( $series[0] ) ) ? '<br><span class="ssp-player-series">' . substr( $series[0]->name, 0, 35) . ( strlen( $series[0]->name ) > 35 ? '...' : '' ) . '</span>' : '';
+												}
 												?>
 											</h3>
 										</div>
@@ -698,7 +714,7 @@ class SSP_Frontend {
 
 					break;
 
-					case 'video':
+				case 'video':
 
 					// Use featured image as video poster
 					if( $episode_id && has_post_thumbnail( $episode_id ) ) {
@@ -709,7 +725,7 @@ class SSP_Frontend {
 					}
 
 					$player = wp_video_shortcode( $params );
-				break;
+					break;
 			}
 
 			// Allow filtering so that alternative players can be used
@@ -746,6 +762,11 @@ class SSP_Frontend {
 	 * @return string              Episode meta details
 	 */
 	public function episode_meta_details ( $episode_id = 0, $context = 'content', $return = false ) {
+
+		// don't render is if the ss_player shortcode is being used.
+		if ( ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
+			return;
+		}
 
 		if ( ! $episode_id ) {
 			return;
@@ -1741,6 +1762,7 @@ class SSP_Frontend {
 			'podcast_episode',
 			'podcast_playlist',
 			'ss_podcast',
+			'ss_player',
 		);
 
 		foreach ( $shortcodes as $shortcode ) {

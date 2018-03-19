@@ -102,6 +102,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.7-beta =
+* 2018-03-02
+* [NEW] Updated Castos logo in HTML5 player to link to castos.com
+* [NEW] Added iTunes 'keyword' tag to RSS feed, pulls data from Podcast tags in WordPress
+* [NEW] Added an option to allow Castos Hosting users to disconnect their account from Castos
+* [TWEAK] Update HTML5 player bar to be more user friendly
+* [TWEAK] Fix a bug where some users of font icons reported icons not loading
+
 = 1.19.6 =
 * 2018-03-02
 * [FIX] Sanitize file name on upload to Castos service

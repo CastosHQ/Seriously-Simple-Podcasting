@@ -127,6 +127,8 @@ class SSP_Settings {
 		// process the import form submission
 		add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
+		add_action( 'admin_init', array( $this, 'maybe_disconnect_from_castos' ) );
+
 		// Quick and dirty colour picker implementation
 		// If we do not have the WordPress core colour picker field, then we don't break anything
 		add_action( 'admin_footer', function () {
@@ -1708,6 +1710,16 @@ class SSP_Settings {
 			$html .= '</p>' . "\n";
 		}
 
+		if ( isset( $tab ) && 'castos-hosting' == $tab ) {
+			// Disconnect button, if this install has an active Castos account
+			$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+			if ( ! empty( $podmotor_api_token ) ) {
+				$html .= '<p>' . "\n";
+				$html .= '<a id="disconnect_castos_hosting" href="' . add_query_arg( 'action', 'disconnect_castos_hosting' ) . '">' . esc_attr( __( 'Disconnect your Castos hosting account', 'seriously-simple-podcasting' ) ) . '</a>' . "\n";
+				$html .= '</p>' . "\n";
+			}
+		}
+
 		$html .= '</form>' . "\n";
 
 		$html .= '</div>' . "\n";
@@ -1786,6 +1798,28 @@ class SSP_Settings {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * Disconnects a user from the Castos Hosting service by deleting their API keys
+	 */
+	public function maybe_disconnect_from_castos(){
+		$action = ( isset( $_GET['action'] ) ? filter_var( $_GET['action'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $action ) ) {
+			return;
+		}
+		if ( 'disconnect_castos_hosting' !== $action ) {
+			return;
+		}
+		// delete castos hosting credentials options
+		delete_option( 'ss_podcasting_podmotor_account_email' );
+		delete_option( 'ss_podcasting_podmotor_account_api_token' );
+		delete_option( 'ss_podcasting_podmotor_account_id' );
+		?>
+		<div class="notice notice-info is-dismissible">
+			<p><?php esc_attr_e( 'You have been disconnected from the Castos hosting service, thank you for your support.', 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
 	}
 
 	public function render_seriously_simple_sidebar() {

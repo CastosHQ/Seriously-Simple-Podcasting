@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.19.5
+ * Version:
  * Plugin URI: https://www.castos.com/seriously-simple-podcasting
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos

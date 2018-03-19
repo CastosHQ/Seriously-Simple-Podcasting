@@ -211,15 +211,17 @@
 
 .ssp-wave{
     height: 2px !important;
-    margin-top: 15px;
+    margin-top: 10px;
 }
 
 .ssp-wave wave{
     background: #444;
+    cursor: pointer;
 }
 
 .ssp-wave wave wave{
-    height:2px;
+    height: 10px;
+    background: #28c0e1 !important;
 }
 
 .sspProgressBar{

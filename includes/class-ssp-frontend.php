@@ -577,7 +577,7 @@ class SSP_Frontend {
 										progressColor: '<?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?>',
 										barWidth: 3,
 										barHeight: 15,
-										height: 2,
+										height: 8,
 										hideScrollbar: true,
 										skipLength: 30,
 										backend: 'MediaElement'

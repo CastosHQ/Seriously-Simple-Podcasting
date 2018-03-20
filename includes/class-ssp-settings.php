@@ -127,7 +127,7 @@ class SSP_Settings {
 		// process the import form submission
 		add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
-		add_action( 'admin_init', array( $this, 'maybe_disconnect_from_castos' ) );
+		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array( $this, 'maybe_disconnect_from_castos' ), 10, 2 );
 
 		// Quick and dirty colour picker implementation
 		// If we do not have the WordPress core colour picker field, then we don't break anything
@@ -1044,8 +1044,22 @@ class SSP_Settings {
 					'type'    => 'hidden',
 					'default' => '',
 				),
+				array(
+					'id'              => 'podmotor_disconnect',
+					'label'           => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
+					'description'     => __( 'Disconnect your Castos account.', 'seriously-simple-podcasting' ),
+					'type'            => 'checkbox',
+					'default'         => '',
+					'callback'        => 'wp_strip_all_tags',
+					'class'           => 'disconnect-castos',
+				),
 			),
 		);
+
+		// @todo there has to be a better way to do this
+		if ( !ssp_is_connected_to_podcastmotor() ) {
+			$settings['castos-hosting']['fields'][3]['container_class'] = 'hidden';
+		}
 
 		if ( ssp_is_connected_to_podcastmotor() ) {
 			$settings['import'] = array(
@@ -1142,6 +1156,11 @@ class SSP_Settings {
 							continue;
 						}
 
+						$container_class = '';
+						if ( isset( $field['container_class'] ) && ! empty( $field['container_class'] ) ) {
+							$container_class = $field['container_class'];
+						}
+
 						// Add field to page.
 						add_settings_field( $field['id'], $field['label'],
 							array(
@@ -1154,6 +1173,7 @@ class SSP_Settings {
 								'field'       => $field,
 								'prefix'      => $this->settings_base,
 								'feed-series' => $series_id,
+								'class'       => $container_class
 							)
 						);
 					}
@@ -1710,16 +1730,6 @@ class SSP_Settings {
 			$html .= '</p>' . "\n";
 		}
 
-		if ( isset( $tab ) && 'castos-hosting' == $tab ) {
-			// Disconnect button, if this install has an active Castos account
-			$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-			if ( ! empty( $podmotor_api_token ) ) {
-				$html .= '<p>' . "\n";
-				$html .= '<a id="disconnect_castos_hosting" href="' . add_query_arg( 'action', 'disconnect_castos_hosting' ) . '">' . esc_attr( __( 'Disconnect your Castos hosting account', 'seriously-simple-podcasting' ) ) . '</a>' . "\n";
-				$html .= '</p>' . "\n";
-			}
-		}
-
 		$html .= '</form>' . "\n";
 
 		$html .= '</div>' . "\n";
@@ -1802,24 +1812,31 @@ class SSP_Settings {
 
 	/**
 	 * Disconnects a user from the Castos Hosting service by deleting their API keys
+	 * Triggered by the update_option_ss_podcasting_podmotor_disconnect action hook
 	 */
-	public function maybe_disconnect_from_castos(){
-		$action = ( isset( $_GET['action'] ) ? filter_var( $_GET['action'], FILTER_SANITIZE_STRING ) : '' );
-		if ( empty( $action ) ) {
+	public function maybe_disconnect_from_castos( $old_value, $new_value ) {
+		ssp_debug( array( 'old value' => $old_value, 'new value' => $new_value ) );
+		if ( 'on' != $new_value ) {
+			ssp_debug('this option is off');
 			return;
 		}
-		if ( 'disconnect_castos_hosting' !== $action ) {
-			return;
-		}
+		ssp_debug('this option is on and were about to delete these options');
 		// delete castos hosting credentials options
-		delete_option( 'ss_podcasting_podmotor_account_email' );
-		delete_option( 'ss_podcasting_podmotor_account_api_token' );
-		delete_option( 'ss_podcasting_podmotor_account_id' );
+		delete_option( $this->settings_base . 'podmotor_account_email' );
+		delete_option( $this->settings_base . 'podmotor_account_api_token' );
+		delete_option( $this->settings_base . 'podmotor_account_id' );
+		delete_option( $this->settings_base . 'podmotor_disconnect' );
+		ssp_debug('options deleted');
+		//add_action( 'admin_notices', array( $this, 'admin_notice_castos_disconnected' ) );
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php esc_attr_e( 'You have been disconnected from the Castos hosting service, thank you for your support.', 'seriously-simple-podcasting' ); ?></p>
 		</div>
 		<?php
+	}
+
+	public function admin_notice_castos_disconnected(){
+
 	}
 
 	public function render_seriously_simple_sidebar() {

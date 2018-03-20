@@ -61,13 +61,26 @@ jQuery(document).ready(function($) {
 
 		})
 
-		$('#disconnect_castos_hosting').on('click', function (event) {
-			event.preventDefault();
-			var href = $(this).attr('href');
+		/**
+		 * Disconnect Castos checkbox on change, renders a confirmation message to the user.
+		 */
+		$('#podmotor_disconnect').on('change', function (event) {
+			var $checkbox = $(this);
+
+			// if the change is to uncheck the checkbox
+			if (!$checkbox.is(':checked')) {
+				return;
+			}
+
 			var $message = 'If you disconnect from Castos hosting you will no longer be able to upload media files to the Castos hosting platform. If you’re no longer a Castos customer your media files may no longer be available to your listeners.';
 			var user_input = confirm($message);
-			if (user_input == true) {
-				window.location = href;
+			if (user_input !== true) {
+				// Ensures this code runs AFTER the browser handles click however it wants.
+				setTimeout(function() {
+					$checkbox.removeAttr('checked');
+				}, 0);
+				event.preventDefault();
+				event.stopPropagation();
 			}
 		});
 

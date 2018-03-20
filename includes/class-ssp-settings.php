@@ -1815,28 +1815,13 @@ class SSP_Settings {
 	 * Triggered by the update_option_ss_podcasting_podmotor_disconnect action hook
 	 */
 	public function maybe_disconnect_from_castos( $old_value, $new_value ) {
-		ssp_debug( array( 'old value' => $old_value, 'new value' => $new_value ) );
 		if ( 'on' != $new_value ) {
-			ssp_debug('this option is off');
 			return;
 		}
-		ssp_debug('this option is on and were about to delete these options');
-		// delete castos hosting credentials options
 		delete_option( $this->settings_base . 'podmotor_account_email' );
 		delete_option( $this->settings_base . 'podmotor_account_api_token' );
 		delete_option( $this->settings_base . 'podmotor_account_id' );
 		delete_option( $this->settings_base . 'podmotor_disconnect' );
-		ssp_debug('options deleted');
-		//add_action( 'admin_notices', array( $this, 'admin_notice_castos_disconnected' ) );
-		?>
-		<div class="notice notice-info is-dismissible">
-			<p><?php esc_attr_e( 'You have been disconnected from the Castos hosting service, thank you for your support.', 'seriously-simple-podcasting' ); ?></p>
-		</div>
-		<?php
-	}
-
-	public function admin_notice_castos_disconnected(){
-
 	}
 
 	public function render_seriously_simple_sidebar() {

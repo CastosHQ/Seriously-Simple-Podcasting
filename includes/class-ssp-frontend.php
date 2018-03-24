@@ -442,6 +442,15 @@ class SSP_Frontend {
 	 * @return string              Media player HTML on success, empty string on failure
 	 */
 	public function load_media_player($srcFile = '', $episode_id = 0, $player_size){
+
+		/**
+		 * Check if this player is being loaded via the AMP for WordPress plugin and if so, force the standard player
+		 * https://wordpress.org/plugins/amp/
+		 */
+		if ( is_plugin_active( 'amp/amp.php' ) && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			$player_size = 'standard';
+		}
+
 		global $largePlayerInstanceNumber;
 		$largePlayerInstanceNumber++;
 

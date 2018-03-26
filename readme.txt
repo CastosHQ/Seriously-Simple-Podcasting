@@ -102,8 +102,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.7-beta.2 =
+* 2018-03-26
+* [NEW] Updated player to work with AMP for WordPress plugin on AMP pages
+* [NEW] Added player meta data to player shortcode output
+
 = 1.19.7-beta =
-* 2018-03-02
+* 2018-03-19
 * [NEW] Updated Castos logo in HTML5 player to link to castos.com
 * [NEW] Added iTunes 'keyword' tag to RSS feed, pulls data from Podcast tags in WordPress
 * [NEW] Added an option to allow Castos Hosting users to disconnect their account from Castos

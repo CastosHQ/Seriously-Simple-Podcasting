@@ -235,12 +235,17 @@ class SSP_Frontend {
 			$player_style = get_option( 'ss_podcasting_player_style' );
 			
 			if( $show_player ) {
-				$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
+
+				if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
+					$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
+
+					if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
+						$meta .= $this->episode_meta_details( $episode_id, $context );
+					}
+
+				}
 			}
-			
-			if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
-				$meta .= $this->episode_meta_details( $episode_id, $context );
-			}
+
 		}
 
 		$meta = apply_filters( 'ssp_episode_meta', $meta, $episode_id, $context );
@@ -448,7 +453,7 @@ class SSP_Frontend {
 		 * https://wordpress.org/plugins/amp/
 		 */
 		if ( is_plugin_active( 'amp/amp.php' ) && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			$player_size = 'standard';
+			$player_size = 'mini';
 		}
 
 		global $largePlayerInstanceNumber;
@@ -771,11 +776,6 @@ class SSP_Frontend {
 	 * @return string              Episode meta details
 	 */
 	public function episode_meta_details ( $episode_id = 0, $context = 'content', $return = false ) {
-
-		// don't render is if the ss_player shortcode is being used.
-		if ( ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
-			return;
-		}
 
 		if ( ! $episode_id ) {
 			return;

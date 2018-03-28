@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.6
+Stable tag: 1.19.7
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,18 +102,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.19.7-beta.2 =
-* 2018-03-26
+= 1.19.7 =
+* 2018-03-28
 * [NEW] Updated player to work with AMP for WordPress plugin on AMP pages
-* [NEW] Added player meta data to player shortcode output
-
-= 1.19.7-beta =
-* 2018-03-19
-* [NEW] Updated Castos logo in HTML5 player to link to castos.com
+* [NEW] Added player meta data to ssp_player shortcode output
+* [FIX] Updated Castos logo in HTML5 player to link to castos.com
 * [NEW] Added iTunes 'keyword' tag to RSS feed, pulls data from Podcast tags in WordPress
 * [NEW] Added an option to allow Castos Hosting users to disconnect their account from Castos
 * [TWEAK] Update HTML5 player bar to be more user friendly
-* [TWEAK] Fix a bug where some users of font icons reported icons not loading
+* [FIX] Fix a bug where some users of font icons reported icons not loading
 
 = 1.19.6 =
 * 2018-03-02

@@ -1949,12 +1949,6 @@ class SSP_Frontend {
 
 }
 
-add_action( 'wp_enqueue_scripts', 'ssp_enqueue_wave_surfer' );
-
-function ssp_enqueue_wave_surfer(){
-	wp_enqueue_script( 'ssp-wavesurfer', '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js', SSP_VERSION, array( 'jquery' ) );
-}
-
 function example_mejs_add_container_class() {
 	return;
 	if ( ! wp_script_is( 'wp-mediaelement', 'done' ) ) {

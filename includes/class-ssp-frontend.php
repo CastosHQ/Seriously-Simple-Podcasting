@@ -524,12 +524,8 @@ class SSP_Frontend {
 												?>
 											</h3>
 										</div>
-										<div class="ssp-download-episode" style="overflow: hidden;text-align:right;">
-											<?php if( apply_filters( 'ssp_player_show_logo', true ) ) { ?>
-												<a href="https://castos.com/" rel="nofollow"><img class="<?php echo apply_filters( 'ssp_player_logo_class', 'ssp-player-branding' ); ?>" src="<?php echo apply_filters( 'ssp_player_logo_src', SSP_PLUGIN_URL . '/assets/svg/castos_logo_white.svg' ); ?>" width="<?php echo apply_filters( 'ssp_player_logo_width', 68 ); ?>" /></a>
-											<?php }; ?>
-										</div>
-										<div>&nbsp;</div>
+										<div class="ssp-download-episode" style="overflow: hidden;text-align:right;"></div>
+										<div>&nbsp</div>
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
 												<div class="ssp-play-pause" id="ssp-play-pause">

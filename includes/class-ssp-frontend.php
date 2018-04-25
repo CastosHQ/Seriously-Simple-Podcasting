@@ -233,17 +233,17 @@ class SSP_Frontend {
 
 			// Show audio player if requested
 			$player_style = get_option( 'ss_podcasting_player_style' );
-			
-			if( $show_player ) {
 
-				if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
+			if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
+
+				if ( $show_player ) {
 					$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
-
-					if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
-						$meta .= $this->episode_meta_details( $episode_id, $context );
-					}
-
 				}
+
+				if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
+					$meta .= $this->episode_meta_details( $episode_id, $context );
+				}
+
 			}
 
 		}

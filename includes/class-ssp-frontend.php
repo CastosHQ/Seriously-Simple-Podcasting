@@ -452,7 +452,7 @@ class SSP_Frontend {
 		 * Check if this player is being loaded via the AMP for WordPress plugin and if so, force the standard player
 		 * https://wordpress.org/plugins/amp/
 		 */
-		if ( is_plugin_active( 'amp/amp.php' ) && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
 			$player_size = 'mini';
 		}
 
@@ -551,7 +551,7 @@ class SSP_Frontend {
 
 														<div class="ssp-back-thirty-container">
 															<div class="ssp-back-thirty-control" id="ssp-back-thirty">
-																<i class="icon icon-replay">&nbsp;</i>
+																<i class="ssp-icon icon-replay">&nbsp;</i>
 															</div>
 														</div>
 
@@ -563,7 +563,7 @@ class SSP_Frontend {
 
 														<div class="ssp-download-container">
 															<div class="ssp-download-control">
-																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="icon icon-cloud-download">&nbsp;</i></a>
+																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
 															</div>
 														</div>
 

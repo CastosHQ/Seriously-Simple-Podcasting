@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.7
+Stable tag: 1.19.8
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.8 =
+* 2018-03-29
+* [FIX] Fixed a bug related to checking for the AMP for WordPress plugin
+* [FIX] Fixed a bug related to icon rendering in the HTML player
 
 = 1.19.7 =
 * 2018-03-28

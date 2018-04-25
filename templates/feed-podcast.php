@@ -480,7 +480,20 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 				{
 					$pubDate = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_meta( get_the_ID(), 'date_recorded', true ), false ) );
 				}
-				
+
+				// Tags/keywords
+				$post_tags = get_the_tags( get_the_ID() );
+				if ( $post_tags ) {
+					$tags = array();
+					foreach( $post_tags as $tag ) {
+						$tags[] = $tag->name;
+					}
+					$tags = apply_filters( 'ssp_feed_item_itunes_keyword_tags', $tags, get_the_ID() );
+					if ( ! empty( $tags ) ) {
+						$keywords = implode( $tags, ',' );
+					}
+				}
+
 				$is_itunes_fields_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
 				if ( $is_itunes_fields_enabled && $is_itunes_fields_enabled == 'on' ) {
 					// New iTunes WWDC 2017 Tags
@@ -498,6 +511,9 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
 					<description><![CDATA[<?php echo $description; ?>]]></description>
 					<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
+					<?php if ( $keywords ) : ?>
+						<itunes:keywords><?php echo $keywords; ?></itunes:keywords>
+					<?php endif; ?>
 					<?php if ( $itunes_episode_type ) : ?>
 						<itunes:episodeType><?php echo $itunes_episode_type; ?></itunes:episodeType>
 					<?php endif; ?>

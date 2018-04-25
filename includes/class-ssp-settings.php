@@ -127,6 +127,8 @@ class SSP_Settings {
 		// process the import form submission
 		add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
+		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array( $this, 'maybe_disconnect_from_castos' ), 10, 2 );
+
 		// Quick and dirty colour picker implementation
 		// If we do not have the WordPress core colour picker field, then we don't break anything
 		add_action( 'admin_footer', function () {
@@ -1042,8 +1044,22 @@ class SSP_Settings {
 					'type'    => 'hidden',
 					'default' => '',
 				),
+				array(
+					'id'              => 'podmotor_disconnect',
+					'label'           => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
+					'description'     => __( 'Disconnect your Castos account.', 'seriously-simple-podcasting' ),
+					'type'            => 'checkbox',
+					'default'         => '',
+					'callback'        => 'wp_strip_all_tags',
+					'class'           => 'disconnect-castos',
+				),
 			),
 		);
+
+		// @todo there has to be a better way to do this
+		if ( !ssp_is_connected_to_podcastmotor() ) {
+			$settings['castos-hosting']['fields'][3]['container_class'] = 'hidden';
+		}
 
 		if ( ssp_is_connected_to_podcastmotor() ) {
 			$settings['import'] = array(
@@ -1140,6 +1156,11 @@ class SSP_Settings {
 							continue;
 						}
 
+						$container_class = '';
+						if ( isset( $field['container_class'] ) && ! empty( $field['container_class'] ) ) {
+							$container_class = $field['container_class'];
+						}
+
 						// Add field to page.
 						add_settings_field( $field['id'], $field['label'],
 							array(
@@ -1152,6 +1173,7 @@ class SSP_Settings {
 								'field'       => $field,
 								'prefix'      => $this->settings_base,
 								'feed-series' => $series_id,
+								'class'       => $container_class
 							)
 						);
 					}
@@ -1786,6 +1808,20 @@ class SSP_Settings {
 			</div>
 			<?php
 		}
+	}
+
+	/**
+	 * Disconnects a user from the Castos Hosting service by deleting their API keys
+	 * Triggered by the update_option_ss_podcasting_podmotor_disconnect action hook
+	 */
+	public function maybe_disconnect_from_castos( $old_value, $new_value ) {
+		if ( 'on' != $new_value ) {
+			return;
+		}
+		delete_option( $this->settings_base . 'podmotor_account_email' );
+		delete_option( $this->settings_base . 'podmotor_account_api_token' );
+		delete_option( $this->settings_base . 'podmotor_account_id' );
+		delete_option( $this->settings_base . 'podmotor_disconnect' );
 	}
 
 	public function render_seriously_simple_sidebar() {

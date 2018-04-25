@@ -235,12 +235,17 @@ class SSP_Frontend {
 			$player_style = get_option( 'ss_podcasting_player_style' );
 			
 			if( $show_player ) {
-				$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
+
+				if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
+					$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
+
+					if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
+						$meta .= $this->episode_meta_details( $episode_id, $context );
+					}
+
+				}
 			}
-			
-			if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
-				$meta .= $this->episode_meta_details( $episode_id, $context );
-			}
+
 		}
 
 		$meta = apply_filters( 'ssp_episode_meta', $meta, $episode_id, $context );
@@ -442,6 +447,15 @@ class SSP_Frontend {
 	 * @return string              Media player HTML on success, empty string on failure
 	 */
 	public function load_media_player($srcFile = '', $episode_id = 0, $player_size){
+
+		/**
+		 * Check if this player is being loaded via the AMP for WordPress plugin and if so, force the standard player
+		 * https://wordpress.org/plugins/amp/
+		 */
+		if ( is_plugin_active( 'amp/amp.php' ) && function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			$player_size = 'mini';
+		}
+
 		global $largePlayerInstanceNumber;
 		$largePlayerInstanceNumber++;
 
@@ -512,7 +526,7 @@ class SSP_Frontend {
 										</div>
 										<div class="ssp-download-episode" style="overflow: hidden;text-align:right;">
 											<?php if( apply_filters( 'ssp_player_show_logo', true ) ) { ?>
-												<img class="<?php echo apply_filters( 'ssp_player_logo_class', 'ssp-player-branding' ); ?>" src="<?php echo apply_filters( 'ssp_player_logo_src', SSP_PLUGIN_URL . '/assets/svg/castos_logo_white.svg' ); ?>" width="<?php echo apply_filters( 'ssp_player_logo_width', 68 ); ?>" />
+												<a href="https://castos.com/" rel="nofollow"><img class="<?php echo apply_filters( 'ssp_player_logo_class', 'ssp-player-branding' ); ?>" src="<?php echo apply_filters( 'ssp_player_logo_src', SSP_PLUGIN_URL . '/assets/svg/castos_logo_white.svg' ); ?>" width="<?php echo apply_filters( 'ssp_player_logo_width', 68 ); ?>" /></a>
 											<?php }; ?>
 										</div>
 										<div>&nbsp;</div>
@@ -593,7 +607,7 @@ class SSP_Frontend {
 										progressColor: '<?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?>',
 										barWidth: 3,
 										barHeight: 15,
-										height: 2,
+										height: 8,
 										hideScrollbar: true,
 										skipLength: 30,
 										backend: 'MediaElement'
@@ -762,11 +776,6 @@ class SSP_Frontend {
 	 * @return string              Episode meta details
 	 */
 	public function episode_meta_details ( $episode_id = 0, $context = 'content', $return = false ) {
-
-		// don't render is if the ss_player shortcode is being used.
-		if ( ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
-			return;
-		}
 
 		if ( ! $episode_id ) {
 			return;

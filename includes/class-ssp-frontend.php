@@ -123,22 +123,22 @@ class SSP_Frontend {
 	}
 
 	public function html5_player_conditional_scripts() {
-		global $largePlayerInstanceNumber;
-		if ( ! (int) $largePlayerInstanceNumber > 0 ) {
+		global $large_player_instance_number;
+		if ( ! (int) $large_player_instance_number > 0 ) {
 			return;
 		}
 		?>
 		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/css/frontend.css?v=<?php echo SSP_VERSION ?>" />
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>" />
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>" />
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>" />
 		<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
 		<?php
 	}
 
 	public function html5_player_styles() {
-		global $largePlayerInstanceNumber;
-		if ( ! (int) $largePlayerInstanceNumber > 0 ) {
+		global $large_player_instance_number;
+		if ( ! (int) $large_player_instance_number > 0 ) {
 			return;
 		}
 		?>

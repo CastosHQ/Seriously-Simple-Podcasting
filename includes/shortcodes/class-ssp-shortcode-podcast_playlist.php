@@ -214,22 +214,22 @@ class SSP_Shortcode_Podcast_Playlist {
                 }
 
                 if( "larger" == $player_style ) :
-                    global $largePlayerInstanceNumber;
+                    global $large_player_instance_number;
                     add_action( 'wp_footer', function(){
-                        global $largePlayerInstanceNumber;
+                        global $large_player_instance_number;
                         ?>
                             <script>
                                 (function($){
                                     $( document ).ready( function(){
-                                        $( '#sspPlayListTracks<?php echo $largePlayerInstanceNumber; ?> .ssp-playlist-item a' ).on( 'click', function(e){
-                                            $( '#sspPlayListTracks<?php echo $largePlayerInstanceNumber; ?>' ).find( '.ssp-playlist-playing' ).removeClass( 'ssp-playlist-playing' );
+                                        $( '#sspPlayListTracks<?php echo $large_player_instance_number; ?> .ssp-playlist-item a' ).on( 'click', function(e){
+                                            $( '#sspPlayListTracks<?php echo $large_player_instance_number; ?>' ).find( '.ssp-playlist-playing' ).removeClass( 'ssp-playlist-playing' );
                                             $( e.currentTarget ).parents( '.ssp-playlist-item' ).addClass( 'ssp-playlist-playing' );
-                                            window.ssp_player<?php echo $largePlayerInstanceNumber; ?>.load( $( e.currentTarget ).attr( 'href' ) );
-                                            $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> .ssp-player-title' ).html(
+                                            window.ssp_player<?php echo $large_player_instance_number; ?>.load( $( e.currentTarget ).attr( 'href' ) );
+                                            $( '#ssp_player_id_<?php echo $large_player_instance_number; ?> .ssp-player-title' ).html(
                                                 $( e.currentTarget ).data( 'ssp-title' ) +
                                                 ( $( e.currentTarget ).data( 'ssp-series' ) ? '<br><span class="ssp-player-series">' + $( e.currentTarget ).data( 'ssp-series' ) + '</span>' : '' )
                                             );
-                                            $( '#ssp_player_id_<?php echo $largePlayerInstanceNumber; ?> a.ssp-episode-download' ).attr( 'href', $( e.currentTarget ).data( 'ssp-download' ) );
+                                            $( '#ssp_player_id_<?php echo $large_player_instance_number; ?> a.ssp-episode-download' ).attr( 'href', $( e.currentTarget ).data( 'ssp-download' ) );
                                             e.returnValue = false;
                                             e.preventDefault();
                                             return false;
@@ -241,7 +241,7 @@ class SSP_Shortcode_Podcast_Playlist {
                     } );
 			if ( true === $data['tracklist']) :
                     ?>
-                        <div class="ssp-playlist-tracks" id="sspPlayListTracks<?php echo $largePlayerInstanceNumber; ?>">
+                        <div class="ssp-playlist-tracks" id="sspPlayListTracks<?php echo $large_player_instance_number; ?>">
                             <?php
                                 $pc = 0;
 

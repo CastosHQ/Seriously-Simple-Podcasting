@@ -110,6 +110,9 @@ class SSP_Frontend {
 		// Enqueue HTML5 scripts only if the page has an HTML5 player on it
 		add_action( 'wp_print_footer_scripts', array( $this, 'html5_player_conditional_scripts' ) );
 
+		// Enqueue HTML5 styles only if the page has an HTML5 player on it
+		add_action( 'wp_print_footer_scripts', array( $this, 'html5_player_styles' ) );
+
 		// Add overridable styles to footer
 		add_action( 'wp_footer', array( $this, 'ssp_override_player_styles' ) );
 
@@ -119,14 +122,82 @@ class SSP_Frontend {
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}
 
-	public function html5_player_conditional_scripts(){
+	public function html5_player_conditional_scripts() {
 		global $largePlayerInstanceNumber;
-		if( (int) $largePlayerInstanceNumber > 0 ){
+		if ( ! (int) $largePlayerInstanceNumber > 0 ) {
 			echo '<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=' . SSP_VERSION . '" />';
 			echo '<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/css/icon_fonts.css?v=' . SSP_VERSION . '" />';
 			echo '<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/fonts/Gizmo/gizmo.css?v=' . SSP_VERSION . '" />';
 			echo '<link rel="stylesheet" href="' . SSP_PLUGIN_URL . 'assets/css/frontend.css?v=' . SSP_VERSION . '" />';
 			echo '<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=' . SSP_VERSION . '"></script>';
+		}
+	}
+
+	public function html5_player_styles() {
+		global $largePlayerInstanceNumber;
+		if ( (int) $largePlayerInstanceNumber > 0 ) {
+			?>
+			<style type="text/css">
+				.ssp-mejs-container .mejs-time-rail {
+					width: 170px !important;
+				}
+				.ssp-mejs-container .mejs-time-slider {
+					width: 160px !important;
+				}
+				.ssp-controls {
+					overflow: hidden;
+					padding: 5px 10px;
+					background: #333;
+					color: #999;
+					font-size: 0.75em;
+				}
+				.ssp-controls ul.ssp-sub-controls {
+					list-style: none;
+					margin: 0;
+					padding: 0;
+					display: inline-block;
+					float: left;
+					clear: none;
+					width: 40%;
+					-webkit-box-sizing: border-box;
+					-moz-box-sizing: border-box;
+					box-sizing: border-box;
+				}
+				.ssp-controls ul li {
+					display: inline-block;
+					padding: 3px;
+					cursor: pointer;
+					border-left: 1px solid #666;
+				}
+				.ssp-controls ul li:first-child {
+					border-left: none;
+				}
+				.ssp-controls ul li:hover {
+					color: #fff;
+				}
+				ul.ssp-ticker {
+					display: inline-block;
+					overflow: hidden;
+					position: relative;
+					width: 60%;
+					float: right;
+					clear: none;
+					margin: 2px 0 0 0;
+					padding: 0;
+				}
+				ul.ssp-ticker li {
+					overflow: hidden;
+					width: 100%;
+				}
+				ul.ssp-ticker li .ssp-ticker-banner {
+					position: absolute;
+					white-space: nowrap;
+					overflow: hidden;
+					top: 0;
+					left: 0;
+				}
+			</style>
+			<?php
 		}
 	}
 
@@ -1953,248 +2024,3 @@ class SSP_Frontend {
 	}
 
 }
-
-function example_mejs_add_container_class() {
-	return;
-	if ( ! wp_script_is( 'wp-mediaelement', 'done' ) ) {
-		return;
-	}
-	?>
-	<?php //@todo add piwik.js setup ?>
-	<script>
-		(function() {
-
-			var sspTickerBanner, sspTickerBannerContainer, sspTickerOffset;
-
-			var settings = window._wpmejsSettings || {};
-			settings.features = settings.features || mejs.MepDefaults.features;
-			settings.features.push( 'addsspclass' );
-			settings.features.push( 'addcustomcontrol' );
-			settings.features.push( 'addcustomtracking' );
-
-			MediaElementPlayer.prototype.buildaddcustomtracking = function( player, controls, layers, media ) {
-				// Play Episode
-				jQuery(media).bind( 'play', function(){
-					window.sspTrackProgress = setInterval(
-						function(){
-							//_paq.push(['trackEvent', 'Podcast', 'Play-' + Math.floor( ( media.currentTime / media.duration ) * 100 ) + '%', 'Generic'])
-						},
-						1000
-					);
-				} );
-
-				// Pause Episode
-				jQuery(media).bind( 'pause', function(){
-					//_paq.push(['trackEvent', 'Podcast', 'Pause', 'Generic']);
-						clearInterval(window.sspTrackProgress);
-				} );
-
-				// End Episode
-				jQuery(media).bind( 'ended', function(){
-					//_paq.push(['trackEvent', 'Podcast', 'Play-100%', 'Generic']);
-					clearInterval(window.sspTrackProgress);
-				} );
-			};
-
-			MediaElementPlayer.prototype.buildaddsspclass = function( player ) {
-				player.container.addClass( 'ssp-mejs-container ssp-dark' );
-			};
-
-			MediaElementPlayer.prototype.buildaddcustomcontrol = function( player, controls, layers, media ) {
-
-				var backThirtySeconds = jQuery(
-					'<div style="display:inline-block;margin:7px 3px 7px 5px !important;text-align:center;color:#fff;cursor:pointer;width:16px;height:16px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_back_30.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
-						'&nbsp;' +
-					'</div>'
-					).on( 'click', function(e){
-					media.currentTime -= 30;
-				} );
-
-				var expanCollapseButton = jQuery(
-					'<div style="display:inline-block;float:right;margin:7px 7px 5px !important;text-align:center;color:#fff;cursor:pointer;width:17px;height:17px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_download.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
-						'&nbsp;' +
-					'</div>'
-				).on( 'click', function( e ){
-				   if( jQuery( '#ssp-expanded-controls' ).is( ':hidden' ) ){
-					   //jQuery( e.currentTarget ).css( 'background', 'url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp-expand.svg"); ?>) center center no-repeat' );
-					   jQuery( '#ssp-expanded-controls:hidden' ).css( 'display', 'block' );
-					   sspTickerBanner = jQuery( '.ssp-ticker-banner' );
-					   sspTickerBannerContainer = sspTickerBanner.parent();
-					   sspTickerOffset = Math.floor( ( sspTickerBannerContainer.width() - sspTickerBanner.width() ) );
-
-					   var moved = 0;
-					   var offset, tickInterval;
-
-					   function doTickBanner(){
-						   sspTickerBanner.css( 'left','0' );
-						   window.tickInterval = setInterval( function(){
-							   moved = moved-10;
-							   if( moved <= sspTickerOffset ){
-								   sspTickerBanner.css( 'left', sspTickerOffset + 'px' );
-								   offset = 0;
-								   moved = 0;
-								   clearInterval( window.tickInterval );
-								   window.tickTimeout = setTimeout( function(){ doTickBanner() }, 2000 );
-								   return;
-							   }else{
-								   offset = moved;
-							   }
-							   moved--;
-							   sspTickerBanner.css( 'left', offset + 'px' );
-						   }, 500 );
-					   }
-					   doTickBanner();
-				   }else{
-					   //jQuery( e.currentTarget ).css( 'background', 'url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp-collapse.svg"); ?>) center center no-repeat' );
-					   jQuery( '#ssp-expanded-controls:visible' ).css( 'display', 'none' );
-					   clearInterval( window.tickInterval );
-					   clearTimeout( window.tickTimeout );
-				   };
-
-				} );
-
-				var playSpeed = jQuery(
-					'<div style="display:inline-block;margin:7px 0 7px 3px !important;text-align:center;color:#fff;cursor:pointer;width:16px;height:16px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
-						'&nbsp;' +
-					'</div>' +
-					'<div style="display:inline-block;margin:10px 8px 7px 0 !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;">' +
-						' <span id="ssp_playback_speed" data-ssp-playback-rate="1" style="display:inline-block;padding:0 3px;margin-right: 2px;">1x</span>' +
-					'</div>'
-					).on( 'click', function( e ){
-						switch( jQuery( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate' ) ){
-							case "1":
-								jQuery( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' );
-								jQuery( '[data-ssp-playback-rate]' ).text('1.5x' );
-								media.playbackRate = 1.5;
-								break;
-							case "1.5":
-								jQuery( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' );
-								jQuery( '[data-ssp-playback-rate]' ).text('2x' );
-								media.playbackRate = 2.0;
-								break;
-							case "2":
-								jQuery( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' );
-								jQuery( '[data-ssp-playback-rate]' ).text('1x' );
-								media.playbackRate = 1.0;
-							default:
-								break;
-						}
-					} );
-
-				jQuery(controls).find('.mejs-duration-container').after( backThirtySeconds, playSpeed );
-				jQuery(controls).find('.mejs-horizontal-volume-slider').after( expanCollapseButton );
-
-				// @todo player custom controls
-				var sspCustomControls = jQuery('' +
-					'<div class="ssp-controls" id="ssp-expanded-controls" style="display:none;">\n' +
-'                        <ul class="ssp-sub-controls">\n' +
-'                            <li>' +
-								'<div style="display:inline-block;margin:0 3px 0 5px !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_back_30.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
-									'&nbsp;' +
-								'</div>' +
-								'<div style="display:none;margin:0 5px 0 0 !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;">' +
-									' <span id="ssp_back_thirty">-30</span>' +
-								'</div>' +
-							'</li>\n' +
-							'<li>' +
-								'<div style="display:inline-block;margin::0 3px 0 5px !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;background: url(<?php echo content_url("plugins/seriously-simple-podcasting/assets/svg/ssp_speed.svg"); ?>) center center no-repeat;background-size: cover;padding: 0;">' +
-								'&nbsp;' +
-								'</div>' +
-								'<div style="display:inline-block;margin:0 5px 0 0 !important;text-align:center;color:#fff;cursor:pointer;width:14px;height:14px;">' +
-								' <span id="ssp_playback_speed" data-ssp-playback-rate="1" style="display:inline-block;padding-left:3px;">1x</span>' +
-								'</div>' +
-							'</li>\n' +
-'                        </ul>\n' +
-'                        <ul class="ssp-ticker">\n' +
-'                            <li>\n' +
-'                                <div class="ssp-ticker-banner">\n' +
-'                                    Some Series, Episode 1 - Dr. Dove & Company Talk Organic\n' +
-'                                </div>\n' +
-'                            </li>\n' +
-'                        </ul>\n' +
-'                    </div>');
-
-				player.container.after( sspCustomControls );
-			}
-
-		})();
-	</script>
-	<?php
-}
-add_action( 'wp_print_footer_scripts', 'example_mejs_add_container_class' );
-
-add_action( 'wp_print_footer_scripts', function(){
-	?>
-
-	<style type="text/css">
-
-		.ssp-mejs-container .mejs-time-rail{
-			width: 170px !important;
-		}
-
-		.ssp-mejs-container .mejs-time-slider{
-			width: 160px !important;
-		}
-
-		.ssp-controls{
-			overflow:hidden;
-			padding: 5px 10px;
-			background:#333;
-			color: #999;
-			font-size: 0.75em;
-		}
-
-		.ssp-controls ul.ssp-sub-controls{
-			list-style:none;
-			margin:0;
-			padding:0;
-			display: inline-block;
-			float:left;
-			clear:none;
-			width: 40%;
-			-webkit-box-sizing: border-box;
-			-moz-box-sizing: border-box;
-			box-sizing: border-box;
-		}
-
-		.ssp-controls ul li{
-			display: inline-block;
-			padding: 3px;
-			cursor: pointer;
-			border-left: 1px solid #666;
-		}
-		.ssp-controls ul li:first-child{
-			border-left: none;
-		}
-		.ssp-controls ul li:hover{
-			color: #fff;
-		}
-
-		ul.ssp-ticker{
-			display:inline-block;
-			overflow:hidden;
-			position: relative;
-			width:60%;
-			float:right;
-			clear:none;
-			margin:2px 0 0 0;
-			padding:0;
-		}
-
-		ul.ssp-ticker li{
-			overflow:hidden;
-			width: 100%;
-		}
-
-		ul.ssp-ticker li .ssp-ticker-banner{
-			position: absolute;
-			white-space: nowrap;
-			overflow: hidden;
-			top: 0;
-			left: 0;
-		}
-
-	</style>
-
-	<?php
-} );

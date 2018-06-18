@@ -159,8 +159,6 @@ class SSP_Admin {
 		// Dismiss the upgrade screen and redirect to the last screen the user was on
 		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
 		
-		// Dismiss the 1.19 update notice
-		add_action( 'init', array( $this, 'dismiss_119_update_notice' ) );
 	}
 
 	public function ssp_filter_embed_code( $code ){

@@ -27,7 +27,7 @@ class SSP_Shortcode_SS_Podcast {
 			'series' => '',
 			'echo' => false,
 			'size' => 100,
-			'link_title' => true
+			'link_title' => true,
 		);
 
 		$args = shortcode_atts( $defaults, $params, 'ss_podcast' );

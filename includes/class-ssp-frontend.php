@@ -84,6 +84,9 @@ class SSP_Frontend {
 		// Make sure to fetch all relevant post types when viewing series archive
 		add_action( 'pre_get_posts' , array( $this, 'add_all_post_types' ) );
 
+		// Make sure to fetch all relevant post types when viewing a tag archive
+		add_action( 'pre_get_posts' , array( $this, 'add_all_post_types_for_tag_archive' ) );
+
 		// Download podcast episode
 		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
@@ -1288,6 +1291,25 @@ class SSP_Frontend {
 			}
 
 		}
+
+	}
+
+	public function add_all_post_types_for_tag_archive( $query ) {
+
+		if ( is_admin() ) {
+			return;
+		}
+
+		if ( ! $query->is_main_query() ) {
+			return;
+		}
+
+		if ( !is_tag() ) {
+			return;
+		}
+
+		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array('post', 'podcast') ) ;
+		$query->set( 'post_type', $tag_archive_post_types );
 
 	}
 

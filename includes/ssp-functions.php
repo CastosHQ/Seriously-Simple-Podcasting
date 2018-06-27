@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function ssp_debug( $message, $data = '' ) {
 	if ( ! defined( 'SSP_DEBUG' ) || ! SSP_DEBUG ) {
-		//return false;
+		return false;
 	}
 	$file = SSP_LOG_PATH;
 	if ( ! is_file( $file ) ) {

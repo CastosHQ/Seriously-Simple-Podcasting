@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.9
+Stable tag: 1.19.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.11 =
+* 2018-06-27
+* [FIX] Fixes a bug related to logging introduced in the 1.19.10 release
+
+= 1.19.10 =
+* 2018-06-25
+* [FIX] Fixes a bug where using the ss_podcast shortcode with the episodes context argument doesn't show episode meta data.
+* [FIX] Adds the podcast post type to the Tag archive query.
+* [TWEAK] Removes the use of an anonymous function when loading conditional play styles
+* [TWEAK] Removing the upgrade notices related to the 1.19 release
 
 = 1.19.9 =
 * 2018-04-08

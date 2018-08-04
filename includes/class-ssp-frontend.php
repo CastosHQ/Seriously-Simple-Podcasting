@@ -219,12 +219,16 @@ class SSP_Frontend {
 		<?php
 	}
 
-
 	/**
 	 * Enqueue styles and scripts
 	 */
-	public function load_styles_and_scripts(){
-		// @todo load styles and scripts here
+	public function load_styles_and_scripts() {
+		global $large_player_instance_number;
+		if ( ! (int) $large_player_instance_number > 0 ) {
+			return;
+		}
+		wp_register_script( 'media-player', SSP_PLUGIN_URL . 'assets/js/media.player.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'media-player' );
 	}
 
 	/**
@@ -654,24 +658,8 @@ class SSP_Frontend {
 
 						<script>
 
-							// @todo _paq variable declaration
-
-							String.prototype.toFormattedDuration = function () {
-								var sec_num = parseInt(this, 10); // don't forget the second param
-								var hours   = Math.floor(sec_num / 3600);
-								var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-								var seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-								if (hours   < 10) {hours   = "0"+hours;}
-								if (minutes < 10) {minutes = "0"+minutes;}
-								if (seconds < 10) {seconds = "0"+seconds;}
-								return hours > 0 ? ( hours+':'+ minutes+':'+seconds) : (minutes+':'+seconds);
-							}
-
-							jQuery( document ).ready( function($){
-
+							document.addEventListener("DOMContentLoaded", function() {
 								(function($){
-
 									var sspUpdateDuration<?php echo $large_player_instance_number; ?>;
 
 									// Create Player

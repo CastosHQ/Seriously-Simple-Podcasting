@@ -225,8 +225,8 @@ class SSP_Frontend {
 	 * Enqueue styles and scripts
 	 */
 	public function load_styles_and_scripts() {
-		global $large_player_instance_number;
-		if ( ! (int) $large_player_instance_number > 0 ) {
+		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+		if ( 'standard' === $player_style ) {
 			return;
 		}
 		wp_register_script( 'media-player', SSP_PLUGIN_URL . 'assets/js/media.player.js', array( 'jquery' ), $this->version, true );

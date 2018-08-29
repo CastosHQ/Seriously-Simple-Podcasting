@@ -992,13 +992,13 @@ class SSP_Frontend {
 
 		if ( is_array( $terms ) ) {
 			if ( isset( $terms[0] ) ) {
-				if ( false !== get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id, '' ) ) {
+				if ( false !== get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id ) ) {
 					$itunes_url = get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id, '' );
 				}
-				if ( false !== get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id, '' ) ) {
+				if ( false !== get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id) ) {
 					$stitcher_url = get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id, '' );
 				}
-				if ( false !== get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id, '' ) ) {
+				if ( false !== get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id ) ) {
 					$google_play_url = get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id, '' );
 				}
 			}

@@ -241,6 +241,7 @@ class SSP_Admin {
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-microphone',
 			'show_in_rest'        => true,
+			'rest_base'           => 'episodes',
 		);
 
 		$args = apply_filters( 'ssp_register_post_type_args', $args );
@@ -287,6 +288,7 @@ class SSP_Admin {
 			'rewrite'      => array( 'slug' => apply_filters( 'ssp_series_slug', 'series' ) ),
 			'labels'       => $series_labels,
 			'show_in_rest' => true,
+			'rest_base'    => 'podcasts',
 		);
 
 		$series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );

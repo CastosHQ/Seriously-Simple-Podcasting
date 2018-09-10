@@ -288,7 +288,6 @@ class SSP_Admin {
 			'rewrite'      => array( 'slug' => apply_filters( 'ssp_series_slug', 'series' ) ),
 			'labels'       => $series_labels,
 			'show_in_rest' => true,
-			'rest_base'    => 'podcasts',
 		);
 
 		$series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );

@@ -575,7 +575,7 @@ HTML;
 				$series_settings  = $this->token . '_series_image_settings';
 				$default_image    = esc_url( $this->assets_url . 'images/no-image.png' );
 				$media_id         = get_term_meta( $term_id, $series_settings, true );
-				$image_attributes = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
+				$image_attributes = wp_get_attachment_image_src( $media_id );
 				$source           = ( ! is_null( $image_attributes[0] ) ) ? $image_attributes[0] : $default_image;
 				$column_data      = <<<HTML
 <img id="{$series->name}_image_preview" src="{$source}" width="auto" height="auto" style="max-width:50px;" />

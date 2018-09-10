@@ -236,7 +236,7 @@ class SSP_Admin {
 				'comments',
 				'author',
 				'custom-fields',
-				'publicize'
+				'publicize',
 			),
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-microphone',

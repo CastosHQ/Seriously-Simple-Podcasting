@@ -102,6 +102,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.12-beta =
+* 2018-09-10
+* [NEW] Updated the plugins WP REST API support
+
 = 1.19.11 =
 * 2018-06-27
 * [FIX] Fixes a bug related to logging introduced in the 1.19.10 release

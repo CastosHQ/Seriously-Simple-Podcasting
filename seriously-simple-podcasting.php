@@ -58,6 +58,7 @@ require_once 'includes/ssp-functions.php';
 require_once 'includes/class-ssp-admin.php';
 require_once 'includes/class-ssp-frontend.php';
 require_once 'includes/class-ssp-wp-rest-api.php';
+require_once 'includes/class-ssp-wp-rest-episodes-controller.php';
 require_once 'includes/class-podmotor-handler.php';
 //require_once( 'includes/class-ssp-rss-import.php' );
 

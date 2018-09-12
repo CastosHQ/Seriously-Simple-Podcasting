@@ -60,10 +60,24 @@ class SSP_WP_REST_API {
 	 * Registers the custom REST API routes
 	 */
 	public function register_rest_routes() {
-		register_rest_route( 'ssp/v1', '/podcast', array(
-			'methods'  => 'GET',
-			'callback' => array( $this, 'get_rest_podcast' ),
-		) );
+		/**
+		 * Setting up custom route for podcast
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/podcast',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'get_rest_podcast' ),
+			)
+		);
+
+		/**
+		 * Setting up custom route for episodes
+		 */
+		$controller = new WP_REST_Episodes_Controller();
+		$controller->register_routes();
+
 	}
 
 	/**
@@ -71,28 +85,28 @@ class SSP_WP_REST_API {
 	 *
 	 * @return array $podcast Podcast data
 	 */
-	public function get_rest_podcast(){
+	public function get_rest_podcast() {
 		$podcast = $this->get_default_podcast_settings();
+
 		return $podcast;
 	}
 
 
 	public function create_api_series_fields() {
 		$podcast_fields = array_keys( $this->get_default_podcast_settings() );
-		// register_rest_field ( 'name-of-post-type', 'name-of-field-to-return', array-of-callbacks-and-schema() )
+
 		foreach ( $podcast_fields as $podcast_field ) {
-			register_rest_field( 'series', $podcast_field, array(
+			register_rest_field(
+				'series',
+				$podcast_field,
+				array(
 					'get_callback' => array( $this, 'series_get_field_value' ),
 				)
 			);
-
 		}
 	}
 
 	public function series_get_field_value( $data, $field_name, $request ) {
-		//print_r($data);
-		//print_r($field_name);
-		//wp_die('here');
 		$podcast            = $this->get_default_podcast_settings();
 		$field_value        = $podcast[ $field_name ];
 		$series_id          = $data['id'];

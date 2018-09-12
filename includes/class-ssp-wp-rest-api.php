@@ -92,6 +92,9 @@ class SSP_WP_REST_API {
 	}
 
 
+	/**
+	 * Add additional fields to series taxonomy
+	 */
 	public function create_api_series_fields() {
 		$podcast_fields = array_keys( $this->get_default_podcast_settings() );
 
@@ -106,6 +109,15 @@ class SSP_WP_REST_API {
 		}
 	}
 
+	/**
+	 * Get series settings data to add to series fields added above
+	 *
+	 * @param $data
+	 * @param $field_name
+	 * @param $request
+	 *
+	 * @return mixed|void
+	 */
 	public function series_get_field_value( $data, $field_name, $request ) {
 		$podcast            = $this->get_default_podcast_settings();
 		$field_value        = $podcast[ $field_name ];

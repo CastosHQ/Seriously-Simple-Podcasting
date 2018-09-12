@@ -23,9 +23,9 @@
  */
 class WP_REST_Episodes_Controller extends WP_REST_Controller {
 
-	private $namespace;
-	private $rest_base;
-	private $post_types;
+	public $namespace;
+	public $rest_base;
+	public $post_types;
 
 	public function __construct() {
 		$this->namespace = 'ssp/v1';
@@ -144,11 +144,14 @@ class WP_REST_Episodes_Controller extends WP_REST_Controller {
 
 		// Execute the query
 		$posts_query  = new WP_Query();
+		//print_r($query_args);
 		$query_result = $posts_query->query( $query_args );
+		//print_r($query_result);
 
 		// Handle query results
 		$posts = array();
 		foreach ( $query_result as $post ) {
+
 			// Get PostController for Post Type
 			$posts_controller = new WP_REST_Posts_Controller( $post->post_type );
 

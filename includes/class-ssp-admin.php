@@ -240,8 +240,8 @@ class SSP_Admin {
 			),
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-microphone',
-			/*'show_in_rest'        => true,
-			'rest_base'           => 'episodes',*/
+			'show_in_rest'        => true,
+			/*'rest_base'           => 'episodes',*/
 		);
 
 		$args = apply_filters( 'ssp_register_post_type_args', $args );

@@ -19,7 +19,7 @@ class SSP_WP_REST_API {
 	 * @return array Podcast
 	 */
 	private function get_default_podcast_settings() {
-
+		$series_id = 0;
 		$podcast = array();
 
 		$podcast['title']           = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
@@ -34,9 +34,9 @@ class SSP_WP_REST_API {
 		$podcast['explicit_option'] = get_option( 'ss_podcasting_explicit', '' );
 		$podcast['complete_option'] = get_option( 'ss_podcasting_complete', '' );
 		$podcast['image']           = get_option( 'ss_podcasting_data_image', '' );
-		$podcast['category1']       = ssp_get_feed_category_output( 1 );
-		$podcast['category2']       = ssp_get_feed_category_output( 2 );
-		$podcast['category3']       = ssp_get_feed_category_output( 3 );
+		$podcast['category1']       = ssp_get_feed_category_output( 1, $series_id );
+		$podcast['category2']       = ssp_get_feed_category_output( 2, $series_id );
+		$podcast['category3']       = ssp_get_feed_category_output( 3, $series_id );
 
 		return $podcast;
 	}

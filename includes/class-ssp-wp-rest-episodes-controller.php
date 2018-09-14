@@ -123,7 +123,7 @@ class WP_REST_Episodes_Controller extends WP_REST_Controller {
 		 * @var Function
 		 */
 		$args       = apply_filters( "rest_episode_query", $args, $request );
-		$query_args = $this->prepare_items_query( $args, $request );
+		$query_args = $this->prepare_items_query( $args );
 
 		// Get taxonomies for each of the requested post_types
 		$taxonomies = wp_list_filter( get_object_taxonomies( $query_args['post_type'], 'objects' ), array( 'show_in_rest' => true ) );
@@ -221,9 +221,9 @@ class WP_REST_Episodes_Controller extends WP_REST_Controller {
 	 *
 	 * @return array            $query_args
 	 */
-	protected function prepare_items_query( $prepared_args = array(), $request = null ) {
+	protected function prepare_items_query( $prepared_args = array() ) {
 
-		$valid_vars = array_flip( $this->get_allowed_query_vars( $request['type'] ) );
+		$valid_vars = array_flip( $this->get_allowed_query_vars( $this->post_types ) );
 		$query_args = array();
 		foreach ( $valid_vars as $var => $index ) {
 			if ( isset( $prepared_args[ $var ] ) ) {

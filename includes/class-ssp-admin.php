@@ -210,9 +210,7 @@ class SSP_Admin {
 			'items_list_navigation' => sprintf( __( '%s list navigation', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
 			'items_list'            => sprintf( __( '%s list', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
 		);
-
 		$slug = apply_filters( 'ssp_archive_slug', __( 'podcast', 'seriously-simple-podcasting' ) );
-
 		$args = array(
 			'labels'              => $labels,
 			'public'              => true,
@@ -377,7 +375,6 @@ class SSP_Admin {
 		$upload_btn_value = __( 'Add Image', 'seriously-simple-podcasting' );
 		$upload_btn_title = __( 'Choose an image file', 'seriously-simple-podcasting' );
 		$series_img_desc  = __( "Set an image as the artwork for the series. No image will be set if not provided.", 'seriously-simple-podcasting' );
-
 		$series_img_form_label = <<<HTML
 <label>{$series_img_title}</label>
 HTML;
@@ -532,7 +529,6 @@ HTML;
 		$columns['series_image']    = __( 'Series Image', 'seriously-simple-podcasting' );
 		$columns['series_feed_url'] = __( 'Series feed URL', 'seriously-simple-podcasting' );
 		$columns['posts']           = __( 'Episodes', 'seriously-simple-podcasting' );
-
 		$columns = apply_filters( 'ssp_admin_columns_series', $columns );
 
 		return $columns;
@@ -633,7 +629,6 @@ HTML;
 	 */
 	public function meta_box_setup( $post ) {
 		global $pagenow;
-
 		add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details', 'seriously-simple-podcasting' ), array(
 			$this,
 			'meta_box_content'
@@ -731,7 +726,6 @@ HTML;
 
 				switch ( $v['type'] ) {
 					case 'file':
-
 						$upload_button = '<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File', 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />';
 						if ( ssp_is_connected_to_podcastmotor() ) {
 							$upload_button = '<div id="ssp_upload_container" style="display: inline;">';
@@ -1102,7 +1096,6 @@ HTML;
 		$num_posts = count( ssp_episodes( - 1, '', false, 'glance' ) );
 
 		$post_type_object = get_post_type_object( $this->token );
-
 		$text = _n( '%s Episode', '%s Episodes', $num_posts, 'seriously-simple-podcasting' );
 		$text = sprintf( $text, number_format_i18n( $num_posts ) );
 
@@ -1130,11 +1123,9 @@ HTML;
 		if ( ! isset( $plugin_data['slug'] ) || $this->plugin_slug != $plugin_data['slug'] ) {
 			return $plugin_meta;
 		}
-
 		$plugin_meta['docs']   = '<a href="http://www.seriouslysimplepodcasting.com/documentation/" target="_blank">' . __( 'Documentation', 'seriously-simple-podcasting' ) . '</a>';
 		$plugin_meta['addons'] = '<a href="http://www.seriouslysimplepodcasting.com/add-ons/" target="_blank">' . __( 'Add-ons', 'seriously-simple-podcasting' ) . '</a>';
 		$plugin_meta['review'] = '<a href="https://wordpress.org/support/view/plugin-reviews/' . $plugin_data['slug'] . '?rate=5#postform" target="_blank">' . __( 'Write a review', 'seriously-simple-podcasting' ) . '</a>';
-
 		return $plugin_meta;
 	}
 

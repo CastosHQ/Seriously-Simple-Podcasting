@@ -35,10 +35,12 @@ class SSP_Shortcode_SS_Player {
 			$file = $ss_podcasting->get_episode_download_link( $episode_id );
 		}
 
+		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
+		
 		// Make sure we return and don't echo.
 		$args['echo'] = false;
 
-		$shortcode_player = $ss_podcasting->load_media_player( $file, $episode_id, 'large' );
+		$shortcode_player = $ss_podcasting->load_media_player( $file, $episode_id, $player_style );
 
 		if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, 'content' ) ) {
 			$shortcode_player .= $ss_podcasting->episode_meta_details( $episode_id, 'content' );

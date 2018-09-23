@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.11
+Stable tag: 1.19.12-beta
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,8 +103,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.19.12-beta =
-* 2018-09-10
-* [NEW] Updated the plugins WP REST API support
+* 2018-09-24
+* [NEW] Updated the plugin WP REST API support
+* [FIX] Load HTML5 player code using the DOMContentLoaded event listener to prevent the player not loading if jQuery is moved to the footer
+* [FIX] Make use of the ss_podcasting_player_style global option for displaying player. (props [robertogcalle](https://github.com/robertogcalle))
+* [FIX] Use a proper text string for Text domains. (props [robertogcalle](https://github.com/robertogcalle))
+* [FIX] Fixes a bug related to subscribe urls not showing up when a series is used (props [sduret](https://github.com/sduret))
 
 = 1.19.11 =
 * 2018-06-27

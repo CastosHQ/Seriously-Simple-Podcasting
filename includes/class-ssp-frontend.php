@@ -261,7 +261,7 @@ class SSP_Frontend {
 		}
 
 		if ( $show_player && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
-			
+
 			// Get episode meta data
 			$meta = $this->episode_meta( $post->ID, 'content' );
 
@@ -381,7 +381,7 @@ class SSP_Frontend {
 
 		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
 	}
-	
+
 	/**
 	 * Get Album Art for Player
 	 *
@@ -395,16 +395,16 @@ class SSP_Frontend {
 	 * @since 1.19.4
 	 */
 	public function get_album_art( $episode_id = false ) {
-		
+
 		/**
 		 * In case the episode id is not passed
 		 */
 		if (!$episode_id){
 			return $this->get_no_album_art_image_array();
 		}
-		
+
 		$image_data_array = array();
-		
+
 		/**
 		 * Option 1 : if the episode has a featured image that is square, then use that
 		 */
@@ -415,7 +415,7 @@ class SSP_Frontend {
 				return $image_data_array;
 			}
 		}
-		
+
 		/**
 		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
 		 */
@@ -436,7 +436,7 @@ class SSP_Frontend {
 				return $image_data_array;
 			}
 		}
-		
+
 		/**
 		 * Option 3: if the feed settings have an image that is square, then use that
 		 */
@@ -448,13 +448,13 @@ class SSP_Frontend {
 				return $image_data_array;
 			}
 		}
-		
+
 		/**
 		 * None of the above passed, return the no-album-art image
 		 */
 		return $this->get_no_album_art_image_array();
 	}
-	
+
 	/**
 	 * Convert the array returned from wp_get_attachment_image_src into a human readable version
 	 * @todo check if there is a WordPress function for this
@@ -471,7 +471,7 @@ class SSP_Frontend {
 		}
 		return $new_image_data_array;
 	}
-	
+
 	/**
 	 * Check if the image in the formatted image_data_array is a square image
 	 *
@@ -487,7 +487,7 @@ class SSP_Frontend {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the no album art image
 	 *
@@ -497,7 +497,7 @@ class SSP_Frontend {
 		$src    = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
 		$width  = 300;
 		$height = 300;
-		
+
 		return compact( 'src', 'width', 'height' );
 	}
 
@@ -586,7 +586,7 @@ class SSP_Frontend {
 						<div class="ssp-player ssp-player-large" id="ssp_player_id_<?php echo $large_player_instance_number; ?>"<?php echo $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : 'background: #333;' ;?>>
 							<?php if( apply_filters( 'ssp_show_album_art', true, get_the_ID() ) ) { ?>
 								<div class="ssp-album-art-container">
-									<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
+									<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;" aria-hidden="true"></div>
 								</div>
 							<?php }; ?>
 							<div style="overflow: hidden">
@@ -606,7 +606,7 @@ class SSP_Frontend {
 										<div>&nbsp</div>
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
-												<div class="ssp-play-pause" id="ssp-play-pause">
+												<div class="ssp-play-pause" id="ssp-play-pause" aria-label="toggle play" role="button" tabindex='0'>
 													<span class="ssp-icon ssp-icon-play_icon">&nbsp;</span>
 												</div>
 												<div class="ssp-wave-form">
@@ -624,20 +624,20 @@ class SSP_Frontend {
 													<div class="ssp-volume">
 
 														<div class="ssp-back-thirty-container">
-															<div class="ssp-back-thirty-control" id="ssp-back-thirty">
+															<div class="ssp-back-thirty-control" id="ssp-back-thirty" aria-label="rewind 30 seconds" role="button" tabindex='0' >
 																<i class="ssp-icon icon-replay">&nbsp;</i>
 															</div>
 														</div>
 
 														<div class="ssp-playback-speed-label-container">
 															<div class="ssp-playback-speed-label-wrapper">
-																<span id="ssp_playback_speed<?php echo $large_player_instance_number; ?>" data-ssp-playback-rate="1">1X</span>
+																<span class="ssp-playback-speed-label" id="ssp_playback_speed<?php echo $large_player_instance_number; ?>" data-ssp-playback-rate="1" aria-label="Increase playback speed. Currently at 1x." role="button" tabindex='0'>1X</span>
 															</div>
 														</div>
 
 														<div class="ssp-download-container">
 															<div class="ssp-download-control">
-																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
+																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank" aria-label="download episode"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
 															</div>
 														</div>
 
@@ -754,7 +754,7 @@ class SSP_Frontend {
 
 									} );
 
-									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause').on( 'click', function(e){
+									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause, #ssp_player_id_<?php echo $large_player_instance_number; ?> .ssp-album-art').on( 'click', function(e){
 										window.ssp_player<?php echo $large_player_instance_number; ?>.playPause();
 									} );
 
@@ -769,27 +769,22 @@ class SSP_Frontend {
 									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp_playback_speed<?php echo $large_player_instance_number; ?>').on( 'click', function(e){
 										switch( $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate' ) ){
 											case "1":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' );
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1.5X' );
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' ).text('1.5X' ).attr('aria-label', 'Increase playback speed. Currently at 1.5x');
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(1.5);
 												break;
 											case "1.5":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' );
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('2X' );
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' ).text('2X' ).attr('aria-label', 'Reset playback speed. Currently at 2x.');
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(2);
 												break;
 											case "2":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' );
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1X' );
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' ).text('1X' ).attr('aria-label', 'Increase playback speed. Currently at 1x.');
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(1);
 											default:
 												break;
 										}
 									} );
 
-								}(jQuery))
 
-							} );
 
 						</script>
 
@@ -895,11 +890,11 @@ class SSP_Frontend {
 		if( $link && apply_filters( 'ssp_show_new_window_link', true, $context ) ) {
 			$meta['new_window'] = true;
 		}
-		
+
 		if( $link ) {
 			$meta['duration'] = $duration;
 		}
-		
+
 		if( $date_recorded ) {
 			$meta['date_recorded'] = $date_recorded;
 		}
@@ -916,7 +911,7 @@ class SSP_Frontend {
 		$subscribe_display = '';
 
 		$meta_sep = apply_filters( 'ssp_episode_meta_separator', ' | ' );
-		
+
 		foreach ( $meta as $key => $data ) {
 
 			if( ! $data ) {
@@ -937,7 +932,7 @@ class SSP_Frontend {
 					$play_link = add_query_arg( 'ref', 'new_window', $link );
 					$podcast_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
 					break;
-				
+
 				case 'duration':
 					$podcast_display .= '<span class="podcast-meta-duration">' . __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
 					break;
@@ -1054,11 +1049,11 @@ class SSP_Frontend {
 			}
 
 		}
-		
+
 		if ( ! empty( $podcast_display ) || ! empty( $subscribe_display ) ) {
-			
+
 			$meta_display .= '<div class="podcast_meta"><aside>';
-			
+
 			$ss_podcasting_player_meta_data_enabled = get_option('ss_podcasting_player_meta_data_enabled', 'on');
 
 			if ( $ss_podcasting_player_meta_data_enabled && $ss_podcasting_player_meta_data_enabled == 'on' ) {
@@ -1070,7 +1065,7 @@ class SSP_Frontend {
 					}
 				}
 			}
-			
+
 			if ( ! empty( $subscribe_display ) ) {
 				$subscribe_display = '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
 				$subscribe_display = apply_filters( 'ssp_include_podcast_subscribe_links', $subscribe_display );
@@ -1078,15 +1073,15 @@ class SSP_Frontend {
 					$meta_display .= $subscribe_display;
 				}
 			}
-			
+
 			$meta_display .= '</aside></div>';
 		}
 
 		return apply_filters('ssp_include_player_meta', $meta_display );
 
 	}
-	
-	
+
+
 	/**
 	 * Get size of media file
 	 * @param  string  $file File name & path
@@ -1731,7 +1726,7 @@ class SSP_Frontend {
 
 		return $attachment_id;
 	}
-	
+
 	/**
 	 * Get MIME type of attachment file
 	 *
@@ -1753,13 +1748,13 @@ class SSP_Frontend {
 				// Set the cache
 				wp_cache_set( $key, $mime, 'mime-type', DAY_IN_SECONDS );
 			}
-			
+
 			return $mime;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Display plugin name and version in generator meta tag
 	 * @return void

@@ -361,17 +361,17 @@ class Podmotor_Handler {
 	 *
 	 * @return array
 	 */
-	public function upload_series_to_podmotor( $series ) {
+	public function upload_series_to_podmotor( $series_data ) {
 		$this->setup_response();
 
-		if ( empty( $series ) ) {
+		if ( empty( $series_data ) ) {
 			$this->update_response( 'message', 'Invalid Series data' );
 			ssp_debug( 'Invalid Series data when uploading series data' );
 
 			return $this->response;
 		}
 
-		ssp_debug( 'Series Object', $series );
+		ssp_debug( 'Series Object', $series_data );
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 
@@ -379,10 +379,8 @@ class Podmotor_Handler {
 
 		ssp_debug( 'API URL', $api_url );
 
-		$series_data = get_series_data_for_castos( $series->term_id );
-
 		$series_data['api_token'] = $podmotor_api_token;
-		$series_data['series_id'] = $series->term_id;
+
 
 		ssp_debug( 'Parameter series_data Contents', $series_data );
 

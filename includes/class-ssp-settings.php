@@ -155,12 +155,14 @@ class SSP_Settings {
 		$this->settings = $this->settings_fields();
 	}
 
+	/**
+	 * Triggers after a feed is saved, pushes the data to Castos
+	 */
 	public function maybe_feed_saved() {
-/*		[post_type] => podcast
-		[page] => podcast_settings
-		[tab] => feed-details
-		[feed-series] => one
-		[settings-updated] => true*/
+		// Only do this if this is a Castos Customer
+		if ( ! ssp_is_connected_to_podcastmotor() ) {
+			return;
+		}
 
 		ssp_debug( array( 'About to update series' ), $_GET );
 
@@ -173,23 +175,25 @@ class SSP_Settings {
 		if ( ! isset( $_GET['tab'] ) && 'feed-details' !== $_GET['tab'] ) {
 			return;
 		}
-		if ( ! isset( $_GET['feed-series'] ) ) {
-			return;
+
+		if ( isset( $_GET['feed-series'] ) ) {
+			$feed_series_slug = ( isset( $_GET['feed-series'] ) ? filter_var( $_GET['feed-series'], FILTER_SANITIZE_STRING ) : '' );
+			if ( empty( $feed_series_slug ) ) {
+				return;
+			}
+			$series                   = get_term_by( 'slug', $feed_series_slug, 'series' );
+			$series_data              = get_series_data_for_castos( $series->term_id );
+			$series_data['series_id'] = $series->term_id;
+		} else {
+			$series_data              = get_series_data_for_castos( 0 );
+			$series_data['series_id'] = 0;
 		}
-		$feed_series_slug = ( isset( $_GET['feed-series'] ) ? filter_var( $_GET['feed-series'], FILTER_SANITIZE_STRING ) : '' );
-		if ( empty( $feed_series_slug ) ) {
-			return;
-		}
-		$series = get_term_by( 'slug', $feed_series_slug, 'series' );
 
 		$podmotor_handler = new Podmotor_Handler();
-		$response = $podmotor_handler->upload_series_to_podmotor( $series );
+		$response = $podmotor_handler->upload_series_to_podmotor( $series_data );
 
 		ssp_debug( array( 'Series Update', $response ) );
 
-		if ( 'success' == $response['status'] ) {
-
-		}
 	}
 
 	/**

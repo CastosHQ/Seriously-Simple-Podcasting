@@ -371,16 +371,18 @@ class Podmotor_Handler {
 			return $this->response;
 		}
 
+		ssp_debug( 'Series Object', $series );
+
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/series';
 
 		ssp_debug( 'API URL', $api_url );
 
-		$series_data = get_series_settings_data( $series->ID );
+		$series_data = get_series_data_for_castos( $series->term_id );
 
 		$series_data['api_token'] = $podmotor_api_token;
-		$series_data['id']        = $series->ID;
+		$series_data['series_id'] = $series->term_id;
 
 		ssp_debug( 'Parameter series_data Contents', $series_data );
 
@@ -390,8 +392,11 @@ class Podmotor_Handler {
 			)
 		);
 
+		ssp_debug( array( 'app_response' => $app_response ) );
+
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
+			ssp_debug( array( 'Response Object' => $responseObject ) );
 			if ( 'success' == $responseObject->status ) {
 				ssp_debug( 'Series data successfully uploaded to Castos' );
 				$this->update_response( 'status', 'success' );

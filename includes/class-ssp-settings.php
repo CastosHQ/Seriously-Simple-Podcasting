@@ -161,6 +161,9 @@ class SSP_Settings {
 		[tab] => feed-details
 		[feed-series] => one
 		[settings-updated] => true*/
+
+		ssp_debug( array( 'About to update series' ), $_GET );
+
 		if ( ! isset( $_GET['settings-updated'] ) && 'true' !== $_GET['settings-updated'] ) {
 			return;
 		}
@@ -182,7 +185,10 @@ class SSP_Settings {
 		$podmotor_handler = new Podmotor_Handler();
 		$response = $podmotor_handler->upload_series_to_podmotor( $series );
 
+		ssp_debug( array( 'Series Update', $response ) );
+
 		if ( 'success' == $response['status'] ) {
+
 		}
 	}
 

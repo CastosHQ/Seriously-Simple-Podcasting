@@ -991,7 +991,7 @@ if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
 	}
 }
 
-function get_series_settings_data( $series_id ) {
+function get_series_data_for_castos( $series_id ) {
 	$podcast = array();
 
 	// Podcast title
@@ -1001,7 +1001,7 @@ function get_series_settings_data( $series_id ) {
 	if ( $series_title ) {
 		$title = $series_title;
 	}
-	$podcast['title'] = $title;
+	$podcast['podcast_title'] = $title;
 
 	// Podcast description
 	$description        = get_option( 'ss_podcasting_data_description', get_bloginfo( 'description' ) );
@@ -1012,37 +1012,13 @@ function get_series_settings_data( $series_id ) {
 	$podcast_description = mb_substr( strip_tags( $description ), 0, 3999 );
 	$podcast['podcast_description'] = $podcast_description;
 
-	// Podcast language
-	$language = get_option( 'ss_podcasting_data_language', get_bloginfo( 'language' ) );
-	$series_language = get_option( 'ss_podcasting_data_language_' . $series_id, '' );
-	if ( $series_language ) {
-		$language = $series_language;
-	}
-	$podcast['language'] = $language;
-
-	// Podcast copyright string
-	$copyright        = get_option( 'ss_podcasting_data_copyright', '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ) );
-	$series_copyright = get_option( 'ss_podcasting_data_copyright_' . $series_id, '' );
-	if ( $series_copyright ) {
-		$copyright = $series_copyright;
-	}
-	$podcast['copyright'] = $copyright;
-
-	// Podcast subtitle
-	$subtitle        = get_option( 'ss_podcasting_data_subtitle', get_bloginfo( 'description' ) );
-	$series_subtitle = get_option( 'ss_podcasting_data_subtitle_' . $series_id, '' );
-	if ( $series_subtitle ) {
-		$subtitle = $series_subtitle;
-	}
-	$podcast['subtitle'] = $subtitle;
-
 	// Podcast author
 	$author        = get_option( 'ss_podcasting_data_author', get_bloginfo( 'name' ) );
 	$series_author = get_option( 'ss_podcasting_data_author_' . $series_id, '' );
 	if ( $series_author ) {
 		$author = $series_author;
 	}
-	$podcast['author'] = $author;
+	$podcast['author_name'] = $author;
 
 	// Podcast owner name
 	$owner_name        = get_option( 'ss_podcasting_data_owner_name', get_bloginfo( 'name' ) );
@@ -1050,7 +1026,7 @@ function get_series_settings_data( $series_id ) {
 	if ( $series_owner_name ) {
 		$owner_name = $series_owner_name;
 	}
-	$podcast['owner_name'] = $owner_name;
+	$podcast['podcast_owner'] = $owner_name;
 
 	// Podcast owner email address
 	$owner_email = get_option( 'ss_podcasting_data_owner_email', get_bloginfo( 'admin_email' ) );
@@ -1068,14 +1044,13 @@ function get_series_settings_data( $series_id ) {
 		$podcast['explicit'] = 0;
 	}
 
-	// Podcast complete setting
-	$complete_option = get_option( 'ss_podcasting_complete_' . $series_id, '' );
-	if ( $complete_option && 'on' == $complete_option ) {
-		$complete = 'yes';
-	} else {
-		$complete = '';
+	// Podcast language
+	$language = get_option( 'ss_podcasting_data_language', get_bloginfo( 'language' ) );
+	$series_language = get_option( 'ss_podcasting_data_language_' . $series_id, '' );
+	if ( $series_language ) {
+		$language = $series_language;
 	}
-	$podcast['complete'] = $complete;
+	$podcast['language'] = $language;
 
 	// Podcast cover image
 	$image = get_option( 'ss_podcasting_data_image', '' );
@@ -1083,12 +1058,23 @@ function get_series_settings_data( $series_id ) {
 	if ( 'no-image' != $series_image ) {
 		$image = $series_image;
 	}
-	$podcast['image'] = $image;
+	$podcast['cover_image'] = $image;
 
-	// Podcast category and subcategory (all levels) - can be filtered with `ssp_feed_category_output`
-	$podcast['category1'] = ssp_get_feed_category_output( 1, $series_id );
-	$podcast['category2'] = ssp_get_feed_category_output( 2, $series_id );
-	$podcast['category3'] = ssp_get_feed_category_output( 3, $series_id );
+	// Podcast copyright string
+	$copyright        = get_option( 'ss_podcasting_data_copyright', '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ) );
+	$series_copyright = get_option( 'ss_podcasting_data_copyright_' . $series_id, '' );
+	if ( $series_copyright ) {
+		$copyright = $series_copyright;
+	}
+	$podcast['copyright'] = $copyright;
+
+	// Podcast Categories
+	$itunes_category1 = ssp_get_feed_category_output( 1, $series_id );
+	$itunes_category2 = ssp_get_feed_category_output( 2, $series_id );
+	$itunes_category3 = ssp_get_feed_category_output( 3, $series_id );
+	$podcast['itunes_category1'] = $itunes_category1['category'];
+	$podcast['itunes_category2'] = $itunes_category2['category'];
+	$podcast['itunes_category3'] = $itunes_category3['category'];
 
 	return $podcast;
 

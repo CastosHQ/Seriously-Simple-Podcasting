@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.19.11
+ * Version: 1.19.12
  * Plugin URI: https://www.castos.com/seriously-simple-podcasting
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
@@ -35,10 +35,11 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 		</div>
 	';"
 	) );
+
 	return;
 }
 
-define( 'SSP_VERSION', '1.19.11' );
+define( 'SSP_VERSION', '1.19.12' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -53,15 +54,18 @@ define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );
 define( 'SSP_LOG_PATH', SSP_LOG_DIR_PATH . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
 define( 'SSP_LOG_URL', SSP_LOG_DIR_URL . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
 
-require_once( 'includes/ssp-functions.php' );
-require_once( 'includes/class-ssp-admin.php' );
-require_once( 'includes/class-ssp-frontend.php' );
-require_once( 'includes/class-podmotor-handler.php' );
-require_once( 'includes/class-ssp-rss-import.php' );
+require_once 'includes/ssp-functions.php';
+require_once 'includes/class-ssp-admin.php';
+require_once 'includes/class-ssp-frontend.php';
+require_once 'includes/class-ssp-wp-rest-api.php';
+require_once 'includes/class-ssp-wp-rest-episodes-controller.php';
+require_once 'includes/class-podmotor-handler.php';
+//require_once( 'includes/class-ssp-rss-import.php' );
 
-global $ssp_admin, $ss_podcasting;
-$ssp_admin     = new SSP_Admin( __FILE__, SSP_VERSION );
-$ss_podcasting = new SSP_Frontend( __FILE__, SSP_VERSION );
+global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
+$ssp_admin       = new SSP_Admin( __FILE__, SSP_VERSION );
+$ss_podcasting   = new SSP_Frontend( __FILE__, SSP_VERSION );
+$ssp_wp_rest_api = new SSP_WP_REST_API( SSP_VERSION );
 
 if ( is_admin() ) {
 	global $ssp_settings;

@@ -37,7 +37,9 @@ class SSP_Frontend {
 
 	/**
 	 * Constructor
-	 * @param 	string $file Plugin base file
+	 *
+	 * @param    string $file Plugin base file
+	 * @param    string $version
 	 */
 	public function __construct( $file, $version ) {
 
@@ -46,15 +48,15 @@ class SSP_Frontend {
 
 		$this->version = $version;
 
-		$this->dir = dirname( $file );
-		$this->file = $file;
-		$this->assets_dir = trailingslashit( $this->dir ) . 'assets';
-		$this->assets_url = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
+		$this->dir           = dirname( $file );
+		$this->file          = $file;
+		$this->assets_dir    = trailingslashit( $this->dir ) . 'assets';
+		$this->assets_url    = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
 		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
-		$this->template_url = esc_url( trailingslashit( plugins_url( '/templates/', $file ) ) );
-		$this->home_url = trailingslashit( home_url() );
-		$this->site_url = trailingslashit( site_url() );
-		$this->token = 'podcast';
+		$this->template_url  = esc_url( trailingslashit( plugins_url( '/templates/', $file ) ) );
+		$this->home_url      = trailingslashit( home_url() );
+		$this->site_url      = trailingslashit( site_url() );
+		$this->token         = 'podcast';
 
 		// Add meta data to start of podcast content
 		$locations = get_option( 'ss_podcasting_player_locations', array() );
@@ -219,12 +221,16 @@ class SSP_Frontend {
 		<?php
 	}
 
-
 	/**
 	 * Enqueue styles and scripts
 	 */
-	public function load_styles_and_scripts(){
-		// @todo load styles and scripts here
+	public function load_styles_and_scripts() {
+		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+		if ( 'standard' === $player_style ) {
+			return;
+		}
+		wp_register_script( 'media-player', SSP_PLUGIN_URL . 'assets/js/media.player.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'media-player' );
 	}
 
 	/**
@@ -246,7 +252,7 @@ class SSP_Frontend {
 			return $content;
 		}
 
-		if( post_password_required( $post->ID ) ) {
+		if ( post_password_required( $post->ID ) ) {
 			return $content;
 		}
 
@@ -254,25 +260,34 @@ class SSP_Frontend {
 
 		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );
 
-		switch( $player_visibility ) {
-			case 'all': $show_player = true; break;
-			case 'membersonly': $show_player = is_user_logged_in(); break;
-			default: $show_player = true; break;
+		switch ( $player_visibility ) {
+			case 'all':
+				$show_player = true;
+				break;
+			case 'membersonly':
+				$show_player = is_user_logged_in();
+				break;
+			default:
+				$show_player = true;
+				break;
 		}
 
 		if ( $show_player && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
-			
+
 			// Get episode meta data
 			$meta = $this->episode_meta( $post->ID, 'content' );
 
 			// Get specified player position
 			$player_position = get_option( 'ss_podcasting_player_content_location', 'above' );
 
-			switch( $player_position ) {
-				case 'above': $content = $meta . $content; break;
-				case 'below': $content = $content . $meta; break;
+			switch ( $player_position ) {
+				case 'above':
+					$content = $meta . $content;
+					break;
+				case 'below':
+					$content = $content . $meta;
+					break;
 			}
-
 		}
 
 		return $content;
@@ -280,9 +295,11 @@ class SSP_Frontend {
 
 	/**
 	 * Get episode meta data
+	 *
 	 * @param  integer $episode_id ID of episode post
-	 * @param  string  $context    Context for display
-	 * @return string          	   Episode meta
+	 * @param  string $context Context for display
+	 *
+	 * @return string               Episode meta
 	 */
 	public function episode_meta( $episode_id = 0, $context = 'content' ) {
 
@@ -321,9 +338,7 @@ class SSP_Frontend {
 				if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
 					$meta .= $this->episode_meta_details( $episode_id, $context );
 				}
-
 			}
-
 		}
 
 		$meta = apply_filters( 'ssp_episode_meta', $meta, $episode_id, $context );
@@ -399,7 +414,7 @@ class SSP_Frontend {
 		/**
 		 * In case the episode id is not passed
 		 */
-		if (!$episode_id){
+		if ( ! $episode_id ) {
 			return $this->get_no_album_art_image_array();
 		}
 		
@@ -654,24 +669,8 @@ class SSP_Frontend {
 
 						<script>
 
-							// @todo _paq variable declaration
-
-							String.prototype.toFormattedDuration = function () {
-								var sec_num = parseInt(this, 10); // don't forget the second param
-								var hours   = Math.floor(sec_num / 3600);
-								var minutes = Math.floor((sec_num - (hours * 3600)) / 60);
-								var seconds = sec_num - (hours * 3600) - (minutes * 60);
-
-								if (hours   < 10) {hours   = "0"+hours;}
-								if (minutes < 10) {minutes = "0"+minutes;}
-								if (seconds < 10) {seconds = "0"+seconds;}
-								return hours > 0 ? ( hours+':'+ minutes+':'+seconds) : (minutes+':'+seconds);
-							}
-
-							jQuery( document ).ready( function($){
-
+							document.addEventListener("DOMContentLoaded", function() {
 								(function($){
-
 									var sspUpdateDuration<?php echo $large_player_instance_number; ?>;
 
 									// Create Player
@@ -992,13 +991,13 @@ class SSP_Frontend {
 
 		if ( is_array( $terms ) ) {
 			if ( isset( $terms[0] ) ) {
-				if ( false !== get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id, '' ) ) {
+				if ( false !== get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id ) ) {
 					$itunes_url = get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id, '' );
 				}
-				if ( false !== get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id, '' ) ) {
+				if ( false !== get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id ) ) {
 					$stitcher_url = get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id, '' );
 				}
-				if ( false !== get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id, '' ) ) {
+				if ( false !== get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id ) ) {
 					$google_play_url = get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id, '' );
 				}
 			}

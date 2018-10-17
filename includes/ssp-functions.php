@@ -990,3 +990,106 @@ if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
 		return $series_ids[0];
 	}
 }
+
+function get_series_settings_data( $series_id ) {
+	$podcast = array();
+
+	// Podcast title
+	$title = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
+
+	$series_title = get_option( 'ss_podcasting_data_title_' . $series_id, '' );
+	if ( $series_title ) {
+		$title = $series_title;
+	}
+	$podcast['title'] = $title;
+
+	// Podcast description
+	$description        = get_option( 'ss_podcasting_data_description', get_bloginfo( 'description' ) );
+	$series_description = get_option( 'ss_podcasting_data_description_' . $series_id, '' );
+	if ( $series_description ) {
+		$description = $series_description;
+	}
+	$podcast_description = mb_substr( strip_tags( $description ), 0, 3999 );
+	$podcast['podcast_description'] = $podcast_description;
+
+	// Podcast language
+	$language = get_option( 'ss_podcasting_data_language', get_bloginfo( 'language' ) );
+	$series_language = get_option( 'ss_podcasting_data_language_' . $series_id, '' );
+	if ( $series_language ) {
+		$language = $series_language;
+	}
+	$podcast['language'] = $language;
+
+	// Podcast copyright string
+	$copyright        = get_option( 'ss_podcasting_data_copyright', '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ) );
+	$series_copyright = get_option( 'ss_podcasting_data_copyright_' . $series_id, '' );
+	if ( $series_copyright ) {
+		$copyright = $series_copyright;
+	}
+	$podcast['copyright'] = $copyright;
+
+	// Podcast subtitle
+	$subtitle        = get_option( 'ss_podcasting_data_subtitle', get_bloginfo( 'description' ) );
+	$series_subtitle = get_option( 'ss_podcasting_data_subtitle_' . $series_id, '' );
+	if ( $series_subtitle ) {
+		$subtitle = $series_subtitle;
+	}
+	$podcast['subtitle'] = $subtitle;
+
+	// Podcast author
+	$author        = get_option( 'ss_podcasting_data_author', get_bloginfo( 'name' ) );
+	$series_author = get_option( 'ss_podcasting_data_author_' . $series_id, '' );
+	if ( $series_author ) {
+		$author = $series_author;
+	}
+	$podcast['author'] = $author;
+
+	// Podcast owner name
+	$owner_name        = get_option( 'ss_podcasting_data_owner_name', get_bloginfo( 'name' ) );
+	$series_owner_name = get_option( 'ss_podcasting_data_owner_name_' . $series_id, '' );
+	if ( $series_owner_name ) {
+		$owner_name = $series_owner_name;
+	}
+	$podcast['owner_name'] = $owner_name;
+
+	// Podcast owner email address
+	$owner_email = get_option( 'ss_podcasting_data_owner_email', get_bloginfo( 'admin_email' ) );
+	$series_owner_email = get_option( 'ss_podcasting_data_owner_email_' . $series_id, '' );
+	if ( $series_owner_email ) {
+		$owner_email = $series_owner_email;
+	}
+	$podcast['owner_email'] = $owner_email;
+
+	// Podcast explicit setting
+	$explicit_option = get_option( 'ss_podcasting_explicit_' . $series_id, '' );
+	if ( $explicit_option && 'on' == $explicit_option ) {
+		$podcast['explicit'] = 1;
+	} else {
+		$podcast['explicit'] = 0;
+	}
+
+	// Podcast complete setting
+	$complete_option = get_option( 'ss_podcasting_complete_' . $series_id, '' );
+	if ( $complete_option && 'on' == $complete_option ) {
+		$complete = 'yes';
+	} else {
+		$complete = '';
+	}
+	$podcast['complete'] = $complete;
+
+	// Podcast cover image
+	$image = get_option( 'ss_podcasting_data_image', '' );
+	$series_image = get_option( 'ss_podcasting_data_image_' . $series_id, 'no-image' );
+	if ( 'no-image' != $series_image ) {
+		$image = $series_image;
+	}
+	$podcast['image'] = $image;
+
+	// Podcast category and subcategory (all levels) - can be filtered with `ssp_feed_category_output`
+	$podcast['category1'] = ssp_get_feed_category_output( 1, $series_id );
+	$podcast['category2'] = ssp_get_feed_category_output( 2, $series_id );
+	$podcast['category3'] = ssp_get_feed_category_output( 3, $series_id );
+
+	return $podcast;
+
+}

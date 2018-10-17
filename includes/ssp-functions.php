@@ -56,7 +56,7 @@ if ( ! function_exists( 'ssp_get_upload_directory' ) ) {
 				if ( ! is_dir( $ssp_upload_dir ) ) {
 					wp_mkdir_p( $ssp_upload_dir );
 				}
-				
+
 				return $ssp_upload_dir;
 			}
 		}
@@ -93,14 +93,14 @@ if ( ! function_exists( 'is_podcast_download' ) ) {
 	 */
 	function is_podcast_download() {
 		global $wp_query;
-		
+
 		$download = $episode = false;
-		
+
 		if ( isset( $wp_query->query_vars['podcast_episode'] ) && $wp_query->query_vars['podcast_episode'] ) {
 			$download = true;
 			$episode  = intval( $wp_query->query_vars['podcast_episode'] );
 		}
-		
+
 		return apply_filters( 'ssp_is_podcast_download', $download, $episode );
 	}
 }
@@ -116,7 +116,7 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 	 */
 	function ss_get_podcast( $args = '' ) {
 		global $ss_podcasting;
-		
+
 		return $ss_podcasting->get_podcast( $args );
 	}
 }
@@ -138,7 +138,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 	 */
 	function ss_podcast( $args = '' ) {
 		global $post, $ss_podcasting;
-		
+
 		$defaults = array(
 			'echo'         => true,
 			'link_title'   => true,
@@ -150,118 +150,118 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 			'before_title' => '<h3>',
 			'after_title'  => '</h3>'
 		);
-		
+
 		$args = wp_parse_args( $args, $defaults );
-		
+
 		// Allow child themes/plugins to filter here
 		$args = apply_filters( 'ssp_podcast_args', $args );
 		$html = '';
-		
+
 		do_action( 'ssp_podcast_before', $args );
-		
+
 		// The Query
 		$query = ss_get_podcast( $args );
-		
+
 		// The Display
 		if ( ! is_wp_error( $query ) && is_array( $query ) && count( $query ) > 0 ) {
 			$html .= $args['before'] . "\n";
-			
+
 			if ( '' != $args['title'] ) {
 				$html .= $args['before_title'] . esc_html( $args['title'] ) . $args['after_title'] . "\n";
 			}
-			
+
 			$html .= '<div class="ss_podcast">' . "\n";
-			
+
 			// Begin templating logic.
 			$tpl = '<div class="%%CLASS%%"><h4 class="podcast-title">%%TITLE%%</h4><aside class="meta">%%META%%</aside></div>';
 			$tpl = apply_filters( 'ssp_podcast_item_template', $tpl, $args );
-			
+
 			if ( $query['content'] == 'episodes' ) {
-				
+
 				$i = 0;
 				foreach ( $query as $post ) {
-					
+
 					if ( ! is_object( $post ) ) {
 						continue;
 					}
-					
+
 					$template = $tpl;
 					$i ++;
-					
+
 					setup_postdata( $post );
-					
+
 					$class = 'podcast';
-					
+
 					$title = get_the_title();
 					if ( true == $args['link_title'] ) {
 						$title = '<a href="' . esc_url( $post->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';
 					}
-					
+
 					$meta = $ss_podcasting->episode_meta( $post->ID, 'shortcode' );
-					
+
 					$template = str_replace( '%%CLASS%%', $class, $template );
 					$template = str_replace( '%%TITLE%%', $title, $template );
 					$template = str_replace( '%%META%%', $meta, $template );
-					
+
 					$html .= $template;
-					
+
 				}
-				
+
 			} else {
-				
+
 				$i = 0;
 				foreach ( $query as $series ) {
-					
+
 					if ( ! is_object( $series ) ) {
 						continue;
 					}
-					
+
 					$template = $tpl;
 					$i ++;
-					
+
 					$class = 'podcast';
-					
+
 					$title = $series->title;
 					if ( true == $args['link_title'] ) {
 						$title = '<a href="' . esc_url( $series->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';
 					}
-					
+
 					$template = str_replace( '%%CLASS%%', $class, $template );
 					$template = str_replace( '%%TITLE%%', $title, $template );
-					
+
 					$meta     = $series->count . __( ' episodes', 'seriously-simple-podcasting' );
 					$template = str_replace( '%%META%%', $meta, $template );
-					
+
 					$html .= $template;
-					
+
 				}
-				
+
 			}
-			
+
 			$html .= '<div class="fix"></div>' . "\n";
-			
+
 			$html .= '</div><!--/.ss_podcast-->' . "\n";
 			$html .= $args['after'] . "\n";
-			
+
 			wp_reset_postdata();
 		}
-		
+
 		// Allow themes/plugins to filter here
 		$html = apply_filters( 'ssp_podcast_html', $html, $query, $args );
-		
+
 		if ( ! $args['echo'] ) {
 			return $html;
 		}
-		
+
 		// Should only run if "echo" is set to true
 		echo $html;
-		
+
 		do_action( 'ssp_podcast_after', $args );
 	}
 }
 
 if ( ! function_exists( 'ssp_episode_ids' ) ) {
-	
+
 	/**
 	 * Get post IDs of all podcast episodes for all post types
 	 * @since  1.8.2
@@ -269,10 +269,10 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 	 */
 	function ssp_episode_ids() {
 		global $ss_podcasting;
-		
+
 		// Remove action to prevent infinite loop
 		remove_action( 'pre_get_posts', array( $ss_podcasting, 'add_all_post_types' ) );
-		
+
 		// Setup the default args
 		$args = array(
 			'post_type'      => array( 'podcast' ),
@@ -280,10 +280,10 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 			'posts_per_page' => - 1,
 			'fields'         => 'ids',
 		);
-		
+
 		// Do we have any additional post types to add?
 		$podcast_post_types = ssp_post_types( false );
-		
+
 		if ( ! empty( $podcast_post_types ) ) {
 			$args['post_type']  = ssp_post_types();
 			$args['meta_query'] = array(
@@ -294,28 +294,28 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 				),
 			);
 		}
-		
+
 		// Do we have this stored in the cache?
 		$key              = 'episode_ids';
 		$group            = 'ssp';
 		$podcast_episodes = wp_cache_get( $key, $group );
-		
+
 		// If nothing in cache then fetch episodes again and store in cache
 		if ( $podcast_episodes === false ) {
 			$podcast_episodes = get_posts( $args );
 			wp_cache_set( $key, $podcast_episodes, $group, HOUR_IN_SECONDS * 12 );
 		}
-		
+
 		// Reinstate action for future queries
 		add_action( 'pre_get_posts', array( $ss_podcasting, 'add_all_post_types' ) );
-		
+
 		return $podcast_episodes;
 	}
-	
+
 }
 
 if ( ! function_exists( 'ssp_episodes' ) ) {
-	
+
 	/**
 	 * Fetch all podcast episodes
 	 *
@@ -328,25 +328,25 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 	 * @return array                Array of posts or array of query args
 	 */
 	function ssp_episodes( $n = 10, $series = '', $return_args = false, $context = '' ) {
-		
+
 		// Get all podcast episodes IDs
 		$episode_ids = (array) ssp_episode_ids();
-		
+
 		if ( $context === 'glance' ) {
 			return $episode_ids;
 		}
-		
+
 		if ( empty( $episode_ids ) ) {
 			return array();
 		}
-		
+
 		// Get all valid podcast post types
 		$podcast_post_types = ssp_post_types( true );
-		
+
 		if ( empty ( $podcast_post_types ) ) {
 			return array();
 		}
-		
+
 		// Fetch podcast episodes
 		$args = array(
 			'post_type'           => $podcast_post_types,
@@ -355,35 +355,35 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			'ignore_sticky_posts' => true,
 			'post__in'            => $episode_ids,
 		);
-		
+
 		if ( $series ) {
 			$args['series'] = esc_attr( $series );
 		}
-		
+
 		$args = apply_filters( 'ssp_episode_query_args', $args, $context );
-		
+
 		if ( $return_args ) {
 			return $args;
 		}
-		
+
 		// Do we have anything in the cache here?
 		$key   = 'episodes_' . $series;
 		$group = 'ssp';
 		$posts = wp_cache_get( $key, $group );
-		
+
 		// If nothing in cache then fetch episodes again and store in cache
 		if ( $posts === false ) {
 			$posts = get_posts( $args );
 			wp_cache_add( $key, $posts, $group, HOUR_IN_SECONDS * 12 );
 		}
-		
+
 		return $posts;
 	}
-	
+
 }
 
 if ( ! function_exists( 'ssp_post_types' ) ) {
-	
+
 	/**
 	 * Fetch all valid podcast post types
 	 *
@@ -393,39 +393,39 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 	 * @return array                    Array of podcast post types
 	 */
 	function ssp_post_types( $include_podcast = true ) {
-		
+
 		// Get saved podcast post type option (default to empty array)
 		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		
+
 		if ( empty( $podcast_post_types ) && ! is_array( $podcast_post_types ) ) {
 			$podcast_post_types = array();
 		}
-		
+
 		// Add `podcast` post type to array if required
 		if ( $include_podcast ) {
 			$podcast_post_types[] = 'podcast';
 		}
-		
+
 		$valid_podcast_post_types = array();
-		
+
 		// Check if post types exist
 		if ( ! empty( $podcast_post_types ) ) {
-			
+
 			foreach ( $podcast_post_types as $type ) {
 				if ( post_type_exists( $type ) ) {
 					$valid_podcast_post_types[] = $type;
 				}
 			}
-			
+
 		}
-		
+
 		// Return only the valid podcast post types
 		return apply_filters( 'ssp_podcast_post_types', $valid_podcast_post_types, $include_podcast );
 	}
 }
 
 if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
-	
+
 	/**
 	 * Get the XML markup for the feed category at the specified level
 	 *
@@ -434,13 +434,13 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 	 * @return string        XML output for feed vategory
 	 */
 	function ssp_get_feed_category_output( $level = 1, $series_id ) {
-		
+
 		$level = (int) $level;
-		
+
 		if ( 1 == $level ) {
 			$level = '';
 		}
-		
+
 		$category = get_option( 'ss_podcasting_data_category' . $level, '' );
 		if ( $series_id ) {
 			$series_category = get_option( 'ss_podcasting_data_category' . $level . '_' . $series_id, 'no-category' );
@@ -460,17 +460,17 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 				}
 			}
 		}
-		
+
 		return apply_filters( 'ssp_feed_category_output', array(
 			'category'    => $category,
 			'subcategory' => $subcategory
 		), $level, $series_id );
 	}
-	
+
 }
 
 if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
-	
+
 	/**
 	 * Reads file in chunks so big downloads are possible without changing PHP.INI - http://codeigniter.com/wiki/Download_helper_for_large_files/
 	 *
@@ -481,38 +481,38 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 	 * @return   mixed
 	 */
 	function ssp_readfile_chunked( $file, $retbytes = true ) {
-		
+
 		$chunksize = 1 * ( 1024 * 1024 );
 		$cnt       = 0;
-		
+
 		$handle = fopen( $file, 'r' );
 		if ( $handle === false ) {
 			return false;
 		}
-		
+
 		while ( ! feof( $handle ) ) {
 			$buffer = fread( $handle, $chunksize );
 			echo $buffer;
 			ob_flush();
 			flush();
-			
+
 			if ( $retbytes ) {
 				$cnt += strlen( $buffer );
 			}
 		}
-		
+
 		$status = fclose( $handle );
-		
+
 		if ( $retbytes && $status ) {
 			return $cnt;
 		}
-		
+
 		return $status;
 	}
 }
 
 if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
-	
+
 	/**
 	 * Converts human readable file size (eg 280 kb) to bytes (286720)
 	 *
@@ -521,10 +521,10 @@ if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
 	 * @return string
 	 */
 	function convert_human_readable_to_bytes( $formatted_size ) {
-		
+
 		$formatted_size_type  = preg_replace( '/[^a-z]/', '', $formatted_size );
 		$formatted_size_value = trim( str_replace( $formatted_size_type, '', $formatted_size ) );
-		
+
 		switch ( strtoupper( $formatted_size_type ) ) {
 			case 'KB':
 				return $formatted_size_value * 1024;
@@ -544,7 +544,7 @@ if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
 
 
 if ( ! function_exists( 'ssp_is_connected_to_podcastmotor' ) ) {
-	
+
 	/**
 	 * Checks if the PodcastMotor credentials have been validated
 	 *
@@ -560,7 +560,7 @@ if ( ! function_exists( 'ssp_is_connected_to_podcastmotor' ) ) {
 				$is_connected = true;
 			}
 		}
-		
+
 		return $is_connected;
 	}
 }
@@ -598,7 +598,7 @@ if ( ! function_exists( 'ssp_get_existing_podcasts' ) ) {
 			),
 		);
 		$podcasts           = new WP_Query( $args );
-		
+
 		return $podcasts;
 	}
 } // End if().
@@ -613,7 +613,7 @@ if ( ! function_exists( 'ssp_build_podcast_data' ) ) {
 	 */
 	function ssp_build_podcast_data( $podcast_query ) {
 		$podcasts = $podcast_query->get_posts();
-		
+
 		$podcast_data = array();
 		foreach ( $podcasts as $podcast ) {
 			$podcast_data[ $podcast->ID ] = array(
@@ -624,7 +624,7 @@ if ( ! function_exists( 'ssp_build_podcast_data' ) ) {
 				'audio_file'   => get_post_meta( $podcast->ID, 'audio_file', true ),
 			);
 		}
-		
+
 		return $podcast_data;
 	}
 }
@@ -638,7 +638,7 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 	function ssp_get_importing_podcasts_count() {
 		$podmotor_import_podcasts = get_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		if ( 'true' === $podmotor_import_podcasts ) {
-			
+
 			$podcast_post_types = ssp_post_types( true );
 			$args               = array(
 				'post_type'      => $podcast_post_types,
@@ -664,7 +664,7 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 				),
 			);
 			$podcasts           = new WP_Query( $args );
-			
+
 			return $podcasts->post_count;
 		} else {
 			return 'Not importing any podcasts';
@@ -674,57 +674,57 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 
 
 if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
-	
+
 	/**
 	 * Imports existing podcasts to Seriously Simple Hosting
 	 *
 	 * @return bool
 	 */
 	function import_existing_podcast() {
-		
+
 		ssp_debug( 'Importing Existing Podcasts' );
 		$podmotor_import_podcasts = get_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-		
+
 		/**
 		 * Only if we should be importing posts
 		 */
 		if ( 'true' == $podmotor_import_podcasts ) {
 			ssp_debug( 'Import podcasts is on' );
 			$podcast_query = ssp_get_existing_podcasts();
-			
+
 			/**
 			 * Only if there are posts to import
 			 */
 			if ( $podcast_query->have_posts() ) {
 				ssp_debug( 'Podcasts exist to import' );
-				
+
 				$podcast_data = ssp_build_podcast_data( $podcast_query );
-				
+
 				$podmotor_handler         = new Podmotor_Handler();
 				$upload_podcasts_response = $podmotor_handler->upload_podcasts_to_podmotor( $podcast_data );
-				
+
 				if ( 'success' === $upload_podcasts_response['status'] ) {
-					
+
 					ssp_debug( 'Success uploading podcast data, switching off podcast importer' );
 					update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-					
+
 				} else {
 					ssp_debug( 'Error uploading podcast data' );
 					ssp_debug( $upload_podcasts_response );
 				}
-				
+
 			} else {
 				/**
 				 * There are no posts to import, disable import
 				 */
 				ssp_debug( 'Switching off podcast import' );
 				update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-				
+
 				//ssp_email_podcasts_imported();
-				
+
 				return false;
 			}
-			
+
 			return true;
 		} else {
 			return false;
@@ -733,12 +733,12 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 }
 
 if ( ! function_exists( 'ssp_trigger_import_existing_podcast_to_podmotor' ) ) {
-	
+
 	/**
 	 * Trigger the process of importing existing podcasts to Seriously Simple Hosting
 	 * @return bool
 	 */
-	
+
 	function ssp_trigger_import_existing_podcast_to_podmotor() {
 		// connect to podmotor app and insert queue
 		$unique = mktime();
@@ -766,7 +766,7 @@ if ( ! function_exists( 'ssp_trigger_import_existing_podcast_to_podmotor' ) ) {
 }
 
 if ( ! function_exists( 'ssp_download_remote_file' ) ) {
-	
+
 	/**
 	 * Takes an external file and downloads it to the server
 	 *
@@ -776,7 +776,7 @@ if ( ! function_exists( 'ssp_download_remote_file' ) ) {
 	 * @return bool|mixed file_path.
 	 */
 	function ssp_download_remote_file( $remote_file = '', $extension_override = '' ) {
-		
+
 		$response = false;
 		if ( ! empty( $remote_file ) ) {
 			$remote_file_info = pathinfo( $remote_file );
@@ -789,7 +789,7 @@ if ( ! function_exists( 'ssp_download_remote_file' ) ) {
 				$response = $file_path;
 			}
 		}
-		
+
 		return $response;
 	}
 }
@@ -809,16 +809,16 @@ if ( ! function_exists( 'ssp_import_external_rss_feed_to_ssp' ) ) {
 		if ( ! $rh || ! $wh ) {
 			return false;
 		}
-		
+
 		while ( ! feof( $rh ) ) {
 			if ( fwrite( $wh, fread( $rh, 1024 ) ) === false ) {
 				return false;
 			}
 		}
-		
+
 		fclose( $rh );
 		fclose( $wh );
-		
+
 		return true;
 	}
 }
@@ -833,10 +833,10 @@ if ( ! function_exists( 'ssp_import_external_rss_feed_to_ssp' ) ) {
 		if ( ! empty( $ss_podcasting_podcast_rss_url ) ) {
 			$ssp_importer = new SSP_RSS_Import( $ss_podcasting_podcast_rss_url );
 			$imported     = $ssp_importer->import();
-			
+
 			return $imported;
 		}
-		
+
 		return false;
 	}
 }
@@ -857,7 +857,7 @@ if ( ! function_exists( 'ssp_email_podcasts_imported' ) ) {
 		$message          .= sprintf( __( 'The Podcast import for %1$s has completed.%2$s' ), $site_name, $new_line );
 		$message          .= sprintf( __( 'Thank you for using Castos to host your podcasts.%1$s' ), $new_line );
 		$from             = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
-		
+
 		return wp_mail( $to, $subject, $message, $from );
 	}
 }
@@ -882,7 +882,7 @@ if ( ! function_exists( 'ssp_podmotor_decrypt_config' ) ) {
 				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, hex2bin( $encoding_iv ) );
 			}
 			$config = unserialize( $decrypted_token );
-			
+
 			return $config;
 		} else {
 			return false;
@@ -892,16 +892,16 @@ if ( ! function_exists( 'ssp_podmotor_decrypt_config' ) ) {
 
 if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 	function ssp_setup_upload_credentials() {
-		
+
 		$podmotor_account_id    = get_option( 'ss_podcasting_podmotor_account_id', '' );
 		$podmotor_account_email = get_option( 'ss_podcasting_podmotor_account_email', '' );
 		$podmotor_array         = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
-		
+
 		$bucket        = $podmotor_array['bucket'];
 		$show_slug     = $podmotor_array['show_slug'];
 		$access_key_id = $podmotor_array['credentials_key'];
 		$secret        = $podmotor_array['credentials_secret'];
-		
+
 		$policy = base64_encode( json_encode( array(
 			'expiration' => date( 'Y-m-d\TH:i:s.000\Z', strtotime( '+1 day' ) ),
 			// ISO 8601 - date('c'); generates uncompatible date, so better do it manually
@@ -917,12 +917,12 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 				// One more field to take into account: Filename - gets silently sent by FileReference.upload() in Flash http://docs.amazonwebservices.com/AmazonS3/latest/dev/HTTPPOSTFlash.html
 			),
 		) ) );
-		
+
 		$signature    = base64_encode( hash_hmac( 'sha1', $policy, $secret, true ) );
 		$episodes_url = SSP_PODMOTOR_EPISODES_URL;
-		
+
 		return compact( 'bucket', 'show_slug', 'episodes_url', 'access_key_id', 'policy', 'signature' );
-		
+
 	}
 }
 
@@ -962,5 +962,31 @@ if ( ! function_exists( 'ssp_check_if_podcast_has_shortcode' ) ) {
 		}
 
 		return false;
+	}
+}
+
+if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
+	/**
+	 * Get the series id from a podcast episode
+	 * Will only return the first series id if more than one exist
+	 * or zero (0) if none exist
+	 *
+	 *
+	 * @param $episode_id
+	 *
+	 * @return int
+	 */
+	function ssp_get_episode_series_id( $episode_id ) {
+		$series_id = 0;
+		$series    = wp_get_post_terms( $episode_id, 'series' );
+		if ( empty( $series ) ) {
+			return $series_id;
+		}
+		$series_ids = wp_list_pluck( $series, 'id' );
+		if ( empty( $series_ids ) ) {
+			return $series_id;
+		}
+
+		return $series_ids[0];
 	}
 }

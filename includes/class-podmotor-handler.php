@@ -235,7 +235,8 @@ class Podmotor_Handler {
 
 		if ( empty( $post ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
-			ssp_debug('Invalid Podcast data when uploading podcast data');
+			ssp_debug( 'Invalid Podcast data when uploading podcast data' );
+
 			return $this->response;
 		}
 
@@ -390,11 +391,11 @@ class Podmotor_Handler {
 			)
 		);
 
-		ssp_debug( array( 'app_response' => $app_response ) );
+		ssp_debug( 'app_response', $app_response );
 
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
-			ssp_debug( array( 'Response Object' => $responseObject ) );
+			ssp_debug( 'Response Object', $responseObject );
 			if ( 'success' == $responseObject->status ) {
 				ssp_debug( 'Series data successfully uploaded to Castos' );
 				$this->update_response( 'status', 'success' );

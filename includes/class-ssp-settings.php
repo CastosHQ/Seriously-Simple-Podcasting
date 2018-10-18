@@ -164,7 +164,7 @@ class SSP_Settings {
 			return;
 		}
 
-		ssp_debug( array( 'About to update series' ), $_GET );
+		ssp_debug( 'About to update series', $_GET );
 
 		if ( ! isset( $_GET['settings-updated'] ) && 'true' !== $_GET['settings-updated'] ) {
 			return;
@@ -192,7 +192,7 @@ class SSP_Settings {
 		$podmotor_handler = new Podmotor_Handler();
 		$response = $podmotor_handler->upload_series_to_podmotor( $series_data );
 
-		ssp_debug( array( 'Series Update', $response ) );
+		ssp_debug( 'Series Update', $response );
 
 	}
 

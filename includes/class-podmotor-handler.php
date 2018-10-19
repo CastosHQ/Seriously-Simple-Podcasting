@@ -282,8 +282,13 @@ class Podmotor_Handler {
 			)
 		);
 
+		ssp_debug( 'Upload Podcast app_response', $app_response );
+
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
+
+			ssp_debug( 'Upload Podcast Response', $responseObject );
+
 			if ( 'success' == $responseObject->status ) {
 				ssp_debug( 'Pocast episode successfully uploaded to Castos with episode id ' . $responseObject->episode_id );
 				$this->update_response( 'status', 'success' );

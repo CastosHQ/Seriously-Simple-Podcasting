@@ -1501,7 +1501,7 @@ HTML;
 
 		$response = $podmotor_handler->upload_podcast_to_podmotor( $post );
 
-		wp_debug( 'Upload Podcast to Castos Response', $response );
+		ssp_debug( 'Upload Podcast to Castos Response', $response );
 
 		if ( 'success' == $response['status'] ) {
 			$podmotor_episode_id = $response['episode_id'];

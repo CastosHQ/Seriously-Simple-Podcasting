@@ -60,7 +60,6 @@ require_once 'includes/class-ssp-frontend.php';
 require_once 'includes/class-ssp-wp-rest-api.php';
 require_once 'includes/class-ssp-wp-rest-episodes-controller.php';
 require_once 'includes/class-podmotor-handler.php';
-//require_once( 'includes/class-ssp-rss-import.php' );
 
 global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
 $ssp_admin       = new SSP_Admin( __FILE__, SSP_VERSION );

@@ -396,7 +396,7 @@ class SSP_Frontend {
 
 		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
 	}
-	
+
 	/**
 	 * Get Album Art for Player
 	 *
@@ -410,16 +410,16 @@ class SSP_Frontend {
 	 * @since 1.19.4
 	 */
 	public function get_album_art( $episode_id = false ) {
-		
+
 		/**
 		 * In case the episode id is not passed
 		 */
 		if ( ! $episode_id ) {
 			return $this->get_no_album_art_image_array();
 		}
-		
+
 		$image_data_array = array();
-		
+
 		/**
 		 * Option 1 : if the episode has a featured image that is square, then use that
 		 */
@@ -430,7 +430,7 @@ class SSP_Frontend {
 				return $image_data_array;
 			}
 		}
-		
+
 		/**
 		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
 		 */
@@ -451,7 +451,7 @@ class SSP_Frontend {
 				return $image_data_array;
 			}
 		}
-		
+
 		/**
 		 * Option 3: if the feed settings have an image that is square, then use that
 		 */
@@ -463,13 +463,13 @@ class SSP_Frontend {
 				return $image_data_array;
 			}
 		}
-		
+
 		/**
 		 * None of the above passed, return the no-album-art image
 		 */
 		return $this->get_no_album_art_image_array();
 	}
-	
+
 	/**
 	 * Convert the array returned from wp_get_attachment_image_src into a human readable version
 	 * @todo check if there is a WordPress function for this
@@ -486,7 +486,7 @@ class SSP_Frontend {
 		}
 		return $new_image_data_array;
 	}
-	
+
 	/**
 	 * Check if the image in the formatted image_data_array is a square image
 	 *
@@ -502,7 +502,7 @@ class SSP_Frontend {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the no album art image
 	 *
@@ -512,7 +512,7 @@ class SSP_Frontend {
 		$src    = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
 		$width  = 300;
 		$height = 300;
-		
+
 		return compact( 'src', 'width', 'height' );
 	}
 
@@ -894,11 +894,11 @@ class SSP_Frontend {
 		if( $link && apply_filters( 'ssp_show_new_window_link', true, $context ) ) {
 			$meta['new_window'] = true;
 		}
-		
+
 		if( $link ) {
 			$meta['duration'] = $duration;
 		}
-		
+
 		if( $date_recorded ) {
 			$meta['date_recorded'] = $date_recorded;
 		}
@@ -915,7 +915,7 @@ class SSP_Frontend {
 		$subscribe_display = '';
 
 		$meta_sep = apply_filters( 'ssp_episode_meta_separator', ' | ' );
-		
+
 		foreach ( $meta as $key => $data ) {
 
 			if( ! $data ) {
@@ -936,7 +936,7 @@ class SSP_Frontend {
 					$play_link = add_query_arg( 'ref', 'new_window', $link );
 					$podcast_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
 					break;
-				
+
 				case 'duration':
 					$podcast_display .= '<span class="podcast-meta-duration">' . __( 'Duration' , 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
 					break;
@@ -988,6 +988,7 @@ class SSP_Frontend {
 		$itunes_url = get_option( 'ss_podcasting_itunes_url', '' );
 		$stitcher_url = get_option( 'ss_podcasting_stitcher_url', '' );
 		$google_play_url = get_option( 'ss_podcasting_google_play_url', '' );
+		$spotify_url = get_option( 'ss_podcasting_spotify_url', '' );
 
 		if ( is_array( $terms ) ) {
 			if ( isset( $terms[0] ) ) {
@@ -1000,13 +1001,17 @@ class SSP_Frontend {
 				if ( false !== get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id ) ) {
 					$google_play_url = get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id, '' );
 				}
+				if ( false !== get_option( 'ss_podcasting_spotify_url_' . $terms[0]->term_id ) ) {
+					$spotify_url = get_option( 'ss_podcasting_spotify_url_' . $terms[0]->term_id, '' );
+				}
 			}
 		}
 
 		$subscribe_array = array(
 			'itunes_url' => $itunes_url,
 			'stitcher_url' => $stitcher_url,
-			'google_play_url' => $google_play_url
+			'google_play_url' => $google_play_url,
+			'spotify_url' => $spotify_url
 		);
 
 		$subscribe_urls = apply_filters( 'ssp_episode_subscribe_details', $subscribe_array, $episode_id, $context );
@@ -1035,6 +1040,10 @@ class SSP_Frontend {
 					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
 				break;
 
+				case 'spotify_url':
+					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_spotify', __( 'Spotify', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_spotify', __( 'Spotify', 'seriously-simple-podcasting' ) ) . '</a>';
+					break;
+
 				default:
 					$allowed_tags = array(
 						'strong' => array(),
@@ -1053,11 +1062,11 @@ class SSP_Frontend {
 			}
 
 		}
-		
+
 		if ( ! empty( $podcast_display ) || ! empty( $subscribe_display ) ) {
-			
+
 			$meta_display .= '<div class="podcast_meta"><aside>';
-			
+
 			$ss_podcasting_player_meta_data_enabled = get_option('ss_podcasting_player_meta_data_enabled', 'on');
 
 			if ( $ss_podcasting_player_meta_data_enabled && $ss_podcasting_player_meta_data_enabled == 'on' ) {
@@ -1069,7 +1078,7 @@ class SSP_Frontend {
 					}
 				}
 			}
-			
+
 			if ( ! empty( $subscribe_display ) ) {
 				$subscribe_display = '<p>' . __( 'Subscribe:', 'seriously-simple-podcasting' ) . ' ' . $subscribe_display . '</p>';
 				$subscribe_display = apply_filters( 'ssp_include_podcast_subscribe_links', $subscribe_display );
@@ -1077,15 +1086,15 @@ class SSP_Frontend {
 					$meta_display .= $subscribe_display;
 				}
 			}
-			
+
 			$meta_display .= '</aside></div>';
 		}
 
 		return apply_filters('ssp_include_player_meta', $meta_display );
 
 	}
-	
-	
+
+
 	/**
 	 * Get size of media file
 	 * @param  string  $file File name & path
@@ -1730,7 +1739,7 @@ class SSP_Frontend {
 
 		return $attachment_id;
 	}
-	
+
 	/**
 	 * Get MIME type of attachment file
 	 *
@@ -1752,13 +1761,13 @@ class SSP_Frontend {
 				// Set the cache
 				wp_cache_set( $key, $mime, 'mime-type', DAY_IN_SECONDS );
 			}
-			
+
 			return $mime;
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * Display plugin name and version in generator meta tag
 	 * @return void

@@ -355,6 +355,63 @@ class Podmotor_Handler {
 	}
 
 	/**
+	 * Upload series data to Castos
+	 *
+	 * @param $series
+	 *
+	 * @return array
+	 */
+	public function upload_series_to_podmotor( $series_data ) {
+		$this->setup_response();
+
+		if ( empty( $series_data ) ) {
+			$this->update_response( 'message', 'Invalid Series data' );
+			ssp_debug( 'Invalid Series data when uploading series data' );
+
+			return $this->response;
+		}
+
+		ssp_debug( 'Series Object', $series_data );
+
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+
+		$api_url = SSP_PODMOTOR_APP_URL . 'api/series';
+
+		ssp_debug( 'API URL', $api_url );
+
+		$series_data['api_token'] = $podmotor_api_token;
+
+
+		ssp_debug( 'Parameter series_data Contents', $series_data );
+
+		$app_response = wp_remote_post( $api_url, array(
+				'timeout' => 45,
+				'body'    => $series_data,
+			)
+		);
+
+		ssp_debug( array( 'app_response' => $app_response ) );
+
+		if ( ! is_wp_error( $app_response ) ) {
+			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
+			ssp_debug( array( 'Response Object' => $responseObject ) );
+			if ( 'success' == $responseObject->status ) {
+				ssp_debug( 'Series data successfully uploaded to Castos' );
+				$this->update_response( 'status', 'success' );
+				$this->update_response( 'message', 'Series data successfully uploaded to Castos' );
+			} else {
+				ssp_debug( 'An error occurred uploading the series data to Castos', $responseObject );
+				$this->update_response( 'message', 'An error occurred uploading the series data to Castos' );
+			}
+		} else {
+			ssp_debug( 'An unknown error occurred sending series data to castos: ' . $app_response->get_error_message() );
+			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
+		}
+
+		return $this->response;
+	}
+
+	/**
 	 * Creates the podcast import queue with Castos
 	 *
 	 * @param $post

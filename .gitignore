@@ -1,2 +1,5 @@
+node_modules/
 .idea
 log
+package-lock.json
+webpack.config.min.js

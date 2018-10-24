@@ -43,18 +43,11 @@ define( 'SSP_VERSION', '1.19.13-beta' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
-/*if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
+if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
 	define( 'SSP_PODMOTOR_APP_URL', 'https://app.castos.com/' );
 }
 if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
 	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.castos.com/' );
-}*/
-
-if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
-	define( 'SSP_PODMOTOR_APP_URL', 'http://app.seriouslysimplehosting.com/' );
-}
-if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
-	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://s3.amazonaws.com/seriouslysimplestaging/' );
 }
 
 define( 'SSP_LOG_DIR_PATH', SSP_PLUGIN_PATH . 'log' . DIRECTORY_SEPARATOR );

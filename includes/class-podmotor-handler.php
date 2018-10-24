@@ -6,35 +6,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 class Podmotor_Handler {
-	
+
 	/**
 	 * Array of config settings
 	 *
 	 * @var array
 	 */
 	private $podmotor_config = array();
-	
+
 	/**
 	 * S3 bucket
 	 *
 	 * @var string
 	 */
 	private $podmotor_bucket = '';
-	
+
 	/**
 	 * User's show slug
 	 *
 	 * @var string
 	 */
 	private $podmotor_show_slug = '';
-	
+
 	/**
 	 * Response array
 	 *
 	 * @var array
 	 */
 	public $response = array();
-	
+
 	/**
 	 * Podmotor_Handler constructor.
 	 */
@@ -44,7 +44,7 @@ class Podmotor_Handler {
 			$this->init_podmotor_handler();
 		}
 	}
-	
+
 	/**
 	 * Sets up the PodcastMotor Handler
 	 */
@@ -56,7 +56,7 @@ class Podmotor_Handler {
 		$this->podmotor_bucket    = $response['bucket'];
 		$this->podmotor_show_slug = $response['show_slug'];
 	}
-	
+
 	/**
 	 * Sets up the response array
 	 */
@@ -66,7 +66,7 @@ class Podmotor_Handler {
 			'message' => 'An error occurred.',
 		);
 	}
-	
+
 	/**
 	 * Updates the response array
 	 *
@@ -76,7 +76,7 @@ class Podmotor_Handler {
 	private function update_response( $key, $value ) {
 		$this->response[ $key ] = $value;
 	}
-	
+
 	/**
 	 * Get the Handler credentials from the Castos API
 	 *
@@ -86,9 +86,9 @@ class Podmotor_Handler {
 	 * @return array
 	 */
 	public function get_podmotor_bucket_credentials( $podmotor_account_id, $podmotor_account_email ) {
-		
+
 		$podmotor_array = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
-		
+
 		$config = array(
 			'version'     => $podmotor_array['version'],
 			'region'      => $podmotor_array['region'],
@@ -97,16 +97,16 @@ class Podmotor_Handler {
 				'secret' => $podmotor_array['credentials_secret'],
 			),
 		);
-		
+
 		$response = array(
 			'config'    => $config,
 			'bucket'    => $podmotor_array['bucket'],
 			'show_slug' => $podmotor_array['show_slug'],
 		);
-		
+
 		return $response;
 	}
-	
+
 	/**
 	 * Connect to Castos API and validate API credentials
 	 *
@@ -116,17 +116,17 @@ class Podmotor_Handler {
 	 * @return array
 	 */
 	public function validate_api_credentials( $podmotor_account_api_token = '', $podmotor_account_email = '' ) {
-		
+
 		$this->setup_response();
-		
+
 		if ( empty( $podmotor_account_api_token ) || empty( $podmotor_account_email ) ) {
 			$this->update_response( 'message', 'Invalid API Token or email.' );
 		}
-		
+
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/users/validate';
-		
+
 		ssp_debug( 'Validate Credentials : API URL', $api_url );
-		
+
 		$app_response = wp_remote_get( $api_url, array(
 				'timeout' => 45,
 				'body'    => array(
@@ -135,15 +135,15 @@ class Podmotor_Handler {
 				),
 			)
 		);
-		
+
 		ssp_debug( 'Validate Credentials : App Response', $app_response );
-		
+
 		if ( ! is_wp_error( $app_response ) ) {
-			
+
 			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-			
+
 			if ( ! empty( $response_object ) ) {
-				
+
 				if ( 'success' === $response_object->status ) {
 					$this->update_response( 'status', 'success' );
 					$this->update_response( 'message', 'API Credentials Validated.' );
@@ -157,10 +157,10 @@ class Podmotor_Handler {
 		} else {
 			$this->update_response( 'message', 'An error occurred connecting to the server for validation.' );
 		}
-		
+
 		return $this->response;
 	}
-	
+
 	/**
 	 * Upload PodcastMotor file stored in offsite hosting to Castos database
 	 *
@@ -169,32 +169,32 @@ class Podmotor_Handler {
 	 * @return array|mixed|object
 	 */
 	public function upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path = '' ) {
-		
+
 		$this->setup_response();
 		if ( empty( $podmotor_file_path ) ) {
 			$this->update_response( 'message', 'No file to upload' );
-			
+
 			return $this->response;
 		}
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/file';
 		ssp_debug( $api_url );
-		
+
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		ssp_debug( $podmotor_api_token );
-		
+
 		$post_body = array(
 			'api_token'          => $podmotor_api_token,
 			'podmotor_file_path' => $podmotor_file_path,
 		);
 		ssp_debug( $post_body );
-		
+
 		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
 		ssp_debug( $app_response );
-		
+
 		if ( ! is_wp_error( $app_response ) ) {
 			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( ! empty( $response_object ) ) {
@@ -217,7 +217,7 @@ class Podmotor_Handler {
 		} else {
 			$this->update_response( 'message', $app_response->get_error_message() );
 		}
-		
+
 		return $this->response;
 	}
 
@@ -230,15 +230,15 @@ class Podmotor_Handler {
 	 * @return bool
 	 */
 	public function upload_podcast_to_podmotor( $post ) {
-		
+
 		$this->setup_response();
-		
+
 		if ( empty( $post ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
 			ssp_debug('Invalid Podcast data when uploading podcast data');
 			return $this->response;
 		}
-		
+
 		/**
 		 * Don't trigger this unless we have a valid PodcastMotor file id
 		 */
@@ -248,13 +248,15 @@ class Podmotor_Handler {
 			ssp_debug( 'Invalid Podcast file data when uploading podcast data' );
 			return $this->response;
 		}
-		
+
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		
+
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/episode';
-		
+
 		ssp_debug( 'API URL', $api_url );
-		
+
+		$series_id = ssp_get_episode_series_id( $post->ID );
+
 		$post_body = array(
 			'api_token'    => $podmotor_api_token,
 			'post_id'      => $post->ID,
@@ -262,22 +264,23 @@ class Podmotor_Handler {
 			'post_content' => $post->post_content,
 			'post_date'    => $post->post_date,
 			'file_id'      => $podmotor_file_id,
+			'series_id'    => $series_id,
 		);
-		
+
 		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
-		
+
 		if ( ! empty( $podmotor_episode_id ) ) {
 			$post_body['id'] = $podmotor_episode_id;
 		}
-		
+
 		ssp_debug( 'Parameter post_body Contents', $post_body );
-		
+
 		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
-		
+
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( 'success' == $responseObject->status ) {
@@ -293,10 +296,10 @@ class Podmotor_Handler {
 			ssp_debug( 'An unknown error occurred sending podcast data to castos: ' . $app_response->get_error_message() );
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
-		
+
 		return $this->response;
 	}
-	
+
 	/**
 	 * Upload Podcasts episode data to Castos
 	 *
@@ -305,36 +308,36 @@ class Podmotor_Handler {
 	 * @return bool
 	 */
 	public function upload_podcasts_to_podmotor( $podcast_data ) {
-		
+
 		$this->setup_response();
-		
+
 		if ( empty( $podcast_data ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
-			
+
 			return $this->response;
 		}
-		
+
 		$podcast_data_json = wp_json_encode( $podcast_data );
-		
+
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		
+
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/import_episodes';
-		
+
 		$post_body = array(
 			'api_token'    => $podmotor_api_token,
 			'podcast_data' => $podcast_data_json,
 		);
-		
+
 		ssp_debug( $post_body );
-		
+
 		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
-		
+
 		ssp_debug( $app_response );
-		
+
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( 'success' == $responseObject->status ) {
@@ -347,10 +350,10 @@ class Podmotor_Handler {
 			// $todo this should be logged somewhere
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
-		
+
 		return $this->response;
 	}
-	
+
 	/**
 	 * Creates the podcast import queue with Castos
 	 *
@@ -359,33 +362,33 @@ class Podmotor_Handler {
 	 * @return bool
 	 */
 	public function insert_podmotor_queue() {
-		
+
 		$this->setup_response();
-		
+
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		ssp_debug( $podmotor_api_token );
-		
+
 		$api_url = SSP_PODMOTOR_APP_URL . 'api/insert_queue';
 		ssp_debug( $api_url );
-		
+
 		$post_body = array(
 			'api_token'   => $podmotor_api_token,
 			'site_name'   => get_bloginfo( 'name' ),
 			'site_action' => add_query_arg( 'podcast_importer', 'true', trailingslashit( site_url() ) ),
 		);
 		ssp_debug( $post_body );
-		
+
 		$app_response = wp_remote_post( $api_url, array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
 		ssp_debug( $app_response );
-		
+
 		if ( ! is_wp_error( $app_response ) ) {
 			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
 			ssp_debug( $responseObject );
-			
+
 			if ( 'success' == $responseObject->status ) {
 				$this->update_response( 'status', $responseObject->status );
 				$this->update_response( 'message', $responseObject->message );
@@ -397,8 +400,8 @@ class Podmotor_Handler {
 			// @todo somone should be notified about this
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
-		
+
 		return $this->response;
-		
+
 	}
 }

@@ -933,6 +933,16 @@ class SSP_Settings {
 					'callback'    => 'esc_url_raw',
 					'class'       => 'regular-text',
 				),
+				array(
+					'id'          => 'spotify_url',
+					'label'       => __( 'Spotify URL', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your podcast\'s Spotify URL.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'Spotify URL', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_url_raw',
+					'class'       => 'regular-text',
+				),
 			),
 		);
 

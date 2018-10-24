@@ -386,8 +386,7 @@ class Podmotor_Handler {
 		ssp_debug( 'API URL', $api_url );
 
 		$series_data['api_token'] = $podmotor_api_token;
-
-
+		
 		ssp_debug( 'Parameter series_data Contents', $series_data );
 
 		$app_response = wp_remote_post( $api_url, array(

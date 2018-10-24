@@ -979,10 +979,13 @@ if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
 	function ssp_get_episode_series_id( $episode_id ) {
 		$series_id = 0;
 		$series    = wp_get_post_terms( $episode_id, 'series' );
+
+		ssp_debug( 'Episode series for episode ID ' . $episode_id, $series );
+
 		if ( empty( $series ) ) {
 			return $series_id;
 		}
-		$series_ids = wp_list_pluck( $series, 'id' );
+		$series_ids = wp_list_pluck( $series, 'term_id' );
 		if ( empty( $series_ids ) ) {
 			return $series_id;
 		}

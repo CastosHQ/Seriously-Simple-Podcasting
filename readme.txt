@@ -103,8 +103,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.19.14 =
-* 2018-10-29
+* 2018-10-31
 * [FIX] Fixes a bug related to saving series settings
+* [FIX] Only load the REST API endpoints if WordPress is running version 4.7 or later
 
 = 1.19.13 =
 * 2018-10-24

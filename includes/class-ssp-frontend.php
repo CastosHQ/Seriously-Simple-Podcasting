@@ -17,11 +17,11 @@ class SSP_Frontend {
 
 	// @todo reference prior to analytics launch
 	public $style_guide = array(
-		'dark'      => '#3A3A3A',
-		'medium'    => '#666666',
-		'light'     => '#939393',
-		'lightest'  => '#f9f9f9',
-		'accent'    => '#ea5451'
+		'dark'     => '#3A3A3A',
+		'medium'   => '#666666',
+		'light'    => '#939393',
+		'lightest' => '#f9f9f9',
+		'accent'   => '#ea5451',
 	);
 
 	public $version;
@@ -61,15 +61,15 @@ class SSP_Frontend {
 		// Add meta data to start of podcast content
 		$locations = get_option( 'ss_podcasting_player_locations', array() );
 
-		if ( in_array( 'content', (array) $locations ) ) {
+		if ( in_array( 'content', (array) $locations, true ) ) {
 			add_filter( 'the_content', array( $this, 'content_meta_data' ), 10, 1 );
 		}
 
-		if ( in_array( 'excerpt', (array) $locations ) ) {
+		if ( in_array( 'excerpt', (array) $locations, true ) ) {
 			add_filter( 'the_excerpt', array( $this, 'get_excerpt_meta_data' ), 10, 1 );
 		}
 
-		if ( in_array( 'excerpt_embed', (array) $locations ) ) {
+		if ( in_array( 'excerpt_embed', (array) $locations, true ) ) {
 			add_filter( 'the_excerpt_embed', array( $this, 'get_embed_meta_data' ), 10, 1 );
 		}
 
@@ -78,25 +78,25 @@ class SSP_Frontend {
 		add_action( 'get_the_generator_xhtml', array( $this, 'generator_tag' ), 10, 2 );
 
 		// Add RSS meta tag to site header
-		add_action( 'wp_head' , array( $this, 'rss_meta_tag' ) );
+		add_action( 'wp_head', array( $this, 'rss_meta_tag' ) );
 
 		// Add podcast episode to main query loop if setting is activated
-		add_action( 'pre_get_posts' , array( $this, 'add_to_home_query' ) );
+		add_action( 'pre_get_posts', array( $this, 'add_to_home_query' ) );
 
 		// Make sure to fetch all relevant post types when viewing series archive
-		add_action( 'pre_get_posts' , array( $this, 'add_all_post_types' ) );
+		add_action( 'pre_get_posts', array( $this, 'add_all_post_types' ) );
 
 		// Make sure to fetch all relevant post types when viewing a tag archive
-		add_action( 'pre_get_posts' , array( $this, 'add_all_post_types_for_tag_archive' ) );
+		add_action( 'pre_get_posts', array( $this, 'add_all_post_types_for_tag_archive' ) );
 
 		// Download podcast episode
 		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
 		// Trigger import podcast process (if active)
-		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor') );
+		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor' ) );
 
 		// Update podmotor_episode_id and audio file values from import process
-		add_action( 'wp_loaded', array( $this, 'update_episode_data_from_podmotor') );
+		add_action( 'wp_loaded', array( $this, 'update_episode_data_from_podmotor' ) );
 
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );

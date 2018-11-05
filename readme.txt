@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.12
+Stable tag: 1.19.13
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.13 =
+* [NEW] Add Spotify url to Feed details and podcast meta
+* [NEW] If the user is using Castos hosting, push the series id to Castos on episode save
+* [NEW] If the user is using Castos hosting, push the series data to Castos on feed settings save
 
 = 1.19.12 =
 * 2018-09-25

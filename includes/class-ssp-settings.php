@@ -166,13 +166,13 @@ class SSP_Settings {
 
 		ssp_debug( 'About to update series', $_GET );
 
-		if ( ! isset( $_GET['settings-updated'] ) && 'true' !== $_GET['settings-updated'] ) {
+		if ( ! isset( $_GET['page'] ) || 'podcast_settings' !== $_GET['page'] ) {
 			return;
 		}
-		if ( ! isset( $_GET['post_type'] ) && 'podcast' !== $_GET['post_type'] ) {
+		if ( ! isset( $_GET['tab'] ) || 'feed-details' !== $_GET['tab'] ) {
 			return;
 		}
-		if ( ! isset( $_GET['tab'] ) && 'feed-details' !== $_GET['tab'] ) {
+		if ( ! isset( $_GET['settings-updated'] ) || 'true' !== $_GET['settings-updated'] ) {
 			return;
 		}
 

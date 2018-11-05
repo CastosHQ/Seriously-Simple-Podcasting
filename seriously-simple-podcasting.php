@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.19.13
+ * Version: 1.19.14
  * Plugin URI: https://www.castos.com/seriously-simple-podcasting
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
@@ -39,7 +39,7 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	return;
 }
 
-define( 'SSP_VERSION', '1.19.13' );
+define( 'SSP_VERSION', '1.19.14' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -58,10 +58,17 @@ define( 'SSP_LOG_URL', SSP_LOG_DIR_URL . 'ssp.log.' . date( 'd-m-y' ) . '.txt' )
 require_once 'includes/ssp-functions.php';
 require_once 'includes/class-ssp-admin.php';
 require_once 'includes/class-ssp-frontend.php';
-require_once 'includes/class-ssp-wp-rest-api.php';
-require_once 'includes/class-ssp-wp-rest-episodes-controller.php';
 require_once 'includes/class-podmotor-handler.php';
 //require_once( 'includes/class-ssp-rss-import.php' );
+
+/**
+ * Only require the REST API endpoints if the user is using WordPress greater than 4.7
+ */
+global $wp_version;
+if ( version_compare( $wp_version, '4.7', '>=' ) ) {
+	require_once 'includes/class-ssp-wp-rest-api.php';
+	require_once 'includes/class-ssp-wp-rest-episodes-controller.php';
+}
 
 global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
 $ssp_admin       = new SSP_Admin( __FILE__, SSP_VERSION );

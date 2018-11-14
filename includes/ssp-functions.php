@@ -935,8 +935,10 @@ if( !function_exists( 'ssp_get_image_id_from_url' ) ){
 	 * @return mixed
 	 */
 	function ssp_get_image_id_from_url( $image_url ){
+		$relative_image_url = str_replace( get_site_url(), '', $image_url );
 		global $wpdb;
-		$attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid='%s';", $image_url ) );
+		// double escaped placeholder to allow for LIKE wildcard search
+		$attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid LIKE '%%%s%%' LIMIT 1;", $relative_image_url ) );
 		return isset( $attachment[0] ) ? $attachment[0] : false;
 	}
 }

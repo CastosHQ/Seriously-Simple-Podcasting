@@ -478,12 +478,14 @@ class SSP_Frontend {
 	 *
 	 * @return mixed
 	 */
-	private function return_renamed_image_array_keys($image_data_array){
+	private function return_renamed_image_array_keys( $image_data_array ) {
+		$new_image_data_array = array();
 		if ( $image_data_array && ! empty( $image_data_array ) ) {
-			$new_image_data_array['src']    = isset($image_data_array[0]) ? $image_data_array[0] : '' ;
-			$new_image_data_array['width']  = isset($image_data_array[1]) ? $image_data_array[1] : '' ;
-			$new_image_data_array['height'] = isset($image_data_array[2]) ? $image_data_array[2] : '' ;
+			$new_image_data_array['src']    = isset( $image_data_array[0] ) ? $image_data_array[0] : '';
+			$new_image_data_array['width']  = isset( $image_data_array[1] ) ? $image_data_array[1] : '';
+			$new_image_data_array['height'] = isset( $image_data_array[2] ) ? $image_data_array[2] : '';
 		}
+
 		return $new_image_data_array;
 	}
 

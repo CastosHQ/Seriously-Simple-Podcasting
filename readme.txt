@@ -102,6 +102,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.15-beta =
+* 2018-11-16
+* [FIX] Fixes a bug when attempting to locate the fallback podcast episode player image
+* [FIX] Fixes an error related to not initialising an $image_data_array variable
+* [TWEAK] Minor code improvements
+
 = 1.19.14 =
 * 2018-10-31
 * [FIX] Fixes a bug related to saving series settings

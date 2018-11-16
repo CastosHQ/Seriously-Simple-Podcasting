@@ -411,13 +411,10 @@ class SSP_Frontend {
 	 */
 	public function get_album_art( $episode_id = false ) {
 
-		ssp_debug( 'Get Album Art for Episode', $episode_id );
-
 		/**
 		 * In case the episode id is not passed
 		 */
 		if ( ! $episode_id ) {
-			ssp_debug( 'Get Album Art for Episode', 'Empty episode ID' );
 			return $this->get_no_album_art_image_array();
 		}
 
@@ -429,18 +426,7 @@ class SSP_Frontend {
 			$image_data_array = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $thumb_id, 'medium' ) );
 			if ( $this->check_image_is_square( $image_data_array ) ) {
 				return $image_data_array;
-			} else {
-				ssp_debug(
-					'Episode Featured Image Check',
-					array(
-						'error'      => 'Image is not square',
-						'episode_id' => $episode_id,
-						'thumb_id'   => $thumb_id,
-					)
-				);
 			}
-		} else {
-			ssp_debug( 'Episode Featured Image Check', array( 'error' => 'Empty Thumb ID' ) );
 		}
 
 		/**
@@ -450,12 +436,10 @@ class SSP_Frontend {
 		$series_image = '';
 
 		$series = get_the_terms( $episode_id, 'series' );
-		ssp_debug( 'Series Image Check', array( 'series' => $series ) );
 
 		if ( $series ) {
 			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : false;
 		}
-		ssp_debug( 'Series Image Check', array( 'series_id' => $series_id ) );
 
 		if ( $series_id ) {
 			$series_image = get_option( "ss_podcasting_data_image_{$series_id}", false );
@@ -466,18 +450,7 @@ class SSP_Frontend {
 			$image_data_array           = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $series_image_attachment_id, 'medium' ) );
 			if ( $this->check_image_is_square( $image_data_array ) ) {
 				return $image_data_array;
-			} else {
-				ssp_debug(
-					'Series Image Check',
-					array(
-						'error'                      => 'Image is not square',
-						'series_id'                  => $series_id,
-						'series_image_attachment_id' => $series_image_attachment_id,
-					)
-				);
 			}
-		} else {
-			ssp_debug( 'Series Image Check', array( 'error' => 'Empty Series Image' ) );
 		}
 
 		/**
@@ -489,24 +462,12 @@ class SSP_Frontend {
 			$image_data_array         = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $feed_image_attachment_id, 'medium' ) );
 			if ( $this->check_image_is_square( $image_data_array ) ) {
 				return $image_data_array;
-			} else {
-				ssp_debug(
-					'Feed Image Check',
-					array(
-						'error'                    => 'Image is not square',
-						'feed_image'               => $feed_image,
-						'feed_image_attachment_id' => $feed_image_attachment_id,
-					)
-				);
 			}
-		} else {
-			ssp_debug( 'Feed Image Check', array( 'error' => 'Empty Feed Image' ) );
 		}
 
 		/**
 		 * None of the above passed, return the no-album-art image
 		 */
-		ssp_debug( 'Get Album Art for Episode', 'Cannot find a relevant image' );
 		return $this->get_no_album_art_image_array();
 	}
 
@@ -519,6 +480,7 @@ class SSP_Frontend {
 	 * @return mixed
 	 */
 	private function return_renamed_image_array_keys( $image_data_array ) {
+		$new_image_data_array = array();
 		if ( $image_data_array && ! empty( $image_data_array ) ) {
 			$new_image_data_array['src']    = isset( $image_data_array[0] ) ? $image_data_array[0] : '';
 			$new_image_data_array['width']  = isset( $image_data_array[1] ) ? $image_data_array[1] : '';
@@ -549,7 +511,7 @@ class SSP_Frontend {
 	 *
 	 * @return array
 	 */
-	private function get_no_album_art_image_array(){
+	private function get_no_album_art_image_array() {
 		$src    = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
 		$width  = 300;
 		$height = 300;

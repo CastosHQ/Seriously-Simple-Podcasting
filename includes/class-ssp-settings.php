@@ -51,7 +51,7 @@ class SSP_Settings {
 	 * @var string
 	 */
 	private $home_url;
-	
+
 	/**
 	 * Templates Directory
 	 *
@@ -102,6 +102,8 @@ class SSP_Settings {
 
 		add_action( 'init', array( $this, 'load_settings' ), 11 );
 
+		add_action( 'init', array( $this, 'maybe_feed_saved' ), 11 );
+
 		// Register podcast settings.
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 
@@ -127,6 +129,7 @@ class SSP_Settings {
 		// process the import form submission
 		add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
+		// Trigger the disconnect action
 		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array( $this, 'maybe_disconnect_from_castos' ), 10, 2 );
 
 		// Quick and dirty colour picker implementation
@@ -150,6 +153,47 @@ class SSP_Settings {
 	 */
 	public function load_settings() {
 		$this->settings = $this->settings_fields();
+	}
+
+	/**
+	 * Triggers after a feed is saved, pushes the data to Castos
+	 */
+	public function maybe_feed_saved() {
+		// Only do this if this is a Castos Customer
+		if ( ! ssp_is_connected_to_podcastmotor() ) {
+			return;
+		}
+
+		ssp_debug( 'About to update series', $_GET );
+
+		if ( ! isset( $_GET['page'] ) || 'podcast_settings' !== $_GET['page'] ) {
+			return;
+		}
+		if ( ! isset( $_GET['tab'] ) || 'feed-details' !== $_GET['tab'] ) {
+			return;
+		}
+		if ( ! isset( $_GET['settings-updated'] ) || 'true' !== $_GET['settings-updated'] ) {
+			return;
+		}
+
+		if ( isset( $_GET['feed-series'] ) ) {
+			$feed_series_slug = ( isset( $_GET['feed-series'] ) ? filter_var( $_GET['feed-series'], FILTER_SANITIZE_STRING ) : '' );
+			if ( empty( $feed_series_slug ) ) {
+				return;
+			}
+			$series                   = get_term_by( 'slug', $feed_series_slug, 'series' );
+			$series_data              = get_series_data_for_castos( $series->term_id );
+			$series_data['series_id'] = $series->term_id;
+		} else {
+			$series_data              = get_series_data_for_castos( 0 );
+			$series_data['series_id'] = 0;
+		}
+
+		$podmotor_handler = new Podmotor_Handler();
+		$response = $podmotor_handler->upload_series_to_podmotor( $series_data );
+
+		ssp_debug( 'Series Update', $response );
+
 	}
 
 	/**
@@ -179,7 +223,7 @@ class SSP_Settings {
 			'show_upgrade_page',
 		) );
 	}
-	
+
 	/**
 	 * Show the upgrade page
 	 */
@@ -886,6 +930,16 @@ class SSP_Settings {
 					'type'        => 'text',
 					'default'     => '',
 					'placeholder' => __( 'Google Play URL', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_url_raw',
+					'class'       => 'regular-text',
+				),
+				array(
+					'id'          => 'spotify_url',
+					'label'       => __( 'Spotify URL', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your podcast\'s Spotify URL.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'Spotify URL', 'seriously-simple-podcasting' ),
 					'callback'    => 'esc_url_raw',
 					'class'       => 'regular-text',
 				),
@@ -1785,7 +1839,7 @@ class SSP_Settings {
 
 	public function submit_import_form() {
 		$action = ( isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : '' );
-		
+
 		if ( ! empty( $action ) && 'post_import_form' === $action ) {
 			check_admin_referer( 'ss_podcasting-import' );
 			$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );

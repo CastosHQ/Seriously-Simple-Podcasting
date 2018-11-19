@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.11
+Stable tag: 1.19.14
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,25 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.14 =
+* 2018-10-31
+* [FIX] Fixes a bug related to saving series settings
+* [FIX] Only load the REST API endpoints if WordPress is running version 4.7 or later
+
+= 1.19.13 =
+* 2018-10-24
+* [NEW] Add Spotify url to Feed details and podcast meta
+* [NEW] If the user is using Castos hosting, push the series id to Castos on episode save
+* [NEW] If the user is using Castos hosting, push the series data to Castos on feed settings save
+
+= 1.19.12 =
+* 2018-09-25
+* [NEW] Updated the plugin WP REST API support
+* [FIX] Load HTML5 player code using the DOMContentLoaded event listener to prevent the player not loading if jQuery is moved to the footer
+* [FIX] Make use of the ss_podcasting_player_style global option for displaying player. (props [robertogcalle](https://github.com/robertogcalle))
+* [FIX] Use a proper text string for Text domains. (props [robertogcalle](https://github.com/robertogcalle))
+* [FIX] Fixes a bug related to subscribe urls not showing up when a series is used (props [sduret](https://github.com/sduret))
 
 = 1.19.11 =
 * 2018-06-27

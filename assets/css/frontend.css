@@ -259,3 +259,20 @@
 .ssp-playlist-tracks .ssp-playlist-item.ssp-playlist-playing  a.ssp-playlist-caption{
     font-weight: bold;
 }
+
+/* Interactivity indicators */
+.ssp-album-art:hover,
+.ssp-play-pause:hover,
+.ssp-play-pause:focus,
+.ssp-player.ssp-player-large .ssp-back-thirty-control:hover,
+.ssp-player.ssp-player-large .ssp-back-thirty-control:focus,
+.ssp-player.ssp-player-large .ssp-playback-speed-label:hover,
+.ssp-player.ssp-player-large .ssp-playback-speed-label:focus,
+.ssp-player.ssp-player-large .ssp-download-control a:hover,
+.ssp-player.ssp-player-large .ssp-download-control a:focus {
+    color:#bbb;
+    cursor: pointer;
+}
+.ssp-album-art:hover {
+    filter: brightness(.85);
+}

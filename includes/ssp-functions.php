@@ -794,7 +794,7 @@ if ( ! function_exists( 'ssp_download_remote_file' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_import_external_rss_feed_to_ssp' ) ) {
+if ( ! function_exists( 'ssp_download_file' ) ) {
 	/**
 	 * Download external file in chunks
 	 *
@@ -820,24 +820,6 @@ if ( ! function_exists( 'ssp_import_external_rss_feed_to_ssp' ) ) {
 		fclose( $wh );
 
 		return true;
-	}
-}
-
-
-if ( ! function_exists( 'ssp_import_external_rss_feed_to_ssp' ) ) {
-	/**
-	 * Import Podcast Episodes from an external feed
-	 */
-	function ssp_import_external_rss_feed_to_ssp() {
-		$ss_podcasting_podcast_rss_url = get_option( 'ss_podcasting_podcast_rss_url', '' );
-		if ( ! empty( $ss_podcasting_podcast_rss_url ) ) {
-			$ssp_importer = new SSP_RSS_Import( $ss_podcasting_podcast_rss_url );
-			$imported     = $ssp_importer->import();
-
-			return $imported;
-		}
-
-		return false;
 	}
 }
 

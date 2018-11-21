@@ -671,9 +671,9 @@ class SSP_Frontend {
 						</div>
 
 						<script>
-
-							document.addEventListener("DOMContentLoaded", function() {
-								(function($){
+							// @todo move this to a separate enqueued file and use data attributes
+							document.addEventListener("DOMContentLoaded", function () {
+								(function ($) {
 									var sspUpdateDuration<?php echo $large_player_instance_number; ?>;
 
 									// Create Player
@@ -707,86 +707,86 @@ class SSP_Frontend {
 									// @todo Track Player errors
 
 									// On Media Ready
-									window.ssp_player<?php echo $large_player_instance_number; ?>.on( 'ready', function(e){
+									window.ssp_player<?php echo $large_player_instance_number; ?>.on('ready', function (e) {
 
-										if(!window.ssp_player<?php echo $large_player_instance_number; ?>.loaded) {
+										if (!window.ssp_player<?php echo $large_player_instance_number; ?>.loaded) {
 											window.ssp_player<?php echo $large_player_instance_number; ?>.loaded = true;
 											window.ssp_player<?php echo $large_player_instance_number; ?>.play();
 										}
 
-										$( '#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspTotalDuration' ).text( window.ssp_player<?php echo $large_player_instance_number; ?>.getDuration().toString().toFormattedDuration() );
-										$( '#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration' ).text( window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration() );
-									} );
+										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspTotalDuration').text(window.ssp_player<?php echo $large_player_instance_number; ?>.getDuration().toString().toFormattedDuration());
+										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration').text(window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration());
+									});
 
 									// On Media Played
-									window.ssp_player<?php echo $large_player_instance_number; ?>.on( 'play', function(e){
+									window.ssp_player<?php echo $large_player_instance_number; ?>.on('play', function (e) {
 
-										if(!window.ssp_player<?php echo $large_player_instance_number; ?>.loaded) {
+										if (!window.ssp_player<?php echo $large_player_instance_number; ?>.loaded) {
 											window.ssp_player<?php echo $large_player_instance_number; ?>.load(window.ssp_player<?php echo $large_player_instance_number; ?>.track, window.ssp_player<?php echo $large_player_instance_number; ?>.backend.peaks);
 										}
 
 										// @todo Track Podcast Specific Play
 
-										$( '#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-pause_icon' );
-										$( '#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration' ).text( window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration() )
+										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon').removeClass().addClass('ssp-icon ssp-icon-pause_icon');
+										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration').text(window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration())
 
-										sspUpdateDuration<?php echo $large_player_instance_number; ?> = setInterval( function(){
-											$( '#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration' ).text( window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration() );
-										}, 100 );
+										sspUpdateDuration<?php echo $large_player_instance_number; ?> = setInterval(function () {
+											$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration').text(window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration());
+										}, 100);
 
-									} );
+									});
 
 									// On Media Paused
-									window.ssp_player<?php echo $large_player_instance_number; ?>.on( 'pause', function(e){
+									window.ssp_player<?php echo $large_player_instance_number; ?>.on('pause', function (e) {
 
 										// @todo Track Podcast Specific Pause
 
-										$( '#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
+										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon').removeClass().addClass('ssp-icon ssp-icon-play_icon');
 
-										clearInterval( sspUpdateDuration<?php echo $large_player_instance_number; ?> );
+										clearInterval(sspUpdateDuration<?php echo $large_player_instance_number; ?> );
 
-									} );
+									});
 
 									// On Media Finished
-									window.ssp_player<?php echo $large_player_instance_number; ?>.on( 'finish', function(e){
+									window.ssp_player<?php echo $large_player_instance_number; ?>.on('finish', function (e) {
 
-										$( '#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon' ).removeClass().addClass( 'ssp-icon ssp-icon-play_icon' );
+										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon').removeClass().addClass('ssp-icon ssp-icon-play_icon');
 
 										// @todo Track Podcast Specific Finish
 
-									} );
+									});
 
-									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause, #ssp_player_id_<?php echo $large_player_instance_number; ?> .ssp-album-art').on( 'click', function(e){
+									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause, #ssp_player_id_<?php echo $large_player_instance_number; ?> .ssp-album-art').on('click', function (e) {
 										window.ssp_player<?php echo $large_player_instance_number; ?>.playPause();
-									} );
+									});
 
-									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-back-thirty').on( 'click', function(e){
+									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-back-thirty').on('click', function (e) {
 
 										// @todo Track Podcast Specific Back 30
 
 										window.ssp_player<?php echo $large_player_instance_number; ?>.skipBackward();
 
-									} );
+									});
 
-									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp_playback_speed<?php echo $large_player_instance_number; ?>').on( 'click', function(e){
-										switch( $( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate' ) ){
+									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp_playback_speed<?php echo $large_player_instance_number; ?>').on('click', function (e) {
+										switch ($(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate')) {
 											case "1":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' ).text('1.5X' ).attr('aria-label', 'Increase playback speed. Currently at 1.5x');
+												$(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate', '1.5').text('1.5X').attr('aria-label', 'Increase playback speed. Currently at 1.5x');
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(1.5);
 												break;
 											case "1.5":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' ).text('2X' ).attr('aria-label', 'Reset playback speed. Currently at 2x.');
+												$(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate', '2').text('2X').attr('aria-label', 'Reset playback speed. Currently at 2x.');
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(2);
 												break;
 											case "2":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' ).text('1X' ).attr('aria-label', 'Increase playback speed. Currently at 1x.');
+												$(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate', '1').text('1X').attr('aria-label', 'Increase playback speed. Currently at 1x.');
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(1);
 											default:
 												break;
 										}
-									} );
-
-
+									});
+								});
+							});
 
 						</script>
 

@@ -127,14 +127,18 @@ class Podmotor_Handler {
 
 		ssp_debug( 'Validate Credentials : API URL', $api_url );
 
-		$app_response = wp_remote_get( $api_url, array(
-				'timeout' => 45,
-				'body'    => array(
-					'api_token' => $podmotor_account_api_token,
-					'email'     => $podmotor_account_email,
-				),
-			)
+		$api_payload = array(
+			'timeout' => 45,
+			'body'    => array(
+				'api_token' => $podmotor_account_api_token,
+				'email'     => $podmotor_account_email,
+				'website'   => get_site_url(),
+			),
 		);
+
+		ssp_debug( 'Validate Credentials : Api Payload', $api_payload );
+
+		$app_response = wp_remote_get( $api_url, $api_payload );
 
 		ssp_debug( 'Validate Credentials : App Response', $app_response );
 
@@ -386,7 +390,7 @@ class Podmotor_Handler {
 		ssp_debug( 'API URL', $api_url );
 
 		$series_data['api_token'] = $podmotor_api_token;
-		
+
 		ssp_debug( 'Parameter series_data Contents', $series_data );
 
 		$app_response = wp_remote_post( $api_url, array(

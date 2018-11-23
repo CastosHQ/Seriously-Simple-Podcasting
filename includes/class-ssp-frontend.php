@@ -604,7 +604,7 @@ class SSP_Frontend {
 						<div class="ssp-player ssp-player-large" id="ssp_player_id_<?php echo $large_player_instance_number; ?>"<?php echo $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : 'background: #333;' ;?>>
 							<?php if( apply_filters( 'ssp_show_album_art', true, get_the_ID() ) ) { ?>
 								<div class="ssp-album-art-container">
-									<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;" aria-hidden="true"></div>
+									<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
 								</div>
 							<?php }; ?>
 							<div style="overflow: hidden">
@@ -624,7 +624,7 @@ class SSP_Frontend {
 										<div>&nbsp</div>
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
-												<div class="ssp-play-pause" id="ssp-play-pause" aria-label="toggle play" role="button" tabindex='0'>
+												<div class="ssp-play-pause" id="ssp-play-pause">
 													<span class="ssp-icon ssp-icon-play_icon">&nbsp;</span>
 												</div>
 												<div class="ssp-wave-form">
@@ -642,20 +642,20 @@ class SSP_Frontend {
 													<div class="ssp-volume">
 
 														<div class="ssp-back-thirty-container">
-															<div class="ssp-back-thirty-control" id="ssp-back-thirty" aria-label="rewind 30 seconds" role="button" tabindex='0' >
+															<div class="ssp-back-thirty-control" id="ssp-back-thirty">
 																<i class="ssp-icon icon-replay">&nbsp;</i>
 															</div>
 														</div>
 
 														<div class="ssp-playback-speed-label-container">
 															<div class="ssp-playback-speed-label-wrapper">
-																<span class="ssp-playback-speed-label" id="ssp_playback_speed<?php echo $large_player_instance_number; ?>" data-ssp-playback-rate="1" aria-label="Increase playback speed. Currently at 1x." role="button" tabindex='0'>1X</span>
+																<span id="ssp_playback_speed<?php echo $large_player_instance_number; ?>" data-ssp-playback-rate="1">1X</span>
 															</div>
 														</div>
 
 														<div class="ssp-download-container">
 															<div class="ssp-download-control">
-																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank" aria-label="download episode"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
+																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
 															</div>
 														</div>
 
@@ -756,7 +756,7 @@ class SSP_Frontend {
 
 									});
 
-									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause, #ssp_player_id_<?php echo $large_player_instance_number; ?> .ssp-album-art').on('click', function (e) {
+									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause').on( 'click', function(e){
 										window.ssp_player<?php echo $large_player_instance_number; ?>.playPause();
 									});
 
@@ -771,22 +771,27 @@ class SSP_Frontend {
 									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp_playback_speed<?php echo $large_player_instance_number; ?>').on('click', function (e) {
 										switch ($(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate')) {
 											case "1":
-												$(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate', '1.5').text('1.5X').attr('aria-label', 'Increase playback speed. Currently at 1.5x');
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' );
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1.5X' );
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(1.5);
 												break;
 											case "1.5":
-												$(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate', '2').text('2X').attr('aria-label', 'Reset playback speed. Currently at 2x.');
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' );
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('2X' );
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(2);
 												break;
 											case "2":
-												$(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate', '1').text('1X').attr('aria-label', 'Increase playback speed. Currently at 1x.');
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' );
+												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1X' );
 												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(1);
 											default:
 												break;
 										}
-									});
-								});
-							});
+									} );
+
+								}(jQuery))
+
+							} );
 
 						</script>
 

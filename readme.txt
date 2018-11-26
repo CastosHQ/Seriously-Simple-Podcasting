@@ -102,8 +102,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.19.15-beta =
-* 2018-11-21
+= 1.19.15 =
+* 2018-11-26
 * [FIX] Fixes a bug when attempting to locate the fallback podcast episode player image
 * [FIX] Fixes an error related to not initialising an $image_data_array variable when rendering the player image
 * [FIX] Cleaned up unused RSS importer code (props [@adduc](https://github.com/adduc))

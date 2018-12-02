@@ -783,7 +783,9 @@ class SSP_Frontend {
 										}
 									} );
 
+                                }(jQuery))
 
+                            } );
 
 						</script>
 

@@ -256,6 +256,11 @@ class SSP_Frontend {
 			return $content;
 		}
 
+		// Don't output episode meta in a REST Request
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return $content;
+		}
+
 		$podcast_post_types = ssp_post_types( true );
 
 		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );
@@ -1225,6 +1230,11 @@ class SSP_Frontend {
 			return $excerpt;
 		}
 
+		// Don't output episode meta in a REST Request
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return $content;
+		}
+
 		$podcast_post_types = ssp_post_types( true );
 
 		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );
@@ -1529,26 +1539,27 @@ class SSP_Frontend {
 	 * and ssp_podcast_file csv data file
 	 */
 	public function update_episode_data_from_podmotor() {
-		$reponse = array( 'updated' => 'false' );
 
 		$podcast_updater = ( isset( $_POST['podcast_updater'] ) ? filter_var( $_POST['podcast_updater'], FILTER_SANITIZE_STRING ) : '' );
 		if ( empty( $podcast_updater ) || 'true' !== $podcast_updater ) {
-			wp_send_json( $reponse );
+			return;
 		}
 
 		$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_SANITIZE_STRING ) : '' );
 		if ( empty( $ssp_podcast_api_token ) ) {
-			wp_send_json( $reponse );
+			return;
 		}
 
 		$podmotor_api_token    = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		if ( $ssp_podcast_api_token !== $podmotor_api_token ) {
-			wp_send_json( $reponse );
+			return;
 		}
 
 		if ( !isset( $_FILES['ssp_podcast_file'] ) ) {
-			wp_send_json( $reponse );
+			return;
 		}
+
+		$reponse = array( 'updated' => 'false' );
 
 		$episode_data_array = array_map( 'str_getcsv', file( $_FILES['ssp_podcast_file']['tmp_name'] ) );
 		foreach ( $episode_data_array as $episode_data ) {

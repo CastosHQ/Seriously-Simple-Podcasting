@@ -390,9 +390,9 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 				$size = get_post_meta( get_the_ID(), 'filesize_raw', true );
 				
 				if ( ! $size ) {
-					if ( ssp_is_connected_to_podcastmotor() ) {
-						$formatted_size = get_post_meta( get_the_ID(), 'filesize', true );
-						$size           = convert_human_readable_to_bytes( $formatted_size );
+					$formatted_size = get_post_meta( get_the_ID(), 'filesize', true );
+					if ( ssp_is_connected_to_podcastmotor() || $formatted_size ) {
+						$size = convert_human_readable_to_bytes( $formatted_size );
 					} else {
 						$size = 1;
 					}

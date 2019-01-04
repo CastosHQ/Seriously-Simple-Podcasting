@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 4.9.1
+Tested up to: 4.9.8
 Requires PHP: 5.3.3
-Stable tag: 1.19.14
+Stable tag: 1.19.15
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.15 =
+* 2018-11-26
+* [FIX] Fixes a bug when attempting to locate the fallback podcast episode player image
+* [FIX] Fixes an error related to not initialising an $image_data_array variable when rendering the player image
+* [FIX] Cleaned up unused RSS importer code (props [@adduc](https://github.com/adduc))
+* [NEW] Make SSP HTML5 player accessible to screen readers (props [@itmaybejj](https://github.com/itmaybejj))
+* [TWEAK] Add website URL to Castos API verification payload
+* [TWEAK] General code clean up and improvements
 
 = 1.19.14 =
 * 2018-10-31

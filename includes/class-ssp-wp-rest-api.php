@@ -54,6 +54,8 @@ class SSP_WP_REST_API {
 
 		add_action( 'rest_api_init', array( $this, 'create_api_series_fields' ) );
 
+		add_action( 'rest_api_init', array( $this, 'register_rest_episode_images' ) );
+
 	}
 
 	/**
@@ -128,6 +130,41 @@ class SSP_WP_REST_API {
 		}
 
 		return $field_value;
+	}
+
+	/**
+	 * Add the featured image field to all Podcast post types
+	 */
+	public function register_rest_episode_images() {
+		register_rest_field(
+			ssp_post_types(),
+			'episode_featured_image',
+			array(
+				'get_callback'    => array( $this, 'get_rest_featured_image' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+	/**
+	 * Get the featured image for valid Podcast post types
+	 * Call back for the register_rest_episode_images method
+	 *
+	 * @param $object
+	 * @param $field_name
+	 * @param $request
+	 *
+	 * @return bool
+	 */
+	public function get_rest_featured_image( $object, $field_name, $request ) {
+		if ( $object['featured_media'] ) {
+			$img = wp_get_attachment_image_src( $object['featured_media'], 'app-thumb' );
+
+			return $img[0];
+		}
+
+		return false;
 	}
 
 }

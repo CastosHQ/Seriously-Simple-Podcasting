@@ -1470,6 +1470,13 @@ HTML;
 	public function update_podcast_details( $id, $post ) {
 
 		/**
+		 * Don't trigger this if we're not connected to Podcast Motor
+		 */
+		if ( ! ssp_is_connected_to_podcastmotor() ) {
+			return;
+		}
+
+		/**
 		 * Only trigger this when the post type is podcast
 		 */
 		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
@@ -1477,23 +1484,16 @@ HTML;
 		}
 
 		/**
-		 * Only trigger this if the post is actually saved
-		 */
-		if ( isset( $post->post_status ) && 'auto-draft' == $post->post_status ) {
-			return;
-		}
-
-		/**
 		 * Don't trigger this when the post is trashed
 		 */
-		if ( 'trash' == $post->post_status ) {
+		if ( 'trash' === $post->post_status ) {
 			return;
 		}
 
 		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
+		 * Only trigger this if the post is published or scheduled
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( 'publish' !== $post->post_status || 'future' !== $post->post_status ) {
 			return;
 		}
 

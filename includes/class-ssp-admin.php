@@ -289,7 +289,7 @@ class SSP_Admin {
 
 		$series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );
 
-		register_taxonomy( 'series', $podcast_post_types, $series_args );
+		register_taxonomy( apply_filters( 'ssp_series_taxonomy', 'series' ), $podcast_post_types, $series_args );
 
 		$labels = array(
 			'name'                       => __( 'Tags', 'seriously-simple-podcasting' ),
@@ -1473,6 +1473,7 @@ HTML;
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
 		if ( ! ssp_is_connected_to_podcastmotor() ) {
+			ssp_debug('Not connected to Castos');
 			return;
 		}
 
@@ -1480,6 +1481,7 @@ HTML;
 		 * Only trigger this when the post type is podcast
 		 */
 		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
+			ssp_debug('Not valid podcast post type');
 			return;
 		}
 
@@ -1487,15 +1489,21 @@ HTML;
 		 * Don't trigger this when the post is trashed
 		 */
 		if ( 'trash' === $post->post_status ) {
+			ssp_debug('Post is being trashed');
 			return;
 		}
 
 		/**
 		 * Only trigger this if the post is published or scheduled
 		 */
-		if ( 'publish' !== $post->post_status || 'future' !== $post->post_status ) {
+		$disallowed_statuses = array( 'draft', 'pending', 'private', 'trash', 'auto-draft' );
+		if ( in_array( $post->post_status, $disallowed_statuses, true ) ) {
+			ssp_debug( 'Post status is ' . $post->post_status );
+
 			return;
 		}
+
+		ssp_debug('About to push data to Castos');
 
 		$podmotor_handler = new Podmotor_Handler();
 

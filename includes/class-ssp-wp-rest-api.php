@@ -80,6 +80,18 @@ class SSP_WP_REST_API {
 		$controller = new WP_REST_Episodes_Controller();
 		$controller->register_routes();
 
+		/**
+		 * Setting up custom route for podcast
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/podcast_update',
+			array(
+				'methods'  => 'POST',
+				'callback' => array( $this, 'update_rest_podcast' ),
+			)
+		);
+
 	}
 
 	/**
@@ -91,6 +103,36 @@ class SSP_WP_REST_API {
 		$podcast = $this->get_default_podcast_settings();
 
 		return $podcast;
+	}
+
+	public function update_rest_podcast() {
+		$response = array( 'updated' => 'false' );
+
+		$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $ssp_podcast_api_token ) ) {
+			return $response;
+		}
+
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		if ( $ssp_podcast_api_token !== $podmotor_api_token ) {
+			return $response;
+		}
+
+		if ( ! isset( $_FILES['ssp_podcast_file'] ) ) {
+			return $response;
+		}
+
+		$episode_data_array = array_map( 'str_getcsv', file( $_FILES['ssp_podcast_file']['tmp_name'] ) );
+		foreach ( $episode_data_array as $episode_data ) {
+			// add check to make sure url being added is valid first
+			update_post_meta( $episode_data[0], 'podmotor_episode_id', $episode_data[1] );
+			update_post_meta( $episode_data[0], 'audio_file', $episode_data[2] );
+		}
+		ssp_email_podcasts_imported();
+
+		$response['updated'] = 'true';
+
+		return $response;
 	}
 
 

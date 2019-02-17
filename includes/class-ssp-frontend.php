@@ -442,12 +442,12 @@ class SSP_Frontend {
 		}
 
 		if ( $series_id ) {
-			$series_image = get_option( "ss_podcasting_data_image_{$series_id}", false );
+			$series_image = get_term_meta( $series_id, $this->token . '_series_image_settings', true );
 		}
 
 		if ( $series_image ) {
-			$series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
-			$image_data_array           = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $series_image_attachment_id, 'medium' ) );
+			// A resized (medium) image might be cropped, we need to use the original image here.
+			$image_data_array = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $series_image, 'full' ) );
 			if ( $this->check_image_is_square( $image_data_array ) ) {
 				return $image_data_array;
 			}
@@ -459,7 +459,7 @@ class SSP_Frontend {
 		$feed_image = get_option( 'ss_podcasting_data_image', false );
 		if ( $feed_image ) {
 			$feed_image_attachment_id = ssp_get_image_id_from_url( $feed_image );
-			$image_data_array         = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $feed_image_attachment_id, 'medium' ) );
+			$image_data_array         = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $feed_image_attachment_id, 'full' ) );
 			if ( $this->check_image_is_square( $image_data_array ) ) {
 				return $image_data_array;
 			}

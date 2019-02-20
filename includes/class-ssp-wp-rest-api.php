@@ -75,12 +75,6 @@ class SSP_WP_REST_API {
 		);
 
 		/**
-		 * Setting up custom route for episodes
-		 */
-		$controller = new WP_REST_Episodes_Controller();
-		$controller->register_routes();
-
-		/**
 		 * Setting up custom route for podcast
 		 */
 		register_rest_route(
@@ -91,6 +85,12 @@ class SSP_WP_REST_API {
 				'callback' => array( $this, 'update_rest_podcast' ),
 			)
 		);
+
+		/**
+		 * Setting up custom route for episodes
+		 */
+		$controller = new WP_REST_Episodes_Controller();
+		$controller->register_routes();
 
 	}
 
@@ -105,20 +105,31 @@ class SSP_WP_REST_API {
 		return $podcast;
 	}
 
+	/**
+	 * Updates a podcast after a Castos import
+	 *
+	 * @return array
+	 */
 	public function update_rest_podcast() {
-		$response = array( 'updated' => 'false' );
+		$response = array(
+			'updated' => 'false',
+			'message' => '',
+		);
 
 		$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_SANITIZE_STRING ) : '' );
 		if ( empty( $ssp_podcast_api_token ) ) {
+			$response['message'] = 'No Castos API token set';
 			return $response;
 		}
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		if ( $ssp_podcast_api_token !== $podmotor_api_token ) {
+			$response['message'] = 'Castos API invalid';
 			return $response;
 		}
 
 		if ( ! isset( $_FILES['ssp_podcast_file'] ) ) {
+			$response['message'] = 'No podcast file exists';
 			return $response;
 		}
 
@@ -131,6 +142,7 @@ class SSP_WP_REST_API {
 		ssp_email_podcasts_imported();
 
 		$response['updated'] = 'true';
+		$response['message'] = 'Podcast updated successfully';
 
 		return $response;
 	}

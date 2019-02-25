@@ -1790,7 +1790,7 @@ HTML;
 	public function trigger_import_success(){
 		?>
 		<div class="notice notice-info is-dismissible">
-			<p><?php esc_attr_e( 'An error occurred starting your podcast import. Please contact support at hello@castos.com.', 'seriously-simple-podcasting' ); ?></p>
+			<p><?php esc_attr_e( 'Your podcast import triggered successfully, please check your email for details.', 'seriously-simple-podcasting' ); ?></p>
 		</div>
 		<?php
 	}

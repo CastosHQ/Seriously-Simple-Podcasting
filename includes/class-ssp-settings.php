@@ -126,9 +126,6 @@ class SSP_Settings {
 		// New caps for editors and above.
 		add_action( 'admin_init', array( $this, 'add_caps' ), 1 );
 
-		// process the import form submission
-		add_action( 'admin_init', array( $this, 'submit_import_form' ) );
-
 		// Trigger the disconnect action
 		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array( $this, 'maybe_disconnect_from_castos' ), 10, 2 );
 
@@ -228,7 +225,7 @@ class SSP_Settings {
 	 * Show the upgrade page
 	 */
 	public function show_upgrade_page() {
-		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
+		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );https://psykrotek.co.za/wp-admin/admin.php?page=jetpack#/dashboard
 		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
 		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
 	}
@@ -1851,71 +1848,6 @@ class SSP_Settings {
 		<?php
 		$html = ob_get_clean();
 		return $html;
-	}
-
-	public function submit_import_form() {
-
-		$action = ( isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : '' );
-
-		if ( ! empty( $action ) && 'post_import_form' === sanitize_text_field( $action ) ) {
-
-			check_admin_referer( 'ss_podcasting-import' );
-
-			$submit = '';
-			if ( isset( $_POST['Submit'] ) ) {
-				$submit = filter_var( $_POST['Submit'], FILTER_SANITIZE_STRING );
-			}
-
-			// The user has submitted the Import your podcast setting
-			if ( 'Trigger import' === $submit ) {
-				$import = filter_var( $_POST['ss_podcasting_podmotor_import'], FILTER_SANITIZE_STRING );
-				if ( 'on' === $import ) {
-					$podmotorHandler = new Podmotor_Handler();
-					$result          = $podmotorHandler->trigger_podcast_import();
-					if ( 'success' !== $result['status'] ) {
-						?>
-						<div class="notice notice-info is-dismissible">
-							<p><?php esc_attr_e( 'An error occurred starting your podcast import. Please contact support at hello@castos.com.', 'seriously-simple-podcasting' ); ?></p>
-						</div>
-						<?php
-						return;
-					}
-					?>
-					<div class="notice notice-info is-dismissible">
-						<p><?php esc_attr_e( 'Thanks, your podcast import has been started.', 'seriously-simple-podcasting' ); ?></p>
-					</div>
-					<?php
-					return;
-				} else {
-					update_option( 'ss_podcasting_podmotor_import', 'off' );
-				}
-			}
-
-			// The user has submitted the external import form
-			if ( 'Submit Form' === $submit ) {
-				$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
-				$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
-				if ( ! empty( $name ) && ! empty( $podcast_url ) ) {
-					$website = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
-					$email   = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
-
-					$new_line  = "\n";
-					$site_name = $name;
-					$to        = 'hello@castos.com';
-					$subject   = sprintf( __( 'Podcast import request' ), $site_name );
-					$message   = sprintf( __( 'Hi Craig %1$s' ), $new_line );
-					$message   .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
-					$message   .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
-					$from      = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
-					wp_mail( $to, $subject, $message, $from );
-					?>
-					<div class="notice notice-info is-dismissible">
-						<p><?php esc_attr_e( 'Thanks, someone from Castos will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
-					</div>
-					<?php
-				}
-			}
-		}
 	}
 
 	/**

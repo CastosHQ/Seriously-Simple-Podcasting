@@ -182,7 +182,7 @@ class Podmotor_Handler {
 		);
 		ssp_debug( $post_body );
 
-		$app_response = wp_remote_post(
+		$app_response = wp_remote_get(
 			$api_url,
 			array(
 				'timeout' => 45,

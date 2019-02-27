@@ -95,9 +95,6 @@ class SSP_Frontend {
 		// Trigger import podcast process (if active)
 		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor' ) );
 
-		// Update podmotor_episode_id and audio file values from import process
-		add_action( 'wp_loaded', array( $this, 'update_episode_data_from_podmotor' ) );
-
 		// Register widgets
 		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
 
@@ -253,6 +250,11 @@ class SSP_Frontend {
 		}
 
 		if ( post_password_required( $post->ID ) ) {
+			return $content;
+		}
+
+		// Don't output episode meta in a REST Request
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			return $content;
 		}
 
@@ -1225,6 +1227,11 @@ class SSP_Frontend {
 			return $excerpt;
 		}
 
+		// Don't output episode meta in a REST Request
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return $content;
+		}
+
 		$podcast_post_types = ssp_post_types( true );
 
 		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );
@@ -1517,33 +1524,6 @@ class SSP_Frontend {
 				$reponse = array( 'continue' => 'false', 'response' => 'Podcast data imported' );
 			} else {
 				$reponse = array( 'continue' => 'true', 'response' => 'An error occurred importing the podcast data' );
-			}
-			wp_send_json( $reponse );
-		}
-	}
-
-	/**
-	 * Public facing action which is triggered from Seriously Simple Hosting
-	 * Updates episode_id and audio_file data from import process
-	 * Expects ssp_podcast_updater, ssp_podcast_api_token form fields
-	 * and ssp_podcast_file csv data file
-	 */
-	public function update_episode_data_from_podmotor() {
-		$podcast_updater = ( isset( $_POST['podcast_updater'] ) ? filter_var( $_POST['podcast_updater'], FILTER_SANITIZE_STRING ) : '' );
-		if ( ! empty( $podcast_updater ) && 'true' == $podcast_updater ) {
-			$reponse = array( 'updated' => 'false' );
-			$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_SANITIZE_STRING ) : '' );
-			$podmotor_api_token    = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-			if ( $ssp_podcast_api_token === $podmotor_api_token ) {
-				if ( isset( $_FILES['ssp_podcast_file'] ) ) {
-					$episode_data_array = array_map( 'str_getcsv', file( $_FILES['ssp_podcast_file']['tmp_name'] ) );
-					foreach ( $episode_data_array as $episode_data ) {
-						update_post_meta( $episode_data[0], 'podmotor_episode_id', $episode_data[1] );
-						update_post_meta( $episode_data[0], 'audio_file', $episode_data[2] );
-					}
-					ssp_email_podcasts_imported();
-					$reponse['updated'] = 'true';
-				}
 			}
 			wp_send_json( $reponse );
 		}

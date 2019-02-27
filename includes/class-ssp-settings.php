@@ -126,9 +126,6 @@ class SSP_Settings {
 		// New caps for editors and above.
 		add_action( 'admin_init', array( $this, 'add_caps' ), 1 );
 
-		// process the import form submission
-		add_action( 'admin_init', array( $this, 'submit_import_form' ) );
-
 		// Trigger the disconnect action
 		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array( $this, 'maybe_disconnect_from_castos' ), 10, 2 );
 
@@ -228,7 +225,7 @@ class SSP_Settings {
 	 * Show the upgrade page
 	 */
 	public function show_upgrade_page() {
-		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
+		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );https://psykrotek.co.za/wp-admin/admin.php?page=jetpack#/dashboard
 		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
 		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
 	}
@@ -1118,8 +1115,18 @@ class SSP_Settings {
 		if ( ssp_is_connected_to_podcastmotor() ) {
 			$settings['import'] = array(
 				'title'       => __( 'Import', 'seriously-simple-podcasting' ),
-				'description' => sprintf( __( 'Import and upload your externally hosted podcast files to your %s account.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
-				'fields'      => array(),
+				'description' => sprintf( __( 'Manage import options.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
+				'fields'      => array(
+					array(
+						'id'              => 'podmotor_import',
+						'label'           => __( 'Import your podcast', 'seriously-simple-podcasting' ),
+						'description'     => __( 'Import your podcast to your Castos hosting account.', 'seriously-simple-podcasting' ),
+						'type'            => 'checkbox',
+						'default'         => '',
+						'callback'        => 'wp_strip_all_tags',
+						'class'           => 'import-castos',
+					),
+				),
 			);
 		}
 
@@ -1271,10 +1278,6 @@ class SSP_Settings {
 			if ( $feed_url ) {
 				$html .= '<p><a class="view-feed-link" href="' . esc_url( $feed_url ) . '" target="_blank"><span class="dashicons dashicons-rss"></span>' . __( 'View feed', 'seriously-simple-podcasting' ) . '</a></p>' . "\n";
 			}
-		}
-
-		if ( 'import' === $section['id'] ) {
-			$html = $this->render_import_form();
 		}
 
 		if ( 'extensions' === $section['id'] ) {
@@ -1759,6 +1762,7 @@ class SSP_Settings {
 		}
 
 		// Get settings fields
+		// Get settings fields
 		ob_start();
 		if ( isset( $tab ) && 'import' !== $tab ) {
 			settings_fields( 'ss_podcasting' );
@@ -1782,6 +1786,15 @@ class SSP_Settings {
 			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
 			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
 			$html .= '</p>' . "\n";
+		}
+
+		if ( 'import' === $tab ) {
+			// Custom submits for Imports
+			$html .= '<p class="submit">' . "\n";
+			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
+			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+			$html .= '</p>' . "\n";
+			$html .= $this->render_import_form();
 		}
 
 		$html .= '</form>' . "\n";
@@ -1835,33 +1848,6 @@ class SSP_Settings {
 		<?php
 		$html = ob_get_clean();
 		return $html;
-	}
-
-	public function submit_import_form() {
-		$action = ( isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : '' );
-
-		if ( ! empty( $action ) && 'post_import_form' === $action ) {
-			check_admin_referer( 'ss_podcasting-import' );
-			$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
-			$website     = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
-			$email       = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
-			$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
-
-			$new_line    = "\n";
-			$site_name   = $name;
-			$to          = 'hello@seriouslysimplepodcasting.com';
-			$subject     = sprintf( __( 'Podcast import request' ), $site_name );
-			$message     = sprintf( __( 'Hi Craig %1$s' ), $new_line );
-			$message    .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
-			$message    .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
-			$from        = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
-			wp_mail( $to, $subject, $message, $from );
-			?>
-			<div class="notice notice-info is-dismissible">
-				<p><?php esc_attr_e( 'Thanks, someone from Castos will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
-			</div>
-			<?php
-		}
 	}
 
 	/**

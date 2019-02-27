@@ -105,7 +105,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 = 1.19.16 =
 * 2019-02-27
 * [FIX] Fixes a bug where draft posts are incorrectly synced with Castos hosting account
-* [NEW] Adds ssp_series_taxonomy filter that allows the user to edit the series taxonomy being registered
+* [NEW] Adds ssp_series_taxonomy filter that allows the user to edit the series taxonomy being registered (props [@mallardduck](https://github.com/mallardduck))
 * [UPDATE] Implements updates for the new Castos podcast import service
 
 = 1.19.15 =

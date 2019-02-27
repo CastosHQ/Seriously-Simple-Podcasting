@@ -102,6 +102,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.16 =
+* 2019-01-11
+* [FIX] Fixes a bug where draft posts are stored to Castos hosting
+
 = 1.19.15 =
 * 2018-11-26
 * [FIX] Fixes a bug when attempting to locate the fallback podcast episode player image

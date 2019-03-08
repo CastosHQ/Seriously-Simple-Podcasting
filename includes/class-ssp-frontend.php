@@ -124,87 +124,33 @@ class SSP_Frontend {
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}
 
+	/**
+	 * HTML5 player additional scripts
+	 */
 	public function html5_player_conditional_scripts() {
 		global $large_player_instance_number;
 		if ( ! (int) $large_player_instance_number > 0 ) {
 			return;
 		}
 		?>
-		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>" />
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=<?php echo SSP_VERSION ?>"/>
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>"/>
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>"/>
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>"/>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
 		<?php
 	}
 
+	/**
+	 * Register Custom HTML player styles
+	 */
 	public function html5_player_styles() {
 		global $large_player_instance_number;
 		if ( ! (int) $large_player_instance_number > 0 ) {
 			return;
 		}
-		?>
-		<style type="text/css">
-			.ssp-mejs-container .mejs-time-rail {
-				width: 170px !important;
-			}
-			.ssp-mejs-container .mejs-time-slider {
-				width: 160px !important;
-			}
-			.ssp-controls {
-				overflow: hidden;
-				padding: 5px 10px;
-				background: #333;
-				color: #999;
-				font-size: 0.75em;
-			}
-			.ssp-controls ul.ssp-sub-controls {
-				list-style: none;
-				margin: 0;
-				padding: 0;
-				display: inline-block;
-				float: left;
-				clear: none;
-				width: 40%;
-				-webkit-box-sizing: border-box;
-				-moz-box-sizing: border-box;
-				box-sizing: border-box;
-			}
-			.ssp-controls ul li {
-				display: inline-block;
-				padding: 3px;
-				cursor: pointer;
-				border-left: 1px solid #666;
-			}
-			.ssp-controls ul li:first-child {
-				border-left: none;
-			}
-			.ssp-controls ul li:hover {
-				color: #fff;
-			}
-			ul.ssp-ticker {
-				display: inline-block;
-				overflow: hidden;
-				position: relative;
-				width: 60%;
-				float: right;
-				clear: none;
-				margin: 2px 0 0 0;
-				padding: 0;
-			}
-			ul.ssp-ticker li {
-				overflow: hidden;
-				width: 100%;
-			}
-			ul.ssp-ticker li .ssp-ticker-banner {
-				position: absolute;
-				white-space: nowrap;
-				overflow: hidden;
-				top: 0;
-				left: 0;
-			}
-		</style>
-		<?php
+		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5.player.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-html5-player' );
 	}
 
 	public function ssp_override_player_styles(){

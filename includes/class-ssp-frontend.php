@@ -153,6 +153,10 @@ class SSP_Frontend {
 		wp_enqueue_style( 'ssp-html5-player' );
 	}
 
+	/**
+	 * Override player styles
+	 * @todo what is this used for
+	 */
 	public function ssp_override_player_styles(){
 		$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
 		?>
@@ -186,7 +190,7 @@ class SSP_Frontend {
 		global $post, $wp_current_filter, $episode_context;
 
 		// Don't output unformatted data on excerpts
-		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter ) ) {
+		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter ), true ) {
 			return $content;
 		}
 

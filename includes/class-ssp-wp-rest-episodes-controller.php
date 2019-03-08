@@ -123,7 +123,7 @@ class WP_REST_Episodes_Controller extends WP_REST_Controller {
 		 * @var Function
 		 */
 		$args       = apply_filters( "rest_episode_query", $args, $request );
-		$query_args = $this->prepare_items_query( $args );
+		$query_args = $this->prepare_items_query( $args, $request );
 
 		// Get taxonomies for each of the requested post_types
 		$taxonomies = wp_list_filter( get_object_taxonomies( $query_args['post_type'], 'objects' ), array( 'show_in_rest' => true ) );
@@ -221,32 +221,38 @@ class WP_REST_Episodes_Controller extends WP_REST_Controller {
 	 *
 	 * @return array            $query_args
 	 */
-	protected function prepare_items_query( $prepared_args = array() ) {
-
-		$valid_vars = array_flip( $this->get_allowed_query_vars( $this->post_types ) );
+	protected function prepare_items_query( $prepared_args = array(), $request = null ) {
 		$query_args = array();
-		foreach ( $valid_vars as $var => $index ) {
-			if ( isset( $prepared_args[ $var ] ) ) {
-				/**
-				 * Filter the query_vars used in `get_items` for the constructed
-				 * query.
-				 *
-				 * The dynamic portion of the hook name, $var, refers to the
-				 * query_var key.
-				 *
-				 * @param mixed $prepared_args [  $var ] The query_var value.
-				 */
-				$query_args[ $var ] = apply_filters( "rest_query_var_{$var}", $prepared_args[ $var ] );
-			}
+
+		foreach ( $prepared_args as $key => $value ) {
+			/**
+			 * Filters the query_vars used in get_items() for the constructed query.
+			 *
+			 * The dynamic portion of the hook name, `$key`, refers to the query_var key.
+			 *
+			 * @since 4.7.0
+			 *
+			 * @param string $value The query_var value.
+			 */
+			$query_args[ $key ] = apply_filters( "rest_query_var-{$key}", $value ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		}
 
-		// Only allow sticky psts if 'post' is one of the requested post types.
-		if ( in_array( 'post', $query_args['post_type'], true ) || ! isset( $query_args['ignore_sticky_posts'] ) ) {
+		if ( 'post' !== $this->post_type || ! isset( $query_args['ignore_sticky_posts'] ) ) {
 			$query_args['ignore_sticky_posts'] = true;
 		}
 
-		if ( 'include' === $query_args['orderby'] ) {
-			$query_args['orderby'] = 'post__in';
+		// Map to proper WP_Query orderby param.
+		if ( isset( $query_args['orderby'] ) && isset( $request['orderby'] ) ) {
+			$orderby_mappings = array(
+				'id'            => 'ID',
+				'include'       => 'post__in',
+				'slug'          => 'post_name',
+				'include_slugs' => 'post_name__in',
+			);
+
+			if ( isset( $orderby_mappings[ $request['orderby'] ] ) ) {
+				$query_args['orderby'] = $orderby_mappings[ $request['orderby'] ];
+			}
 		}
 
 		return $query_args;

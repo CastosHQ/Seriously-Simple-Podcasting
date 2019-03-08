@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 4.9.8
 Requires PHP: 5.3.3
-Stable tag: 1.19.15
+Stable tag: 1.19.16
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.16 =
+* 2019-02-27
+* [FIX] Fixes a bug where draft posts are incorrectly synced with Castos hosting account
+* [NEW] Adds ssp_series_taxonomy filter that allows the user to edit the series taxonomy being registered (props [@mallardduck](https://github.com/mallardduck))
+* [UPDATE] Implements updates for the new Castos podcast import service
 
 = 1.19.15 =
 * 2018-11-26

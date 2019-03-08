@@ -54,6 +54,8 @@ class SSP_WP_REST_API {
 
 		add_action( 'rest_api_init', array( $this, 'create_api_series_fields' ) );
 
+		add_action( 'rest_api_init', array( $this, 'register_rest_episode_images' ) );
+
 	}
 
 	/**
@@ -69,6 +71,18 @@ class SSP_WP_REST_API {
 			array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'get_rest_podcast' ),
+			)
+		);
+
+		/**
+		 * Setting up custom route for podcast
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/podcast_update',
+			array(
+				'methods'  => 'POST',
+				'callback' => array( $this, 'update_rest_podcast' ),
 			)
 		);
 
@@ -89,6 +103,48 @@ class SSP_WP_REST_API {
 		$podcast = $this->get_default_podcast_settings();
 
 		return $podcast;
+	}
+
+	/**
+	 * Updates a podcast after a Castos import
+	 *
+	 * @return array
+	 */
+	public function update_rest_podcast() {
+		$response = array(
+			'updated' => 'false',
+			'message' => '',
+		);
+
+		$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $ssp_podcast_api_token ) ) {
+			$response['message'] = 'No Castos API token set';
+			return $response;
+		}
+
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		if ( $ssp_podcast_api_token !== $podmotor_api_token ) {
+			$response['message'] = 'Castos API invalid';
+			return $response;
+		}
+
+		if ( ! isset( $_FILES['ssp_podcast_file'] ) ) {
+			$response['message'] = 'No podcast file exists';
+			return $response;
+		}
+
+		$episode_data_array = array_map( 'str_getcsv', file( $_FILES['ssp_podcast_file']['tmp_name'] ) );
+		foreach ( $episode_data_array as $episode_data ) {
+			// add check to make sure url being added is valid first
+			update_post_meta( $episode_data[0], 'podmotor_episode_id', $episode_data[1] );
+			update_post_meta( $episode_data[0], 'audio_file', $episode_data[2] );
+		}
+		ssp_email_podcasts_imported();
+
+		$response['updated'] = 'true';
+		$response['message'] = 'Podcast updated successfully';
+
+		return $response;
 	}
 
 
@@ -128,6 +184,41 @@ class SSP_WP_REST_API {
 		}
 
 		return $field_value;
+	}
+
+	/**
+	 * Add the featured image field to all Podcast post types
+	 */
+	public function register_rest_episode_images() {
+		register_rest_field(
+			ssp_post_types(),
+			'episode_featured_image',
+			array(
+				'get_callback'    => array( $this, 'get_rest_featured_image' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+	/**
+	 * Get the featured image for valid Podcast post types
+	 * Call back for the register_rest_episode_images method
+	 *
+	 * @param $object
+	 * @param $field_name
+	 * @param $request
+	 *
+	 * @return bool
+	 */
+	public function get_rest_featured_image( $object, $field_name, $request ) {
+		if ( $object['featured_media'] ) {
+			$img = wp_get_attachment_image_src( $object['featured_media'], 'app-thumb' );
+
+			return $img[0];
+		}
+
+		return false;
 	}
 
 }

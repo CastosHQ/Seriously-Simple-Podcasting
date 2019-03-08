@@ -79,6 +79,9 @@ class SSP_Admin {
 
 			add_action( 'admin_init', array( $this, 'update_enclosures' ) );
 
+			// process the import form submission
+			add_action( 'admin_init', array( $this, 'submit_import_form' ) );
+
 			// Episode meta box.
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
@@ -289,7 +292,7 @@ class SSP_Admin {
 
 		$series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );
 
-		register_taxonomy( 'series', $podcast_post_types, $series_args );
+		register_taxonomy( apply_filters( 'ssp_series_taxonomy', 'series' ), $podcast_post_types, $series_args );
 
 		$labels = array(
 			'name'                       => __( 'Tags', 'seriously-simple-podcasting' ),
@@ -1470,32 +1473,40 @@ HTML;
 	public function update_podcast_details( $id, $post ) {
 
 		/**
-		 * Only trigger this when the post type is podcast
+		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
-		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
+		if ( ! ssp_is_connected_to_podcastmotor() ) {
+			ssp_debug('Not connected to Castos');
 			return;
 		}
 
 		/**
-		 * Only trigger this if the post is actually saved
+		 * Only trigger this when the post type is podcast
 		 */
-		if ( isset( $post->post_status ) && 'auto-draft' == $post->post_status ) {
+		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
+			ssp_debug('Not valid podcast post type');
 			return;
 		}
 
 		/**
 		 * Don't trigger this when the post is trashed
 		 */
-		if ( 'trash' == $post->post_status ) {
+		if ( 'trash' === $post->post_status ) {
+			ssp_debug('Post is being trashed');
 			return;
 		}
 
 		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
+		 * Only trigger this if the post is published or scheduled
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		$disallowed_statuses = array( 'draft', 'pending', 'private', 'trash', 'auto-draft' );
+		if ( in_array( $post->post_status, $disallowed_statuses, true ) ) {
+			ssp_debug( 'Post status is ' . $post->post_status );
+
 			return;
 		}
+
+		ssp_debug('About to push data to Castos');
 
 		$podmotor_handler = new Podmotor_Handler();
 
@@ -1605,13 +1616,16 @@ HTML;
 	 * Show 'existing podcast' notice
 	 */
 	public function existing_podcasts_notice() {
-		$podcast_import_url = add_query_arg( array( 'podcast_import_action' => 'start' ) );
+		$podcast_import_url = add_query_arg( array(
+			'post_type' => $this->token,
+			'page'      => 'podcast_settings',
+			'tab'       => 'import'
+		) );
 		$ignore_message_url = add_query_arg( array( 'podcast_import_action' => 'ignore' ) );
 		$message            = '';
 		$message            .= '<p>You\'ve connected to your Castos account and you have existing podcasts that can be imported.</p>';
 		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Castos.</a></p>';
 		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
-
 		?>
 		<div class="notice notice-info">
 			<p><?php _e( $message, 'ssp' ); ?></p>
@@ -1712,5 +1726,94 @@ HTML;
 		update_option( 'ssp_upgrade_page_visited', 'true' );
 		wp_redirect( $ssp_redirect );
 		exit;
+	}
+
+	/**
+	 * Processes the Import forms from the Import tab in the plugin settings
+	 */
+	public function submit_import_form() {
+
+		$action = ( isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : '' );
+
+		if ( ! empty( $action ) && 'post_import_form' === sanitize_text_field( $action ) ) {
+
+			check_admin_referer( 'ss_podcasting-import' );
+
+			$submit = '';
+			if ( isset( $_POST['Submit'] ) ) {
+				$submit = filter_var( $_POST['Submit'], FILTER_SANITIZE_STRING );
+			}
+
+			// The user has submitted the Import your podcast setting
+			if ( 'Trigger import' === $submit ) {
+				$import = filter_var( $_POST['ss_podcasting_podmotor_import'], FILTER_SANITIZE_STRING );
+				if ( 'on' === $import ) {
+					$podmotorHandler = new Podmotor_Handler();
+					$result          = $podmotorHandler->trigger_podcast_import();
+					if ( 'success' !== $result['status'] ) {
+						add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
+					}else {
+						add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
+					}
+					return;
+				} else {
+					update_option( 'ss_podcasting_podmotor_import', 'off' );
+				}
+			}
+
+			// The user has submitted the external import form
+			if ( 'Submit Form' === $submit ) {
+				$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
+				$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
+				if ( ! empty( $name ) && ! empty( $podcast_url ) ) {
+					$website = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
+					$email   = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
+
+					$new_line  = "\n";
+					$site_name = $name;
+					$to        = 'hello@castos.com';
+					$subject   = sprintf( __( 'Podcast import request' ), $site_name );
+					$message   = sprintf( __( 'Hi Craig %1$s' ), $new_line );
+					$message   .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
+					$message   .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
+					$from      = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
+					wp_mail( $to, $subject, $message, $from );
+					add_action( 'admin_notices', array( $this, 'import_form_success' ) );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Admin error to display if the import trigger fails
+	 */
+	public function trigger_import_error(){
+		?>
+		<div class="notice notice-info is-dismissible">
+			<p><?php esc_attr_e( 'An error occurred starting your podcast import. Please contact support at hello@castos.com.', 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Admin error to display if the import trigger is successful
+	 */
+	public function trigger_import_success(){
+		?>
+		<div class="notice notice-info is-dismissible">
+			<p><?php esc_attr_e( 'Your podcast import triggered successfully, please check your email for details.', 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Displays an admin message if the Import form submission was successful
+	 */
+	public function import_form_success(){
+		?>
+		<div class="notice notice-info is-dismissible">
+			<p><?php esc_attr_e( 'Thanks, someone from Castos will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
 	}
 }

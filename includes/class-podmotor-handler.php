@@ -166,6 +166,44 @@ class Podmotor_Handler {
 	}
 
 	/**
+	 * Triggers the podcast import fom the Import settings screen
+	 */
+	public function trigger_podcast_import() {
+		$this->setup_response();
+
+		$api_url = SSP_PODMOTOR_APP_URL . 'api/user/import';
+		ssp_debug( $api_url );
+
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		ssp_debug( $podmotor_api_token );
+
+		$post_body = array(
+			'api_token' => $podmotor_api_token,
+		);
+		ssp_debug( $post_body );
+
+		$app_response = wp_remote_get(
+			$api_url,
+			array(
+				'timeout' => 45,
+				'body'    => $post_body,
+			)
+		);
+
+		if ( is_wp_error( $app_response ) ) {
+			$this->update_response( 'message', 'An error occurred connecting to the Castos server to trigger the podcast import.' );
+			ssp_debug( $this->response );
+			return $this->response;
+		}
+
+		$this->update_response( 'status', 'success' );
+		$this->update_response( 'message', 'Podcast import started successfully.' );
+
+		return $this->response;
+
+	}
+
+	/**
 	 * Upload PodcastMotor file stored in offsite hosting to Castos database
 	 *
 	 * @param string $podmotor_file_path
@@ -423,9 +461,7 @@ class Podmotor_Handler {
 	/**
 	 * Creates the podcast import queue with Castos
 	 *
-	 * @param $post
-	 *
-	 * @return bool
+	 * @return array
 	 */
 	public function insert_podmotor_queue() {
 
@@ -444,7 +480,9 @@ class Podmotor_Handler {
 		);
 		ssp_debug( $post_body );
 
-		$app_response = wp_remote_post( $api_url, array(
+		$app_response = wp_remote_post(
+			$api_url,
+			array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
@@ -452,13 +490,13 @@ class Podmotor_Handler {
 		ssp_debug( $app_response );
 
 		if ( ! is_wp_error( $app_response ) ) {
-			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
-			ssp_debug( $responseObject );
+			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
+			ssp_debug( $response_object );
 
-			if ( 'success' == $responseObject->status ) {
-				$this->update_response( 'status', $responseObject->status );
-				$this->update_response( 'message', $responseObject->message );
-				$this->update_response( 'queue_id', $responseObject->queue_id );
+			if ( 'success' === $response_object->status ) {
+				$this->update_response( 'status', $response_object->status );
+				$this->update_response( 'message', $response_object->message );
+				$this->update_response( 'queue_id', $response_object->queue_id );
 			} else {
 				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 			}

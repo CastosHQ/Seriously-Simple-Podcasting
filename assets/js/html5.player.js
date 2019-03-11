@@ -1,23 +1,22 @@
-// @todo move this to a separate enqueued file and use data attributes
 // @todo fix deprecated getCurrentTime function
-
 document.addEventListener("DOMContentLoaded", function () {
 	(function ($) {
+		window.ssp_player = {};
 
 		let sspUpdateDuration = [];
 
 		$('div.ssp-player-large').each(function () {
 
-			const large_player = $(this);
-			const player_instance_number = large_player.data('player-instance-number');
+			let large_player = $(this);
+			let player_instance_number = large_player.data('player-instance-number');
 			//const player_waveform_colour = large_player.data('player-waveform-colour');
-			const player_waveform_progress_colour = large_player.data('player-waveform-progress-colour');
-			const source_file = large_player.data('source-file');
+			let player_waveform_progress_colour = large_player.data('player-waveform-progress-colour');
+			let source_file = large_player.data('source-file');
 			sspUpdateDuration[player_instance_number] = '';
 
 			// Create Player
 			window.ssp_player[player_instance_number] = WaveSurfer.create({
-				container: '#waveform_' + player_instance_number,
+				container: '#waveform' + player_instance_number,
 				waveColor: '#444',
 				progressColor: player_waveform_progress_colour,
 				barWidth: 3,
@@ -64,7 +63,7 @@ document.addEventListener("DOMContentLoaded", function () {
 				$('#ssp_player_id_' + player_instance_number + ' #ssp-play-pause .ssp-icon').removeClass().addClass('ssp-icon ssp-icon-pause_icon');
 				$('#ssp_player_id_' + player_instance_number + ' #sspPlayedDuration').text(window.ssp_player[player_instance_number].getCurrentTime().toString().toFormattedDuration());
 				sspUpdateDuration[player_instance_number] = setInterval(function () {
-					$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration').text(window.ssp_player[player_instance_number].getCurrentTime().toString().toFormattedDuration());
+					$('#ssp_player_id_' + player_instance_number + ' #sspPlayedDuration').text(window.ssp_player[player_instance_number].getCurrentTime().toString().toFormattedDuration());
 				}, 100);
 			});
 

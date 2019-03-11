@@ -126,6 +126,7 @@ class SSP_Frontend {
 
 	/**
 	 * HTML5 player additional scripts
+	 * @todo this should really be done in a better way
 	 */
 	public function html5_player_conditional_scripts() {
 		global $large_player_instance_number;
@@ -143,6 +144,7 @@ class SSP_Frontend {
 
 	/**
 	 * Register Custom HTML player styles
+	 * @todo can this be merged into the load_styles_and_scripts function
 	 */
 	public function html5_player_styles() {
 		global $large_player_instance_number;
@@ -173,11 +175,26 @@ class SSP_Frontend {
 	 */
 	public function load_styles_and_scripts() {
 		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+		ssp_debug( 'Player Style', $player_style );
 		if ( 'standard' === $player_style ) {
 			return;
 		}
-		wp_register_script( 'media-player', SSP_PLUGIN_URL . 'assets/js/media.player.js', array( 'jquery' ), $this->version, true );
+		wp_register_script( 'media-player', $this->assets_url . 'js/media.player.js', array( 'jquery' ), $this->version, true );
 		wp_enqueue_script( 'media-player' );
+
+		wp_register_script( 'html5-player', $this->assets_url . 'js/html5.player.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'html5-player' );
+
+	}
+
+	/**
+	 * @todo can this be merged into the load_styles_and_scripts method?
+	 */
+	public function load_scripts() {
+
+		wp_register_style( 'ssp-frontend-player', $this->assets_url . 'css/player.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-frontend-player' );
+
 	}
 
 	/**
@@ -1844,16 +1861,6 @@ class SSP_Frontend {
 
 	public function load_localisation () {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
-	}
-
-	/**
-	 *
-	 */
-	public function load_scripts(){
-
-		wp_register_style( 'ssp-frontend-player', $this->assets_url.'css/player.css', array(), $this->version );
-		wp_enqueue_style( 'ssp-frontend-player' );
-
 	}
 
 }

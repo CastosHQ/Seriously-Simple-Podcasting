@@ -161,8 +161,6 @@ class SSP_Settings {
 			return;
 		}
 
-		ssp_debug( 'About to update series', $_GET );
-
 		if ( ! isset( $_GET['page'] ) || 'podcast_settings' !== $_GET['page'] ) {
 			return;
 		}

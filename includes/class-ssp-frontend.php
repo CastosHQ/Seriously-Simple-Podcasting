@@ -190,12 +190,12 @@ class SSP_Frontend {
 		global $post, $wp_current_filter, $episode_context;
 
 		// Don't output unformatted data on excerpts
-		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter ), true ) {
+		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter, true ) ) {
 			return $content;
 		}
 
 		// Don't output episode meta in shortcode or widget
-		if ( isset( $episode_context ) && in_array( $episode_context, array( 'shortcode', 'widget' ) ) ) {
+		if ( isset( $episode_context ) && in_array( $episode_context, array( 'shortcode', 'widget' ), true ) ) {
 			return $content;
 		}
 

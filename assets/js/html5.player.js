@@ -1,7 +1,7 @@
 // @todo fix deprecated getCurrentTime function
 document.addEventListener("DOMContentLoaded", function () {
 	(function ($) {
-		window.ssp_player = {};
+		window.ssp_player = [];
 
 		let sspUpdateDuration = [];
 

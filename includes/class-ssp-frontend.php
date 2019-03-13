@@ -159,14 +159,14 @@ class SSP_Frontend {
 	 * Override player styles
 	 * @todo what is this used for
 	 */
-	public function ssp_override_player_styles(){
+	public function ssp_override_player_styles() {
 		$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
 		?>
-			<style type="text/css">
-				.ssp-wave wave wave{
-					background: <?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?> !important;
-				}
-			</style>
+		<style type="text/css">
+			.ssp-wave wave wave {
+				background: <?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?> !important;
+			}
+		</style>
 		<?php
 	}
 
@@ -175,7 +175,7 @@ class SSP_Frontend {
 	 */
 	public function load_styles_and_scripts() {
 		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
-		ssp_debug( 'Player Style', $player_style );
+
 		if ( 'standard' === $player_style ) {
 			return;
 		}
@@ -184,17 +184,14 @@ class SSP_Frontend {
 
 		wp_register_script( 'html5-player', $this->assets_url . 'js/html5.player.js', array( 'jquery' ), $this->version, true );
 		wp_enqueue_script( 'html5-player' );
-
 	}
 
 	/**
 	 * @todo can this be merged into the load_styles_and_scripts method?
 	 */
 	public function load_scripts() {
-
 		wp_register_style( 'ssp-frontend-player', $this->assets_url . 'css/player.css', array(), $this->version );
 		wp_enqueue_style( 'ssp-frontend-player' );
-
 	}
 
 	/**

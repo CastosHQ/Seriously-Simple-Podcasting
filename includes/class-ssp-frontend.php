@@ -124,97 +124,49 @@ class SSP_Frontend {
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}
 
+	/**
+	 * HTML5 player additional scripts
+	 * @todo this should really be done in a better way
+	 */
 	public function html5_player_conditional_scripts() {
 		global $large_player_instance_number;
 		if ( ! (int) $large_player_instance_number > 0 ) {
 			return;
 		}
 		?>
-		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>" />
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>" />
+		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=<?php echo SSP_VERSION ?>"/>
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>"/>
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>"/>
+		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>"/>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
 		<?php
 	}
 
+	/**
+	 * Register Custom HTML player styles
+	 * @todo can this be merged into the load_styles_and_scripts function
+	 */
 	public function html5_player_styles() {
 		global $large_player_instance_number;
 		if ( ! (int) $large_player_instance_number > 0 ) {
 			return;
 		}
-		?>
-		<style type="text/css">
-			.ssp-mejs-container .mejs-time-rail {
-				width: 170px !important;
-			}
-			.ssp-mejs-container .mejs-time-slider {
-				width: 160px !important;
-			}
-			.ssp-controls {
-				overflow: hidden;
-				padding: 5px 10px;
-				background: #333;
-				color: #999;
-				font-size: 0.75em;
-			}
-			.ssp-controls ul.ssp-sub-controls {
-				list-style: none;
-				margin: 0;
-				padding: 0;
-				display: inline-block;
-				float: left;
-				clear: none;
-				width: 40%;
-				-webkit-box-sizing: border-box;
-				-moz-box-sizing: border-box;
-				box-sizing: border-box;
-			}
-			.ssp-controls ul li {
-				display: inline-block;
-				padding: 3px;
-				cursor: pointer;
-				border-left: 1px solid #666;
-			}
-			.ssp-controls ul li:first-child {
-				border-left: none;
-			}
-			.ssp-controls ul li:hover {
-				color: #fff;
-			}
-			ul.ssp-ticker {
-				display: inline-block;
-				overflow: hidden;
-				position: relative;
-				width: 60%;
-				float: right;
-				clear: none;
-				margin: 2px 0 0 0;
-				padding: 0;
-			}
-			ul.ssp-ticker li {
-				overflow: hidden;
-				width: 100%;
-			}
-			ul.ssp-ticker li .ssp-ticker-banner {
-				position: absolute;
-				white-space: nowrap;
-				overflow: hidden;
-				top: 0;
-				left: 0;
-			}
-		</style>
-		<?php
+		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5.player.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-html5-player' );
 	}
 
-	public function ssp_override_player_styles(){
+	/**
+	 * Override player styles
+	 * @todo what is this used for
+	 */
+	public function ssp_override_player_styles() {
 		$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
 		?>
-			<style type="text/css">
-				.ssp-wave wave wave{
-					background: <?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?> !important;
-				}
-			</style>
+		<style type="text/css">
+			.ssp-wave wave wave {
+				background: <?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?> !important;
+			}
+		</style>
 		<?php
 	}
 
@@ -223,11 +175,23 @@ class SSP_Frontend {
 	 */
 	public function load_styles_and_scripts() {
 		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+
 		if ( 'standard' === $player_style ) {
 			return;
 		}
-		wp_register_script( 'media-player', SSP_PLUGIN_URL . 'assets/js/media.player.js', array( 'jquery' ), $this->version, true );
+		wp_register_script( 'media-player', $this->assets_url . 'js/media.player.js', array( 'jquery' ), $this->version, true );
 		wp_enqueue_script( 'media-player' );
+
+		wp_register_script( 'html5-player', $this->assets_url . 'js/html5.player.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'html5-player' );
+	}
+
+	/**
+	 * @todo can this be merged into the load_styles_and_scripts method?
+	 */
+	public function load_scripts() {
+		wp_register_style( 'ssp-frontend-player', $this->assets_url . 'css/player.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-frontend-player' );
 	}
 
 	/**
@@ -240,12 +204,12 @@ class SSP_Frontend {
 		global $post, $wp_current_filter, $episode_context;
 
 		// Don't output unformatted data on excerpts
-		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter ) ) {
+		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter, true ) ) {
 			return $content;
 		}
 
 		// Don't output episode meta in shortcode or widget
-		if ( isset( $episode_context ) && in_array( $episode_context, array( 'shortcode', 'widget' ) ) ) {
+		if ( isset( $episode_context ) && in_array( $episode_context, array( 'shortcode', 'widget' ), true ) ) {
 			return $content;
 		}
 
@@ -524,27 +488,27 @@ class SSP_Frontend {
 
 	/**
 	 * Return media player for a given file. Used to enable other checks or to prevent the player from loading
-	 * @param string $srcFile
+	 * @param string $src_file
 	 * @param int $episode_id
 	 * @param string $player_size
 	 *
 	 * @return string
 	 */
-	public function media_player( $srcFile = '', $episode_id = 0, $player_size = "large" ) {
+	public function media_player( $src_file = '', $episode_id = 0, $player_size = "large" ) {
 		// check if the ss_player shortcode has been used in the episode already
 		if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
-			return $this->load_media_player( $srcFile, $episode_id, $player_size );
+			return $this->load_media_player( $src_file, $episode_id, $player_size );
 		}
 	}
 
 	/**
 	 * Load media player for given file
-	 * @param  string  $srcFile        Source of file
+	 * @param  string  $src_file        Source of file
 	 * @param  integer $episode_id Episode ID for audio file
 	 * @param  string $player_size mini or large
 	 * @return string              Media player HTML on success, empty string on failure
 	 */
-	public function load_media_player($srcFile = '', $episode_id = 0, $player_size){
+	public function load_media_player($src_file = '', $episode_id = 0, $player_size){
 
 		/**
 		 * Check if this player is being loaded via the AMP for WordPress plugin and if so, force the standard player
@@ -559,7 +523,7 @@ class SSP_Frontend {
 
 		$player = '';
 
-		if ( $srcFile ) {
+		if ( $src_file ) {
 
 			// Get episode type and default to audio
 			$type = $this->get_episode_type( $episode_id );
@@ -568,10 +532,10 @@ class SSP_Frontend {
 			}
 
 			// Switch to podcast player URL
-			$srcFile = str_replace( 'podcast-download', 'podcast-player', $srcFile );
+			$src_file = str_replace( 'podcast-download', 'podcast-player', $src_file );
 
 			// Set up parameters for media player
-			$params = array( 'src' => $srcFile, 'preload' => 'none' );
+			$params = array( 'src' => $src_file, 'preload' => 'none' );
 
 			// Use built-in WordPress media player
 			// Or use new custom player if user has selected as such
@@ -598,12 +562,15 @@ class SSP_Frontend {
 						$player_wave_form_colour = get_option( 'ss_podcasting_player_wave_form_colour', false );
 						$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
 
+						$player_background_colour = ( $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : 'background: #333;' );
+						$player_wave_form_progress_colour = ( $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1" );
+
 						$meta = $this->episode_meta_details( $episode_id, '', true );
 
 						ob_start();
-
+						// @todo move this all into an overridable template file
 						?>
-						<div class="ssp-player ssp-player-large" id="ssp_player_id_<?php echo $large_player_instance_number; ?>"<?php echo $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : 'background: #333;' ;?>>
+						<div class="ssp-player ssp-player-large" data-player-instance-number="<?php echo $large_player_instance_number; ?>" data-player-waveform-colour="<?php echo $player_wave_form_colour; ?>" data-player-waveform-progress-colour="<?php echo $player_wave_form_progress_colour; ?>" data-source-file="<?php echo $src_file ?>" id="ssp_player_id_<?php echo $large_player_instance_number; ?>" <?php echo $player_background_colour ?>>
 							<?php if( apply_filters( 'ssp_show_album_art', true, get_the_ID() ) ) { ?>
 								<div class="ssp-album-art-container">
 									<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
@@ -631,176 +598,39 @@ class SSP_Frontend {
 												</div>
 												<div class="ssp-wave-form">
 													<div class="ssp-inner">
-														<div id="waveform<?php echo $large_player_instance_number; ?>" class="ssp-wave"></div>
+														<div data-waveform-id="waveform_<?php echo $large_player_instance_number; ?>" id="waveform<?php echo $large_player_instance_number; ?>" class="ssp-wave"></div>
 													</div>
 												</div>
-
 												<div class="ssp-time-volume">
-
 													<div class="ssp-duration">
 														<span id="sspPlayedDuration">00:00</span> / <span id="sspTotalDuration"><?php echo $meta['duration']; ?></span>
 													</div>
-
 													<div class="ssp-volume">
-
 														<div class="ssp-back-thirty-container">
 															<div class="ssp-back-thirty-control" id="ssp-back-thirty">
 																<i class="ssp-icon icon-replay">&nbsp;</i>
 															</div>
 														</div>
-
 														<div class="ssp-playback-speed-label-container">
 															<div class="ssp-playback-speed-label-wrapper">
-																<span id="ssp_playback_speed<?php echo $large_player_instance_number; ?>" data-ssp-playback-rate="1">1X</span>
+																<span data-playback-speed-id="ssp_playback_speed_<?php echo $large_player_instance_number; ?>" id="ssp_playback_speed<?php echo $large_player_instance_number; ?>" data-ssp-playback-rate="1">1X</span>
 															</div>
 														</div>
-
 														<div class="ssp-download-container">
 															<div class="ssp-download-control">
 																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
 															</div>
 														</div>
-
 													</div>
-
 												</div>
-
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-
-						<script>
-							// @todo move this to a separate enqueued file and use data attributes
-							document.addEventListener("DOMContentLoaded", function () {
-								(function ($) {
-									var sspUpdateDuration<?php echo $large_player_instance_number; ?>;
-
-									// Create Player
-									window.ssp_player<?php echo $large_player_instance_number; ?> = WaveSurfer.create({
-										container: '#waveform<?php echo $large_player_instance_number; ?>',
-										waveColor: '#444',
-										progressColor: '<?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?>',
-										barWidth: 3,
-										barHeight: 15,
-										height: 8,
-										hideScrollbar: true,
-										skipLength: 30,
-										backend: 'MediaElement'
-									});
-
-									//Set player track
-									window.ssp_player<?php echo $large_player_instance_number; ?>.track = '<?php echo $srcFile; ?>';
-
-									/**
-									 * Setting and drawing the peaks seems to be required for the 'load on play' functionality to work
-									 */
-									//Set peaks
-									window.ssp_player<?php echo $large_player_instance_number; ?>.backend.peaks = [0.0218, 0.0183, 0.0165, 0.0198, 0.2137, 0.2888, 0.2313, 0.15, 0.2542, 0.2538, 0.2358, 0.1195, 0.1591, 0.2599, 0.2742, 0.1447, 0.2328, 0.1878, 0.1988, 0.1645, 0.1218, 0.2005, 0.2828, 0.2051, 0.1664, 0.1181, 0.1621, 0.2966, 0.189, 0.246, 0.2445, 0.1621, 0.1618, 0.189, 0.2354, 0.1561, 0.1638, 0.2799, 0.0923, 0.1659, 0.1675, 0.1268, 0.0984, 0.0997, 0.1248, 0.1495, 0.1431, 0.1236, 0.1755, 0.1183, 0.1349, 0.1018, 0.1109, 0.1833, 0.1813, 0.1422, 0.0961, 0.1191, 0.0791, 0.0631, 0.0315, 0.0157, 0.0166, 0.0108];
-
-									//Draw peaks
-									window.ssp_player<?php echo $large_player_instance_number; ?>.drawBuffer();
-
-									//Variable to check if the track is loaded
-									window.ssp_player<?php echo $large_player_instance_number; ?>.loaded = false;
-
-									// @todo Track Player errors
-
-									// On Media Ready
-									window.ssp_player<?php echo $large_player_instance_number; ?>.on('ready', function (e) {
-
-										if (!window.ssp_player<?php echo $large_player_instance_number; ?>.loaded) {
-											window.ssp_player<?php echo $large_player_instance_number; ?>.loaded = true;
-											window.ssp_player<?php echo $large_player_instance_number; ?>.play();
-										}
-
-										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspTotalDuration').text(window.ssp_player<?php echo $large_player_instance_number; ?>.getDuration().toString().toFormattedDuration());
-										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration').text(window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration());
-									});
-
-									// On Media Played
-									window.ssp_player<?php echo $large_player_instance_number; ?>.on('play', function (e) {
-
-										if (!window.ssp_player<?php echo $large_player_instance_number; ?>.loaded) {
-											window.ssp_player<?php echo $large_player_instance_number; ?>.load(window.ssp_player<?php echo $large_player_instance_number; ?>.track, window.ssp_player<?php echo $large_player_instance_number; ?>.backend.peaks);
-										}
-
-										// @todo Track Podcast Specific Play
-
-										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon').removeClass().addClass('ssp-icon ssp-icon-pause_icon');
-										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration').text(window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration())
-
-										sspUpdateDuration<?php echo $large_player_instance_number; ?> = setInterval(function () {
-											$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #sspPlayedDuration').text(window.ssp_player<?php echo $large_player_instance_number; ?>.getCurrentTime().toString().toFormattedDuration());
-										}, 100);
-
-									});
-
-									// On Media Paused
-									window.ssp_player<?php echo $large_player_instance_number; ?>.on('pause', function (e) {
-
-										// @todo Track Podcast Specific Pause
-
-										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon').removeClass().addClass('ssp-icon ssp-icon-play_icon');
-
-										clearInterval(sspUpdateDuration<?php echo $large_player_instance_number; ?> );
-
-									});
-
-									// On Media Finished
-									window.ssp_player<?php echo $large_player_instance_number; ?>.on('finish', function (e) {
-
-										$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause .ssp-icon').removeClass().addClass('ssp-icon ssp-icon-play_icon');
-
-										// @todo Track Podcast Specific Finish
-
-									});
-
-									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-play-pause').on( 'click', function(e){
-										window.ssp_player<?php echo $large_player_instance_number; ?>.playPause();
-									});
-
-									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp-back-thirty').on('click', function (e) {
-
-										// @todo Track Podcast Specific Back 30
-
-										window.ssp_player<?php echo $large_player_instance_number; ?>.skipBackward();
-
-									});
-
-									$('#ssp_player_id_<?php echo $large_player_instance_number; ?> #ssp_playback_speed<?php echo $large_player_instance_number; ?>').on('click', function (e) {
-										switch ($(e.currentTarget).parent().find('[data-ssp-playback-rate]').attr('data-ssp-playback-rate')) {
-											case "1":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1.5' );
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1.5X' );
-												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(1.5);
-												break;
-											case "1.5":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '2' );
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('2X' );
-												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(2);
-												break;
-											case "2":
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).attr( 'data-ssp-playback-rate', '1' );
-												$( e.currentTarget ).parent().find( '[data-ssp-playback-rate]' ).text('1X' );
-												window.ssp_player<?php echo $large_player_instance_number; ?>.setPlaybackRate(1);
-											default:
-												break;
-										}
-									} );
-
-								}(jQuery))
-
-							} );
-
-						</script>
-
 						<?php
-
 						$player = ob_get_clean();
-
 						// ---- /NEW PLAYER -----
 					}
 
@@ -821,7 +651,7 @@ class SSP_Frontend {
 			}
 
 			// Allow filtering so that alternative players can be used
-			$player = apply_filters( 'ssp_media_player', $player, $srcFile, $episode_id );
+			$player = apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
 		}
 
 		return $player;
@@ -2028,16 +1858,6 @@ class SSP_Frontend {
 
 	public function load_localisation () {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
-	}
-
-	/**
-	 *
-	 */
-	public function load_scripts(){
-
-		wp_register_style( 'ssp-frontend-player', $this->assets_url.'css/player.css', array(), $this->version );
-		wp_enqueue_style( 'ssp-frontend-player' );
-
 	}
 
 }

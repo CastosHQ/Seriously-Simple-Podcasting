@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 4.9.8
+Tested up to: 5.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.16
+Stable tag: 1.19.17
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.17 =
+* 2019-03-13
+* [FIX] Fixes a bug where the HTML5 player JavaScript was rendered inline, causing wpautop related bugs
+* [UPDATE] Updates the Castos Discount form
 
 = 1.19.16 =
 * 2019-02-27

@@ -133,13 +133,13 @@ class SSP_Settings {
 		// If we do not have the WordPress core colour picker field, then we don't break anything
 		add_action( 'admin_footer', function () {
 			?>
-            <script>
-                jQuery(document).ready(function ($) {
-                    if ("function" === typeof $.fn.wpColorPicker) {
-                        $('.ssp-color-picker').wpColorPicker();
-                    }
-                });
-            </script>
+			<script>
+				jQuery(document).ready(function ($) {
+					if ("function" === typeof $.fn.wpColorPicker) {
+						$('.ssp-color-picker').wpColorPicker();
+					}
+				});
+			</script>
 			<?php
 		}, 99 );
 
@@ -1111,20 +1111,24 @@ class SSP_Settings {
 		}
 
 		if ( ssp_is_connected_to_podcastmotor() ) {
+			$fields = array();
+			if ( ! ssp_get_external_rss_being_imported() ) {
+				$fields = array(
+					array(
+						'id'          => 'podmotor_import',
+						'label'       => __( 'Import your podcast', 'seriously-simple-podcasting' ),
+						'description' => __( 'Import your podcast to your Castos hosting account.', 'seriously-simple-podcasting' ),
+						'type'        => 'checkbox',
+						'default'     => '',
+						'callback'    => 'wp_strip_all_tags',
+						'class'       => 'import-castos',
+					),
+				);
+			}
 			$settings['import'] = array(
 				'title'       => __( 'Import', 'seriously-simple-podcasting' ),
 				'description' => sprintf( __( 'Manage import options.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
-				'fields'      => array(
-					array(
-						'id'              => 'podmotor_import',
-						'label'           => __( 'Import your podcast', 'seriously-simple-podcasting' ),
-						'description'     => __( 'Import your podcast to your Castos hosting account.', 'seriously-simple-podcasting' ),
-						'type'            => 'checkbox',
-						'default'         => '',
-						'callback'        => 'wp_strip_all_tags',
-						'class'           => 'import-castos',
-					),
-				),
+				'fields'      => $fields,
 			);
 		}
 
@@ -1743,7 +1747,7 @@ class SSP_Settings {
 			);
 			$html .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
 			$html .= '<input type="hidden" name="action" value="post_import_form" />';
-			$html .= wp_nonce_field( 'ss_podcasting-import' );
+			$html .= wp_nonce_field( 'ss_podcasting_import' );
 		} else {
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 		}
@@ -1788,11 +1792,15 @@ class SSP_Settings {
 
 		if ( 'import' === $tab ) {
 			// Custom submits for Imports
-			$html .= '<p class="submit">' . "\n";
-			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
-			$html .= '</p>' . "\n";
-			$html .= $this->render_import_form();
+			if ( ssp_get_external_rss_being_imported() ) {
+				$html .= $this->render_external_import_process();
+			} else {
+				$html .= '<p class="submit">' . "\n";
+				$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
+				$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+				$html .= '</p>' . "\n";
+				$html .= $this->render_external_import_form();
+			}
 		}
 
 		$html .= '</form>' . "\n";
@@ -1805,6 +1813,11 @@ class SSP_Settings {
 
 		echo $html;
 	}
+
+	/**
+	 * Renders the Castos Trigger Import form
+	 *
+	 * @return false|string
 
 	public function render_import_form() {
 		$site_name    = get_bloginfo( 'name' );
@@ -1846,6 +1859,38 @@ class SSP_Settings {
 		<?php
 		$html = ob_get_clean();
 		return $html;
+	}
+	 */
+
+	public function render_external_import_form() {
+		ob_start();
+		?>
+		<p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
+			the RSS Feed in the form below and the plugin will import the episodes for you.</p>
+		<table class="form-table">
+			<tbody>
+			<tr>
+				<th scope="row">RSS feed</th>
+				<td>
+					<input id="external_rss" name="external_rss" type="text" placeholder="https://externalservice.com/rss" value="" class="regular-text">
+				</td>
+			</tr>
+			</tbody>
+		</table>
+		<p class="submit">
+			<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Submit Form', 'seriously-simple-podcasting' ) ) ?>"/>
+		</p>
+		<?php
+		$html = ob_get_clean();
+
+		return $html;
+	}
+
+	public function render_external_import_process(){
+		$output = '';
+		$output .= '<h2>Your external RSS feed is being imported. Please leave this window open until it completes</h2>';
+		$output .= '<div id="ssp-external-feed-progress"></div>';
+		return $output;
 	}
 
 	/**

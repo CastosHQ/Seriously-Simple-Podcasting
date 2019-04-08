@@ -1733,55 +1733,70 @@ HTML;
 	 */
 	public function submit_import_form() {
 
-		$action = ( isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : '' );
+		$action = ( isset( $_POST['action'] ) ? sanitize_text_field( $_POST['action'] ) : '' );
 
-		if ( ! empty( $action ) && 'post_import_form' === sanitize_text_field( $action ) ) {
+		if ( empty( $action ) && 'post_import_form' !== sanitize_text_field( $action ) ) {
+			return;
+		}
 
-			check_admin_referer( 'ss_podcasting-import' );
+		check_admin_referer( 'ss_podcasting_import' );
 
-			$submit = '';
-			if ( isset( $_POST['Submit'] ) ) {
-				$submit = filter_var( $_POST['Submit'], FILTER_SANITIZE_STRING );
-			}
+		$submit = '';
+		if ( isset( $_POST['Submit'] ) ) {
+			$submit = sanitize_text_field( $_POST['Submit'] );
+		}
 
-			// The user has submitted the Import your podcast setting
-			if ( 'Trigger import' === $submit ) {
-				$import = filter_var( $_POST['ss_podcasting_podmotor_import'], FILTER_SANITIZE_STRING );
-				if ( 'on' === $import ) {
-					$podmotorHandler = new Podmotor_Handler();
-					$result          = $podmotorHandler->trigger_podcast_import();
-					if ( 'success' !== $result['status'] ) {
-						add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
-					}else {
-						add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
-					}
-					return;
-				} else {
-					update_option( 'ss_podcasting_podmotor_import', 'off' );
+		// The user has submitted the Import your podcast setting
+		if ( 'Trigger import' === $submit ) {
+			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
+			if ( 'on' === $import ) {
+				$podmotorHandler = new Podmotor_Handler();
+				$result          = $podmotorHandler->trigger_podcast_import();
+				if ( 'success' !== $result['status'] ) {
+					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
+				}else {
+					add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
 				}
-			}
-
-			// The user has submitted the external import form
-			if ( 'Submit Form' === $submit ) {
-				$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
-				$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
-				if ( ! empty( $name ) && ! empty( $podcast_url ) ) {
-					$website = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
-					$email   = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
-
-					$new_line  = "\n";
-					$site_name = $name;
-					$to        = 'hello@castos.com';
-					$subject   = sprintf( __( 'Podcast import request' ), $site_name );
-					$message   = sprintf( __( 'Hi Craig %1$s' ), $new_line );
-					$message   .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
-					$message   .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
-					$from      = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
-					wp_mail( $to, $subject, $message, $from );
-					add_action( 'admin_notices', array( $this, 'import_form_success' ) );
-				}
+				return;
+			} else {
+				update_option( 'ss_podcasting_podmotor_import', 'off' );
 			}
 		}
+
+		// The user has submitted the external import form
+		if ( 'Submit Form' === $submit ) {
+			$external_rss = strip_tags(
+				stripslashes(
+					filter_var( $_POST['external_rss'], FILTER_VALIDATE_URL )
+				)
+			);
+			if ( ! empty( $external_rss ) ) {
+				update_option( 'ssp_external_rss', $external_rss );
+				add_action( 'admin_notices', array( $this, 'import_form_success' ) );
+			}
+		}
+
+/*		// The user has submitted the external import form
+		if ( 'Submit Form' === $submit ) {
+			$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
+			$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
+			if ( ! empty( $name ) && ! empty( $podcast_url ) ) {
+				$website = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
+				$email   = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
+
+				$new_line  = "\n";
+				$site_name = $name;
+				$to        = 'hello@castos.com';
+				$subject   = sprintf( __( 'Podcast import request' ), $site_name );
+				$message   = sprintf( __( 'Hi Craig %1$s' ), $new_line );
+				$message   .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
+				$message   .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
+				$from      = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
+				wp_mail( $to, $subject, $message, $from );
+				add_action( 'admin_notices', array( $this, 'import_form_success' ) );
+			}
+		}*/
+
 	}
 
 	/**
@@ -1809,10 +1824,10 @@ HTML;
 	/**
 	 * Displays an admin message if the Import form submission was successful
 	 */
-	public function import_form_success(){
+	public function import_form_success() {
 		?>
 		<div class="notice notice-info is-dismissible">
-			<p><?php esc_attr_e( 'Thanks, someone from Castos will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
+			<p><?php esc_attr_e( 'Thanks, your external RSS feed will start importing', 'seriously-simple-podcasting' ); ?></p>
 		</div>
 		<?php
 	}

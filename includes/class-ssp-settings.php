@@ -1888,7 +1888,7 @@ class SSP_Settings {
 
 	public function render_external_import_process(){
 		$output = '';
-		$output .= '<h2>Your external RSS feed is being imported. Please leave this window open until it completes</h2>';
+		$output .= '<h3>Your external RSS feed is being imported. Please leave this window open until it completes</h3>';
 		$output .= '<div id="ssp-external-feed-progress"></div>';
 		return $output;
 	}

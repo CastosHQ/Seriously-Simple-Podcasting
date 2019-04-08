@@ -1170,6 +1170,15 @@ HTML;
 				wp_enqueue_style( 'jquery-peekabar' );
 			}
 		}
+
+
+		/**
+		 * Only load the jquery-ui CSS when the import settings screen is loaded
+		 * @todo load this locally perhaps? and only the progress bar stuff?
+		 */
+		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
+			wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
+		}
 	}
 
 	/**
@@ -1209,6 +1218,17 @@ HTML;
 				wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 				wp_enqueue_script( 'jquery-peekabar' );
 			}
+		}
+
+		/**
+		 * Only load the import js when the import settings screen is loaded
+		 */
+		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
+			wp_register_script( 'ssp-import-rss', esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ), array(
+				'jquery',
+				'jquery-ui-progressbar'
+			), $this->version );
+			wp_enqueue_script( 'ssp-import-rss' );
 		}
 	}
 

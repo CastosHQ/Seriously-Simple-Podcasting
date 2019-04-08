@@ -1886,11 +1886,24 @@ class SSP_Settings {
 		return $html;
 	}
 
-	public function render_external_import_process(){
-		$output = '';
-		$output .= '<h3>Your external RSS feed is being imported. Please leave this window open until it completes</h3>';
-		$output .= '<div id="ssp-external-feed-progress"></div>';
-		return $output;
+	public function render_external_import_process() {
+		ob_start();
+		?>
+		<h3>Your external RSS feed is being imported. Please leave this window open until it completes</h3>
+		<div id="ssp-external-feed-progress"></div>
+		<div id="ssp-external-feed-status">
+			<p><strong>Feed import complete</strong></p>
+			<p>Imported WP Hacker Cast Episode 5</p>
+			<p>Imported WP Hacker Cast Episode 4</p>
+			<p>Imported WP Hacker Cast Episode 3</p>
+			<p>Imported WP Hacker Cast Episode 2</p>
+			<p>Imported WP Hacker Cast Episode 1</p>
+			<p>Commencing feed import</p>
+		</div>
+		<?php
+		$html = ob_get_clean();
+
+		return $html;
 	}
 
 	/**

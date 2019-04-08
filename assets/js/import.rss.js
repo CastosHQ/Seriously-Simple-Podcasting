@@ -5,9 +5,9 @@ jQuery(document).ready(function ($) {
 	 */
 	if ($('#ssp-external-feed-progress').length > 0) {
 		$("#ssp-external-feed-progress").progressbar({
-			value: 1
+			value: 100
 		});
-		ssp_import_external_feed();
+		//ssp_import_external_feed();
 	}
 
 	/**

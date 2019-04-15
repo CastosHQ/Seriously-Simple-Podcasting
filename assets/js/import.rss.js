@@ -5,9 +5,9 @@ jQuery(document).ready(function ($) {
 	 */
 	if ($('#ssp-external-feed-progress').length > 0) {
 		$("#ssp-external-feed-progress").progressbar({
-			value: 100
+			value: 0
 		});
-		//ssp_import_external_feed();
+		ssp_import_external_feed();
 	}
 
 	/**
@@ -15,29 +15,16 @@ jQuery(document).ready(function ($) {
 	 */
 	function ssp_import_external_feed(){
 		$.ajax({
-			url: path,
-			type: 'post',
-			data: {payload: payload},
-			xhr: function () {
-				var xhr = $.ajaxSettings.xhr();
-				xhr.onprogress = function e() {
-					// For downloads
-					if (e.lengthComputable) {
-						console.log(e.loaded / e.total);
-					}
-				};
-				xhr.upload.onprogress = function (e) {
-					// For uploads
-					if (e.lengthComputable) {
-						console.log(e.loaded / e.total);
-					}
-				};
-				return xhr;
-			}
+			url: ajaxurl,
+			data: {'action': 'import_external_rss_feed'},
+		}).progress(function (e) {
+			console.log(['Progress', e]);
+		}).uploadProgress(function (e) {
+			console.log(['Progress Upload', e]);
 		}).done(function (e) {
-			// Do something
+			console.log(['Done', e]);
 		}).fail(function (e) {
-			// Do something
+			console.log(['Fail', e]);
 		});
 	}
 });

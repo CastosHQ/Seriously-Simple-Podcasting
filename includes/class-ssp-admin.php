@@ -153,6 +153,9 @@ class SSP_Admin {
 		// Add ajax action for customising episode embed code
 		add_action( 'wp_ajax_update_episode_embed_code', array( $this, 'update_episode_embed_code' ) );
 
+		// Add ajax action for importing external rss feed
+		add_action( 'wp_ajax_import_external_rss_feed', array( $this, 'import_external_rss_feed' ) );
+
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
@@ -693,6 +696,17 @@ HTML;
 	}
 
 	/**
+	 * Import an external RSS feed via ajax
+	 */
+	public function import_external_rss_feed(){
+		for ( $i = 10; $i <= 100; $i ++ ) {
+			if ( 0 === $i % 10 ) {
+				echo $i;
+			}
+		}
+	}
+
+	/**
 	 * Load content for episode meta box
 	 * @return void
 	 */
@@ -1224,6 +1238,11 @@ HTML;
 		 * Only load the import js when the import settings screen is loaded
 		 */
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
+			wp_register_script( 'ssp-jq-ajax-progress', esc_url( $this->assets_url . 'js/jq-ajax-progress' . $this->script_suffix . '.js' ), array(
+				'jquery',
+				'jquery-ui-progressbar'
+			), $this->version );
+			wp_enqueue_script( 'ssp-jq-ajax-progress' );
 			wp_register_script( 'ssp-import-rss', esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ), array(
 				'jquery',
 				'jquery-ui-progressbar'

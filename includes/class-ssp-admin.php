@@ -1797,7 +1797,7 @@ HTML;
 
 		$action = ( isset( $_POST['action'] ) ? sanitize_text_field( $_POST['action'] ) : '' );
 
-		if ( empty( $action ) && 'post_import_form' !== sanitize_text_field( $action ) ) {
+		if ( empty( $action ) || 'post_import_form' !== sanitize_text_field( $action ) ) {
 			return;
 		}
 

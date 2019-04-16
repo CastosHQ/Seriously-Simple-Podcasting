@@ -703,9 +703,9 @@ HTML;
 	 */
 	public function import_external_rss_feed() {
 		// @todo add nonces, add user caps check, validate inputs
-		$response = array();
-		$ssp_external_rss = get_option('ssp_external_rss', '');
-		if (empty($ssp_external_rss)){
+
+		$ssp_external_rss = get_option( 'ssp_external_rss', '' );
+		if ( empty( $ssp_external_rss ) ) {
 			$response = array(
 				'status'  => 'error',
 				'message' => 'No feed to process'
@@ -715,8 +715,8 @@ HTML;
 			return;
 		}
 
-		$rss_importer = new SSP_External_RSS_Importer();
-		$response = $rss_importer->import_rss_feed();
+		$rss_importer = new SSP_External_RSS_Importer( $ssp_external_rss );
+		$response     = $rss_importer->import_rss_feed();
 
 		wp_send_json( $response );
 	}

@@ -55,6 +55,7 @@ class SSP_External_RSS_Importer {
 				'post_status'  => 'publish',
 				'post_author'  => $post_author,
 				'post_date'    => date( 'Y-m-d H:i:s', $post_date ),
+				'post_type'    => 'podcast', // todo get type from import selection
 			);
 
 			// Add the post

@@ -1,5 +1,4 @@
 jQuery(document).ready(function ($) {
-
 	/**
 	 * If the progress bar appears on the page, trigger the import
 	 */
@@ -14,17 +13,30 @@ jQuery(document).ready(function ($) {
 	 * Import the external RSS feed
 	 */
 	function ssp_import_external_feed(){
+		//let timer = setInterval(update_external_feed_progress_bar, 500);
 		$.ajax({
 			url: ajaxurl,
+			type: 'get',
 			data: {'action': 'import_external_rss_feed'},
-		}).progress(function (e) {
-			console.log(['Progress', e]);
-		}).uploadProgress(function (e) {
-			console.log(['Progress Upload', e]);
-		}).done(function (e) {
-			console.log(['Done', e]);
-		}).fail(function (e) {
-			console.log(['Fail', e]);
+		}).done(function (response) {
+			console.log(response);
+			console.log('complete');
+			//clearInterval(timer);
+		}).fail(function (response) {
+			console.log(response);
+			console.log('error');
+		});
+	}
+
+	function update_external_feed_progress_bar(){
+		$.ajax({
+			url: ajaxurl,
+			type: 'get',
+			data: {'action': 'get_external_rss_feed_progress'},
+		}).done(function (response) {
+			console.log(response);
+		}).fail(function (response) {
+			console.log(response);
 		});
 	}
 });

@@ -156,6 +156,9 @@ class SSP_Admin {
 		// Add ajax action for importing external rss feed
 		add_action( 'wp_ajax_import_external_rss_feed', array( $this, 'import_external_rss_feed' ) );
 
+		// Add ajax action for getting external rss feed progress
+		add_action( 'wp_ajax_get_external_rss_feed_progress', array( $this, 'get_external_rss_feed_progress' ) );
+
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
@@ -698,11 +701,31 @@ HTML;
 	/**
 	 * Import an external RSS feed via ajax
 	 */
-	public function import_external_rss_feed(){
-		for ( $i = 10; $i <= 100; $i ++ ) {
-			if ( 0 === $i % 10 ) {
-				echo $i;
-			}
+	public function import_external_rss_feed() {
+		// @todo add nonces, add user caps check, validate inputs
+		$response = array();
+		$ssp_external_rss = get_option('ssp_external_rss', '');
+		if (empty($ssp_external_rss)){
+			$response = array(
+				'status'  => 'error',
+				'message' => 'No feed to process'
+			);
+			wp_send_json( $response );
+
+			return;
+		}
+
+		$rss_importer = new SSP_External_RSS_Importer();
+		$response = $rss_importer->import_rss_feed();
+
+		wp_send_json( $response );
+	}
+
+	public function get_external_rss_feed_progress() {
+		// @todo add nonces, add user caps check
+		$progress = (int) get_option( 'ssp_rss_import', 0 );
+		if ( $progress > 0 ) {
+			wp_send_json( $progress );
 		}
 	}
 
@@ -1238,11 +1261,11 @@ HTML;
 		 * Only load the import js when the import settings screen is loaded
 		 */
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
-			wp_register_script( 'ssp-jq-ajax-progress', esc_url( $this->assets_url . 'js/jq-ajax-progress' . $this->script_suffix . '.js' ), array(
+			/*wp_register_script( 'ssp-jq-ajax-progress', esc_url( $this->assets_url . 'js/jq-ajax-progress' . $this->script_suffix . '.js' ), array(
 				'jquery',
 				'jquery-ui-progressbar'
 			), $this->version );
-			wp_enqueue_script( 'ssp-jq-ajax-progress' );
+			wp_enqueue_script( 'ssp-jq-ajax-progress' );*/
 			wp_register_script( 'ssp-import-rss', esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ), array(
 				'jquery',
 				'jquery-ui-progressbar'

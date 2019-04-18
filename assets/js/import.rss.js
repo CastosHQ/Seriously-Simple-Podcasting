@@ -3,10 +3,18 @@ jQuery(document).ready(function ($) {
 	 * If the progress bar appears on the page, trigger the import
 	 */
 	if ($('#ssp-external-feed-progress').length > 0) {
-		$("#ssp-external-feed-progress").progressbar({
-			value: 0
-		});
-		ssp_import_external_feed();
+
+		var response = confirm('You are about to import an external RSS feed.');
+		if (response == true) {
+			$("#ssp-external-feed-progress").progressbar({
+				value: 0
+			});
+			ssp_import_external_feed();
+		}else {
+			ssp_reset_external_feed();
+		}
+
+
 	}
 
 	function update_progress_bar(progress) {
@@ -29,8 +37,8 @@ jQuery(document).ready(function ($) {
 	/**
 	 * Import the external RSS feed
 	 */
-	function ssp_import_external_feed(){
-		let timer = setInterval(update_external_feed_progress_bar, 250);
+	function ssp_import_external_feed() {
+		let timer = setInterval(update_external_feed_progress_bar, 500);
 		update_progress_bar(10);
 		$.ajax({
 			url: ajaxurl,
@@ -41,12 +49,11 @@ jQuery(document).ready(function ($) {
 			update_progress_log(response.episodes);
 			update_progress_bar(100);
 		}).fail(function (response) {
-			console.log(response);
 			alert('An error occurred importing the RSS feed, please refresh this page to try again');
 		});
 	}
 
-	function update_external_feed_progress_bar(){
+	function update_external_feed_progress_bar() {
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
@@ -54,5 +61,9 @@ jQuery(document).ready(function ($) {
 		}).done(function (response) {
 			update_progress_bar(response);
 		});
+	}
+
+	function ssp_reset_external_feed(){
+
 	}
 });

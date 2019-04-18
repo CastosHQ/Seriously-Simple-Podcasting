@@ -8,6 +8,8 @@ class SSP_External_RSS_Importer {
 
 	private $rss_feed;
 
+	private $post_type;
+
 	private $feed_object;
 
 	private $podcast_count = 0;
@@ -18,10 +20,9 @@ class SSP_External_RSS_Importer {
 
 	private $podcast_failure = 0;
 
-	private $podcasts_imported = array();
-
-	public function __construct( $rss_feed ) {
-		$this->rss_feed = $rss_feed;
+	public function __construct( $ssp_external_rss ) {
+		$this->rss_feed  = $ssp_external_rss['import_rss_feed'];
+		$this->post_type = $ssp_external_rss['import_post_type'];
 	}
 
 	public function load_rss_feed() {
@@ -57,7 +58,7 @@ class SSP_External_RSS_Importer {
 				'post_status'  => 'publish',
 				'post_author'  => $post_author,
 				'post_date'    => date( 'Y-m-d H:i:s', $post_date ),
-				'post_type'    => 'podcast', // todo get type from import selection
+				'post_type'    => $this->post_type,
 			);
 
 			// Add the post

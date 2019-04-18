@@ -3,17 +3,25 @@ jQuery(document).ready(function ($) {
 	 * If the progress bar appears on the page, trigger the import
 	 */
 	if ($('#ssp-external-feed-progress').length > 0) {
-		$("#ssp-external-feed-progress").progressbar({
-			value: 0
-		});
-		ssp_import_external_feed();
+
+		var response = confirm('You are about to import an external RSS feed.');
+		if (response == true) {
+			$("#ssp-external-feed-progress").progressbar({
+				value: 0
+			});
+			ssp_import_external_feed();
+		}else {
+			ssp_reset_external_feed();
+		}
+
+
 	}
 
 	/**
 	 * Import the external RSS feed
 	 */
-	function ssp_import_external_feed(){
-		//let timer = setInterval(update_external_feed_progress_bar, 500);
+	function ssp_import_external_feed() {
+		let timer = setInterval(update_external_feed_progress_bar, 500);
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
@@ -21,14 +29,14 @@ jQuery(document).ready(function ($) {
 		}).done(function (response) {
 			console.log(response);
 			console.log('complete');
-			//clearInterval(timer);
+			clearInterval(timer);
 		}).fail(function (response) {
 			console.log(response);
 			console.log('error');
 		});
 	}
 
-	function update_external_feed_progress_bar(){
+	function update_external_feed_progress_bar() {
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
@@ -38,5 +46,9 @@ jQuery(document).ready(function ($) {
 		}).fail(function (response) {
 			console.log(response);
 		});
+	}
+
+	function ssp_reset_external_feed(){
+
 	}
 });

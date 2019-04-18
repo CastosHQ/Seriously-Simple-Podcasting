@@ -1863,6 +1863,7 @@ class SSP_Settings {
 	 */
 
 	public function render_external_import_form() {
+		$post_types = ssp_post_types( true );
 		ob_start();
 		?>
 		<p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
@@ -1875,6 +1876,18 @@ class SSP_Settings {
 					<input id="external_rss" name="external_rss" type="text" placeholder="https://externalservice.com/rss" value="" class="regular-text">
 				</td>
 			</tr>
+			<?php if ( count( $post_types ) > 1 ) { ?>
+				<tr>
+					<th scope="row">RSS feed</th>
+					<td>
+						<select id="import_post_type" name="import_post_type">
+							<?php foreach ( $post_types as $post_type ) { ?>
+								<option value="<?php echo $post_type; ?>"><?php echo ucfirst( $post_type ); ?></option>
+							<?php } ?>
+						</select>
+					</td>
+				</tr>
+			<?php } ?>
 			</tbody>
 		</table>
 		<p class="submit">

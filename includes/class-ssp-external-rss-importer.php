@@ -18,6 +18,8 @@ class SSP_External_RSS_Importer {
 
 	private $podcast_failure = 0;
 
+	private $podcasts_imported = array();
+
 	public function __construct( $rss_feed ) {
 		$this->rss_feed = $rss_feed;
 	}
@@ -67,6 +69,7 @@ class SSP_External_RSS_Importer {
 
 			// Update the added count
 			$this->podcast_added ++;
+			$this->podcasts_imported[] = $post_title;
 
 			// Set the audio_file
 			$audio_file = add_post_meta( $post_id, 'audio_file', $url );
@@ -79,10 +82,13 @@ class SSP_External_RSS_Importer {
 			$this->update_ssp_rss_import();
 		}
 
+		update_option( 'ssp_external_rss', '' );
+
 		$response = array(
-			'status'  => 'success',
-			'message' => 'RSS Feed successfully imported',
-			'count'   => $this->podcast_added,
+			'status'   => 'success',
+			'message'  => 'RSS Feed successfully imported',
+			'count'    => $this->podcast_added,
+			'episodes' => $this->podcasts_imported,
 		);
 
 		return $response;

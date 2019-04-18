@@ -704,6 +704,8 @@ HTML;
 	public function import_external_rss_feed() {
 		// @todo add nonces, add user caps check, validate inputs
 
+		update_option( 'ssp_rss_import', 0 );
+
 		$ssp_external_rss = get_option( 'ssp_external_rss', '' );
 		if ( empty( $ssp_external_rss ) ) {
 			$response = array(
@@ -724,9 +726,7 @@ HTML;
 	public function get_external_rss_feed_progress() {
 		// @todo add nonces, add user caps check
 		$progress = (int) get_option( 'ssp_rss_import', 0 );
-		if ( $progress > 0 ) {
-			wp_send_json( $progress );
-		}
+		wp_send_json( $progress );
 	}
 
 	/**

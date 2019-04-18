@@ -1891,15 +1891,7 @@ class SSP_Settings {
 		?>
 		<h3>Your external RSS feed is being imported. Please leave this window open until it completes</h3>
 		<div id="ssp-external-feed-progress"></div>
-		<div id="ssp-external-feed-status">
-			<p><strong>Feed import complete</strong></p>
-			<p>Imported WP Hacker Cast Episode 5</p>
-			<p>Imported WP Hacker Cast Episode 4</p>
-			<p>Imported WP Hacker Cast Episode 3</p>
-			<p>Imported WP Hacker Cast Episode 2</p>
-			<p>Imported WP Hacker Cast Episode 1</p>
-			<p>Commencing feed import</p>
-		</div>
+		<div id="ssp-external-feed-status"><p>Commencing feed import</p></div>
 		<?php
 		$html = ob_get_clean();
 

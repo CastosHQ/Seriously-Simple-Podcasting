@@ -62,8 +62,9 @@ define( 'SSP_LOG_URL', SSP_LOG_DIR_URL . 'ssp.log.' . date( 'd-m-y' ) . '.txt' )
 require_once 'includes/ssp-functions.php';
 require_once 'includes/class-ssp-admin.php';
 require_once 'includes/class-ssp-frontend.php';
-require_once 'includes/class-podmotor-handler.php';
 
+require_once 'includes/class-podmotor-handler.php';
+require_once 'includes/class-ssp-external-rss-importer.php';
 /**
  * Only require the REST API endpoints if the user is using WordPress greater than 4.7
  */

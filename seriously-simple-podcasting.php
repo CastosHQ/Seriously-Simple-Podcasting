@@ -65,7 +65,6 @@ require_once 'includes/class-ssp-frontend.php';
 
 require_once 'includes/class-podmotor-handler.php';
 require_once 'includes/class-ssp-external-rss-importer.php';
-
 /**
  * Only require the REST API endpoints if the user is using WordPress greater than 4.7
  */

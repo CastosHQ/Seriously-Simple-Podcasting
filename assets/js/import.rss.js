@@ -10,7 +10,7 @@ jQuery(document).ready(function ($) {
 				value: 0
 			});
 			ssp_import_external_feed();
-		}else {
+		} else {
 			ssp_reset_external_feed();
 		}
 
@@ -63,7 +63,7 @@ jQuery(document).ready(function ($) {
 		});
 	}
 
-	function ssp_reset_external_feed(){
-
+	function ssp_reset_external_feed() {
+		// reset back to importer
 	}
 });

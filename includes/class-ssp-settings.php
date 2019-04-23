@@ -1878,7 +1878,7 @@ class SSP_Settings {
 			</tbody>
 		</table>
 		<p class="submit">
-			<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Submit Form', 'seriously-simple-podcasting' ) ) ?>"/>
+			<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Begin Import Now', 'seriously-simple-podcasting' ) ) ?>"/>
 		</p>
 		<?php
 		$html = ob_get_clean();
@@ -1889,7 +1889,7 @@ class SSP_Settings {
 	public function render_external_import_process() {
 		ob_start();
 		?>
-		<h3>Your external RSS feed is being imported. Please leave this window open until it completes</h3>
+		<h3 class="ssp-ssp-external-feed-message">Your external RSS feed is being imported. Please leave this window open until it completes</h3>
 		<div id="ssp-external-feed-progress"></div>
 		<div id="ssp-external-feed-status"><p>Commencing feed import</p></div>
 		<?php

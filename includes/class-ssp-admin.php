@@ -1208,13 +1208,19 @@ HTML;
 			}
 		}
 
-
 		/**
 		 * Only load the jquery-ui CSS when the import settings screen is loaded
 		 * @todo load this locally perhaps? and only the progress bar stuff?
 		 */
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
-			wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
+			//wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
+
+			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness.css' ), array(), $this->version );
+			wp_enqueue_style( 'jquery-ui-smoothness' );
+
+			wp_register_style( 'import-rss', esc_url( $this->assets_url . 'css/import.rss.css' ), array(), $this->version );
+			wp_enqueue_style( 'import-rss' );
+
 		}
 	}
 
@@ -1826,7 +1832,7 @@ HTML;
 		}
 
 		// The user has submitted the external import form
-		if ( 'Submit Form' === $submit ) {
+		if ( 'Begin Import Now' === $submit ) {
 			$external_rss = strip_tags(
 				stripslashes(
 					filter_var( $_POST['external_rss'], FILTER_VALIDATE_URL )

@@ -1839,7 +1839,16 @@ HTML;
 				)
 			);
 			if ( ! empty( $external_rss ) ) {
-				update_option( 'ssp_external_rss', $external_rss );
+				$import_post_type = sanitize_text_field( $_GET['import_post_type'] );
+				if ( empty( $import_post_type ) ) {
+					$import_post_type = 'podcast';
+				}
+				update_option( 'ssp_external_rss',
+					array(
+						'import_rss_feed'  => $external_rss,
+						'import_post_type' => $import_post_type,
+					)
+				);
 				add_action( 'admin_notices', array( $this, 'import_form_success' ) );
 			}
 		}

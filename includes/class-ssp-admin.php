@@ -159,6 +159,9 @@ class SSP_Admin {
 		// Add ajax action for getting external rss feed progress
 		add_action( 'wp_ajax_get_external_rss_feed_progress', array( $this, 'get_external_rss_feed_progress' ) );
 
+		// Add ajax action to reset external feed options
+		add_action( 'wp_ajax_reset_external_rss_feed_progress', array( $this, 'reset_external_rss_feed_progress' ) );
+
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
@@ -727,6 +730,13 @@ HTML;
 		// @todo add nonces, add user caps check
 		$progress = (int) get_option( 'ssp_rss_import', 0 );
 		wp_send_json( $progress );
+	}
+
+	public function reset_external_rss_feed_progress() {
+		// @todo add nonces, add user caps check
+		delete_option( 'ssp_external_rss' );
+		delete_option( 'ssp_rss_import' );
+		wp_send_json( 'success' );
 	}
 
 	/**
@@ -1839,14 +1849,19 @@ HTML;
 				)
 			);
 			if ( ! empty( $external_rss ) ) {
-				$import_post_type = sanitize_text_field( $_GET['import_post_type'] );
-				if ( empty( $import_post_type ) ) {
-					$import_post_type = 'podcast';
+				$import_post_type = 'podcast';
+				if (isset($_GET['import_post_type'])){
+					$import_post_type = sanitize_text_field( $_GET['import_post_type'] );
+				}
+				$import_series = '';
+				if ( isset( $_GET['import_series'] ) ) {
+					$import_series = sanitize_text_field( $_GET['import_series'] );
 				}
 				update_option( 'ssp_external_rss',
 					array(
 						'import_rss_feed'  => $external_rss,
 						'import_post_type' => $import_post_type,
+						'import_series'    => $import_series,
 					)
 				);
 				add_action( 'admin_notices', array( $this, 'import_form_success' ) );

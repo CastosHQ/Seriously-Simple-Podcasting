@@ -10,6 +10,8 @@ class SSP_External_RSS_Importer {
 
 	private $post_type;
 
+	private $series;
+
 	private $feed_object;
 
 	private $podcast_count = 0;
@@ -23,6 +25,7 @@ class SSP_External_RSS_Importer {
 	public function __construct( $ssp_external_rss ) {
 		$this->rss_feed  = $ssp_external_rss['import_rss_feed'];
 		$this->post_type = $ssp_external_rss['import_post_type'];
+		$this->series    = $ssp_external_rss['import_series'];
 	}
 
 	public function load_rss_feed() {
@@ -66,6 +69,10 @@ class SSP_External_RSS_Importer {
 
 			if ( is_wp_error( $post_id ) ) {
 				$this->podcast_failure ++;
+			}
+
+			if ( ! empty( $this->series ) ) {
+				wp_set_post_terms( $post_id, $this->series, 'series' );
 			}
 
 			// Update the added count

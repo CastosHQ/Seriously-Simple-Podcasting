@@ -1865,6 +1865,7 @@ class SSP_Settings {
 
 	public function render_external_import_form() {
 		$post_types = ssp_post_types( true );
+		$series = get_terms( 'series', array( 'hide_empty' => false ) );
 		ob_start();
 		?>
 		<p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
@@ -1884,6 +1885,18 @@ class SSP_Settings {
 						<select id="import_post_type" name="import_post_type">
 							<?php foreach ( $post_types as $post_type ) { ?>
 								<option value="<?php echo $post_type; ?>"><?php echo ucfirst( $post_type ); ?></option>
+							<?php } ?>
+						</select>
+					</td>
+				</tr>
+			<?php } ?>
+			<?php if ( count( $series ) > 1 ) { ?>
+				<tr>
+					<th scope="row">Series</th>
+					<td>
+						<select id="import_series" name="import_series">
+							<?php foreach ( $series as $series_item ) { ?>
+								<option value="<?php echo $series_item->term_id; ?>"><?php echo $series_item->name; ?></option>
 							<?php } ?>
 						</select>
 					</td>

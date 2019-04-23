@@ -109,7 +109,17 @@ jQuery(document).ready(function ($) {
 		});
 	}
 
+	/**
+	 * Resets the external RSS feed
+	 */
 	function ssp_reset_external_feed() {
-		// reset back to importer
+		$.ajax({
+			url: ajaxurl,
+			type: 'get',
+			data: {'action': 'reset_external_rss_feed_progress'},
+		}).done(function () {
+			$('.ssp-ssp-external-feed-message').html('Import cancelled !').css('color', 'red');
+			$('#ssp-external-feed-status').html('');
+		});
 	}
 });

@@ -84,6 +84,7 @@ class SSP_External_RSS_Importer {
 		}
 
 		update_option( 'ssp_external_rss', '' );
+		update_option( 'ssp_rss_import', '100' );
 
 		$response = array(
 			'status'   => 'success',

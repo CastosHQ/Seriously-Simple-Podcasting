@@ -1,36 +1,71 @@
 jQuery(document).ready(function ($) {
+
+	/**
+	 * Setup the progressbar element
+	 * @type {*|jQuery|HTMLElement}
+	 */
+	let progressbar = $('#ssp-external-feed-progress');
+
 	/**
 	 * If the progress bar appears on the page, trigger the import
 	 */
-	if ($('#ssp-external-feed-progress').length > 0) {
-		var response = confirm('You are about to import an external RSS feed.');
-		if (response == true) {
-		  update_progress_bar(0, 'blue');
-		  ssp_import_external_feed();
+	if (progressbar.length > 0) {
+		let response = confirm('You are about to import an external RSS feed.');
+		if (true === response) {
+			update_progress_bar(0);
+			ssp_import_external_feed();
 		} else {
 			ssp_reset_external_feed();
 		}
 	}
 
+	/**
+	 * Change the colour of the progressbar
+	 * @param colour
+	 */
 	function change_progress_colour(colour) {
-		console.log(colour);
-		let removeClass = 'blue';
-		if ('blue' === colour){
-			removeClass = 'green';
+		let remove_class = 'blue';
+		if ('blue' === colour) {
+			remove_class = 'green';
 		}
-		$('#ssp-external-feed-progress').removeClass(removeClass).addClass(colour);
+		progressbar.removeClass(remove_class).addClass(colour);
 	}
 
+	/**
+	 * Update the progressbar value
+	 * @param progress
+	 * @param colour
+	 */
 	function update_progress_bar(progress, colour) {
-		if ('' === colour){
+		/**
+		 * First run
+		 */
+		if (0 === progress) {
+			progressbar.progressbar({
+				value: 0
+			});
+			return;
+		}
+
+		/**
+		 * Subsequent runs
+		 */
+		if ('' === colour) {
 			colour = 'blue';
 		}
-		$("#ssp-external-feed-progress").progressbar({
-			value: progress
-		});
-		change_progress_colour(colour);
+		let current_value = progressbar.progressbar('value');
+		if (current_value < 100) {
+			progressbar.progressbar({
+				value: progress
+			});
+			change_progress_colour(colour);
+		}
 	}
 
+	/**
+	 * Update the progress log
+	 * @param episodes
+	 */
 	function update_progress_log(episodes) {
 		$('.ssp-ssp-external-feed-message').html('Import completed successfully !').css('color', 'green');
 		let ssp_external_feed_status = $('#ssp-external-feed-status');
@@ -46,7 +81,7 @@ jQuery(document).ready(function ($) {
 	/**
 	 * Import the external RSS feed
 	 */
-	function ssp_import_external_feed(){
+	function ssp_import_external_feed() {
 		let timer = setInterval(update_external_feed_progress_bar, 250);
 		$.ajax({
 			url: ajaxurl,
@@ -61,6 +96,9 @@ jQuery(document).ready(function ($) {
 		});
 	}
 
+	/**
+	 * Poll the system to get the progressbar update
+	 */
 	function update_external_feed_progress_bar() {
 		$.ajax({
 			url: ajaxurl,

@@ -1554,7 +1554,6 @@ HTML;
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
 		if ( ! ssp_is_connected_to_podcastmotor() ) {
-			ssp_debug('Not connected to Castos');
 			return;
 		}
 
@@ -1562,7 +1561,6 @@ HTML;
 		 * Only trigger this when the post type is podcast
 		 */
 		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
-			ssp_debug('Not valid podcast post type');
 			return;
 		}
 
@@ -1570,7 +1568,6 @@ HTML;
 		 * Don't trigger this when the post is trashed
 		 */
 		if ( 'trash' === $post->post_status ) {
-			ssp_debug('Post is being trashed');
 			return;
 		}
 
@@ -1579,18 +1576,20 @@ HTML;
 		 */
 		$disallowed_statuses = array( 'draft', 'pending', 'private', 'trash', 'auto-draft' );
 		if ( in_array( $post->post_status, $disallowed_statuses, true ) ) {
-			ssp_debug( 'Post status is ' . $post->post_status );
-
 			return;
 		}
 
-		ssp_debug('About to push data to Castos');
+		/**
+		 * Don't trigger this unless we have a valid castos file id
+		 */
+		$file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
+		if ( empty( $file_id ) ) {
+			return;
+		}
 
 		$podmotor_handler = new Podmotor_Handler();
 
 		$response = $podmotor_handler->upload_podcast_to_podmotor( $post );
-
-		ssp_debug( 'Upload Podcast to Castos Response', $response );
 
 		if ( 'success' == $response['status'] ) {
 			$podmotor_episode_id = $response['episode_id'];
@@ -1850,45 +1849,22 @@ HTML;
 			);
 			if ( ! empty( $external_rss ) ) {
 				$import_post_type = 'podcast';
-				if (isset($_GET['import_post_type'])){
-					$import_post_type = sanitize_text_field( $_GET['import_post_type'] );
+				if (isset($_POST['import_post_type'])){
+					$import_post_type = sanitize_text_field( $_POST['import_post_type'] );
 				}
 				$import_series = '';
-				if ( isset( $_GET['import_series'] ) ) {
-					$import_series = sanitize_text_field( $_GET['import_series'] );
+				if ( isset( $_POST['import_series'] ) ) {
+					$import_series = sanitize_text_field( $_POST['import_series'] );
 				}
-				update_option( 'ssp_external_rss',
-					array(
-						'import_rss_feed'  => $external_rss,
-						'import_post_type' => $import_post_type,
-						'import_series'    => $import_series,
-					)
+				$ssp_external_rss = array(
+					'import_rss_feed'  => $external_rss,
+					'import_post_type' => $import_post_type,
+					'import_series'    => $import_series,
 				);
+				update_option( 'ssp_external_rss', $ssp_external_rss );
 				add_action( 'admin_notices', array( $this, 'import_form_success' ) );
 			}
 		}
-
-/*		// The user has submitted the external import form
-		if ( 'Submit Form' === $submit ) {
-			$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
-			$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
-			if ( ! empty( $name ) && ! empty( $podcast_url ) ) {
-				$website = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
-				$email   = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
-
-				$new_line  = "\n";
-				$site_name = $name;
-				$to        = 'hello@castos.com';
-				$subject   = sprintf( __( 'Podcast import request' ), $site_name );
-				$message   = sprintf( __( 'Hi Craig %1$s' ), $new_line );
-				$message   .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
-				$message   .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
-				$from      = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
-				wp_mail( $to, $subject, $message, $from );
-				add_action( 'admin_notices', array( $this, 'import_form_success' ) );
-			}
-		}*/
-
 	}
 
 	/**

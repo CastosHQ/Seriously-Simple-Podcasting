@@ -4,39 +4,96 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * External RSS feed importer
+ *
+ * @author      Jonathan Bossenger
+ * @category    Class
+ * @package     SeriouslySimplePodcasting/Classes
+ * @since       1.19.18
+ */
 class SSP_External_RSS_Importer {
 
+	/**
+	 * RSS feed url
+	 *
+	 * @var mixed
+	 */
 	private $rss_feed;
 
+	/**
+	 * Post type to import episodes to
+	 *
+	 * @var mixed
+	 */
 	private $post_type;
 
+	/**
+	 * Series to import episodes to
+	 *
+	 * @var mixed
+	 */
 	private $series;
 
+	/**
+	 * Feed object created by loading the xml url
+	 *
+	 * @var
+	 */
 	private $feed_object;
 
+	/**
+	 * Number of episodes processed
+	 *
+	 * @var int
+	 */
 	private $podcast_count = 0;
 
+	/**
+	 * Number of episodes successfully added
+	 *
+	 * @var int
+	 */
 	private $podcast_added = 0;
 
-	private $podcast_success = 0;
+	/**
+	 * Episode titles added
+	 *
+	 * @var array
+	 */
+	private $podcasts_imported = array();
 
-	private $podcast_failure = 0;
-
+	/**
+	 * SSP_External_RSS_Importer constructor.
+	 *
+	 * @param $ssp_external_rss
+	 */
 	public function __construct( $ssp_external_rss ) {
 		$this->rss_feed  = $ssp_external_rss['import_rss_feed'];
 		$this->post_type = $ssp_external_rss['import_post_type'];
 		$this->series    = $ssp_external_rss['import_series'];
 	}
 
+	/**
+	 * Load the xml feed url into the feed_object
+	 */
 	public function load_rss_feed() {
 		$this->feed_object = simplexml_load_file( $this->rss_feed );
 	}
 
+	/**
+	 * Update the import progress option
+	 */
 	public function update_ssp_rss_import() {
 		$progress = round( ( $this->podcast_added / $this->podcast_count ) * 100 );
 		update_option( 'ssp_rss_import', $progress );
 	}
 
+	/**
+	 * Import the RSS Feed episodes
+	 *
+	 * @return array
+	 */
 	public function import_rss_feed() {
 
 		$this->load_rss_feed();
@@ -67,25 +124,24 @@ class SSP_External_RSS_Importer {
 			// Add the post
 			$post_id = wp_insert_post( $post );
 
+			/**
+			 * If an error occurring adding a post, continue the loop
+			 */
 			if ( is_wp_error( $post_id ) ) {
-				$this->podcast_failure ++;
+				continue;
 			}
 
+			// Set the audio_file
+			add_post_meta( $post_id, 'audio_file', $url );
+
+			// Set the series, if it is available
 			if ( ! empty( $this->series ) ) {
 				wp_set_post_terms( $post_id, $this->series, 'series' );
 			}
 
-			// Update the added count
+			// Update the added count and imported title array
 			$this->podcast_added ++;
 			$this->podcasts_imported[] = $post_title;
-
-			// Set the audio_file
-			$audio_file = add_post_meta( $post_id, 'audio_file', $url );
-
-			// Log whether or not this failed.
-			if ( ! is_wp_error( $audio_file ) ) {
-				$this->podcast_success ++;
-			}
 
 			$this->update_ssp_rss_import();
 		}

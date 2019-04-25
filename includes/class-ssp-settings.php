@@ -1816,53 +1816,10 @@ class SSP_Settings {
 	}
 
 	/**
-	 * Renders the Castos Trigger Import form
+	 * Render the form to enable importing an external RSS feed
 	 *
 	 * @return false|string
-
-	public function render_import_form() {
-		$site_name    = get_bloginfo( 'name' );
-		$current_user = wp_get_current_user();
-		ob_start();
-		?>
-		<p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) send us a message below and our team will personally import all of your media files and associated posts for you.</p>
-		<table class="form-table">
-			<tbody>
-			<tr>
-				<th scope="row">Your name</th>
-				<td>
-					<input id="name" name="name" type="text" placeholder="Name" value="<?php echo esc_attr( $current_user->user_firstname ) . ' ' . esc_attr( $current_user->user_lastname ) ?>" class="regular-text">
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">Your website name</th>
-				<td>
-					<input id="website" name="website" type="text" placeholder="Website" value="<?php echo esc_attr( $site_name ) ?>" class="regular-text">
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">Your email address</th>
-				<td>
-					<input id="email" name="email" type="text" placeholder="email@domain.com" value="<?php echo esc_attr( $current_user->user_email ) ?>" class="regular-text">
-				</td>
-			</tr>
-			<tr>
-				<th scope="row">Your external podcast url</th>
-				<td>
-					<input id="podcast_url" name="podcast_url" type="text" placeholder="https://example.com/rss" value="" class="regular-text">
-				</td>
-			</tr>
-			</tbody>
-		</table>
-		<p class="submit">
-			<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Submit Form', 'seriously-simple-podcasting' ) ) ?>" />
-		</p>
-		<?php
-		$html = ob_get_clean();
-		return $html;
-	}
 	 */
-
 	public function render_external_import_form() {
 		$post_types = ssp_post_types( true );
 		$series = get_terms( 'series', array( 'hide_empty' => false ) );
@@ -1913,6 +1870,11 @@ class SSP_Settings {
 		return $html;
 	}
 
+	/**
+	 * Render the progress bar to show the importing RSS feed progress
+	 *
+	 * @return false|string
+	 */
 	public function render_external_import_process() {
 		ob_start();
 		?>

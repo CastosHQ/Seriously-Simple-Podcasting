@@ -43,8 +43,6 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	return;
 }
 
-define( 'SCRIPT_DEBUG', false );
-
 define( 'SSP_VERSION', '1.19.19' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );

@@ -1110,8 +1110,8 @@ class SSP_Settings {
 			$settings['castos-hosting']['fields'][3]['container_class'] = 'hidden';
 		}
 
+		$fields = array();
 		if ( ssp_is_connected_to_podcastmotor() ) {
-			$fields = array();
 			if ( ! ssp_get_external_rss_being_imported() ) {
 				$fields = array(
 					array(
@@ -1126,7 +1126,6 @@ class SSP_Settings {
 				);
 			}
 		}
-
 		$settings['import'] = array(
 			'title'       => __( 'Import', 'seriously-simple-podcasting' ),
 			'description' => sprintf( __( 'Manage import options.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),

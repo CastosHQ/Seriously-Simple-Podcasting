@@ -102,6 +102,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.19.20 =
+* 2019-04-29
+* [FIX] Fixes a PHP Notice introduced by the 1.19.19 release
+
 = 1.19.19 =
 * 2019-04-29
 * [FIX] Fixes bug where regular Seriously Simple Podcasting users where not able to use the new importer

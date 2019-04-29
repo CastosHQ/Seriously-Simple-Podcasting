@@ -108,7 +108,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 1.19.18 =
 * 2019-04-29
-* [NEW] Option to import an external podcast feed, useful when moving from a third party service to Seriously Simple Podcasting
+* [NEW] Option to import an external podcast feed, useful when moving from a third party service to Seriously Simple Podcasting (props [Jake Spurlock](https://github.com/whyisjake))
 * [FIX] Fixes a PHP 7 deprecated function error
 
 = 1.19.17 =

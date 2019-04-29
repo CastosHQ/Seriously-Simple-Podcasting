@@ -1837,7 +1837,7 @@ class SSP_Settings {
 			</tr>
 			<?php if ( count( $post_types ) > 1 ) { ?>
 				<tr>
-					<th scope="row">RSS feed</th>
+					<th scope="row">Post Type</th>
 					<td>
 						<select id="import_post_type" name="import_post_type">
 							<?php foreach ( $post_types as $post_type ) { ?>

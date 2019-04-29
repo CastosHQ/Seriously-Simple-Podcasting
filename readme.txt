@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.18-beta
+Stable tag: 1.19.18
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -103,8 +103,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.19.18 =
-* 2019-04-25
+* 2019-04-29
 * [NEW] Option to import an external podcast feed, useful when moving from a third party service to Seriously Simple Podcasting
+* [FIX] Fixes a PHP 7 deprecated function error
 
 = 1.19.17 =
 * 2019-03-13

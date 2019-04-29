@@ -1125,12 +1125,13 @@ class SSP_Settings {
 					),
 				);
 			}
-			$settings['import'] = array(
-				'title'       => __( 'Import', 'seriously-simple-podcasting' ),
-				'description' => sprintf( __( 'Manage import options.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
-				'fields'      => $fields,
-			);
 		}
+
+		$settings['import'] = array(
+			'title'       => __( 'Import', 'seriously-simple-podcasting' ),
+			'description' => sprintf( __( 'Manage import options.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
+			'fields'      => $fields,
+		);
 
 		$settings['extensions'] = array(
 			'title'               => __( 'Extensions', 'seriously-simple-podcasting' ),
@@ -1792,10 +1793,12 @@ class SSP_Settings {
 
 		if ( 'import' === $tab ) {
 			// Custom submits for Imports
-			$html .= '<p class="submit">' . "\n";
-			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
-			$html .= '</p>' . "\n";
+			if ( ssp_is_connected_to_podcastmotor() ) {
+				$html .= '<p class="submit">' . "\n";
+				$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
+				$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+				$html .= '</p>' . "\n";
+			}
 
 			if ( ssp_get_external_rss_being_imported() ) {
 				$html .= $this->render_external_import_process();

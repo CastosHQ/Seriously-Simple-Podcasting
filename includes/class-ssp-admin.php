@@ -153,6 +153,15 @@ class SSP_Admin {
 		// Add ajax action for customising episode embed code
 		add_action( 'wp_ajax_update_episode_embed_code', array( $this, 'update_episode_embed_code' ) );
 
+		// Add ajax action for importing external rss feed
+		add_action( 'wp_ajax_import_external_rss_feed', array( $this, 'import_external_rss_feed' ) );
+
+		// Add ajax action for getting external rss feed progress
+		add_action( 'wp_ajax_get_external_rss_feed_progress', array( $this, 'get_external_rss_feed_progress' ) );
+
+		// Add ajax action to reset external feed options
+		add_action( 'wp_ajax_reset_external_rss_feed_progress', array( $this, 'reset_external_rss_feed_progress' ) );
+
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
@@ -693,6 +702,44 @@ HTML;
 	}
 
 	/**
+	 * Import an external RSS feed via ajax
+	 */
+	public function import_external_rss_feed() {
+		// @todo add nonces, add user caps check, validate inputs
+
+		update_option( 'ssp_rss_import', 0 );
+
+		$ssp_external_rss = get_option( 'ssp_external_rss', '' );
+		if ( empty( $ssp_external_rss ) ) {
+			$response = array(
+				'status'  => 'error',
+				'message' => 'No feed to process'
+			);
+			wp_send_json( $response );
+
+			return;
+		}
+
+		$rss_importer = new SSP_External_RSS_Importer( $ssp_external_rss );
+		$response     = $rss_importer->import_rss_feed();
+
+		wp_send_json( $response );
+	}
+
+	public function get_external_rss_feed_progress() {
+		// @todo add nonces, add user caps check
+		$progress = (int) get_option( 'ssp_rss_import', 0 );
+		wp_send_json( $progress );
+	}
+
+	public function reset_external_rss_feed_progress() {
+		// @todo add nonces, add user caps check
+		delete_option( 'ssp_external_rss' );
+		delete_option( 'ssp_rss_import' );
+		wp_send_json( 'success' );
+	}
+
+	/**
 	 * Load content for episode meta box
 	 * @return void
 	 */
@@ -1170,6 +1217,21 @@ HTML;
 				wp_enqueue_style( 'jquery-peekabar' );
 			}
 		}
+
+		/**
+		 * Only load the jquery-ui CSS when the import settings screen is loaded
+		 * @todo load this locally perhaps? and only the progress bar stuff?
+		 */
+		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
+			//wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
+
+			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness.css' ), array(), $this->version );
+			wp_enqueue_style( 'jquery-ui-smoothness' );
+
+			wp_register_style( 'import-rss', esc_url( $this->assets_url . 'css/import.rss.css' ), array(), $this->version );
+			wp_enqueue_style( 'import-rss' );
+
+		}
 	}
 
 	/**
@@ -1209,6 +1271,22 @@ HTML;
 				wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 				wp_enqueue_script( 'jquery-peekabar' );
 			}
+		}
+
+		/**
+		 * Only load the import js when the import settings screen is loaded
+		 */
+		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
+			/*wp_register_script( 'ssp-jq-ajax-progress', esc_url( $this->assets_url . 'js/jq-ajax-progress' . $this->script_suffix . '.js' ), array(
+				'jquery',
+				'jquery-ui-progressbar'
+			), $this->version );
+			wp_enqueue_script( 'ssp-jq-ajax-progress' );*/
+			wp_register_script( 'ssp-import-rss', esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ), array(
+				'jquery',
+				'jquery-ui-progressbar'
+			), $this->version );
+			wp_enqueue_script( 'ssp-import-rss' );
 		}
 	}
 
@@ -1476,7 +1554,6 @@ HTML;
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
 		if ( ! ssp_is_connected_to_podcastmotor() ) {
-			ssp_debug('Not connected to Castos');
 			return;
 		}
 
@@ -1484,7 +1561,6 @@ HTML;
 		 * Only trigger this when the post type is podcast
 		 */
 		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
-			ssp_debug('Not valid podcast post type');
 			return;
 		}
 
@@ -1492,7 +1568,6 @@ HTML;
 		 * Don't trigger this when the post is trashed
 		 */
 		if ( 'trash' === $post->post_status ) {
-			ssp_debug('Post is being trashed');
 			return;
 		}
 
@@ -1501,18 +1576,20 @@ HTML;
 		 */
 		$disallowed_statuses = array( 'draft', 'pending', 'private', 'trash', 'auto-draft' );
 		if ( in_array( $post->post_status, $disallowed_statuses, true ) ) {
-			ssp_debug( 'Post status is ' . $post->post_status );
-
 			return;
 		}
 
-		ssp_debug('About to push data to Castos');
+		/**
+		 * Don't trigger this unless we have a valid castos file id
+		 */
+		$file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
+		if ( empty( $file_id ) ) {
+			return;
+		}
 
 		$podmotor_handler = new Podmotor_Handler();
 
 		$response = $podmotor_handler->upload_podcast_to_podmotor( $post );
-
-		ssp_debug( 'Upload Podcast to Castos Response', $response );
 
 		if ( 'success' == $response['status'] ) {
 			$podmotor_episode_id = $response['episode_id'];
@@ -1733,53 +1810,59 @@ HTML;
 	 */
 	public function submit_import_form() {
 
-		$action = ( isset( $_POST['action'] ) ? filter_var( $_POST['action'], FILTER_SANITIZE_STRING ) : '' );
+		$action = ( isset( $_POST['action'] ) ? sanitize_text_field( $_POST['action'] ) : '' );
 
-		if ( ! empty( $action ) && 'post_import_form' === sanitize_text_field( $action ) ) {
+		if ( empty( $action ) || 'post_import_form' !== sanitize_text_field( $action ) ) {
+			return;
+		}
 
-			check_admin_referer( 'ss_podcasting-import' );
+		check_admin_referer( 'ss_podcasting_import' );
 
-			$submit = '';
-			if ( isset( $_POST['Submit'] ) ) {
-				$submit = filter_var( $_POST['Submit'], FILTER_SANITIZE_STRING );
-			}
+		$submit = '';
+		if ( isset( $_POST['Submit'] ) ) {
+			$submit = sanitize_text_field( $_POST['Submit'] );
+		}
 
-			// The user has submitted the Import your podcast setting
-			if ( 'Trigger import' === $submit ) {
-				$import = filter_var( $_POST['ss_podcasting_podmotor_import'], FILTER_SANITIZE_STRING );
-				if ( 'on' === $import ) {
-					$podmotorHandler = new Podmotor_Handler();
-					$result          = $podmotorHandler->trigger_podcast_import();
-					if ( 'success' !== $result['status'] ) {
-						add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
-					}else {
-						add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
-					}
-					return;
-				} else {
-					update_option( 'ss_podcasting_podmotor_import', 'off' );
+		// The user has submitted the Import your podcast setting
+		if ( 'Trigger import' === $submit ) {
+			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
+			if ( 'on' === $import ) {
+				$podmotorHandler = new Podmotor_Handler();
+				$result          = $podmotorHandler->trigger_podcast_import();
+				if ( 'success' !== $result['status'] ) {
+					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
+				}else {
+					add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
 				}
+				return;
+			} else {
+				update_option( 'ss_podcasting_podmotor_import', 'off' );
 			}
+		}
 
-			// The user has submitted the external import form
-			if ( 'Submit Form' === $submit ) {
-				$name        = filter_var( $_POST['name'], FILTER_SANITIZE_STRING );
-				$podcast_url = filter_var( $_POST['podcast_url'], FILTER_SANITIZE_URL );
-				if ( ! empty( $name ) && ! empty( $podcast_url ) ) {
-					$website = filter_var( $_POST['website'], FILTER_SANITIZE_STRING );
-					$email   = filter_var( $_POST['email'], FILTER_SANITIZE_EMAIL );
-
-					$new_line  = "\n";
-					$site_name = $name;
-					$to        = 'hello@castos.com';
-					$subject   = sprintf( __( 'Podcast import request' ), $site_name );
-					$message   = sprintf( __( 'Hi Craig %1$s' ), $new_line );
-					$message   .= sprintf( __( '%1$s (owner of %2$s) would like your assistance with manually importing his podcast from %3$s. %4$s' ), $name, $website, $podcast_url, $new_line );
-					$message   .= sprintf( __( 'Please contact him at %1$s. %2$s' ), $email, $new_line );
-					$from      = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
-					wp_mail( $to, $subject, $message, $from );
-					add_action( 'admin_notices', array( $this, 'import_form_success' ) );
+		// The user has submitted the external import form
+		if ( 'Begin Import Now' === $submit ) {
+			$external_rss = strip_tags(
+				stripslashes(
+					filter_var( $_POST['external_rss'], FILTER_VALIDATE_URL )
+				)
+			);
+			if ( ! empty( $external_rss ) ) {
+				$import_post_type = 'podcast';
+				if (isset($_POST['import_post_type'])){
+					$import_post_type = sanitize_text_field( $_POST['import_post_type'] );
 				}
+				$import_series = '';
+				if ( isset( $_POST['import_series'] ) ) {
+					$import_series = sanitize_text_field( $_POST['import_series'] );
+				}
+				$ssp_external_rss = array(
+					'import_rss_feed'  => $external_rss,
+					'import_post_type' => $import_post_type,
+					'import_series'    => $import_series,
+				);
+				update_option( 'ssp_external_rss', $ssp_external_rss );
+				add_action( 'admin_notices', array( $this, 'import_form_success' ) );
 			}
 		}
 	}
@@ -1809,10 +1892,10 @@ HTML;
 	/**
 	 * Displays an admin message if the Import form submission was successful
 	 */
-	public function import_form_success(){
+	public function import_form_success() {
 		?>
 		<div class="notice notice-info is-dismissible">
-			<p><?php esc_attr_e( 'Thanks, someone from Castos will be in touch. to assist with importing your podcast', 'seriously-simple-podcasting' ); ?></p>
+			<p><?php esc_attr_e( 'Thanks, your external RSS feed will start importing', 'seriously-simple-podcasting' ); ?></p>
 		</div>
 		<?php
 	}

@@ -1,13 +1,13 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Castos;
+namespace SeriouslySimplePodcasting\Handlers;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Handler {
+class Castos {
 
 	/**
 	 * Array of config settings
@@ -38,7 +38,7 @@ class Handler {
 	public $response = array();
 
 	/**
-	 * Handler constructor.
+	 * Castos constructor.
 	 */
 	public function __construct() {
 		$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
@@ -48,7 +48,7 @@ class Handler {
 	}
 
 	/**
-	 * Sets up the PodcastMotor Handler
+	 * Sets up the PodcastMotor Castos
 	 */
 	private function init_podmotor_handler() {
 		$podmotor_account_id      = get_option( 'ss_podcasting_podmotor_account_id', '' );
@@ -80,7 +80,7 @@ class Handler {
 	}
 
 	/**
-	 * Get the Handler credentials from the Castos API
+	 * Get the Castos credentials from the Castos API
 	 *
 	 * @param $podmotor_account_id
 	 * @param $podmotor_account_email

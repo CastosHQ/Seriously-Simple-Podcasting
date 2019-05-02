@@ -2,7 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers\Admin;
 
-use SeriouslySimplePodcasting\Castos\Handler;
+use SeriouslySimplePodcasting\Handlers\Castos;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1591,7 +1591,7 @@ HTML;
 			return;
 		}
 
-		$castos_handler = new Handler();
+		$castos_handler = new Castos();
 
 		$response = $castos_handler->upload_podcast_to_podmotor( $post );
 
@@ -1620,7 +1620,7 @@ HTML;
 		$response = array( 'status' => 'error', 'message' => 'Error storing file to offsite storage account' );
 
 		try {
-			$castos_handler  = new Handler();
+			$castos_handler  = new Castos();
 			$podmotor_response = $castos_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
 		} catch ( Exception $e ) {
 			$response['status']  = 'error';
@@ -1675,7 +1675,7 @@ HTML;
 		if ( isset( $_GET['podcast_import_action'] ) && 'start' == $_GET['podcast_import_action'] ) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
 			//ssp_trigger_import_existing_podcast_to_podmotor();
-			$castos_handler = new Handler();
+			$castos_handler = new Castos();
 			$reponse          = $castos_handler->insert_podmotor_queue();
 			if ( 'success' === $reponse['status'] ) {
 				update_option( 'ss_podcasting_podmotor_queue_id', $reponse['queue_id'] );
@@ -1831,7 +1831,7 @@ HTML;
 		if ( 'Trigger import' === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
-				$podmotorHandler = new Handler();
+				$podmotorHandler = new Castos();
 				$result          = $podmotorHandler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );

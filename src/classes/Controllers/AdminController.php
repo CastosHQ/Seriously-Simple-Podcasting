@@ -1592,7 +1592,6 @@ HTML;
 		}
 
 		$castos_handler = new CastosHandler();
-
 		$response = $castos_handler->upload_podcast_to_podmotor( $post );
 
 		if ( 'success' == $response['status'] ) {
@@ -1621,15 +1620,15 @@ HTML;
 
 		try {
 			$castos_handler  = new CastosHandler();
-			$podmotor_response = $castos_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
+			$castos_response = $castos_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
 		} catch ( Exception $e ) {
 			$response['status']  = 'error';
 			$response['message'] = 'An unknown error occurred: ' . $e->getMessage();
 			wp_send_json( $response );
 		}
 
-		if ( $podmotor_response ) {
-			$response = $podmotor_response;
+		if ( $castos_response ) {
+			$response = $castos_response;
 		}
 		wp_send_json( $response );
 	}
@@ -1744,7 +1743,7 @@ HTML;
 	public function invalid_permalink_structure_notice() {
 		$message = '';
 		$message .= '<p>You\'ve not set a valid permalink structure. This will affect your Podcast feed url.</p>';
-		$message .= '<p>Please set a permalink structure in the <em>\'Admin -> Permalinks\'</em> admin menu.</p>';
+		$message .= '<p>Please set a permalink structure in the <em>\'Settings -> Permalinks\'</em> admin menu.</p>';
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php _e( $message, 'ssp' ); ?></p>
@@ -1831,8 +1830,8 @@ HTML;
 		if ( 'Trigger import' === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
-				$podmotorHandler = new CastosHandler();
-				$result          = $podmotorHandler->trigger_podcast_import();
+				$castos_handler = new Castos_Handler();
+				$result          = $castos_handler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
 				}else {

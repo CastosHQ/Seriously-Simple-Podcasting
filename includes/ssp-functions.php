@@ -30,13 +30,40 @@ function ssp_debug( $message, $data = '' ) {
 	file_put_contents( $file, $data_string, FILE_APPEND );
 }
 
-/**
- * Clear debug log
- */
-function ssp_debug_clear() {
-	$file = SSP_PLUGIN_PATH . 'ssp.log.txt';
-	file_put_contents( $file, '' );
+function ssp_is_php_version_ok() {
+
+	if ( ! version_compare( PHP_VERSION, '5.3.3', '<' ) ) {
+		return true;
+	}
+
+	/**
+	 * We are running in the admin under PHP 5.3.3
+	 */
+	if ( ! is_admin() ) {
+		return false;
+	}
+
+	/**
+	 * Display an admin notice and gracefully do nothing.
+	 */
+	add_action( 'admin_notices', 'ssp_php_version_notice' );
+	function ssp_php_version_notice() {
+		?>
+		<div class="error">
+			<p>
+				<strong>The Seriously Simple Podcasting plugin requires PHP version 5.3.3 or later. Please
+					contact your web host to upgrade your PHP version or deactivate the plugin.</strong>.
+			</p>
+			<p>We apologise for any inconvenience.</p>
+		</div>
+		<?php
+
+	}
+
+	return false;
 }
+
+
 
 if ( ! function_exists( 'ssp_get_upload_directory' ) ) {
 	/**
@@ -916,7 +943,7 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		) ) );
 
 		$signature    = base64_encode( hash_hmac( 'sha1', $policy, $secret, true ) );
-		$episodes_url = SSP_PODMOTOR_EPISODES_URL;
+		$episodes_url = SSP_CASTOS_EPISODES_URL;
 
 		return compact( 'bucket', 'show_slug', 'episodes_url', 'access_key_id', 'policy', 'signature' );
 

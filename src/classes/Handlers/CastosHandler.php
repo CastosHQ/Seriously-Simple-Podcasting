@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Helpers\LogHelper;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -38,9 +40,15 @@ class CastosHandler {
 	public $response = array();
 
 	/**
+	 * @var LogHelper
+	 */
+	public $logger;
+
+	/**
 	 * CastosHandler constructor.
 	 */
 	public function __construct() {
+		$this->logger        = new LogHelper();
 		$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
 		if ( ! empty( $podmotor_account_id ) ) {
 			$this->init_podmotor_handler();
@@ -125,9 +133,9 @@ class CastosHandler {
 			$this->update_response( 'message', 'Invalid API Token or email.' );
 		}
 
-		$api_url = SSP_PODMOTOR_APP_URL . 'api/users/validate';
+		$api_url = SSP_CASTOS_APP_URL . 'api/users/validate';
 
-		ssp_debug( 'Validate Credentials : API URL', $api_url );
+		LogHelper()->log( 'Validate Credentials : API URL', $api_url );
 
 		$api_payload = array(
 			'timeout' => 45,
@@ -138,11 +146,11 @@ class CastosHandler {
 			),
 		);
 
-		ssp_debug( 'Validate Credentials : Api Payload', $api_payload );
+		$this->logger->log( 'Validate Credentials : Api Payload', $api_payload );
 
 		$app_response = wp_remote_get( $api_url, $api_payload );
 
-		ssp_debug( 'Validate Credentials : App Response', $app_response );
+		$this->logger->log( 'Validate Credentials : App Response', $app_response );
 
 		if ( ! is_wp_error( $app_response ) ) {
 
@@ -173,16 +181,16 @@ class CastosHandler {
 	public function trigger_podcast_import() {
 		$this->setup_response();
 
-		$api_url = SSP_PODMOTOR_APP_URL . 'api/user/import';
-		ssp_debug( $api_url );
+		$api_url = SSP_CASTOS_APP_URL . 'api/user/import';
+		$this->logger->log( $api_url );
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		ssp_debug( $podmotor_api_token );
+		$this->logger->log( $podmotor_api_token );
 
 		$post_body = array(
 			'api_token' => $podmotor_api_token,
 		);
-		ssp_debug( $post_body );
+		$this->logger->log( $post_body );
 
 		$app_response = wp_remote_get(
 			$api_url,
@@ -194,7 +202,7 @@ class CastosHandler {
 
 		if ( is_wp_error( $app_response ) ) {
 			$this->update_response( 'message', 'An error occurred connecting to the Castos server to trigger the podcast import.' );
-			ssp_debug( $this->response );
+			$this->logger->log( $this->response );
 			return $this->response;
 		}
 
@@ -220,29 +228,31 @@ class CastosHandler {
 
 			return $this->response;
 		}
-		$api_url = SSP_PODMOTOR_APP_URL . 'api/file';
-		ssp_debug( $api_url );
+		$api_url = SSP_CASTOS_APP_URL . 'api/file';
+		$this->logger->log( $api_url );
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		ssp_debug( $podmotor_api_token );
+		$this->logger->log( $podmotor_api_token );
 
 		$post_body = array(
 			'api_token'          => $podmotor_api_token,
 			'podmotor_file_path' => $podmotor_file_path,
 		);
-		ssp_debug( $post_body );
+		$this->logger->log( $post_body );
 
-		$app_response = wp_remote_post( $api_url, array(
+		$app_response = wp_remote_post(
+			$api_url,
+			array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
-		ssp_debug( $app_response );
+		$this->logger->log( $app_response );
 
 		if ( ! is_wp_error( $app_response ) ) {
 			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 			if ( ! empty( $response_object ) ) {
-				if ( 'success' == $response_object->status ) {
+				if ( 'success' === $response_object->status ) {
 					$this->update_response( 'status', 'success' );
 					$this->update_response( 'message', 'File successfully uploaded.' );
 					$this->update_response( 'file_id', $response_object->file_id );
@@ -271,7 +281,7 @@ class CastosHandler {
 	 *
 	 * @param $post
 	 *
-	 * @return bool
+	 * @return array
 	 */
 	public function upload_podcast_to_podmotor( $post ) {
 
@@ -279,7 +289,7 @@ class CastosHandler {
 
 		if ( empty( $post ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
-			ssp_debug( 'Invalid Podcast data when uploading podcast data' );
+			$this->logger->log( 'Invalid Podcast data when uploading podcast data' );
 
 			return $this->response;
 		}
@@ -290,15 +300,15 @@ class CastosHandler {
 		$podmotor_file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
 		if ( empty( $podmotor_file_id ) ) {
 			$this->update_response( 'message', 'Invalid Podcast file data' );
-			ssp_debug( 'Invalid Podcast file data when uploading podcast data' );
+			$this->logger->log( 'Invalid Podcast file data when uploading podcast data' );
 			return $this->response;
 		}
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 
-		$api_url = SSP_PODMOTOR_APP_URL . 'api/episode';
+		$api_url = SSP_CASTOS_APP_URL . 'api/episode';
 
-		ssp_debug( 'API URL', $api_url );
+		$this->logger->log( 'API URL', $api_url );
 
 		$series_id = ssp_get_episode_series_id( $post->ID );
 
@@ -318,32 +328,34 @@ class CastosHandler {
 			$post_body['id'] = $podmotor_episode_id;
 		}
 
-		ssp_debug( 'Parameter post_body Contents', $post_body );
+		$this->logger->log( 'Parameter post_body Contents', $post_body );
 
-		$app_response = wp_remote_post( $api_url, array(
+		$app_response = wp_remote_post(
+			$api_url,
+			array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
 
-		ssp_debug( 'Upload Podcast app_response', $app_response );
+		$this->logger->log( 'Upload Podcast app_response', $app_response );
 
 		if ( ! is_wp_error( $app_response ) ) {
-			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
+			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 
-			ssp_debug( 'Upload Podcast Response', $responseObject );
+			$this->logger->log( 'Upload Podcast Response', $response_object );
 
-			if ( 'success' == $responseObject->status ) {
-				ssp_debug( 'Pocast episode successfully uploaded to Castos with episode id ' . $responseObject->episode_id );
+			if ( 'success' === $response_object->status ) {
+				$this->logger->log( 'Pocast episode successfully uploaded to Castos with episode id ' . $response_object->episode_id );
 				$this->update_response( 'status', 'success' );
 				$this->update_response( 'message', 'Pocast episode successfully uploaded to Castos' );
-				$this->update_response( 'episode_id', $responseObject->episode_id );
+				$this->update_response( 'episode_id', $response_object->episode_id );
 			} else {
-				ssp_debug( 'An error occurred uploading the episode data to Castos', $responseObject );
+				$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
 				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 			}
 		} else {
-			ssp_debug( 'An unknown error occurred sending podcast data to castos: ' . $app_response->get_error_message() );
+			$this->logger->log( 'An unknown error occurred sending podcast data to castos: ' . $app_response->get_error_message() );
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
 
@@ -355,7 +367,7 @@ class CastosHandler {
 	 *
 	 * @param $podcast_data array of post values
 	 *
-	 * @return bool
+	 * @return array
 	 */
 	public function upload_podcasts_to_podmotor( $podcast_data ) {
 
@@ -371,33 +383,34 @@ class CastosHandler {
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 
-		$api_url = SSP_PODMOTOR_APP_URL . 'api/import_episodes';
+		$api_url = SSP_CASTOS_APP_URL . 'api/import_episodes';
 
 		$post_body = array(
 			'api_token'    => $podmotor_api_token,
 			'podcast_data' => $podcast_data_json,
 		);
 
-		ssp_debug( $post_body );
+		$this->logger->log( $post_body );
 
-		$app_response = wp_remote_post( $api_url, array(
+		$app_response = wp_remote_post(
+			$api_url,
+			array(
 				'timeout' => 45,
 				'body'    => $post_body,
 			)
 		);
 
-		ssp_debug( $app_response );
+		$this->logger->log( $app_response );
 
 		if ( ! is_wp_error( $app_response ) ) {
-			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
-			if ( 'success' == $responseObject->status ) {
+			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
+			if ( 'success' == $response_object->status ) {
 				$this->update_response( 'status', 'success' );
 				$this->update_response( 'message', 'Pocast episode data successfully uploaded to Castos' );
 			} else {
 				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 			}
 		} else {
-			// $todo this should be logged somewhere
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
 
@@ -416,44 +429,46 @@ class CastosHandler {
 
 		if ( empty( $series_data ) ) {
 			$this->update_response( 'message', 'Invalid Series data' );
-			ssp_debug( 'Invalid Series data when uploading series data' );
+			$this->logger->log( 'Invalid Series data when uploading series data' );
 
 			return $this->response;
 		}
 
-		ssp_debug( 'Series Object', $series_data );
+		$this->logger->log( 'Series Object', $series_data );
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 
-		$api_url = SSP_PODMOTOR_APP_URL . 'api/series';
+		$api_url = SSP_CASTOS_APP_URL . 'api/series';
 
-		ssp_debug( 'API URL', $api_url );
+		$this->logger->log( 'API URL', $api_url );
 
 		$series_data['api_token'] = $podmotor_api_token;
 
-		ssp_debug( 'Parameter series_data Contents', $series_data );
+		$this->logger->log( 'Parameter series_data Contents', $series_data );
 
-		$app_response = wp_remote_post( $api_url, array(
+		$app_response = wp_remote_post(
+			$api_url,
+			array(
 				'timeout' => 45,
 				'body'    => $series_data,
 			)
 		);
 
-		ssp_debug( 'app_response', $app_response );
+		$this->logger->log( 'app_response', $app_response );
 
 		if ( ! is_wp_error( $app_response ) ) {
-			$responseObject = json_decode( wp_remote_retrieve_body( $app_response ) );
-			ssp_debug( 'Response Object', $responseObject );
-			if ( 'success' == $responseObject->status ) {
-				ssp_debug( 'Series data successfully uploaded to Castos' );
+			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
+			$this->logger->log( 'Response Object', $response_object );
+			if ( 'success' === $response_object->status ) {
+				$this->logger->log( 'Series data successfully uploaded to Castos' );
 				$this->update_response( 'status', 'success' );
 				$this->update_response( 'message', 'Series data successfully uploaded to Castos' );
 			} else {
-				ssp_debug( 'An error occurred uploading the series data to Castos', $responseObject );
+				$this->logger->log( 'An error occurred uploading the series data to Castos', $response_object );
 				$this->update_response( 'message', 'An error occurred uploading the series data to Castos' );
 			}
 		} else {
-			ssp_debug( 'An unknown error occurred sending series data to castos: ' . $app_response->get_error_message() );
+			$this->logger->log( 'An unknown error occurred sending series data to castos: ' . $app_response->get_error_message() );
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
 
@@ -470,17 +485,17 @@ class CastosHandler {
 		$this->setup_response();
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		ssp_debug( $podmotor_api_token );
+		$this->logger->log( $podmotor_api_token );
 
-		$api_url = SSP_PODMOTOR_APP_URL . 'api/insert_queue';
-		ssp_debug( $api_url );
+		$api_url = SSP_CASTOS_APP_URL . 'api/insert_queue';
+		$this->logger->log( $api_url );
 
 		$post_body = array(
 			'api_token'   => $podmotor_api_token,
 			'site_name'   => get_bloginfo( 'name' ),
 			'site_action' => add_query_arg( 'podcast_importer', 'true', trailingslashit( site_url() ) ),
 		);
-		ssp_debug( $post_body );
+		$this->logger->log( $post_body );
 
 		$app_response = wp_remote_post(
 			$api_url,
@@ -489,11 +504,11 @@ class CastosHandler {
 				'body'    => $post_body,
 			)
 		);
-		ssp_debug( $app_response );
+		$this->logger->log( $app_response );
 
 		if ( ! is_wp_error( $app_response ) ) {
 			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-			ssp_debug( $response_object );
+			$this->logger->log( $response_object );
 
 			if ( 'success' === $response_object->status ) {
 				$this->update_response( 'status', $response_object->status );
@@ -503,7 +518,6 @@ class CastosHandler {
 				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 			}
 		} else {
-			// @todo somone should be notified about this
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 		}
 

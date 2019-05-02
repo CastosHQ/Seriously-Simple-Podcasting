@@ -1056,7 +1056,7 @@ class SettingsController {
 // @todo add back for analytics launch
 //		$settings['analytics'] = array(
 //			'title'       => __( 'Analytics', 'seriously-simple-podcasting' ),
-//			'description' => sprintf( __( 'Connect your %s analytics application with your podcast site' ), '<a target="_blank" href=" ' . SSP_PODMOTOR_APP_URL . '">Seriously Simple Hosting</a>' ),
+//			'description' => sprintf( __( 'Connect your %s analytics application with your podcast site' ), '<a target="_blank" href=" ' . SSP_CASTOS_APP_URL . '">Seriously Simple Hosting</a>' ),
 //			'fields'      => array(
 //				array(
 //					'id'          => 'ssp_analytics_token',
@@ -1071,7 +1071,7 @@ class SettingsController {
 
 		$settings['castos-hosting'] = array(
 			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
+			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
 			'fields'      => array(
 				array(
 					'id'          => 'podmotor_account_email',
@@ -1133,7 +1133,7 @@ class SettingsController {
 		}
 		$settings['import'] = array(
 			'title'       => __( 'Import', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Manage import options.', 'seriously-simple-podcasting' ), '<a href="' . SSP_PODMOTOR_APP_URL . '">Castos</a>' ),
+			'description' => sprintf( __( 'Manage import options.', 'seriously-simple-podcasting' ), '<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
 			'fields'      => $fields,
 		);
 
@@ -1922,7 +1922,7 @@ class SettingsController {
 			'connect'     => array(
 				'title'       => 'NEW - Castos Podcast Hosting',
 				'image'       => $image_dir . 'castos-icon-extension.jpg',
-				'url'         => SSP_PODMOTOR_APP_URL,
+				'url'         => SSP_CASTOS_APP_URL,
 				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Castos.',
 				'new_window'  => true,
 			),

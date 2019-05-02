@@ -1,8 +1,8 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Settings;
+namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Handlers\Castos;
+use SeriouslySimplePodcasting\Handlers\CastosHandler;
 
 /**
  * SSP Admin
@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       2.0
  */
-class Settings {
+class SettingsController {
 	/**
 	 * Directory
 	 *
@@ -189,7 +189,7 @@ class Settings {
 			$series_data['series_id'] = 0;
 		}
 
-		$castos_handler = new Castos();
+		$castos_handler = new CastosHandler();
 		$response = $castos_handler->upload_series_to_podmotor( $series_data );
 
 		ssp_debug( 'Series Update', $response );
@@ -1596,7 +1596,7 @@ class Settings {
 		$podmotor_account_api_token = ( isset( $_GET['api_token'] ) ? filter_var( $_GET['api_token'], FILTER_SANITIZE_STRING ) : '' );
 		$podmotor_account_email     = ( isset( $_GET['email'] ) ? filter_var( $_GET['email'], FILTER_SANITIZE_STRING ) : '' );
 
-		$castos_handler           = new Castos();
+		$castos_handler           = new CastosHandler();
 		$response                   = $castos_handler->validate_api_credentials( $podmotor_account_api_token, $podmotor_account_email );
 		wp_send_json( $response );
 	}

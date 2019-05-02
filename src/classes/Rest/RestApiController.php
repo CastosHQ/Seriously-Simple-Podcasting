@@ -2,8 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Rest;
 
-use SeriouslySimplePodcasting\Rest\EpisodesController;
-
 /**
  * Extending the WP REST API for Seriously Simple Podcasting
  *
@@ -11,7 +9,7 @@ use SeriouslySimplePodcasting\Rest\EpisodesController;
  * @since 1.19.12
  */
 
-class RestApi {
+class RestApiController {
 
 	/**
 	 * @var $version string Plugin version (semvar)

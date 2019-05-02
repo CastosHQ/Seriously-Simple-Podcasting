@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Castos {
+class CastosHandler {
 
 	/**
 	 * Array of config settings

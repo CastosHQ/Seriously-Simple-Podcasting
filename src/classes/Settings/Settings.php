@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       2.0
  */
-class SSP_Settings {
+class Settings {
 	/**
 	 * Directory
 	 *

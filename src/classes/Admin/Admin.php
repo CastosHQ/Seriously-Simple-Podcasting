@@ -1,4 +1,4 @@
-<?php
+<?php //phpcs:ignore WordPress.Files.FileName
 
 namespace SeriouslySimplePodcasting\Admin;
 
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.0
  */
-class SSP_Admin {
+class Admin {
 	private $version;
 	private $dir;
 	private $file;

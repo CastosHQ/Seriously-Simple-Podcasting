@@ -1,6 +1,6 @@
-<?php
+<?php //phpcs:ignore WordPress.Files.FileName
 
-namespace SeriouslySimplePodcasting\Podcasting;
+namespace SeriouslySimplePodcasting\Frontend;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.0
  */
-class SSP_Frontend {
+class Frontend {
 
 	// @todo reference prior to analytics launch
 	public $style_guide = array(

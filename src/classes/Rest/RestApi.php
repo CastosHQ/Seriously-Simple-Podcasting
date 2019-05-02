@@ -1,5 +1,8 @@
-<?php
+<?php  //phpcs:ignore WordPress.Files.FileName
+
 namespace SeriouslySimplePodcasting\Rest;
+
+use SeriouslySimplePodcasting\Rest\EpisodesController;
 
 /**
  * Extending the WP REST API for Seriously Simple Podcasting
@@ -8,7 +11,7 @@ namespace SeriouslySimplePodcasting\Rest;
  * @since 1.19.12
  */
 
-class SSP_WP_REST_API {
+class RestApi {
 
 	/**
 	 * @var $version string Plugin version (semvar)
@@ -22,11 +25,11 @@ class SSP_WP_REST_API {
 	 */
 	private function get_default_podcast_settings() {
 		$series_id = 0;
-		$podcast = array();
+		$podcast   = array();
 
 		$podcast['title']           = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
 		$description                = get_option( 'ss_podcasting_data_description', get_bloginfo( 'description' ) );
-		$podcast['description']     = mb_substr( strip_tags( $description ), 0, 3999 );
+		$podcast['description']     = mb_substr( wp_strip_all_tags( $description ), 0, 3999 );
 		$podcast['language']        = get_option( 'ss_podcasting_data_language', get_bloginfo( 'language' ) );
 		$podcast['copyright']       = get_option( 'ss_podcasting_data_copyright', '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ) );
 		$podcast['subtitle']        = get_option( 'ss_podcasting_data_subtitle', get_bloginfo( 'description' ) );
@@ -91,7 +94,7 @@ class SSP_WP_REST_API {
 		/**
 		 * Setting up custom route for episodes
 		 */
-		$controller = new SSP_WP_REST_Episodes_Controller();
+		$controller = new EpisodesController();
 		$controller->register_routes();
 
 	}

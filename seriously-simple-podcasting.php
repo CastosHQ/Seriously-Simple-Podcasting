@@ -15,18 +15,24 @@
  * @package Seriously Simple Podcasting
  */
 
-namespace SeriouslySimplePodcasting;
-
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 use SeriouslySimplePodcasting\Admin;
-use SeriouslySimplePodcasting\Podcasting;
+use SeriouslySimplePodcasting\Frontend;
+use SeriouslySimplePodcasting\Settings;
 use SeriouslySimplePodcasting\Rest;
-//use SeriouslySimplePodcasting\Settings;
 
+/**
+ * Only require the REST API endpoints if the user is using WordPress greater than 4.7
+global $wp_version;
+if ( version_compare( $wp_version, '4.7', '>=' ) ) {
+	require_once 'includes/class-ssp-wp-rest-api.php';
+	require_once 'includes/class-ssp-wp-rest-episodes-controller.php';
+}
+ */
 
 define( 'SSP_VERSION', '1.19.20' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -44,7 +50,7 @@ define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );
 define( 'SSP_LOG_PATH', SSP_LOG_DIR_PATH . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
 define( 'SSP_LOG_URL', SSP_LOG_DIR_URL . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
 
-require SSP_PLUGIN_URL . 'vendor/autoload.php';
+require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
 if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	/**
@@ -79,21 +85,14 @@ require_once 'includes/class-ssp-frontend.php';
 require_once 'includes/class-podmotor-handler.php';
 require_once 'includes/class-ssp-external-rss-importer.php';
 */
-/**
- * Only require the REST API endpoints if the user is using WordPress greater than 4.7
- */
-global $wp_version;
-if ( version_compare( $wp_version, '4.7', '>=' ) ) {
-	require_once 'includes/class-ssp-wp-rest-api.php';
-	require_once 'includes/class-ssp-wp-rest-episodes-controller.php';
-}
+
 
 global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
-$ssp_admin       = new Admin\SSP_Admin( __FILE__, SSP_VERSION );
-$ss_podcasting   = new Podcasting\SSP_Frontend( __FILE__, SSP_VERSION );
-$ssp_wp_rest_api = new Rest\SSP_WP_REST_API( SSP_VERSION );
+$ssp_admin       = new Admin\Admin( __FILE__, SSP_VERSION );
+$ss_podcasting   = new Frontend\Frontend( __FILE__, SSP_VERSION );
+$ssp_wp_rest_api = new Rest\RestApi( SSP_VERSION );
 
 if ( is_admin() ) {
 	global $ssp_settings;
-	$ssp_settings = new Settings\SSP_Settings( __FILE__, SSP_VERSION );
+	$ssp_settings = new Settings\Settings( __FILE__, SSP_VERSION );
 }

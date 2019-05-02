@@ -5,7 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\CastosHandler;
 
 /**
- * SSP Admin
+ * SSP Settings
  *
  * @package Seriously Simple Podcasting
  */

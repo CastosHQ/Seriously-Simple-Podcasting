@@ -38,7 +38,7 @@ class CastosHandler {
 	public $response = array();
 
 	/**
-	 * Castos constructor.
+	 * CastosHandler constructor.
 	 */
 	public function __construct() {
 		$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
@@ -48,7 +48,7 @@ class CastosHandler {
 	}
 
 	/**
-	 * Sets up the PodcastMotor Castos
+	 * Sets up the CastosHandler
 	 */
 	private function init_podmotor_handler() {
 		$podmotor_account_id      = get_option( 'ss_podcasting_podmotor_account_id', '' );
@@ -80,7 +80,7 @@ class CastosHandler {
 	}
 
 	/**
-	 * Get the Castos credentials from the Castos API
+	 * Get the CastosHandler credentials from the Castos API
 	 *
 	 * @param $podmotor_account_id
 	 * @param $podmotor_account_email

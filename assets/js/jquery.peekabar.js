@@ -18,7 +18,7 @@
 		/** Instance */
 		this.bar = {};
 
-		/** Admin */
+		/** Settings */
 		this.settings = {};
 
 		/** Defaults */
@@ -92,7 +92,7 @@
 			that.bar.hide();
 		};
 
-		/** Apply Custom Bar Admin */
+		/** Apply Custom Bar Settings */
 		var _applyCustomSettings = function() {
 			_applyHTML();
 			_applyAutohide();

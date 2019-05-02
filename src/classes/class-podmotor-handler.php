@@ -1,11 +1,13 @@
 <?php
+
+namespace SeriouslySimplePodcasting\CastosHandler;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-
-class Podmotor_Handler {
+class CastosHandler {
 
 	/**
 	 * Array of config settings
@@ -36,7 +38,7 @@ class Podmotor_Handler {
 	public $response = array();
 
 	/**
-	 * Podmotor_Handler constructor.
+	 * CastosHandler constructor.
 	 */
 	public function __construct() {
 		$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );

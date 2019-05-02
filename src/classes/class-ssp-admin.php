@@ -1587,9 +1587,9 @@ HTML;
 			return;
 		}
 
-		$podmotor_handler = new Podmotor_Handler();
+		$castos_handler = new CastosHandler();
 
-		$response = $podmotor_handler->upload_podcast_to_podmotor( $post );
+		$response = $castos_handler->upload_podcast_to_podmotor( $post );
 
 		if ( 'success' == $response['status'] ) {
 			$podmotor_episode_id = $response['episode_id'];
@@ -1616,8 +1616,8 @@ HTML;
 		$response = array( 'status' => 'error', 'message' => 'Error storing file to offsite storage account' );
 
 		try {
-			$podmotor_handler  = new Podmotor_Handler();
-			$podmotor_response = $podmotor_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
+			$castos_handler  = new CastosHandler();
+			$podmotor_response = $castos_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
 		} catch ( Exception $e ) {
 			$response['status']  = 'error';
 			$response['message'] = 'An unknown error occurred: ' . $e->getMessage();
@@ -1671,8 +1671,8 @@ HTML;
 		if ( isset( $_GET['podcast_import_action'] ) && 'start' == $_GET['podcast_import_action'] ) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
 			//ssp_trigger_import_existing_podcast_to_podmotor();
-			$podmotor_handler = new Podmotor_Handler();
-			$reponse          = $podmotor_handler->insert_podmotor_queue();
+			$castos_handler = new CastosHandler();
+			$reponse          = $castos_handler->insert_podmotor_queue();
 			if ( 'success' === $reponse['status'] ) {
 				update_option( 'ss_podcasting_podmotor_queue_id', $reponse['queue_id'] );
 			}
@@ -1827,7 +1827,7 @@ HTML;
 		if ( 'Trigger import' === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
-				$podmotorHandler = new Podmotor_Handler();
+				$podmotorHandler = new CastosHandler();
 				$result          = $podmotorHandler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );

@@ -20,6 +20,24 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+define( 'SSP_VERSION', '1.19.20' );
+define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
+
+if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
+	define( 'SSP_PODMOTOR_APP_URL', 'https://app.castos.com/' );
+}
+if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
+	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.castos.com/' );
+}
+
+define( 'SSP_LOG_DIR_PATH', SSP_PLUGIN_PATH . 'log' . DIRECTORY_SEPARATOR );
+define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );
+define( 'SSP_LOG_PATH', SSP_LOG_DIR_PATH . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
+define( 'SSP_LOG_URL', SSP_LOG_DIR_URL . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
+
+require SSP_PLUGIN_URL . 'vendor/autoload.php';
+
 if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 	/**
 	 * We are running under PHP 5.3.3
@@ -42,22 +60,6 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 
 	return;
 }
-
-define( 'SSP_VERSION', '1.19.20' );
-define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
-
-if ( ! defined( 'SSP_PODMOTOR_APP_URL' ) ) {
-	define( 'SSP_PODMOTOR_APP_URL', 'https://app.castos.com/' );
-}
-if ( ! defined( 'SSP_PODMOTOR_EPISODES_URL' ) ) {
-	define( 'SSP_PODMOTOR_EPISODES_URL', 'https://episodes.castos.com/' );
-}
-
-define( 'SSP_LOG_DIR_PATH', SSP_PLUGIN_PATH . 'log' . DIRECTORY_SEPARATOR );
-define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );
-define( 'SSP_LOG_PATH', SSP_LOG_DIR_PATH . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
-define( 'SSP_LOG_URL', SSP_LOG_DIR_URL . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
 
 require_once 'includes/ssp-functions.php';
 require_once 'includes/class-ssp-admin.php';

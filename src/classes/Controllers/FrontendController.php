@@ -796,7 +796,7 @@ class FrontendController {
 						),
 					);
 					$podcast_display .= wp_kses( $data, $allowed_tags );
-				break;
+					break;
 
 			}
 		}
@@ -867,15 +867,15 @@ class FrontendController {
 
 				case 'itunes_url':
 					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '</a>';
-				break;
+					break;
 
 				case 'stitcher_url':
 					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '</a>';
-				break;
+					break;
 
 				case 'google_play_url':
 					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
-				break;
+					break;
 
 				case 'spotify_url':
 					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_spotify', __( 'Spotify', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_spotify', __( 'Spotify', 'seriously-simple-podcasting' ) ) . '</a>';
@@ -894,7 +894,7 @@ class FrontendController {
 						),
 					);
 					$subscribe_display .= wp_kses( $data, $allowed_tags );
-				break;
+					break;
 
 			}
 
@@ -1597,10 +1597,10 @@ class FrontendController {
 			switch ( $type ) {
 				case 'html':
 					$gen .= "\n" . '<meta name="generator" content="' . $generator . '">';
-				break;
+					break;
 				case 'xhtml':
 					$gen .= "\n" . '<meta name="generator" content="' . $generator . '" />';
-				break;
+					break;
 			}
 
 		}
@@ -1726,93 +1726,93 @@ class FrontendController {
 
 		$html = '<div class="podcast-episode episode-' . esc_attr( $episode_id ) . '">' . "\n";
 
-			// Setup post data for episode post object
-			$post = $episode;
-			setup_postdata( $post );
+		// Setup post data for episode post object
+		$post = $episode;
+		setup_postdata( $post );
 
-			$episode_context = $context;
+		$episode_context = $context;
 
-			// Get episode album art
-			$thumb_id = get_post_thumbnail_id( $episode_id );
-			if ( ! empty( $thumb_id ) ) {
-				list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'full' );
-				$albumArt = compact( 'src', 'width', 'height' );
-			} else {
-				$albumArt['src'] = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
-				$albumArt['width'] = 300;
-				$albumArt['height'] = 300;
-			}
-
-			// Render different player styles
-			/**
-			 * This is very much the start of what needs to become a more integrated player.
-			 * This player needs to also adapt for embeds, and needs to look presentable in many sizes
-			 * @author Simon Dowdles - SSP <simon.dowdles@gmail.com>
-			 * @todo Seperate logic into own js file
-			 * @todo Work on styles
-			 * @todo Work on feedback on player
-			 * @todo Move CSS to own file
-			 * @todo Add filters
-			 * @todo Add settings pages to customize layout / colours
-			 */
-
-			if( 'mini' !== $style ){
-				if( 'large' == $style ){
-
-					foreach ( $content_items as $item ) {
-
-						switch( $item ) {
-
-							case 'title':
-								$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
-								break;
-
-							case 'excerpt':
-								$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
-								break;
-
-							case 'content':
-								$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
-								break;
-
-							case 'player':
-								$file = $this->get_enclosure( $episode_id );
-								if ( get_option( 'permalink_structure' ) ) {
-									$file = $this->get_episode_download_link( $episode_id );
-								}
-								$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, "large" ) . '</div>' . "\n";
-								break;
-
-							case 'details':
-								$html .= $this->episode_meta_details( $episode_id, $episode_context );
-								break;
-
-							case 'image':
-								$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
-								break;
-
-						}
-					}
+		// Get episode album art
+		$thumb_id = get_post_thumbnail_id( $episode_id );
+		if ( ! empty( $thumb_id ) ) {
+			list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'full' );
+			$albumArt = compact( 'src', 'width', 'height' );
+		} else {
+			$albumArt['src'] = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
+			$albumArt['width'] = 300;
+			$albumArt['height'] = 300;
 		}
-			}
 
-			if( 'mini' === $style ){
-				// Display specified content items in the order supplied
+		// Render different player styles
+		/**
+		 * This is very much the start of what needs to become a more integrated player.
+		 * This player needs to also adapt for embeds, and needs to look presentable in many sizes
+		 * @author Simon Dowdles - SSP <simon.dowdles@gmail.com>
+		 * @todo Seperate logic into own js file
+		 * @todo Work on styles
+		 * @todo Work on feedback on player
+		 * @todo Move CSS to own file
+		 * @todo Add filters
+		 * @todo Add settings pages to customize layout / colours
+		 */
+
+		if( 'mini' !== $style ){
+			if( 'large' == $style ){
+
 				foreach ( $content_items as $item ) {
+
+					switch( $item ) {
+
+						case 'title':
+							$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
+							break;
+
+						case 'excerpt':
+							$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
+							break;
+
+						case 'content':
+							$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
+							break;
+
+						case 'player':
+							$file = $this->get_enclosure( $episode_id );
+							if ( get_option( 'permalink_structure' ) ) {
+								$file = $this->get_episode_download_link( $episode_id );
+							}
+							$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, "large" ) . '</div>' . "\n";
+							break;
+
+						case 'details':
+							$html .= $this->episode_meta_details( $episode_id, $episode_context );
+							break;
+
+						case 'image':
+							$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
+							break;
+
+					}
+				}
+			}
+		}
+
+		if( 'mini' === $style ){
+			// Display specified content items in the order supplied
+			foreach ( $content_items as $item ) {
 
 				switch( $item ) {
 
 					case 'title':
 						$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
-					break;
+						break;
 
 					case 'excerpt':
 						$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
-					break;
+						break;
 
 					case 'content':
 						$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
-					break;
+						break;
 
 					case 'player':
 						$file = $this->get_enclosure( $episode_id );
@@ -1820,22 +1820,22 @@ class FrontendController {
 							$file = $this->get_episode_download_link( $episode_id );
 						}
 						$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $style ) . '</div>' . "\n";
-					break;
+						break;
 
 					case 'details':
 						$html .= $this->episode_meta_details( $episode_id, $episode_context );
-					break;
+						break;
 
 					case 'image':
 						$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
 						break;
 
-					}
 				}
 			}
+		}
 
-			// Reset post data after fetching episode details
-			wp_reset_postdata();
+		// Reset post data after fetching episode details
+		wp_reset_postdata();
 
 		$html .= '</div>' . "\n";
 

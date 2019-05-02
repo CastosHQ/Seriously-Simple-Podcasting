@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.1
+Tested up to: 5.1.1
 Requires PHP: 5.3.3
-Stable tag: 1.19.17
+Stable tag: 1.19.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,19 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.19.20 =
+* 2019-04-29
+* [FIX] Fixes a PHP Notice introduced by the 1.19.19 release
+
+= 1.19.19 =
+* 2019-04-29
+* [FIX] Fixes bug where regular Seriously Simple Podcasting users were not able to use the new importer
+
+= 1.19.18 =
+* 2019-04-29
+* [NEW] Option to import an external podcast feed, useful when moving from a third party service to Seriously Simple Podcasting (props [Jake Spurlock](https://github.com/whyisjake))
+* [FIX] Fixes a PHP 7 deprecated function error
 
 = 1.19.17 =
 * 2019-03-13

@@ -761,6 +761,18 @@ if ( ! function_exists( 'ssp_trigger_import_existing_podcast_to_podmotor' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ssp_get_external_rss_being_imported' ) ) {
+	/**
+	 * If an external RSS feed is being imported, return the url
+	 * Otherwise return false
+	 *
+	 * @return mixed|void
+	 */
+	function ssp_get_external_rss_being_imported() {
+		return get_option( 'ssp_external_rss', false );
+	}
+}
+
 if ( ! function_exists( 'ssp_download_remote_file' ) ) {
 	/**
 	 * Takes an external file and downloads it to the server

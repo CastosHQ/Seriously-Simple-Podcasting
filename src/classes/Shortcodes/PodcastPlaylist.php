@@ -1,4 +1,7 @@
 <?php
+
+namespace SeriouslySimplePodcasting\ShortCodes;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -7,19 +10,19 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Seriously Simple Podcasting Recent Podcast Episodes Widget
  *
- * @author 		Hugh Lashbrooke
- * @package 	SeriouslySimplePodcasting
- * @category 	SeriouslySimplePodcasting/Shortcodes
- * @since 		1.15.0
+ * @author        Hugh Lashbrooke
+ * @package    SeriouslySimplePodcasting
+ * @category    SeriouslySimplePodcasting/Shortcodes
+ * @since        1.15.0
  */
-class SSP_Shortcode_Podcast_Playlist {
+class PodcastPlaylist {
 
 	/**
 	 * Shortcode function to display podcast playlist (copied and modified from wp-includes/media.php)
 	 * @param  array  $params Shortcode paramaters
 	 * @return string         HTML output
 	 */
-	function shortcode( $params ) {
+	public function shortcode( $params ) {
 		global $content_width, $ss_podcasting;
 
 		// Get list of episode IDs for display from `episodes` parameter
@@ -32,28 +35,32 @@ class SSP_Shortcode_Podcast_Playlist {
 		}
 
 		// Parse shortcode attributes
-		$atts = shortcode_atts( array(
-			'type'		    => 'audio',
-			'series'	    => '',
-			'order'		    => 'ASC',
-			'orderby'	    => 'menu_order ID',
-			'include'	    => '',
-			'exclude'       => '',
-			'style'		    => 'light',
-			'player_style'  => 'mini',
-			'tracklist'     => true,
-			'tracknumbers'  => true,
-			'images'	    => true,
-            'limit'         => -1
-		), $params, 'podcast_playlist' );
+		$atts = shortcode_atts(
+			array(
+				'type'         => 'audio',
+				'series'       => '',
+				'order'        => 'ASC',
+				'orderby'      => 'menu_order ID',
+				'include'      => '',
+				'exclude'      => '',
+				'style'        => 'light',
+				'player_style' => 'mini',
+				'tracklist'    => true,
+				'tracknumbers' => true,
+				'images'       => true,
+				'limit'        => - 1,
+			),
+			$params,
+			'podcast_playlist'
+		);
 
 		// Included posts must be passed as an array
-		if( $atts['include'] ) {
+		if ( $atts['include'] ) {
 			$atts['include'] = explode( ',', $atts['include'] );
 		}
 
 		// Excluded posts must be passed as an array
-		if( $atts['exclude'] ) {
+		if ( $atts['exclude'] ) {
 			$atts['exclude'] = explode( ',', $atts['exclude'] );
 		}
 
@@ -64,9 +71,9 @@ class SSP_Shortcode_Podcast_Playlist {
 		$query_args = array(
 			'post_status'         => 'publish',
 			'post_type'           => $podcast_post_types,
-			'posts_per_page'      => (int) $atts['limit'] > 0 ? $atts['limit'] : -1,
-			'order'				  => $atts['order'],
-			'orderby'			  => $atts['orderby'],
+			'posts_per_page'      => (int) $atts['limit'] > 0 ? $atts['limit'] : - 1,
+			'order'               => $atts['order'],
+			'orderby'             => $atts['orderby'],
 			'ignore_sticky_posts' => true,
 			'post__in'            => $atts['include'],
 			'post__not_in'        => $atts['exclude'],
@@ -87,8 +94,8 @@ class SSP_Shortcode_Podcast_Playlist {
 			$query_args['tax_query'] = array(
 				array(
 					'taxonomy' => 'series',
-					'field' => 'slug',
-					'terms' => $atts['series'],
+					'field'    => 'slug',
+					'terms'    => $atts['series'],
 				),
 			);
 
@@ -100,25 +107,24 @@ class SSP_Shortcode_Podcast_Playlist {
 		// Fetch all episodes for display
 		$episodes = get_posts( $query_args );
 
-		if( empty ( $episodes ) ) {
+		if ( empty ( $episodes ) ) {
 			return;
 		}
 
-		$outer = 22; // default padding and border of wrapper
-
-		$default_width = 640;
+		$outer          = 22; // default padding and border of wrapper
+		$default_width  = 640;
 		$default_height = 360;
 
-		$theme_width = empty( $content_width ) ? $default_width : ( $content_width - $outer );
+		$theme_width  = empty( $content_width ) ? $default_width : ( $content_width - $outer );
 		$theme_height = empty( $content_width ) ? $default_height : round( ( $default_height * $theme_width ) / $default_width );
 
 		$data = array(
-			'type' => $atts['type'],
+			'type'         => $atts['type'],
 			// don't pass strings to JSON, will be truthy in JS
-			'tracklist' => wp_validate_boolean( $atts['tracklist'] ),
+			'tracklist'    => wp_validate_boolean( $atts['tracklist'] ),
 			'tracknumbers' => wp_validate_boolean( $atts['tracknumbers'] ),
-			'images' => wp_validate_boolean( $atts['images'] ),
-			'artists' => false,
+			'images'       => wp_validate_boolean( $atts['images'] ),
+			'artists'      => false,
 		);
 
 		$tracks = array();
@@ -133,7 +139,7 @@ class SSP_Shortcode_Podcast_Playlist {
 			// Get episode file type
 			$ftype = wp_check_filetype( $url, wp_get_mime_types() );
 
-			if( $episode->post_excerpt ) {
+			if ( $episode->post_excerpt ) {
 				$episode_excerpt = $episode->post_excerpt;
 			} else {
 				$episode_excerpt = $episode->post_title;
@@ -141,10 +147,10 @@ class SSP_Shortcode_Podcast_Playlist {
 
 			// Setup episode data for media player
 			$track = array(
-				'src' => $url,
-				'type' => $ftype['type'],
-				'caption' => $episode->post_title,
-				'title' => $episode_excerpt,
+				'src'         => $url,
+				'type'        => $ftype['type'],
+				'caption'     => $episode->post_title,
+				'title'       => $episode_excerpt,
 				'description' => $episode->post_content,
 			);
 
@@ -155,9 +161,9 @@ class SSP_Shortcode_Podcast_Playlist {
 			if ( 'video' === $atts['type'] ) {
 				$track['dimensions'] = array(
 					'original' => compact( $default_width, $default_height ),
-					'resized' => array(
-						'width' => $theme_width,
-						'height' => $theme_height
+					'resized'  => array(
+						'width'  => $theme_width,
+						'height' => $theme_height,
 					)
 				);
 			}
@@ -181,7 +187,7 @@ class SSP_Shortcode_Podcast_Playlist {
 
 		$data['tracks'] = $tracks;
 
-		$safe_type = esc_attr( $atts['type'] );
+		$safe_type  = esc_attr( $atts['type'] );
 		$safe_style = esc_attr( $atts['style'] );
 
 		static $instance = 0;
@@ -189,18 +195,16 @@ class SSP_Shortcode_Podcast_Playlist {
 
 		ob_start();
 
-        //$player_style = (string) get_option( 'ss_podcasting_player_style' ); // Not taking into account global settings for now
-        //$player_style = $atts['player_style'];
-		$player_style = "mini";
+		$player_style = 'mini';
 
-		if ( 1 === $instance && "larger" !== $player_style ) {
+		// @todo clean this mess up
+
+		if ( 1 === $instance && 'larger' !== $player_style ) {
 			/* This hook is defined in wp-includes/media.php */
 			do_action( 'wp_playlist_scripts', $atts['type'], $atts['style'] );
 		} ?>
         <div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?>">
-
             <?php
-
                 if( 'audio' === $atts['type'] && "larger" == $player_style ){
                     echo $ss_podcasting->media_player( $ss_podcasting->get_episode_download_link( $episodes[0]->ID ), $episodes[0]->ID, "large" );
                 }else{
@@ -212,7 +216,6 @@ class SSP_Shortcode_Podcast_Playlist {
                         endif; ?>></<?php echo $safe_type ?>>
                     <?php
                 }
-
                 if( "larger" == $player_style ) :
                     global $large_player_instance_number;
                     add_action( 'wp_footer', function(){
@@ -313,7 +316,5 @@ class SSP_Shortcode_Podcast_Playlist {
 		<?php
 		return ob_get_clean();
 	}
-
 }
 
-$GLOBALS['ssp_shortcodes']['podcast_playlist'] = new SSP_Shortcode_Podcast_Playlist();

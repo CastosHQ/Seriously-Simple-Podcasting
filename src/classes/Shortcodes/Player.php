@@ -1,4 +1,7 @@
 <?php
+
+namespace SeriouslySimplePodcasting\ShortCodes;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -12,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category   SeriouslySimplePodcasting/Shortcodes
  * @since      1.19.6
  */
-class SSP_Shortcode_SS_Player {
+class Player {
 
 	/**
 	 * Load ss_player shortcode
@@ -36,7 +39,7 @@ class SSP_Shortcode_SS_Player {
 		}
 
 		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
-		
+
 		// Make sure we return and don't echo.
 		$args['echo'] = false;
 
@@ -50,5 +53,3 @@ class SSP_Shortcode_SS_Player {
 	}
 
 }
-
-$GLOBALS['ssp_shortcodes']['ss_player'] = new SSP_Shortcode_SS_Player();

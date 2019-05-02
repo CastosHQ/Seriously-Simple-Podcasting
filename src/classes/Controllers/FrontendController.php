@@ -2,6 +2,11 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\ShortCodes\Player;
+use SeriouslySimplePodcasting\ShortCodes\Podcast;
+use SeriouslySimplePodcasting\ShortCodes\PodcastEpisode;
+use SeriouslySimplePodcasting\ShortCodes\PodcastPlaylist;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -1682,19 +1687,10 @@ class FrontendController {
 	 * @return void
 	 */
 	public function register_shortcodes () {
-
-		$shortcodes = array(
-			'podcast_episode',
-			'podcast_playlist',
-			'ss_podcast',
-			'ss_player',
-		);
-
-		foreach ( $shortcodes as $shortcode ) {
-			require_once( $this->dir . '/includes/shortcodes/class-ssp-shortcode-' . $shortcode . '.php' );
-			add_shortcode( $shortcode, array( $GLOBALS['ssp_shortcodes'][ $shortcode ], 'shortcode' ) );
-		}
-
+		add_shortcode( 'ss_player', array( new Player(), 'shortcode' ) );
+		add_shortcode( 'ss_podcast', array( new Podcast(), 'shortcode' ) );
+		add_shortcode( 'podcast_episode', array( new PodcastEpisode(), 'shortcode' ) );
+		add_shortcode( 'podcast_playlist', array( new PodcastPlaylist(), 'shortcode' ) );
 	}
 
 	/**

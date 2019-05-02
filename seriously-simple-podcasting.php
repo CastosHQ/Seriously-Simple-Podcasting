@@ -25,6 +25,7 @@ use SeriouslySimplePodcasting\Controllers\FrontendController;
 use SeriouslySimplePodcasting\Controllers\SettingsController;
 //use SeriouslySimplePodcasting\Rest;
 
+
 /**
  * Only require the REST API endpoints if the user is using WordPress greater than 4.7
 global $wp_version;

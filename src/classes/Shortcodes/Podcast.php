@@ -1,4 +1,7 @@
 <?php
+
+namespace SeriouslySimplePodcasting\ShortCodes;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -7,26 +10,26 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Seriously Simple Podcasting Recent Podcast Episodes Widget
  *
- * @author 		Hugh Lashbrooke
- * @package 	SeriouslySimplePodcasting
- * @category 	SeriouslySimplePodcasting/Shortcodes
- * @since 		1.15.0
+ * @author        Hugh Lashbrooke
+ * @package    SeriouslySimplePodcasting
+ * @category    SeriouslySimplePodcasting/Shortcodes
+ * @since        1.15.0
  */
-class SSP_Shortcode_SS_Podcast {
+class Podcast {
 
 	/**
 	 * Load ss_podcast shortcode
 	 * @param  array  $params  Shortcode attributes
 	 * @return string          HTML output
 	 */
-	function shortcode ( $params ) {
+	public function shortcode( $params ) {
 
 		$defaults = array(
-			'title' => '',
-			'content' => 'series',
-			'series' => '',
-			'echo' => false,
-			'size' => 100,
+			'title'      => '',
+			'content'    => 'series',
+			'series'     => '',
+			'echo'       => false,
+			'size'       => 100,
 			'link_title' => true,
 		);
 
@@ -37,7 +40,4 @@ class SSP_Shortcode_SS_Podcast {
 
 		return ss_podcast( $args );
 	}
-
 }
-
-$GLOBALS['ssp_shortcodes']['ss_podcast'] = new SSP_Shortcode_SS_Podcast();

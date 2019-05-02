@@ -6,64 +6,36 @@ use SeriouslySimplePodcasting\Handlers\CastosHandler;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
+	function ssp_is_php_version_ok() {
+		if ( ! version_compare( PHP_VERSION, '5.3.3', '<' ) ) {
+			return true;
+		}
+		/**
+		 * We are running under PHP 5.3.3
+		 */
+		if ( ! is_admin() ) {
+			return false;
+		}
+		/**
+		 * Display an admin notice and gracefully do nothing.
+		 */
+		add_action( 'admin_notices', 'ssp_php_version_notice' );
+		function ssp_php_version_notice() {
+			?>
+			<div class="error">
+				<p>
+					<strong>The Seriously Simple Podcasting plugin requires PHP version 5.3.3 or higher. Please
+						contact your web host to upgrade your PHP version or deactivate the plugin.</strong>.
+				</p>
+				<p>We apologise for any inconvenience.</p>
+			</div>
+			<?php
+		}
 
-/**
- * Simple Logging function
- *
- * @param $message string debug message
- * @param $data mixed debug data
- *
- * @return bool
- */
-function ssp_debug( $message, $data = '' ) {
-	if ( ! defined( 'SSP_DEBUG' ) || ! SSP_DEBUG ) {
 		return false;
 	}
-	$file = SSP_LOG_PATH;
-	if ( ! is_file( $file ) ) {
-		file_put_contents( $file, '' );
-	}
-	if ( ! empty( $data ) ) {
-		$message = array( $message => $data );
-	}
-	$data_string = print_r( $message, true ) . "\n";
-	file_put_contents( $file, $data_string, FILE_APPEND );
 }
-
-function ssp_is_php_version_ok() {
-
-	if ( ! version_compare( PHP_VERSION, '5.3.3', '<' ) ) {
-		return true;
-	}
-
-	/**
-	 * We are running in the admin under PHP 5.3.3
-	 */
-	if ( ! is_admin() ) {
-		return false;
-	}
-
-	/**
-	 * Display an admin notice and gracefully do nothing.
-	 */
-	add_action( 'admin_notices', 'ssp_php_version_notice' );
-	function ssp_php_version_notice() {
-		?>
-		<div class="error">
-			<p>
-				<strong>The Seriously Simple Podcasting plugin requires PHP version 5.3.3 or later. Please
-					contact your web host to upgrade your PHP version or deactivate the plugin.</strong>.
-			</p>
-			<p>We apologise for any inconvenience.</p>
-		</div>
-		<?php
-
-	}
-
-	return false;
-}
-
-
 
 if ( ! function_exists( 'ssp_get_upload_directory' ) ) {
 	/**
@@ -117,14 +89,13 @@ if ( ! function_exists( 'ssp_cannot_write_uploads_dir_error' ) ) {
 if ( ! function_exists( 'is_podcast_download' ) ) {
 	/**
 	 * Check if podcast file is being downloaded
-	 * @since  1.5
 	 * @return boolean True if file is being downloaded
+	 * @since  1.5
 	 */
 	function is_podcast_download() {
+		$download = false;
+		$episode  = false;
 		global $wp_query;
-
-		$download = $episode = false;
-
 		if ( isset( $wp_query->query_vars['podcast_episode'] ) && $wp_query->query_vars['podcast_episode'] ) {
 			$download = true;
 			$episode  = intval( $wp_query->query_vars['podcast_episode'] );
@@ -138,10 +109,10 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 	/**
 	 * Wrapper function to get the podcast episodes from the SeriouslySimplePodcasting class.
 	 *
-	 * @param  mixed $args Arguments
+	 * @param mixed $args Arguments
 	 *
-	 * @since  1.0.0
 	 * @return mixed        Array if true, boolean if false.
+	 * @since  1.0.0
 	 */
 	function ss_get_podcast( $args = '' ) {
 		global $ss_podcasting;
@@ -160,10 +131,10 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 	/**
 	 * Display or return HTML-formatted podcast data.
 	 *
-	 * @param  mixed $args Arguments
+	 * @param mixed $args Arguments
 	 *
-	 * @since  1.0.0
 	 * @return string
+	 * @since  1.0.0
 	 */
 	function ss_podcast( $args = '' ) {
 		global $post, $ss_podcasting;
@@ -177,7 +148,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 			'before'       => '<div class="widget widget_ss_podcast">',
 			'after'        => '</div><!--/.widget widget_ss_podcast-->',
 			'before_title' => '<h3>',
-			'after_title'  => '</h3>'
+			'after_title'  => '</h3>',
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -195,7 +166,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 		if ( ! is_wp_error( $query ) && is_array( $query ) && count( $query ) > 0 ) {
 			$html .= $args['before'] . "\n";
 
-			if ( '' != $args['title'] ) {
+			if ( '' !== $args['title'] ) {
 				$html .= $args['before_title'] . esc_html( $args['title'] ) . $args['after_title'] . "\n";
 			}
 
@@ -205,7 +176,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 			$tpl = '<div class="%%CLASS%%"><h4 class="podcast-title">%%TITLE%%</h4><aside class="meta">%%META%%</aside></div>';
 			$tpl = apply_filters( 'ssp_podcast_item_template', $tpl, $args );
 
-			if ( $query['content'] == 'episodes' ) {
+			if ( 'episodes' === $query['content'] ) {
 
 				$i = 0;
 				foreach ( $query as $post ) {
@@ -222,7 +193,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$class = 'podcast';
 
 					$title = get_the_title();
-					if ( true == $args['link_title'] ) {
+					if ( true === $args['link_title'] ) {
 						$title = '<a href="' . esc_url( $post->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';
 					}
 
@@ -235,7 +206,6 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$html .= $template;
 
 				}
-
 			} else {
 
 				$i = 0;
@@ -251,7 +221,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$class = 'podcast';
 
 					$title = $series->title;
-					if ( true == $args['link_title'] ) {
+					if ( true === $args['link_title'] ) {
 						$title = '<a href="' . esc_url( $series->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';
 					}
 
@@ -264,7 +234,6 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$html .= $template;
 
 				}
-
 			}
 
 			$html .= '<div class="fix"></div>' . "\n";
@@ -293,8 +262,8 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 
 	/**
 	 * Get post IDs of all podcast episodes for all post types
-	 * @since  1.8.2
 	 * @return array
+	 * @since  1.8.2
 	 */
 	function ssp_episode_ids() {
 		global $ss_podcasting;
@@ -330,7 +299,7 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 		$podcast_episodes = wp_cache_get( $key, $group );
 
 		// If nothing in cache then fetch episodes again and store in cache
-		if ( $podcast_episodes === false ) {
+		if ( false === $podcast_episodes ) {
 			$podcast_episodes = get_posts( $args );
 			wp_cache_set( $key, $podcast_episodes, $group, HOUR_IN_SECONDS * 12 );
 		}
@@ -340,7 +309,6 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 
 		return $podcast_episodes;
 	}
-
 }
 
 if ( ! function_exists( 'ssp_episodes' ) ) {
@@ -348,20 +316,20 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 	/**
 	 * Fetch all podcast episodes
 	 *
-	 * @param  integer $n Number of episodes to fetch
-	 * @param  string $series Slug of series to fetch
-	 * @param  boolean $return_args True to return query args, false to return posts
-	 * @param  string $context Context of query
+	 * @param integer $n Number of episodes to fetch
+	 * @param string $series Slug of series to fetch
+	 * @param boolean $return_args True to return query args, false to return posts
+	 * @param string $context Context of query
 	 *
-	 * @since  1.8.2
 	 * @return array                Array of posts or array of query args
+	 * @since  1.8.2
 	 */
 	function ssp_episodes( $n = 10, $series = '', $return_args = false, $context = '' ) {
 
 		// Get all podcast episodes IDs
 		$episode_ids = (array) ssp_episode_ids();
 
-		if ( $context === 'glance' ) {
+		if ( 'glance' === $context ) {
 			return $episode_ids;
 		}
 
@@ -401,14 +369,13 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		$posts = wp_cache_get( $key, $group );
 
 		// If nothing in cache then fetch episodes again and store in cache
-		if ( $posts === false ) {
+		if ( false === $posts ) {
 			$posts = get_posts( $args );
 			wp_cache_add( $key, $posts, $group, HOUR_IN_SECONDS * 12 );
 		}
 
 		return $posts;
 	}
-
 }
 
 if ( ! function_exists( 'ssp_post_types' ) ) {
@@ -416,10 +383,10 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 	/**
 	 * Fetch all valid podcast post types
 	 *
-	 * @param  boolean $include_podcast Include the `podcast` post type or not
+	 * @param boolean $include_podcast Include the `podcast` post type or not
 	 *
-	 * @since  1.8.7
 	 * @return array                    Array of podcast post types
+	 * @since  1.8.7
 	 */
 	function ssp_post_types( $include_podcast = true ) {
 
@@ -445,7 +412,6 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 					$valid_podcast_post_types[] = $type;
 				}
 			}
-
 		}
 
 		// Return only the valid podcast post types
@@ -458,7 +424,7 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 	/**
 	 * Get the XML markup for the feed category at the specified level
 	 *
-	 * @param  int $level Category level
+	 * @param int $level Category level
 	 *
 	 * @return string        XML output for feed vategory
 	 */
@@ -466,14 +432,14 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 
 		$level = (int) $level;
 
-		if ( 1 == $level ) {
+		if ( 1 === $level ) {
 			$level = '';
 		}
 
 		$category = get_option( 'ss_podcasting_data_category' . $level, '' );
 		if ( $series_id ) {
 			$series_category = get_option( 'ss_podcasting_data_category' . $level . '_' . $series_id, 'no-category' );
-			if ( 'no-category' != $series_category ) {
+			if ( 'no-category' !== $series_category ) {
 				$category = $series_category;
 			}
 		}
@@ -484,18 +450,22 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 			$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level, '' );
 			if ( $series_id ) {
 				$series_subcategory = get_option( 'ss_podcasting_data_subcategory' . $level . '_' . $series_id, 'no-subcategory' );
-				if ( 'no-subcategory' != $series_subcategory ) {
+				if ( 'no-subcategory' !== $series_subcategory ) {
 					$subcategory = $series_subcategory;
 				}
 			}
 		}
 
-		return apply_filters( 'ssp_feed_category_output', array(
-			'category'    => $category,
-			'subcategory' => $subcategory
-		), $level, $series_id );
+		return apply_filters(
+			'ssp_feed_category_output',
+			array(
+				'category'    => $category,
+				'subcategory' => $subcategory,
+			),
+			$level,
+			$series_id
+		);
 	}
-
 }
 
 if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
@@ -503,11 +473,11 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 	/**
 	 * Reads file in chunks so big downloads are possible without changing PHP.INI - http://codeigniter.com/wiki/Download_helper_for_large_files/
 	 *
-	 * @param    string    file
-	 * @param    boolean   return bytes of file
+	 * @param string    file
+	 * @param boolean   return bytes of file
 	 *
-	 * @since     1.0.0
 	 * @return   mixed
+	 * @since     1.0.0
 	 */
 	function ssp_readfile_chunked( $file, $retbytes = true ) {
 
@@ -515,7 +485,7 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 		$cnt       = 0;
 
 		$handle = fopen( $file, 'r' );
-		if ( $handle === false ) {
+		if ( false === $handle ) {
 			return false;
 		}
 
@@ -708,21 +678,18 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 	 */
 	function import_existing_podcast() {
 
-		ssp_debug( 'Importing Existing Podcasts' );
 		$podmotor_import_podcasts = get_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 
 		/**
 		 * Only if we should be importing posts
 		 */
-		if ( 'true' == $podmotor_import_podcasts ) {
-			ssp_debug( 'Import podcasts is on' );
+		if ( 'true' === $podmotor_import_podcasts ) {
 			$podcast_query = ssp_get_existing_podcasts();
 
 			/**
 			 * Only if there are posts to import
 			 */
 			if ( $podcast_query->have_posts() ) {
-				ssp_debug( 'Podcasts exist to import' );
 
 				$podcast_data = ssp_build_podcast_data( $podcast_query );
 
@@ -730,23 +697,13 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 				$upload_podcasts_response = $castos_handler->upload_podcasts_to_podmotor( $podcast_data );
 
 				if ( 'success' === $upload_podcasts_response['status'] ) {
-
-					ssp_debug( 'Success uploading podcast data, switching off podcast importer' );
 					update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-
-				} else {
-					ssp_debug( 'Error uploading podcast data' );
-					ssp_debug( $upload_podcasts_response );
 				}
-
 			} else {
 				/**
 				 * There are no posts to import, disable import
 				 */
-				ssp_debug( 'Switching off podcast import' );
 				update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-
-				//ssp_email_podcasts_imported();
 
 				return false;
 			}
@@ -755,38 +712,6 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 		} else {
 			return false;
 		}
-	}
-}
-
-if ( ! function_exists( 'ssp_trigger_import_existing_podcast_to_podmotor' ) ) {
-	/**
-	 * Trigger the process of importing existing podcasts to Seriously Simple Hosting
-	 * @return bool
-	 */
-
-	function ssp_trigger_import_existing_podcast_to_podmotor() {
-		// connect to podmotor app and insert queue
-		$unique = mktime();
-		ssp_debug( 'Triggering Curl for #' . $unique . ' at ' . date( 'd-m-Y H:i:s' ) );
-		$curl_url = add_query_arg( array( 'ssp_podcast_importer' => 'true' ), trailingslashit( site_url() ) );
-		$curl     = curl_init();
-		curl_setopt_array(
-			$curl,
-			array(
-				CURLOPT_TIMEOUT_MS     => 60,
-				CURLOPT_RETURNTRANSFER => true,
-				CURLOPT_HEADER         => false,
-				CURLOPT_NOSIGNAL       => true,
-				CURLOPT_URL            => $curl_url,
-			)
-		);
-		$request = curl_exec( $curl );
-		if ( false === $request ) {
-			ssp_debug( 'Curl error for #' . $unique . ': ' . curl_error( $curl ) . ' at ' . date( 'd-m-Y H:i:s' ) );
-		} else {
-			ssp_debug( 'Curl completed for #' . $unique . ' at ' . date( 'd-m-Y H:i:s' ) );
-		}
-		curl_close( $curl );
 	}
 }
 
@@ -866,15 +791,16 @@ if ( ! function_exists( 'ssp_email_podcasts_imported' ) ) {
 	 * @return mixed
 	 */
 	function ssp_email_podcasts_imported() {
-		$new_line         = "\n";
 		$site_name        = get_bloginfo( 'name' );
 		$site_admin_email = get_bloginfo( 'admin_email' );
 		$to               = $site_admin_email;
-		$subject          = sprintf( __( 'Podcast import completed for %s' ), $site_name );
-		$message          = '';
-		$message          .= sprintf( __( 'The Podcast import for %1$s has completed.%2$s' ), $site_name, $new_line );
-		$message          .= sprintf( __( 'Thank you for using Castos to host your podcasts.%1$s' ), $new_line );
-		$from             = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
+		/* translators: %s: Site Name */
+		$subject = sprintf( __( 'Podcast import completed for %s' ), $site_name );
+		$message = '';
+		/* translators: %s: Site Name */
+		$message .= sprintf( __( 'The Podcast import for %1$s has completed.' ), $site_name ) . PHP_EOL;
+		$message .= __( 'Thank you for using Castos to host your podcasts.' );
+		$from     = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
 
 		return wp_mail( $to, $subject, $message, $from );
 	}
@@ -890,7 +816,7 @@ if ( ! function_exists( 'ssp_podmotor_decrypt_config' ) ) {
 	 * @return bool|mixed
 	 */
 	function ssp_podmotor_decrypt_config( $encrypted_string, $unique_key ) {
-		if ( preg_match( "/^(.*)::(.*)$/", $encrypted_string, $regs ) ) {
+		if ( preg_match( '/^(.*)::(.*)$/', $encrypted_string, $regs ) ) {
 			list( $original_string, $encrypted_string, $encoding_iv ) = $regs;
 			$encoding_method = 'AES-128-CTR';
 			$encoding_key    = crypt( $unique_key, sha1( $unique_key ) );
@@ -926,21 +852,25 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		$access_key_id = $podmotor_array['credentials_key'];
 		$secret        = $podmotor_array['credentials_secret'];
 
-		$policy = base64_encode( json_encode( array(
-			'expiration' => date( 'Y-m-d\TH:i:s.000\Z', strtotime( '+1 day' ) ),
-			// ISO 8601 - date('c'); generates uncompatible date, so better do it manually
-			'conditions' => array(
-				array( 'bucket' => $bucket ),
-				array( 'acl' => 'public-read' ),
-				array( 'starts-with', '$key', '' ),
-				array( 'starts-with', '$Content-Type', '' ),
-				// accept all files
-				array( 'starts-with', '$name', '' ),
-				// Plupload internally adds name field, so we need to mention it here
-				array( 'starts-with', '$Filename', '' ),
-				// One more field to take into account: Filename - gets silently sent by FileReference.upload() in Flash http://docs.amazonwebservices.com/AmazonS3/latest/dev/HTTPPOSTFlash.html
-			),
-		) ) );
+		$policy = base64_encode(
+			json_encode(
+				array(
+					'expiration' => date( 'Y-m-d\TH:i:s.000\Z', strtotime( '+1 day' ) ),
+					// ISO 8601 - date('c'); generates incompatible date, so better do it manually
+					'conditions' => array(
+						array( 'bucket' => $bucket ),
+						array( 'acl' => 'public-read' ),
+						array( 'starts-with', '$key', '' ),
+						array( 'starts-with', '$Content-Type', '' ),
+						// accept all files
+						array( 'starts-with', '$name', '' ),
+						// Plupload internally adds name field, so we need to mention it here
+						array( 'starts-with', '$Filename', '' ),
+						// One more field to take into account: Filename - gets silently sent by FileReference.upload() in Flash http://docs.amazonwebservices.com/AmazonS3/latest/dev/HTTPPOSTFlash.html
+					),
+				)
+			)
+		);
 
 		$signature    = base64_encode( hash_hmac( 'sha1', $policy, $secret, true ) );
 		$episodes_url = SSP_CASTOS_EPISODES_URL;
@@ -950,18 +880,20 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 	}
 }
 
-if( !function_exists( 'ssp_get_image_id_from_url' ) ){
+if ( ! function_exists( 'ssp_get_image_id_from_url' ) ) {
 	/**
 	 * Get image ID when only the URL of the image is known
 	 *
 	 * @param $image_url
+	 *
 	 * @return mixed
 	 */
-	function ssp_get_image_id_from_url( $image_url ){
+	function ssp_get_image_id_from_url( $image_url ) {
 		$relative_image_url = str_replace( get_site_url(), '', $image_url );
 		global $wpdb;
 		// double escaped placeholder to allow for LIKE wildcard search
-		$attachment = $wpdb->get_col( $wpdb->prepare("SELECT ID FROM $wpdb->posts WHERE guid LIKE '%%%s%%' LIMIT 1;", $relative_image_url ) );
+		$attachment = $wpdb->get_col( $wpdb->prepare( "SELECT ID FROM $wpdb->posts WHERE guid LIKE '%%%s%%' LIMIT 1;", $relative_image_url ) );
+
 		return isset( $attachment[0] ) ? $attachment[0] : false;
 	}
 }
@@ -981,7 +913,6 @@ if ( ! function_exists( 'ssp_check_if_podcast_has_shortcode' ) ) {
 		}
 		$podcast         = get_post( $podcast_id );
 		$podcast_content = $podcast->post_content;
-		//$podcast_content = apply_filters( 'the_content', $podcast_content );
 		if ( has_shortcode( $podcast_content, $shortcode ) ) {
 			return true;
 		}
@@ -1004,8 +935,6 @@ if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
 	function ssp_get_episode_series_id( $episode_id ) {
 		$series_id = 0;
 		$series    = wp_get_post_terms( $episode_id, 'series' );
-
-		ssp_debug( 'Episode series for episode ID ' . $episode_id, $series );
 
 		if ( empty( $series ) ) {
 			return $series_id;
@@ -1045,7 +974,7 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 		if ( $series_description ) {
 			$description = $series_description;
 		}
-		$podcast_description            = mb_substr( strip_tags( $description ), 0, 3999 );
+		$podcast_description            = mb_substr( wp_strip_all_tags( $description ), 0, 3999 );
 		$podcast['podcast_description'] = $podcast_description;
 
 		// Podcast author
@@ -1074,7 +1003,7 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 
 		// Podcast explicit setting
 		$explicit_option = get_option( 'ss_podcasting_explicit_' . $series_id, '' );
-		if ( $explicit_option && 'on' == $explicit_option ) {
+		if ( $explicit_option && 'on' === $explicit_option ) {
 			$podcast['explicit'] = 1;
 		} else {
 			$podcast['explicit'] = 0;
@@ -1091,7 +1020,7 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 		// Podcast cover image
 		$image        = get_option( 'ss_podcasting_data_image', '' );
 		$series_image = get_option( 'ss_podcasting_data_image_' . $series_id, 'no-image' );
-		if ( 'no-image' != $series_image ) {
+		if ( 'no-image' !== $series_image ) {
 			$image = $series_image;
 		}
 		$podcast['cover_image'] = $image;
@@ -1115,5 +1044,4 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 		return $podcast;
 
 	}
-
 }

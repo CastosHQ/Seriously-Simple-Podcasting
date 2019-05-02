@@ -192,8 +192,6 @@ class SettingsController {
 		$castos_handler = new CastosHandler();
 		$response = $castos_handler->upload_series_to_podmotor( $series_data );
 
-		ssp_debug( 'Series Update', $response );
-
 	}
 
 	/**

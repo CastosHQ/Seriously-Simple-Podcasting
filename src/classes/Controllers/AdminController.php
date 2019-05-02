@@ -920,8 +920,6 @@ HTML;
 
 		$field_data = $this->custom_fields();
 
-		ssp_debug( 'Field Data', $field_data );
-
 		$enclosure = '';
 
 		foreach ( $field_data as $k => $field ) {
@@ -947,8 +945,6 @@ HTML;
 		}
 
 		if ( $enclosure ) {
-
-			ssp_debug( 'File Enclosure', $enclosure );
 
 			if ( ! ssp_is_connected_to_podcastmotor() ) {
 				// Get file duration
@@ -1673,7 +1669,6 @@ HTML;
 	public function start_importing_existing_podcasts() {
 		if ( isset( $_GET['podcast_import_action'] ) && 'start' == $_GET['podcast_import_action'] ) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
-			//ssp_trigger_import_existing_podcast_to_podmotor();
 			$castos_handler = new CastosHandler();
 			$reponse          = $castos_handler->insert_podmotor_queue();
 			if ( 'success' === $reponse['status'] ) {

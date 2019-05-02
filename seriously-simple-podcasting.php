@@ -88,11 +88,11 @@ require_once 'includes/class-ssp-external-rss-importer.php';
 
 
 global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
-$ssp_admin       = new Admin\Admin( __FILE__, SSP_VERSION );
-$ss_podcasting   = new Frontend\Frontend( __FILE__, SSP_VERSION );
+$ssp_admin       = new Admin\Controller( __FILE__, SSP_VERSION );
+$ss_podcasting   = new Frontend\Controller( __FILE__, SSP_VERSION );
 $ssp_wp_rest_api = new Rest\RestApi( SSP_VERSION );
 
 if ( is_admin() ) {
 	global $ssp_settings;
-	$ssp_settings = new Settings\Settings( __FILE__, SSP_VERSION );
+	$ssp_settings = new Settings\Controller( __FILE__, SSP_VERSION );
 }

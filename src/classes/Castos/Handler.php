@@ -7,7 +7,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class CastosHandler {
+class Handler {
 
 	/**
 	 * Array of config settings
@@ -38,7 +38,7 @@ class CastosHandler {
 	public $response = array();
 
 	/**
-	 * CastosHandler constructor.
+	 * Handler constructor.
 	 */
 	public function __construct() {
 		$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );

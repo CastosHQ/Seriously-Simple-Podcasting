@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.0
  */
-class Frontend {
+class Controller {
 
 	// @todo reference prior to analytics launch
 	public $style_guide = array(

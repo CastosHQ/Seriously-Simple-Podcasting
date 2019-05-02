@@ -2,7 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Admin;
 
-use SeriouslySimplePodcasting\Castos\CastosHandler;
+use SeriouslySimplePodcasting\Castos\Handler;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.0
  */
-class Admin {
+class Controller {
 	private $version;
 	private $dir;
 	private $file;
@@ -1591,7 +1591,7 @@ HTML;
 			return;
 		}
 
-		$castos_handler = new CastosHandler();
+		$castos_handler = new Handler();
 
 		$response = $castos_handler->upload_podcast_to_podmotor( $post );
 
@@ -1620,7 +1620,7 @@ HTML;
 		$response = array( 'status' => 'error', 'message' => 'Error storing file to offsite storage account' );
 
 		try {
-			$castos_handler  = new CastosHandler();
+			$castos_handler  = new Handler();
 			$podmotor_response = $castos_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
 		} catch ( Exception $e ) {
 			$response['status']  = 'error';
@@ -1675,7 +1675,7 @@ HTML;
 		if ( isset( $_GET['podcast_import_action'] ) && 'start' == $_GET['podcast_import_action'] ) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
 			//ssp_trigger_import_existing_podcast_to_podmotor();
-			$castos_handler = new CastosHandler();
+			$castos_handler = new Handler();
 			$reponse          = $castos_handler->insert_podmotor_queue();
 			if ( 'success' === $reponse['status'] ) {
 				update_option( 'ss_podcasting_podmotor_queue_id', $reponse['queue_id'] );
@@ -1744,7 +1744,7 @@ HTML;
 	public function invalid_permalink_structure_notice() {
 		$message = '';
 		$message .= '<p>You\'ve not set a valid permalink structure. This will affect your Podcast feed url.</p>';
-		$message .= '<p>Please set a permalink structure in the <em>\'Settings -> Permalinks\'</em> admin menu.</p>';
+		$message .= '<p>Please set a permalink structure in the <em>\'Controller -> Permalinks\'</em> admin menu.</p>';
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php _e( $message, 'ssp' ); ?></p>
@@ -1831,7 +1831,7 @@ HTML;
 		if ( 'Trigger import' === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
-				$podmotorHandler = new CastosHandler();
+				$podmotorHandler = new Handler();
 				$result          = $podmotorHandler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );

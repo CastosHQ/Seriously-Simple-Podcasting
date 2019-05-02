@@ -5,7 +5,7 @@ namespace SeriouslySimplePodcasting\Settings;
 use SeriouslySimplePodcasting\Castos\Handler;
 
 /**
- * SSP Controller
+ * SSP Admin
  *
  * @package Seriously Simple Podcasting
  */
@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Controller class
+ * Admin class
  *
  * Handles plugin settings page
  *
@@ -70,13 +70,13 @@ class Controller {
 	 */
 	private $token;
 	/**
-	 * Controller Base
+	 * Admin Base
 	 *
 	 * @var string
 	 */
 	private $settings_base;
 	/**
-	 * Controller
+	 * Admin
 	 *
 	 * @var mixed
 	 */
@@ -202,7 +202,7 @@ class Controller {
 	 * @return void
 	 */
 	public function add_menu_item() {
-		add_submenu_page( 'edit.php?post_type=podcast', __( 'Podcast Controller', 'seriously-simple-podcasting' ), __( 'Controller', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings', array(
+		add_submenu_page( 'edit.php?post_type=podcast', __( 'Podcast Admin', 'seriously-simple-podcasting' ), __( 'Admin', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings', array(
 			$this,
 			'settings_page',
 		) );
@@ -280,7 +280,7 @@ class Controller {
 	 * @return array $links Modified links
 	 */
 	public function add_plugin_links( $links ) {
-		$settings_link = '<a href="edit.php?post_type=podcast&page=podcast_settings">' . __( 'Controller', 'seriously-simple-podcasting' ) . '</a>';
+		$settings_link = '<a href="edit.php?post_type=podcast&page=podcast_settings">' . __( 'Admin', 'seriously-simple-podcasting' ) . '</a>';
 		array_push( $links, $settings_link );
 
 		return $links;
@@ -596,7 +596,7 @@ class Controller {
 
 		$settings['general'] = array(
 			'title'       => __( 'General', 'seriously-simple-podcasting' ),
-			'description' => __( 'General Controller', 'seriously-simple-podcasting' ),
+			'description' => __( 'General Admin', 'seriously-simple-podcasting' ),
 			'fields'      => array(
 				array(
 					'id'          => 'use_post_types',
@@ -1251,7 +1251,7 @@ class Controller {
 	}
 
 	/**
-	 * Controller Section
+	 * Admin Section
 	 *
 	 * @param string $section section.
 	 */
@@ -1629,7 +1629,7 @@ class Controller {
 		// Build page HTML
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";
 
-		$html .= '<h1>' . __( 'Podcast Controller', 'seriously-simple-podcasting' ) . '</h1>' . "\n";
+		$html .= '<h1>' . __( 'Podcast Admin', 'seriously-simple-podcasting' ) . '</h1>' . "\n";
 
 		$tab = 'general';
 		if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {
@@ -1791,7 +1791,7 @@ class Controller {
 			// Submit button
 			$html .= '<p class="submit">' . "\n";
 			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Controller', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Admin', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
 			$html .= '</p>' . "\n";
 		}
 

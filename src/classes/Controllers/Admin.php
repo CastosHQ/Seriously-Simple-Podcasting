@@ -1,6 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Admin;
+namespace SeriouslySimplePodcasting\Controllers\Admin;
 
 use SeriouslySimplePodcasting\Castos\Handler;
 
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.0
  */
-class Controller {
+class Admin {
 	private $version;
 	private $dir;
 	private $file;
@@ -1744,7 +1744,7 @@ HTML;
 	public function invalid_permalink_structure_notice() {
 		$message = '';
 		$message .= '<p>You\'ve not set a valid permalink structure. This will affect your Podcast feed url.</p>';
-		$message .= '<p>Please set a permalink structure in the <em>\'Controller -> Permalinks\'</em> admin menu.</p>';
+		$message .= '<p>Please set a permalink structure in the <em>\'Admin -> Permalinks\'</em> admin menu.</p>';
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php _e( $message, 'ssp' ); ?></p>

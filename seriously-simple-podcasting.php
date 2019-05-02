@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use SeriouslySimplePodcasting\Admin;
+use SeriouslySimplePodcasting\Controllers\Admin;
 use SeriouslySimplePodcasting\Frontend;
 use SeriouslySimplePodcasting\Settings;
 use SeriouslySimplePodcasting\Rest;
@@ -88,7 +88,7 @@ require_once 'includes/class-ssp-external-rss-importer.php';
 
 
 global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
-$ssp_admin       = new Admin\Controller( __FILE__, SSP_VERSION );
+$ssp_admin       = new Admin\Admin( __FILE__, SSP_VERSION );
 $ss_podcasting   = new Frontend\Controller( __FILE__, SSP_VERSION );
 $ssp_wp_rest_api = new Rest\RestApi( SSP_VERSION );
 

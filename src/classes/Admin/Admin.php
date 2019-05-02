@@ -1,6 +1,8 @@
-<?php //phpcs:ignore WordPress.Files.FileName
+<?php
 
 namespace SeriouslySimplePodcasting\Admin;
+
+use SeriouslySimplePodcasting\Castos\CastosHandler;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

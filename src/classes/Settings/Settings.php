@@ -1,5 +1,8 @@
 <?php
+
 namespace SeriouslySimplePodcasting\Settings;
+
+use SeriouslySimplePodcasting\Castos\CastosHandler;
 
 /**
  * SSP Settings

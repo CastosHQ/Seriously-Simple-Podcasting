@@ -1,5 +1,7 @@
 <?php
 
+use SeriouslySimplePodcasting\Castos\CastosHandler;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

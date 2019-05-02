@@ -1,5 +1,7 @@
 <?php
 
+namespace SeriouslySimplePodcasting\Admin;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

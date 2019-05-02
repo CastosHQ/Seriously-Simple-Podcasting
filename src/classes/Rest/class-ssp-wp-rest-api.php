@@ -1,4 +1,6 @@
 <?php
+namespace SeriouslySimplePodcasting\Rest;
+
 /**
  * Extending the WP REST API for Seriously Simple Podcasting
  *
@@ -89,7 +91,7 @@ class SSP_WP_REST_API {
 		/**
 		 * Setting up custom route for episodes
 		 */
-		$controller = new WP_REST_Episodes_Controller();
+		$controller = new SSP_WP_REST_Episodes_Controller();
 		$controller->register_routes();
 
 	}

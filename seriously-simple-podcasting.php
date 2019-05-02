@@ -15,10 +15,18 @@
  * @package Seriously Simple Podcasting
  */
 
+namespace SeriouslySimplePodcasting;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+use SeriouslySimplePodcasting\Admin;
+use SeriouslySimplePodcasting\Podcasting;
+use SeriouslySimplePodcasting\Rest;
+//use SeriouslySimplePodcasting\Settings;
+
 
 define( 'SSP_VERSION', '1.19.20' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -62,11 +70,15 @@ if ( version_compare( PHP_VERSION, '5.3.3', '<' ) ) { // PHP 5.3.3 or greater
 }
 
 require_once 'includes/ssp-functions.php';
+
+/*
 require_once 'includes/class-ssp-admin.php';
 require_once 'includes/class-ssp-frontend.php';
-
+*/
+/*
 require_once 'includes/class-podmotor-handler.php';
 require_once 'includes/class-ssp-external-rss-importer.php';
+*/
 /**
  * Only require the REST API endpoints if the user is using WordPress greater than 4.7
  */
@@ -77,12 +89,11 @@ if ( version_compare( $wp_version, '4.7', '>=' ) ) {
 }
 
 global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
-$ssp_admin       = new SSP_Admin( __FILE__, SSP_VERSION );
-$ss_podcasting   = new SSP_Frontend( __FILE__, SSP_VERSION );
-$ssp_wp_rest_api = new SSP_WP_REST_API( SSP_VERSION );
+$ssp_admin       = new Admin\SSP_Admin( __FILE__, SSP_VERSION );
+$ss_podcasting   = new Podcasting\SSP_Frontend( __FILE__, SSP_VERSION );
+$ssp_wp_rest_api = new Rest\SSP_WP_REST_API( SSP_VERSION );
 
 if ( is_admin() ) {
 	global $ssp_settings;
-	require_once 'includes/class-ssp-settings.php';
-	$ssp_settings = new SSP_Settings( __FILE__, SSP_VERSION );
+	$ssp_settings = new Settings\SSP_Settings( __FILE__, SSP_VERSION );
 }

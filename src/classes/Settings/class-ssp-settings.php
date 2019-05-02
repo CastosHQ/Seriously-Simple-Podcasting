@@ -1,4 +1,6 @@
 <?php
+namespace SeriouslySimplePodcasting\Settings;
+
 /**
  * SSP Settings
  *

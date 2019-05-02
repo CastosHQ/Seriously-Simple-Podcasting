@@ -1,6 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\CastosHandler;
+namespace SeriouslySimplePodcasting\Admin;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

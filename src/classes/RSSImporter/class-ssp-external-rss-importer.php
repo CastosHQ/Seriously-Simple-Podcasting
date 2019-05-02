@@ -1,4 +1,7 @@
 <?php
+
+namespace SeriouslySimplePodcasting\RSSImporter;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;

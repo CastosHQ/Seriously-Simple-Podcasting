@@ -1,4 +1,5 @@
 <?php
+namespace SeriouslySimplePodcasting\Rest;
 
 /**
  * Custom endpoint for querying for multiple post-types for episodes.
@@ -21,7 +22,7 @@
 /**
  * Class WP_REST_Episodes_Controller
  */
-class WP_REST_Episodes_Controller extends WP_REST_Controller {
+class SSP_WP_REST_Episodes_Controller extends WP_REST_Controller {
 
 	public $namespace;
 	public $rest_base;

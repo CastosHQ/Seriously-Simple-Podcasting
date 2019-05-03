@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Ajax\ValidateCastosCredentials;
 use SeriouslySimplePodcasting\Handlers\CastosHandler;
 
 /**
@@ -125,8 +126,7 @@ class SettingsController {
 		// Mark date on which feed redirection was activated.
 		add_action( 'update_option', array( $this, 'mark_feed_redirect_date' ), 10, 3 );
 
-		// Add ajax action for plugin rating.
-		add_action( 'wp_ajax_validate_podmotor_api_credentials', array( $this, 'validate_podmotor_api_credentials' ) );
+
 
 		// New caps for editors and above.
 		add_action( 'admin_init', array( $this, 'add_caps' ), 1 );
@@ -1587,17 +1587,7 @@ class SettingsController {
 
 	}
 
-	/**
-	 * Validate the Seriously Simple Hosting api credentials
-	 */
-	public function validate_podmotor_api_credentials() {
-		$podmotor_account_api_token = ( isset( $_GET['api_token'] ) ? filter_var( $_GET['api_token'], FILTER_SANITIZE_STRING ) : '' );
-		$podmotor_account_email     = ( isset( $_GET['email'] ) ? filter_var( $_GET['email'], FILTER_SANITIZE_STRING ) : '' );
 
-		$podmotor_handler           = new Podmotor_Handler();
-		$response                   = $podmotor_handler->validate_api_credentials( $podmotor_account_api_token, $podmotor_account_email );
-		wp_send_json( $response );
-	}
 
 	/**
 	 * Generate HTML for settings page

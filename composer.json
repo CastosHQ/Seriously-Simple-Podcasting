@@ -1,4 +1,27 @@
 {
+  "name"       : "castos/seriously-simple-podcasting",
+  "description": "Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.",
+  "keywords"   : ["wordpress", "podcasting"],
+  "type"       : "wordpress-plugin",
+  "homepage"   : "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting",
+  "license"    : "GPL-2.0",
+  "authors"    : [
+    {
+      "name"    : "Craig Hewitt",
+      "homepage": "https://castos.com/"
+    },
+    {
+      "name"    : "Jonathan Bossenger",
+      "homepage": "https://jonathanbossenger.com/"
+    },
+    {
+      "name"    : "Hugh Lashbrooke",
+      "homepage": "https://hugh.blog/"
+    }
+  ],
+  "support"    : {
+    "issues": "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting/issues"
+  },
   "autoload": {
     "psr-4": {
       "SeriouslySimplePodcasting\\": "src/classes"

@@ -27,8 +27,6 @@
 	<config name="minimum_supported_wp_version" value="4.6"/>
 	<rule ref="WordPress">
 		<exclude name="WordPress.VIP"/>
-		<exclude name="WordPress.Files.FileName.NotHyphenatedLowercase"/>
-		<exclude name="WordPress.Files.FileName.InvalidClassFileName"/>
 	</rule>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>

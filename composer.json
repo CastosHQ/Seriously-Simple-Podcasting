@@ -22,9 +22,7 @@
   "support"    : {
     "issues": "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting/issues"
   },
-  "autoload": {
-    "psr-4": {
-      "SeriouslySimplePodcasting\\": "src/classes"
-    }
+  "autoload"   : {
+    "classmap": ["src/"]
   }
 }

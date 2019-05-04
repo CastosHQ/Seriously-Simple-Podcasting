@@ -64,7 +64,7 @@ require_once 'includes/class-ssp-external-rss-importer.php';
 
 
 global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
-$ssp_admin     = new AdminController( __FILE__, SSP_VERSION );
+$ssp_admin     = new admincontroller( __FILE__, SSP_VERSION );
 $ss_podcasting = new FrontendController( __FILE__, SSP_VERSION );
 //$ssp_wp_rest_api = new Rest\RestApi( SSP_VERSION );
 

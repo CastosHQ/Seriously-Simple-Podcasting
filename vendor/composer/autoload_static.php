@@ -12,7 +12,7 @@ class ComposerStaticInit34e210bfa8d7151620d7fa4510f053c5
         'SeriouslySimplePodcasting\\Controllers\\FrontendController' => __DIR__ . '/../..' . '/src/classes/controllers/class-frontend-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\SettingsController' => __DIR__ . '/../..' . '/src/classes/controllers/class-settings-controller.php',
         'SeriouslySimplePodcasting\\Handlers\\CastosHandler' => __DIR__ . '/../..' . '/src/classes/handlers/class-castos-handler.php',
-        'SeriouslySimplePodcasting\\Handlers\\SettingsHandler' => __DIR__ . '/../..' . '/src/classes/Handlers/SettingsHandler.php',
+        'SeriouslySimplePodcasting\\Handlers\\Settings_Handler' => __DIR__ . '/../..' . '/src/classes/handlers/class-settings-handler.php',
         'SeriouslySimplePodcasting\\Helpers\\LogHelper' => __DIR__ . '/../..' . '/src/classes/helpers/class-log-helper.php',
         'SeriouslySimplePodcasting\\Importers\\RssImporter' => __DIR__ . '/../..' . '/src/classes/importers/class-rss-importer.php',
         'SeriouslySimplePodcasting\\Rest\\EpisodesController' => __DIR__ . '/../..' . '/src/classes/rest/class-episodes-controller.php',

@@ -11,7 +11,7 @@ return array(
     'SeriouslySimplePodcasting\\Controllers\\FrontendController' => $baseDir . '/src/classes/controllers/class-frontend-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\SettingsController' => $baseDir . '/src/classes/controllers/class-settings-controller.php',
     'SeriouslySimplePodcasting\\Handlers\\CastosHandler' => $baseDir . '/src/classes/handlers/class-castos-handler.php',
-    'SeriouslySimplePodcasting\\Handlers\\SettingsHandler' => $baseDir . '/src/classes/Handlers/SettingsHandler.php',
+    'SeriouslySimplePodcasting\\Handlers\\Settings_Handler' => $baseDir . '/src/classes/handlers/class-settings-handler.php',
     'SeriouslySimplePodcasting\\Helpers\\LogHelper' => $baseDir . '/src/classes/helpers/class-log-helper.php',
     'SeriouslySimplePodcasting\\Importers\\RssImporter' => $baseDir . '/src/classes/importers/class-rss-importer.php',
     'SeriouslySimplePodcasting\\Rest\\EpisodesController' => $baseDir . '/src/classes/rest/class-episodes-controller.php',

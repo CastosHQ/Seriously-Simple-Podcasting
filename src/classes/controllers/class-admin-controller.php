@@ -18,6 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       1.0
  */
 class AdminController {
+
 	private $version;
 	private $dir;
 	private $file;
@@ -62,6 +63,7 @@ class AdminController {
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();
+
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Regsiter podcast post type, taxonomies and meta fields.
@@ -70,14 +72,20 @@ class AdminController {
 		// Register podcast feed.
 		add_action( 'init', array( $this, 'add_feed' ), 1 );
 
-		// Hide WP SEO footer text for podcast RSS feed.
-		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
-
 		// Handle v1.x feed URL as well as feed URLs for default permalinks.
 		add_action( 'init', array( $this, 'redirect_old_feed' ) );
 
 		// Setup custom permalink structures.
 		add_action( 'init', array( $this, 'setup_permastruct' ), 10 );
+
+		// Run any updates required
+		add_action( 'init', array( $this, 'update' ), 11 );
+
+		// Dismiss the upgrade screen and redirect to the last screen the user was on
+		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
+
+		// Hide WP SEO footer text for podcast RSS feed.
+		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
 		if ( is_admin() ) {
 
@@ -152,11 +160,6 @@ class AdminController {
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
 		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
-
-		add_action( 'init', array( $this, 'update' ), 11 );
-
-		// Dismiss the upgrade screen and redirect to the last screen the user was on
-		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
 
 	}
 

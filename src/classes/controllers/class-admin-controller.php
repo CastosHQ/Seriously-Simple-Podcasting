@@ -2,7 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Handlers\CastosHandler;
+use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.0
  */
-class AdminController {
+class Admin_Controller {
 
 	private $version;
 	private $dir;
@@ -1498,7 +1498,7 @@ HTML;
 			return;
 		}
 
-		$castos_handler = new CastosHandler();
+		$castos_handler = new Castos_Handler();
 		$response = $castos_handler->upload_podcast_to_podmotor( $post );
 
 		if ( 'success' == $response['status'] ) {
@@ -1550,7 +1550,7 @@ HTML;
 	public function start_importing_existing_podcasts() {
 		if ( isset( $_GET['podcast_import_action'] ) && 'start' == $_GET['podcast_import_action'] ) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
-			$castos_handler = new CastosHandler();
+			$castos_handler = new Castos_Handler();
 			$reponse          = $castos_handler->insert_podmotor_queue();
 			if ( 'success' === $reponse['status'] ) {
 				update_option( 'ss_podcasting_podmotor_queue_id', $reponse['queue_id'] );

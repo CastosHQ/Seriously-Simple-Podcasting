@@ -2,14 +2,14 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use SeriouslySimplePodcasting\Helpers\LogHelper;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class CastosHandler {
+class Castos_Handler {
 
 	/**
 	 * Array of config settings
@@ -40,15 +40,15 @@ class CastosHandler {
 	public $response = array();
 
 	/**
-	 * @var LogHelper
+	 * @var Log_Helper
 	 */
 	public $logger;
 
 	/**
-	 * CastosHandler constructor.
+	 * Castos_Handler constructor.
 	 */
 	public function __construct() {
-		$this->logger        = new LogHelper();
+		$this->logger        = new Log_Helper();
 		$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
 		if ( ! empty( $podmotor_account_id ) ) {
 			$this->init_podmotor_handler();
@@ -56,7 +56,7 @@ class CastosHandler {
 	}
 
 	/**
-	 * Sets up the CastosHandler
+	 * Sets up the Castos_Handler
 	 */
 	private function init_podmotor_handler() {
 		$podmotor_account_id      = get_option( 'ss_podcasting_podmotor_account_id', '' );
@@ -88,7 +88,7 @@ class CastosHandler {
 	}
 
 	/**
-	 * Get the CastosHandler credentials from the Castos API
+	 * Get the Castos_Handler credentials from the Castos API
 	 *
 	 * @param $podmotor_account_id
 	 * @param $podmotor_account_email
@@ -135,7 +135,7 @@ class CastosHandler {
 
 		$api_url = SSP_CASTOS_APP_URL . 'api/users/validate';
 
-		LogHelper()->log( 'Validate Credentials : API URL', $api_url );
+		Log_Helper()->log( 'Validate Credentials : API URL', $api_url );
 
 		$api_payload = array(
 			'timeout' => 45,

@@ -12,7 +12,7 @@ define( 'SSP_LOG_DIR_URL', SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR );
 define( 'SSP_LOG_PATH', SSP_LOG_DIR_PATH . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );
 define( 'SSP_LOG_URL', SSP_LOG_DIR_URL . 'ssp.log.' . date( 'd-m-y' ) . '.txt' );*/
 
-class LogHelper {
+class Log_Helper {
 
 	private $log_dir_path;
 	private $log_dir_url;

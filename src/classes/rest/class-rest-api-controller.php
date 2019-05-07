@@ -9,7 +9,7 @@ namespace SeriouslySimplePodcasting\Rest;
  * @since 1.19.12
  */
 
-class RestApiController {
+class Rest_Api_Controller {
 
 	/**
 	 * @var $version string Plugin version (semvar)
@@ -92,7 +92,7 @@ class RestApiController {
 		/**
 		 * Setting up custom route for episodes
 		 */
-		$controller = new EpisodesController();
+		$controller = new Episodes_Controller();
 		$controller->register_routes();
 
 	}

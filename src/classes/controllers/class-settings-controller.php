@@ -2,7 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Handlers\CastosHandler;
+use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 
 /**
@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.0
  */
-class SettingsController {
+class Settings_Controller {
 	/**
 	 * Directory
 	 *
@@ -184,7 +184,7 @@ class SettingsController {
 			$series_data['series_id'] = 0;
 		}
 
-		$castos_handler = new CastosHandler();
+		$castos_handler = new Castos_Handler();
 		$response = $castos_handler->upload_series_to_podmotor( $series_data );
 
 	}

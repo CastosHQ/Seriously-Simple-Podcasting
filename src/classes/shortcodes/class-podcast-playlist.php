@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    SeriouslySimplePodcasting/Shortcodes
  * @since        1.15.0
  */
-class PodcastPlaylist {
+class Podcast_Playlist {
 
 	/**
 	 * Shortcode function to display podcast playlist (copied and modified from wp-includes/media.php)

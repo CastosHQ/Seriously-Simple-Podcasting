@@ -23,7 +23,7 @@ namespace SeriouslySimplePodcasting\Rest;
 /**
  * Class WP_REST_Episodes_Controller
  */
-class EpisodesController extends WP_REST_Controller {
+class Episodes_Controller extends WP_REST_Controller {
 
 	public $namespace;
 	public $rest_base;

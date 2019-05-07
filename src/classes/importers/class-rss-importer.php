@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.19.18
  */
-class RssImporter {
+class Rss_Importer {
 
 	/**
 	 * RSS feed url

@@ -4,8 +4,8 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\ShortCodes\Player;
 use SeriouslySimplePodcasting\ShortCodes\Podcast;
-use SeriouslySimplePodcasting\ShortCodes\PodcastEpisode;
-use SeriouslySimplePodcasting\ShortCodes\PodcastPlaylist;
+use SeriouslySimplePodcasting\ShortCodes\Podcast_Episode;
+use SeriouslySimplePodcasting\ShortCodes\Podcast_Playlist;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.0
  */
-class FrontendController {
+class Frontend_Controller {
 
 	// @todo reference prior to analytics launch
 	public $style_guide = array(
@@ -1670,8 +1670,8 @@ class FrontendController {
 	public function register_shortcodes () {
 		add_shortcode( 'ss_player', array( new Player(), 'shortcode' ) );
 		add_shortcode( 'ss_podcast', array( new Podcast(), 'shortcode' ) );
-		add_shortcode( 'podcast_episode', array( new PodcastEpisode(), 'shortcode' ) );
-		add_shortcode( 'podcast_playlist', array( new PodcastPlaylist(), 'shortcode' ) );
+		add_shortcode( 'podcast_episode', array( new Podcast_Episode(), 'shortcode' ) );
+		add_shortcode( 'podcast_playlist', array( new Podcast_Playlist(), 'shortcode' ) );
 	}
 
 	/**

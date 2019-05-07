@@ -2,10 +2,10 @@
 
 namespace SeriouslySimplePodcasting\Ajax;
 
-use SeriouslySimplePodcasting\Handlers\CastosHandler;
-use SeriouslySimplePodcasting\Importers\RssImporter;
+use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Importers\Rss_Importer;
 
-class AjaxHandler {
+class Ajax_Handler {
 
 	public function __construct() {
 		// Add ajax action for plugin rating
@@ -66,7 +66,7 @@ class AjaxHandler {
 		$account_api_token = ( sanitize_text_field( $_GET['api_token'] ) );
 		$account_email     = ( sanitize_text_field( $_GET['email'] ) );
 
-		$castos_handler = new CastosHandler();
+		$castos_handler = new Castos_Handler();
 		$response       = $castos_handler->validate_api_credentials( $account_api_token, $account_email );
 		wp_send_json( $response );
 	}
@@ -93,7 +93,7 @@ class AjaxHandler {
 		);
 
 		try {
-			$castos_handler  = new CastosHandler();
+			$castos_handler  = new Castos_Handler();
 			$castos_response = $castos_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
 		} catch ( Exception $e ) {
 			$response['status']  = 'error';
@@ -151,7 +151,7 @@ class AjaxHandler {
 			return;
 		}
 
-		$rss_importer = new RssImporter( $ssp_external_rss );
+		$rss_importer = new Rss_Importer( $ssp_external_rss );
 		$response     = $rss_importer->import_rss_feed();
 
 		wp_send_json( $response );

@@ -806,25 +806,6 @@ class FrontendController {
 			}
 		}
 
-		$series = get_the_terms( $episode_id, 'series' );
-		$episode_series = !empty( $series ) && isset( $series[0] ) ? $series[0]->term_id : false;
-		$share_url_array = array();
-
-		if( $itunes_share_url = get_option( 'ss_podcasting_itunes_url_' . $episode_series ) ){
-			$share_url_array['iTunes'] = $itunes_share_url;
-			//$meta_display .= $meta_sep . '<a href="' . esc_url( $itunes_share_url ) . '" title="' . __( 'View on iTunes', 'seriously-simple-podcasting' ) . '" class="podcast-meta-itunes">' . __( 'iTunes', 'seriously-simple-podcasting' ) . '</a>';
-		}
-
-		if( $google_play_share_url = get_option( 'ss_podcasting_google_play_url_' . $episode_series ) ){
-			$share_url_array['Google Play'] = $google_play_share_url;
-			//$meta_display .= $meta_sep . '<a href="' . esc_url( $google_play_share_url ) . '" title="' . __( 'View on Google Play', 'seriously-simple-podcasting' ) . '" class="podcast-meta-itunes">' . __( 'Google Play', 'seriously-simple-podcasting' ) . '</a>';
-		}
-
-		if( $stitcher_share_url = get_option( 'ss_podcasting_stitcher_url_' . $episode_series ) ){
-			$share_url_array['Stitcher'] = $stitcher_share_url;
-			//$meta_display .= $meta_sep . '<a href="' . esc_url( $stitcher_share_url ) . '" title="' . __( 'View on Stitcher', 'seriously-simple-podcasting' ) . '" class="podcast-meta-itunes">' . __( 'Stitcher', 'seriously-simple-podcasting' ) . '</a>';
-		}
-
 		$terms = get_the_terms( $episode_id, 'series' );
 
 		$itunes_url = get_option( 'ss_podcasting_itunes_url', '' );

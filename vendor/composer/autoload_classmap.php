@@ -6,10 +6,12 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'SeriouslySimplePodcasting\\Ajax\\AjaxHandler' => $baseDir . '/src/classes/ajax/class-ajax-handler.php',
     'SeriouslySimplePodcasting\\Controllers\\AdminController' => $baseDir . '/src/classes/controllers/class-admin-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\FrontendController' => $baseDir . '/src/classes/controllers/class-frontend-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\SettingsController' => $baseDir . '/src/classes/controllers/class-settings-controller.php',
     'SeriouslySimplePodcasting\\Handlers\\CastosHandler' => $baseDir . '/src/classes/handlers/class-castos-handler.php',
+    'SeriouslySimplePodcasting\\Handlers\\SettingsHandler' => $baseDir . '/src/classes/Handlers/SettingsHandler.php',
     'SeriouslySimplePodcasting\\Helpers\\LogHelper' => $baseDir . '/src/classes/helpers/class-log-helper.php',
     'SeriouslySimplePodcasting\\Importers\\RssImporter' => $baseDir . '/src/classes/importers/class-rss-importer.php',
     'SeriouslySimplePodcasting\\Rest\\EpisodesController' => $baseDir . '/src/classes/rest/class-episodes-controller.php',

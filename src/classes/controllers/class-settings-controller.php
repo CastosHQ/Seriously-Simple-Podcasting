@@ -2,7 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Ajax\ValidateCastosCredentials;
+use SeriouslySimplePodcasting\ajax\ValidateCastosCredentials;
 use SeriouslySimplePodcasting\Handlers\CastosHandler;
 
 /**

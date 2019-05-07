@@ -7,10 +7,12 @@ namespace Composer\Autoload;
 class ComposerStaticInit34e210bfa8d7151620d7fa4510f053c5
 {
     public static $classMap = array (
+        'SeriouslySimplePodcasting\\Ajax\\AjaxHandler' => __DIR__ . '/../..' . '/src/classes/ajax/class-ajax-handler.php',
         'SeriouslySimplePodcasting\\Controllers\\AdminController' => __DIR__ . '/../..' . '/src/classes/controllers/class-admin-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\FrontendController' => __DIR__ . '/../..' . '/src/classes/controllers/class-frontend-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\SettingsController' => __DIR__ . '/../..' . '/src/classes/controllers/class-settings-controller.php',
         'SeriouslySimplePodcasting\\Handlers\\CastosHandler' => __DIR__ . '/../..' . '/src/classes/handlers/class-castos-handler.php',
+        'SeriouslySimplePodcasting\\Handlers\\SettingsHandler' => __DIR__ . '/../..' . '/src/classes/Handlers/SettingsHandler.php',
         'SeriouslySimplePodcasting\\Helpers\\LogHelper' => __DIR__ . '/../..' . '/src/classes/helpers/class-log-helper.php',
         'SeriouslySimplePodcasting\\Importers\\RssImporter' => __DIR__ . '/../..' . '/src/classes/importers/class-rss-importer.php',
         'SeriouslySimplePodcasting\\Rest\\EpisodesController' => __DIR__ . '/../..' . '/src/classes/rest/class-episodes-controller.php',

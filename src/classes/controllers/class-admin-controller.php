@@ -148,23 +148,6 @@ class AdminController {
 
 		} // End if().
 
-		// Add ajax action for plugin rating
-		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
-
-		// Add ajax action for uploading file data to Castos that has been uploaded already via plupload
-		add_action( 'wp_ajax_ssp_store_podmotor_file', array( $this, 'store_podmotor_file' ) );
-
-		// Add ajax action for customising episode embed code
-		add_action( 'wp_ajax_update_episode_embed_code', array( $this, 'update_episode_embed_code' ) );
-
-		// Add ajax action for importing external rss feed
-		add_action( 'wp_ajax_import_external_rss_feed', array( $this, 'import_external_rss_feed' ) );
-
-		// Add ajax action for getting external rss feed progress
-		add_action( 'wp_ajax_get_external_rss_feed_progress', array( $this, 'get_external_rss_feed_progress' ) );
-
-		// Add ajax action to reset external feed options
-		add_action( 'wp_ajax_reset_external_rss_feed_progress', array( $this, 'reset_external_rss_feed_progress' ) );
 
 		// Setup activation and deactivation hooks
 		register_activation_hook( $file, array( $this, 'activate' ) );
@@ -680,67 +663,6 @@ HTML;
 		$html .= '<p><textarea readonly id="episode_embed_code">' . esc_textarea( $embed_code ) . '</textarea></p>';
 
 		echo $html;
-	}
-
-	/**
-	 * Update the epiaode embed code via ajax
-	 * @return void
-	 */
-	public function update_episode_embed_code() {
-
-		// Make sure we have a valid post ID
-		if ( empty( $_POST['post_id'] ) ) {
-			return;
-		}
-
-		// Get info for embed code
-		$post_id = (int) $_POST['post_id'];
-		$width   = (int) $_POST['width'];
-		$height  = (int) $_POST['height'];
-
-		// Generate embed code
-		echo get_post_embed_html( $width, $height, $post_id );
-
-		// Exit after ajax request
-		exit;
-	}
-
-	/**
-	 * Import an external RSS feed via ajax
-	 */
-	public function import_external_rss_feed() {
-		// @todo add nonces, add user caps check, validate inputs
-
-		update_option( 'ssp_rss_import', 0 );
-
-		$ssp_external_rss = get_option( 'ssp_external_rss', '' );
-		if ( empty( $ssp_external_rss ) ) {
-			$response = array(
-				'status'  => 'error',
-				'message' => 'No feed to process'
-			);
-			wp_send_json( $response );
-
-			return;
-		}
-
-		$rss_importer = new SSP_External_RSS_Importer( $ssp_external_rss );
-		$response     = $rss_importer->import_rss_feed();
-
-		wp_send_json( $response );
-	}
-
-	public function get_external_rss_feed_progress() {
-		// @todo add nonces, add user caps check
-		$progress = (int) get_option( 'ssp_rss_import', 0 );
-		wp_send_json( $progress );
-	}
-
-	public function reset_external_rss_feed_progress() {
-		// @todo add nonces, add user caps check
-		delete_option( 'ssp_external_rss' );
-		delete_option( 'ssp_rss_import' );
-		wp_send_json( 'success' );
 	}
 
 	/**
@@ -1277,11 +1199,6 @@ HTML;
 		 * Only load the import js when the import settings screen is loaded
 		 */
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
-			/*wp_register_script( 'ssp-jq-ajax-progress', esc_url( $this->assets_url . 'js/jq-ajax-progress' . $this->script_suffix . '.js' ), array(
-				'jquery',
-				'jquery-ui-progressbar'
-			), $this->version );
-			wp_enqueue_script( 'ssp-jq-ajax-progress' );*/
 			wp_register_script( 'ssp-import-rss', esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ), array(
 				'jquery',
 				'jquery-ui-progressbar'
@@ -1517,15 +1434,6 @@ HTML;
 	}
 
 	/**
-	 * Indicate that plugin has been rated
-	 * @return void
-	 */
-	public function rated() {
-		update_option( 'ssp_admin_footer_text_rated', 1 );
-		die();
-	}
-
-	/**
 	 * Clear the cache on post save.
 	 *
 	 * @param  int $id POST ID
@@ -1597,36 +1505,6 @@ HTML;
 			}
 		}
 
-	}
-
-	/**
-	 * Store the file uploaded via plupload to the Castos account
-	 */
-	public function store_podmotor_file() {
-		if ( ! isset( $_GET['podmotor_file_path'] ) ) {
-			wp_send_json( array(
-				'status'  => 'error',
-				'message' => 'An error occurred storing your file to your Castos account, please contact hello@castos.com for assistance.',
-			) );
-		}
-
-		$podmotor_file_path = filter_var( $_GET['podmotor_file_path'], FILTER_SANITIZE_STRING );
-
-		$response = array( 'status' => 'error', 'message' => 'Error storing file to offsite storage account' );
-
-		try {
-			$castos_handler  = new CastosHandler();
-			$castos_response = $castos_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
-		} catch ( Exception $e ) {
-			$response['status']  = 'error';
-			$response['message'] = 'An unknown error occurred: ' . $e->getMessage();
-			wp_send_json( $response );
-		}
-
-		if ( $castos_response ) {
-			$response = $castos_response;
-		}
-		wp_send_json( $response );
 	}
 
 	/**

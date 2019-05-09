@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
+use SeriouslySimplePodcasting\Handlers\Series_Handler;
 
 /**
  * SSP Settings
@@ -126,8 +127,6 @@ class Settings_Controller {
 		// Mark date on which feed redirection was activated.
 		add_action( 'update_option', array( $this, 'mark_feed_redirect_date' ), 10, 3 );
 
-
-
 		// New caps for editors and above.
 		add_action( 'admin_init', array( $this, 'add_caps' ), 1 );
 
@@ -150,43 +149,12 @@ class Settings_Controller {
 
 	}
 
-
-
 	/**
-	 * Triggers after a feed is saved, pushes the data to Castos
+	 * Triggers after a feed/series is saved, attempts to push the data to Castos
 	 */
 	public function maybe_feed_saved() {
-		// Only do this if this is a Castos Customer
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
-			return;
-		}
-
-		if ( ! isset( $_GET['page'] ) || 'podcast_settings' !== $_GET['page'] ) {
-			return;
-		}
-		if ( ! isset( $_GET['tab'] ) || 'feed-details' !== $_GET['tab'] ) {
-			return;
-		}
-		if ( ! isset( $_GET['settings-updated'] ) || 'true' !== $_GET['settings-updated'] ) {
-			return;
-		}
-
-		if ( isset( $_GET['feed-series'] ) ) {
-			$feed_series_slug = ( isset( $_GET['feed-series'] ) ? filter_var( $_GET['feed-series'], FILTER_SANITIZE_STRING ) : '' );
-			if ( empty( $feed_series_slug ) ) {
-				return;
-			}
-			$series                   = get_term_by( 'slug', $feed_series_slug, 'series' );
-			$series_data              = get_series_data_for_castos( $series->term_id );
-			$series_data['series_id'] = $series->term_id;
-		} else {
-			$series_data              = get_series_data_for_castos( 0 );
-			$series_data['series_id'] = 0;
-		}
-
-		$castos_handler = new Castos_Handler();
-		$response = $castos_handler->upload_series_to_podmotor( $series_data );
-
+		$series_handler = new Series_Handler();
+		$series_handler->maybe_save_series();
 	}
 
 	/**

@@ -2,11 +2,13 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+/**
+ * SSP Settings Handler
+ *
+ * @package Seriously Simple Podcasting
+ */
+
 class Settings_Handler {
-
-	public function __construct() {
-
-	}
 
 	/**
 	 * Build settings fields

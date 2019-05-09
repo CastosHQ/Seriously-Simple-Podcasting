@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Widgets;
 
+use WP_Widget;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -10,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Seriously Simple Podcasting Podcast Playlist Widget
  *
- * @author 		Hugh Lashbrooke
- * @package 	SeriouslySimplePodcasting
- * @category 	SeriouslySimplePodcasting/Widgets
- * @since 		1.15.0
+ * @author    Hugh Lashbrooke
+ * @package   SeriouslySimplePodcasting
+ * @category  SeriouslySimplePodcasting/Widgets
+ * @since     1.9.0
  */
 class Playlist extends WP_Widget {
 	protected $widget_cssclass;

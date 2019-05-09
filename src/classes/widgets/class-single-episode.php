@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Widgets;
 
+use WP_Widget;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -10,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Seriously Simple Podcasting Single Podcast Episode Widget
  *
- * @author 		Hugh Lashbrooke
- * @package 	SeriouslySimplePodcasting
- * @category 	SeriouslySimplePodcasting/Widgets
- * @since 		1.9.0
+ * @author    Hugh Lashbrooke
+ * @package   SeriouslySimplePodcasting
+ * @category  SeriouslySimplePodcasting/Widgets
+ * @since     1.9.0
  */
 class Single_Episode extends WP_Widget {
 	protected $widget_cssclass;

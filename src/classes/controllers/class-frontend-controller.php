@@ -7,6 +7,11 @@ use SeriouslySimplePodcasting\ShortCodes\Podcast;
 use SeriouslySimplePodcasting\ShortCodes\Podcast_Episode;
 use SeriouslySimplePodcasting\ShortCodes\Podcast_Playlist;
 
+use SeriouslySimplePodcasting\Widgets\Playlist;
+use SeriouslySimplePodcasting\Widgets\Series;
+use SeriouslySimplePodcasting\Widgets\Recent_Episodes;
+use SeriouslySimplePodcasting\Widgets\Single_Episode;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -103,7 +108,7 @@ class Frontend_Controller {
 		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor' ) );
 
 		// Register widgets
-		add_action( 'widgets_init', array( $this, 'register_widgets' ), 1 );
+		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 
 		// Add shortcodes
 		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
@@ -1648,18 +1653,10 @@ class Frontend_Controller {
 	 * @return void
 	 */
 	public function register_widgets () {
-
-		$widgets = array(
-			'recent-episodes' => 'Recent_Episodes',
-			'single-episode' => 'Single_Episode',
-			'series' => 'Series',
-			'playlist' => 'Playlist',
-		);
-
-		foreach ( $widgets as $id => $name ) {
-			register_widget( 'SSP_Widget_' . $name );
-		}
-
+		register_widget( new Playlist() );
+		register_widget( new Series() );
+		register_widget( new Single_Episode() );
+		register_widget( new Recent_Episodes() );
 	}
 
 	/**

@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Widgets;
 
+use WP_Widget;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -10,10 +12,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Seriously Simple Podcasting Recent Podcast Episodes Widget
  *
- * @author 		Hugh Lashbrooke
- * @package 	SeriouslySimplePodcasting
- * @category 	SeriouslySimplePodcasting/Widgets
- * @since 		1.8.0
+ * @author    Hugh Lashbrooke
+ * @package   SeriouslySimplePodcasting
+ * @category  SeriouslySimplePodcasting/Widgets
+ * @since     1.9.0
  */
 class Recent_Episodes extends WP_Widget {
 	protected $widget_cssclass;

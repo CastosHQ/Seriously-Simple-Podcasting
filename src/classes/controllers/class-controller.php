@@ -79,18 +79,6 @@ class Controller {
 	 */
 	public $token;
 	/**
-	 * Settings Base
-	 *
-	 * @var string
-	 */
-	public $settings_base;
-	/**
-	 * Settings
-	 *
-	 * @var mixed
-	 */
-	public $settings;
-	/**
 	 * Version
 	 *
 	 * @var string version.

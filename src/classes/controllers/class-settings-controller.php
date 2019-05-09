@@ -26,14 +26,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.0
  */
-class Settings_Controller {
+class Settings_Controller extends Controller {
 
 	/**
 	 * Base string for option name keys
 	 *
 	 * @var string
 	 */
-	private $settings_base;
+	protected $settings_base;
 
 	/**
 	 * Settings Fields
@@ -41,12 +41,12 @@ class Settings_Controller {
 	 *
 	 * @var array
 	 */
-	private $settings;
+	protected $settings;
 
-	private $series_handler;
+	protected $series_handler;
 
-	private $import_controller;
-	private $extensions_controller;
+	protected $import_controller;
+	protected $extensions_controller;
 
 	/**
 	 * Constructor
@@ -59,13 +59,11 @@ class Settings_Controller {
 
 		$this->settings_base = 'ss_podcasting_';
 
-		$this->series_handler    = new Series_Handler();
-
-		$this->import_controller = new Import_Controller();
+		$this->series_handler        = new Series_Handler();
+		$this->import_controller     = new Import_Controller();
 		$this->extensions_controller = new Extensions_Controller( $file, $version );
 
 		$this->register_hooks_and_filters();
-
 	}
 
 	/**
@@ -248,7 +246,7 @@ class Settings_Controller {
 	 */
 	public function load_settings() {
 		$settings_handler = new Settings_Handler();
-		$this->settings   = $settings_handler->get_settings();
+		$this->settings   = $settings_handler->settings_fields();
 	}
 
 	/**
@@ -465,7 +463,6 @@ class Settings_Controller {
 			case 'colour-picker':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
 				break;
-
 			case 'text_secret':
 				$placeholder = $field['placeholder'];
 				if ( $data ) {
@@ -473,11 +470,9 @@ class Settings_Controller {
 				}
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" value="" class="' . $class . '"/>' . "\n";
 				break;
-
 			case 'textarea':
 				$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" rows="5" cols="50" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" class="' . $class . '">' . $data . '</textarea><br/>' . "\n";
 				break;
-
 			case 'checkbox':
 				$checked = '';
 				if ( $data && 'on' === $data ) {
@@ -485,7 +480,6 @@ class Settings_Controller {
 				}
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . ' class="' . $class . '"/>' . "\n";
 				break;
-
 			case 'checkbox_multi':
 				foreach ( $field['options'] as $k => $v ) {
 					$checked = false;
@@ -495,7 +489,6 @@ class Settings_Controller {
 					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</label><br/>';
 				}
 				break;
-
 			case 'radio':
 				foreach ( $field['options'] as $k => $v ) {
 					$checked = false;
@@ -505,9 +498,7 @@ class Settings_Controller {
 					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</label><br/>';
 				}
 				break;
-
 			case 'select':
-
 				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
 				$prev_group = '';
 				foreach ( $field['options'] as $k => $v ) {
@@ -539,16 +530,13 @@ class Settings_Controller {
 				}
 				$html .= '</select> ';
 				break;
-
 			case 'image':
 				$html .= '<img id="' . esc_attr( $default_option_name ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;" /><br/>' . "\n";
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '" type="hidden" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
 				break;
-
 			case 'feed_link':
-
 				// Set feed URL based on site's permalink structure
 				if ( get_option( 'permalink_structure' ) ) {
 					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
@@ -559,9 +547,7 @@ class Settings_Controller {
 
 				$html .= '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>';
 				break;
-
 			case 'feed_link_series':
-
 				// Set feed URL based on site's permalink structure
 				if ( get_option( 'permalink_structure' ) ) {
 					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
@@ -572,16 +558,13 @@ class Settings_Controller {
 
 				$html .= esc_url( $url ) . "\n";
 				break;
-
-			case 'podcast_url';
-
+			case 'podcast_url':
 				$slug        = apply_filters( 'ssp_archive_slug', __( 'podcast', 'seriously-simple-podcasting' ) );
 				$podcast_url = $this->home_url . $slug;
 
 				$html .= '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';
 				break;
-
-			case 'importing_podcasts';
+			case 'importing_podcasts':
 				$data = ssp_get_importing_podcasts_count();
 				$html .= '<input type="input" value="' . esc_attr( $data ) . '" class="' . $class . '" disabled/>' . "\n";
 				break;
@@ -616,7 +599,7 @@ class Settings_Controller {
 	 * @return string       Validated string
 	 */
 	public function validate_slug( $slug ) {
-		if ( $slug && strlen( $slug ) > 0 && $slug != '' ) {
+		if ( $slug && strlen( $slug ) > 0 && '' !== $slug ) {
 			$slug = urlencode( strtolower( str_replace( ' ', '-', $slug ) ) );
 		}
 
@@ -632,7 +615,7 @@ class Settings_Controller {
 	 */
 	public function encode_password( $password ) {
 
-		if ( $password && strlen( $password ) > 0 && $password != '' ) {
+		if ( $password && strlen( $password ) > 0 && '' !== $password ) {
 			$password = md5( $password );
 		} else {
 			$option   = get_option( 'ss_podcasting_protection_password' );
@@ -682,8 +665,8 @@ class Settings_Controller {
 	 */
 	public function mark_feed_redirect_date( $option, $old_value, $new_value ) {
 
-		if ( $option == 'ss_podcasting_redirect_feed' ) {
-			if ( ( $new_value != $old_value ) && $new_value == 'on' ) {
+		if ( 'ss_podcasting_redirect_feed' === $option ) {
+			if ( ( $new_value != $old_value ) && 'on' === $new_value ) {
 				$date = time();
 				update_option( 'ss_podcasting_redirect_feed_date', $date );
 			}
@@ -691,20 +674,21 @@ class Settings_Controller {
 
 	}
 
-
-
 	/**
 	 * Generate HTML for settings page
 	 * @return void
 	 */
 	public function settings_page() {
 
-		$q_args = wp_parse_args( $_GET, array(
-			'post_type' => null,
-			'page'      => null,
-			'view'      => null,
-			'tab'       => null
-		) );
+		$q_args = wp_parse_args(
+			$_GET,
+			array(
+				'post_type' => null,
+				'page'      => null,
+				'view'      => null,
+				'tab'       => null
+			)
+		);
 
 		array_walk( $q_args, function ( &$entry ) {
 			$entry = sanitize_title( $entry );

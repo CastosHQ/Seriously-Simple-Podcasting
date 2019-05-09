@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * @author      Hugh Lashbrooke
  * @category    Class
- * @package     SeriouslySimplePodcasting/Classes
+ * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0
  */
 class Frontend_Controller {

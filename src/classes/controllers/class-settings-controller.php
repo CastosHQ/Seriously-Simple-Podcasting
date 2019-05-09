@@ -90,6 +90,8 @@ class Settings_Controller {
 	 */
 	private $version;
 
+	private $series_handler;
+
 	/**
 	 * Constructor
 	 *
@@ -106,6 +108,9 @@ class Settings_Controller {
 		$this->templates_dir = trailingslashit( $this->dir ) . 'templates';
 		$this->token         = 'podcast';
 		$this->settings_base = 'ss_podcasting_';
+
+		$this->series_handler = new Series_Handler();
+		$this->import_controller = new Import_Controller();
 
 		add_action( 'init', array( $this, 'load_settings' ), 11 );
 
@@ -153,8 +158,7 @@ class Settings_Controller {
 	 * Triggers after a feed/series is saved, attempts to push the data to Castos
 	 */
 	public function maybe_feed_saved() {
-		$series_handler = new Series_Handler();
-		$series_handler->maybe_save_series();
+		$this->series_handler->maybe_save_series();
 	}
 
 	/**
@@ -1000,23 +1004,6 @@ class Settings_Controller {
 		<p class="submit">
 			<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Begin Import Now', 'seriously-simple-podcasting' ) ) ?>"/>
 		</p>
-		<?php
-		$html = ob_get_clean();
-
-		return $html;
-	}
-
-	/**
-	 * Render the progress bar to show the importing RSS feed progress
-	 *
-	 * @return false|string
-	 */
-	public function render_external_import_process() {
-		ob_start();
-		?>
-		<h3 class="ssp-ssp-external-feed-message">Your external RSS feed is being imported. Please leave this window open until it completes</h3>
-		<div id="ssp-external-feed-progress"></div>
-		<div id="ssp-external-feed-status"><p>Commencing feed import</p></div>
 		<?php
 		$html = ob_get_clean();
 

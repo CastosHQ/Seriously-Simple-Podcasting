@@ -20,10 +20,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-use SeriouslySimplePodcasting\Controllers\AdminController;
-use SeriouslySimplePodcasting\Controllers\FrontendController;
-use SeriouslySimplePodcasting\Controllers\SettingsController;
-use SeriouslySimplePodcasting\Rest\RestApiController;
+use SeriouslySimplePodcasting\Controllers\Admin_Controller;
+use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
+use SeriouslySimplePodcasting\Controllers\Settings_Controller;
+use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 
 
 /**
@@ -60,10 +60,10 @@ require_once 'includes/class-ssp-external-rss-importer.php';
 
 
 global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
-$ssp_admin       = new AdminController( __FILE__, SSP_VERSION );
-$ss_podcasting   = new FrontendController( __FILE__, SSP_VERSION );
-$ssp_wp_rest_api = new RestApiController( SSP_VERSION );
+$ssp_admin       = new Admin_Controller( __FILE__, SSP_VERSION );
+$ss_podcasting   = new Frontend_Controller( __FILE__, SSP_VERSION );
+$ssp_wp_rest_api = new Rest_Api_Controller( SSP_VERSION );
 if ( is_admin() ) {
 	global $ssp_settings;
-	$ssp_settings = new SettingsController( __FILE__, SSP_VERSION );
+	$ssp_settings = new Settings_Controller( __FILE__, SSP_VERSION );
 }

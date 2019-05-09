@@ -20,4 +20,8 @@ return array(
     'SeriouslySimplePodcasting\\ShortCodes\\Podcast' => $baseDir . '/src/classes/shortcodes/class-podcast.php',
     'SeriouslySimplePodcasting\\ShortCodes\\Podcast_Episode' => $baseDir . '/src/classes/shortcodes/class-podcast-episode.php',
     'SeriouslySimplePodcasting\\ShortCodes\\Podcast_Playlist' => $baseDir . '/src/classes/shortcodes/class-podcast-playlist.php',
+    'SeriouslySimplePodcasting\\Widgets\\Playlist' => $baseDir . '/src/classes/widgets/class-ssp-playlist.php',
+    'SeriouslySimplePodcasting\\Widgets\\Recent_Episodes' => $baseDir . '/src/classes/widgets/class-recent-episodes.php',
+    'SeriouslySimplePodcasting\\Widgets\\Series' => $baseDir . '/src/classes/widgets/class-series.php',
+    'SeriouslySimplePodcasting\\Widgets\\Single_Episode' => $baseDir . '/src/classes/widgets/class-single-episode.php',
 );

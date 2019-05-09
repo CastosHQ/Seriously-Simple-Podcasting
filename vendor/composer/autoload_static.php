@@ -21,6 +21,10 @@ class ComposerStaticInit34e210bfa8d7151620d7fa4510f053c5
         'SeriouslySimplePodcasting\\ShortCodes\\Podcast' => __DIR__ . '/../..' . '/src/classes/shortcodes/class-podcast.php',
         'SeriouslySimplePodcasting\\ShortCodes\\Podcast_Episode' => __DIR__ . '/../..' . '/src/classes/shortcodes/class-podcast-episode.php',
         'SeriouslySimplePodcasting\\ShortCodes\\Podcast_Playlist' => __DIR__ . '/../..' . '/src/classes/shortcodes/class-podcast-playlist.php',
+        'SeriouslySimplePodcasting\\Widgets\\Playlist' => __DIR__ . '/../..' . '/src/classes/widgets/class-ssp-playlist.php',
+        'SeriouslySimplePodcasting\\Widgets\\Recent_Episodes' => __DIR__ . '/../..' . '/src/classes/widgets/class-recent-episodes.php',
+        'SeriouslySimplePodcasting\\Widgets\\Series' => __DIR__ . '/../..' . '/src/classes/widgets/class-series.php',
+        'SeriouslySimplePodcasting\\Widgets\\Single_Episode' => __DIR__ . '/../..' . '/src/classes/widgets/class-single-episode.php',
     );
 
     public static function getInitializer(ClassLoader $loader)

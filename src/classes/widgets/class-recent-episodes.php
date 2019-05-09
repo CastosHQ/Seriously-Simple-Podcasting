@@ -1,5 +1,7 @@
 <?php
 
+namespace SeriouslySimplePodcasting\Widgets;
+
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -13,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category 	SeriouslySimplePodcasting/Widgets
  * @since 		1.8.0
  */
-class SSP_Widget_Recent_Episodes extends WP_Widget {
+class Recent_Episodes extends WP_Widget {
 	protected $widget_cssclass;
 	protected $widget_description;
 	protected $widget_idbase;

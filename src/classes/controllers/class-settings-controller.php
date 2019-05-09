@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 
@@ -28,69 +27,26 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       2.0
  */
 class Settings_Controller {
-	/**
-	 * Directory
-	 *
-	 * @var string
-	 */
-	private $dir;
-	/**
-	 * File
-	 *
-	 * @var string
-	 */
-	private $file;
-	/**
-	 * Assets Directory
-	 *
-	 * @var string
-	 */
-	private $assets_dir;
-	/**
-	 * Assets URI
-	 *
-	 * @var string
-	 */
-	private $assets_url;
-	/**
-	 * Home Url
-	 *
-	 * @var string
-	 */
-	private $home_url;
 
 	/**
-	 * Templates Directory
-	 *
-	 * @var string
-	 */
-	private $templates_dir;
-	/**
-	 * Token
-	 *
-	 * @var string
-	 */
-	private $token;
-	/**
-	 * Settings Base
+	 * Base string for option name keys
 	 *
 	 * @var string
 	 */
 	private $settings_base;
+
 	/**
-	 * Settings
+	 * Settings Fields
+	 * Created in Settings_Handler
 	 *
-	 * @var mixed
+	 * @var array
 	 */
 	private $settings;
-	/**
-	 * Version
-	 *
-	 * @var string version.
-	 */
-	private $version;
 
 	private $series_handler;
+
+	private $import_controller;
+	private $extensions_controller;
 
 	/**
 	 * Constructor
@@ -99,19 +55,23 @@ class Settings_Controller {
 	 * @param string $version Plugin version
 	 */
 	public function __construct( $file, $version ) {
-		$this->version       = $version;
-		$this->file          = $file;
-		$this->dir           = dirname( $this->file );
-		$this->assets_dir    = trailingslashit( $this->dir ) . 'assets';
-		$this->assets_url    = esc_url( trailingslashit( plugins_url( '/assets/', $this->file ) ) );
-		$this->home_url      = trailingslashit( home_url() );
-		$this->templates_dir = trailingslashit( $this->dir ) . 'templates';
-		$this->token         = 'podcast';
+		parent::__construct( $file, $version );
+
 		$this->settings_base = 'ss_podcasting_';
 
-		$this->series_handler = new Series_Handler();
-		$this->import_controller = new Import_Controller();
+		$this->series_handler    = new Series_Handler();
 
+		$this->import_controller = new Import_Controller();
+		$this->extensions_controller = new Extensions_Controller( $file, $version );
+
+		$this->register_hooks_and_filters();
+
+	}
+
+	/**
+	 * Set up all hooks and filters
+	 */
+	public function register_hooks_and_filters() {
 		add_action( 'init', array( $this, 'load_settings' ), 11 );
 
 		add_action( 'init', array( $this, 'maybe_feed_saved' ), 11 );
@@ -151,7 +111,6 @@ class Settings_Controller {
 			</script>
 			<?php
 		}, 99 );
-
 	}
 
 	/**
@@ -195,7 +154,7 @@ class Settings_Controller {
 	public function show_upgrade_page() {
 		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );https://psykrotek.co.za/wp-admin/admin.php?page=jetpack#/dashboard
 		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
-		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
+		include( $this->template_path . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
 	}
 
 	/**
@@ -431,7 +390,7 @@ class Settings_Controller {
 		}
 
 		if ( 'extensions' === $section['id'] ) {
-			$html .= $this->render_seriously_simple_extensions();
+			$html .= $this->extensions_controller->render_seriously_simple_extensions();
 		}
 
 		echo $html;
@@ -938,9 +897,9 @@ class Settings_Controller {
 			}
 
 			if ( ssp_get_external_rss_being_imported() ) {
-				$html .= $this->render_external_import_process();
+				$html .= $this->import_controller->render_external_import_process();
 			} else {
-				$html .= $this->render_external_import_form();
+				$html .= $this->import_controller->render_external_import_form();
 			}
 		}
 
@@ -948,66 +907,11 @@ class Settings_Controller {
 
 		$html .= '</div>' . "\n";
 
-		$html .= $this->render_seriously_simple_sidebar();
+		$html .= $this->extensions_controller->render_seriously_simple_sidebar();
 
 		$html .= '</div>' . "\n";
 
 		echo $html;
-	}
-
-	/**
-	 * Render the form to enable importing an external RSS feed
-	 *
-	 * @return false|string
-	 */
-	public function render_external_import_form() {
-		$post_types = ssp_post_types( true );
-		$series = get_terms( 'series', array( 'hide_empty' => false ) );
-		ob_start();
-		?>
-		<p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
-			the RSS Feed in the form below and the plugin will import the episodes for you.</p>
-		<table class="form-table">
-			<tbody>
-			<tr>
-				<th scope="row">RSS feed</th>
-				<td>
-					<input id="external_rss" name="external_rss" type="text" placeholder="https://externalservice.com/rss" value="" class="regular-text">
-				</td>
-			</tr>
-			<?php if ( count( $post_types ) > 1 ) { ?>
-				<tr>
-					<th scope="row">Post Type</th>
-					<td>
-						<select id="import_post_type" name="import_post_type">
-							<?php foreach ( $post_types as $post_type ) { ?>
-								<option value="<?php echo $post_type; ?>"><?php echo ucfirst( $post_type ); ?></option>
-							<?php } ?>
-						</select>
-					</td>
-				</tr>
-			<?php } ?>
-			<?php if ( count( $series ) > 1 ) { ?>
-				<tr>
-					<th scope="row">Series</th>
-					<td>
-						<select id="import_series" name="import_series">
-							<?php foreach ( $series as $series_item ) { ?>
-								<option value="<?php echo $series_item->term_id; ?>"><?php echo $series_item->name; ?></option>
-							<?php } ?>
-						</select>
-					</td>
-				</tr>
-			<?php } ?>
-			</tbody>
-		</table>
-		<p class="submit">
-			<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Begin Import Now', 'seriously-simple-podcasting' ) ) ?>"/>
-		</p>
-		<?php
-		$html = ob_get_clean();
-
-		return $html;
 	}
 
 	/**
@@ -1022,72 +926,5 @@ class Settings_Controller {
 		delete_option( $this->settings_base . 'podmotor_account_api_token' );
 		delete_option( $this->settings_base . 'podmotor_account_id' );
 		delete_option( $this->settings_base . 'podmotor_disconnect' );
-	}
-
-	public function render_seriously_simple_sidebar() {
-		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-		ob_start();
-		include ( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-sidebar.php' );
-		return ob_get_clean();
-	}
-
-	public function render_seriously_simple_extensions() {
-		add_thickbox();
-		$image_dir  = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-		$extensions = array(
-			'connect'     => array(
-				'title'       => 'NEW - Castos Podcast Hosting',
-				'image'       => $image_dir . 'castos-icon-extension.jpg',
-				'url'         => SSP_CASTOS_APP_URL,
-				'description' => 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Castos.',
-				'new_window'  => true,
-			),
-			'stats'       => array(
-				'title'       => 'Seriously Simple Podcasting Stats',
-				'image'       => $image_dir . 'ssp-stats.jpg',
-				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-stats', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
-				'description' => 'Seriously Simple Stats offers integrated analytics for your podcast, giving you access to incredibly useful information about who is listening to your podcast and how they are accessing it.',
-			),
-			'transcripts' => array(
-				'title'       => 'Seriously Simple Podcasting Transcripts',
-				'image'       => $image_dir . 'ssp-transcripts.jpg',
-				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-transcripts', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
-				'description' => 'Seriously Simple Transcripts gives you a simple and automated way for you to add downloadable transcripts to your podcast episodes. It’s an easy way for you to provide episode transcripts to your listeners without taking up valuable space in your episode content.',
-			),
-			'speakers'    => array(
-				'title'       => 'Seriously Simple Podcasting Speakers',
-				'image'       => $image_dir . 'ssp-speakers.jpg',
-				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-speakers', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
-				'description' => 'Does your podcast have a number of different speakers? Or maybe a different guest each week? Perhaps you have unique hosts for each episode? If any of those options describe your podcast then Seriously Simple Speakers is the add-on for you!',
-			),
-			'genesis'     => array(
-				'title'       => 'Seriously Simple Podcasting Genesis Support ',
-				'image'       => $image_dir . 'ssp-genesis.jpg',
-				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-podcasting-genesis-support', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
-				'description' => 'The Genesis compatibility add-on for Seriously Simple Podcasting gives you full support for the Genesis theme framework. It adds support to the podcast post type for the features that Genesis requires. If you are using Genesis and Seriously Simple Podcasting together then this plugin will make your website look and work much more smoothly.',
-			),
-		);
-
-		$html = '<div id="ssp-extensions">';
-		foreach ( $extensions as $extension ) {
-			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>';
-			if (isset($extension['new_window']) && $extension['new_window']){
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
-			}else {
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
-			}
-			$html .= '<p></p>';
-			$html .= '<p>' . $extension['description'] . '</p>';
-			$html .= '<p></p>';
-			if (isset($extension['new_window']) && $extension['new_window']){
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">Get this Extension</a>';
-			}else {
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">Get this Extension</a>';
-			}
-			$html .= '</div>';
-		}
-		$html .= '</div>';
-
-		return $html;
 	}
 }

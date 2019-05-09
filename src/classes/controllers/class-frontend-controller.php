@@ -25,7 +25,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0
  */
-class Frontend_Controller {
+class Frontend_Controller extends Controller {
 
 	// @todo reference prior to analytics launch
 	public $style_guide = array(
@@ -36,17 +36,6 @@ class Frontend_Controller {
 		'accent'   => '#ea5451',
 	);
 
-	public $version;
-	public $template_url;
-	public $home_url;
-	public $site_url;
-	public $token;
-	private $dir;
-	private $file;
-	private $assets_dir;
-	private $assets_url;
-	private $template_path;
-
 	/**
 	 * Constructor
 	 *
@@ -55,20 +44,18 @@ class Frontend_Controller {
 	 */
 	public function __construct( $file, $version ) {
 
+		parent::__construct( $file, $version );
+
 		global $large_player_instance_number;
 		$large_player_instance_number = 0;
 
-		$this->version = $version;
+		// Apply filters to the style guide so that users may swap out colours of the player
+		$this->style_guide = apply_filters( 'ssp_filter_style_guide', $this->style_guide );
 
-		$this->dir           = dirname( $file );
-		$this->file          = $file;
-		$this->assets_dir    = trailingslashit( $this->dir ) . 'assets';
-		$this->assets_url    = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
-		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
-		$this->template_url  = esc_url( trailingslashit( plugins_url( '/templates/', $file ) ) );
-		$this->home_url      = trailingslashit( home_url() );
-		$this->site_url      = trailingslashit( site_url() );
-		$this->token         = 'podcast';
+		$this->register_hooks_and_filters();
+	}
+
+	public function register_hooks_and_filters() {
 
 		// Add meta data to start of podcast content
 		$locations = get_option( 'ss_podcasting_player_locations', array() );
@@ -129,9 +116,6 @@ class Frontend_Controller {
 
 		// Add overridable styles to footer
 		add_action( 'wp_footer', array( $this, 'ssp_override_player_styles' ) );
-
-		// Apply filters to the style guide so that users may swap out colours of the player
-		$this->style_guide = apply_filters( 'ssp_filter_style_guide', $this->style_guide );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
 	}

@@ -17,53 +17,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0
  */
-class Admin_Controller {
-
-	private $version;
-	private $dir;
-	private $file;
-	private $assets_dir;
-	private $assets_url;
-	private $template_path;
-	private $token;
-	private $home_url;
-	private $script_suffix;
+class Admin_Controller extends Controller {
 
 	/**
-	 * Unique identifier for the plugin.
+	 * Admin_Controller constructor.
 	 *
-	 * The variable name is used as the text domain when internationalizing strings of text.
-	 * Its value should match the Text Domain file header in the main plugin file.
-	 *
-	 * @since    1.0.0
-	 *
-	 * @var      string
-	 */
-	protected $plugin_slug;
-
-	/**
-	 * Constructor
-	 *
-	 * @param    string $file Plugin base file
+	 * @param $file main plugin file
+	 * @param $version plugin version
 	 */
 	public function __construct( $file, $version ) {
-
-		$this->version = $version;
-
-		$this->dir           = dirname( $file );
-		$this->file          = $file;
-		$this->assets_dir    = trailingslashit( $this->dir ) . 'assets';
-		$this->assets_url    = esc_url( trailingslashit( plugins_url( '/assets/', $file ) ) );
-		$this->template_path = trailingslashit( $this->dir ) . 'templates/';
-		$this->home_url      = trailingslashit( home_url() );
-		$this->token         = 'podcast';
-		$this->plugin_slug   = 'seriously-simple-podcasting';
-
-		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
+		parent::__construct( $file, $version );
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();
 
+		$this->register_hooks_and_filters();
+	}
+
+	/**
+	 * Set up all hooks and filters for this class
+	 */
+	public function register_hooks_and_filters() {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Regsiter podcast post type, taxonomies and meta fields.
@@ -156,11 +130,9 @@ class Admin_Controller {
 
 		} // End if().
 
-
 		// Setup activation and deactivation hooks
-		register_activation_hook( $file, array( $this, 'activate' ) );
-		register_deactivation_hook( $file, array( $this, 'deactivate' ) );
-
+		register_activation_hook( $this->file, array( $this, 'activate' ) );
+		register_deactivation_hook( $this->file, array( $this, 'deactivate' ) );
 	}
 
 	public function ssp_filter_embed_code( $code ) {

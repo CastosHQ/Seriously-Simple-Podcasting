@@ -8,9 +8,13 @@ $baseDir = dirname($vendorDir);
 return array(
     'SeriouslySimplePodcasting\\Ajax\\Ajax_Handler' => $baseDir . '/src/classes/ajax/class-ajax-handler.php',
     'SeriouslySimplePodcasting\\Controllers\\Admin_Controller' => $baseDir . '/src/classes/controllers/class-admin-controller.php',
+    'SeriouslySimplePodcasting\\Controllers\\Controller' => $baseDir . '/src/classes/controllers/class-controller.php',
+    'SeriouslySimplePodcasting\\Controllers\\Extensions_Controller' => $baseDir . '/src/classes/controllers/class-extensions-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Frontend_Controller' => $baseDir . '/src/classes/controllers/class-frontend-controller.php',
+    'SeriouslySimplePodcasting\\Controllers\\Import_Controller' => $baseDir . '/src/classes/controllers/class-import-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Settings_Controller' => $baseDir . '/src/classes/controllers/class-settings-controller.php',
     'SeriouslySimplePodcasting\\Handlers\\Castos_Handler' => $baseDir . '/src/classes/handlers/class-castos-handler.php',
+    'SeriouslySimplePodcasting\\Handlers\\Series_Handler' => $baseDir . '/src/classes/handlers/class-series-handler.php',
     'SeriouslySimplePodcasting\\Handlers\\Settings_Handler' => $baseDir . '/src/classes/handlers/class-settings-handler.php',
     'SeriouslySimplePodcasting\\Helpers\\Log_Helper' => $baseDir . '/src/classes/helpers/class-log-helper.php',
     'SeriouslySimplePodcasting\\Importers\\Rss_Importer' => $baseDir . '/src/classes/importers/class-rss-importer.php',

@@ -1657,7 +1657,6 @@ class Frontend_Controller {
 		);
 
 		foreach ( $widgets as $id => $name ) {
-			require_once( $this->dir . '/includes/widgets/class-ssp-widget-' . $id . '.php' );
 			register_widget( 'SSP_Widget_' . $name );
 		}
 

@@ -6,9 +6,9 @@
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
  * Author URI: https://www.castos.com/
- * Requires PHP: 5.3.3
+ * Requires PHP: 5.6
  * Requires at least: 4.4
- * Tested up to: 5.1.1
+ * Tested up to: 5.2
  *
  * Text Domain: seriously-simple-podcasting
  *
@@ -25,17 +25,7 @@ use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 
-
-/**
- * Only require the REST API endpoints if the user is using WordPress greater than 4.7
-global $wp_version;
-if ( version_compare( $wp_version, '4.7', '>=' ) ) {
-	require_once 'includes/class-ssp-wp-rest-api.php';
-	require_once 'includes/class-ssp-wp-rest-episodes-controller.php';
-}
- */
-
-require_once 'includes/ssp-functions.php';
+require_once 'php/includes/ssp-functions.php';
 if ( ! ssp_is_php_version_ok() ) {
 	return;
 }
@@ -58,12 +48,25 @@ require_once 'includes/class-podmotor-handler.php';
 require_once 'includes/class-ssp-external-rss-importer.php';
 */
 
-
-global $ssp_admin, $ss_podcasting, $ssp_wp_rest_api;
+/**
+ * @todo refactor these globals
+ * @todo the admin_controller should really be renamed, as it's not really 'admin' specific
+ * @todo alternatively the non admin specific functionality should be moved into it's own 'foundation' controller, perhaps even the parent controller
+ */
+global $ssp_admin, $ss_podcasting;
 $ssp_admin       = new Admin_Controller( __FILE__, SSP_VERSION );
 $ss_podcasting   = new Frontend_Controller( __FILE__, SSP_VERSION );
-$ssp_wp_rest_api = new Rest_Api_Controller( SSP_VERSION );
+/**
+ * Only load the settings if we're in the admin dashboard
+ */
 if ( is_admin() ) {
 	global $ssp_settings;
 	$ssp_settings = new Settings_Controller( __FILE__, SSP_VERSION );
+}
+/**
+ * Only load WP REST API Endpoints if the WordPress version is newer than 4.7
+ */
+if ( version_compare( $wp_version, '4.7', '>=' ) ) {
+	global $ssp_wp_rest_api;
+	$ssp_wp_rest_api = new Rest_Api_Controller( SSP_VERSION );
 }

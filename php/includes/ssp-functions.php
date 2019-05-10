@@ -8,11 +8,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
 	function ssp_is_php_version_ok() {
-		if ( ! version_compare( PHP_VERSION, '5.3.3', '<' ) ) {
+		if ( ! version_compare( PHP_VERSION, '5.6', '<' ) ) {
 			return true;
 		}
 		/**
-		 * We are running under PHP 5.3.3
+		 * We are running under PHP 5.6
 		 */
 		if ( ! is_admin() ) {
 			return false;
@@ -25,7 +25,7 @@ if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
 			?>
 			<div class="error">
 				<p>
-					<strong>The Seriously Simple Podcasting plugin requires PHP version 5.3.3 or higher. Please
+					<strong>The Seriously Simple Podcasting plugin requires PHP version 5.6 or higher. Please
 						contact your web host to upgrade your PHP version or deactivate the plugin.</strong>.
 				</p>
 				<p>We apologise for any inconvenience.</p>

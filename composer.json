@@ -23,6 +23,6 @@
     "issues": "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting/issues"
   },
   "autoload"   : {
-    "classmap": ["src/"]
+    "classmap": ["php/"]
   }
 }

@@ -2,8 +2,8 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.1.1
-Requires PHP: 5.3.3
+Tested up to: 5.2
+Requires PHP: 5.6
 Stable tag: 1.19.20
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
@@ -101,6 +101,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.20.0-alpha =
+* 2019-05-10
+* [CHANGE] Refactoring plugin structure with basic support for composer autoloading, namespacing and better WordPress coding standards support
+* [CHANGE] Refactoring plugin structure to have a better separation of concerns (WIP)
+* [CHANGE] PHP version 5.6 or greater now required
 
 = 1.19.20 =
 * 2019-04-29

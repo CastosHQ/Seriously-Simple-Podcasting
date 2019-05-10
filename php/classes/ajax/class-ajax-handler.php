@@ -7,7 +7,17 @@ use SeriouslySimplePodcasting\Importers\Rss_Importer;
 
 class Ajax_Handler {
 
+	/**
+	 * Ajax_Handler constructor.
+	 */
 	public function __construct() {
+		$this->bootstrap();
+	}
+
+	/**
+	 * Runs any functionality to be included in the object instantiation
+	 */
+	public function bootstrap() {
 		// Add ajax action for plugin rating
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 

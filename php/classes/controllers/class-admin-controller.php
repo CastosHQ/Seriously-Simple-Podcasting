@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 
 // Exit if accessed directly.
@@ -20,6 +21,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Controller extends Controller {
 
 	/**
+	 * @var object instance of Ajax_Handler
+	 */
+	protected $ajax_handler;
+
+	/**
 	 * Admin_Controller constructor.
 	 *
 	 * @param $file main plugin file
@@ -27,17 +33,19 @@ class Admin_Controller extends Controller {
 	 */
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
-
-		// Handle localisation.
-		$this->load_plugin_textdomain();
-
-		$this->register_hooks_and_filters();
+		$this->bootstrap();
 	}
 
 	/**
 	 * Set up all hooks and filters for this class
 	 */
-	public function register_hooks_and_filters() {
+	public function bootstrap() {
+
+		$this->ajax_handler = new Ajax_Handler();
+
+		// Handle localisation.
+		$this->load_plugin_textdomain();
+
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Regsiter podcast post type, taxonomies and meta fields.

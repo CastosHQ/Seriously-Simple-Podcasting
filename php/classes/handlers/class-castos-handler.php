@@ -135,7 +135,7 @@ class Castos_Handler {
 
 		$api_url = SSP_CASTOS_APP_URL . 'api/users/validate';
 
-		Log_Helper()->log( 'Validate Credentials : API URL', $api_url );
+		$this->logger->log( 'Validate Credentials : API URL', $api_url );
 
 		$api_payload = array(
 			'timeout' => 45,

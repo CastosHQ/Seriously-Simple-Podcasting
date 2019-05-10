@@ -20,7 +20,7 @@ class Extensions_Controller extends Controller {
 	public function render_seriously_simple_sidebar() {
 		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
 		ob_start();
-		include( $this->templates_dir . DIRECTORY_SEPARATOR . 'settings-sidebar.php' );
+		include( $this->template_path . DIRECTORY_SEPARATOR . 'settings-sidebar.php' );
 
 		return ob_get_clean();
 	}

@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use WP_Query;
+
 use SeriouslySimplePodcasting\ShortCodes\Player;
 use SeriouslySimplePodcasting\ShortCodes\Podcast;
 use SeriouslySimplePodcasting\ShortCodes\Podcast_Episode;

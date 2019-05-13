@@ -3,7 +3,9 @@
 namespace SeriouslySimplePodcasting\Rest;
 
 use WP_REST_Controller;
+use WP_REST_Posts_Controller;
 use WP_REST_Server;
+use WP_Query;
 
 /**
  * Custom endpoint for querying for multiple post-types for episodes.
@@ -24,7 +26,7 @@ use WP_REST_Server;
  */
 
 /**
- * Class WP_REST_Episodes_Controller
+ * Class Episodes_Controller
  */
 class Episodes_Controller extends WP_REST_Controller {
 
@@ -242,7 +244,7 @@ class Episodes_Controller extends WP_REST_Controller {
 			$query_args[ $key ] = apply_filters( "rest_query_var-{$key}", $value ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		}
 
-		if ( 'post' !== $this->post_type || ! isset( $query_args['ignore_sticky_posts'] ) ) {
+		if ( ! in_array( 'post', $this->post_types ) || ! isset( $query_args['ignore_sticky_posts'] ) ) {
 			$query_args['ignore_sticky_posts'] = true;
 		}
 

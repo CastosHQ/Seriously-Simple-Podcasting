@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Widgets;
 
 use WP_Widget;
+use WP_Query;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

@@ -553,9 +553,6 @@ class Settings_Handler {
 					),
 					'default'     => 'published',
 				),
-				/**
-				 * New iTunes Tag Announced At WWDC 2017
-				 */
 				array(
 					'id'          => 'consume_order',
 					'label'       => __( 'Show Type', 'seriously-simple-podcasting' ),

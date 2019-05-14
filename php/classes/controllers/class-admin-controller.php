@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 
@@ -25,6 +26,8 @@ class Admin_Controller extends Controller {
 	 */
 	protected $ajax_handler;
 
+	protected $upgrade_handler;
+
 	/**
 	 * Admin_Controller constructor.
 	 *
@@ -42,6 +45,8 @@ class Admin_Controller extends Controller {
 	public function bootstrap() {
 
 		$this->ajax_handler = new Ajax_Handler();
+
+		$this->upgrade_handler = new Upgrade_Handler();
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();
@@ -1323,10 +1328,15 @@ HTML;
 			flush_rewrite_rules();
 		}
 
+		if ( version_compare( $previous_version, '1.20.0', '<' ) ) {
+			$this->upgrade_handler->upgrade_subscribe_links_option();
+		}
+
 		// always just check if the directory is ok
 		ssp_get_upload_directory( false );
 
 		update_option( 'ssp_version', $this->version );
+
 
 	}
 

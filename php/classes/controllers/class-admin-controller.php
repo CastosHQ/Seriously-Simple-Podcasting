@@ -1329,14 +1329,13 @@ HTML;
 		}
 
 		if ( version_compare( $previous_version, '1.20.0', '<' ) ) {
-			$this->upgrade_handler->upgrade_subscribe_links_option();
+			$this->upgrade_handler->upgrade_subscribe_links_options();
 		}
 
 		// always just check if the directory is ok
 		ssp_get_upload_directory( false );
 
 		update_option( 'ssp_version', $this->version );
-
 
 	}
 

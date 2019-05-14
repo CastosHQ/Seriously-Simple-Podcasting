@@ -17,6 +17,7 @@ class ComposerStaticInit34e210bfa8d7151620d7fa4510f053c5
         'SeriouslySimplePodcasting\\Handlers\\Castos_Handler' => __DIR__ . '/../..' . '/php/classes/handlers/class-castos-handler.php',
         'SeriouslySimplePodcasting\\Handlers\\Series_Handler' => __DIR__ . '/../..' . '/php/classes/handlers/class-series-handler.php',
         'SeriouslySimplePodcasting\\Handlers\\Settings_Handler' => __DIR__ . '/../..' . '/php/classes/handlers/class-settings-handler.php',
+        'SeriouslySimplePodcasting\\Handlers\\Upgrade_Handler' => __DIR__ . '/../..' . '/php/classes/handlers/class-upgrade-handler.php',
         'SeriouslySimplePodcasting\\Helpers\\Log_Helper' => __DIR__ . '/../..' . '/php/classes/helpers/class-log-helper.php',
         'SeriouslySimplePodcasting\\Importers\\Rss_Importer' => __DIR__ . '/../..' . '/php/classes/importers/class-rss-importer.php',
         'SeriouslySimplePodcasting\\Rest\\Episodes_Controller' => __DIR__ . '/../..' . '/php/classes/rest/class-episodes-controller.php',

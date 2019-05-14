@@ -16,6 +16,7 @@ return array(
     'SeriouslySimplePodcasting\\Handlers\\Castos_Handler' => $baseDir . '/php/classes/handlers/class-castos-handler.php',
     'SeriouslySimplePodcasting\\Handlers\\Series_Handler' => $baseDir . '/php/classes/handlers/class-series-handler.php',
     'SeriouslySimplePodcasting\\Handlers\\Settings_Handler' => $baseDir . '/php/classes/handlers/class-settings-handler.php',
+    'SeriouslySimplePodcasting\\Handlers\\Upgrade_Handler' => $baseDir . '/php/classes/handlers/class-upgrade-handler.php',
     'SeriouslySimplePodcasting\\Helpers\\Log_Helper' => $baseDir . '/php/classes/helpers/class-log-helper.php',
     'SeriouslySimplePodcasting\\Importers\\Rss_Importer' => $baseDir . '/php/classes/importers/class-rss-importer.php',
     'SeriouslySimplePodcasting\\Rest\\Episodes_Controller' => $baseDir . '/php/classes/rest/class-episodes-controller.php',

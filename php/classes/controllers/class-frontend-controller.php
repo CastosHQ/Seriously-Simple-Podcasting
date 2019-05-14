@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use stdClass;
 use WP_Query;
 
 use SeriouslySimplePodcasting\ShortCodes\Player;

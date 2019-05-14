@@ -54,8 +54,8 @@ require_once 'includes/class-ssp-external-rss-importer.php';
  * @todo alternatively the non admin specific functionality should be moved into it's own 'foundation' controller, perhaps even the parent controller
  */
 global $ssp_admin, $ss_podcasting;
-$ssp_admin       = new Admin_Controller( __FILE__, SSP_VERSION );
-$ss_podcasting   = new Frontend_Controller( __FILE__, SSP_VERSION );
+$ssp_admin     = new Admin_Controller( __FILE__, SSP_VERSION );
+$ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
 /**
  * Only load the settings if we're in the admin dashboard
  */

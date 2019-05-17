@@ -131,94 +131,23 @@ class Options_Controller extends Controller {
 		}
 
 		if ( isset( $_GET['settings-updated'] ) ) {
-			$html .= '<br/><div class="updated notice notice-success is-dismissible">
-									<p>' . sprintf( __( '%1$s settings updated.', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) . '</b>' ) . '</p>
-								</div>';
+			$html .= '<br/>
+						<div class="updated notice notice-success is-dismissible">
+							<p>' . sprintf( __( '%1$s settings updated.', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) . '</b>' ) . '</p>
+						</div>';
 		}
 
 		if ( function_exists( 'php_sapi_name' ) && 'security' == $tab ) {
 			$sapi_type = php_sapi_name();
 			if ( strpos( $sapi_type, 'fcgi' ) !== false ) {
-				$html .= '<br/><div class="update-nag">
-									<p>' . sprintf( __( 'It looks like your server has FastCGI enabled, which will prevent the feed password protection feature from working. You can fix this by following %1$sthis quick guide%2$s.', 'seriously-simple-podcasting' ), '<a href="http://www.seriouslysimplepodcasting.com/documentation/why-does-the-feed-password-protection-feature-not-work/" target="_blank">', '</a>' ) . '</p>
-								</div>';
+				$html .= '<br/>
+							<div class="update-nag">
+								<p>' . sprintf( __( 'It looks like your server has FastCGI enabled, which will prevent the feed password protection feature from working. You can fix this by following %1$sthis quick guide%2$s.', 'seriously-simple-podcasting' ), '<a href="http://www.seriouslysimplepodcasting.com/documentation/why-does-the-feed-password-protection-feature-not-work/" target="_blank">', '</a>' ) . '</p>
+							</div>';
 			}
 		}
 
-		$current_series = '';
-
-		// Series submenu for feed details
-		if ( 'feed-details' == $tab ) {
-			$series = get_terms( 'series', array( 'hide_empty' => false ) );
-
-			if ( ! empty( $series ) ) {
-
-				if ( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
-					$current_series = esc_attr( $_GET['feed-series'] );
-					$series_class   = '';
-				} else {
-					$current_series = 'default';
-					$series_class   = 'current';
-				}
-
-				$html .= '<div class="feed-series-list-container">' . "\n";
-				$html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'seriously-simple-podcasting' ) . '"></span>' . "\n";
-
-				$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
-				$html .= '<li><a href="' . add_query_arg( array(
-						'feed-series'      => 'default',
-						'settings-updated' => false
-					) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'seriously-simple-podcasting' ) . '</a></li>';
-
-				foreach ( $series as $s ) {
-
-					if ( $current_series == $s->slug ) {
-						$series_class = 'current';
-					} else {
-						$series_class = '';
-					}
-
-					$html .= '<li>' . "\n";
-					$html .= ' | <a href="' . esc_url( add_query_arg( array(
-							'feed-series'      => $s->slug,
-							'settings-updated' => false
-						) ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
-					$html .= '</li>' . "\n";
-				}
-
-				$html .= '</ul>' . "\n";
-				$html .= '<br class="clear" />' . "\n";
-				$html .= '</div>' . "\n";
-
-			}
-		}
-
-		if ( isset( $tab ) && 'import' == $tab ) {
-			$current_admin_url = add_query_arg(
-				array(
-					'post_type' => 'podcast',
-					'page'      => 'podcast_settings',
-					'tab'       => 'import',
-				),
-				admin_url( 'edit.php' )
-			);
-			$html .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
-			$html .= '<input type="hidden" name="action" value="post_import_form" />';
-			$html .= wp_nonce_field( 'ss_podcasting_import' );
-		} else {
-			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
-		}
-
-
-		// Add current series to posted data
-		if ( $current_series ) {
-			$html .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
-		}
-
-		if ( isset( $tab ) && 'castos-hosting' == $tab ) {
-			$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
-			$html .= '<input id="podmotor_account_id" type="hidden" name="ss_podcasting_podmotor_account_id" placeholder="" value="' . $podmotor_account_id . '" class="regular-text disabled" readonly="">' . "\n";
-		}
+		$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 
 		// Get settings fields
 		// Get settings fields
@@ -229,14 +158,6 @@ class Options_Controller extends Controller {
 		do_settings_sections( 'ss_podcasting' );
 		$html .= ob_get_clean();
 
-		if ( isset( $tab ) && 'castos-hosting' == $tab ) {
-			// Validate button
-			$html .= '<p class="submit">' . "\n";
-			$html .= '<input id="validate_api_credentials" type="button" class="button-primary" value="' . esc_attr( __( 'Validate Credentials', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
-			$html .= '<span class="validate-api-credentials-message"></span>' . "\n";
-			$html .= '</p>' . "\n";
-		}
-
 		$disable_save_button_on_tabs = array( 'extensions', 'import' );
 
 		if ( ! in_array( $tab, $disable_save_button_on_tabs ) ) {
@@ -245,22 +166,6 @@ class Options_Controller extends Controller {
 			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
 			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
 			$html .= '</p>' . "\n";
-		}
-
-		if ( 'import' === $tab ) {
-			// Custom submits for Imports
-			if ( ssp_is_connected_to_podcastmotor() ) {
-				$html .= '<p class="submit">' . "\n";
-				$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-				$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
-				$html .= '</p>' . "\n";
-			}
-
-			if ( ssp_get_external_rss_being_imported() ) {
-				$html .= $this->import_controller->render_external_import_process();
-			} else {
-				$html .= $this->import_controller->render_external_import_form();
-			}
 		}
 
 		$html .= '</form>' . "\n";

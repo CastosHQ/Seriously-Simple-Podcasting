@@ -4,7 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 
-class Options_Controller {
+class Options_Controller extends Controller {
 
 	protected $options_base;
 
@@ -91,7 +91,7 @@ class Options_Controller {
 		$html .= '<div id="main-settings">' . "\n";
 
 		// Show page tabs
-		if ( is_array( $this->settings ) && 1 < count( $this->settings ) ) {
+		if ( is_array( $this->options ) && 1 < count( $this->options ) ) {
 
 			$html .= '<h2 class="nav-tab-wrapper">' . "\n";
 
@@ -266,8 +266,6 @@ class Options_Controller {
 		$html .= '</form>' . "\n";
 
 		$html .= '</div>' . "\n";
-
-		$html .= $this->extensions_controller->render_seriously_simple_sidebar();
 
 		$html .= '</div>' . "\n";
 

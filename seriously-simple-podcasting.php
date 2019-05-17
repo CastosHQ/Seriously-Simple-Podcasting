@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 use SeriouslySimplePodcasting\Controllers\Admin_Controller;
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
+use SeriouslySimplePodcasting\Controllers\Options_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 
 require_once 'php/includes/ssp-functions.php';
@@ -60,8 +61,9 @@ $ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
  * Only load the settings if we're in the admin dashboard
  */
 if ( is_admin() ) {
-	global $ssp_settings;
+	global $ssp_settings, $ssp_options;
 	$ssp_settings = new Settings_Controller( __FILE__, SSP_VERSION );
+	$ssp_options  = new Options_Controller( __FILE__, SSP_VERSION );
 }
 /**
  * Only load WP REST API Endpoints if the WordPress version is newer than 4.7

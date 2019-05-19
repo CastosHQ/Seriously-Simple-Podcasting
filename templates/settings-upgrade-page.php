@@ -8,7 +8,12 @@
 		padding-right: 2%;
 		text-align: center;
 	}
-	
+
+	#header h1 {
+		text-align: center;
+		font-size: 28px;
+	}
+
 	#active2 #tab2,
 	#active3 #tab3,
 	#active4 #tab4,
@@ -35,21 +40,27 @@
 	
 	#col1 {
 		float: left;
-		width: 46%;
+		width: 60%;
 		position: relative;
 		left: 52%;
 		overflow: hidden;
+		min-width: 560px;
 	}
 	
 	#col2 {
 		float: left;
-		width: 46%;
+		width: 40%;
 		position: relative;
-		left: 56%;
+		left: 52%;
 		overflow: hidden;
 		vertical-align: center;
 	}
-	
+
+	#col2 ul {
+		list-style-type: disc;
+		padding-inline-start: 40px;
+	}
+
 	#header, #footer {
 		padding: 10px;
 	}
@@ -75,7 +86,13 @@
 		display: inline-block;
 		font-size: 16px;
 	}
-	
+
+	@media all and (max-width: 1136px) {
+		#col2{
+			width:80%;
+		}
+	}
+
 	/* --> */
 </style>
 <div class="wrap">
@@ -94,20 +111,20 @@
 				<p>Castos podcast hosting combines best in class media hosting with the workflow you know and love in Seriously Simple Podcasting. </p>
 				<ul>
 					<li>Direct file upload from WordPress dashboard</li>
-					<li>Playback duration level analytics on all episodes</li>
+					<li>Automatic republishing to YouTube</li>
 					<li>Seamless integration with Seriously Simple Podcasting plugin</li>
 					<li>Lightning fast episode downloads and real-time streaming</li>
+					<li>Automated Transcripts for all your episodes</li>
 					<li>Safe, secure file storage on a robust hosting platform</li>
 				</ul>
 				<p>Every account comes with a Free 14 day Trial</p>
 				<br>
 				<div class="signup">
-					<a class='button' href="https://www.castos.com/">Sign Up Today</a>
+					<a class='button' href="https://castos.com/ssp/?utm_source=plugin&utm_medium=welcome&utm_campaign=signup_link">Sign Up Today</a>
 				</div>
 			</div>
 		</div>
 	</div>
-	
 	
 	<div id="footer">
 		<p><a href="<?php echo $ssp_dismiss_url; ?>">Dismiss this message</a></p>

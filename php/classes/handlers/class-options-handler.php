@@ -42,7 +42,7 @@ class Options_Handler {
 			'fields'      => $subscribe_options_array,
 		);
 
-		$options = apply_filters( 'ssp_settings_fields', $options );
+		$options = apply_filters( 'ssp_options_fields', $options );
 
 		return $options;
 	}
@@ -76,7 +76,7 @@ class Options_Handler {
 			);
 		}
 
-		return $subscribe_field_options;
+		return apply_filters( 'ssp_subscribe_field_options', $subscribe_field_options );
 	}
 
 }

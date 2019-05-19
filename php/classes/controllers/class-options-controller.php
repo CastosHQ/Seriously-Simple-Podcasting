@@ -27,6 +27,9 @@ class Options_Controller extends Controller {
 	public function register_hooks_and_filters() {
 		add_action( 'init', array( $this, 'load_options' ), 11 );
 
+		// Register podcast options.
+		add_action( 'admin_init', array( $this, 'register_options' ) );
+
 		// Add options page to menu.
 		add_action( 'admin_menu', array( $this, 'add_menu_item' ) );
 	}
@@ -37,6 +40,103 @@ class Options_Controller extends Controller {
 	public function load_options() {
 		$options_handler = new Options_Handler();
 		$this->options   = $options_handler->options_fields();
+	}
+
+	/**
+	 * Register plugin options
+	 *
+	 * @return void
+	 */
+	public function register_options() {
+		if ( is_array( $this->options ) ) {
+			$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_SANITIZE_STRING ) : '' );
+			// Check posted/selected tab.
+			$current_section = 'general';
+			if ( ! empty( $tab ) ) {
+				$current_section = $tab;
+			} else {
+				$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_SANITIZE_STRING ) : '' );
+				if ( ! empty( $tab ) ) {
+					$current_section = $tab;
+				}
+			}
+
+			foreach ( $this->options as $section => $data ) {
+
+				if ( $current_section && $current_section !== $section ) {
+					continue;
+				}
+
+				// Get data for specific feed series.
+				$title_tail = '';
+				$series_id  = 0;
+
+				$section_title = $data['title'] . $title_tail;
+
+				// Add section to page.
+				add_settings_section( $section, $section_title, array( $this, 'options_section' ), 'ss_podcasting' );
+
+				if ( ! empty( $data['fields'] ) ) {
+
+					foreach ( $data['fields'] as $field ) {
+
+						// Validation callback for field.
+						$validation = '';
+						if ( isset( $field['callback'] ) ) {
+							$validation = $field['callback'];
+						}
+
+						// Get field option name.
+						$option_name = $this->options_base . $field['id'];
+
+						// Append series ID if selected.
+						if ( $series_id ) {
+							$option_name .= '_' . $series_id;
+						}
+
+						// Register setting.
+						register_setting( 'ss_podcasting', $option_name, $validation );
+
+						if ( 'hidden' === $field['type'] ) {
+							continue;
+						}
+
+						$container_class = '';
+						if ( isset( $field['container_class'] ) && ! empty( $field['container_class'] ) ) {
+							$container_class = $field['container_class'];
+						}
+
+						// Add field to page.
+						add_settings_field(
+							$field['id'],
+							$field['label'],
+							array(
+								$this,
+								'display_field',
+							),
+							'ss_podcasting',
+							$section,
+							array(
+								'field'       => $field,
+								'prefix'      => $this->options_base,
+								'feed-series' => $series_id,
+								'class'       => $container_class,
+							)
+						);
+					}
+				}
+			}
+		}
+	}
+
+	/**
+	 * Options Section
+	 *
+	 * @param string $section section.
+	 */
+	public function options_section( $section ) {
+		$html = '<p>' . $this->options[ $section['id'] ]['description'] . '</p>' . "\n";
+		echo $html;
 	}
 
 	/**
@@ -130,27 +230,16 @@ class Options_Controller extends Controller {
 			$html .= '</h2>' . "\n";
 		}
 
-		if ( isset( $_GET['settings-updated'] ) ) {
+		if ( isset( $_GET['options-updated'] ) ) {
 			$html .= '<br/>
 						<div class="updated notice notice-success is-dismissible">
-							<p>' . sprintf( __( '%1$s settings updated.', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) . '</b>' ) . '</p>
+							<p>' . sprintf( __( '%1$s Options updated.', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) . '</b>' ) . '</p>
 						</div>';
-		}
-
-		if ( function_exists( 'php_sapi_name' ) && 'security' == $tab ) {
-			$sapi_type = php_sapi_name();
-			if ( strpos( $sapi_type, 'fcgi' ) !== false ) {
-				$html .= '<br/>
-							<div class="update-nag">
-								<p>' . sprintf( __( 'It looks like your server has FastCGI enabled, which will prevent the feed password protection feature from working. You can fix this by following %1$sthis quick guide%2$s.', 'seriously-simple-podcasting' ), '<a href="http://www.seriouslysimplepodcasting.com/documentation/why-does-the-feed-password-protection-feature-not-work/" target="_blank">', '</a>' ) . '</p>
-							</div>';
-			}
 		}
 
 		$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 
-		// Get settings fields
-		// Get settings fields
+		// Get options fields
 		ob_start();
 		if ( isset( $tab ) && 'import' !== $tab ) {
 			settings_fields( 'ss_podcasting' );
@@ -158,15 +247,11 @@ class Options_Controller extends Controller {
 		do_settings_sections( 'ss_podcasting' );
 		$html .= ob_get_clean();
 
-		$disable_save_button_on_tabs = array( 'extensions', 'import' );
-
-		if ( ! in_array( $tab, $disable_save_button_on_tabs ) ) {
-			// Submit button
-			$html .= '<p class="submit">' . "\n";
-			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
-			$html .= '</p>' . "\n";
-		}
+		// Submit button
+		$html .= '<p class="submit">' . "\n";
+		$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
+		$html .= '<input id="ssp-options-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Options', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+		$html .= '</p>' . "\n";
 
 		$html .= '</form>' . "\n";
 

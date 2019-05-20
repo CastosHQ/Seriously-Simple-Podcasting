@@ -68,6 +68,7 @@ if ( is_admin() ) {
 /**
  * Only load WP REST API Endpoints if the WordPress version is newer than 4.7
  */
+global $wp_version;
 if ( version_compare( $wp_version, '4.7', '>=' ) ) {
 	global $ssp_wp_rest_api;
 	$ssp_wp_rest_api = new Rest_Api_Controller( SSP_VERSION );

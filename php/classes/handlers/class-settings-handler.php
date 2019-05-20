@@ -801,7 +801,7 @@ class Settings_Handler {
 	 */
 	public function get_subscribe_field_options() {
 		$subscribe_field_options = array();
-		$subscribe_links_options = get_option( 'ss_podcasting_subscribe_links_options', array() );
+		$subscribe_links_options = get_option( 'ss_podcasting_subscribe_options', array() );
 		if ( empty( $subscribe_links_options ) ) {
 			return $subscribe_field_options;
 		}

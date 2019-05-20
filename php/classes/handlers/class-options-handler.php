@@ -55,25 +55,27 @@ class Options_Handler {
 	 */
 	public function get_subscribe_field_options() {
 		$subscribe_field_options = array();
-		$subscribe_links_options = get_option( 'ss_podcasting_subscribe_links_options', array() );
+		$subscribe_links_options = get_option( 'ss_podcasting_subscribe_options', array() );
 		if ( empty( $subscribe_links_options ) ) {
 			return $subscribe_field_options;
 		}
 
+		$count = 1;
 		foreach ( $subscribe_links_options as $key => $title ) {
 			$subscribe_field_options[] = array(
-				'id'          => $key,
+				'id'          => 'subscribe_option_' . $count,
 				// translators: %s: Service title eg iTunes
-				'label'       => sprintf( __( '%s URL', 'seriously-simple-podcasting' ), $title ),
+				'label'       => sprintf( __( 'Subscribe option %s', 'seriously-simple-podcasting' ), $count ),
 				// translators: %s: Service title eg iTunes
-				'description' => sprintf( __( 'Your podcast\'s %s URL.', 'seriously-simple-podcasting' ), $title ),
+				'description' => sprintf( __( 'Subscribe option %s.', 'seriously-simple-podcasting' ), $count ),
 				'type'        => 'text',
-				'default'     => '',
+				'default'     => $title,
 				// translators: %s: Service title eg iTunes
-				'placeholder' => sprintf( __( '%s URL', 'seriously-simple-podcasting' ), $title ),
-				'callback'    => 'esc_url_raw',
-				'class'       => 'regular-text',
+				'placeholder' => sprintf( __( 'Subscribe option %s', 'seriously-simple-podcasting' ), $count ),
+				'callback'    => 'wp_strip_all_tags',
+				'class'       => 'text',
 			);
+			$count++;
 		}
 
 		return apply_filters( 'ssp_subscribe_field_options', $subscribe_field_options );

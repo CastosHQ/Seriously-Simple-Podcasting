@@ -2,8 +2,11 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
-
+/**
+ * SSP Options Handler
+ *
+ * @package Seriously Simple Podcasting
+ */
 class Options_Handler {
 
 	/**
@@ -73,8 +76,6 @@ class Options_Handler {
 	public function get_subscribe_field_options() {
 		$subscribe_field_options = array();
 		$subscribe_options       = get_option( 'ss_podcasting_subscribe_options', array() );
-		$logger                  = new Log_Helper();
-		$logger->log( 'Subscribe Options', $subscribe_options );
 		if ( empty( $subscribe_options ) ) {
 			return $subscribe_field_options;
 		}
@@ -124,6 +125,11 @@ class Options_Handler {
 		return true;
 	}
 
+	/**
+	 * Inserts a new option into the ss_podcasting_subscribe_options array
+	 *
+	 * @return mixed|void
+	 */
 	public function insert_subscribe_option() {
 		$subscribe_options            = get_option( 'ss_podcasting_subscribe_options', array() );
 		$subscribe_options['new_url'] = 'New Option';
@@ -144,5 +150,39 @@ class Options_Handler {
 		$subscribe_key = strtolower( $subscribe_key . '_url' );
 
 		return $subscribe_key;
+	}
+
+	/**
+	 * Get the subscribe urls for an episode
+	 *
+	 * @param $episode_id
+	 * @param $context
+	 *
+	 * @return mixed|void
+	 */
+	public function get_subscribe_urls( $episode_id, $context ) {
+		$terms             = get_the_terms( $episode_id, 'series' );
+		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+
+		$subscribe_array = array();
+		foreach ( $subscribe_options as $key => $label ) {
+			// get the main feed url
+			$url = get_option( 'ss_podcasting_' . $key, '' );
+			// if we're in a series, and the series has a url for this option
+			if ( is_array( $terms ) ) {
+				if ( isset( $terms[0] ) ) {
+					if ( false !== get_option( 'ss_podcasting_' . $key . '_' . $terms[0]->term_id ) ) {
+						$url = get_option( 'ss_podcasting_' . $key . '_' . $terms[0]->term_id, '' );
+					}
+				}
+			}
+			$subscribe_array[ $key ] = array(
+				'url'   => $url,
+				'label' => $label,
+			);
+		}
+
+		return apply_filters( 'ssp_episode_subscribe_details', $subscribe_array, $episode_id, $context );
+
 	}
 }

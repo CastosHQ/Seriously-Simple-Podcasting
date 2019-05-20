@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use stdClass;
 use WP_Query;
 
@@ -14,6 +15,8 @@ use SeriouslySimplePodcasting\Widgets\Playlist;
 use SeriouslySimplePodcasting\Widgets\Series;
 use SeriouslySimplePodcasting\Widgets\Recent_Episodes;
 use SeriouslySimplePodcasting\Widgets\Single_Episode;
+
+use SeriouslySimplePodcasting\Handlers\Options_Handler;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -798,38 +801,9 @@ class Frontend_Controller extends Controller {
 			}
 		}
 
-		$terms = get_the_terms( $episode_id, 'series' );
-
-		$itunes_url = get_option( 'ss_podcasting_itunes_url', '' );
-		$stitcher_url = get_option( 'ss_podcasting_stitcher_url', '' );
-		$google_play_url = get_option( 'ss_podcasting_google_play_url', '' );
-		$spotify_url = get_option( 'ss_podcasting_spotify_url', '' );
-
-		if ( is_array( $terms ) ) {
-			if ( isset( $terms[0] ) ) {
-				if ( false !== get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id ) ) {
-					$itunes_url = get_option( 'ss_podcasting_itunes_url_' . $terms[0]->term_id, '' );
-				}
-				if ( false !== get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id ) ) {
-					$stitcher_url = get_option( 'ss_podcasting_stitcher_url_' . $terms[0]->term_id, '' );
-				}
-				if ( false !== get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id ) ) {
-					$google_play_url = get_option( 'ss_podcasting_google_play_url_' . $terms[0]->term_id, '' );
-				}
-				if ( false !== get_option( 'ss_podcasting_spotify_url_' . $terms[0]->term_id ) ) {
-					$spotify_url = get_option( 'ss_podcasting_spotify_url_' . $terms[0]->term_id, '' );
-				}
-			}
-		}
-
-		$subscribe_array = array(
-			'itunes_url' => $itunes_url,
-			'stitcher_url' => $stitcher_url,
-			'google_play_url' => $google_play_url,
-			'spotify_url' => $spotify_url
-		);
-
-		$subscribe_urls = apply_filters( 'ssp_episode_subscribe_details', $subscribe_array, $episode_id, $context );
+		// @todo implement dependancy injection
+		$options_handler = new Options_Handler();
+		$subscribe_urls  = $options_handler->get_subscribe_urls( $episode_id, $context );
 
 		foreach( $subscribe_urls as $key => $data ){
 
@@ -841,39 +815,21 @@ class Frontend_Controller extends Controller {
 				$subscribe_display .= $meta_sep;
 			}
 
-			switch( $key ) {
-
-				case 'itunes_url':
-					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_itunes', __( 'iTunes', 'seriously-simple-podcasting' ) ) . '</a>';
-					break;
-
-				case 'stitcher_url':
-					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_stitcher', __( 'Stitcher', 'seriously-simple-podcasting' ) ) . '</a>';
-					break;
-
-				case 'google_play_url':
-					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_google_play', __( 'Google Play', 'seriously-simple-podcasting' ) ) . '</a>';
-					break;
-
-				case 'spotify_url':
-					$subscribe_display .= '<a href="' . esc_url( $data ) . '" target="_blank" title="' . apply_filters( 'ssp_subscribe_link_name_spotify', __( 'Spotify', 'seriously-simple-podcasting' ) ) . '" class="podcast-meta-itunes">' . apply_filters( 'ssp_subscribe_link_name_spotify', __( 'Spotify', 'seriously-simple-podcasting' ) ) . '</a>';
-					break;
-
-				default:
-					$allowed_tags = array(
-						'strong' => array(),
-						'b' => array(),
-						'em' => array(),
-						'i' => array(),
-						'a' => array(
-							'href' => array(),
-							'title' => array(),
-							'target' => array(),
-						),
-					);
-					$subscribe_display .= wp_kses( $data, $allowed_tags );
-					break;
-
+			if (preg_match('/\b_url\b/', $key) === false) {
+				$allowed_tags = array(
+					'strong' => array(),
+					'b' => array(),
+					'em' => array(),
+					'i' => array(),
+					'a' => array(
+						'href' => array(),
+						'title' => array(),
+						'target' => array(),
+					),
+				);
+				$subscribe_display .= wp_kses( $data['url'], $allowed_tags );
+			}else {
+				$subscribe_display .= '<a href="' . esc_url( $data['url'] ) . '" target="_blank" title="' . $data['label'] . '" class="podcast-meta-itunes">' . $data['label'] . '</a>';
 			}
 
 		}

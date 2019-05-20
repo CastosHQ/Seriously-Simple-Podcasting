@@ -6,6 +6,8 @@ use SeriouslySimplePodcasting\Handlers\Options_Handler;
 
 class Options_Controller extends Controller {
 
+	protected $options_handler;
+
 	protected $options_base;
 
 	protected $options;
@@ -21,25 +23,68 @@ class Options_Controller extends Controller {
 
 		$this->options_base = 'ss_podcasting_';
 
+		// @todo inject via DI
+		$this->options_handler = new Options_Handler();
+
 		$this->register_hooks_and_filters();
 	}
 
 	public function register_hooks_and_filters() {
+
+		add_action( 'init', array( $this, 'update_subscribe_options' ), 11 );
+
+		// load the options from the Options Handler
 		add_action( 'init', array( $this, 'load_options' ), 11 );
 
 		// Register podcast options.
 		add_action( 'admin_init', array( $this, 'register_options' ) );
+
+		// Enqueue scripts for this controller
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10, 1 );
 
 		// Add options page to menu.
 		add_action( 'admin_menu', array( $this, 'add_menu_item' ) );
 	}
 
 	/**
-	 * Load settings
+	 * @param $hook
+	 */
+	public function enqueue_admin_scripts( $hook ) {
+		/**
+		 * Only load the options js when the options screen is loaded
+		 */
+		if ( 'podcast_page_podcast_options' === $hook ) {
+			wp_register_script(
+				'ssp-options',
+				esc_url( $this->assets_url . 'js/options' . $this->script_suffix . '.js' ),
+				array( 'jquery' ),
+				$this->version,
+				true
+			);
+			wp_enqueue_script( 'ssp-options' );
+		}
+	}
+
+	/**
+	 * Load Options
 	 */
 	public function load_options() {
-		$options_handler = new Options_Handler();
-		$this->options   = $options_handler->options_fields();
+		$this->options = $this->options_handler->options_fields();
+	}
+
+	/**
+	 * Update subscribe options after options saved
+	 *
+	 * @return bool
+	 */
+	public function update_subscribe_options() {
+		if ( ! isset( $_GET['page'] ) || 'podcast_options' !== $_GET['page'] ) { //phpcs:ignore WordPress.Security
+			return false;
+		}
+		if ( ! isset( $_GET['settings-updated'] ) || 'true' !== $_GET['settings-updated'] ) {  //phpcs:ignore WordPress.Security
+			return false;
+		}
+		return $this->options_handler->update_subscribe_options();
 	}
 
 	/**
@@ -188,7 +233,7 @@ class Options_Controller extends Controller {
 
 		$tab = 'general';
 
-		$html .= '<div id="main-settings">' . "\n";
+		$html .= '<div id="main-options">' . "\n";
 
 		// Show page tabs
 		if ( is_array( $this->options ) && 1 < count( $this->options ) ) {
@@ -247,6 +292,8 @@ class Options_Controller extends Controller {
 		do_settings_sections( 'options_page' );
 		$html .= ob_get_clean();
 
+		$html .= $this->options_handler->get_extra_html_content();
+
 		// Submit button
 		$html .= '<p class="submit">' . "\n";
 		$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
@@ -260,6 +307,7 @@ class Options_Controller extends Controller {
 		$html .= '</div>' . "\n";
 
 		echo $html;
+
 	}
 
 	/**

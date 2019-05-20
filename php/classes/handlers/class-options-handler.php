@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
+
 class Options_Handler {
 
 	/**
@@ -48,6 +50,21 @@ class Options_Handler {
 	}
 
 	/**
+	 * Inject HTML content into the Options form
+	 *
+	 * @return string
+	 */
+	public function get_extra_html_content() {
+		// Add the 'Add new subscribe option'
+		$html  = '';
+		$html .= '<p class="add">' . "\n";
+		$html .= '<input id="ssp-options-add-subscribe" type="button" class="button-primary" value="' . esc_attr( __( 'Add subscribe option', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+		$html .= '</p>' . "\n";
+
+		return $html;
+	}
+
+	/**
 	 * Builds the array of field settings for the subscribe links, based on the options stored in the options table.
 	 * // @todo this is duplicated from the settings handler, so it should probably be placed in it's own class somewhere
 	 *
@@ -55,13 +72,15 @@ class Options_Handler {
 	 */
 	public function get_subscribe_field_options() {
 		$subscribe_field_options = array();
-		$subscribe_links_options = get_option( 'ss_podcasting_subscribe_options', array() );
-		if ( empty( $subscribe_links_options ) ) {
+		$subscribe_options       = get_option( 'ss_podcasting_subscribe_options', array() );
+		$logger                  = new Log_Helper();
+		$logger->log( 'Subscribe Options', $subscribe_options );
+		if ( empty( $subscribe_options ) ) {
 			return $subscribe_field_options;
 		}
 
 		$count = 1;
-		foreach ( $subscribe_links_options as $key => $title ) {
+		foreach ( $subscribe_options as $key => $title ) {
 			$subscribe_field_options[] = array(
 				'id'          => 'subscribe_option_' . $count,
 				// translators: %s: Service title eg iTunes
@@ -73,7 +92,7 @@ class Options_Handler {
 				// translators: %s: Service title eg iTunes
 				'placeholder' => sprintf( __( 'Subscribe option %s', 'seriously-simple-podcasting' ), $count ),
 				'callback'    => 'wp_strip_all_tags',
-				'class'       => 'text',
+				'class'       => 'text subscribe-option',
 			);
 			$count++;
 		}
@@ -81,4 +100,49 @@ class Options_Handler {
 		return apply_filters( 'ssp_subscribe_field_options', $subscribe_field_options );
 	}
 
+	/**
+	 * Update the ss_podcasting_subscribe_options array based on the individual ss_podcasting_subscribe_option_ options
+	 *
+	 * @return bool
+	 */
+	public function update_subscribe_options() {
+		$continue          = true;
+		$count             = 0;
+		$subscribe_options = array();
+		while ( false !== $continue ) {
+			$count ++;
+			$subscribe_option = get_option( 'ss_podcasting_subscribe_option_' . $count, '' );
+			if ( empty( $subscribe_option ) ) {
+				$continue = false;
+			} else {
+				$subscribe_key                       = $this->create_subscribe_option_key( $subscribe_option );
+				$subscribe_options[ $subscribe_key ] = $subscribe_option;
+			}
+		}
+		update_option( 'ss_podcasting_subscribe_options', $subscribe_options );
+
+		return true;
+	}
+
+	public function insert_subscribe_option() {
+		$subscribe_options            = get_option( 'ss_podcasting_subscribe_options', array() );
+		$subscribe_options['new_url'] = 'New Option';
+		update_option( 'ss_podcasting_subscribe_options', $subscribe_options );
+
+		return $subscribe_options;
+	}
+
+	/**
+	 * Converts the Subscribe option label to the relevant key
+	 *
+	 * @param string $subscribe_option
+	 *
+	 * @return string $subscribe_key
+	 */
+	public function create_subscribe_option_key( $subscribe_option ) {
+		$subscribe_key = preg_replace( '/[^A-Za-z]/', '_', $subscribe_option );
+		$subscribe_key = strtolower( $subscribe_key . '_url' );
+
+		return $subscribe_key;
+	}
 }

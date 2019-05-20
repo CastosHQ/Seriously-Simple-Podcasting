@@ -1328,7 +1328,7 @@ HTML;
 			flush_rewrite_rules();
 		}
 
-		if ( version_compare( $previous_version, '1.20.0', '<' ) ) {
+		if ( version_compare( $previous_version, '1.19.21', '<' ) ) {
 			$this->upgrade_handler->upgrade_subscribe_links_options();
 		}
 

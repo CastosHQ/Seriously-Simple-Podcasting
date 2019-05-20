@@ -59,7 +59,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-		})
+		});
 
 		/**
 		 * Disconnect Castos checkbox on change, renders a confirmation message to the user.

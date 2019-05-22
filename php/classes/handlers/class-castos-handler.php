@@ -456,21 +456,26 @@ class Castos_Handler {
 
 		$this->logger->log( 'app_response', $app_response );
 
-		if ( ! is_wp_error( $app_response ) ) {
-			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-			$this->logger->log( 'Response Object', $response_object );
-			if ( 'success' === $response_object->status ) {
-				$this->logger->log( 'Series data successfully uploaded to Castos' );
-				$this->update_response( 'status', 'success' );
-				$this->update_response( 'message', 'Series data successfully uploaded to Castos' );
-			} else {
-				$this->logger->log( 'An error occurred uploading the series data to Castos', $response_object );
-				$this->update_response( 'message', 'An error occurred uploading the series data to Castos' );
-			}
-		} else {
+		if ( is_wp_error( $app_response ) ) {
 			$this->logger->log( 'An unknown error occurred sending series data to castos: ' . $app_response->get_error_message() );
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
+
+			return $this->response;
 		}
+
+		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
+		$this->logger->log( 'Response Object', $response_object );
+
+		if ( ! isset( $response_object->status ) || 'success' !== $response_object->status ) {
+			$this->logger->log( 'An error occurred uploading the series data to Castos', $response_object );
+			$this->update_response( 'message', 'An error occurred uploading the series data to Castos' );
+
+			return $this->response;
+		}
+
+		$this->logger->log( 'Series data successfully uploaded to Castos' );
+		$this->update_response( 'status', 'success' );
+		$this->update_response( 'message', 'Series data successfully uploaded to Castos' );
 
 		return $this->response;
 	}

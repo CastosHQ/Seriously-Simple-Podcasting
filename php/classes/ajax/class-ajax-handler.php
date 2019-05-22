@@ -25,6 +25,9 @@ class Ajax_Handler {
 		// Insert a new subscribe option to the ss_podcasting_subscribe_options array.
 		add_action( 'wp_ajax_insert_new_subscribe_option', array( $this, 'insert_new_subscribe_option' ) );
 
+		// Deletes a subscribe option from the ss_podcasting_subscribe_options array.
+		add_action( 'wp_ajax_delete_subscribe_option', array( $this, 'delete_subscribe_option' ) );
+
 		// Add ajax action for plugin rating.
 		add_action( 'wp_ajax_validate_castos_credentials', array( $this, 'validate_podmotor_api_credentials' ) );
 
@@ -53,6 +56,9 @@ class Ajax_Handler {
 		die();
 	}
 
+	/**
+	 * Insert a new subscribe field option
+	 */
 	public function insert_new_subscribe_option() {
 		// @todo add nonces
 		if ( ! current_user_can( 'manage_podcast' ) ) {
@@ -66,6 +72,33 @@ class Ajax_Handler {
 		}
 		$options_handler   = new Options_Handler();
 		$subscribe_options = $options_handler->insert_subscribe_option();
+		wp_send_json( $subscribe_options );
+	}
+
+	public function delete_subscribe_option() {
+		// @todo add nonces
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'message' => 'Current user doesn\'t have correct permissions',
+				)
+			);
+
+			return;
+		}
+		if ( ! isset( $_POST['option'] ) ) {
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'message' => 'POSTed option not set',
+				)
+			);
+
+			return;
+		}
+		$options_handler   = new Options_Handler();
+		$subscribe_options = $options_handler->delete_subscribe_option( $_POST['option'] );
 		wp_send_json( $subscribe_options );
 	}
 

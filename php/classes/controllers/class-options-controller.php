@@ -96,7 +96,7 @@ class Options_Controller extends Controller {
 		if ( is_array( $this->options ) ) {
 			$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_SANITIZE_STRING ) : '' );
 			// Check posted/selected tab.
-			$current_section = 'general';
+			$current_section = 'subscribe';
 			if ( ! empty( $tab ) ) {
 				$current_section = $tab;
 			} else {
@@ -231,7 +231,7 @@ class Options_Controller extends Controller {
 
 		$html .= '<h1>' . __( 'Podcast Options', 'seriously-simple-podcasting' ) . '</h1>' . "\n";
 
-		$tab = 'general';
+		$tab = 'subscribe';
 
 		$html .= '<div id="main-options">' . "\n";
 
@@ -260,10 +260,6 @@ class Options_Controller extends Controller {
 				$tab_link = add_query_arg( array( 'tab' => $section ) );
 				if ( isset( $_GET['settings-updated'] ) ) {
 					$tab_link = remove_query_arg( 'settings-updated', $tab_link );
-				}
-
-				if ( isset( $_GET['feed-series'] ) ) {
-					$tab_link = remove_query_arg( 'feed-series', $tab_link );
 				}
 
 				// Output tab

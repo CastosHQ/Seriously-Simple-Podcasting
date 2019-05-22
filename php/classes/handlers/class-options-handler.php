@@ -41,9 +41,21 @@ class Options_Handler {
 
 		$subscribe_options_array = $this->get_subscribe_field_options();
 
-		$options['general'] = array(
-			'title'       => __( 'General', 'seriously-simple-podcasting' ),
-			'description' => __( 'General Settings', 'seriously-simple-podcasting' ),
+		$feed_details_url = add_query_arg(
+			array(
+				'post_type' => 'podcast',
+				'page'      => 'podcast_settings',
+				'tab'       => 'feed-details',
+			)
+		);
+
+		$options['subscribe'] = array(
+			'title'       => __( 'Subscribe options', 'seriously-simple-podcasting' ),
+			'description' => sprintf(
+				/* translators: %s: URL to feed details */
+				__( 'Here you can change the available options which power the Subscribe URLs that appear below the player on your website. The Subscribe URLS are edited under <a href="%s">Settings -> Feed Details</a>', 'seriously-simple-podcasting' ),
+				$feed_details_url
+			),
 			'fields'      => $subscribe_options_array,
 		);
 
@@ -59,7 +71,8 @@ class Options_Handler {
 	 */
 	public function get_extra_html_content() {
 		// Add the 'Add new subscribe option'
-		$html  = '';
+
+		$html  = '<p>Click "Add subscribe option" below to add a new subscribe URL field</p>';
 		$html .= '<p class="add">' . "\n";
 		$html .= '<input id="ssp-options-add-subscribe" type="button" class="button-primary" value="' . esc_attr( __( 'Add subscribe option', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
 		$html .= '</p>' . "\n";
@@ -85,13 +98,12 @@ class Options_Handler {
 			$subscribe_field_options[] = array(
 				'id'          => 'subscribe_option_' . $count,
 				// translators: %s: Service title eg iTunes
-				'label'       => sprintf( __( 'Subscribe option %s', 'seriously-simple-podcasting' ), $count ),
-				// translators: %s: Service title eg iTunes
-				'description' => sprintf( __( 'Subscribe option %s.', 'seriously-simple-podcasting' ), $count ),
+				'label'       => sprintf( __( '%s URL field label', 'seriously-simple-podcasting' ), $title ),
+				// translators: %1$s and %2$s: HTML anchor tags
+				'description' => sprintf( __( '%1$sDelete%2$s', 'seriously-simple-podcasting' ), '<a class="delete_subscribe_option" data-option="' . $key . '" href="#delete">', '</a>' ),
 				'type'        => 'text',
 				'default'     => $title,
-				// translators: %s: Service title eg iTunes
-				'placeholder' => sprintf( __( 'Subscribe option %s', 'seriously-simple-podcasting' ), $count ),
+				'placeholder' => __( 'Subscribe button label', 'seriously-simple-podcasting' ),
 				'callback'    => 'wp_strip_all_tags',
 				'class'       => 'text subscribe-option',
 			);
@@ -132,7 +144,24 @@ class Options_Handler {
 	 */
 	public function insert_subscribe_option() {
 		$subscribe_options            = get_option( 'ss_podcasting_subscribe_options', array() );
-		$subscribe_options['new_url'] = 'New Option';
+		$subscribe_options['new_url'] = 'New URL field label';
+		update_option( 'ss_podcasting_subscribe_options', $subscribe_options );
+
+		return $subscribe_options;
+	}
+
+	/**
+	 * Deletes a subscribe option, based on it's key
+	 *
+	 * @param $option_key
+	 *
+	 * @return mixed|void
+	 */
+	public function delete_subscribe_option( $option_key ) {
+		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+		if ( isset( $subscribe_options[ $option_key ] ) ) {
+			unset( $subscribe_options[ $option_key ] );
+		}
 		update_option( 'ss_podcasting_subscribe_options', $subscribe_options );
 
 		return $subscribe_options;

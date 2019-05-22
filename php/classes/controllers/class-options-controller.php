@@ -53,16 +53,27 @@ class Options_Controller extends Controller {
 		/**
 		 * Only load the options js when the options screen is loaded
 		 */
-		if ( 'podcast_page_podcast_options' === $hook ) {
-			wp_register_script(
-				'ssp-options',
-				esc_url( $this->assets_url . 'js/options' . $this->script_suffix . '.js' ),
-				array( 'jquery' ),
-				$this->version,
-				true
-			);
-			wp_enqueue_script( 'ssp-options' );
+		if ( 'podcast_page_podcast_options' !== $hook ) {
+			return;
 		}
+
+		wp_register_script(
+			'ssp-options',
+			esc_url( $this->assets_url . 'js/options' . $this->script_suffix . '.js' ),
+			array( 'jquery' ),
+			$this->version,
+			true
+		);
+		wp_enqueue_script( 'ssp-options' );
+
+		$options_nonce = wp_create_nonce( 'ssp_ajax_options_nonce' );
+		wp_localize_script(
+			'ssp-options',
+			'options_ajax_object',
+			array(
+				'nonce' => $options_nonce,
+			)
+		);
 	}
 
 	/**

@@ -95,19 +95,24 @@ class Options_Handler {
 
 		$count = 1;
 		foreach ( $subscribe_options as $key => $title ) {
+			if ( 'new_url' === $key ) {
+				$label = 'New';
+			} else {
+				$label = $title;
+			}
 			$subscribe_field_options[] = array(
 				'id'          => 'subscribe_option_' . $count,
 				// translators: %s: Service title eg iTunes
-				'label'       => sprintf( __( '%s URL field label', 'seriously-simple-podcasting' ), $title ),
-				// translators: %1$s and %2$s: HTML anchor tags
-				'description' => sprintf( __( '%1$sDelete%2$s', 'seriously-simple-podcasting' ), '<a class="delete_subscribe_option" data-option="' . $key . '" href="#delete">', '</a>' ),
+				'label'       => sprintf( __( '%s URL field label', 'seriously-simple-podcasting' ), $label ),
+				// translators: %1$s and %2$s: HTML anchor opening and closing tags
+				'description' => sprintf( __( '%1$sDelete%2$s', 'seriously-simple-podcasting' ), '<a class="delete_subscribe_option" data-count="' . $count . '" data-option="' . $key . '" href="#delete">', '</a>' ),
 				'type'        => 'text',
 				'default'     => $title,
 				'placeholder' => __( 'Subscribe button label', 'seriously-simple-podcasting' ),
 				'callback'    => 'wp_strip_all_tags',
 				'class'       => 'text subscribe-option',
 			);
-			$count++;
+			$count ++;
 		}
 
 		return apply_filters( 'ssp_subscribe_field_options', $subscribe_field_options );
@@ -157,12 +162,16 @@ class Options_Handler {
 	 *
 	 * @return mixed|void
 	 */
-	public function delete_subscribe_option( $option_key ) {
+	public function delete_subscribe_option( $option_key, $option_count ) {
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
 		if ( isset( $subscribe_options[ $option_key ] ) ) {
 			unset( $subscribe_options[ $option_key ] );
 		}
 		update_option( 'ss_podcasting_subscribe_options', $subscribe_options );
+
+		// delete actual option from database eg ss_podcasting_subscribe_option_7
+		$subscribe_option_key = 'ss_podcasting_subscribe_option_' . $option_count;
+		delete_option( $subscribe_option_key );
 
 		return $subscribe_options;
 	}

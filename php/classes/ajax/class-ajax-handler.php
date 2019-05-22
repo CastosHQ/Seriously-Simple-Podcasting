@@ -60,7 +60,7 @@ class Ajax_Handler {
 	 * Insert a new subscribe field option
 	 */
 	public function insert_new_subscribe_option() {
-		// @todo add nonces
+		check_ajax_referer( 'ssp_ajax_options_nonce' );
 		if ( ! current_user_can( 'manage_podcast' ) ) {
 			wp_send_json(
 				array(
@@ -76,7 +76,7 @@ class Ajax_Handler {
 	}
 
 	public function delete_subscribe_option() {
-		// @todo add nonces
+		check_ajax_referer( 'ssp_ajax_options_nonce' );
 		if ( ! current_user_can( 'manage_podcast' ) ) {
 			wp_send_json(
 				array(
@@ -87,18 +87,18 @@ class Ajax_Handler {
 
 			return;
 		}
-		if ( ! isset( $_POST['option'] ) ) {
+		if ( ! isset( $_POST['option'] ) || ! isset( $_POST['count'] ) ) {
 			wp_send_json(
 				array(
 					'status'  => 'error',
-					'message' => 'POSTed option not set',
+					'message' => 'POSTed option or count not set',
 				)
 			);
 
 			return;
 		}
 		$options_handler   = new Options_Handler();
-		$subscribe_options = $options_handler->delete_subscribe_option( $_POST['option'] );
+		$subscribe_options = $options_handler->delete_subscribe_option( sanitize_text_field( $_POST['option'] ), sanitize_text_field( $_POST['count'] ) );
 		wp_send_json( $subscribe_options );
 	}
 

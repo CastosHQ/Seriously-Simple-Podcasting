@@ -5,11 +5,13 @@
 
 jQuery(document).ready(function ($) {
 	$('#ssp-options-add-subscribe').on('click', function () {
-		// @todo add nonces
 		$.ajax({
 			method: "POST",
 			url: ajaxurl,
-			data: {action: "insert_new_subscribe_option"}
+			data: {
+				_ajax_nonce: options_ajax_object.nonce,
+				action: "insert_new_subscribe_option"
+			}
 		})
 			.done(function () {
 				location.reload();
@@ -19,13 +21,14 @@ jQuery(document).ready(function ($) {
 	$('.delete_subscribe_option').on('click', function (e) {
 		e.preventDefault();
 		let anchor = $(this);
-		// @todo add nonces
 		$.ajax({
 			method: "POST",
 			url: ajaxurl,
 			data: {
+				_ajax_nonce: options_ajax_object.nonce,
 				action: "delete_subscribe_option",
-				option: anchor.data('option')
+				count: anchor.data('count'),
+				option: anchor.data('option'),
 			}
 		})
 			.done(function () {

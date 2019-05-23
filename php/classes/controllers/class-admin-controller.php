@@ -267,11 +267,12 @@ class Admin_Controller extends Controller {
 		);
 
 		$series_args = array(
-			'public'       => true,
-			'hierarchical' => true,
-			'rewrite'      => array( 'slug' => apply_filters( 'ssp_series_slug', 'series' ) ),
-			'labels'       => $series_labels,
-			'show_in_rest' => true,
+			'public'            => true,
+			'hierarchical'      => true,
+			'rewrite'           => array( 'slug' => apply_filters( 'ssp_series_slug', 'series' ) ),
+			'labels'            => $series_labels,
+			'show_in_rest'      => true,
+			'show_admin_column' => true,
 		);
 
 		$series_args = apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );

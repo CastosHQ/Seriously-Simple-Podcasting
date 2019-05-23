@@ -44,11 +44,6 @@ if ( ! ssp_is_php_version_ok() ) {
 
 require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
-/*
-require_once 'includes/class-podmotor-handler.php';
-require_once 'includes/class-ssp-external-rss-importer.php';
-*/
-
 /**
  * @todo refactor these globals
  * @todo the admin_controller should really be renamed, as it's not really 'admin' specific

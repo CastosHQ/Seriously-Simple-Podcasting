@@ -102,12 +102,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.20.0-alpha.2 =
-* 2019-05-20
+= 1.20.0-beta =
+* 2019-05-23
 * [CHANGE] Refactoring plugin structure with basic support for composer autoloading, namespacing and better WordPress coding standards support
 * [CHANGE] Refactoring plugin structure to have a better separation of concerns (WIP)
 * [CHANGE] PHP version 5.6 or greater now required
 * [CHANGE] Added a plugin options page, which allows for managing more than 4 subscribe links
+* [FIX] Fixes a bug where Post Types marked as Podcasts couldn't be assigned series
 * [TWEAK] Minor changes to the upgrade page
 
 = 1.19.20 =

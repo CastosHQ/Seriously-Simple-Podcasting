@@ -1328,7 +1328,7 @@ HTML;
 			flush_rewrite_rules();
 		}
 
-		if ( version_compare( $previous_version, '1.19.20', '=<' ) ) {
+		if ( version_compare( $previous_version, '1.19.20', '<=' ) ) {
 			$this->upgrade_handler->upgrade_subscribe_links_options();
 		}
 

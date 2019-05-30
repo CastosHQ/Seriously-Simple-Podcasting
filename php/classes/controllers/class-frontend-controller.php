@@ -807,7 +807,7 @@ class Frontend_Controller extends Controller {
 
 		foreach( $subscribe_urls as $key => $data ){
 
-			if( !$data ){
+			if ( empty( $data['url'] ) ) {
 				continue;
 			}
 

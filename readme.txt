@@ -102,6 +102,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.20.2-beta =
+* 2019-05-30
+* [FIX] Fixes a legacy bug where post type registration was prioritised over other custom post types
+
 = 1.20.1 =
 * 2019-05-28
 * [FIX] Fixes a bug where subscribe links still show, even if not url has been set

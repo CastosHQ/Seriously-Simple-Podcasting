@@ -46,7 +46,7 @@ jQuery(document).ready(function($) {
 			$.ajax({
 				method: "GET",
 				url: ajaxurl,
-				data: { action: "validate_podmotor_api_credentials", api_token: podmotor_account_api_token, email: podmotor_account_email }
+				data: { action: "validate_castos_credentials", api_token: podmotor_account_api_token, email: podmotor_account_email }
 			})
 			.done(function( response ) {
 				if ( response.status == 'success' ){
@@ -59,7 +59,7 @@ jQuery(document).ready(function($) {
 				}
 			});
 
-		})
+		});
 
 		/**
 		 * Disconnect Castos checkbox on change, renders a confirmation message to the user.

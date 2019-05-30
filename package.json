@@ -1,0 +1,11 @@
+{
+  "name": "seriously-simple-podcasting",
+  "version": "0.1.0",
+  "main": "Gruntfile.js",
+  "author": "Jonathan Bossenger",
+  "devDependencies": {
+    "grunt": "^1.0.4",
+    "grunt-wp-i18n": "^1.0.3",
+    "grunt-wp-readme-to-markdown": "~1.0.0"
+  }
+}

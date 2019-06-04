@@ -14,6 +14,9 @@ class Log_Helper {
 	public $log_path;
 	public $log_url;
 
+	/**
+	 * Log_Helper constructor.
+	 */
 	public function __construct() {
 		$this->log_dir_path = SSP_PLUGIN_PATH . 'log' . DIRECTORY_SEPARATOR;
 		$this->log_dir_url  = SSP_PLUGIN_URL . 'log' . DIRECTORY_SEPARATOR;
@@ -22,7 +25,16 @@ class Log_Helper {
 		$this->check_paths();
 	}
 
+	/**
+	 * Checks if the logging paths exist, and attempts to create them
+	 * Will only fire if SSP_DEBUG is set and true
+	 *
+	 * @return bool
+	 */
 	public function check_paths() {
+		if ( ! defined( 'SSP_DEBUG' ) || ! SSP_DEBUG ) {
+			return false;
+		}
 		if ( ! is_dir( $this->log_dir_path ) ) {
 			mkdir( $this->log_dir_path );
 		}

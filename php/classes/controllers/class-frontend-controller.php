@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use stdClass;
 use WP_Query;
 

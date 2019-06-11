@@ -54,7 +54,7 @@ class Admin_Controller extends Controller {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Regsiter podcast post type, taxonomies and meta fields.
-		add_action( 'init', array( $this, 'register_post_type' ), 1 );
+		add_action( 'init', array( $this, 'register_post_type' ), 11 );
 
 		// Register podcast feed.
 		add_action( 'init', array( $this, 'add_feed' ), 1 );
@@ -241,7 +241,6 @@ class Admin_Controller extends Controller {
 	 * @return void
 	 */
 	private function register_taxonomies() {
-
 		$podcast_post_types = ssp_post_types( true );
 
 		$series_labels = array(

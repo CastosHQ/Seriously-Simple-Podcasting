@@ -825,4 +825,19 @@ class Settings_Handler {
 		return $subscribe_field_options;
 	}
 
+	/**
+	 * Checks if a user role exists, used in the SettingsController add_caps method
+	 *
+	 * @param $role
+	 *
+	 * @return bool
+	 */
+	public function role_exists( $role ) {
+		if ( ! empty( $role ) ) {
+			return $GLOBALS['wp_roles']->is_role( $role );
+		}
+
+		return false;
+	}
+
 }

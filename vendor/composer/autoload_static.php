@@ -10,6 +10,7 @@ class ComposerStaticInit34e210bfa8d7151620d7fa4510f053c5
         'SeriouslySimplePodcasting\\Ajax\\Ajax_Handler' => __DIR__ . '/../..' . '/php/classes/ajax/class-ajax-handler.php',
         'SeriouslySimplePodcasting\\Controllers\\Admin_Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-admin-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-controller.php',
+        'SeriouslySimplePodcasting\\Controllers\\Episode_Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-episode-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\Extensions_Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-extensions-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\Frontend_Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-frontend-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\Import_Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-import-controller.php',

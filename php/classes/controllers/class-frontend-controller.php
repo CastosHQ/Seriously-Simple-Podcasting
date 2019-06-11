@@ -32,6 +32,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Frontend_Controller extends Controller {
 
+	protected $episode_controller;
+
 	// @todo reference prior to analytics launch
 	public $style_guide = array(
 		'dark'     => '#3A3A3A',
@@ -50,6 +52,8 @@ class Frontend_Controller extends Controller {
 	public function __construct( $file, $version ) {
 
 		parent::__construct( $file, $version );
+
+		$this->episode_controller = new Episode_Controller( $file, $version );
 
 		global $large_player_instance_number;
 		$large_player_instance_number = 0;
@@ -314,54 +318,25 @@ class Frontend_Controller extends Controller {
 
 	/**
 	 * Get episode enclosure
+	 * Wrapper for Episode_Controller get_enclosure method
+	 *
 	 * @param  integer $episode_id ID of episode
 	 * @return string              URL of enclosure
 	 */
 	public function get_enclosure( $episode_id = 0 ) {
-
-		if ( $episode_id ) {
-			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ), true ), $episode_id );
-		}
-
-		return '';
+		return $this->episode_controller->get_enclosure( $episode_id );
 	}
 
 	/**
 	 * Get download link for episode
+	 * Wrapper for Episode_Controller get_episode_download_link method
+	 *
 	 * @param  integer $episode_id ID of episode
+	 * @param  string $referrer Referrer
 	 * @return string              Episode download link
 	 */
 	public function get_episode_download_link( $episode_id, $referrer = '' ) {
-
-		// Get file URL
-		$file = $this->get_enclosure( $episode_id );
-
-		if ( ! $file ) {
-			return;
-		}
-
-		// Get download link based on permalink structure
-		if ( get_option( 'permalink_structure' ) ) {
-			$episode = get_post( $episode_id );
-			// Get file extension - default to MP3 to prevent empty extension strings
-			$ext = pathinfo( $file, PATHINFO_EXTENSION );
-			if ( ! $ext ) {
-				$ext = 'mp3';
-			}
-			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
-		} else {
-			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
-		}
-
-		// Allow for dyamic referrer
-		$referrer = apply_filters( 'ssp_download_referrer', $referrer, $episode_id );
-
-		// Add referrer flag if supplied
-		if ( $referrer ) {
-			$link = add_query_arg( array( 'ref' => $referrer ), $link );
-		}
-
-		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
+		return $this->episode_controller->get_episode_download_link( $episode_id, $referrer );
 	}
 
 	/**

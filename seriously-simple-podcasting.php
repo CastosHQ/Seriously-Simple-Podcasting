@@ -66,5 +66,5 @@ if ( is_admin() ) {
 global $wp_version;
 if ( version_compare( $wp_version, '4.7', '>=' ) ) {
 	global $ssp_wp_rest_api;
-	$ssp_wp_rest_api = new Rest_Api_Controller( SSP_VERSION );
+	$ssp_wp_rest_api = new Rest_Api_Controller( __FILE__, SSP_VERSION );
 }

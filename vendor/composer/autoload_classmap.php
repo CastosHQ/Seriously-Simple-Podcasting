@@ -9,6 +9,7 @@ return array(
     'SeriouslySimplePodcasting\\Ajax\\Ajax_Handler' => $baseDir . '/php/classes/ajax/class-ajax-handler.php',
     'SeriouslySimplePodcasting\\Controllers\\Admin_Controller' => $baseDir . '/php/classes/controllers/class-admin-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Controller' => $baseDir . '/php/classes/controllers/class-controller.php',
+    'SeriouslySimplePodcasting\\Controllers\\Episode_Controller' => $baseDir . '/php/classes/controllers/class-episode-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Extensions_Controller' => $baseDir . '/php/classes/controllers/class-extensions-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Frontend_Controller' => $baseDir . '/php/classes/controllers/class-frontend-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Import_Controller' => $baseDir . '/php/classes/controllers/class-import-controller.php',

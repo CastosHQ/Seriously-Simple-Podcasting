@@ -988,6 +988,10 @@ class Frontend_Controller extends Controller {
 
 		global $post;
 
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			return $excerpt;
+		}
+
 		if( post_password_required( $post->ID ) ) {
 			return $excerpt;
 		}

@@ -102,6 +102,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.20.3-alpha =
+* 2019-06-11
+* [FIX] Fixes a bug introduced by 1.20.0 where using link_title in the ss_podcast shortcode does not work
+* [FIX] Fixes a spelling error in the default Stitcher subscribe option
+* [NEW] Check if editor or administrator roles exist, before adding user capabilities to podcast post types
+* [NEW] Adds a new download_link REST API field on the episodes endpoint, which allows for stats tracking via the REST API
+
 = 1.20.2 =
 * 2019-06-05
 * [FIX] Fixes a legacy bug where the series custom taxonomy was not available an certain custom post types, if enabled

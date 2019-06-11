@@ -10,7 +10,7 @@ class Upgrade_Handler {
 	public function upgrade_subscribe_links_options() {
 		$subscribe_links_options = array(
 			'itunes_url'      => 'iTunes',
-			'stitcher_url'    => 'Sticher',
+			'stitcher_url'    => 'Stitcher',
 			'google_play_url' => 'Google Play',
 			'spotify_url'     => 'Spotify',
 		);

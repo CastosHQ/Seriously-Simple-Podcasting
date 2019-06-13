@@ -103,7 +103,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 1.20.3 =
-* 2019-06-11
+* 2019-06-13
 * [FIX] Fixes a bug introduced by 1.20.0 where using link_title in the ss_podcast shortcode does not work
 * [FIX] Fixes a spelling error in the default Stitcher subscribe option
 * [NEW] Check if editor or administrator roles exist, before adding user capabilities to podcast post types

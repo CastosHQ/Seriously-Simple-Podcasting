@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Rest;
 
+use SeriouslySimplePodcasting\Controllers\Episode_Controller;
+
 /**
  * Extending the WP REST API for Seriously Simple Podcasting
  *
@@ -15,6 +17,11 @@ class Rest_Api_Controller {
 	 * @var $version string Plugin version (semvar)
 	 */
 	private $version;
+
+	/**
+	 * @var $file plugin file
+	 */
+	private $file;
 
 	/**
 	 * Gets the default podcast data
@@ -47,9 +54,11 @@ class Rest_Api_Controller {
 	/**
 	 * Constructor
 	 *
+	 * @param    string $file Plugin file
 	 * @param    string $version Plugin version
 	 */
-	public function __construct( $version ) {
+	public function __construct( $file, $version ) {
+		$this->file    = $file;
 		$this->version = $version;
 
 		// Register custom REST API routes.
@@ -58,6 +67,8 @@ class Rest_Api_Controller {
 		add_action( 'rest_api_init', array( $this, 'create_api_series_fields' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_episode_images' ) );
+
+		add_action( 'rest_api_init', array( $this, 'register_rest_audio_download_link' ) );
 
 	}
 
@@ -205,6 +216,21 @@ class Rest_Api_Controller {
 	}
 
 	/**
+	 * Add the audio file tracking url field to all Podcast post types
+	 */
+	public function register_rest_audio_download_link() {
+		register_rest_field(
+			ssp_post_types(),
+			'download_link',
+			array(
+				'get_callback'    => array( $this, 'get_rest_audio_download_link' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+	/**
 	 * Get the featured image for valid Podcast post types
 	 * Call back for the register_rest_episode_images method
 	 *
@@ -219,6 +245,27 @@ class Rest_Api_Controller {
 			$img = wp_get_attachment_image_src( $object['featured_media'], 'app-thumb' );
 
 			return $img[0];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the audio_file for valid Podcast post types
+	 * Call back for the register_rest_episode_audio_file method
+	 *
+	 * @param $object
+	 * @param $field_name
+	 * @param $request
+	 *
+	 * @return bool
+	 */
+	public function get_rest_audio_download_link( $object, $field_name, $request ) {
+		if ( $object['meta']['audio_file'] ) {
+			$episode_controller = new Episode_Controller( $this->file, $this->version );
+			$download_link       = $episode_controller->get_episode_download_link( $object['id'] );
+
+			return $download_link;
 		}
 
 		return false;

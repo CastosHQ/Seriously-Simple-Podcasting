@@ -43,6 +43,8 @@ class Settings_Controller extends Controller {
 	 */
 	protected $settings;
 
+	protected $settings_handler;
+
 	protected $series_handler;
 
 	protected $import_controller;
@@ -59,6 +61,7 @@ class Settings_Controller extends Controller {
 
 		$this->settings_base = 'ss_podcasting_';
 
+		$this->settings_handler      = new Settings_Handler();
 		$this->series_handler        = new Series_Handler();
 		$this->import_controller     = new Import_Controller();
 		$this->extensions_controller = new Extensions_Controller( $file, $version );
@@ -167,6 +170,10 @@ class Settings_Controller extends Controller {
 		// Loop through each role and assign capabilities.
 		foreach ( $roles as $the_role ) {
 
+			if ( ! $this->settings_handler->role_exists( $the_role ) ) {
+				continue;
+			}
+
 			$role = get_role( $the_role );
 			$caps = array(
 				'manage_podcast',
@@ -245,8 +252,7 @@ class Settings_Controller extends Controller {
 	 * Load settings
 	 */
 	public function load_settings() {
-		$settings_handler = new Settings_Handler();
-		$this->settings   = $settings_handler->settings_fields();
+		$this->settings   = $this->settings_handler->settings_fields();
 	}
 
 	/**

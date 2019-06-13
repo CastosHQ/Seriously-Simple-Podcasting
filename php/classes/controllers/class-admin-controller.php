@@ -1332,6 +1332,10 @@ HTML;
 			$this->upgrade_handler->upgrade_subscribe_links_options();
 		}
 
+		if ( version_compare( $previous_version, '1.20.3', '<=' ) ) {
+			$this->upgrade_handler->upgrade_stitcher_subscribe_link_option();
+		}
+
 		// always just check if the directory is ok
 		ssp_get_upload_directory( false );
 

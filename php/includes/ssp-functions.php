@@ -141,7 +141,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 
 		$defaults = array(
 			'echo'         => true,
-			'link_title'   => true,
+			'link_title'   => 'true',
 			'title'        => '',
 			'content'      => 'series',
 			'series'       => '',
@@ -193,7 +193,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$class = 'podcast';
 
 					$title = get_the_title();
-					if ( true === $args['link_title'] ) {
+					if ( 'true' === $args['link_title'] ) {
 						$title = '<a href="' . esc_url( $post->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';
 					}
 
@@ -221,7 +221,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$class = 'podcast';
 
 					$title = $series->title;
-					if ( true === $args['link_title'] ) {
+					if ( 'true' === $args['link_title'] ) {
 						$title = '<a href="' . esc_url( $series->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';
 					}
 

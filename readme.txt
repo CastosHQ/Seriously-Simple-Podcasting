@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 1.20.2
+Stable tag: 1.20.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.20.3 =
+* 2019-06-11
+* [FIX] Fixes a bug introduced by 1.20.0 where using link_title in the ss_podcast shortcode does not work
+* [FIX] Fixes a spelling error in the default Stitcher subscribe option
+* [NEW] Check if editor or administrator roles exist, before adding user capabilities to podcast post types
+* [NEW] Adds a new download_link REST API field on the episodes endpoint, which allows for stats tracking via the REST API
 
 = 1.20.2 =
 * 2019-06-05

@@ -13,8 +13,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 global $ss_podcasting, $wp_query;
 
-$logger = new \SeriouslySimplePodcasting\Helpers\Log_Helper();
-
 // Hide all errors
 error_reporting( 0 );
 
@@ -24,25 +22,20 @@ $give_access = true;
 // Check if feed is password protected
 $protection = get_option( 'ss_podcasting_protect', '' );
 
-$logger->log( 'Protection', $protection );
-
 // Handle feed protection if required
-if ( $protection && $protection == 'on' ) {
+if ( $protection && 'on' === $protection ) {
 
 	$give_access = false;
 
 	// Request password and give access if correct
-	$logger->log( 'SERVER', $_SERVER );
 	if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) && ! isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 		$give_access = false;
 	} else {
 		$username = get_option( 'ss_podcasting_protection_username' );
 		$password = get_option( 'ss_podcasting_protection_password' );
 
-		$logger->log( 'Auth', array( 'username' => $username, 'password' => $password ) );
-
-		if ( $_SERVER['PHP_AUTH_USER'] == $username ) {
-			if ( md5( $_SERVER['PHP_AUTH_PW'] ) == $password ) {
+		if ( $_SERVER['PHP_AUTH_USER'] === $username ) {
+			if ( md5( $_SERVER['PHP_AUTH_PW'] ) === $password ) {
 				$give_access = true;
 			}
 		}

@@ -23,19 +23,19 @@ $give_access = true;
 $protection = get_option( 'ss_podcasting_protect', '' );
 
 // Handle feed protection if required
-if ( $protection && $protection == 'on' ) {
-	
+if ( $protection && 'on' === $protection ) {
+
 	$give_access = false;
-	
+
 	// Request password and give access if correct
 	if ( ! isset( $_SERVER['PHP_AUTH_USER'] ) && ! isset( $_SERVER['PHP_AUTH_PW'] ) ) {
 		$give_access = false;
 	} else {
 		$username = get_option( 'ss_podcasting_protection_username' );
 		$password = get_option( 'ss_podcasting_protection_password' );
-		
-		if ( $_SERVER['PHP_AUTH_USER'] == $username ) {
-			if ( md5( $_SERVER['PHP_AUTH_PW'] ) == $password ) {
+
+		if ( $_SERVER['PHP_AUTH_USER'] === $username ) {
+			if ( md5( $_SERVER['PHP_AUTH_PW'] ) === $password ) {
 				$give_access = true;
 			}
 		}
@@ -62,24 +62,24 @@ $give_access = apply_filters( 'ssp_feed_access', $give_access, $series_id );
 
 // Send 401 status and display no access message if access has been denied
 if ( ! $give_access ) {
-	
+
 	// Set default message
 	$message = __( 'You are not permitted to view this podcast feed.', 'seriously-simple-podcasting' );
-	
+
 	// Check message option from plugin settings
 	$message_option = get_option( 'ss_podcasting_protection_no_access_message' );
 	if ( $message_option ) {
 		$message = $message_option;
 	}
-	
+
 	// Allow message to be filtered dynamically
 	$message = apply_filters( 'ssp_feed_no_access_message', $message );
-	
+
 	$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
-	
+
 	header( 'WWW-Authenticate: Basic realm="Podcast Feed"' );
 	header( 'HTTP/1.0 401 Unauthorized' );
-	
+
 	die( $no_access_message );
 }
 
@@ -87,14 +87,14 @@ if ( ! $give_access ) {
 $redirect     = get_option( 'ss_podcasting_redirect_feed' );
 $new_feed_url = false;
 if ( $redirect && $redirect == 'on' ) {
-	
+
 	$new_feed_url = get_option( 'ss_podcasting_new_feed_url' );
 	$update_date  = get_option( 'ss_podcasting_redirect_feed_date' );
-	
+
 	if ( $new_feed_url && $update_date ) {
 		$redirect_date = strtotime( '+2 days', $update_date );
 		$current_date  = time();
-		
+
 		// Redirect with 301 if it is more than 2 days since redirect was saved
 		if ( $current_date > $redirect_date ) {
 			header( 'HTTP/1.1 301 Moved Permanently' );
@@ -271,7 +271,7 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
      xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 	<?php do_action( 'rss2_ns' ); ?>
 >
-	
+
 	<channel>
 		<title><?php echo esc_html( $title ); ?></title>
 		<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml"/>
@@ -335,24 +335,24 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 		<?php if ( $new_feed_url ) { ?>
 			<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 		<?php }
-		
+
 		// Prevent WP core from outputting an <image> element
 		remove_action( 'rss2_head', 'rss2_site_icon' );
-		
+
 		// Add RSS2 headers
 		do_action( 'rss2_head' );
-		
+
 		// Get post IDs of all podcast episodes
 		$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ) ) );
-		
+
 		$args = ssp_episodes( $num_posts, $podcast_series, true, 'feed' );
-		
+
 		$qry = new WP_Query( $args );
-		
+
 		if ( $qry->have_posts() ) {
 			while ( $qry->have_posts() ) {
 				$qry->the_post();
-				
+
 				// Audio file
 				$audio_file = $ss_podcasting->get_enclosure( get_the_ID() );
 				if ( get_option( 'permalink_structure' ) ) {
@@ -360,14 +360,14 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 				} else {
 					$enclosure = $audio_file;
 				}
-				
+
 				$enclosure = apply_filters( 'ssp_feed_item_enclosure', $enclosure, get_the_ID() );
-				
+
 				// If there is no enclosure then go no further
 				if ( ! isset( $enclosure ) || ! $enclosure ) {
 					continue;
 				}
-				
+
 				// Get episode image from post featured image
 				$episode_image = '';
 				$image_id      = get_post_thumbnail_id( get_the_ID() );
@@ -378,17 +378,17 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					}
 				}
 				$episode_image = apply_filters( 'ssp_feed_item_image', $episode_image, get_the_ID() );
-				
+
 				// Episode duration (default to 0:00 to ensure there is always a value for this)
 				$duration = get_post_meta( get_the_ID(), 'duration', true );
 				if ( ! $duration ) {
 					$duration = '0:00';
 				}
 				$duration = apply_filters( 'ssp_feed_item_duration', $duration, get_the_ID() );
-				
+
 				// File size
 				$size = get_post_meta( get_the_ID(), 'filesize_raw', true );
-				
+
 				if ( ! $size ) {
 					if ( ssp_is_connected_to_podcastmotor() ) {
 						$formatted_size = get_post_meta( get_the_ID(), 'filesize', true );
@@ -398,12 +398,12 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					}
 				}
 				$size = apply_filters( 'ssp_feed_item_size', $size, get_the_ID() );
-				
-				
+
+
 				// File MIME type (default to MP3/MP4 to ensure there is always a value for this)
 				$mime_type = $ss_podcasting->get_attachment_mimetype( $audio_file );
 				if ( ! $mime_type ) {
-					
+
 					// Get the episode type (audio or video) to determine the appropriate default MIME type
 					$episode_type = $ss_podcasting->get_episode_type( get_the_ID() );
 					switch ( $episode_type ) {
@@ -416,7 +416,7 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					}
 				}
 				$mime_type = apply_filters( 'ssp_feed_item_mime_type', $mime_type, get_the_ID() );
-				
+
 				// Episode explicit flag
 				$ep_explicit = get_post_meta( get_the_ID(), 'explicit', true );
 				$ep_explicit = apply_filters( 'ssp_feed_item_explicit', $ep_explicit, get_the_ID() );
@@ -427,7 +427,7 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					$itunes_explicit_flag     = 'clean';
 					$googleplay_explicit_flag = 'No';
 				}
-				
+
 				// Episode block flag
 				$ep_block = get_post_meta( get_the_ID(), 'block', true );
 				$ep_block = apply_filters( 'ssp_feed_item_block', $ep_block, get_the_ID() );
@@ -436,27 +436,27 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 				} else {
 					$block_flag = 'no';
 				}
-				
+
 				// Episode author
 				$author = esc_html( get_the_author() );
 				$author = apply_filters( 'ssp_feed_item_author', $author, get_the_ID() );
-				
+
 				// Episode content (with iframes removed)
 				$content = get_the_content_feed( 'rss2' );
 				$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 				$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
-				
+
 				// iTunes summary is the full episode content, but must be shorter than 4000 characters
 				$itunes_summary = mb_substr( $content, 0, 3999 );
 				$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, get_the_ID() );
 				$gp_description = apply_filters( 'ssp_feed_item_gp_description', $itunes_summary, get_the_ID() );
-				
+
 				// Episode description
 				ob_start();
 				the_excerpt_rss();
 				$description = ob_get_clean();
 				$description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
-				
+
 				// iTunes subtitle does not allow any HTML and must be shorter than 255 characters
 				$itunes_subtitle = strip_tags( strip_shortcodes( $description ) );
 				$itunes_subtitle = str_replace( array(
@@ -471,7 +471,7 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 				), array( '', '', '', '', '', '', '', '' ), $itunes_subtitle );
 				$itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
 				$itunes_subtitle = apply_filters( 'ssp_feed_item_itunes_subtitle', $itunes_subtitle, get_the_ID() );
-				
+
 				// Date recorded
 				$pubDateType = get_option( 'ss_podcasting_publish_date', 'published' );
 				if ( $pubDateType === 'published' ) {

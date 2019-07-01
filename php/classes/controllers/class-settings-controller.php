@@ -613,54 +613,6 @@ class Settings_Controller extends Controller {
 	}
 
 	/**
-	 * Encode feed password
-	 *
-	 * @param  string $password User input
-	 *
-	 * @return string           Encoded password
-	 */
-	public function encode_password( $password ) {
-
-		if ( $password && strlen( $password ) > 0 && '' !== $password ) {
-			$password = md5( $password );
-		} else {
-			$option   = get_option( 'ss_podcasting_protection_password' );
-			$password = $option;
-		}
-
-		return $password;
-	}
-
-	/**
-	 * Validate protectino message
-	 *
-	 * @param  string $message User input
-	 *
-	 * @return string          Validated message
-	 */
-	public function validate_message( $message ) {
-
-		if ( $message ) {
-
-			$allowed = array(
-				'a'      => array(
-					'href'   => array(),
-					'title'  => array(),
-					'target' => array(),
-				),
-				'br'     => array(),
-				'em'     => array(),
-				'strong' => array(),
-				'p'      => array(),
-			);
-
-			$message = wp_kses( $message, $allowed );
-		}
-
-		return $message;
-	}
-
-	/**
 	 * Mark redirect date for feed
 	 *
 	 * @param  string $option Name of option being updated

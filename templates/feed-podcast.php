@@ -118,6 +118,8 @@ if ( $series_id ) {
 	}
 }
 
+$turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
+
 // Podcast title
 $title = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
 if ( $podcast_series ) {
@@ -242,19 +244,11 @@ $category1 = ssp_get_feed_category_output( 1, $series_id );
 $category2 = ssp_get_feed_category_output( 2, $series_id );
 $category3 = ssp_get_feed_category_output( 3, $series_id );
 
-// Get stylehseet URL (filterable to allow custom RSS stylesheets)
-$stylehseet_url = apply_filters( 'ssp_rss_stylesheet', $ss_podcasting->template_url . 'feed-stylesheet.xsl' );
-
 // Set RSS content type and charset headers
 header( 'Content-Type: ' . feed_content_type( 'podcast' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
 // Use `echo` for first line to prevent any extra characters at start of document
 echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?>' . "\n";
-
-// Include RSS stylesheet
-if ( $stylehseet_url ) {
-	echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( $stylehseet_url ) . '"?>';
-}
 
 // Get iTunes Type
 $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_' . $series_id : null ) );
@@ -289,22 +283,17 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 			<?php
 		}
 		?>
-		<googleplay:author><?php echo esc_html( $author ); ?></googleplay:author>
-		<googleplay:email><?php echo esc_html( $owner_email ); ?></googleplay:email>
 		<itunes:summary><?php echo esc_html( $podcast_description ); ?></itunes:summary>
-		<googleplay:description><?php echo esc_html( $podcast_description ); ?></googleplay:description>
 		<itunes:owner>
 			<itunes:name><?php echo esc_html( $owner_name ); ?></itunes:name>
 			<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>
 		</itunes:owner>
 		<itunes:explicit><?php echo esc_html( $itunes_explicit ); ?></itunes:explicit>
-		<googleplay:explicit><?php echo esc_html( $googleplay_explicit ); ?></googleplay:explicit>
 		<?php if ( $complete ) { ?>
 			<itunes:complete><?php echo esc_html( $complete ); ?></itunes:complete><?php }
 		if ( $image ) {
 			?>
 			<itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
-			<googleplay:image href="<?php echo esc_url( $image ); ?>"></googleplay:image>
 			<image>
 				<url><?php echo esc_url( $image ); ?></url>
 				<title><?php echo esc_html( $title ); ?></title>
@@ -334,8 +323,18 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 		<?php } ?>
 		<?php if ( $new_feed_url ) { ?>
 			<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
-		<?php }
+		<?php } ?>
+		<?php if ( 'off' === $turbo ) { ?>
+			<googleplay:author><?php echo esc_html( $author ); ?></googleplay:author>
+			<googleplay:email><?php echo esc_html( $owner_email ); ?></googleplay:email>
+			<googleplay:description><?php echo esc_html( $podcast_description ); ?></googleplay:description>
+			<googleplay:explicit><?php echo esc_html( $googleplay_explicit ); ?></googleplay:explicit>
+			<?php if ( $image ) { ?>
+				<googleplay:image href="<?php echo esc_url( $image ); ?>"></googleplay:image>
+			<?php } ?>
+		<?php } ?>
 
+		<?php
 		// Prevent WP core from outputting an <image> element
 		remove_action( 'rss2_head', 'rss2_site_icon' );
 
@@ -526,20 +525,28 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					<?php if ( $itunes_season_number ): ?>
 						<itunes:season><?php echo $itunes_season_number; ?></itunes:season>
 					<?php endif; ?>
-					<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
-					<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
-					<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
-					<?php if ( $episode_image ) { ?>
-						<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
-						<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
+					<?php if ( 'off' === $turbo ) { ?>
+						<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
+					<?php } else { ?>
+						<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
 					<?php } ?>
 					<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
+					<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
+					<?php if ( $episode_image ) { ?>
+						<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
+					<?php } ?>
 					<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
-					<googleplay:explicit><?php echo esc_html( $googleplay_explicit_flag ); ?></googleplay:explicit>
 					<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
-					<googleplay:block><?php echo esc_html( $block_flag ); ?></googleplay:block>
 					<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
 					<itunes:author><?php echo $author; ?></itunes:author>
+					<?php if ( 'off' === $turbo ) { ?>
+						<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
+						<?php if ( $episode_image ) { ?>
+							<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
+						<?php } ?>
+						<googleplay:explicit><?php echo esc_html( $googleplay_explicit_flag ); ?></googleplay:explicit>
+						<googleplay:block><?php echo esc_html( $block_flag ); ?></googleplay:block>
+					<?php } ?>
 				</item>
 			<?php }
 		} ?>

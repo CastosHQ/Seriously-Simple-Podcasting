@@ -577,6 +577,14 @@ class Settings_Handler {
 				'callback'    => 'wp_strip_all_tags',
 			),
 			array(
+				'id'          => 'turbocharge_feed',
+				'label'       => __( 'Turbocharge podcast feed', 'seriously-simple-podcasting' ),
+				'description' => sprintf( __( 'When enabled, this setting will speed up your feed loading time, by limiting or disabling certain content fields.', 'seriously-simple-podcasting' ), '<br/>' ),
+				'type'        => 'checkbox',
+				'default'     => '',
+				'callback'    => 'wp_strip_all_tags',
+			),
+			array(
 				'id'          => 'new_feed_url',
 				'label'       => __( 'New podcast feed URL', 'seriously-simple-podcasting' ),
 				'description' => __( 'Your podcast feed\'s new URL.', 'seriously-simple-podcasting' ),

@@ -118,8 +118,6 @@ if ( $series_id ) {
 	}
 }
 
-$turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
-
 // Podcast title
 $title = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
 if ( $podcast_series ) {
@@ -252,6 +250,9 @@ echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?>' . "
 
 // Get iTunes Type
 $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_' . $series_id : null ) );
+
+$turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
+
 ?>
 
 <rss version="2.0"
@@ -348,6 +349,10 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 
 		$qry = new WP_Query( $args );
 
+		if ( 'on' === $turbo ) {
+			$post_count = 0;
+		}
+
 		if ( $qry->have_posts() ) {
 			while ( $qry->have_posts() ) {
 				$qry->the_post();
@@ -397,7 +402,6 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					}
 				}
 				$size = apply_filters( 'ssp_feed_item_size', $size, get_the_ID() );
-
 
 				// File MIME type (default to MP3/MP4 to ensure there is always a value for this)
 				$mime_type = $ss_podcasting->get_attachment_mimetype( $audio_file );
@@ -501,6 +505,9 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					$itunes_episode_number = get_post_meta( get_the_ID(), 'itunes_episode_number', true );
 					$itunes_season_number  = get_post_meta( get_the_ID(), 'itunes_season_number', true );
 				}
+				if ( isset( $post_count ) ) {
+					$post_count ++;
+				}
 				?>
 				<item>
 					<title><?php esc_html( the_title_rss() ); ?></title>
@@ -525,13 +532,13 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					<?php if ( $itunes_season_number ): ?>
 						<itunes:season><?php echo $itunes_season_number; ?></itunes:season>
 					<?php endif; ?>
-					<?php if ( 'off' === $turbo ) { ?>
+					<?php if ( isset( $post_count ) && $post_count <= 10 ) { ?>
 						<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
-					<?php } else { ?>
-						<content:encoded><![CDATA[<?php echo $itunes_summary; ?>]]></content:encoded>
 					<?php } ?>
 					<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
-					<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
+					<?php if ( isset( $post_count ) && $post_count <= 10 ) { ?>
+						<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
+					<?php } ?>
 					<?php if ( $episode_image ) { ?>
 						<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
 					<?php } ?>

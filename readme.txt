@@ -102,7 +102,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.20.4=
+= 1.20.5-beta =
+* 2019-07-04
+* [NEW] Add the ability to turbo charge the load times of the RSS feed, by limiting certain fields
+
+= 1.20.4 =
 * 2019-07-01
 * [FIX] Fixes a bug introduced by 1.20.0 which breaks password protecting a feed
 

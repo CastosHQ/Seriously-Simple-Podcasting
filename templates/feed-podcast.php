@@ -528,7 +528,7 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					<?php if ( 'off' === $turbo ) { ?>
 						<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
 					<?php } else { ?>
-						<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
+						<content:encoded><![CDATA[<?php echo $itunes_summary; ?>]]></content:encoded>
 					<?php } ?>
 					<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 					<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>

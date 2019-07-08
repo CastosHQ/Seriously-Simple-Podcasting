@@ -444,21 +444,17 @@ $turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 				$author = esc_html( get_the_author() );
 				$author = apply_filters( 'ssp_feed_item_author', $author, get_the_ID() );
 
-				// Episode content (with iframes removed)
+				// Episode content (with shortcodes and iframes removed)
 				$content = get_the_content_feed( 'rss2' );
+				$content = strip_shortcodes( $content );
 				$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 				$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 
-				// iTunes summary is the full episode content, but must be shorter than 4000 characters
-				$itunes_summary = mb_substr( $content, 0, 3999 );
-				$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, get_the_ID() );
-				$gp_description = apply_filters( 'ssp_feed_item_gp_description', $itunes_summary, get_the_ID() );
-
-				// Episode description
-				ob_start();
-				the_excerpt_rss();
-				$description = ob_get_clean();
-				$description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
+				// Description, iTunes summary and Google Play description is the full episode content, but must be shorter than 4000 characters
+				$description    = mb_substr( $content, 0, 3999 );
+				$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $description, get_the_ID() );
+				$gp_description = apply_filters( 'ssp_feed_item_gp_description', $description, get_the_ID() );
+				$description    = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
 
 				// iTunes subtitle does not allow any HTML and must be shorter than 255 characters
 				$itunes_subtitle = strip_tags( strip_shortcodes( $description ) );
@@ -515,7 +511,7 @@ $turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 					<pubDate><?php echo $pubDate; ?></pubDate>
 					<dc:creator><?php echo $author; ?></dc:creator>
 					<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
-					<description><![CDATA[<?php echo $content; ?>]]></description>
+					<description><![CDATA[<?php echo $description; ?>]]></description>
 					<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
 					<?php if ( $keywords ) : ?>
 						<itunes:keywords><?php echo $keywords; ?></itunes:keywords>

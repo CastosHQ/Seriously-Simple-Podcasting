@@ -509,7 +509,7 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 					<pubDate><?php echo $pubDate; ?></pubDate>
 					<dc:creator><?php echo $author; ?></dc:creator>
 					<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
-					<description><![CDATA[<?php echo $description; ?>]]></description>
+					<description><![CDATA[<?php echo $content; ?>]]></description>
 					<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
 					<?php if ( $keywords ) : ?>
 						<itunes:keywords><?php echo $keywords; ?></itunes:keywords>

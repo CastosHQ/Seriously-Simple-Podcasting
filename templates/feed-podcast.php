@@ -441,8 +441,9 @@ $itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_
 				$author = esc_html( get_the_author() );
 				$author = apply_filters( 'ssp_feed_item_author', $author, get_the_ID() );
 
-				// Episode content (with iframes removed)
+				// Episode content (with shortcodes and iframes removed)
 				$content = get_the_content_feed( 'rss2' );
+				$content = strip_shortcodes( $content );
 				$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 				$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 

@@ -354,7 +354,13 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		);
 
 		if ( $series ) {
-			$args['series'] = esc_attr( $series );
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'series',
+					'field'    => 'slug',
+					'terms'    => esc_attr( $series )
+				)
+			);
 		}
 
 		$args = apply_filters( 'ssp_episode_query_args', $args, $context );

@@ -450,41 +450,52 @@ $turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 				$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 				$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 
-				// Description, iTunes summary and Google Play description is the full episode content, but must be shorter than 4000 characters
-				$description    = mb_substr( $content, 0, 3999 );
-				$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $description, get_the_ID() );
-				$gp_description = apply_filters( 'ssp_feed_item_gp_description', $description, get_the_ID() );
-				$description    = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
+				// Description is the full episode content, includes HTML, but must be shorter than 4000 characters
+				$description = mb_substr( $content, 0, 3999 );
+				$description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
 
-				// iTunes subtitle does not allow any HTML and must be shorter than 255 characters
-				$itunes_subtitle = strip_tags( strip_shortcodes( $description ) );
-				$itunes_subtitle = str_replace( array(
-					'>',
-					'<',
-					'\'',
-					'"',
-					'`',
-					'[andhellip;]',
-					'[&hellip;]',
-					'[&#8230;]'
-				), array( '', '', '', '', '', '', '', '' ), $itunes_subtitle );
+				// iTunes summary excludes HTML and must be shorter than 4000 characters
+				$itunes_summary = wp_strip_all_tags( $content );
+				$itunes_summary = mb_substr( $itunes_summary, 0, 3999 );
+				$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, get_the_ID() );
+
+				// Google Play description is the same as iTunes summary, but must be shorter than 1000 characters
+				$gp_description = mb_substr( $itunes_summary, 0, 999 );
+				$gp_description = apply_filters( 'ssp_feed_item_gp_description', $gp_description, get_the_ID() );
+
+				// iTunes subtitle excludes HTML and must be shorter than 255 characters
+				$itunes_subtitle = wp_strip_all_tags( $description );
+				$itunes_subtitle = str_replace(
+					array(
+						'>',
+						'<',
+						'\'',
+						'"',
+						'`',
+						'[andhellip;]',
+						'[&hellip;]',
+						'[&#8230;]',
+					),
+					array( '', '', '', '', '', '', '', '' ),
+					$itunes_subtitle
+				);
 				$itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
 				$itunes_subtitle = apply_filters( 'ssp_feed_item_itunes_subtitle', $itunes_subtitle, get_the_ID() );
 
 				// Date recorded
-				$pubDateType = get_option( 'ss_podcasting_publish_date', 'published' );
-				if ( $pubDateType === 'published' ) {
-					$pubDate = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) );
-				} else    // 'recorded'
+				$pub_date_type = get_option( 'ss_podcasting_publish_date', 'published' );
+				if ( 'published' === $pub_date_type ) {
+					$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) );
+				} else // 'recorded'.
 				{
-					$pubDate = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_meta( get_the_ID(), 'date_recorded', true ), false ) );
+					$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_meta( get_the_ID(), 'date_recorded', true ), false ) );
 				}
 
 				// Tags/keywords
 				$post_tags = get_the_tags( get_the_ID() );
 				if ( $post_tags ) {
 					$tags = array();
-					foreach( $post_tags as $tag ) {
+					foreach ( $post_tags as $tag ) {
 						$tags[] = $tag->name;
 					}
 					$tags = apply_filters( 'ssp_feed_item_itunes_keyword_tags', $tags, get_the_ID() );
@@ -508,7 +519,7 @@ $turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 				<item>
 					<title><?php esc_html( the_title_rss() ); ?></title>
 					<link><?php esc_url( the_permalink_rss() ); ?></link>
-					<pubDate><?php echo $pubDate; ?></pubDate>
+					<pubDate><?php echo $pub_date; ?></pubDate>
 					<dc:creator><?php echo $author; ?></dc:creator>
 					<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
 					<description><![CDATA[<?php echo $description; ?>]]></description>

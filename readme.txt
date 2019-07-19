@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 1.20.4
+Stable tag: 1.20.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,7 +102,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.20.4=
+= 1.20.5 =
+* 2019-07-10
+* [NEW] Add the ability to turbo charge the load times of the RSS feed, by limiting certain fields
+* [CHANGE] Updated the RSS feed description tag, itunes:summary tag and googleplay:description tag to meet RSS feed requirements
+* [FIX] Fixes a bug when retrieving posts by series
+
+= 1.20.4 =
 * 2019-07-01
 * [FIX] Fixes a bug introduced by 1.20.0 which breaks password protecting a feed
 

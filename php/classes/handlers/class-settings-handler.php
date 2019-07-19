@@ -577,6 +577,14 @@ class Settings_Handler {
 				'callback'    => 'wp_strip_all_tags',
 			),
 			array(
+				'id'          => 'turbocharge_feed',
+				'label'       => __( 'Turbocharge podcast feed', 'seriously-simple-podcasting' ),
+				'description' => sprintf( __( 'When enabled, this setting will speed up your feed loading time. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/89-turbocharging-your-feed-to-maximize-available-episodes' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+				'type'        => 'checkbox',
+				'default'     => '',
+				'callback'    => 'wp_strip_all_tags',
+			),
+			array(
 				'id'          => 'new_feed_url',
 				'label'       => __( 'New podcast feed URL', 'seriously-simple-podcasting' ),
 				'description' => __( 'Your podcast feed\'s new URL.', 'seriously-simple-podcasting' ),

@@ -24,18 +24,22 @@ class Series_Handler {
 		if ( ! isset( $_GET['settings-updated'] ) || 'true' !== $_GET['settings-updated'] ) {
 			return false;
 		}
-
-		if ( isset( $_GET['feed-series'] ) ) {
-			$feed_series_slug = ( isset( $_GET['feed-series'] ) ? filter_var( $_GET['feed-series'], FILTER_SANITIZE_STRING ) : '' );
+		if ( ! isset( $_GET['feed-series'] ) ) {
+			$feed_series_slug = 'default';
+		} else {
+			$feed_series_slug = sanitize_text_field( $_GET['feed-series'] );
 			if ( empty( $feed_series_slug ) ) {
 				return false;
 			}
+		}
+
+		if ( 'default' === $feed_series_slug ) {
+			$series_data              = get_series_data_for_castos( 0 );
+			$series_data['series_id'] = 0;
+		} else {
 			$series                   = get_term_by( 'slug', $feed_series_slug, 'series' );
 			$series_data              = get_series_data_for_castos( $series->term_id );
 			$series_data['series_id'] = $series->term_id;
-		} else {
-			$series_data              = get_series_data_for_castos( 0 );
-			$series_data['series_id'] = 0;
 		}
 
 		$castos_handler = new Castos_Handler();

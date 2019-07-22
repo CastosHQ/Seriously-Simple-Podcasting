@@ -102,6 +102,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.20.6-beta =
+* 2019-07-22
+* [NEW] Adds a setting to control how the RSS feed episode description is selected, either post excerpt or full post content
+* [FIX] Fixes a bug where Turbocharge settings were enabled even when it is switched off
+
 = 1.20.5 =
 * 2019-07-10
 * [NEW] Add the ability to turbo charge the load times of the RSS feed, by limiting certain fields

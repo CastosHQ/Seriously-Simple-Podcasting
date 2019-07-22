@@ -57,10 +57,10 @@ class Admin_Controller extends Controller {
 		add_action( 'init', array( $this, 'register_post_type' ), 11 );
 
 		// Register podcast feed.
-		add_action( 'init', array( $this, 'add_feed' ), 1 );
+		add_action( 'init', array( $this, 'add_feed' ), 11 );
 
 		// Handle v1.x feed URL as well as feed URLs for default permalinks.
-		add_action( 'init', array( $this, 'redirect_old_feed' ) );
+		add_action( 'init', array( $this, 'redirect_old_feed' ), 11 );
 
 		// Setup custom permalink structures.
 		add_action( 'init', array( $this, 'setup_permastruct' ), 10 );

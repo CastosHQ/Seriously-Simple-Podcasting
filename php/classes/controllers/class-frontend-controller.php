@@ -485,7 +485,6 @@ class Frontend_Controller extends Controller {
 	 * @return string              Media player HTML on success, empty string on failure
 	 */
 	public function load_media_player($src_file = '', $episode_id = 0, $player_size){
-
 		/**
 		 * Check if this player is being loaded via the AMP for WordPress plugin and if so, force the standard player
 		 * https://wordpress.org/plugins/amp/

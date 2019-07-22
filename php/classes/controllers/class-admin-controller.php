@@ -1260,6 +1260,14 @@ HTML;
 
 		// Prevent 404 on feed
 		$wp_query->is_404 = false;
+
+		/**
+		 * Fix the is_feed attribute on the old feed url structure
+		 */
+		if ( ! $wp_query->is_feed ) {
+			$wp_query->is_feed = true;
+		}
+
 		status_header( 200 );
 
 		$file_name = 'feed-podcast.php';

@@ -3,6 +3,8 @@
 namespace SeriouslySimplePodcasting\ShortCodes;
 
 // Exit if accessed directly.
+use ParagonIE\Sodium\Core\Curve25519\Ge\P1p1;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -22,6 +24,13 @@ class Player {
 	 * @return string          HTML output
 	 */
 	public function shortcode() {
+
+		/**
+		 * If we're in an RSS feed, don't render this shortcode
+		 */
+		if ( is_feed() ) {
+			return;
+		}
 
 		global $ss_podcasting;
 

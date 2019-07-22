@@ -1324,17 +1324,7 @@ HTML;
 
 		$previous_version = get_option( 'ssp_version', '1.0' );
 
-		if ( version_compare( $previous_version, '1.13.1', '<' ) ) {
-			flush_rewrite_rules();
-		}
-
-		if ( version_compare( $previous_version, '1.19.20', '<=' ) ) {
-			$this->upgrade_handler->upgrade_subscribe_links_options();
-		}
-
-		if ( version_compare( $previous_version, '1.20.3', '<=' ) ) {
-			$this->upgrade_handler->upgrade_stitcher_subscribe_link_option();
-		}
+		$this->upgrade_handler->run_upgrades( $previous_version );
 
 		// always just check if the directory is ok
 		ssp_get_upload_directory( false );

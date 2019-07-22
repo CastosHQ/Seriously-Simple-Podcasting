@@ -255,7 +255,7 @@ if ( $series_id && $series_id > 0 ) {
 }
 
 // Get episode description setting
-$episode_description = get_option( 'episode_description', 'excerpt' );
+$episode_description = get_option( 'ss_podcasting_episode_description', 'excerpt' );
 if ( $series_id && $series_id > 0 ) {
 	$series_episode_description = get_option( 'episode_description_' . $series_id );
 	if ( false !== $series_episode_description ) {
@@ -263,19 +263,12 @@ if ( $series_id && $series_id > 0 ) {
 	}
 }
 
-// Get stylesheet URL (filterable to allow custom RSS stylesheets)
-$stylehseet_url = apply_filters( 'ssp_rss_stylesheet', $ss_podcasting->template_url . 'feed-stylesheet.xsl' );
-
 // Set RSS content type and charset headers
 header( 'Content-Type: ' . feed_content_type( 'podcast' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
 // Use `echo` for first line to prevent any extra characters at start of document
 echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?>' . "\n";
 
-// Include RSS stylesheet
-if ( $stylehseet_url ) {
-	echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( $stylehseet_url ) . '"?>';
-}
 ?>
 <rss version="2.0"
 xmlns:content="http://purl.org/rss/1.0/modules/content/"
@@ -286,7 +279,7 @@ xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
 xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
 xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
 xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
-<?php do_action( 'rss2_ns' ); ?> >
+<?php do_action( 'rss2_ns' ); ?>>
 	<channel>
 		<title><?php echo esc_html( $title ); ?></title>
 		<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml"/>
@@ -569,11 +562,11 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 					<?php if ( $itunes_season_number ): ?>
 						<itunes:season><?php echo $itunes_season_number; ?></itunes:season>
 					<?php endif; ?>
-					<?php if ( isset( $turbo_post_count ) && $turbo_post_count <= 10 ) { ?>
+					<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
 						<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
 					<?php } ?>
 					<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
-					<?php if ( isset( $turbo_post_count ) && $turbo_post_count <= 10 ) { ?>
+					<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
 						<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
 					<?php } ?>
 					<?php if ( $episode_image ) { ?>

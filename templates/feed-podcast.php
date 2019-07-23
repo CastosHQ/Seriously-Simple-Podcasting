@@ -86,7 +86,7 @@ if ( ! $give_access ) {
 // If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
 $redirect     = get_option( 'ss_podcasting_redirect_feed' );
 $new_feed_url = false;
-if ( $redirect && $redirect == 'on' ) {
+if ( $redirect && 'on' === $redirect ) {
 
 	$new_feed_url = get_option( 'ss_podcasting_new_feed_url' );
 	$update_date  = get_option( 'ss_podcasting_redirect_feed_date' );
@@ -108,7 +108,7 @@ if ( $redirect && $redirect == 'on' ) {
 if ( $series_id ) {
 	$redirect     = get_option( 'ss_podcasting_redirect_feed_' . $series_id );
 	$new_feed_url = false;
-	if ( $redirect && $redirect == 'on' ) {
+	if ( $redirect && 'on' === $redirect ) {
 		$new_feed_url = get_option( 'ss_podcasting_new_feed_url_' . $series_id );
 		if ( $new_feed_url ) {
 			header( 'HTTP/1.1 301 Moved Permanently' );
@@ -206,7 +206,7 @@ if ( $podcast_series ) {
 	$explicit_option        = $series_explicit_option;
 }
 $explicit_option = apply_filters( 'ssp_feed_explicit', $explicit_option, $series_id );
-if ( $explicit_option && 'on' == $explicit_option ) {
+if ( $explicit_option && 'on' === $explicit_option ) {
 	$itunes_explicit     = 'yes';
 	$googleplay_explicit = 'Yes';
 } else {
@@ -221,7 +221,7 @@ if ( $podcast_series ) {
 	$complete_option        = $series_complete_option;
 }
 $complete_option = apply_filters( 'ssp_feed_complete', $complete_option, $series_id );
-if ( $complete_option && 'on' == $complete_option ) {
+if ( $complete_option && 'on' === $complete_option ) {
 	$complete = 'yes';
 } else {
 	$complete = '';
@@ -231,7 +231,7 @@ if ( $complete_option && 'on' == $complete_option ) {
 $image = get_option( 'ss_podcasting_data_image', '' );
 if ( $podcast_series ) {
 	$series_image = get_option( 'ss_podcasting_data_image_' . $series_id, 'no-image' );
-	if ( 'no-image' != $series_image ) {
+	if ( 'no-image' !== $series_image ) {
 		$image = $series_image;
 	}
 }
@@ -242,31 +242,43 @@ $category1 = ssp_get_feed_category_output( 1, $series_id );
 $category2 = ssp_get_feed_category_output( 2, $series_id );
 $category3 = ssp_get_feed_category_output( 3, $series_id );
 
+// Get iTunes Type
+$itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_' . $series_id : null ) );
+
+// Get turbo setting
+$turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
+if ( $series_id && $series_id > 0 ) {
+	$series_turbo = get_option( 'ss_podcasting_turbocharge_feed_' . $series_id );
+	if ( false !== $series_turbo ) {
+		$turbo = $series_turbo;
+	}
+}
+
+// Get episode description setting
+$episode_description = get_option( 'ss_podcasting_episode_description', 'excerpt' );
+if ( $series_id && $series_id > 0 ) {
+	$series_episode_description = get_option( 'episode_description_' . $series_id );
+	if ( false !== $series_episode_description ) {
+		$episode_description = $series_episode_description;
+	}
+}
+
 // Set RSS content type and charset headers
 header( 'Content-Type: ' . feed_content_type( 'podcast' ) . '; charset=' . get_option( 'blog_charset' ), true );
 
 // Use `echo` for first line to prevent any extra characters at start of document
 echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?>' . "\n";
-
-// Get iTunes Type
-$itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_' . $series_id : null ) );
-
-$turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
-
 ?>
-
 <rss version="2.0"
-     xmlns:content="http://purl.org/rss/1.0/modules/content/"
-     xmlns:wfw="http://wellformedweb.org/CommentAPI/"
-     xmlns:dc="http://purl.org/dc/elements/1.1/"
-     xmlns:atom="http://www.w3.org/2005/Atom"
-     xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
-     xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
-     xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
-     xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
-	<?php do_action( 'rss2_ns' ); ?>
->
-
+xmlns:content="http://purl.org/rss/1.0/modules/content/"
+xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+xmlns:dc="http://purl.org/dc/elements/1.1/"
+xmlns:atom="http://www.w3.org/2005/Atom"
+xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+<?php do_action( 'rss2_ns' ); ?>>
 	<channel>
 		<title><?php echo esc_html( $title ); ?></title>
 		<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml"/>
@@ -350,7 +362,7 @@ $turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 		$qry = new WP_Query( $args );
 
 		if ( 'on' === $turbo ) {
-			$post_count = 0;
+			$turbo_post_count = 0;
 		}
 
 		if ( $qry->have_posts() ) {
@@ -450,8 +462,18 @@ $turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 				$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 				$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 
-				// Description is the full episode content, includes HTML, but must be shorter than 4000 characters
-				$description = mb_substr( $content, 0, 3999 );
+				// Description is set based on feed setting
+				if ( 'excerpt' === $episode_description ) {
+					ob_start();
+					the_excerpt_rss();
+					$description = ob_get_clean();
+				} else {
+					$description = $content;
+					if ( isset( $turbo_post_count ) && $turbo_post_count > 10 ) {
+						// If turbo is on, limit the full html description to 4000 chars
+						$description = mb_substr( $description, 0, 3999 );
+					}
+				}
 				$description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
 
 				// iTunes summary excludes HTML and must be shorter than 4000 characters
@@ -512,8 +534,8 @@ $turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 					$itunes_episode_number = get_post_meta( get_the_ID(), 'itunes_episode_number', true );
 					$itunes_season_number  = get_post_meta( get_the_ID(), 'itunes_season_number', true );
 				}
-				if ( isset( $post_count ) ) {
-					$post_count ++;
+				if ( isset( $turbo_post_count ) ) {
+					$turbo_post_count ++;
 				}
 				?>
 				<item>
@@ -539,11 +561,11 @@ $turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 					<?php if ( $itunes_season_number ): ?>
 						<itunes:season><?php echo $itunes_season_number; ?></itunes:season>
 					<?php endif; ?>
-					<?php if ( isset( $post_count ) && $post_count <= 10 ) { ?>
+					<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
 						<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
 					<?php } ?>
 					<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
-					<?php if ( isset( $post_count ) && $post_count <= 10 ) { ?>
+					<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
 						<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
 					<?php } ?>
 					<?php if ( $episode_image ) { ?>

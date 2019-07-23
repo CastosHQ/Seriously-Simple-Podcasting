@@ -23,6 +23,13 @@ class Player {
 	 */
 	public function shortcode() {
 
+		/**
+		 * If we're in an RSS feed, don't render this shortcode
+		 */
+		if ( is_feed() ) {
+			return;
+		}
+
 		global $ss_podcasting;
 
 		$current_post = get_post();

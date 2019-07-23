@@ -3,8 +3,6 @@
 namespace SeriouslySimplePodcasting\ShortCodes;
 
 // Exit if accessed directly.
-use ParagonIE\Sodium\Core\Curve25519\Ge\P1p1;
-
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }

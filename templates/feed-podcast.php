@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 global $ss_podcasting, $wp_query;
 
 // Hide all errors
-// error_reporting( 0 );
+error_reporting( 0 );
 
 // Allow feed access by default
 $give_access = true;

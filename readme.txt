@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.2
 Requires PHP: 5.6
-Stable tag: 1.20.5
+Stable tag: 1.20.6
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,10 +102,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.20.6-beta =
-* 2019-07-22
-* [NEW] Adds a setting to control how the RSS feed episode description is selected, either post excerpt or full post content
+= 1.20.6 =
+* 2019-07-24
+* UPDATE SUMMARY:  Various bug fixes related to recent changes to the RSS Feed
+* [NEW] Add a setting to control whether RSS feed episode description tags use the post content or the post excerpt
 * [FIX] Fixes a bug where Turbocharge settings were enabled even when it is switched off
+* [FIX] Fixes a bug when sending series data to a Castos connected podcast
+* [FIX] Fixes a bug where the ss_player shortcode renders the media player in the RSS feed
+* [FIX] Fixes a bug in the legacy RSS feed url
 
 = 1.20.5 =
 * 2019-07-10

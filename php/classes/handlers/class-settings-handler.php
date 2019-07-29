@@ -51,7 +51,6 @@ class Settings_Handler {
 			'History'                 => __( 'History', 'seriously-simple-podcasting' ),
 			'Health & Fitness'        => __( 'Health', 'seriously-simple-podcasting' ),
 			'Kids & Family'           => __( 'Kids & Family', 'seriously-simple-podcasting' ),
-			'Leisure'                 => __( 'Leisure', 'seriously-simple-podcasting' ),
 			'Music'                   => __( 'Music', 'seriously-simple-podcasting' ),
 			'News'                    => __( 'News', 'seriously-simple-podcasting' ),
 			'Religion & Spirituality' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),

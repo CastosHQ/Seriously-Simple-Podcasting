@@ -89,24 +89,28 @@ class Settings_Handler {
 				'label' => __( 'Visual Arts', 'seriously-simple-podcasting' ),
 				'group' => __( 'Arts', 'seriously-simple-podcasting' ),
 			),
-			'Business News'          => array(
-				'label' => __( 'Business News', 'seriously-simple-podcasting' ),
-				'group' => __( 'Business', 'seriously-simple-podcasting' ),
-			),
 			'Careers'                => array(
 				'label' => __( 'Careers', 'seriously-simple-podcasting' ),
+				'group' => __( 'Business', 'seriously-simple-podcasting' ),
+			),
+			'Entrepreneurship'          => array(
+				'label' => __( 'Entrepreneurship', 'seriously-simple-podcasting' ),
 				'group' => __( 'Business', 'seriously-simple-podcasting' ),
 			),
 			'Investing'              => array(
 				'label' => __( 'Investing', 'seriously-simple-podcasting' ),
 				'group' => __( 'Business', 'seriously-simple-podcasting' ),
 			),
-			'Management & Marketing' => array(
-				'label' => __( 'Management & Marketing', 'seriously-simple-podcasting' ),
+			'Management' => array(
+				'label' => __( 'Management', 'seriously-simple-podcasting' ),
 				'group' => __( 'Business', 'seriously-simple-podcasting' ),
 			),
-			'Shopping'               => array(
-				'label' => __( 'Shopping', 'seriously-simple-podcasting' ),
+			'Marketing'               => array(
+				'label' => __( 'Marketing', 'seriously-simple-podcasting' ),
+				'group' => __( 'Business', 'seriously-simple-podcasting' ),
+			),
+			'Non-profit'               => array(
+				'label' => __( 'Non-profit', 'seriously-simple-podcasting' ),
 				'group' => __( 'Business', 'seriously-simple-podcasting' ),
 			),
 			'Education'              => array(

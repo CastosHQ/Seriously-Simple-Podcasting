@@ -65,6 +65,10 @@ class Settings_Handler {
 		// Set up available sub-category options.
 		$subcategory_options = array(
 			''                       => __( '-- None --', 'seriously-simple-podcasting' ),
+			'Books'                  => array(
+				'label' => __( 'Books', 'seriously-simple-podcasting' ),
+				'group' => __( 'Arts', 'seriously-simple-podcasting' ),
+			),
 			'Design'                 => array(
 				'label' => __( 'Design', 'seriously-simple-podcasting' ),
 				'group' => __( 'Arts', 'seriously-simple-podcasting' ),
@@ -75,10 +79,6 @@ class Settings_Handler {
 			),
 			'Food'                   => array(
 				'label' => __( 'Food', 'seriously-simple-podcasting' ),
-				'group' => __( 'Arts', 'seriously-simple-podcasting' ),
-			),
-			'Literature'             => array(
-				'label' => __( 'Literature', 'seriously-simple-podcasting' ),
 				'group' => __( 'Arts', 'seriously-simple-podcasting' ),
 			),
 			'Performing Arts'        => array(

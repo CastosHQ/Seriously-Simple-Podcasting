@@ -57,10 +57,10 @@ class Admin_Controller extends Controller {
 		add_action( 'init', array( $this, 'register_post_type' ), 11 );
 
 		// Register podcast feed.
-		add_action( 'init', array( $this, 'add_feed' ), 1 );
+		add_action( 'init', array( $this, 'add_feed' ), 11 );
 
 		// Handle v1.x feed URL as well as feed URLs for default permalinks.
-		add_action( 'init', array( $this, 'redirect_old_feed' ) );
+		add_action( 'init', array( $this, 'redirect_old_feed' ), 11 );
 
 		// Setup custom permalink structures.
 		add_action( 'init', array( $this, 'setup_permastruct' ), 10 );
@@ -1260,6 +1260,14 @@ HTML;
 
 		// Prevent 404 on feed
 		$wp_query->is_404 = false;
+
+		/**
+		 * Fix the is_feed attribute on the old feed url structure
+		 */
+		if ( ! $wp_query->is_feed ) {
+			$wp_query->is_feed = true;
+		}
+
 		status_header( 200 );
 
 		$file_name = 'feed-podcast.php';
@@ -1324,17 +1332,7 @@ HTML;
 
 		$previous_version = get_option( 'ssp_version', '1.0' );
 
-		if ( version_compare( $previous_version, '1.13.1', '<' ) ) {
-			flush_rewrite_rules();
-		}
-
-		if ( version_compare( $previous_version, '1.19.20', '<=' ) ) {
-			$this->upgrade_handler->upgrade_subscribe_links_options();
-		}
-
-		if ( version_compare( $previous_version, '1.20.3', '<=' ) ) {
-			$this->upgrade_handler->upgrade_stitcher_subscribe_link_option();
-		}
+		$this->upgrade_handler->run_upgrades( $previous_version );
 
 		// always just check if the directory is ok
 		ssp_get_upload_directory( false );

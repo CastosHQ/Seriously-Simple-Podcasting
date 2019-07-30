@@ -227,6 +227,48 @@ class Settings_Handler {
 				'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
 			),
 
+			'Music Commentary '            => array(
+				'label' => __( 'Music Commentary ', 'seriously-simple-podcasting' ),
+				'group' => __( 'Music', 'seriously-simple-podcasting' ),
+			),
+			'Music History'            => array(
+				'label' => __( 'Music History', 'seriously-simple-podcasting' ),
+				'group' => __( 'Music', 'seriously-simple-podcasting' ),
+			),
+			'Music Interviews'            => array(
+				'label' => __( 'Music Interviews', 'seriously-simple-podcasting' ),
+				'group' => __( 'Music', 'seriously-simple-podcasting' ),
+			),
+
+			'Business News' => array(
+				'label' => __( 'Business News', 'seriously-simple-podcasting' ),
+				'group' => __( 'News', 'seriously-simple-podcasting' ),
+			),
+			'Daily News' => array(
+				'label' => __( 'Daily News', 'seriously-simple-podcasting' ),
+				'group' => __( 'News', 'seriously-simple-podcasting' ),
+			),
+			'Entertainment News' => array(
+				'label' => __( 'Entertainment News', 'seriously-simple-podcasting' ),
+				'group' => __( 'News', 'seriously-simple-podcasting' ),
+			),
+			'News Commentary' => array(
+				'label' => __( 'News Commentary', 'seriously-simple-podcasting' ),
+				'group' => __( 'News', 'seriously-simple-podcasting' ),
+			),
+			'Politics' => array(
+				'label' => __( 'Politics', 'seriously-simple-podcasting' ),
+				'group' => __( 'News', 'seriously-simple-podcasting' ),
+			),
+			'Sports News ' => array(
+				'label' => __( 'Sports News ', 'seriously-simple-podcasting' ),
+				'group' => __( 'News', 'seriously-simple-podcasting' ),
+			),
+			'Tech News' => array(
+				'label' => __( 'Tech News', 'seriously-simple-podcasting' ),
+				'group' => __( 'News', 'seriously-simple-podcasting' ),
+			),
+
 			'Buddhism'              => array(
 				'label' => __( 'Buddhism', 'seriously-simple-podcasting' ),
 				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),

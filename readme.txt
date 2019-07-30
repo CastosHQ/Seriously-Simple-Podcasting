@@ -102,6 +102,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.20.7-alpha =
+* [UPDATE] Updated podcast categories to reflect Apple's [podcast category changes](https://podnews.net/press-release/apple-wwdc-2019-anno)
+
 = 1.20.6 =
 * 2019-07-24
 * UPDATE SUMMARY:  Various bug fixes related to recent changes to the RSS Feed

@@ -263,8 +263,17 @@ if ( $series_id && $series_id > 0 ) {
 	}
 }
 
+// Get stylehseet URL (filterable to allow custom RSS stylesheets)
+$stylehseet_url       = apply_filters( 'ssp_rss_stylesheet', $ss_podcasting->template_url . 'feed-stylesheet.xsl' );
+$apply_stylesheet_url = apply_filters( 'ssp_enable_rss_stylesheet', false );
+
 // Set RSS content type and charset headers
 header( 'Content-Type: ' . feed_content_type( 'podcast' ) . '; charset=' . get_option( 'blog_charset' ), true );
+
+// Include RSS stylesheet
+if ( $apply_stylesheet_url && $stylehseet_url ) {
+	echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( $stylehseet_url ) . '"?>';
+}
 
 // Use `echo` for first line to prevent any extra characters at start of document
 echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?>' . "\n";

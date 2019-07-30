@@ -1801,14 +1801,16 @@ HTML;
 	 * Show 'categories need updating' notice
 	 */
 	public function categories_update_notice() {
-		$feed_settings_url  = add_query_arg(
+		$feed_settings_url = add_query_arg(
 			array(
 				'post_type'                     => $this->token,
 				'page'                          => 'podcast_settings',
 				'tab'                           => 'feed-details',
 				'ssp_dismiss_categories_update' => 'true',
-			)
+			),
+			admin_url( 'edit.php' )
 		);
+
 		$ignore_message_url = add_query_arg( array( 'ssp_dismiss_categories_update' => 'true' ) );
 
 		$message            = __( 'Seriously Simple Podcasting\'s feed categories have been updated.', 'seriously-simple-podcasting' );

@@ -71,6 +71,9 @@ class Admin_Controller extends Controller {
 		// Dismiss the upgrade screen and redirect to the last screen the user was on
 		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
 
+		// Dismiss the categories update screen
+		add_action( 'init', array( $this, 'dismiss_categories_update' ) );
+
 		// Hide WP SEO footer text for podcast RSS feed.
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
@@ -137,6 +140,10 @@ class Admin_Controller extends Controller {
 
 			// Check if a valid permalink structure is set and show a message
 			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
+
+			// Check if the podcast feed category update message needs to trigger
+			add_action( 'admin_init', array( $this, 'check_category_update_required' ) );
+
 
 			// Filter Embed HTML Code
 			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
@@ -1560,6 +1567,11 @@ HTML;
 	}
 
 	/**
+	 * Admin notices
+	 * Ideally this should be moved to it's own controller
+	 */
+
+	/**
 	 * Show 'existing podcast' notice
 	 */
 	public function existing_podcasts_notice() {
@@ -1641,6 +1653,7 @@ HTML;
 
 		// check version number is upgraded
 		$ssp_version = get_option( 'ssp_version', '' );
+
 		// The enhanced register_meta function is only available for WordPress 4.6+
 		if ( version_compare( $ssp_version, '1.15.1', '<' ) ) {
 			return;
@@ -1769,4 +1782,81 @@ HTML;
 		</div>
 		<?php
 	}
+
+
+	/**
+	 * Checks to see if we're on a version higher than 1.20.6
+	 */
+	public function check_category_update_required() {
+		// check if the user has dismissed this notice previously
+		$ssp_categories_update_dismissed = get_option( 'ssp_categories_update_dismissed', 'false' );
+		if ( 'true' === $ssp_categories_update_dismissed ) {
+			return;
+		}
+		// trigger the notice
+		add_action( 'admin_notices', array( $this, 'categories_update_notice' ) );
+	}
+
+	/**
+	 * Show 'categories need updating' notice
+	 */
+	public function categories_update_notice() {
+		$feed_settings_url = add_query_arg(
+			array(
+				'post_type'                     => $this->token,
+				'page'                          => 'podcast_settings',
+				'tab'                           => 'feed-details',
+				'ssp_dismiss_categories_update' => 'true',
+			),
+			admin_url( 'edit.php' )
+		);
+
+		$ignore_message_url = add_query_arg( array( 'ssp_dismiss_categories_update' => 'true' ) );
+
+		$message            = __( 'Seriously Simple Podcasting\'s feed categories have been updated.', 'seriously-simple-podcasting' );
+		$feed_settings_link = sprintf(
+			wp_kses(
+				// translators: Placeholder is the url to the Feed details
+				__( 'Please check your <a href="%s">Feed details</a>  to update your categories.', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			),
+			esc_url( $feed_settings_url )
+		);
+		$ignore_message_link = sprintf(
+			wp_kses(
+				// translators: Placeholder is the url to dismiss the message
+				__( 'Alternatively you can <a href="%s">dismiss this message</a>.', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			),
+			esc_url( $ignore_message_url )
+		);
+		?>
+		<div class="notice notice-info">
+			<p><?php echo $message; ?></p>
+			<p><?php echo $feed_settings_link; ?></p>
+			<p><?php echo $ignore_message_link; ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Dismiss categories update screen when user clicks 'Dismiss' link
+	 */
+	public function dismiss_categories_update() {
+		// Check if the ssp_dismiss_categories_update variable exists
+		$ssp_dismiss_categories_update = ( isset( $_GET['ssp_dismiss_categories_update'] ) ? sanitize_text_field( $_GET['ssp_dismiss_categories_update'] ) : '' );
+		if ( empty( $ssp_dismiss_categories_update ) ) {
+			return;
+		}
+		update_option( 'ssp_categories_update_dismissed', 'true' );
+	}
+
 }

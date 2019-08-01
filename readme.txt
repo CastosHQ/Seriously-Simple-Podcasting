@@ -102,6 +102,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 1.20.8-alpha =
+* 2019-08-01
+* [NEW] Added support for Podtrac Measuring service
+
 = 1.20.7 =
 * 2019-07-31
 * [UPDATE] Updated podcast categories to reflect Apple's [podcast category changes](https://podnews.net/press-release/apple-wwdc-2019-anno)

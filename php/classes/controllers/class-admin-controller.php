@@ -56,12 +56,6 @@ class Admin_Controller extends Controller {
 		// Regsiter podcast post type, taxonomies and meta fields.
 		add_action( 'init', array( $this, 'register_post_type' ), 11 );
 
-		// Register podcast feed.
-		add_action( 'init', array( $this, 'add_feed' ), 11 );
-
-		// Handle v1.x feed URL as well as feed URLs for default permalinks.
-		add_action( 'init', array( $this, 'redirect_old_feed' ), 11 );
-
 		// Setup custom permalink structures.
 		add_action( 'init', array( $this, 'setup_permastruct' ), 10 );
 
@@ -1234,15 +1228,6 @@ HTML;
 	}
 
 	/**
-	 * Register podcast feed
-	 * @return void
-	 */
-	public function add_feed() {
-		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-		add_feed( $feed_slug, array( $this, 'feed_template' ) );
-	}
-
-	/**
 	 * Hide RSS footer created by WordPress SEO from podcast RSS feed
 	 *
 	 * @param  boolean $include_footer Default inclusion value
@@ -1256,56 +1241,6 @@ HTML;
 		}
 
 		return $include_footer;
-	}
-
-	/**
-	 * Load feed template
-	 * @return void
-	 */
-	public function feed_template() {
-		global $wp_query;
-
-		// Prevent 404 on feed
-		$wp_query->is_404 = false;
-
-		/**
-		 * Fix the is_feed attribute on the old feed url structure
-		 */
-		if ( ! $wp_query->is_feed ) {
-			$wp_query->is_feed = true;
-		}
-
-		status_header( 200 );
-
-		$file_name = 'feed-podcast.php';
-
-		$user_template_file = apply_filters( 'ssp_feed_template_file', trailingslashit( get_stylesheet_directory() ) . $file_name );
-
-		// Any functions hooked in here must NOT output any data or else feed will break
-		do_action( 'ssp_before_feed' );
-
-		// Load user feed template if it exists, otherwise use plugin template
-		if ( file_exists( $user_template_file ) ) {
-			require( $user_template_file );
-		} else {
-			require( $this->template_path . $file_name );
-		}
-
-		// Any functions hooked in here must NOT output any data or else feed will break
-		do_action( 'ssp_after_feed' );
-
-		exit;
-	}
-
-	/**
-	 * Redirect feed URLs created prior to v1.8 to ensure backwards compatibility
-	 * @return void
-	 */
-	public function redirect_old_feed() {
-		if ( isset( $_GET['feed'] ) && in_array( $_GET['feed'], array( $this->token, 'itunes' ) ) ) {
-			$this->feed_template();
-			exit;
-		}
 	}
 
 	/**

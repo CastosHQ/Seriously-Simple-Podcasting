@@ -1051,3 +1051,25 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 
 	}
 }
+
+if ( ! function_exists( 'parse_episode_url_for_podtrac' ) ) {
+	/**
+	 * Takes an episode url and appends the podtrac prefix in front of it
+	 *
+	 * @param string $audio_file_url
+	 * @param string $podtrac_url
+	 *
+	 * @return string
+	 */
+	function parse_episode_url_for_podtrac( $audio_file_url = '', $podtrac_url = '' ) {
+		if ( empty( $podtrac_url ) ) {
+			return $audio_file_url;
+		}
+		if ( empty( $audio_file_url ) ) {
+			return $audio_file_url;
+		}
+		$url_parts = wp_parse_url( $audio_file_url );
+
+		return $podtrac_url . $url_parts['host'] . $url_parts['path'];
+	}
+}

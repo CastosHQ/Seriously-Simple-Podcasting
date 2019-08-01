@@ -22,6 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 use SeriouslySimplePodcasting\Controllers\Admin_Controller;
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
+use SeriouslySimplePodcasting\Controllers\Feed_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
@@ -49,9 +50,10 @@ require SSP_PLUGIN_PATH . 'vendor/autoload.php';
  * @todo the admin_controller should really be renamed, as it's not really 'admin' specific
  * @todo alternatively the non admin specific functionality should be moved into it's own 'foundation' controller, perhaps even the parent controller
  */
-global $ssp_admin, $ss_podcasting;
+global $ssp_admin, $ss_podcasting, $ssp_feed;
 $ssp_admin     = new Admin_Controller( __FILE__, SSP_VERSION );
 $ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
+$ssp_feed      = new Feed_Controller( __FILE__, SSP_VERSION );
 /**
  * Only load the settings if we're in the admin dashboard
  */

@@ -723,6 +723,18 @@ class Settings_Handler {
 				),
 				'default'     => '',
 			),
+
+			array(
+				'id'          => 'podtrac_prefix',
+				'label'       => __( 'Podtrac Prefix', 'seriously-simple-podcasting' ),
+				'description' => __( 'Enter your Podtrac Prefix to use Podtrac\'s Measurement service. Be sure to include correct protocol and trailing slash.', 'seriously-simple-podcasting' ),
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => __( 'https://dts.podtrac.com/redirect/mp3/', 'seriously-simple-podcasting' ),
+				'callback'    => 'esc_url_raw',
+				'class'       => 'regular-text',
+			),
+
 			array(
 				'id'          => 'episode_description',
 				'label'       => __( 'Episode description', 'seriously-simple-podcasting' ),

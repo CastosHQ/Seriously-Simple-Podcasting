@@ -1251,7 +1251,6 @@ HTML;
 
 		// Setup all custom URL rules
 		$this->register_post_type();
-		$this->add_feed();
 		$this->setup_permastruct();
 
 		// Flush permalinks

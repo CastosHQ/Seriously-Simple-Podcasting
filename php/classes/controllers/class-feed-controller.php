@@ -40,6 +40,8 @@ class Feed_Controller extends Controller {
 
 		// Handle v1.x feed URL as well as feed URLs for default permalinks.
 		add_action( 'init', array( $this, 'redirect_old_feed' ), 11 );
+
+		register_activation_hook( $this->file, array( $this, 'add_feed' ) );
 	}
 
 	/**

@@ -255,12 +255,12 @@ if ( $series_id && $series_id > 0 ) {
 	}
 }
 
-// Get podract prefix setting
-$podtrac_prefix = get_option( 'ss_podcasting_podtrac_prefix', '' );
+// Get media prefix setting
+$media_prefix = get_option( 'ss_podcasting_media_prefix', '' );
 if ( $series_id && $series_id > 0 ) {
-	$series_podtrac_prefix = get_option( 'ss_podcasting_episode_description_' . $series_id );
-	if ( false !== $series_podtrac_prefix ) {
-		$podtrac_prefix = $series_podtrac_prefix;
+	$series_media_prefix = get_option( 'ss_podcasting_media_prefix_' . $series_id );
+	if ( false !== $series_media_prefix ) {
+		$media_prefix = $series_media_prefix;
 	}
 }
 
@@ -401,8 +401,8 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 
 				$enclosure = apply_filters( 'ssp_feed_item_enclosure', $enclosure, get_the_ID() );
 
-				if ( ! empty( $podtrac_prefix ) ) {
-					$enclosure = parse_episode_url_for_podtrac( $enclosure, $podtrac_prefix );
+				if ( ! empty( $media_prefix ) ) {
+					$enclosure = parse_episode_url_with_media_prefix( $enclosure, $media_prefix );
 				}
 
 				// If there is no enclosure then go no further

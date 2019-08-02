@@ -56,7 +56,7 @@ class Admin_Controller extends Controller {
 
 		$this->upgrade_handler = new Upgrade_Handler();
 
-		$this->feed_controller = new Feed_Controller();
+		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();

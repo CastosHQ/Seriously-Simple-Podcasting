@@ -26,13 +26,21 @@ class Admin_Controller extends Controller {
 	 */
 	protected $ajax_handler;
 
+	/**
+	 * @var object instance of Upgrade_Handler
+	 */
 	protected $upgrade_handler;
+
+	/**
+	 * @var object instance of Feed_Controller
+	 */
+	protected $feed_controller;
 
 	/**
 	 * Admin_Controller constructor.
 	 *
-	 * @param $file main plugin file
-	 * @param $version plugin version
+	 * @param $file string main plugin file
+	 * @param $version string plugin version
 	 */
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
@@ -47,6 +55,8 @@ class Admin_Controller extends Controller {
 		$this->ajax_handler = new Ajax_Handler();
 
 		$this->upgrade_handler = new Upgrade_Handler();
+
+		$this->feed_controller = new Feed_Controller();
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();
@@ -1244,21 +1254,22 @@ HTML;
 	}
 
 	/**
-	 * Flush rewrite rules on plugin acivation
+	 * All plugin activation functionality
 	 * @return void
 	 */
 	public function activate() {
-
 		// Setup all custom URL rules
 		$this->register_post_type();
+		// Setup feed
+		$this->feed_controller->add_feed();
+		// Setup permalink structure
 		$this->setup_permastruct();
-
 		// Flush permalinks
 		flush_rewrite_rules( true );
 	}
 
 	/**
-	 * Flush rewrite rules on plugin deacivation
+	 * All plugin deactivation functionality
 	 * @return void
 	 */
 	public function deactivate() {

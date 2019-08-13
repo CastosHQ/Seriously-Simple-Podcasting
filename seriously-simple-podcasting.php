@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.20.8-alpha.1
+ * Version: 1.20.8
  * Plugin URI: https://www.castos.com/seriously-simple-podcasting
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
  * Author URI: https://www.castos.com/
  * Requires PHP: 5.6
  * Requires at least: 4.4
- * Tested up to: 5.2
+ * Tested up to: 5.2.2
  *
  * Text Domain: seriously-simple-podcasting
  *
@@ -26,7 +26,7 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 
-define( 'SSP_VERSION', '1.20.8-alpha.1' );
+define( 'SSP_VERSION', '1.20.8' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 

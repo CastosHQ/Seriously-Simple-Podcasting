@@ -11,6 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// @todo move all of this logic into the Feed_Controller render_podcast_feed method, at the very least
 global $ss_podcasting, $wp_query;
 
 // Hide all errors
@@ -254,6 +255,15 @@ if ( $series_id && $series_id > 0 ) {
 	}
 }
 
+// Get media prefix setting
+$media_prefix = get_option( 'ss_podcasting_media_prefix', '' );
+if ( $series_id && $series_id > 0 ) {
+	$series_media_prefix = get_option( 'ss_podcasting_media_prefix_' . $series_id );
+	if ( false !== $series_media_prefix ) {
+		$media_prefix = $series_media_prefix;
+	}
+}
+
 // Get episode description setting
 $episode_description = get_option( 'ss_podcasting_episode_description', 'excerpt' );
 if ( $series_id && $series_id > 0 ) {
@@ -390,6 +400,10 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 				}
 
 				$enclosure = apply_filters( 'ssp_feed_item_enclosure', $enclosure, get_the_ID() );
+
+				if ( ! empty( $media_prefix ) ) {
+					$enclosure = parse_episode_url_with_media_prefix( $enclosure, $media_prefix );
+				}
 
 				// If there is no enclosure then go no further
 				if ( ! isset( $enclosure ) || ! $enclosure ) {

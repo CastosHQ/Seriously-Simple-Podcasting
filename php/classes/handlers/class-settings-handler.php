@@ -714,14 +714,26 @@ class Settings_Handler {
 			array(
 				'id'          => 'consume_order',
 				'label'       => __( 'Show Type', 'seriously-simple-podcasting' ),
+				// translators: placeholders are for help document link
 				'description' => sprintf( __( 'The order your podcast episodes will be listed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://www.seriouslysimplepodcasting.com/ios-11-podcast-tags/' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'select',
 				'options'     => array(
 					''         => __( 'Please Select', 'seriously-simple-podcasting' ),
 					'episodic' => __( 'Episodic', 'seriously-simple-podcasting' ),
-					'serial'   => __( 'Serial', 'seriously-simple-podcasting' )
+					'serial'   => __( 'Serial', 'seriously-simple-podcasting' ),
 				),
 				'default'     => '',
+			),
+			array(
+				'id'          => 'media_prefix',
+				'label'       => __( 'Media File Prefix', 'seriously-simple-podcasting' ),
+				// translators: placeholders are for help document link
+				'description' => sprintf( __( 'Enter your Podtrac, Chartable, or other media file prefix here. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/95-adding-a-media-file-prefix-for-podtrac-chartable-and-other-tracking-services' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+				'type'        => 'text',
+				'default'     => '',
+				'placeholder' => __( 'https://dts.podtrac.com/redirect/mp3/', 'seriously-simple-podcasting' ),
+				'callback'    => 'esc_url_raw',
+				'class'       => 'regular-text',
 			),
 			array(
 				'id'          => 'episode_description',

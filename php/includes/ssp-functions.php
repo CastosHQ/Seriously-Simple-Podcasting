@@ -1051,3 +1051,25 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 
 	}
 }
+
+if ( ! function_exists( 'parse_episode_url_with_media_prefix' ) ) {
+	/**
+	 * Takes an episode url and appends the media prefix in front of it
+	 *
+	 * @param string $audio_file_url
+	 * @param string $media_prefix
+	 *
+	 * @return string
+	 */
+	function parse_episode_url_with_media_prefix( $audio_file_url = '', $media_prefix = '' ) {
+		if ( empty( $media_prefix ) ) {
+			return $audio_file_url;
+		}
+		if ( empty( $audio_file_url ) ) {
+			return $audio_file_url;
+		}
+		$url_parts = wp_parse_url( $audio_file_url );
+
+		return $media_prefix . $url_parts['host'] . $url_parts['path'];
+	}
+}

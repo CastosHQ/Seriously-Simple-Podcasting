@@ -20,7 +20,7 @@ jQuery(document).ready(function ($) {
 
 	$('.delete_subscribe_option').on('click', function (e) {
 		e.preventDefault();
-		let anchor = $(this);
+		var anchor = $(this);
 		$.ajax({
 			method: "POST",
 			url: ajaxurl,

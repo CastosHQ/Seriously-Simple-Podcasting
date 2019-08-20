@@ -3,15 +3,15 @@ document.addEventListener("DOMContentLoaded", function () {
 	(function ($) {
 		window.ssp_player = [];
 
-		let sspUpdateDuration = [];
+		var sspUpdateDuration = [];
 
 		$('div.ssp-player-large').each(function () {
 
-			let large_player = $(this);
-			let player_instance_number = large_player.data('player-instance-number');
+			var large_player = $(this);
+			var player_instance_number = large_player.data('player-instance-number');
 			//const player_waveform_colour = large_player.data('player-waveform-colour');
-			let player_waveform_progress_colour = large_player.data('player-waveform-progress-colour');
-			let source_file = large_player.data('source-file');
+			var player_waveform_progress_colour = large_player.data('player-waveform-progress-colour');
+			var source_file = large_player.data('source-file');
 			sspUpdateDuration[player_instance_number] = '';
 
 			// Create Player

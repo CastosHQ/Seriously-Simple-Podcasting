@@ -7,6 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// @todo maybe this should be a trait ?
+
 /**
  * Main controller class
  *

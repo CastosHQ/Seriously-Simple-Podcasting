@@ -11,6 +11,7 @@ return array(
     'SeriouslySimplePodcasting\\Controllers\\Controller' => $baseDir . '/php/classes/controllers/class-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Episode_Controller' => $baseDir . '/php/classes/controllers/class-episode-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Extensions_Controller' => $baseDir . '/php/classes/controllers/class-extensions-controller.php',
+    'SeriouslySimplePodcasting\\Controllers\\Feed_Controller' => $baseDir . '/php/classes/controllers/class-feed-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Frontend_Controller' => $baseDir . '/php/classes/controllers/class-frontend-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Import_Controller' => $baseDir . '/php/classes/controllers/class-import-controller.php',
     'SeriouslySimplePodcasting\\Controllers\\Options_Controller' => $baseDir . '/php/classes/controllers/class-options-controller.php',

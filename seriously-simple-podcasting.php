@@ -2,10 +2,10 @@
 /**
  * Plugin Name: Seriously Simple Podcasting
  * Version: 1.20.9-beta
- * Plugin URI: https://www.castos.com/seriously-simple-podcasting
+ * Plugin URI: https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
- * Author URI: https://www.castos.com/
+ * Author URI: https://castos.com/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Requires PHP: 5.6
  * Requires at least: 4.4
  * Tested up to: 5.2.2

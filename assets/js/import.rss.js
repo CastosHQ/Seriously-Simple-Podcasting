@@ -4,13 +4,13 @@ jQuery(document).ready(function ($) {
 	 * Setup the progressbar element
 	 * @type {*|jQuery|HTMLElement}
 	 */
-	let progressbar = $('#ssp-external-feed-progress');
+	var progressbar = $('#ssp-external-feed-progress');
 
 	/**
 	 * If the progress bar appears on the page, trigger the import
 	 */
 	if (progressbar.length > 0) {
-		let response = confirm('You are about to import an external RSS feed.');
+		var response = confirm('You are about to import an external RSS feed.');
 		if (true === response) {
 			update_progress_bar(0);
 			ssp_import_external_feed();
@@ -24,7 +24,7 @@ jQuery(document).ready(function ($) {
 	 * @param colour
 	 */
 	function change_progress_colour(colour) {
-		let remove_class = 'blue';
+		var remove_class = 'blue';
 		if ('blue' === colour) {
 			remove_class = 'green';
 		}
@@ -53,7 +53,7 @@ jQuery(document).ready(function ($) {
 		if ('' === colour) {
 			colour = 'blue';
 		}
-		let current_value = progressbar.progressbar('value');
+		var current_value = progressbar.progressbar('value');
 		if (current_value < 100) {
 			progressbar.progressbar({
 				value: progress
@@ -68,9 +68,9 @@ jQuery(document).ready(function ($) {
 	 */
 	function update_progress_log(episodes) {
 		$('.ssp-ssp-external-feed-message').html('Import completed successfully !').css('color', 'green');
-		let ssp_external_feed_status = $('#ssp-external-feed-status');
-		let status_html = ssp_external_feed_status.html();
-		let log_html = '';
+		var ssp_external_feed_status = $('#ssp-external-feed-status');
+		var status_html = ssp_external_feed_status.html();
+		var log_html = '';
 		for (var i = 0; i < episodes.length; i++) {
 			log_html = '<p>Imported ' + episodes[i] + '</p>' + log_html;
 		}
@@ -82,7 +82,7 @@ jQuery(document).ready(function ($) {
 	 * Import the external RSS feed
 	 */
 	function ssp_import_external_feed() {
-		let timer = setInterval(update_external_feed_progress_bar, 250);
+		var timer = setInterval(update_external_feed_progress_bar, 250);
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',

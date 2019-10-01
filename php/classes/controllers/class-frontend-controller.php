@@ -493,10 +493,10 @@ class Frontend_Controller extends Controller {
 			$player_size = 'mini';
 		}
 
-        if ( $player_size == 'large' || $player_size == 'larger' ) {
-    		global $large_player_instance_number;
-    		$large_player_instance_number++;
-        }
+		if ( $player_size == 'large' || $player_size == 'larger' ) {
+			global $large_player_instance_number;
+			$large_player_instance_number++;
+		}
 
 		$player = '';
 
@@ -1606,9 +1606,9 @@ class Frontend_Controller extends Controller {
 		$player_wave_form_colour = get_option( 'ss_podcasting_player_wave_form_colour', false );
 		$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
 
-        if ( $style == 'large' || $style == 'larger' ) {
-            $large_player_instance_number+= 1;
-        }
+		if ( $style == 'large' || $style == 'larger' ) {
+			$large_player_instance_number+= 1;
+		}
 
 		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
 			return;

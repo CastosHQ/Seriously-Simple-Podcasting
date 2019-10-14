@@ -1397,7 +1397,7 @@ HTML;
 	}
 
 	/**
-	 * Send the podcast details to Seriously Simple Hosting
+	 * Send the podcast details to Castos
 	 *
 	 * @param $id
 	 * @param $post
@@ -1405,7 +1405,7 @@ HTML;
 	public function update_podcast_details( $id, $post ) {
 
 		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
+		 * Don't trigger this if we're not connected to Castos
 		 */
 		if ( ! ssp_is_connected_to_podcastmotor() ) {
 			return;
@@ -1414,7 +1414,7 @@ HTML;
 		/**
 		 * Only trigger this when the post type is podcast
 		 */
-		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
+		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
 			return;
 		}
 
@@ -1442,9 +1442,9 @@ HTML;
 		}
 
 		$castos_handler = new Castos_Handler();
-		$response = $castos_handler->upload_podcast_to_podmotor( $post );
+		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
 
-		if ( 'success' == $response['status'] ) {
+		if ( 'success' === $response['status'] ) {
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );

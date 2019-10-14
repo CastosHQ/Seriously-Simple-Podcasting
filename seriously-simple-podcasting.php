@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 1.20.9
+ * Version: 1.20.10-beta
  * Plugin URI: https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
@@ -26,7 +26,7 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 
-define( 'SSP_VERSION', '1.20.9' );
+define( 'SSP_VERSION', '1.20.10-beta' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 

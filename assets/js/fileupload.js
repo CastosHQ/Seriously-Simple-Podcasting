@@ -81,16 +81,17 @@ jQuery( document ).ready( function ( $ ) {
 		/**
 		 * Checks for a valid file type triggers upload if successful
 		 */
-		uploader.bind( 'FilesAdded', function ( up, files ) {
+		uploader.bind('FilesAdded', function (up, files) {
 			// we've turned off multi file select so we're only expecting one file
-			var file = files[ 0 ];
-			if ( isFileAllowed( file ) ) {
-				notificationBar( 'Uploading file to Castos Hosting. You can continue editing this post while the file uploads. <b id="ssp_upload_progress"></b>' );
+			var file = files[0];
+			if (isFileAllowed(file)) {
+				notificationBar('Uploading file to Castos Hosting. You can continue editing this post while the file uploads. <b id="ssp_upload_progress"></b>');
 				uploader.start();
 			} else {
-				notificationBar( 'You have selected an invalid file type, please select a valid audio or video file.' );
+				notificationBar('You have selected an invalid file type, please select a valid audio or video file.');
+				uploader.removeFile(file);
 			}
-		} );
+		});
 
 		/**
 		 * Sanatizes the file name for upload

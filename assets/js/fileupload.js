@@ -89,6 +89,7 @@ jQuery( document ).ready( function ( $ ) {
 				uploader.start();
 			} else {
 				notificationBar( 'You have selected an invalid file type, please select a valid audio or video file.' );
+				uploader.refresh();
 			}
 		} );
 

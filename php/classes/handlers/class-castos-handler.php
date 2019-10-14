@@ -328,14 +328,26 @@ class Castos_Handler {
 			$post_body['id'] = $podmotor_episode_id;
 		}
 
-		$this->logger->log( 'Parameter post_body Contents', $post_body );
+		$post_body = $this->prepare_featured_image( $post, $post_body );
+
+		//$this->logger->log( 'Parameter post_body Contents', $post_body );
+
+		$post_arguments = array(
+			'timeout' => 45,
+			'body'    => $post_body,
+		);
+
+		/*if ( isset( $post_body['episode_file'] ) ) {
+			$post_arguments['headers'] = array(
+				'content-type' => 'application/binary',
+			);
+		}*/
+
+		//$this->logger->log( 'Parameter post_argument Contents', $post_arguments );
 
 		$app_response = wp_remote_post(
 			$api_url,
-			array(
-				'timeout' => 45,
-				'body'    => $post_body,
-			)
+			$post_arguments
 		);
 
 		$this->logger->log( 'Upload Podcast app_response', $app_response );
@@ -360,6 +372,34 @@ class Castos_Handler {
 		}
 
 		return $this->response;
+	}
+
+	/**
+	 * Checks if there is a featured image on the post
+	 * If so, reads the data to a file pointer and returns it in the post body
+	 *
+	 * @param $post
+	 * @param $post_body
+	 *
+	 * @return mixed
+	 */
+	public function prepare_featured_image( $post, $post_body ) {
+		$featured_image_id = get_post_thumbnail_id( $post->ID );
+		if ( empty( $featured_image_id ) ) {
+			return $post_body;
+		}
+		$image_file = get_attached_file( $featured_image_id );
+		$file       = fopen( $image_file, 'r' ); //phpcs:ignore
+		if ( ! $file ) {
+			$this->logger->log( 'Could not read featured image for post:' . $post->ID );
+
+			return $post_body;
+		}
+		$file_size                 = filesize( $image_file );
+		$file_data                 = fread( $file, $file_size ); //phpcs:ignore
+		$post_body['episode_file'] = $file_data;
+
+		return $post_body;
 	}
 
 	/**

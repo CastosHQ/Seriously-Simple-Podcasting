@@ -527,7 +527,7 @@ if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
 	 */
 	function convert_human_readable_to_bytes( $formatted_size ) {
 
-		$formatted_size_type  = preg_replace( '/[^a-z]/', '', $formatted_size );
+		$formatted_size_type  = preg_replace( '/[^a-z]/i', '', $formatted_size );
 		$formatted_size_value = trim( str_replace( $formatted_size_type, '', $formatted_size ) );
 
 		switch ( strtoupper( $formatted_size_type ) ) {

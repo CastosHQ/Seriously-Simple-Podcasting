@@ -1,0 +1,11 @@
+#ssp-external-feed-progress.blue .ui-progressbar-value {
+	background: rgb(74, 163, 223);
+}
+
+#ssp-external-feed-progress.green .ui-progressbar-value {
+	background: green;
+}
+
+#ssp-external-feed-status .import-complete-message {
+
+}

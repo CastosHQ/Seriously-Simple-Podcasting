@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 4.9.8
-Requires PHP: 5.3.3
-Stable tag: 1.19.15
+Tested up to: 5.2.2
+Requires PHP: 5.6
+Stable tag: 1.20.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -12,12 +12,12 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 
 == Description ==
 
-[Seriously Simple Podcasting](https://castos.com/seriously-simple-podcasting) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+[Seriously Simple Podcasting](https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
 
 **Primary Features**
 
 - Simple settings so you can get your podcast up and running quickly
-- Integrated podcast hosting platform, [Castos](https://castos.com/ssp), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
+- Integrated podcast hosting platform, [Castos](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
 - Newly redesigned, customizable media player that includes your podcast cover image
 - Run multiple podcasts from the same site - each with their own, unique RSS feed
 - Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
@@ -27,16 +27,16 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 - Highly configurable and robust RSS feed designed for *all* podcast services and feed readers - including iTunes, Google Play and Stitcher
 - Shortcodes & widgets for displaying podcast episode lists, single episodes and podcast playlists anywhere on your site
 - The freedom to host your media files wherever you like - on the same site, our integrated Castos hosting platform, or any other server
-- Complete user and developer [documentation](http://support.castos.com/)
+- Complete user and developer [documentation](https://support.castos.com/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019)
 - [Full i18n support](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting)
 
 **Podcast Hosting Platform**
 
-If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://castos.com/ssp).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
+If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
 
 https://youtu.be/Se3H1IDAYtw
 
-Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrifc listening experience at the same time.
+Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrific listening experience at the same time.
 
 **Beautifully Designed Media Player**
 
@@ -46,11 +46,11 @@ Choose from a compact or full size design, complete with your podcast cover imag
 
 **Where to find help**
 
-Seriously Simple Podcasting comes with complete user and developer [documentation](http://support.castos.com/). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
+Seriously Simple Podcasting comes with complete user and developer [documentation](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
 
 **Add-ons**
 
-Seriously Simple Podcasting comes with a growing [library of add-ons](https://castos.com/seriously-simple-podcasting/add-ons/). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
+Seriously Simple Podcasting comes with a growing [library of add-ons](https://castos.com/add-ons/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
 
 **How to contribute**
 
@@ -64,9 +64,9 @@ If you would like to contribute translations to this plugin you can do so throug
 
 Simply upload the plugin and you're good to go. Go to "Podcast > Add New" to add new episodes and go to "Podcast > Settings" to customise your podcast.
 
-Podcast media files can be uploaded directly into WordPress, hosted on the integrated [Castos](https://www.castos.com) platform,  or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them manually.*
+Podcast media files can be uploaded directly into WordPress, hosted on the integrated [Castos](https://castos.com/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019) platform, or hosted on any other site - in the latter case all you'll need to supply is the URL to the file. *Please note that episode lengths and file sizes can only be automatically calculated for files that are hosted on the same server as the website - either way though, you can input them manually.*
 
-If you need help, you can find complete user and developer documentation [here](http://support.castos.com/).
+If you need help, you can find complete user and developer documentation [here](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019).
 
 == Installation ==
 
@@ -81,7 +81,7 @@ Installing "Seriously Simple Podcasting" can be done either by searching for "Se
 
 = Where are the FAQs? =
 
-You can find complete user and developer documentation (along with the FAQs) on [the Seriously Simple Podcasting documentation site](http://support.castos.com/).
+You can find complete user and developer documentation (along with the FAQs) on [the Seriously Simple Podcasting documentation site](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019).
 
 == Screenshots ==
 
@@ -101,6 +101,91 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.20.10
+* 2019-10-14
+* [FIX] Fixes a bug in the javascript file uploader
+
+= 1.20.9 =
+* 2019-08-22
+* [FIX] Fixed a bug caused by the HTML player on older versions of Internet Explorer (IE10 and older)
+
+= 1.20.8 =
+* 2019-08-13
+* [NEW] Added support for RSS Feed media file prefixing, to enable measuring services like Podtrac and Chartable
+
+= 1.20.7 =
+* 2019-07-31
+* [UPDATE] Updated podcast categories to reflect Apple's [podcast category changes](https://podnews.net/press-release/apple-wwdc-2019-anno)
+* [FIX] Added default RSS stylesheet back
+* [NEW] Add ssp_enable_rss_stylesheet filter to allow disabling of the podcast RSS feed stylesheet
+
+= 1.20.6 =
+* 2019-07-24
+* UPDATE SUMMARY:  Various bug fixes related to recent changes to the RSS Feed
+* [NEW] Add a setting to control whether RSS feed episode description tags use the post content or the post excerpt
+* [FIX] Fixes a bug where Turbocharge settings were enabled even when it is switched off
+* [FIX] Fixes a bug when sending series data to a Castos connected podcast
+* [FIX] Fixes a bug where the ss_player shortcode renders the media player in the RSS feed
+* [FIX] Fixes a bug in the legacy RSS feed url
+
+= 1.20.5 =
+* 2019-07-10
+* [NEW] Add the ability to turbo charge the load times of the RSS feed, by limiting certain fields
+* [CHANGE] Updated the RSS feed description tag, itunes:summary tag and googleplay:description tag to meet RSS feed requirements
+* [FIX] Fixes a bug when retrieving posts by series
+
+= 1.20.4 =
+* 2019-07-01
+* [FIX] Fixes a bug introduced by 1.20.0 which breaks password protecting a feed
+
+= 1.20.3 =
+* 2019-06-13
+* [FIX] Fixes a bug introduced by 1.20.0 where using link_title in the ss_podcast shortcode does not work
+* [FIX] Fixes a spelling error in the default Stitcher subscribe option
+* [NEW] Check if editor or administrator roles exist, before adding user capabilities to podcast post types
+* [NEW] Adds a new download_link REST API field on the episodes endpoint, which allows for stats tracking via the REST API
+
+= 1.20.2 =
+* 2019-06-05
+* [FIX] Fixes a legacy bug where the series custom taxonomy was not available an certain custom post types, if enabled
+
+= 1.20.1 =
+* 2019-05-28
+* [FIX] Fixes a bug where subscribe links still show, even if not url has been set
+
+= 1.20.0 =
+* 2019-05-28
+* [CHANGE] Refactoring plugin structure with basic support for composer autoloading, namespacing and better WordPress coding standards support
+* [CHANGE] Refactoring plugin structure to have a better separation of concerns (WIP)
+* [CHANGE] PHP version 5.6 or greater now required
+* [CHANGE] Added a plugin options page, which allows for managing more than 4 subscribe links
+* [FIX] Fixes a bug where Post Types marked as Podcasts couldn't be assigned series
+* [TWEAK] Minor changes to the upgrade page
+
+= 1.19.20 =
+* 2019-04-29
+* [FIX] Fixes a PHP Notice introduced by the 1.19.19 release
+
+= 1.19.19 =
+* 2019-04-29
+* [FIX] Fixes bug where regular Seriously Simple Podcasting users were not able to use the new importer
+
+= 1.19.18 =
+* 2019-04-29
+* [NEW] Option to import an external podcast feed, useful when moving from a third party service to Seriously Simple Podcasting (props [Jake Spurlock](https://github.com/whyisjake))
+* [FIX] Fixes a PHP 7 deprecated function error
+
+= 1.19.17 =
+* 2019-03-13
+* [FIX] Fixes a bug where the HTML5 player JavaScript was rendered inline, causing wpautop related bugs
+* [UPDATE] Updates the Castos Discount form
+
+= 1.19.16 =
+* 2019-02-27
+* [FIX] Fixes a bug where draft posts are incorrectly synced with Castos hosting account
+* [NEW] Adds ssp_series_taxonomy filter that allows the user to edit the series taxonomy being registered (props [@mallardduck](https://github.com/mallardduck))
+* [UPDATE] Implements updates for the new Castos podcast import service
 
 = 1.19.15 =
 * 2018-11-26

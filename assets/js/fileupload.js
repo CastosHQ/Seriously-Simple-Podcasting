@@ -4,7 +4,6 @@
  */
 
 jQuery( document ).ready( function ( $ ) {
-
 	/**
 	 * Upload notification bar
 	 */

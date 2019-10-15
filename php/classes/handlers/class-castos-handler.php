@@ -312,7 +312,7 @@ class Castos_Handler {
 
 		$series_id = ssp_get_episode_series_id( $post->ID );
 
-		$post_body = array(
+		$fields = array(
 			'api_token'    => $podmotor_api_token,
 			'post_id'      => $post->ID,
 			'post_title'   => $post->post_title,
@@ -325,25 +325,22 @@ class Castos_Handler {
 		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
 
 		if ( ! empty( $podmotor_episode_id ) ) {
-			$post_body['id'] = $podmotor_episode_id;
+			$fields['id'] = $podmotor_episode_id;
 		}
 
-		$post_body = $this->prepare_featured_image( $post, $post_body );
+		$boundary  = wp_generate_password( 24 );
+		$post_body = $this->prepare_post_body( $fields, $boundary );
+		$post_body = $this->prepare_featured_image( $post, $post_body, $boundary );
 
-		//$this->logger->log( 'Parameter post_body Contents', $post_body );
+		$headers = array(
+			'content-type' => 'multipart/form-data; boundary=' . $boundary,
+		);
 
 		$post_arguments = array(
 			'timeout' => 45,
+			'headers' => $headers,
 			'body'    => $post_body,
 		);
-
-		/*if ( isset( $post_body['episode_file'] ) ) {
-			$post_arguments['headers'] = array(
-				'content-type' => 'application/binary',
-			);
-		}*/
-
-		//$this->logger->log( 'Parameter post_argument Contents', $post_arguments );
 
 		$app_response = wp_remote_post(
 			$api_url,
@@ -375,6 +372,27 @@ class Castos_Handler {
 	}
 
 	/**
+	 * Prepare the post body fields
+	 *
+	 * @param $fields
+	 * @param $boundary
+	 *
+	 * @return string
+	 */
+	public function prepare_post_body( $fields, $boundary ) {
+		$post_body = '';
+		foreach ( $fields as $name => $value ) {
+			$post_body .= '--' . $boundary;
+			$post_body .= "\r\n";
+			$post_body .= 'Content-Disposition: form-data; name="' . $name . '"' . "\r\n\r\n";
+			$post_body .= $value;
+			$post_body .= "\r\n";
+		}
+
+		return $post_body;
+	}
+
+	/**
 	 * Checks if there is a featured image on the post
 	 * If so, reads the data to a file pointer and returns it in the post body
 	 *
@@ -383,21 +401,25 @@ class Castos_Handler {
 	 *
 	 * @return mixed
 	 */
-	public function prepare_featured_image( $post, $post_body ) {
+	public function prepare_featured_image( $post, $post_body, $boundary ) {
 		$featured_image_id = get_post_thumbnail_id( $post->ID );
 		if ( empty( $featured_image_id ) ) {
 			return $post_body;
 		}
 		$image_file = get_attached_file( $featured_image_id );
-		$file       = fopen( $image_file, 'r' ); //phpcs:ignore
+		$file       = fopen( $image_file, 'rb' ); //phpcs:ignore
 		if ( ! $file ) {
 			$this->logger->log( 'Could not read featured image for post:' . $post->ID );
 
 			return $post_body;
 		}
-		$file_size                 = filesize( $image_file );
-		$file_data                 = fread( $file, $file_size ); //phpcs:ignore
-		$post_body['episode_file'] = $file_data;
+
+		$post_body .= '--' . $boundary;
+		$post_body .= "\r\n";
+		$post_body .= 'Content-Disposition: form-data; name="episode_image"; filename="' . basename( $image_file ) . '"' . "\r\n";// $payload .= 'Content-Type: image/jpeg' . "\r\n";
+		$post_body .= "\r\n";
+		$post_body .= file_get_contents( $image_file );
+		$post_body .= "\r\n";
 
 		return $post_body;
 	}

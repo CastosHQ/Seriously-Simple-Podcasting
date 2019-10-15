@@ -96,6 +96,8 @@ class Admin_Controller extends Controller {
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 
+			add_action( 'after_delete_post', array( $this, 'delete_podcast' ) );
+
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
 			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
@@ -1450,6 +1452,10 @@ HTML;
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
 		}
+
+	}
+
+	public function delete_podcast(){
 
 	}
 

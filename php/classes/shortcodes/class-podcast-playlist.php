@@ -181,6 +181,9 @@ class Podcast_Playlist {
 					$track['thumb'] = '';
 				}
 			}
+			
+			// Allow dynamic filtering of track data
+			$track = apply_filters( 'ssp_podcast_playlist_track_data', $track, $episode );
 
 			$tracks[] = $track;
 		}

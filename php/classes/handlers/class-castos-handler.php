@@ -414,11 +414,16 @@ class Castos_Handler {
 			return $post_body;
 		}
 
+		$mime_type = get_post_mime_type( $featured_image_id );
+
 		$post_body .= '--' . $boundary;
 		$post_body .= "\r\n";
-		$post_body .= 'Content-Disposition: form-data; name="episode_image"; filename="' . basename( $image_file ) . '"' . "\r\n";// $payload .= 'Content-Type: image/jpeg' . "\r\n";
+		$post_body .= 'Content-Disposition: form-data; name="episode_file"; filename="' . basename( $file ) . '"' . "\r\n";
+		if ( ! empty( $mime_type ) ) {
+			$post_body .= 'Content-Type: ' . $mime_type . "\r\n";
+		}
 		$post_body .= "\r\n";
-		$post_body .= file_get_contents( $image_file );
+		$post_body .= file_get_contents( $file ); //phpcs:ignore
 		$post_body .= "\r\n";
 
 		return $post_body;

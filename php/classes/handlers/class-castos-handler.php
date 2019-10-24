@@ -312,7 +312,7 @@ class Castos_Handler {
 
 		$series_id = ssp_get_episode_series_id( $post->ID );
 
-		$fields = array(
+		$post_body = array(
 			'api_token'    => $podmotor_api_token,
 			'post_id'      => $post->ID,
 			'post_title'   => $post->post_title,
@@ -325,29 +325,22 @@ class Castos_Handler {
 		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
 
 		if ( ! empty( $podmotor_episode_id ) ) {
-			$fields['id'] = $podmotor_episode_id;
+			$post_body['id'] = $podmotor_episode_id;
 		}
 
-		$boundary   = wp_generate_password( 24 );
-		$post_body  = $this->prepare_post_body( $fields, $boundary );
-		$post_body  = $this->prepare_featured_image( $post, $post_body, $boundary );
-		$post_body .= '--' . $boundary . '--';
+		$featured_image_url = $this->get_featured_image( $post );
+		if ( ! empty( $podmotor_episode_id ) ) {
+			$post_body['featured_image_url'] = $featured_image_url;
+		}
 
-		$headers = array(
-			'content-type' => 'multipart/form-data; boundary=' . $boundary,
-		);
-
-		$post_arguments = array(
-			'timeout' => 45,
-			'headers' => $headers,
-			'body'    => $post_body,
-		);
-
-		$this->logger->log( 'Post Body', $post_arguments );
+		$this->logger->log( 'Parameter post_body Contents', $post_body );
 
 		$app_response = wp_remote_post(
 			$api_url,
-			$post_arguments
+			array(
+				'timeout' => 45,
+				'body'    => $post_body,
+			)
 		);
 
 		$this->logger->log( 'Upload Podcast app_response', $app_response );
@@ -375,61 +368,15 @@ class Castos_Handler {
 	}
 
 	/**
-	 * Prepare the post body fields
-	 *
-	 * @param $fields
-	 * @param $boundary
-	 *
-	 * @return string
-	 */
-	public function prepare_post_body( $fields, $boundary ) {
-		$post_body = '';
-		foreach ( $fields as $name => $value ) {
-			$post_body .= '--' . $boundary;
-			$post_body .= "\r\n";
-			$post_body .= 'Content-Disposition: form-data; name="' . $name . '"' . "\r\n\r\n";
-			$post_body .= $value;
-			$post_body .= "\r\n";
-		}
-
-		return $post_body;
-	}
-
-	/**
-	 * Checks if there is a featured image on the post
-	 * If so, reads the data to a file pointer and returns it in the post body
+	 * Gets the featured image url
 	 *
 	 * @param $post
 	 * @param $post_body
 	 *
 	 * @return mixed
 	 */
-	public function prepare_featured_image( $post, $post_body, $boundary ) {
-		$featured_image_id = get_post_thumbnail_id( $post->ID );
-		if ( empty( $featured_image_id ) ) {
-			return $post_body;
-		}
-		$image_file = get_attached_file( $featured_image_id );
-		$file       = fopen( $image_file, 'rb' ); //phpcs:ignore
-		if ( ! $file ) {
-			$this->logger->log( 'Could not read featured image for post:' . $post->ID );
-
-			return $post_body;
-		}
-
-		$mime_type = get_post_mime_type( $featured_image_id );
-
-		$post_body .= '--' . $boundary;
-		$post_body .= "\r\n";
-		$post_body .= 'Content-Disposition: form-data; name="episode_file"; filename="' . basename( $image_file ) . '"' . "\r\n";
-		if ( ! empty( $mime_type ) ) {
-			$post_body .= 'Content-Type: ' . $mime_type . "\r\n";
-		}
-		$post_body .= "\r\n";
-		$post_body .= file_get_contents( $image_file ); //phpcs:ignore
-		$post_body .= "\r\n";
-
-		return $post_body;
+	public function get_featured_image( $post ) {
+		return get_the_post_thumbnail_url( $post->ID, 'full' );
 	}
 
 	/**

@@ -329,7 +329,7 @@ class Castos_Handler {
 		}
 
 		$featured_image_url = $this->get_featured_image( $post );
-		if ( ! empty( $podmotor_episode_id ) ) {
+		if ( ! empty( $featured_image_url ) ) {
 			$post_body['featured_image_url'] = $featured_image_url;
 		}
 

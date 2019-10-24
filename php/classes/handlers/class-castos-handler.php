@@ -328,9 +328,10 @@ class Castos_Handler {
 			$fields['id'] = $podmotor_episode_id;
 		}
 
-		$boundary  = wp_generate_password( 24 );
-		$post_body = $this->prepare_post_body( $fields, $boundary );
-		$post_body = $this->prepare_featured_image( $post, $post_body, $boundary );
+		$boundary   = wp_generate_password( 24 );
+		$post_body  = $this->prepare_post_body( $fields, $boundary );
+		$post_body  = $this->prepare_featured_image( $post, $post_body, $boundary );
+		$post_body .= '--' . $boundary . '--';
 
 		$headers = array(
 			'content-type' => 'multipart/form-data; boundary=' . $boundary,
@@ -341,6 +342,8 @@ class Castos_Handler {
 			'headers' => $headers,
 			'body'    => $post_body,
 		);
+
+		$this->logger->log( 'Post Body', $post_arguments );
 
 		$app_response = wp_remote_post(
 			$api_url,

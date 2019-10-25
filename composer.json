@@ -24,5 +24,8 @@
   },
   "autoload"   : {
     "classmap": ["php/"]
+  },
+  "require-dev": {
+    "lucatume/wp-browser": "^2.2"
   }
 }

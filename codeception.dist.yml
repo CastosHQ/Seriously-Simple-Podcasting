@@ -17,4 +17,6 @@ extensions:
         - Codeception\Command\GenerateWPCanonical
         - Codeception\Command\GenerateWPXMLRPC
 params:
-  - env # load params from environment vars
+  #- .env
+  - .env.testing
+

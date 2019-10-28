@@ -328,6 +328,11 @@ class Castos_Handler {
 			$post_body['id'] = $podmotor_episode_id;
 		}
 
+		$featured_image_url = $this->get_featured_image( $post );
+		if ( ! empty( $featured_image_url ) ) {
+			$post_body['featured_image_url'] = $featured_image_url;
+		}
+
 		$this->logger->log( 'Parameter post_body Contents', $post_body );
 
 		$app_response = wp_remote_post(
@@ -360,6 +365,18 @@ class Castos_Handler {
 		}
 
 		return $this->response;
+	}
+
+	/**
+	 * Gets the featured image url
+	 *
+	 * @param $post
+	 * @param $post_body
+	 *
+	 * @return mixed
+	 */
+	public function get_featured_image( $post ) {
+		return get_the_post_thumbnail_url( $post->ID, 'full' );
 	}
 
 	/**

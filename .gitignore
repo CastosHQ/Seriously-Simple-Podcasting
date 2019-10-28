@@ -8,6 +8,8 @@ node_modules/
 *.tar.gz
 *.zip
 .idea
+.env*
 log
 package-lock.json
 webpack.config.min.js
+/vendor

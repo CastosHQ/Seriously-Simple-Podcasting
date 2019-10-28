@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.2.2
 Requires PHP: 5.6
-Stable tag: 1.20.10
+Stable tag: 1.20.11-beta
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.20.11-beta
+* 2018-10-28
+* [FIX] Fix file size not showing in RSS feed bug. (props [Josephus Paye II](https://github.com/JosephusPaye))
+* [FIX] Fixes a bug related to the Music Commentary category not saving in Castos. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [FIX] Fixes a bug where scripts and styles for HTML5 player showing up in footer even when standard player is selected. (props [rghedin](https://github.com/rghedin))
+* [NEW] Added the ssp_podcast_playlist_track_data filter for track data in playlist shortcode. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [TWEAK] Localised the PHP version error message for translations. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [TWEAK] Add context to localisation of podcast URL slug to prevent URLs changing when translated. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [UPDATE] Hooks into the post save to push featured image to the Castos episode.
+* [UPDATE] Hooks into the post delete to delete an episode in Castos.
 
 = 1.20.10
 * 2019-10-14

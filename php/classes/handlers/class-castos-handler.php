@@ -363,6 +363,49 @@ class Castos_Handler {
 	}
 
 	/**
+	 * Delete a post from Castos when it's delete from WordPress
+	 *
+	 * @param $id
+	 *
+	 * @return bool
+	 */
+	public function delete_podcast( $post_id ) {
+		$this->setup_response();
+
+		if ( empty( $post_id ) ) {
+			return false;
+		}
+
+		$post = get_post( $post_id );
+		if ( empty( $post ) ) {
+			return false;
+		}
+
+		$episode_id = get_post_meta( $post->ID, 'podmotor_episode_id' );
+		if ( empty( $episode_id ) ) {
+			return false;
+		}
+
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+
+		$api_url = SSP_CASTOS_APP_URL . 'api/episode';
+
+		$post_body = array(
+			'api_token' => $podmotor_api_token,
+			'id'        => $episode_id,
+		);
+
+		wp_remote_request(
+			$api_url,
+			array(
+				'method'  => 'DELETE',
+				'timeout' => 45,
+				'body'    => $post_body,
+			)
+		);
+	}
+
+	/**
 	 * Upload Podcasts episode data to Castos
 	 *
 	 * @param $podcast_data array of post values

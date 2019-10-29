@@ -96,6 +96,9 @@ class Admin_Controller extends Controller {
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 
+			// Delete podcast from Castos
+			add_action( 'after_delete_post', array( $this, 'delete_podcast' ), 10, 2 );
+
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
 			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
@@ -1397,7 +1400,7 @@ HTML;
 	}
 
 	/**
-	 * Send the podcast details to Seriously Simple Hosting
+	 * Send the podcast details to Castos
 	 *
 	 * @param $id
 	 * @param $post
@@ -1451,6 +1454,17 @@ HTML;
 			}
 		}
 
+	}
+
+	/**
+	 * Delete the podcast from Castos
+	 *
+	 * @param $id
+	 * @param $post
+	 */
+	public function delete_podcast( $id ) {
+		$castos_handler = new Castos_Handler();
+		$castos_handler->delete_podcast( $id );
 	}
 
 	/**

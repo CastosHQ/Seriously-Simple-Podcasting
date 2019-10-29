@@ -226,7 +226,7 @@ class Settings_Handler {
 				'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
 			),
 			'Music Commentary '  => array(
-				'label' => __( 'Music Commentary ', 'seriously-simple-podcasting' ),
+				'label' => __( 'Music Commentary', 'seriously-simple-podcasting' ),
 				'group' => __( 'Music', 'seriously-simple-podcasting' ),
 			),
 			'Music History'      => array(

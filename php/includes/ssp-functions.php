@@ -22,13 +22,14 @@ if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
 		 */
 		add_action( 'admin_notices', 'ssp_php_version_notice' );
 		function ssp_php_version_notice() {
+			$error_notice = __( 'The Seriously Simple Podcasting plugin requires PHP version 5.6 or higher. Please contact your web host to upgrade your PHP version or deactivate the plugin.', 'seriously-simple-podcasting' );
+			$error_notice_apology = __( 'We apologise for any inconvenience.', 'seriously-simple-podcasting' );
 			?>
 			<div class="error">
 				<p>
-					<strong>The Seriously Simple Podcasting plugin requires PHP version 5.6 or higher. Please
-						contact your web host to upgrade your PHP version or deactivate the plugin.</strong>.
+					<strong><?php echo $error_notice; ?></strong>.
 				</p>
-				<p>We apologise for any inconvenience.</p>
+				<p><?php echo $error_notice_apology; ?></p>
 			</div>
 			<?php
 		}
@@ -527,7 +528,7 @@ if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
 	 */
 	function convert_human_readable_to_bytes( $formatted_size ) {
 
-		$formatted_size_type  = preg_replace( '/[^a-z]/', '', $formatted_size );
+		$formatted_size_type  = preg_replace( '/[^a-z]/i', '', $formatted_size );
 		$formatted_size_value = trim( str_replace( $formatted_size_type, '', $formatted_size ) );
 
 		switch ( strtoupper( $formatted_size_type ) ) {

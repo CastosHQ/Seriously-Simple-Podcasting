@@ -97,7 +97,7 @@ class Admin_Controller extends Controller {
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 
 			// Delete podcast from Castos
-			add_action( 'after_delete_post', array( $this, 'delete_podcast' ) );
+			add_action( 'trashed_post', array( $this, 'trash_post' ) );
 
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -1461,7 +1461,7 @@ HTML;
 	 *
 	 * @param $post_id
 	 */
-	public function delete_podcast( $post_id ) {
+	public function trash_post( $post_id ) {
 		/**
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */

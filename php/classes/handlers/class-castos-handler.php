@@ -380,7 +380,7 @@ class Castos_Handler {
 	}
 
 	/**
-	 * Delete a post from Castos when it's delete from WordPress
+	 * Delete a post from Castos when it's trashed in WordPress
 	 *
 	 * @param $post
 	 *
@@ -393,7 +393,7 @@ class Castos_Handler {
 			return false;
 		}
 
-		$episode_id = get_post_meta( $post->ID, 'podmotor_episode_id' );
+		$episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
 		if ( empty( $episode_id ) ) {
 			return false;
 		}
@@ -407,7 +407,7 @@ class Castos_Handler {
 			'id'        => $episode_id,
 		);
 
-		wp_remote_request(
+		$api_response = wp_remote_request(
 			$api_url,
 			array(
 				'method'  => 'DELETE',
@@ -415,6 +415,9 @@ class Castos_Handler {
 				'body'    => $post_body,
 			)
 		);
+
+		$this->logger->log( 'Delete Podcast api_response', $api_response );
+
 		return true;
 	}
 

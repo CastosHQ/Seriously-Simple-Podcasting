@@ -365,18 +365,13 @@ class Castos_Handler {
 	/**
 	 * Delete a post from Castos when it's delete from WordPress
 	 *
-	 * @param $id
+	 * @param $post
 	 *
 	 * @return bool
 	 */
-	public function delete_podcast( $post_id ) {
+	public function delete_podcast( $post ) {
 		$this->setup_response();
 
-		if ( empty( $post_id ) ) {
-			return false;
-		}
-
-		$post = get_post( $post_id );
 		if ( empty( $post ) ) {
 			return false;
 		}

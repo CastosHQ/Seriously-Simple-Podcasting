@@ -1459,12 +1459,27 @@ HTML;
 	/**
 	 * Delete the podcast from Castos
 	 *
-	 * @param $id
-	 * @param $post
+	 * @param $post_id
 	 */
-	public function delete_podcast( $id ) {
+	public function delete_podcast( $post_id ) {
+		/**
+		 * Don't trigger this if we're not connected to Podcast Motor
+		 */
+		if ( ! ssp_is_connected_to_podcastmotor() ) {
+			return;
+		}
+
+		$post = get_post( $post_id );
+
+		/**
+		 * Only trigger this when the post type is podcast
+		 */
+		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
+			return;
+		}
+
 		$castos_handler = new Castos_Handler();
-		$castos_handler->delete_podcast( $id );
+		$castos_handler->delete_podcast( $post );
 	}
 
 	/**

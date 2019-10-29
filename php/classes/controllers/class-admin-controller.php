@@ -97,7 +97,7 @@ class Admin_Controller extends Controller {
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 
 			// Delete podcast from Castos
-			add_action( 'after_delete_post', array( $this, 'delete_podcast' ), 10, 2 );
+			add_action( 'after_delete_post', array( $this, 'delete_podcast' ) );
 
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -1408,7 +1408,7 @@ HTML;
 	public function update_podcast_details( $id, $post ) {
 
 		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
+		 * Don't trigger this if we're not connected to Castos
 		 */
 		if ( ! ssp_is_connected_to_podcastmotor() ) {
 			return;
@@ -1417,7 +1417,7 @@ HTML;
 		/**
 		 * Only trigger this when the post type is podcast
 		 */
-		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
+		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
 			return;
 		}
 
@@ -1445,14 +1445,18 @@ HTML;
 		}
 
 		$castos_handler = new Castos_Handler();
-		$response = $castos_handler->upload_podcast_to_podmotor( $post );
+		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
 
-		if ( 'success' == $response['status'] ) {
+		if ( 'success' === $response['status'] ) {
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
 		}
+
+	}
+
+	public function delete_podcast(){
 
 	}
 

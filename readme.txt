@@ -110,8 +110,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [NEW] Added the ssp_podcast_playlist_track_data filter for track data in playlist shortcode. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
 * [TWEAK] Localised the PHP version error message for translations. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
 * [TWEAK] Add context to localisation of podcast URL slug to prevent URLs changing when translated. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
-* [UPDATE] Hooks into the post save to push featured image to the Castos episode.
-* [UPDATE] Hooks into the post delete to delete an episode in Castos.
+* [UPDATE] Update to push the post featured image to the Castos episode.
+* [UPDATE] Update to delete an episode in Castos when a post is trashed in WordPress.
 
 = 1.20.10
 * 2019-10-14

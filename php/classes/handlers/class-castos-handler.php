@@ -377,8 +377,9 @@ class Castos_Handler {
 	 */
 	public function get_featured_image( $post ) {
 		return get_the_post_thumbnail_url( $post->ID, 'full' );
-  }
+	}
 
+	/**
 	 * Delete a post from Castos when it's delete from WordPress
 	 *
 	 * @param $post
@@ -414,8 +415,8 @@ class Castos_Handler {
 				'body'    => $post_body,
 			)
 		);
-  }
-
+		return true;
+	}
 
 	/**
 	 * Upload Podcasts episode data to Castos

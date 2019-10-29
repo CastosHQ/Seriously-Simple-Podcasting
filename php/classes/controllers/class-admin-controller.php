@@ -1456,10 +1456,6 @@ HTML;
 
 	}
 
-	public function delete_podcast(){
-
-	}
-
 	/**
 	 * Delete the podcast from Castos
 	 *

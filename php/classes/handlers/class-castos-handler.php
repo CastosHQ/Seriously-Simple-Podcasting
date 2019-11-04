@@ -390,11 +390,13 @@ class Castos_Handler {
 		$this->setup_response();
 
 		if ( empty( $post ) ) {
+			$this->logger->log( 'Post to trash empty', array( 'post', $post ) );
 			return false;
 		}
 
 		$episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
 		if ( empty( $episode_id ) ) {
+			$this->logger->log( 'Episode ID to trash empty', array( 'episode_id', $episode_id ) );
 			return false;
 		}
 

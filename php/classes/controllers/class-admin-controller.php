@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,6 +37,8 @@ class Admin_Controller extends Controller {
 	 */
 	protected $feed_controller;
 
+	protected $logger;
+
 	/**
 	 * Admin_Controller constructor.
 	 *
@@ -57,6 +60,8 @@ class Admin_Controller extends Controller {
 		$this->upgrade_handler = new Upgrade_Handler();
 
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
+
+		$this->logger = new Log_Helper();
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();
@@ -81,6 +86,9 @@ class Admin_Controller extends Controller {
 		// Hide WP SEO footer text for podcast RSS feed.
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
+		// Delete podcast from Castos
+		add_action( 'trashed_post', array( $this, 'delete_post' ), 11, 1 );
+
 		if ( is_admin() ) {
 
 			add_action( 'admin_init', array( $this, 'update_enclosures' ) );
@@ -95,9 +103,6 @@ class Admin_Controller extends Controller {
 			// Update podcast details to Castos.
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
-
-			// Delete podcast from Castos
-			add_action( 'trashed_post', array( $this, 'trash_post' ) );
 
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -1461,7 +1466,8 @@ HTML;
 	 *
 	 * @param $post_id
 	 */
-	public function trash_post( $post_id ) {
+	public function delete_post( $post_id ) {
+
 		/**
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */

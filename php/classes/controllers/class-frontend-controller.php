@@ -208,6 +208,11 @@ class Frontend_Controller extends Controller {
 
 		global $post, $wp_current_filter, $episode_context;
 
+		// Don't do anything if we don't have a valid post object
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			return $content;
+		}
+
 		// Don't output unformatted data on excerpts
 		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter, true ) ) {
 			return $content;

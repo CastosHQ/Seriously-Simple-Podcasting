@@ -108,6 +108,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [FIX] Fixes a bug related to the Music Commentary category not saving in Castos. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
 * [FIX] Fixes a bug where scripts and styles for HTML5 player showing up in footer even when standard player is selected. (props [rghedin](https://github.com/rghedin))
 * [NEW] Added the ssp_podcast_playlist_track_data filter for track data in playlist shortcode. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [NEW] Added ssp_enable_get_file_size and ssp_enable_get_file_duration filters to disable the file size and duration functionality via filters
 * [TWEAK] Localised the PHP version error message for translations. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
 * [TWEAK] Add context to localisation of podcast URL slug to prevent URLs changing when translated. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
 * [UPDATE] Update to push the post featured image to the Castos episode.

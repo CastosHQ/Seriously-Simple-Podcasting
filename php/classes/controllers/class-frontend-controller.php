@@ -848,6 +848,14 @@ class Frontend_Controller extends Controller {
 	 */
 	public function get_file_size( $file = '' ) {
 
+		/**
+		 * ssp_enable_get_file_size filter to allow this functionality to be disabled programmatically
+		 */
+		$enabled = apply_filters( 'ssp_enable_get_file_size', true );
+		if ( ! $enabled ) {
+			return false;
+		}
+
 		if ( $file ) {
 
 			// Include media functions if necessary
@@ -1082,6 +1090,14 @@ class Frontend_Controller extends Controller {
 	 * @return mixed        File duration on success, boolean false on failure
 	 */
 	public function get_file_duration( $file ) {
+
+		/**
+		 * ssp_enable_get_file_duration filter to allow this functionality to be disabled programmatically
+		 */
+		$enabled = apply_filters( 'ssp_enable_get_file_duration', true );
+		if ( ! $enabled ) {
+			return false;
+		}
 
 		if ( $file ) {
 

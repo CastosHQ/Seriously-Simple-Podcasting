@@ -1,6 +1,6 @@
 <?php
 
-use SeriouslySimplePodcasting\Handlers\CastosHandler;
+use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -700,7 +700,7 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 
 				$podcast_data = ssp_build_podcast_data( $podcast_query );
 
-				$castos_handler           = new CastosHandler();
+				$castos_handler           = new Castos_Handler();
 				$upload_podcasts_response = $castos_handler->upload_podcasts_to_podmotor( $podcast_data );
 
 				if ( 'success' === $upload_podcasts_response['status'] ) {

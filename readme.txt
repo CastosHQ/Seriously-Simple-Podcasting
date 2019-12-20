@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.2.2
+Tested up to: 5.3.2
 Requires PHP: 5.6
-Stable tag: 1.20.11-beta
+Stable tag: 1.20.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,8 +102,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.20.11-beta
-* 2018-10-28
+= 1.20.11
+* 2018-12-20
+* UPDATE SUMMARY:  Various community bug fixes and Castos hosting related improvements
 * [FIX] Fix file size not showing in RSS feed bug. (props [Josephus Paye II](https://github.com/JosephusPaye))
 * [FIX] Fixes a bug related to the Music Commentary category not saving in Castos. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
 * [FIX] Fixes a bug where scripts and styles for HTML5 player showing up in footer even when standard player is selected. (props [rghedin](https://github.com/rghedin))

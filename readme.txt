@@ -102,7 +102,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 1.20.11
+= 1.20.11 =
 * 2018-12-20
 * UPDATE SUMMARY:  Various community bug fixes and Castos hosting related improvements
 * [FIX] Fix file size not showing in RSS feed bug. (props [Josephus Paye II](https://github.com/JosephusPaye))
@@ -115,7 +115,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [UPDATE] Update to push the post featured image to the Castos episode.
 * [UPDATE] Update to delete an episode in Castos when a post is trashed in WordPress.
 
-= 1.20.10
+= 1.20.10 =
 * 2019-10-14
 * [FIX] Fixes a bug in the javascript file uploader
 

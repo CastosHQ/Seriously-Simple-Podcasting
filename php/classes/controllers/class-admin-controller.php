@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -36,6 +37,8 @@ class Admin_Controller extends Controller {
 	 */
 	protected $feed_controller;
 
+	protected $logger;
+
 	/**
 	 * Admin_Controller constructor.
 	 *
@@ -57,6 +60,8 @@ class Admin_Controller extends Controller {
 		$this->upgrade_handler = new Upgrade_Handler();
 
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
+
+		$this->logger = new Log_Helper();
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();
@@ -80,6 +85,9 @@ class Admin_Controller extends Controller {
 
 		// Hide WP SEO footer text for podcast RSS feed.
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
+
+		// Delete podcast from Castos
+		add_action( 'trashed_post', array( $this, 'delete_post' ), 11, 1 );
 
 		if ( is_admin() ) {
 
@@ -1397,7 +1405,7 @@ HTML;
 	}
 
 	/**
-	 * Send the podcast details to Seriously Simple Hosting
+	 * Send the podcast details to Castos
 	 *
 	 * @param $id
 	 * @param $post
@@ -1405,7 +1413,7 @@ HTML;
 	public function update_podcast_details( $id, $post ) {
 
 		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
+		 * Don't trigger this if we're not connected to Castos
 		 */
 		if ( ! ssp_is_connected_to_podcastmotor() ) {
 			return;
@@ -1414,7 +1422,7 @@ HTML;
 		/**
 		 * Only trigger this when the post type is podcast
 		 */
-		if ( ! in_array( $post->post_type, ssp_post_types( true ) ) ) {
+		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
 			return;
 		}
 
@@ -1442,15 +1450,42 @@ HTML;
 		}
 
 		$castos_handler = new Castos_Handler();
-		$response = $castos_handler->upload_podcast_to_podmotor( $post );
+		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
 
-		if ( 'success' == $response['status'] ) {
+		if ( 'success' === $response['status'] ) {
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
 		}
 
+	}
+
+	/**
+	 * Delete the podcast from Castos
+	 *
+	 * @param $post_id
+	 */
+	public function delete_post( $post_id ) {
+
+		/**
+		 * Don't trigger this if we're not connected to Podcast Motor
+		 */
+		if ( ! ssp_is_connected_to_podcastmotor() ) {
+			return;
+		}
+
+		$post = get_post( $post_id );
+
+		/**
+		 * Only trigger this when the post type is podcast
+		 */
+		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
+			return;
+		}
+
+		$castos_handler = new Castos_Handler();
+		$castos_handler->delete_podcast( $post );
 	}
 
 	/**

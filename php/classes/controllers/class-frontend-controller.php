@@ -208,6 +208,11 @@ class Frontend_Controller extends Controller {
 
 		global $post, $wp_current_filter, $episode_context;
 
+		// Don't do anything if we don't have a valid post object
+		if ( ! is_a( $post, 'WP_Post' ) ) {
+			return $content;
+		}
+
 		// Don't output unformatted data on excerpts
 		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter, true ) ) {
 			return $content;
@@ -493,8 +498,10 @@ class Frontend_Controller extends Controller {
 			$player_size = 'mini';
 		}
 
-		global $large_player_instance_number;
-		$large_player_instance_number++;
+		if ( $player_size == 'large' || $player_size == 'larger' ) {
+			global $large_player_instance_number;
+			$large_player_instance_number++;
+		}
 
 		$player = '';
 
@@ -846,6 +853,14 @@ class Frontend_Controller extends Controller {
 	 */
 	public function get_file_size( $file = '' ) {
 
+		/**
+		 * ssp_enable_get_file_size filter to allow this functionality to be disabled programmatically
+		 */
+		$enabled = apply_filters( 'ssp_enable_get_file_size', true );
+		if ( ! $enabled ) {
+			return false;
+		}
+
 		if ( $file ) {
 
 			// Include media functions if necessary
@@ -1080,6 +1095,14 @@ class Frontend_Controller extends Controller {
 	 * @return mixed        File duration on success, boolean false on failure
 	 */
 	public function get_file_duration( $file ) {
+
+		/**
+		 * ssp_enable_get_file_duration filter to allow this functionality to be disabled programmatically
+		 */
+		$enabled = apply_filters( 'ssp_enable_get_file_duration', true );
+		if ( ! $enabled ) {
+			return false;
+		}
 
 		if ( $file ) {
 
@@ -1604,7 +1627,9 @@ class Frontend_Controller extends Controller {
 		$player_wave_form_colour = get_option( 'ss_podcasting_player_wave_form_colour', false );
 		$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
 
-		$large_player_instance_number+= 1;
+		if ( $style == 'large' || $style == 'larger' ) {
+			$large_player_instance_number+= 1;
+		}
 
 		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
 			return;

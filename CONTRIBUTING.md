@@ -18,6 +18,8 @@ GitHub is for *bug reports and contributions only* - if you have a support quest
 ## Making Changes
 
 * Fork the repository on GitHub.
+* Clone the forked repository to your local development environment
+* Be sure to run `composer install` to install any dependencies
 * Make the changes to your forked repository.
   * **Ensure you stick to the [WordPress Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/) for all languages.**
 * When committing, reference your issue (#1234) and include a note about the fix.

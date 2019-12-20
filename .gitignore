@@ -4,11 +4,13 @@ phpunit.xml
 Thumbs.db
 wp-cli.local.yml
 node_modules/
+vendor/
 *.sql
 *.tar.gz
 *.zip
 .idea
+.env*
 log
 package-lock.json
 webpack.config.min.js
-vendor
+vendor/

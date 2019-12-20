@@ -328,6 +328,11 @@ class Castos_Handler {
 			$post_body['id'] = $podmotor_episode_id;
 		}
 
+		$featured_image_url = $this->get_featured_image( $post );
+		if ( ! empty( $featured_image_url ) ) {
+			$post_body['featured_image_url'] = $featured_image_url;
+		}
+
 		$this->logger->log( 'Parameter post_body Contents', $post_body );
 
 		$app_response = wp_remote_post(
@@ -360,6 +365,62 @@ class Castos_Handler {
 		}
 
 		return $this->response;
+	}
+
+	/**
+	 * Gets the featured image url
+	 *
+	 * @param $post
+	 * @param $post_body
+	 *
+	 * @return mixed
+	 */
+	public function get_featured_image( $post ) {
+		return get_the_post_thumbnail_url( $post->ID, 'full' );
+	}
+
+	/**
+	 * Delete a post from Castos when it's trashed in WordPress
+	 *
+	 * @param $post
+	 *
+	 * @return bool
+	 */
+	public function delete_podcast( $post ) {
+		$this->setup_response();
+
+		if ( empty( $post ) ) {
+			$this->logger->log( 'Post to trash empty', array( 'post', $post ) );
+			return false;
+		}
+
+		$episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
+		if ( empty( $episode_id ) ) {
+			$this->logger->log( 'Episode ID to trash empty', array( 'episode_id', $episode_id ) );
+			return false;
+		}
+
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+
+		$api_url = SSP_CASTOS_APP_URL . 'api/episode';
+
+		$post_body = array(
+			'api_token' => $podmotor_api_token,
+			'id'        => $episode_id,
+		);
+
+		$api_response = wp_remote_request(
+			$api_url,
+			array(
+				'method'  => 'DELETE',
+				'timeout' => 45,
+				'body'    => $post_body,
+			)
+		);
+
+		$this->logger->log( 'Delete Podcast api_response', $api_response );
+
+		return true;
 	}
 
 	/**

@@ -432,9 +432,9 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 				$size = get_post_meta( get_the_ID(), 'filesize_raw', true );
 
 				if ( ! $size ) {
-					if ( ssp_is_connected_to_podcastmotor() ) {
-						$formatted_size = get_post_meta( get_the_ID(), 'filesize', true );
-						$size           = convert_human_readable_to_bytes( $formatted_size );
+					$formatted_size = get_post_meta( get_the_ID(), 'filesize', true );
+					if ( ssp_is_connected_to_podcastmotor() || $formatted_size ) {
+						$size = convert_human_readable_to_bytes( $formatted_size );
 					} else {
 						$size = 1;
 					}

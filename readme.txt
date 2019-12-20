@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.2.2
+Tested up to: 5.3.2
 Requires PHP: 5.6
-Stable tag: 1.20.10
+Stable tag: 1.20.11
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,19 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 1.20.11
+* 2018-12-20
+* UPDATE SUMMARY:  Various community bug fixes and Castos hosting related improvements
+* [FIX] Fix file size not showing in RSS feed bug. (props [Josephus Paye II](https://github.com/JosephusPaye))
+* [FIX] Fixes a bug related to the Music Commentary category not saving in Castos. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [FIX] Fixes a bug where scripts and styles for HTML5 player showing up in footer even when standard player is selected. (props [rghedin](https://github.com/rghedin))
+* [NEW] Added the ssp_podcast_playlist_track_data filter for track data in playlist shortcode. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [NEW] Added ssp_enable_get_file_size and ssp_enable_get_file_duration filters to disable the file size and duration functionality via filters
+* [TWEAK] Localised the PHP version error message for translations. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [TWEAK] Add context to localisation of podcast URL slug to prevent URLs changing when translated. (props [Hugh Lashbrooke](https://github.com/hlashbrooke))
+* [UPDATE] Update to push the post featured image to the Castos episode.
+* [UPDATE] Update to delete an episode in Castos when a post is trashed in WordPress.
 
 = 1.20.10
 * 2019-10-14

@@ -60,6 +60,12 @@ class Extensions_Controller extends Controller {
 				'url'         => add_query_arg( array( 'tab' => 'plugin-information', 'plugin' => 'seriously-simple-podcasting-genesis-support', 'TB_iframe' => 'true', 'width' => '772', 'height' => '859' ), admin_url( 'plugin-install.php' ) ),
 				'description' => 'The Genesis compatibility add-on for Seriously Simple Podcasting gives you full support for the Genesis theme framework. It adds support to the podcast post type for the features that Genesis requires. If you are using Genesis and Seriously Simple Podcasting together then this plugin will make your website look and work much more smoothly.',
 			),
+			'second-line' => array(
+				'title'       => 'Second Line Themes',
+				'image'       => $image_dir . 'second-line-themes.png',
+				'url'         => 'https://secondlinethemes.com/?utm_source=ssp-settings',
+				'description' => 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out SecondLineThemes!',
+			),
 		);
 
 		$html = '<div id="ssp-extensions">';

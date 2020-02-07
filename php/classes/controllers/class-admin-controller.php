@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
@@ -33,6 +34,11 @@ class Admin_Controller extends Controller {
 	protected $upgrade_handler;
 
 	/**
+	 * @var object instance of the Admin_Notices_Handler
+	 */
+	protected $admin_notices_handler;
+
+	/**
 	 * @var object instance of Feed_Controller
 	 */
 	protected $feed_controller;
@@ -62,6 +68,10 @@ class Admin_Controller extends Controller {
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
 
 		$this->logger = new Log_Helper();
+
+		if ( is_admin() ) {
+			$this->admin_notices_handler = new Admin_Notifications_Handler();
+		}
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();
@@ -143,17 +153,9 @@ class Admin_Controller extends Controller {
 
 			// Check for, setup or ignore import of existing podcasts.
 			add_action( 'admin_init', array( $this, 'ignore_importing_existing_podcasts' ) );
-			add_action( 'admin_init', array( $this, 'start_importing_existing_podcasts' ) );
 
 			// Show upgrade screen
 			add_action( 'current_screen', array( $this, 'show_upgrade_screen' ), 12 );
-
-			// Check if a valid permalink structure is set and show a message
-			add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
-
-			// Check if the podcast feed category update message needs to trigger
-			add_action( 'admin_init', array( $this, 'check_category_update_required' ) );
-
 
 			// Filter Embed HTML Code
 			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
@@ -1486,23 +1488,6 @@ HTML;
 		$castos_handler->delete_podcast( $post );
 	}
 
-
-
-	/**
-	 * Setup podcast import
-	 */
-	public function start_importing_existing_podcasts() {
-		if ( isset( $_GET['podcast_import_action'] ) && 'start' == $_GET['podcast_import_action'] ) {
-			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
-			$castos_handler = new Castos_Handler();
-			$reponse          = $castos_handler->insert_podmotor_queue();
-			if ( 'success' === $reponse['status'] ) {
-				update_option( 'ss_podcasting_podmotor_queue_id', $reponse['queue_id'] );
-			}
-			add_action( 'admin_notices', array( $this, 'importing_podcasts_notice' ) );
-		}
-	}
-
 	/**
 	 * Ignore podcast import
 	 */
@@ -1510,46 +1495,6 @@ HTML;
 		if ( isset( $_GET['podcast_import_action'] ) && 'ignore' == $_GET['podcast_import_action'] ) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		}
-	}
-
-
-
-	/**
-	 * Show 'importing podcasts' notice
-	 */
-	public function importing_podcasts_notice() {
-		$message = '';
-		$message .= '<p>We\'re importing your podcast episodes and media files to Castos now. Check your email for an update when this process is finished</p>';
-		$message .= '<p>The import process takes place as a background task, so you may dismiss this message.</p>';
-		?>
-		<div class="notice notice-info is-dismissible">
-			<p><?php _e( $message, 'ssp' ); ?></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Checks to see if a valid permalink structure is in place
-	 */
-	public function check_valid_permalink() {
-		$permalink_structure = get_option( 'permalink_structure', '' );
-		if ( empty( $permalink_structure ) ) {
-			add_action( 'admin_notices', array( $this, 'invalid_permalink_structure_notice' ) );
-		}
-	}
-
-	/**
-	 * Show 'invalid permalink structure' notice
-	 */
-	public function invalid_permalink_structure_notice() {
-		$message = '';
-		$message .= '<p>You\'ve not set a valid permalink structure. This will affect your Podcast feed url.</p>';
-		$message .= '<p>Please set a permalink structure in the <em>\'Settings -> Permalinks\'</em> admin menu.</p>';
-		?>
-		<div class="notice notice-info is-dismissible">
-			<p><?php _e( $message, 'ssp' ); ?></p>
-		</div>
-		<?php
 	}
 
 	/**
@@ -1647,14 +1592,14 @@ HTML;
 
 		// The user has submitted the external import form
 		if ( 'Begin Import Now' === $submit ) {
-			$external_rss = strip_tags(
+			$external_rss = wp_strip_all_tags(
 				stripslashes(
-					filter_var( $_POST['external_rss'], FILTER_VALIDATE_URL )
+					esc_url_raw( $_POST['external_rss'] )
 				)
 			);
 			if ( ! empty( $external_rss ) ) {
 				$import_post_type = 'podcast';
-				if (isset($_POST['import_post_type'])){
+				if ( isset( $_POST['import_post_type'] ) ) {
 					$import_post_type = sanitize_text_field( $_POST['import_post_type'] );
 				}
 				$import_series = '';
@@ -1701,70 +1646,6 @@ HTML;
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php esc_attr_e( 'Thanks, your external RSS feed will start importing', 'seriously-simple-podcasting' ); ?></p>
-		</div>
-		<?php
-	}
-
-
-	/**
-	 * Checks to see if we're on a version higher than 1.20.6
-	 */
-	public function check_category_update_required() {
-		// check if the user has dismissed this notice previously
-		$ssp_categories_update_dismissed = get_option( 'ssp_categories_update_dismissed', 'false' );
-		if ( 'true' === $ssp_categories_update_dismissed ) {
-			return;
-		}
-		// trigger the notice
-		add_action( 'admin_notices', array( $this, 'categories_update_notice' ) );
-	}
-
-	/**
-	 * Show 'categories need updating' notice
-	 */
-	public function categories_update_notice() {
-		$feed_settings_url = add_query_arg(
-			array(
-				'post_type'                     => $this->token,
-				'page'                          => 'podcast_settings',
-				'tab'                           => 'feed-details',
-				'ssp_dismiss_categories_update' => 'true',
-			),
-			admin_url( 'edit.php' )
-		);
-
-		$ignore_message_url = add_query_arg( array( 'ssp_dismiss_categories_update' => 'true' ) );
-
-		$message            = __( 'Seriously Simple Podcasting\'s feed categories have been updated.', 'seriously-simple-podcasting' );
-		$feed_settings_link = sprintf(
-			wp_kses(
-				// translators: Placeholder is the url to the Feed details
-				__( 'Please check your <a href="%s">Feed details</a>  to update your categories.', 'seriously-simple-podcasting' ),
-				array(
-					'a' => array(
-						'href' => array(),
-					),
-				)
-			),
-			esc_url( $feed_settings_url )
-		);
-		$ignore_message_link = sprintf(
-			wp_kses(
-				// translators: Placeholder is the url to dismiss the message
-				__( 'Alternatively you can <a href="%s">dismiss this message</a>.', 'seriously-simple-podcasting' ),
-				array(
-					'a' => array(
-						'href' => array(),
-					),
-				)
-			),
-			esc_url( $ignore_message_url )
-		);
-		?>
-		<div class="notice notice-info">
-			<p><?php echo $message; ?></p>
-			<p><?php echo $feed_settings_link; ?></p>
-			<p><?php echo $ignore_message_link; ?></p>
 		</div>
 		<?php
 	}

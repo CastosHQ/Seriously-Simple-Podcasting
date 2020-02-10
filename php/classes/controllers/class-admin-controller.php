@@ -1623,7 +1623,7 @@ HTML;
 	/**
 	 * Admin error to display if the import trigger fails
 	 */
-	public function trigger_import_error(){
+	public function trigger_import_error() {
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php esc_attr_e( 'An error occurred starting your podcast import. Please contact support at hello@castos.com.', 'seriously-simple-podcasting' ); ?></p>
@@ -1634,7 +1634,7 @@ HTML;
 	/**
 	 * Admin error to display if the import trigger is successful
 	 */
-	public function trigger_import_success(){
+	public function trigger_import_success() {
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php esc_attr_e( 'Your podcast import triggered successfully, please check your email for details.', 'seriously-simple-podcasting' ); ?></p>
@@ -1666,7 +1666,7 @@ HTML;
 	}
 
 	/**
-	 * Dismiss second line themese notice when user clicks 'No thanks' link
+	 * Dismiss second line themes notice when user clicks 'No thanks' link
 	 */
 	public function dismiss_second_line_themes() {
 		// Check if the ssp_dismiss_upgrade variable exists
@@ -1674,9 +1674,7 @@ HTML;
 		if ( empty( $ssp_dismiss_upgrade ) ) {
 			return;
 		}
-
 		update_option( 'ss_podcasting_second_line_themes', 'true' );
-		exit;
 	}
 
 }

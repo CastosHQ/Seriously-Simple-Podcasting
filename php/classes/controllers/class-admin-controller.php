@@ -93,6 +93,9 @@ class Admin_Controller extends Controller {
 		// Dismiss the categories update screen
 		add_action( 'init', array( $this, 'dismiss_categories_update' ) );
 
+		// Dismiss the second line themes notice
+		add_action( 'init', array( $this, 'dismiss_second_line_themes' ) );
+
 		// Hide WP SEO footer text for podcast RSS feed.
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
@@ -1660,6 +1663,20 @@ HTML;
 			return;
 		}
 		update_option( 'ssp_categories_update_dismissed', 'true' );
+	}
+
+	/**
+	 * Dismiss second line themese notice when user clicks 'No thanks' link
+	 */
+	public function dismiss_second_line_themes() {
+		// Check if the ssp_dismiss_upgrade variable exists
+		$ssp_dismiss_upgrade = ( isset( $_GET['ssp_dismiss_second_line_themes'] ) ? filter_var( $_GET['ssp_dismiss_second_line_themes'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $ssp_dismiss_upgrade ) ) {
+			return;
+		}
+
+		update_option( 'ss_podcasting_second_line_themes', 'true' );
+		exit;
 	}
 
 }

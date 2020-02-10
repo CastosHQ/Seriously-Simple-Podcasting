@@ -30,6 +30,8 @@ class Admin_Notifications_Handler {
 	public function bootstrap() {
 		add_action( 'current_screen', array( $this, 'check_existing_podcasts' ) );
 
+		add_action( 'current_screen', array( $this, 'second_line_themes' ) );
+
 		add_action( 'admin_init', array( $this, 'start_importing_existing_podcasts' ) );
 
 		// Check if a valid permalink structure is set and show a message
@@ -37,6 +39,8 @@ class Admin_Notifications_Handler {
 
 		// Check if the podcast feed category update message needs to trigger
 		add_action( 'admin_init', array( $this, 'check_category_update_required' ) );
+
+
 	}
 
 	/**
@@ -209,4 +213,77 @@ class Admin_Notifications_Handler {
 		</div>
 		<?php
 	}
+
+	/**
+	 * If the plugin has just been activated, show the second line themes notice.
+	 */
+	public function second_line_themes() {
+		/**
+		 * Only show this notice on the All Episodes page
+		 */
+		$current_screen = get_current_screen();
+		if ( 'edit-podcast' !== $current_screen->id ) {
+			return;
+		}
+
+		/**
+		 * Only trigger this if the ss_podcasting_second_line_themes option hasn't been set
+		 */
+		$ss_podcasting_second_line_themes = get_option( 'ss_podcasting_second_line_themes', '' );
+		if ( ! empty( $ss_podcasting_second_line_themes ) ) {
+			return;
+		}
+
+		add_action( 'admin_notices', array( $this, 'second_line_themes_notice' ) );
+	}
+
+	/**
+	 * Show 'invalid permalink structure' notice
+	 */
+	public function second_line_themes_notice() {
+
+		$message = sprintf(
+			// translators: placeholders are html anchor tags with a link to the url
+			__( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out %1$sSecond Line Themes.%2$s', 'seriously-simple-podcasting' ),
+			'<a href="https://secondlinethemes.com/?utm_source=ssp-notice">',
+			'</a>'
+		);
+
+		$second_line_themes_link = sprintf(
+			wp_kses(
+				// translators: Placeholder is the url to dismiss the message
+				__( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out  <a href="%s">Second Line Themes.</a> ', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			),
+			esc_url( 'https://secondlinethemes.com/?utm_source=ssp-notice' )
+		);
+
+		$ignore_message_url  = add_query_arg( array( 'ssp_dismiss_second_line_themes' => 'true' ) );
+		$ignore_message_link = sprintf(
+			wp_kses(
+				// translators: Placeholder is the url to dismiss the message
+				__( '<a href="%s">(No thanks.)</a>', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			),
+			esc_url( $ignore_message_url )
+		);
+
+		$message = $second_line_themes_link . $ignore_message_link;
+
+		?>
+		<div class="notice notice-info">
+			<p><?php echo $message; // phpcs:ignore ?></p>
+		</div>
+		<?php
+	}
+
+
 }

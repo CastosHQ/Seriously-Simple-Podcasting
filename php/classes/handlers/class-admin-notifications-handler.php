@@ -219,10 +219,11 @@ class Admin_Notifications_Handler {
 	 */
 	public function second_line_themes() {
 		/**
-		 * Only show this notice on the All Episodes page
+		 * Only show this notice on the All Episodes page and on the Themes page
 		 */
-		$current_screen = get_current_screen();
-		if ( 'edit-podcast' !== $current_screen->id ) {
+		$current_screen  = get_current_screen();
+		$allowed_screens = array( 'themes', 'edit-podcast' );
+		if ( ! in_array( $current_screen->id, $allowed_screens ) ) {
 			return;
 		}
 
@@ -242,20 +243,14 @@ class Admin_Notifications_Handler {
 	 */
 	public function second_line_themes_notice() {
 
-		$message = sprintf(
-			// translators: placeholders are html anchor tags with a link to the url
-			__( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out %1$sSecond Line Themes.%2$s', 'seriously-simple-podcasting' ),
-			'<a href="https://secondlinethemes.com/?utm_source=ssp-notice">',
-			'</a>'
-		);
-
 		$second_line_themes_link = sprintf(
 			wp_kses(
 				// translators: Placeholder is the url to dismiss the message
-				__( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out  <a href="%s">Second Line Themes.</a> ', 'seriously-simple-podcasting' ),
+				__( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out  <a href="%s" target="_blank">Second Line Themes.</a> ', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
-						'href' => array(),
+						'href'   => array(),
+						'target' => true,
 					),
 				)
 			),

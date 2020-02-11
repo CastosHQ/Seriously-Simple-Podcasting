@@ -322,10 +322,12 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 	 * @param boolean $return_args True to return query args, false to return posts
 	 * @param string $context Context of query
 	 *
+	 * @param array $exclude_series a list of series terms for which episodes should be excluded
+	 *
 	 * @return array                Array of posts or array of query args
 	 * @since  1.8.2
 	 */
-	function ssp_episodes( $n = 10, $series = '', $return_args = false, $context = '' ) {
+	function ssp_episodes( $n = 10, $series = '', $return_args = false, $context = '', $exclude_series = array() ) {
 
 		// Get all podcast episodes IDs
 		$episode_ids = (array) ssp_episode_ids();
@@ -341,7 +343,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		// Get all valid podcast post types
 		$podcast_post_types = ssp_post_types( true );
 
-		if ( empty ( $podcast_post_types ) ) {
+		if ( empty( $podcast_post_types ) ) {
 			return array();
 		}
 
@@ -359,8 +361,19 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 				array(
 					'taxonomy' => 'series',
 					'field'    => 'slug',
-					'terms'    => esc_attr( $series )
-				)
+					'terms'    => esc_attr( $series ),
+				),
+			);
+		}
+
+		if ( ! empty( $exclude_series ) ) {
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'series',
+					'field'    => 'slug',
+					'terms'    => $exclude_series,
+					'operator' => 'NOT IN',
+				),
 			);
 		}
 

@@ -309,6 +309,13 @@ class Settings_Controller extends Controller {
 
 					foreach ( $data['fields'] as $field ) {
 
+						// only show the exclude_feed field on the non default feed settings
+						if ( ( 'exclude_feed' === $field['id'] ) ) {
+							if ( empty( $feed_series ) || 'default' === $feed_series ) {
+								continue;
+							}
+						}
+
 						// Validation callback for field.
 						$validation = '';
 						if ( isset( $field['callback'] ) ) {
@@ -334,6 +341,8 @@ class Settings_Controller extends Controller {
 						if ( isset( $field['container_class'] ) && ! empty( $field['container_class'] ) ) {
 							$container_class = $field['container_class'];
 						}
+
+
 
 						// Add field to page.
 						add_settings_field( $field['id'], $field['label'],
@@ -574,7 +583,6 @@ class Settings_Controller extends Controller {
 				$data = ssp_get_importing_podcasts_count();
 				$html .= '<input type="input" value="' . esc_attr( $data ) . '" class="' . $class . '" disabled/>' . "\n";
 				break;
-
 		}
 
 		if ( ! in_array( $field['type'], array( 'feed_link', 'feed_link_series', 'podcast_url', 'hidden' ), true ) ) {

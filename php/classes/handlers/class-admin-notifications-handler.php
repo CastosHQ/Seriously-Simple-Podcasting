@@ -215,7 +215,7 @@ class Admin_Notifications_Handler {
 	}
 
 	/**
-	 * If the plugin has just been activated, show the second line themes notice.
+	 * If the plugin has just been activated, show the Second Line Themes notice.
 	 */
 	public function second_line_themes() {
 		/**
@@ -223,23 +223,27 @@ class Admin_Notifications_Handler {
 		 */
 		$current_screen  = get_current_screen();
 		$allowed_screens = array( 'themes', 'edit-podcast' );
-		if ( ! in_array( $current_screen->id, $allowed_screens ) ) {
+		if ( ! in_array( $current_screen->id, $allowed_screens, true ) ) {
 			return;
 		}
 
 		/**
-		 * Only trigger this if the ss_podcasting_second_line_themes option hasn't been set
+		 * Only show this notice once on either the themes page or the podcast list page
 		 */
-		$ss_podcasting_second_line_themes = get_option( 'ss_podcasting_second_line_themes', '' );
-		if ( ! empty( $ss_podcasting_second_line_themes ) ) {
+		$viewed_option = get_option( 'ss_podcasting_second_line_themes_' . $current_screen->id, 'false' );
+		if ( 'true' === $viewed_option ) {
 			return;
 		}
+		/**
+		 * Set the viewed option, so this notice won't appear again on this page
+		 */
+		update_option( 'ss_podcasting_second_line_themes_' . $current_screen->id, 'true' );
 
 		add_action( 'admin_notices', array( $this, 'second_line_themes_notice' ) );
 	}
 
 	/**
-	 * Show 'invalid permalink structure' notice
+	 * Show Second Line Themes notice
 	 */
 	public function second_line_themes_notice() {
 
@@ -257,28 +261,10 @@ class Admin_Notifications_Handler {
 			esc_url( 'https://secondlinethemes.com/?utm_source=ssp-notice' )
 		);
 
-		$ignore_message_url  = add_query_arg( array( 'ssp_dismiss_second_line_themes' => 'true' ) );
-		$ignore_message_link = sprintf(
-			wp_kses(
-				// translators: Placeholder is the url to dismiss the message
-				__( '<a href="%s">(No thanks.)</a>', 'seriously-simple-podcasting' ),
-				array(
-					'a' => array(
-						'href' => array(),
-					),
-				)
-			),
-			esc_url( $ignore_message_url )
-		);
-
-		$message = $second_line_themes_link . $ignore_message_link;
-
 		?>
-		<div class="notice notice-info">
-			<p><?php echo $message; // phpcs:ignore ?></p>
+		<div class="notice notice-info is-dismissible">
+			<p><?php echo $second_line_themes_link; // phpcs:ignore ?></p>
 		</div>
 		<?php
 	}
-
-
 }

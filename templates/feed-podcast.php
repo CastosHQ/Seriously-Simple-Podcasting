@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // @todo move all of this logic into the Feed_Controller render_podcast_feed method, at the very least
 global $ss_podcasting, $wp_query;
 
+// @todo turn this off and fix any errors
 // Hide all errors
 error_reporting( 0 );
 
@@ -105,7 +106,25 @@ if ( $redirect && 'on' === $redirect ) {
 	}
 }
 
-// If this is a series-sepcific feed, then check if we need to redirect
+// if this is the default feed, check for series for which posts should be excluded
+$exclude_series = array();
+if ( empty( $series_id ) ) {
+	$series = get_terms(
+		array(
+			'taxonomy'   => 'series',
+			'hide_empty' => false,
+		)
+	);
+	foreach ( $series as $feed ) {
+		$option_name         = 'ss_podcasting_exclude_feed_' . $feed->term_id;
+		$exclude_feed_option = get_option( $option_name, 'off' );
+		if ( 'on' === $exclude_feed_option ) {
+			$exclude_series[] = $feed->slug;
+		}
+	}
+}
+
+// If this is a series specific feed, then check if we need to redirect
 if ( $series_id ) {
 	$redirect     = get_option( 'ss_podcasting_redirect_feed_' . $series_id );
 	$new_feed_url = false;
@@ -379,7 +398,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 		// Get post IDs of all podcast episodes
 		$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ) ) );
 
-		$args = ssp_episodes( $num_posts, $podcast_series, true, 'feed' );
+		$args = ssp_episodes( $num_posts, $podcast_series, true, 'feed', $exclude_series );
 
 		$qry = new WP_Query( $args );
 

@@ -540,7 +540,7 @@ class Settings_Handler {
 			'description' => sprintf( __( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe.%1$sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.%2$s', 'seriously-simple-podcasting' ), '<br/><em>', '</em>' ),
 		);
 
-		$feed_details_fields                = array(
+		$feed_details_fields = array(
 			array(
 				'id'          => 'data_title',
 				'label'       => __( 'Title', 'seriously-simple-podcasting' ),
@@ -667,6 +667,7 @@ class Settings_Handler {
 			array(
 				'id'          => 'data_language',
 				'label'       => __( 'Language', 'seriously-simple-podcasting' ),
+				// translators: placeholders are for a link to the ISO standards
 				'description' => sprintf( __( 'Your podcast\'s language in %1$sISO-639-1 format%2$s.', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'http://www.loc.gov/standards/iso639-2/php/code_list.php' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'text',
 				'default'     => get_bloginfo( 'language' ),
@@ -687,6 +688,7 @@ class Settings_Handler {
 			array(
 				'id'          => 'explicit',
 				'label'       => __( 'Explicit', 'seriously-simple-podcasting' ),
+				// translators: placeholders are for an Apple help document link
 				'description' => sprintf( __( 'To mark this podcast as an explicit podcast, check this box. Explicit content rules can be found %s.', 'seriously-simple-podcasting' ), '<a href="https://discussions.apple.com/thread/1079151">here</a>' ),
 				'type'        => 'checkbox',
 				'default'     => '',
@@ -707,7 +709,7 @@ class Settings_Handler {
 				'type'        => 'radio',
 				'options'     => array(
 					'published' => __( 'Published date', 'seriously-simple-podcasting' ),
-					'recorded'  => __( 'Recorded date', 'seriously-simple-podcasting' )
+					'recorded'  => __( 'Recorded date', 'seriously-simple-podcasting' ),
 				),
 				'default'     => 'published',
 			),
@@ -747,8 +749,18 @@ class Settings_Handler {
 				'default'     => 'excerpt',
 			),
 			array(
+				'id'          => 'exclude_feed',
+				'label'       => __( 'Exclude series from default feed', 'seriously-simple-podcasting' ),
+				// translators: placeholders are html anchor tags to support document
+				'description' => sprintf( __( 'When enabled, this will exclude any episodes in this series feed from the default feed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/114-excluding-series-episodes-from-the-default-feed' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+				'type'        => 'checkbox',
+				'default'     => '',
+				'callback'    => 'wp_strip_all_tags',
+			),
+			array(
 				'id'          => 'turbocharge_feed',
 				'label'       => __( 'Turbocharge podcast feed', 'seriously-simple-podcasting' ),
+				// translators: placeholders are html anchor tags to support document
 				'description' => sprintf( __( 'When enabled, this setting will speed up your feed loading time. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/89-turbocharging-your-feed-to-maximize-available-episodes' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'checkbox',
 				'default'     => '',
@@ -773,6 +785,7 @@ class Settings_Handler {
 				'class'       => 'regular-text',
 			),
 		);
+
 		$subscribe_options_array            = $this->get_subscribe_field_options();
 		$settings['feed-details']['fields'] = array_merge( $feed_details_fields, $subscribe_options_array );
 

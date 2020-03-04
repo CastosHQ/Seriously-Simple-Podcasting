@@ -187,7 +187,7 @@ class Admin_Controller extends Controller {
 
 		// Series feed URLs
 		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-		add_rewrite_rule( '^feed/' . $feed_slug . '/([^/]*)/?', 'index.php?feed=podcast&podcast_series=$matches[1]', 'top' );
+		add_rewrite_rule( '^feed/' . $feed_slug . '/([^/]*)/?', 'index.php?feed=' . $feed_slug . '&podcast_series=$matches[1]', 'top' );
 		add_rewrite_tag( '%podcast_series%', '([^&]+)' );
 	}
 

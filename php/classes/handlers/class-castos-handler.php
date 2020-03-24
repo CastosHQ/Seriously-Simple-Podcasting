@@ -120,17 +120,19 @@ class Castos_Handler {
 	/**
 	 * Connect to Castos API and validate API credentials
 	 *
-	 * @param string $podmotor_account_api_token
-	 * @param string $podmotor_account_email
+	 * @param string $account_api_token
+	 * @param string $account_email
 	 *
 	 * @return array
 	 */
-	public function validate_api_credentials( $podmotor_account_api_token = '', $podmotor_account_email = '' ) {
+	public function validate_api_credentials( $account_api_token = '', $account_email = '' ) {
 
 		$this->setup_response();
 
-		if ( empty( $podmotor_account_api_token ) || empty( $podmotor_account_email ) ) {
+		if ( empty( $account_api_token ) || empty( $account_email ) ) {
 			$this->update_response( 'message', 'Invalid API Token or email.' );
+
+			return $this->response;
 		}
 
 		$api_url = SSP_CASTOS_APP_URL . 'api/users/validate';
@@ -140,8 +142,8 @@ class Castos_Handler {
 		$api_payload = array(
 			'timeout' => 45,
 			'body'    => array(
-				'api_token' => $podmotor_account_api_token,
-				'email'     => $podmotor_account_email,
+				'api_token' => $account_api_token,
+				'email'     => $account_email,
 				'website'   => get_site_url(),
 			),
 		);
@@ -152,25 +154,29 @@ class Castos_Handler {
 
 		$this->logger->log( 'Validate Credentials : App Response', $app_response );
 
-		if ( ! is_wp_error( $app_response ) ) {
-
-			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-
-			if ( ! empty( $response_object ) ) {
-
-				if ( 'success' === $response_object->status ) {
-					$this->update_response( 'status', 'success' );
-					$this->update_response( 'message', 'API Credentials Validated.' );
-					$this->update_response( 'podmotor_id', $response_object->podmotor_id );
-				} else {
-					$this->update_response( 'message', 'An error occurred validating the credentials.' );
-				}
-			} else {
-				$this->update_response( 'message', 'An error occurred retrieving the credential validation.' );
-			}
-		} else {
+		if ( is_wp_error( $app_response ) ) {
 			$this->update_response( 'message', 'An error occurred connecting to the server for validation.' );
+
+			return $this->response;
 		}
+
+		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
+
+		if ( empty( $response_object ) ) {
+			$this->update_response( 'message', 'An error occurred retrieving the credential validation.' );
+
+			return $this->response;
+		}
+
+		if ( 'success' !== $response_object->status ) {
+			$this->update_response( 'message', 'An error occurred validating the credentials.' );
+
+			return $this->response;
+		}
+
+		$this->update_response( 'status', 'success' );
+		$this->update_response( 'message', 'API Credentials Validated.' );
+		$this->update_response( 'podmotor_id', $response_object->podmotor_id );
 
 		return $this->response;
 	}

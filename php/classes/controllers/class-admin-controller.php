@@ -710,7 +710,7 @@ HTML;
 				switch ( $v['type'] ) {
 					case 'file':
 						$upload_button = '<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File', 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />';
-						if ( ssp_is_connected_to_podcastmotor() ) {
+						if ( ssp_is_connected_to_castos() ) {
 							$upload_button = '<div id="ssp_upload_container" style="display: inline;">';
 							$upload_button .= '  <button id="ssp_select_file" href="javascript:">Select podcast file</button>';
 							$upload_button .= '</div>';
@@ -719,7 +719,7 @@ HTML;
 						$html .= '<p>
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>';
 
-						if ( ssp_is_connected_to_podcastmotor() ) {
+						if ( ssp_is_connected_to_castos() ) {
 							$html .= '<div id="ssp_upload_notification">Your browser doesn\'t have HTML5 support.</div>';
 						}
 
@@ -875,7 +875,7 @@ HTML;
 
 		if ( $enclosure ) {
 
-			if ( ! ssp_is_connected_to_podcastmotor() ) {
+			if ( ! ssp_is_connected_to_castos() ) {
 				// Get file duration
 				if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
 					$duration = $ss_podcasting->get_file_duration( $enclosure );
@@ -941,7 +941,7 @@ HTML;
 		);
 
 		//
-		if ( ssp_is_connected_to_podcastmotor() ) {
+		if ( ssp_is_connected_to_castos() ) {
 			$fields['podmotor_file_id'] = array(
 				'type'             => 'hidden',
 				'default'          => '',
@@ -968,7 +968,7 @@ HTML;
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 
-		if ( ssp_is_connected_to_podcastmotor() ) {
+		if ( ssp_is_connected_to_castos() ) {
 			$fields['filesize_raw'] = array(
 				'type'             => 'hidden',
 				'default'          => '',
@@ -1415,7 +1415,7 @@ HTML;
 		/**
 		 * Don't trigger this if we're not connected to Castos
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 
@@ -1471,7 +1471,7 @@ HTML;
 		/**
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 

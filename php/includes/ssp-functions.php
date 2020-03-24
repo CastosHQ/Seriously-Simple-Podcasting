@@ -561,14 +561,14 @@ if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_is_connected_to_podcastmotor' ) ) {
+if ( ! function_exists( 'ssp_is_connected_to_castos' ) ) {
 
 	/**
-	 * Checks if the PodcastMotor credentials have been validated
+	 * Checks if the Castos credentials have been validated
 	 *
 	 * @return bool
 	 */
-	function ssp_is_connected_to_podcastmotor() {
+	function ssp_is_connected_to_castos() {
 		$is_connected = false;
 		$podmotor_id  = get_option( 'ss_podcasting_podmotor_account_id', '' );
 		if ( ! empty( $podmotor_id ) ) {

@@ -839,7 +839,7 @@ class Settings_Controller extends Controller {
 
 		if ( 'import' === $tab ) {
 			// Custom submits for Imports
-			if ( ssp_is_connected_to_podcastmotor() ) {
+			if ( ssp_is_connected_to_castos() ) {
 				$html .= '<p class="submit">' . "\n";
 				$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
 				$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";

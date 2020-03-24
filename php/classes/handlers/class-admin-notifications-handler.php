@@ -50,7 +50,7 @@ class Admin_Notifications_Handler {
 		/**
 		 * Only trigger this if we're connected to Seriously Simple Hosting
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 

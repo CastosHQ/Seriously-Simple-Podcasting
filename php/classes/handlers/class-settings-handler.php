@@ -955,12 +955,12 @@ class Settings_Handler {
 		);
 
 		// @todo there has to be a better way to do this
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			$settings['castos-hosting']['fields'][3]['container_class'] = 'hidden';
 		}
 
 		$fields = array();
-		if ( ssp_is_connected_to_podcastmotor() ) {
+		if ( ssp_is_connected_to_castos() ) {
 			if ( ! ssp_get_external_rss_being_imported() ) {
 				$fields = array(
 					array(

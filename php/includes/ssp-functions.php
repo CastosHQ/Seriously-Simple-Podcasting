@@ -826,34 +826,6 @@ if ( ! function_exists( 'ssp_email_podcasts_imported' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_podmotor_decrypt_config' ) ) {
-	/**
-	 * Decrypt data
-	 *
-	 * @param $encrypted_string
-	 * @param $unique_key
-	 *
-	 * @return bool|mixed
-	 */
-	function ssp_podmotor_decrypt_config( $encrypted_string, $unique_key ) {
-		if ( preg_match( '/^(.*)::(.*)$/', $encrypted_string, $regs ) ) {
-			list( $original_string, $encrypted_string, $encoding_iv ) = $regs;
-			$encoding_method = 'AES-128-CTR';
-			$encoding_key    = crypt( $unique_key, sha1( $unique_key ) );
-			if ( version_compare( PHP_VERSION, '5.4.0', '<' ) ) {
-				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, pack( 'H*', $encoding_iv ) );
-			} else {
-				$decrypted_token = openssl_decrypt( $encrypted_string, $encoding_method, $encoding_key, 0, hex2bin( $encoding_iv ) );
-			}
-			$config = unserialize( $decrypted_token );
-
-			return $config;
-		} else {
-			return false;
-		}
-	}
-}
-
 if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 	/**
 	 *
@@ -862,45 +834,10 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 	 * @return array
 	 */
 	function ssp_setup_upload_credentials() {
-
 		$castos_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		$castos_api_url   = SSP_CASTOS_APP_URL . 'api/v2/';
 
-		$podmotor_account_id    = get_option( 'ss_podcasting_podmotor_account_id', '' );
-		$podmotor_account_email = get_option( 'ss_podcasting_podmotor_account_email', '' );
-		$podmotor_array         = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
-
-		$bucket        = $podmotor_array['bucket'];
-		/*
-		$show_slug     = $podmotor_array['show_slug'];
-		$access_key_id = $podmotor_array['credentials_key'];
-		$secret        = $podmotor_array['credentials_secret'];
-
-		$policy = base64_encode(
-			json_encode(
-				array(
-					'expiration' => date( 'Y-m-d\TH:i:s.000\Z', strtotime( '+1 day' ) ),
-					// ISO 8601 - date('c'); generates incompatible date, so better do it manually
-					'conditions' => array(
-						array( 'bucket' => $bucket ),
-						array( 'acl' => 'public-read' ),
-						array( 'starts-with', '$key', '' ),
-						array( 'starts-with', '$Content-Type', '' ),
-						// accept all files
-						array( 'starts-with', '$name', '' ),
-						// Plupload internally adds name field, so we need to mention it here
-						array( 'starts-with', '$Filename', '' ),
-						// One more field to take into account: Filename - gets silently sent by FileReference.upload() in Flash http://docs.amazonwebservices.com/AmazonS3/latest/dev/HTTPPOSTFlash.html
-					),
-				)
-			)
-		);
-
-		$signature    = base64_encode( hash_hmac( 'sha1', $policy, $secret, true ) );
-		*/
-		$episodes_url = SSP_CASTOS_EPISODES_URL;
-
-		return compact( 'episodes_url', 'castos_api_token', 'bucket' );
-
+		return compact( 'castos_api_url', 'castos_api_token' );
 	}
 }
 

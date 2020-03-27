@@ -312,20 +312,24 @@ class Castos_Handler {
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 
-		$api_url = SSP_CASTOS_APP_URL . 'api/episode';
+		$api_url = SSP_CASTOS_APP_URL . 'api/v2/episode';
 
 		$this->logger->log( 'API URL', $api_url );
 
 		$series_id = ssp_get_episode_series_id( $post->ID );
 
 		$post_body = array(
-			'api_token'    => $podmotor_api_token,
-			'post_id'      => $post->ID,
-			'post_title'   => $post->post_title,
-			'post_content' => $post->post_content,
-			'post_date'    => $post->post_date,
-			'file_id'      => $podmotor_file_id,
-			'series_id'    => $series_id,
+			'api_token'      => $podmotor_api_token,
+			'post_id'        => $post->ID,
+			'post_title'     => $post->post_title,
+			'post_content'   => $post->post_content,
+			'keywords'       => get_keywords_for_episode( $post->ID ), // possibly tags?
+			'series_number'  => '', // itunes season number
+			'episode_number' => '', // itunes episode number
+			'episode_type'   => '', //itunes episode type
+			'post_date'      => $post->post_date,
+			'file_id'        => $podmotor_file_id,
+			'series_id'      => $series_id,
 		);
 
 		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );

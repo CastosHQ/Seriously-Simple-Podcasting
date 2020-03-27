@@ -1028,3 +1028,30 @@ if ( ! function_exists( 'parse_episode_url_with_media_prefix' ) ) {
 		return $media_prefix . $url_parts['host'] . $url_parts['path'];
 	}
 }
+
+if ( ! function_exists( 'get_keywords_for_episode' ) ) {
+	/**
+	 * Return a comma delimited list of tags for a post
+	 *
+	 * @param $post_id
+	 *
+	 * @return string
+	 */
+	function get_keywords_for_episode( $post_id ) {
+		$tags = get_the_tags( $post_id );
+		if ( ! $tags ) {
+			return '';
+		}
+
+		$keyword_array = array();
+
+		if ( $tags ) {
+			foreach ( $tags as $tag ) {
+				$keyword_array[] = $tag->name;
+			}
+		}
+
+		return implode( ',', $keyword_array );
+
+	}
+}

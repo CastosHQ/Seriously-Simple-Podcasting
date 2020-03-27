@@ -17,10 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Admin_Notifications_Handler {
 
+	public $token;
+
 	/**
 	 * Admin_Notifications_Handler constructor.
+	 *
+	 * @param $token
 	 */
-	public function __construct() {
+	public function __construct( $token ) {
+		$this->token = $token;
 		$this->bootstrap();
 	}
 

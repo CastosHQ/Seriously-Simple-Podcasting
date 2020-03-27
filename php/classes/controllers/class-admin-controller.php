@@ -70,7 +70,7 @@ class Admin_Controller extends Controller {
 		$this->logger = new Log_Helper();
 
 		if ( is_admin() ) {
-			$this->admin_notices_handler = new Admin_Notifications_Handler();
+			$this->admin_notices_handler = new Admin_Notifications_Handler($this->token);
 		}
 
 		// Handle localisation.

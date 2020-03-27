@@ -863,11 +863,14 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 	 */
 	function ssp_setup_upload_credentials() {
 
+		$castos_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+
 		$podmotor_account_id    = get_option( 'ss_podcasting_podmotor_account_id', '' );
 		$podmotor_account_email = get_option( 'ss_podcasting_podmotor_account_email', '' );
 		$podmotor_array         = ssp_podmotor_decrypt_config( $podmotor_account_id, $podmotor_account_email );
 
 		$bucket        = $podmotor_array['bucket'];
+		/*
 		$show_slug     = $podmotor_array['show_slug'];
 		$access_key_id = $podmotor_array['credentials_key'];
 		$secret        = $podmotor_array['credentials_secret'];
@@ -893,9 +896,10 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		);
 
 		$signature    = base64_encode( hash_hmac( 'sha1', $policy, $secret, true ) );
+		*/
 		$episodes_url = SSP_CASTOS_EPISODES_URL;
 
-		return compact( 'bucket', 'show_slug', 'episodes_url', 'access_key_id', 'policy', 'signature' );
+		return compact( 'episodes_url', 'castos_api_token', 'bucket' );
 
 	}
 }

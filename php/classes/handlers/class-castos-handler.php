@@ -267,14 +267,14 @@ class Castos_Handler {
 		$series_id = ssp_get_episode_series_id( $post->ID );
 
 		$post_body = array(
-			'api_token'      => $this->api_token,
+			'token'          => $this->api_token,
 			'post_id'        => $post->ID,
 			'post_title'     => $post->post_title,
 			'post_content'   => $post->post_content,
 			'keywords'       => get_keywords_for_episode( $post->ID ),
-			'series_number'  => get_post_meta( $post->ID, 'itunes_season_number', '' ),
-			'episode_number' => get_post_meta( $post->ID, 'itunes_episode_number', '' ),
-			'episode_type'   => get_post_meta( $post->ID, 'itunes_episode_type', '' ),
+			'series_number'  => get_post_meta( $post->ID, 'itunes_season_number', true ),
+			'episode_number' => get_post_meta( $post->ID, 'itunes_episode_number', true ),
+			'episode_type'   => get_post_meta( $post->ID, 'itunes_episode_type', true ),
 			'post_date'      => $post->post_date,
 			'file_id'        => $podmotor_file_id,
 			'series_id'      => $series_id,
@@ -314,17 +314,17 @@ class Castos_Handler {
 
 		$this->logger->log( 'Upload Podcast Response', $response_object );
 
-		if ( 'success' !== $response_object->status ) {
+		if ( ! $response_object->status ) {
 			$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
 			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 
 			return $this->response;
 		}
 
-		$this->logger->log( 'Pocast episode successfully uploaded to Castos with episode id ' . $response_object->episode_id );
+		$this->logger->log( 'Pocast episode successfully uploaded to Castos with episode id ' . $response_object->episode->id );
 		$this->update_response( 'status', 'success' );
 		$this->update_response( 'message', 'Pocast episode successfully uploaded to Castos' );
-		$this->update_response( 'episode_id', $response_object->episode_id );
+		$this->update_response( 'episode_id', $response_object->episode->id );
 
 		return $this->response;
 	}
@@ -365,7 +365,7 @@ class Castos_Handler {
 		$api_url = SSP_CASTOS_APP_URL . 'posts/delete';
 
 		$post_body = array(
-			'api_token' => $this->api_token,
+			'token' => $this->api_token,
 			'id'        => $episode_id,
 		);
 

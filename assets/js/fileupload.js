@@ -69,6 +69,7 @@ jQuery( document ).ready( function ( $ ) {
 				url: upload_credentials.castos_api_url + 'files',
 				multipart_params: {
 					'token': upload_credentials.castos_api_token,
+					'episode_id': upload_credentials.episode_id,
 				}
 			}
 		);

@@ -67,10 +67,6 @@ jQuery( document ).ready( function ( $ ) {
 				multi_selection: false,
 				container: 'ssp_upload_container',
 				url: upload_credentials.castos_api_url + 'files',
-				multipart_params: {
-					'token': upload_credentials.castos_api_token,
-					'episode_id': upload_credentials.episode_id,
-				}
 			}
 		);
 
@@ -104,19 +100,15 @@ jQuery( document ).ready( function ( $ ) {
 		/**
 		 * Sanatizes the file name for upload
 		 */
-		/*uploader.bind('BeforeUpload', function (up, file) {
+		uploader.bind('BeforeUpload', function (up, file) {
 			var file_name = sanitizeName(file.name);
 			var multipart_params = {
-				'key': upload_credentials.show_slug + '/' + file_name,
-				'Filename': upload_credentials.show_slug + '/' + file_name,
-				'acl': 'public-read',
-				'Content-Type': '',
-				'AWSAccessKeyId': upload_credentials.access_key_id,
-				'policy': upload_credentials.policy,
-				'signature': upload_credentials.signature
-			}
+				'token': upload_credentials.castos_api_token,
+				'episode_id': upload_credentials.castos_episode_id,
+				'file_name': file_name
+			};
 			uploader.settings.multipart_params = multipart_params;
-		});*/
+		});
 
 		/**
 		 * Show an error if anything goes wrong

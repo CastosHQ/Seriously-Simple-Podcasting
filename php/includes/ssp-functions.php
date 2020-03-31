@@ -834,13 +834,13 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 		$castos_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 		$castos_api_url   = SSP_CASTOS_APP_URL . 'api/v2/';
 
-		$episode_id = '';
-		$post       = get_post();
+		$castos_episode_id = '';
+		$post              = get_post();
 		if ( $post ) {
-			$episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
+			$castos_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
 		}
 
-		return compact( 'castos_api_url', 'castos_api_token', 'episode_id' );
+		return compact( 'castos_api_url', 'castos_api_token', 'castos_episode_id' );
 	}
 }
 

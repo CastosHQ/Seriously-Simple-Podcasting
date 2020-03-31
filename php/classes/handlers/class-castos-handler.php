@@ -362,11 +362,11 @@ class Castos_Handler {
 			return false;
 		}
 
-		$api_url = SSP_CASTOS_APP_URL . 'posts/delete';
+		$api_url = SSP_CASTOS_APP_URL . 'api/v2/posts/delete';
 
 		$post_body = array(
 			'token' => $this->api_token,
-			'id'        => $episode_id,
+			'id'    => $episode_id,
 		);
 
 		$api_response = wp_remote_request(

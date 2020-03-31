@@ -110,8 +110,7 @@ class Admin_Controller extends Controller {
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 
-			// Update podcast details to Castos.
-			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
+			// Update podcast details to Castos when a post is saved, or updated
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 
 			// Episode edit screen.

@@ -289,7 +289,7 @@ class Castos_Handler {
 	 *
 	 * @return array
 	 */
-	public function upload_podcast_to_podmotor( $post ) {
+	public function upload_podcast_to_podmotor( $post, $update ) {
 
 		$this->setup_response();
 
@@ -307,14 +307,17 @@ class Castos_Handler {
 		if ( empty( $podmotor_file_id ) ) {
 			$this->update_response( 'message', 'Invalid Podcast file data' );
 			$this->logger->log( 'Invalid Podcast file data when uploading podcast data' );
+
 			return $this->response;
 		}
 
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 
-		$api_url = SSP_CASTOS_APP_URL . 'api/v2/episode';
-
-		$this->logger->log( 'API URL', $api_url );
+		$api_url             = SSP_CASTOS_APP_URL . 'api/v2/posts/create';
+		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
+		if ( ! empty( $podmotor_episode_id ) ) {
+			$api_url = SSP_CASTOS_APP_URL . 'api/v2/posts/update';
+		}
 
 		$series_id = ssp_get_episode_series_id( $post->ID );
 
@@ -323,20 +326,20 @@ class Castos_Handler {
 			'post_id'        => $post->ID,
 			'post_title'     => $post->post_title,
 			'post_content'   => $post->post_content,
-			'keywords'       => get_keywords_for_episode( $post->ID ), // possibly tags?
-			'series_number'  => '', // itunes season number
-			'episode_number' => '', // itunes episode number
-			'episode_type'   => '', //itunes episode type
+			'keywords'       => get_keywords_for_episode( $post->ID ),
+			'series_number'  => get_post_meta( $post->ID, 'itunes_season_number', '' ),
+			'episode_number' => get_post_meta( $post->ID, 'itunes_episode_number', '' ),
+			'episode_type'   => get_post_meta( $post->ID, 'itunes_episode_type', '' ),
 			'post_date'      => $post->post_date,
 			'file_id'        => $podmotor_file_id,
 			'series_id'      => $series_id,
 		);
 
-		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
-
 		if ( ! empty( $podmotor_episode_id ) ) {
 			$post_body['id'] = $podmotor_episode_id;
 		}
+
+		$this->logger->log( 'API URL', $api_url );
 
 		$featured_image_url = $this->get_featured_image( $post );
 		if ( ! empty( $featured_image_url ) ) {
@@ -355,24 +358,28 @@ class Castos_Handler {
 
 		$this->logger->log( 'Upload Podcast app_response', $app_response );
 
-		if ( ! is_wp_error( $app_response ) ) {
-			$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-
-			$this->logger->log( 'Upload Podcast Response', $response_object );
-
-			if ( 'success' === $response_object->status ) {
-				$this->logger->log( 'Pocast episode successfully uploaded to Castos with episode id ' . $response_object->episode_id );
-				$this->update_response( 'status', 'success' );
-				$this->update_response( 'message', 'Pocast episode successfully uploaded to Castos' );
-				$this->update_response( 'episode_id', $response_object->episode_id );
-			} else {
-				$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
-				$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
-			}
-		} else {
+		if ( is_wp_error( $app_response ) ) {
 			$this->logger->log( 'An unknown error occurred sending podcast data to castos: ' . $app_response->get_error_message() );
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
+
+			return $this->response;
 		}
+
+		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
+
+		$this->logger->log( 'Upload Podcast Response', $response_object );
+
+		if ( 'success' !== $response_object->status ) {
+			$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
+			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
+
+			return $this->response;
+		}
+
+		$this->logger->log( 'Pocast episode successfully uploaded to Castos with episode id ' . $response_object->episode_id );
+		$this->update_response( 'status', 'success' );
+		$this->update_response( 'message', 'Pocast episode successfully uploaded to Castos' );
+		$this->update_response( 'episode_id', $response_object->episode_id );
 
 		return $this->response;
 	}

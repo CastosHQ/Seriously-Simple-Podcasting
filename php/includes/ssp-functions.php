@@ -569,14 +569,11 @@ if ( ! function_exists( 'ssp_is_connected_to_castos' ) ) {
 	 * @return bool
 	 */
 	function ssp_is_connected_to_castos() {
-		$is_connected = false;
-		$podmotor_id  = get_option( 'ss_podcasting_podmotor_account_id', '' );
-		if ( ! empty( $podmotor_id ) ) {
-			$podmotor_email     = get_option( 'ss_podcasting_podmotor_account_email', '' );
-			$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-			if ( ! empty( $podmotor_email ) && ! empty( $podmotor_api_token ) ) {
-				$is_connected = true;
-			}
+		$is_connected       = false;
+		$podmotor_email     = get_option( 'ss_podcasting_podmotor_account_email', '' );
+		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		if ( ! empty( $podmotor_email ) && ! empty( $podmotor_api_token ) ) {
+			$is_connected = true;
 		}
 
 		return $is_connected;

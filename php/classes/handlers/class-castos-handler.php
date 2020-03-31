@@ -74,6 +74,13 @@ class Castos_Handler {
 			return $this->response;
 		}
 
+		/**
+		 * Clear out existing values
+		 */
+		delete_option( 'ss_podcasting_podmotor_account_email' );
+		delete_option( 'ss_podcasting_podmotor_account_api_token' );
+		delete_option( 'ss_podcasting_podmotor_account_id' );
+
 		$api_url = SSP_CASTOS_APP_URL . 'api/users/validate';
 
 		$this->logger->log( 'Validate Credentials : API URL', $api_url );

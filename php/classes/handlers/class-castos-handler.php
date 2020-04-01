@@ -122,7 +122,6 @@ class Castos_Handler {
 
 		$this->update_response( 'status', 'success' );
 		$this->update_response( 'message', 'API Credentials Validated.' );
-		$this->update_response( 'podmotor_id', $response_object->podmotor_id );
 
 		return $this->response;
 	}

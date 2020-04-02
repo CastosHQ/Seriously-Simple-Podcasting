@@ -13,6 +13,9 @@
  * Text Domain: seriously-simple-podcasting
  *
  * @package Seriously Simple Podcasting
+ *
+ * GitHub Plugin URI: https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting
+ *
  */
 
 // Exit if accessed directly.

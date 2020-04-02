@@ -13,4 +13,3 @@ vendor/
 log
 package-lock.json
 webpack.config.min.js
-vendor/

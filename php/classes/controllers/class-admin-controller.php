@@ -1573,16 +1573,18 @@ HTML;
 		}
 
 		// The user has submitted the Import your podcast setting
-		if ( __( 'Trigger import' ) === $submit ) {
+		$trigger_import_submit = __( 'Trigger import', 'seriously-simple-podcasting' );
+		if ( $trigger_import_submit === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
 				$castos_handler = new Castos_Handler();
-				$result          = $castos_handler->trigger_podcast_import();
+				$result         = $castos_handler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
-				}else {
+				} else {
 					add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
 				}
+
 				return;
 			} else {
 				update_option( 'ss_podcasting_podmotor_import', 'off' );
@@ -1590,7 +1592,8 @@ HTML;
 		}
 
 		// The user has submitted the external import form
-		if ( __( 'Begin Import Now' ) === $submit ) {
+		$begin_import_submit = __( 'Begin Import Now', 'seriously-simple-podcasting' );
+		if ( $begin_import_submit === $submit ) {
 			$external_rss = wp_strip_all_tags(
 				stripslashes(
 					esc_url_raw( $_POST['external_rss'] )

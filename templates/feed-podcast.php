@@ -452,7 +452,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 
 				if ( ! $size ) {
 					$formatted_size = get_post_meta( get_the_ID(), 'filesize', true );
-					if ( ssp_is_connected_to_podcastmotor() || $formatted_size ) {
+					if ( ssp_is_connected_to_castos() || $formatted_size ) {
 						$size = convert_human_readable_to_bytes( $formatted_size );
 					} else {
 						$size = 1;

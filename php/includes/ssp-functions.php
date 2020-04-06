@@ -17,9 +17,9 @@ if ( ! function_exists( 'ssp_beta_check' ) ) {
 		 */
 		add_action( 'admin_notices', 'ssp_beta_notice' );
 		function ssp_beta_notice() {
-			$beta_notice = __( 'You are using the Seriously Simple Podcasting beta, connected to .', 'seriously-simple-podcasting' );
+			$beta_notice = __( 'You are using the Seriously Simple Podcasting beta, connected to ', 'seriously-simple-podcasting' );
 			?>
-			<div class="warning">
+			<div class="notice notice-warning">
 				<p>
 					<strong><?php echo $beta_notice . SSP_CASTOS_APP_URL; ?></strong>.
 				</p>

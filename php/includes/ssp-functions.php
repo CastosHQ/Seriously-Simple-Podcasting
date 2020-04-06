@@ -38,6 +38,30 @@ if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ssp_is_vendor_ok' ) ) {
+	function ssp_is_vendor_ok() {
+
+		if ( file_exists( SSP_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
+			return true;
+		}
+		add_action( 'admin_notices', 'ssp_vendor_notice' );
+		function ssp_php_version_notice() {
+			$error_notice         = __( 'The Seriously Simple Podcasting vendor directory is missing or broken, please re-download/reinstall the plugin.', 'seriously-simple-podcasting' );
+			$error_notice_apology = __( 'We apologise for any inconvenience.', 'seriously-simple-podcasting' );
+			?>
+			<div class="error">
+				<p>
+					<strong><?php echo $error_notice; ?></strong>.
+				</p>
+				<p><?php echo $error_notice_apology; ?></p>
+			</div>
+			<?php
+		}
+
+		return false;
+	}
+}
+
 if ( ! function_exists( 'ssp_get_upload_directory' ) ) {
 	/**
 	 * Gets the temporary Seriously Simple Podcasting upload directory

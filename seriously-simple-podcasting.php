@@ -34,14 +34,24 @@ define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( ! defined( 'SSP_CASTOS_APP_URL' ) ) {
+	define( 'SSP_CASTOS_APP_URL', 'http://app.seriouslysimplehosting.com/' );
+}
+if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
+	define( 'SSP_CASTOS_EPISODES_URL', 'https://s3.amazonaws.com/seriouslysimplestaging/' );
+}
+/*
+if ( ! defined( 'SSP_CASTOS_APP_URL' ) ) {
 	define( 'SSP_CASTOS_APP_URL', 'https://app.castos.com/' );
 }
 if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
 	define( 'SSP_CASTOS_EPISODES_URL', 'https://episodes.castos.com/' );
 }
-
+*/
 require_once SSP_PLUGIN_PATH . 'php/includes/ssp-functions.php';
 if ( ! ssp_is_php_version_ok() ) {
+	return;
+}
+if ( ! ssp_is_vendor_ok() ) {
 	return;
 }
 

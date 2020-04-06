@@ -1573,7 +1573,7 @@ HTML;
 		}
 
 		// The user has submitted the Import your podcast setting
-		if ( 'Trigger import' === $submit ) {
+		if ( __( 'Trigger import' ) === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
 				$castos_handler = new Castos_Handler();
@@ -1590,7 +1590,7 @@ HTML;
 		}
 
 		// The user has submitted the external import form
-		if ( 'Begin Import Now' === $submit ) {
+		if ( __( 'Begin Import Now' ) === $submit ) {
 			$external_rss = wp_strip_all_tags(
 				stripslashes(
 					esc_url_raw( $_POST['external_rss'] )

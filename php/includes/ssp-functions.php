@@ -6,6 +6,32 @@ use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
+
+if ( ! function_exists( 'ssp_beta_notice' ) ) {
+	function ssp_beta_notice() {
+		if ( ! strstr( SSP_VERSION, 'beta' ) ) {
+			return;
+		}
+		/**
+		 * Display the beta notice.
+		 */
+		add_action( 'admin_notices', 'ssp_beta_notice' );
+		function ssp_beta_notice() {
+			$beta_notice = __( 'You are using the Seriously Simple Podcasting beta, connected to .', 'seriously-simple-podcasting' );
+			?>
+			<div class="warning">
+				<p>
+					<strong><?php echo $beta_notice . SSP_CASTOS_APP_URL; ?></strong>.
+				</p>
+			</div>
+			<?php
+		}
+
+		return false;
+	}
+}
+
+
 if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
 	function ssp_is_php_version_ok() {
 		if ( ! version_compare( PHP_VERSION, '5.6', '<' ) ) {
@@ -45,7 +71,7 @@ if ( ! function_exists( 'ssp_is_vendor_ok' ) ) {
 			return true;
 		}
 		add_action( 'admin_notices', 'ssp_vendor_notice' );
-		function ssp_php_version_notice() {
+		function ssp_vendor_notice() {
 			$error_notice         = __( 'The Seriously Simple Podcasting vendor directory is missing or broken, please re-download/reinstall the plugin.', 'seriously-simple-podcasting' );
 			$error_notice_apology = __( 'We apologise for any inconvenience.', 'seriously-simple-podcasting' );
 			?>

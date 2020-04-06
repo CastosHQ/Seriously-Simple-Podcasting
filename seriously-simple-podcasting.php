@@ -54,7 +54,7 @@ if ( ! ssp_is_php_version_ok() ) {
 if ( ! ssp_is_vendor_ok() ) {
 	return;
 }
-ssp_beta_notice();
+ssp_beta_check();
 require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
 /**

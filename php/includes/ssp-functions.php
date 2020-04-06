@@ -7,8 +7,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-if ( ! function_exists( 'ssp_beta_notice' ) ) {
-	function ssp_beta_notice() {
+if ( ! function_exists( 'ssp_beta_check' ) ) {
+	function ssp_beta_check() {
 		if ( ! strstr( SSP_VERSION, 'beta' ) ) {
 			return;
 		}

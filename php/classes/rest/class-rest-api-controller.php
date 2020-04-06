@@ -261,9 +261,10 @@ class Rest_Api_Controller {
 	 * @return bool
 	 */
 	public function get_rest_audio_download_link( $object, $field_name, $request ) {
-		if ( $object['meta']['audio_file'] ) {
+
+		if ( ! empty( $object['meta']['audio_file'] ) ) {
 			$episode_controller = new Episode_Controller( $this->file, $this->version );
-			$download_link       = $episode_controller->get_episode_download_link( $object['id'] );
+			$download_link      = $episode_controller->get_episode_download_link( $object['id'] );
 
 			return $download_link;
 		}

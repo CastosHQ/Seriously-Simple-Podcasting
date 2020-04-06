@@ -186,7 +186,7 @@ class Admin_Controller extends Controller {
 
 		// Series feed URLs
 		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-		add_rewrite_rule( '^feed/' . $feed_slug . '/([^/]*)/?', 'index.php?feed=podcast&podcast_series=$matches[1]', 'top' );
+		add_rewrite_rule( '^feed/' . $feed_slug . '/([^/]*)/?', 'index.php?feed=' . $feed_slug . '&podcast_series=$matches[1]', 'top' );
 		add_rewrite_tag( '%podcast_series%', '([^&]+)' );
 	}
 
@@ -1573,16 +1573,18 @@ HTML;
 		}
 
 		// The user has submitted the Import your podcast setting
-		if ( 'Trigger import' === $submit ) {
+		$trigger_import_submit = __( 'Trigger import', 'seriously-simple-podcasting' );
+		if ( $trigger_import_submit === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
 				$castos_handler = new Castos_Handler();
-				$result          = $castos_handler->trigger_podcast_import();
+				$result         = $castos_handler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
-				}else {
+				} else {
 					add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
 				}
+
 				return;
 			} else {
 				update_option( 'ss_podcasting_podmotor_import', 'off' );
@@ -1590,7 +1592,8 @@ HTML;
 		}
 
 		// The user has submitted the external import form
-		if ( 'Begin Import Now' === $submit ) {
+		$begin_import_submit = __( 'Begin Import Now', 'seriously-simple-podcasting' );
+		if ( $begin_import_submit === $submit ) {
 			$external_rss = wp_strip_all_tags(
 				stripslashes(
 					esc_url_raw( $_POST['external_rss'] )

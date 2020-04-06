@@ -102,6 +102,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.0.0-beta.1 =
+* [UPDATE] Updated Castos API access for Castos users
+
 = 1.20.13 =
 * 2020-03-02
 * [FIX] Fixed a bug in the RSS Importer that was importing post_content incorrectly (fix missing from 1.20.12)

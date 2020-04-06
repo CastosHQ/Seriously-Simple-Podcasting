@@ -70,7 +70,7 @@ class Admin_Controller extends Controller {
 		$this->logger = new Log_Helper();
 
 		if ( is_admin() ) {
-			$this->admin_notices_handler = new Admin_Notifications_Handler();
+			$this->admin_notices_handler = new Admin_Notifications_Handler($this->token);
 		}
 
 		// Handle localisation.
@@ -110,8 +110,7 @@ class Admin_Controller extends Controller {
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 
-			// Update podcast details to Castos.
-			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
+			// Update podcast details to Castos when a post is saved, or updated
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 
 			// Episode edit screen.
@@ -710,7 +709,7 @@ HTML;
 				switch ( $v['type'] ) {
 					case 'file':
 						$upload_button = '<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File', 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />';
-						if ( ssp_is_connected_to_podcastmotor() ) {
+						if ( ssp_is_connected_to_castos() ) {
 							$upload_button = '<div id="ssp_upload_container" style="display: inline;">';
 							$upload_button .= '  <button id="ssp_select_file" href="javascript:">Select podcast file</button>';
 							$upload_button .= '</div>';
@@ -719,7 +718,7 @@ HTML;
 						$html .= '<p>
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>';
 
-						if ( ssp_is_connected_to_podcastmotor() ) {
+						if ( ssp_is_connected_to_castos() ) {
 							$html .= '<div id="ssp_upload_notification">Your browser doesn\'t have HTML5 support.</div>';
 						}
 
@@ -875,7 +874,7 @@ HTML;
 
 		if ( $enclosure ) {
 
-			if ( ! ssp_is_connected_to_podcastmotor() ) {
+			if ( ! ssp_is_connected_to_castos() ) {
 				// Get file duration
 				if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
 					$duration = $ss_podcasting->get_file_duration( $enclosure );
@@ -941,7 +940,7 @@ HTML;
 		);
 
 		//
-		if ( ssp_is_connected_to_podcastmotor() ) {
+		if ( ssp_is_connected_to_castos() ) {
 			$fields['podmotor_file_id'] = array(
 				'type'             => 'hidden',
 				'default'          => '',
@@ -968,7 +967,7 @@ HTML;
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 
-		if ( ssp_is_connected_to_podcastmotor() ) {
+		if ( ssp_is_connected_to_castos() ) {
 			$fields['filesize_raw'] = array(
 				'type'             => 'hidden',
 				'default'          => '',
@@ -1415,7 +1414,7 @@ HTML;
 		/**
 		 * Don't trigger this if we're not connected to Castos
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 
@@ -1471,7 +1470,7 @@ HTML;
 		/**
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 
@@ -1574,16 +1573,18 @@ HTML;
 		}
 
 		// The user has submitted the Import your podcast setting
-		if ( 'Trigger import' === $submit ) {
+		$trigger_import_submit = __( 'Trigger import', 'seriously-simple-podcasting' );
+		if ( $trigger_import_submit === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
 				$castos_handler = new Castos_Handler();
-				$result          = $castos_handler->trigger_podcast_import();
+				$result         = $castos_handler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
-				}else {
+				} else {
 					add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
 				}
+
 				return;
 			} else {
 				update_option( 'ss_podcasting_podmotor_import', 'off' );
@@ -1591,7 +1592,8 @@ HTML;
 		}
 
 		// The user has submitted the external import form
-		if ( 'Begin Import Now' === $submit ) {
+		$begin_import_submit = __( 'Begin Import Now', 'seriously-simple-podcasting' );
+		if ( $begin_import_submit === $submit ) {
 			$external_rss = wp_strip_all_tags(
 				stripslashes(
 					esc_url_raw( $_POST['external_rss'] )

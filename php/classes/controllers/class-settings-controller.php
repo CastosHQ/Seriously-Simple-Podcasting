@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 
 /**
  * SSP Settings
@@ -805,11 +806,6 @@ class Settings_Controller extends Controller {
 			$html .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
 		}
 
-		if ( isset( $tab ) && 'castos-hosting' == $tab ) {
-			$podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
-			$html .= '<input id="podmotor_account_id" type="hidden" name="ss_podcasting_podmotor_account_id" placeholder="" value="' . $podmotor_account_id . '" class="regular-text disabled" readonly="">' . "\n";
-		}
-
 		// Get settings fields
 		// Get settings fields
 		ob_start();
@@ -819,7 +815,7 @@ class Settings_Controller extends Controller {
 		do_settings_sections( 'ss_podcasting' );
 		$html .= ob_get_clean();
 
-		if ( isset( $tab ) && 'castos-hosting' == $tab ) {
+		if ( isset( $tab ) && 'castos-hosting' === $tab ) {
 			// Validate button
 			$html .= '<p class="submit">' . "\n";
 			$html .= '<input id="validate_api_credentials" type="button" class="button-primary" value="' . esc_attr( __( 'Validate Credentials', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
@@ -839,7 +835,7 @@ class Settings_Controller extends Controller {
 
 		if ( 'import' === $tab ) {
 			// Custom submits for Imports
-			if ( ssp_is_connected_to_podcastmotor() ) {
+			if ( ssp_is_connected_to_castos() ) {
 				$html .= '<p class="submit">' . "\n";
 				$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
 				$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
@@ -869,7 +865,7 @@ class Settings_Controller extends Controller {
 	 * Triggered by the update_option_ss_podcasting_podmotor_disconnect action hook
 	 */
 	public function maybe_disconnect_from_castos( $old_value, $new_value ) {
-		if ( 'on' != $new_value ) {
+		if ( 'on' !== $new_value ) {
 			return;
 		}
 		delete_option( $this->settings_base . 'podmotor_account_email' );

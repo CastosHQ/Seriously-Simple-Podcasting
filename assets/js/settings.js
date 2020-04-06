@@ -6,12 +6,6 @@
 jQuery(document).ready(function($) {
 
 	if ( $("#podmotor_account_email").length > 0 && $("#podmotor_account_api_token").length > 0 ){
-
-		/**
-		 * Disable the account id field
-		 */
-		$("#podmotor_account_id").prop( "readonly", "readonly" );
-
 		/**
 		 * If either API field is empty, disable the submit button
 		 */
@@ -51,8 +45,6 @@ jQuery(document).ready(function($) {
 			.done(function( response ) {
 				if ( response.status == 'success' ){
 					$(".validate-api-credentials-message").html( "Credentials Valid" );
-					$("#podmotor_account_id").val( response.podmotor_id );
-					$("#podmotor_account_id").attr( 'value', response.podmotor_id );
 					$("#ssp-settings-submit").prop( "disabled", "" );
 				}else {
 					$(".validate-api-credentials-message").html( response.message );

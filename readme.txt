@@ -109,6 +109,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [FIX] Fixed a bug where uploading a file to an existing Castos connected episode, would not update the file in Castos
 * [FIX] Fixed a bug which broke series RSS feeds when using a custom feed slug. (props [Maarten Hunink](https://github.com/maartenhunink))
 * [FIX] Fixed a bug where the Importers wouldn't work on translated sites
+* [FIX] Fixed a bug which raised a PHP notice when using the block editor on a "podcast" post type
 
 = 1.20.13 =
 * 2020-03-02

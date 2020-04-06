@@ -938,11 +938,6 @@ class Settings_Handler {
 					'class'       => 'regular-text',
 				),
 				array(
-					'id'      => 'podmotor_account_id',
-					'type'    => 'hidden',
-					'default' => '',
-				),
-				array(
 					'id'          => 'podmotor_disconnect',
 					'label'       => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
 					'description' => __( 'Disconnect your Castos account.', 'seriously-simple-podcasting' ),
@@ -954,13 +949,8 @@ class Settings_Handler {
 			),
 		);
 
-		// @todo there has to be a better way to do this
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
-			$settings['castos-hosting']['fields'][3]['container_class'] = 'hidden';
-		}
-
 		$fields = array();
-		if ( ssp_is_connected_to_podcastmotor() ) {
+		if ( ssp_is_connected_to_castos() ) {
 			if ( ! ssp_get_external_rss_being_imported() ) {
 				$fields = array(
 					array(

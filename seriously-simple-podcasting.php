@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 2.0.0-beta.2
+ * Version: 2.0.0-beta.3
  * Plugin URI: https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
@@ -34,7 +34,7 @@ define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( ! defined( 'SSP_CASTOS_APP_URL' ) ) {
-	define( 'SSP_CASTOS_APP_URL', 'http://app.seriouslysimplehosting.com/' );
+	define( 'SSP_CASTOS_APP_URL', 'https://app.seriouslysimplehosting.com/' );
 }
 if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
 	define( 'SSP_CASTOS_EPISODES_URL', 'https://s3.amazonaws.com/seriouslysimplestaging/' );

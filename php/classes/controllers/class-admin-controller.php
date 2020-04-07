@@ -444,14 +444,16 @@ HTML;
 	 * @param $term_id
 	 */
 	public function save_series_data_to_feed( $term_id ) {
-		$term                 = get_term( $term_id );
-		$title_option_name    = 'ss_podcasting_data_title_' . $term_id;
-		$subtitle_option_name = 'ss_podcasting_data_subtitle_' . $term_id;
+		$term                    = get_term( $term_id );
+		$title_option_name       = 'ss_podcasting_data_title_' . $term_id;
+		$subtitle_option_name    = 'ss_podcasting_data_subtitle_' . $term_id;
+		$description_option_name = 'ss_podcasting_data_description_' . $term_id;
 		if ( ! empty( $term->name ) ) {
 			update_option( $title_option_name, $term->name );
 		}
 		if ( ! empty( $term->description ) ) {
 			update_option( $subtitle_option_name, $term->description );
+			update_option( $description_option_name, $term->description );
 		}
 		// push the series to Castos as a Podcast
 		$series_data              = get_series_data_for_castos( $term_id );

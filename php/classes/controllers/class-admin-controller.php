@@ -455,6 +455,9 @@ HTML;
 			update_option( $subtitle_option_name, $term->description );
 			update_option( $description_option_name, $term->description );
 		}
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
 		// push the series to Castos as a Podcast
 		$series_data              = get_series_data_for_castos( $term_id );
 		$series_data['series_id'] = $term_id;

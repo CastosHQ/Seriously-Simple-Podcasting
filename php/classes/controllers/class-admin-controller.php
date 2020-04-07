@@ -418,6 +418,7 @@ HTML;
 	 */
 	public function save_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
+		$this->save_series_data_to_feed( $term_id );
 	}
 
 	/**
@@ -435,6 +436,23 @@ HTML;
 		$prev_media_id   = get_term_meta( $term_id, $series_settings, true );
 		$media_id        = sanitize_title( $_POST[ $series_settings ] );
 		update_term_meta( $term_id, $series_settings, $media_id, $prev_media_id );
+	}
+
+	/**
+	 * Store the Series Feed title as the Series name
+	 *
+	 * @param $term_id
+	 */
+	public function save_series_data_to_feed( $term_id ) {
+		$term                 = get_term( $term_id );
+		$title_option_name    = 'ss_podcasting_data_title_' . $term_id;
+		$subtitle_option_name = 'ss_podcasting_data_subtitle_' . $term_id;
+		if ( ! empty( $term->name ) ) {
+			update_option( $title_option_name, $term->name );
+		}
+		if ( ! empty( $term->description ) ) {
+			update_option( $subtitle_option_name, $term->description );
+		}
 	}
 
 	public function register_meta() {

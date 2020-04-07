@@ -453,6 +453,11 @@ HTML;
 		if ( ! empty( $term->description ) ) {
 			update_option( $subtitle_option_name, $term->description );
 		}
+		// push the series to Castos as a Podcast
+		$series_data              = get_series_data_for_castos( $term_id );
+		$series_data['series_id'] = $term_id;
+		$castos_handler           = new Castos_Handler();
+		$castos_handler->upload_series_to_podmotor( $series_data );
 	}
 
 	public function register_meta() {

@@ -139,6 +139,7 @@ class Admin_Controller extends Controller {
 			add_action( 'edited_series', array( $this, 'update_series_meta' ), 10, 2 );
 
 			// Dashboard widgets.
+			add_action( 'wp_dashboard_setup', array( $this, 'ssp_dashboard_setup' ) );
 			add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
 
 			// Appreciation links.
@@ -1060,6 +1061,51 @@ HTML;
 		}
 
 		return apply_filters( 'ssp_episode_fields', $fields );
+	}
+
+	/**
+	 * Adding Castos Blog dashboard widget
+	 */
+	public function ssp_dashboard_setup() {
+		wp_add_dashboard_widget( 'dashboard_primary', __( 'WordPress Events and News' ), 'ssp_dashboard_news' );
+	}
+
+	public function ssp_dashboard_news(){
+		?>
+		<div class="wordpress-news hide-if-no-js">
+			<?php $this->ssp_dashboard_primary(); ?>
+		</div>
+		<?php
+	}
+
+	public function ssp_dashboard_primary() {
+		$feeds = array(
+			'news' => array(
+				'link'         => apply_filters( 'dashboard_primary_link', __( 'https://castos.com/blog/' ) ),
+				'title'        => apply_filters( 'dashboard_primary_title', __( 'Castos Blog' ) ),
+				'items'        => 1,
+				'show_summary' => 0,
+				'show_author'  => 0,
+				'show_date'    => 0,
+			),
+		);
+		wp_dashboard_cached_rss_widget(
+			'ssp_dashboard_primary',
+			array(
+				$this,
+				'ssp_dashboard_primary_output',
+			),
+			$feeds
+		);
+	}
+
+	public function ssp_dashboard_primary_output( $widget_id, $feeds ) {
+		foreach ( $feeds as $type => $args ) {
+			$args['type'] = $type;
+			echo '<div class="rss-widget">';
+			wp_widget_rss_output( $args['url'], $args );
+			echo '</div>';
+		}
 	}
 
 	/**

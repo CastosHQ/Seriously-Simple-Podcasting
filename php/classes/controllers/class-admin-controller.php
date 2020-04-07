@@ -1064,48 +1064,79 @@ HTML;
 	}
 
 	/**
-	 * Adding Castos Blog dashboard widget
+	 * Register the Castos Blog dashboard widget
+	 * Hooks into the wp_dashboard_setup action hook
 	 */
 	public function ssp_dashboard_setup() {
-		wp_add_dashboard_widget( 'dashboard_primary', __( 'WordPress Events and News' ), 'ssp_dashboard_news' );
+		wp_add_dashboard_widget( 'ssp_castos_dashboard', __( 'Castos News' ), array( $this, 'ssp_castos_dashboard' ) );
 	}
 
-	public function ssp_dashboard_news(){
+	/**
+	 * Castos Blog dashboard widget callback
+	 */
+	public function ssp_castos_dashboard() {
 		?>
-		<div class="wordpress-news hide-if-no-js">
-			<?php $this->ssp_dashboard_primary(); ?>
+		<div class="castos-news hide-if-no-js">
+			<?php echo $this->ssp_castos_dashboard_render(); ?>
 		</div>
 		<?php
 	}
 
-	public function ssp_dashboard_primary() {
+	/**
+	 * Render the dashboard widget data
+	 *
+	 * @return string
+	 */
+	public function ssp_castos_dashboard_render() {
 		$feeds = array(
 			'news' => array(
-				'link'         => apply_filters( 'dashboard_primary_link', __( 'https://castos.com/blog/' ) ),
-				'title'        => apply_filters( 'dashboard_primary_title', __( 'Castos Blog' ) ),
-				'items'        => 1,
+				'link'         => apply_filters( 'ssp_castos_dashboard_primary_link', __( 'https://castos.com/blog/' ) ),
+				'url'          => apply_filters( 'ssp_castos_dashboard_secondary_feed', __( 'https://castos.com/blog/feed/' ) ),
+				'title'        => apply_filters( 'ssp_castos_dashboard_primary_title', __( 'Castos Blog' ) ),
+				'items'        => 4,
 				'show_summary' => 0,
 				'show_author'  => 0,
 				'show_date'    => 0,
 			),
 		);
-		wp_dashboard_cached_rss_widget(
-			'ssp_dashboard_primary',
-			array(
-				$this,
-				'ssp_dashboard_primary_output',
-			),
-			$feeds
-		);
+
+		return $this->ssp_castos_dashboard_output( 'ssp_castos_dashboard', $feeds );
 	}
 
-	public function ssp_dashboard_primary_output( $widget_id, $feeds ) {
+	/**
+	 * Generate the dashboard widget content
+	 *
+	 * @param $widget_id
+	 * @param $feeds
+	 *
+	 * @return string the RSS feed output
+	 */
+	public function ssp_castos_dashboard_output( $widget_id, $feeds ) {
+		/**
+		 * Check if there is a cached version of the RSS Feed and output it
+		 */
+		$locale    = get_user_locale();
+		$cache_key = 'ssp_dash_v2_' . md5( $widget_id . '_' . $locale );
+		$rss_output    = get_transient( $cache_key );
+		if ( false !== $rss_output ) {
+			return $rss_output;
+		}
+		/**
+		 * Get the RSS Feed contents
+		 */
+		ob_start();
 		foreach ( $feeds as $type => $args ) {
 			$args['type'] = $type;
 			echo '<div class="rss-widget">';
 			wp_widget_rss_output( $args['url'], $args );
 			echo '</div>';
 		}
+		$rss_output = ob_get_flush();
+		/**
+		 * Set up the cached version to expire in 12 hours and output the content
+		 */
+		set_transient( $cache_key, $rss_output, 12 * HOUR_IN_SECONDS );
+		return $rss_output;
 	}
 
 	/**

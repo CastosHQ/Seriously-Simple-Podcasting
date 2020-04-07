@@ -106,6 +106,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * 2020-04-10
 * UPDATE SUMMARY:  Castos API update and various bug fixes
 * [UPDATE] Updated Castos API connection and data sync for Castos account users
+* [NEW] When creating a Series in the Series UI, the plugin will automatically add the Series name and description to the Feed settings Title, Subtitle and Description fields, respectively
+* [NEW] If the user is connected to Castos, creating a new Series will automatically create a new Podcast in Castos
 * [FIX] Fixed a bug where uploading a file to an existing Castos connected episode, would not update the file in Castos
 * [FIX] Fixed a bug which broke series RSS feeds when using a custom feed slug. (props [Maarten Hunink](https://github.com/maartenhunink))
 * [FIX] Fixed a bug where the Importers wouldn't work on translated sites

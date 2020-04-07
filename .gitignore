@@ -12,4 +12,3 @@ node_modules/
 log
 package-lock.json
 webpack.config.min.js
-vendor/

@@ -45,7 +45,7 @@ class Series_Handler {
 		$castos_handler = new Castos_Handler();
 		$response       = $castos_handler->upload_series_to_podmotor( $series_data );
 
-		if ( ! 'success' === $response['status'] ) {
+		if ( 'success' !== $response['status'] ) {
 			return false;
 		}
 

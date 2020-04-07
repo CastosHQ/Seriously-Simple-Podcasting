@@ -139,6 +139,7 @@ class Admin_Controller extends Controller {
 			add_action( 'edited_series', array( $this, 'update_series_meta' ), 10, 2 );
 
 			// Dashboard widgets.
+			add_action( 'wp_dashboard_setup', array( $this, 'ssp_dashboard_setup' ) );
 			add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
 
 			// Appreciation links.
@@ -418,6 +419,7 @@ HTML;
 	 */
 	public function save_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
+		$this->save_series_data_to_feed( $term_id );
 	}
 
 	/**
@@ -435,6 +437,33 @@ HTML;
 		$prev_media_id   = get_term_meta( $term_id, $series_settings, true );
 		$media_id        = sanitize_title( $_POST[ $series_settings ] );
 		update_term_meta( $term_id, $series_settings, $media_id, $prev_media_id );
+	}
+
+	/**
+	 * Store the Series Feed title as the Series name
+	 *
+	 * @param $term_id
+	 */
+	public function save_series_data_to_feed( $term_id ) {
+		$term                    = get_term( $term_id );
+		$title_option_name       = 'ss_podcasting_data_title_' . $term_id;
+		$subtitle_option_name    = 'ss_podcasting_data_subtitle_' . $term_id;
+		$description_option_name = 'ss_podcasting_data_description_' . $term_id;
+		if ( ! empty( $term->name ) ) {
+			update_option( $title_option_name, $term->name );
+		}
+		if ( ! empty( $term->description ) ) {
+			update_option( $subtitle_option_name, $term->description );
+			update_option( $description_option_name, $term->description );
+		}
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+		// push the series to Castos as a Podcast
+		$series_data              = get_series_data_for_castos( $term_id );
+		$series_data['series_id'] = $term_id;
+		$castos_handler           = new Castos_Handler();
+		$castos_handler->upload_series_to_podmotor( $series_data );
 	}
 
 	public function register_meta() {
@@ -1060,6 +1089,82 @@ HTML;
 		}
 
 		return apply_filters( 'ssp_episode_fields', $fields );
+	}
+
+	/**
+	 * Register the Castos Blog dashboard widget
+	 * Hooks into the wp_dashboard_setup action hook
+	 */
+	public function ssp_dashboard_setup() {
+		wp_add_dashboard_widget( 'ssp_castos_dashboard', __( 'Castos News' ), array( $this, 'ssp_castos_dashboard' ) );
+	}
+
+	/**
+	 * Castos Blog dashboard widget callback
+	 */
+	public function ssp_castos_dashboard() {
+		?>
+		<div class="castos-news hide-if-no-js">
+			<?php echo $this->ssp_castos_dashboard_render(); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render the dashboard widget data
+	 *
+	 * @return string
+	 */
+	public function ssp_castos_dashboard_render() {
+		$feeds = array(
+			'news' => array(
+				'link'         => apply_filters( 'ssp_castos_dashboard_primary_link', __( 'https://castos.com/blog/' ) ),
+				'url'          => apply_filters( 'ssp_castos_dashboard_secondary_feed', __( 'https://castos.com/blog/feed/' ) ),
+				'title'        => apply_filters( 'ssp_castos_dashboard_primary_title', __( 'Castos Blog' ) ),
+				'items'        => 4,
+				'show_summary' => 0,
+				'show_author'  => 0,
+				'show_date'    => 0,
+			),
+		);
+
+		return $this->ssp_castos_dashboard_output( 'ssp_castos_dashboard', $feeds );
+	}
+
+	/**
+	 * Generate the dashboard widget content
+	 *
+	 * @param $widget_id
+	 * @param $feeds
+	 *
+	 * @return string the RSS feed output
+	 */
+	public function ssp_castos_dashboard_output( $widget_id, $feeds ) {
+		/**
+		 * Check if there is a cached version of the RSS Feed and output it
+		 */
+		$locale    = get_user_locale();
+		$cache_key = 'ssp_dash_v2_' . md5( $widget_id . '_' . $locale );
+		$rss_output    = get_transient( $cache_key );
+		if ( false !== $rss_output ) {
+			return $rss_output;
+		}
+		/**
+		 * Get the RSS Feed contents
+		 */
+		ob_start();
+		foreach ( $feeds as $type => $args ) {
+			$args['type'] = $type;
+			echo '<div class="rss-widget">';
+			wp_widget_rss_output( $args['url'], $args );
+			echo '</div>';
+		}
+		$rss_output = ob_get_flush();
+		/**
+		 * Set up the cached version to expire in 12 hours and output the content
+		 */
+		set_transient( $cache_key, $rss_output, 12 * HOUR_IN_SECONDS );
+		return $rss_output;
 	}
 
 	/**

@@ -456,15 +456,11 @@ class Castos_Handler {
 			return $this->response;
 		}
 
-		$this->logger->log( 'Series Object', $series_data );
-
-		$api_url = SSP_CASTOS_APP_URL . 'api/series';
+		$api_url = SSP_CASTOS_APP_URL . 'api/v2/series/create';
 
 		$this->logger->log( 'API URL', $api_url );
 
-		$series_data['api_token'] = $this->api_token;
-
-		$this->logger->log( 'Parameter series_data Contents', $series_data );
+		$series_data['token'] = $this->api_token;
 
 		$app_response = wp_remote_post(
 			$api_url,
@@ -473,8 +469,6 @@ class Castos_Handler {
 				'body'    => $series_data,
 			)
 		);
-
-		$this->logger->log( 'app_response', $app_response );
 
 		if ( is_wp_error( $app_response ) ) {
 			$this->logger->log( 'An unknown error occurred sending series data to castos: ' . $app_response->get_error_message() );
@@ -486,7 +480,7 @@ class Castos_Handler {
 		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 		$this->logger->log( 'Response Object', $response_object );
 
-		if ( ! isset( $response_object->status ) || 'success' !== $response_object->status ) {
+		if ( ! $response_object->status ) {
 			$this->logger->log( 'An error occurred uploading the series data to Castos', $response_object );
 			$this->update_response( 'message', 'An error occurred uploading the series data to Castos' );
 

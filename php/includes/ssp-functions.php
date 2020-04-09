@@ -1055,6 +1055,9 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 		$podcast['itunes_category2'] = $itunes_category2['category'];
 		$podcast['itunes_category3'] = $itunes_category3['category'];
 
+		$podcast['itunes']      = get_option( 'ss_podcasting_itunes_url_' . $series_id, '' );
+		$podcast['google_play'] = get_option( 'ss_podcasting_google_play_url_' . $series_id, '' );
+
 		return $podcast;
 
 	}

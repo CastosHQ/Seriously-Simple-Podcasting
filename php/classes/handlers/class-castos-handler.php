@@ -81,7 +81,7 @@ class Castos_Handler {
 		delete_option( 'ss_podcasting_podmotor_account_api_token' );
 		delete_option( 'ss_podcasting_podmotor_account_id' );
 
-		$api_url = SSP_CASTOS_APP_URL . 'api/users/validate';
+		$api_url = SSP_CASTOS_APP_URL . 'api/v2/users/validate';
 
 		$this->logger->log( 'Validate Credentials : API URL', $api_url );
 
@@ -114,7 +114,7 @@ class Castos_Handler {
 			return $this->response;
 		}
 
-		if ( 'success' !== $response_object->status ) {
+		if ( ! $response_object->success ) {
 			$this->update_response( 'message', 'An error occurred validating the credentials.' );
 
 			return $this->response;

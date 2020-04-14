@@ -2,7 +2,7 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.3.2
+Tested up to: 5.4
 Requires PHP: 5.6
 Stable tag: 2.0.0
 License: GPLv2 or later
@@ -103,7 +103,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 2.0.0 =
-* 2020-04-10
+* 2020-04-14
 * UPDATE SUMMARY:  Castos API updates, Series/Feed data improvements, Castos News dashboard widget, and various bug fixes
 * [UPDATE] Updated Castos API connection and data sync for Castos account users
 * [NEW] When creating a Series in the Series UI, the plugin will automatically add the Series name and description to the Feed settings Title, Subtitle and Description fields, respectively

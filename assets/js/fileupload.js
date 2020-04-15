@@ -9,18 +9,22 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	function notificationBar( message ) {
 		$( '.peek-a-bar' ).hide().remove();
-		var notification_bar = new $.peekABar( {
-			padding: '1em',
-			animation: {
-				type: 'fade',
-				duration: 1000,
-			},
-			cssClass: 'ssp-notification-bar',
-			backgroundColor: '#4aa3df'
-		} );
-		notification_bar.show( {
-			html: message
-		} );
+		var notification_bar = new $.peekABar(
+			{
+				padding: '1em',
+				animation: {
+					type: 'fade',
+					duration: 1000,
+				},
+				cssClass: 'ssp-notification-bar',
+				backgroundColor: '#4aa3df'
+			}
+		);
+		notification_bar.show(
+			{
+				html: message
+			}
+		);
 	}
 
 	/**
@@ -29,41 +33,42 @@ jQuery( document ).ready( function ( $ ) {
 	 * @returns {boolean}
 	 */
 	function isFileAllowed( file ) {
-		var fileType = file.type;
+		var fileType      = file.type;
 		var fileTypeParts = fileType.split( "/" );
-		var isValid = false;
-		if ( 'audio' == fileTypeParts[ 0 ] || 'video' == fileTypeParts[ 0 ] ) {
+		var isValid       = false;
+		if ( 'audio' === fileTypeParts[ 0 ] || 'video' === fileTypeParts[ 0 ] ) {
 			isValid = true;
 		}
 		return isValid;
 	}
 
+	/**
+	 * Sanitize the file name
+	 * @param name
+	 * @returns {string}
+	 */
 	function sanitizeName(name) {
-		var punctuationlessName = name.replace(/[,\/#!$%\^&\*;:{}=\-_`'~()+"|? ]/g," ");
-		return punctuationlessName.replace(/\s{1,}/g,"-");
+		var punctuationlessName = name.replace( /[,\/#!$%\^&\*;:{}=\-_`'~()+"|? ]/g," " );
+		return punctuationlessName.replace( /\s{1,}/g,"-" );
 	}
 
 	/**
-	 * Of the upload_credentials object isn't available
+	 * If the upload_credentials object isn't available
 	 */
 	if ( typeof upload_credentials != "undefined" ) {
-
-		var bucket = upload_credentials.bucket;
-		var show_slug = upload_credentials.show_slug;
-		var episodes_url = upload_credentials.episodes_url;
-
 		/**
 		 * Creates instance of plupload
 		 * @type {module:plupload.Uploader}
 		 */
-		var uploader = new plupload.Uploader( {
-			runtimes: 'html5',
-			browse_button: 'ssp_select_file',
-			multi_selection: false,
-			container: 'ssp_upload_container',
-			url: 'https://' + bucket + '.s3.amazonaws.com:443/',
-			multipart_params: {}
-		} );
+		var uploader = new plupload.Uploader(
+			{
+				runtimes: 'html5',
+				browse_button: 'ssp_select_file',
+				multi_selection: false,
+				container: 'ssp_upload_container',
+				url: upload_credentials.castos_api_url + 'files',
+			}
+		);
 
 		/**
 		 * Init Uploader
@@ -98,14 +103,10 @@ jQuery( document ).ready( function ( $ ) {
 		uploader.bind('BeforeUpload', function (up, file) {
 			var file_name = sanitizeName(file.name);
 			var multipart_params = {
-				'key': upload_credentials.show_slug + '/' + file_name,
-				'Filename': upload_credentials.show_slug + '/' + file_name,
-				'acl': 'public-read',
-				'Content-Type': '',
-				'AWSAccessKeyId': upload_credentials.access_key_id,
-				'policy': upload_credentials.policy,
-				'signature': upload_credentials.signature
-			}
+				'token': upload_credentials.castos_api_token,
+				'episode_id': upload_credentials.castos_episode_id,
+				'file_name': file_name
+			};
 			uploader.settings.multipart_params = multipart_params;
 		});
 
@@ -121,42 +122,37 @@ jQuery( document ).ready( function ( $ ) {
 		 */
 		uploader.bind( 'UploadProgress', function ( up, file ) {
 			$( '#ssp_upload_progress' ).html( file.percent + '%' );
+			if (file.percent === 100) {
+				notificationBar( 'Processing Castos Hosting file.' );
+			}
+		});
+
+		/**
+		 * Update the notification bar on upload progress
+		 */
+		uploader.bind( 'FileUploaded', function ( up, file, result ) {
+			notificationBar( 'Uploading file to Castos Hosting Complete.' );
+			var response = JSON.parse(result.response);
+			if ( response.status === 200 ) {
+				var file = response.file;
+				/**
+				 * @todo sanitize file name ???
+				 */
+				$( "#podmotor_file_id" ).val( file.id );
+				$( "#filesize_raw" ).val( file.file_size );
+				$( "#filesize" ).val( plupload.formatSize( file.file_size ) );
+				$( "#duration" ).val( file.file_duration );
+				$( '#upload_audio_file' ).val( file.file_path );
+				$( '.peek-a-bar' ).fadeOut( 5000 );
+			}
 		} );
 
 		/**
-		 * Return the file upload and display a complete message on complete
+		 * Hide the notification bar once the upload is finished
 		 */
 		uploader.bind( 'UploadComplete', function ( up, files ) {
-
-			notificationBar( 'Processing Castos Hosting file.' );
-
-			// we're only expecting one file to be uploaded
-			var file = files[ 0 ];
-			var file_name = sanitizeName(file.name);
-			var filesize_raw = file.size;
-			var file_size = plupload.formatSize(file.size);
-			var uploaded_file = 'https://s3.amazonaws.com/' + bucket + '/' + show_slug + '/' + file_name;
-			var episode_file = episodes_url + show_slug + '/' + file_name;
-
-			// push podmotor_file_path to wp_ajax_ssp_store_podmotor_file
-			$.ajax( {
-				method: "GET",
-				url: ajaxurl,
-				data: { action: "ssp_store_podmotor_file", podmotor_file_path: uploaded_file }
-			} )
-				.done( function ( response ) {
-					if ( response.status == 'success' ) {
-						notificationBar( 'Uploading file to Castos Hosting Complete.' );
-						$( "#podmotor_file_id" ).val( response.file_id );
-						$( "#filesize_raw" ).val( filesize_raw );
-						$( "#filesize" ).val( file_size );
-						$( "#duration" ).val( response.file_duration );
-						$( '#upload_audio_file' ).val( episode_file );
-						$( '.peek-a-bar' ).fadeOut( 5000 );
-					} else {
-						notificationBar( response.message );
-					}
-				} );
+			$( '.peek-a-bar' ).fadeOut( 5000 );
 		} );
+
 	}
-} );
+});

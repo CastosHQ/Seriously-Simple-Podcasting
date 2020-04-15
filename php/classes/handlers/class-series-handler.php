@@ -11,7 +11,7 @@ class Series_Handler {
 
 	public function maybe_save_series() {
 		// Only do this if this is a Castos Customer
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			return false;
 		}
 
@@ -45,7 +45,7 @@ class Series_Handler {
 		$castos_handler = new Castos_Handler();
 		$response       = $castos_handler->upload_series_to_podmotor( $series_data );
 
-		if ( ! 'success' === $response['status'] ) {
+		if ( 'success' !== $response['status'] ) {
 			return false;
 		}
 

@@ -70,7 +70,7 @@ class Admin_Controller extends Controller {
 		$this->logger = new Log_Helper();
 
 		if ( is_admin() ) {
-			$this->admin_notices_handler = new Admin_Notifications_Handler();
+			$this->admin_notices_handler = new Admin_Notifications_Handler($this->token);
 		}
 
 		// Handle localisation.
@@ -110,7 +110,7 @@ class Admin_Controller extends Controller {
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 
-			// Update podcast details to Castos.
+			// Update podcast details to Castos when a post is updated or saved
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
 
@@ -140,6 +140,7 @@ class Admin_Controller extends Controller {
 			add_action( 'edited_series', array( $this, 'update_series_meta' ), 10, 2 );
 
 			// Dashboard widgets.
+			add_action( 'wp_dashboard_setup', array( $this, 'ssp_dashboard_setup' ) );
 			add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
 
 			// Appreciation links.
@@ -187,7 +188,7 @@ class Admin_Controller extends Controller {
 
 		// Series feed URLs
 		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-		add_rewrite_rule( '^feed/' . $feed_slug . '/([^/]*)/?', 'index.php?feed=podcast&podcast_series=$matches[1]', 'top' );
+		add_rewrite_rule( '^feed/' . $feed_slug . '/([^/]*)/?', 'index.php?feed=' . $feed_slug . '&podcast_series=$matches[1]', 'top' );
 		add_rewrite_tag( '%podcast_series%', '([^&]+)' );
 	}
 
@@ -419,6 +420,7 @@ HTML;
 	 */
 	public function save_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
+		$this->save_series_data_to_feed( $term_id );
 	}
 
 	/**
@@ -436,6 +438,33 @@ HTML;
 		$prev_media_id   = get_term_meta( $term_id, $series_settings, true );
 		$media_id        = sanitize_title( $_POST[ $series_settings ] );
 		update_term_meta( $term_id, $series_settings, $media_id, $prev_media_id );
+	}
+
+	/**
+	 * Store the Series Feed title as the Series name
+	 *
+	 * @param $term_id
+	 */
+	public function save_series_data_to_feed( $term_id ) {
+		$term                    = get_term( $term_id );
+		$title_option_name       = 'ss_podcasting_data_title_' . $term_id;
+		$subtitle_option_name    = 'ss_podcasting_data_subtitle_' . $term_id;
+		$description_option_name = 'ss_podcasting_data_description_' . $term_id;
+		if ( ! empty( $term->name ) ) {
+			update_option( $title_option_name, $term->name );
+		}
+		if ( ! empty( $term->description ) ) {
+			update_option( $subtitle_option_name, $term->description );
+			update_option( $description_option_name, $term->description );
+		}
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+		// push the series to Castos as a Podcast
+		$series_data              = get_series_data_for_castos( $term_id );
+		$series_data['series_id'] = $term_id;
+		$castos_handler           = new Castos_Handler();
+		$castos_handler->upload_series_to_podmotor( $series_data );
 	}
 
 	public function register_meta() {
@@ -710,7 +739,7 @@ HTML;
 				switch ( $v['type'] ) {
 					case 'file':
 						$upload_button = '<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File', 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />';
-						if ( ssp_is_connected_to_podcastmotor() ) {
+						if ( ssp_is_connected_to_castos() ) {
 							$upload_button = '<div id="ssp_upload_container" style="display: inline;">';
 							$upload_button .= '  <button id="ssp_select_file" href="javascript:">Select podcast file</button>';
 							$upload_button .= '</div>';
@@ -719,7 +748,7 @@ HTML;
 						$html .= '<p>
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>';
 
-						if ( ssp_is_connected_to_podcastmotor() ) {
+						if ( ssp_is_connected_to_castos() ) {
 							$html .= '<div id="ssp_upload_notification">Your browser doesn\'t have HTML5 support.</div>';
 						}
 
@@ -875,7 +904,7 @@ HTML;
 
 		if ( $enclosure ) {
 
-			if ( ! ssp_is_connected_to_podcastmotor() ) {
+			if ( ! ssp_is_connected_to_castos() ) {
 				// Get file duration
 				if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
 					$duration = $ss_podcasting->get_file_duration( $enclosure );
@@ -941,7 +970,7 @@ HTML;
 		);
 
 		//
-		if ( ssp_is_connected_to_podcastmotor() ) {
+		if ( ssp_is_connected_to_castos() ) {
 			$fields['podmotor_file_id'] = array(
 				'type'             => 'hidden',
 				'default'          => '',
@@ -968,7 +997,7 @@ HTML;
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 
-		if ( ssp_is_connected_to_podcastmotor() ) {
+		if ( ssp_is_connected_to_castos() ) {
 			$fields['filesize_raw'] = array(
 				'type'             => 'hidden',
 				'default'          => '',
@@ -1061,6 +1090,82 @@ HTML;
 		}
 
 		return apply_filters( 'ssp_episode_fields', $fields );
+	}
+
+	/**
+	 * Register the Castos Blog dashboard widget
+	 * Hooks into the wp_dashboard_setup action hook
+	 */
+	public function ssp_dashboard_setup() {
+		wp_add_dashboard_widget( 'ssp_castos_dashboard', __( 'Castos News' ), array( $this, 'ssp_castos_dashboard' ) );
+	}
+
+	/**
+	 * Castos Blog dashboard widget callback
+	 */
+	public function ssp_castos_dashboard() {
+		?>
+		<div class="castos-news hide-if-no-js">
+			<?php echo $this->ssp_castos_dashboard_render(); ?>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Render the dashboard widget data
+	 *
+	 * @return string
+	 */
+	public function ssp_castos_dashboard_render() {
+		$feeds = array(
+			'news' => array(
+				'link'         => apply_filters( 'ssp_castos_dashboard_primary_link', __( 'https://castos.com/blog/' ) ),
+				'url'          => apply_filters( 'ssp_castos_dashboard_secondary_feed', __( 'https://castos.com/blog/feed/' ) ),
+				'title'        => apply_filters( 'ssp_castos_dashboard_primary_title', __( 'Castos Blog' ) ),
+				'items'        => 4,
+				'show_summary' => 0,
+				'show_author'  => 0,
+				'show_date'    => 0,
+			),
+		);
+
+		return $this->ssp_castos_dashboard_output( 'ssp_castos_dashboard', $feeds );
+	}
+
+	/**
+	 * Generate the dashboard widget content
+	 *
+	 * @param $widget_id
+	 * @param $feeds
+	 *
+	 * @return string the RSS feed output
+	 */
+	public function ssp_castos_dashboard_output( $widget_id, $feeds ) {
+		/**
+		 * Check if there is a cached version of the RSS Feed and output it
+		 */
+		$locale    = get_user_locale();
+		$cache_key = 'ssp_dash_v2_' . md5( $widget_id . '_' . $locale );
+		$rss_output    = get_transient( $cache_key );
+		if ( false !== $rss_output ) {
+			return $rss_output;
+		}
+		/**
+		 * Get the RSS Feed contents
+		 */
+		ob_start();
+		foreach ( $feeds as $type => $args ) {
+			$args['type'] = $type;
+			echo '<div class="rss-widget">';
+			wp_widget_rss_output( $args['url'], $args );
+			echo '</div>';
+		}
+		$rss_output = ob_get_flush();
+		/**
+		 * Set up the cached version to expire in 12 hours and output the content
+		 */
+		set_transient( $cache_key, $rss_output, 12 * HOUR_IN_SECONDS );
+		return $rss_output;
 	}
 
 	/**
@@ -1411,11 +1516,10 @@ HTML;
 	 * @param $post
 	 */
 	public function update_podcast_details( $id, $post ) {
-
 		/**
 		 * Don't trigger this if we're not connected to Castos
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 
@@ -1449,10 +1553,23 @@ HTML;
 			return;
 		}
 
+		/**
+		 * Don't trigger this if we've just updated the post
+		 * This is because both actions we're hooking into get triggered in a post update
+		 * So this is to prevent this method from being called twice during a post update.
+		 */
+		$cache_key     = 'ssp_podcast_updated';
+		$podcast_saved = get_transient( $cache_key );
+		if ( false !== $podcast_saved ) {
+			delete_transient( $cache_key );
+			return;
+		}
+
 		$castos_handler = new Castos_Handler();
 		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
 
 		if ( 'success' === $response['status'] ) {
+			set_transient( $cache_key, true, 60 );
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
@@ -1471,7 +1588,7 @@ HTML;
 		/**
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
-		if ( ! ssp_is_connected_to_podcastmotor() ) {
+		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 
@@ -1574,16 +1691,18 @@ HTML;
 		}
 
 		// The user has submitted the Import your podcast setting
-		if ( 'Trigger import' === $submit ) {
+		$trigger_import_submit = __( 'Trigger import', 'seriously-simple-podcasting' );
+		if ( $trigger_import_submit === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
 				$castos_handler = new Castos_Handler();
-				$result          = $castos_handler->trigger_podcast_import();
+				$result         = $castos_handler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
-				}else {
+				} else {
 					add_action( 'admin_notices', array( $this, 'trigger_import_success' ) );
 				}
+
 				return;
 			} else {
 				update_option( 'ss_podcasting_podmotor_import', 'off' );
@@ -1591,7 +1710,8 @@ HTML;
 		}
 
 		// The user has submitted the external import form
-		if ( 'Begin Import Now' === $submit ) {
+		$begin_import_submit = __( 'Begin Import Now', 'seriously-simple-podcasting' );
+		if ( $begin_import_submit === $submit ) {
 			$external_rss = wp_strip_all_tags(
 				stripslashes(
 					esc_url_raw( $_POST['external_rss'] )

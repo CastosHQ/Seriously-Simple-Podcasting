@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.3.2
+Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 1.20.13
+Stable tag: 2.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -101,6 +101,18 @@ You can find complete user and developer documentation (along with the FAQs) on 
 14. An example of the styled podcast RSS feed when viewed directly in the browser.
 
 == Changelog ==
+
+= 2.0.0 =
+* 2020-04-14
+* UPDATE SUMMARY:  Castos API updates, Series/Feed data improvements, Castos News dashboard widget, and various bug fixes
+* [UPDATE] Updated Castos API connection and data sync for Castos account users
+* [NEW] When creating a Series in the Series UI, the plugin will automatically add the Series name and description to the Feed settings Title, Subtitle and Description fields, respectively
+* [NEW] If the user is connected to Castos, creating a new Series will automatically create a new Podcast in Castos
+* [NEW] Adds Castos News dashboard widget
+* [FIX] Fixed a bug where uploading a file to an existing Castos connected episode, would not update the file in Castos
+* [FIX] Fixed a bug which broke series RSS feeds when using a custom feed slug. (props [Maarten Hunink](https://github.com/maartenhunink))
+* [FIX] Fixed a bug where the Importers wouldn't work on translated sites
+* [FIX] Fixed a bug which raised a PHP notice when using the block editor on a "podcast" post type
 
 = 1.20.13 =
 * 2020-03-02

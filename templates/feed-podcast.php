@@ -523,6 +523,10 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 
 				// iTunes summary excludes HTML and must be shorter than 4000 characters
 				$itunes_summary = wp_strip_all_tags( $description );
+				/**
+				 * If the Feed is set to use post_content, in some instances &nbsp; are added to the post content, but this is not allowed in RSS XML
+				 */
+				$itunes_summary = str_replace( '&nbsp;', ' ', $itunes_summary );
 				$itunes_summary = mb_substr( $itunes_summary, 0, 3999 );
 				$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, get_the_ID() );
 

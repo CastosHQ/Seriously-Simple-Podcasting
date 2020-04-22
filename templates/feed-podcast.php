@@ -615,7 +615,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 						<?php if ( $episode_description_uses_excerpt ) { ?>
 							<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
 						<?php } else { ?>
-							<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]</itunes:summary>
+							<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
 						<?php } ?>
 					<?php } ?>
 					<?php if ( $episode_image ) { ?>
@@ -629,7 +629,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 						<?php if ( $episode_description_uses_excerpt ) { ?>
 							<googleplay:description><?php echo $gp_description; ?></googleplay:description>
 						<?php } else { ?>
-							<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]</googleplay:description>
+							<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
 						<?php } ?>
 						<?php if ( $episode_image ) { ?>
 							<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>

@@ -284,7 +284,8 @@ if ( $series_id && $series_id > 0 ) {
 }
 
 // Get episode description setting
-$episode_description = get_option( 'ss_podcasting_episode_description', 'excerpt' );
+$episode_description              = get_option( 'ss_podcasting_episode_description', 'excerpt' );
+$episode_description_uses_excerpt = 'excerpt' === $episode_description;
 if ( $series_id && $series_id > 0 ) {
 	$series_episode_description = get_option( 'episode_description_' . $series_id );
 	if ( false !== $series_episode_description ) {
@@ -508,7 +509,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 				$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 
 				// Description is set based on feed setting
-				if ( 'excerpt' === $episode_description ) {
+				if ( $episode_description_uses_excerpt) {
 					ob_start();
 					the_excerpt_rss();
 					$description = ob_get_clean();
@@ -611,7 +612,11 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 					<?php } ?>
 					<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 					<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
-						<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
+						<?php if ( $episode_description_uses_excerpt ) { ?>
+							<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
+						<?php } else { ?>
+							<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
+						<?php } ?>
 					<?php } ?>
 					<?php if ( $episode_image ) { ?>
 						<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
@@ -621,7 +626,11 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 					<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
 					<itunes:author><?php echo $author; ?></itunes:author>
 					<?php if ( 'off' === $turbo ) { ?>
-						<googleplay:description><?php echo $gp_description; ?></googleplay:description>
+						<?php if ( $episode_description_uses_excerpt ) { ?>
+							<googleplay:description><?php echo $gp_description; ?></googleplay:description>
+						<?php } else { ?>
+							<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
+						<?php } ?>
 						<?php if ( $episode_image ) { ?>
 							<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
 						<?php } ?>

@@ -1,3 +1,4 @@
+.github
 .git
 .idea
 .distignore
@@ -14,7 +15,8 @@ codeception.dist.yml
 composer.json
 composer.lock
 Gruntfile.js
-package.jason
+Gruntfile.min.js
+package.json
 package-lock.json
 phpunit.xml.dist
 README.md

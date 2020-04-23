@@ -26,17 +26,28 @@ class Podcast_List_Block extends Controller {
 	}
 
 	protected function bootstrap() {
-		add_action( 'enqueue_block_editor_assets', array( $this, 'podcast_block_enqueue' ) );
+		add_action( 'enqueue_block_editor_assets', array( $this, 'podcast_block_enqueue_scripts' ) );
+		add_action( 'enqueue_block_assets', array( $this, 'podcast_block_enqueue_styles' ) );
 	}
 
-	public function podcast_block_enqueue() {
+	public function podcast_block_enqueue_scripts() {
 		wp_register_script(
 			'podcast-list-block-script',
 			esc_url( $this->assets_url . 'blocks/podcast_list' . $this->script_suffix . '.js' ),
-			array(),
+			array( 'wp-blocks' ),
 			$this->version,
 			true
 		);
 		wp_enqueue_script( 'podcast-list-block-script' );
+	}
+
+	public function podcast_block_enqueue_styles() {
+		wp_register_style(
+			'podcast-list-block-style',
+			esc_url( $this->assets_url . 'blocks/podcast_list' . $this->script_suffix . '.css' ),
+			array(),
+			$this->version
+		);
+		wp_enqueue_style( 'podcast-list-block-style' );
 	}
 }

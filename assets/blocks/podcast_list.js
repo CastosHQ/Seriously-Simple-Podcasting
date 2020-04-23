@@ -1,1 +1,4 @@
-console.log( "Podcast list block script loaded!" );
+wp.blocks.registerBlockStyle( 'core/quote', {
+	name: 'fancy-quote',
+	label: 'Fancy Quote',
+} );

@@ -1,9 +1,11 @@
+build/
+node_modules/
+vendor/
 .DS_Store
 phpcs.xml
 phpunit.xml
 Thumbs.db
 wp-cli.local.yml
-node_modules/
 *.sql
 *.tar.gz
 *.zip
@@ -12,4 +14,4 @@ node_modules/
 log
 package-lock.json
 webpack.config.min.js
-vendor/
+

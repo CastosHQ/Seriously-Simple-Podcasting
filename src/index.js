@@ -1,15 +1,38 @@
 import { registerBlockType } from '@wordpress/blocks';
+import { RichText } from '@wordpress/block-editor';
 
-registerBlockType( 'seriously-simple-podcasting/example-02-stylesheets', {
-	title: 'Example: Stylesheets',
+registerBlockType( 'seriously-simple-podcasting/example-03-editable-esnext', {
+	title: 'Example: Editable (esnext)',
 	icon: 'universal-access-alt',
 	category: 'layout',
-	example: {},
-	edit( { className } ) {
-		return <p className={ className }>Hello World, step 2 (from the editor, in green).</p>;
+	attributes: {
+		content: {
+			type: 'array',
+			source: 'children',
+			selector: 'p',
+		},
 	},
-	save() {
-		return <p>Hello World, step 2 (from the frontend, in red).</p>;
+	example: {
+		attributes: {
+			content: 'Hello World',
+		},
+	},
+	edit: ( props ) => {
+		const { attributes: { content }, setAttributes, className } = props;
+		const onChangeContent = ( newContent ) => {
+			setAttributes( { content: newContent } );
+		};
+		return (
+			<RichText
+				tagName="p"
+				className={ className }
+				onChange={ onChangeContent }
+				value={ content }
+			/>
+		);
+	},
+	save: ( props ) => {
+		return <RichText.Content tagName="p" value={ props.attributes.content } />;
 	},
 } );
 

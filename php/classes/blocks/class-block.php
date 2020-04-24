@@ -54,7 +54,7 @@ class Block extends Controller {
 		);
 
 		return register_block_type(
-			'seriously-simple-podcasting/example-02-stylesheets',
+			'seriously-simple-podcasting/example-03-editable-esnext',
 			array(
 				'editor_script' => 'ssp-block-script',
 				'editor_style'  => 'ssp-block-editor-style',

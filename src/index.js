@@ -1,6 +1,8 @@
 import { registerBlockType } from '@wordpress/blocks';
 import { RichText } from '@wordpress/block-editor';
 
+//https://developer.wordpress.org/block-editor/tutorials/block-tutorial/introducing-attributes-and-editable-fields/
+
 registerBlockType( 'seriously-simple-podcasting/example-03-editable-esnext', {
 	title: 'Example: Editable (esnext)',
 	icon: 'universal-access-alt',

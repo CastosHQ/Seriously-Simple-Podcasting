@@ -1,31 +1,5 @@
 import { registerBlockType } from '@wordpress/blocks';
 
-/**
- * Example 1
- * @type {{padding: string, backgroundColor: string, color: string}}
- */
-const blockStyle = {
-	backgroundColor: '#900',
-	color: '#fff',
-	padding: '20px',
-};
-
-registerBlockType( 'seriously-simple-podcasting/example-01-basic-esnext', {
-	title: 'Example: Basic (esnext)',
-	icon: 'universal-access-alt',
-	category: 'layout',
-	example: {},
-	edit() {
-		return <div style={ blockStyle }>Hello World, step 1 (from the editor).</div>;
-	},
-	save() {
-		return <div style={ blockStyle }>Hello World, step 1 (from the frontend).</div>;
-	},
-} );
-
-/**
- * Example 2
-
 registerBlockType( 'seriously-simple-podcasting/example-02-stylesheets', {
 	title: 'Example: Stylesheets',
 	icon: 'universal-access-alt',
@@ -38,6 +12,8 @@ registerBlockType( 'seriously-simple-podcasting/example-02-stylesheets', {
 		return <p>Hello World, step 2 (from the frontend, in red).</p>;
 	},
 } );
+
+/**
 
 registerBlockType(
 	'seriously-simple-podcasting/player-block', {

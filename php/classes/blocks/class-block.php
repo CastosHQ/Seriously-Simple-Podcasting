@@ -27,27 +27,10 @@ class Block extends Controller {
 
 	protected function bootstrap() {
 		$this->asset_file = include SSP_PLUGIN_PATH . '/build/index.asset.php';
-		add_action( 'init', array( $this, 'examples_01_register_block' ) );
-		//add_action( 'enqueue_block_editor_assets', array( $this, 'block_enqueue_scripts' ) );
-		//add_action( 'enqueue_block_assets', 'block_enqueue_styles' );
+		add_action( 'init', array( $this, 'examples_02_register_block' ) );
 	}
 
-	public function block_enqueue_scripts() {
-		wp_register_script(
-			'ssp-block-script',
-			esc_url( SSP_PLUGIN_URL . 'build/index.js' ),
-			$this->asset_file['dependencies'],
-			$this->asset_file['version'],
-			true
-		);
-		wp_enqueue_script( 'ssp-block-script' );
-	}
-
-	public function block_enqueue_styles() {
-		//
-	}
-
-	public function examples_01_register_block() {
+	public function examples_02_register_block() {
 		wp_register_script(
 			'ssp-block-script',
 			esc_url( SSP_PLUGIN_URL . 'build/index.js' ),
@@ -56,10 +39,26 @@ class Block extends Controller {
 			true
 		);
 
-		register_block_type(
-			'seriously-simple-podcasting/example-01-basic-esnext',
+		wp_register_style(
+			'ssp-block-editor-style',
+			esc_url( SSP_PLUGIN_URL . 'assets/css/block_editor.css' ),
+			array( 'wp-edit-blocks' ),
+			$this->asset_file['version']
+		);
+
+		wp_register_style(
+			'ssp-block-frontend-style',
+			esc_url( SSP_PLUGIN_URL . 'assets/css/block_style.css' ),
+			array(),
+			$this->asset_file['version']
+		);
+
+		return register_block_type(
+			'seriously-simple-podcasting/example-02-stylesheets',
 			array(
 				'editor_script' => 'ssp-block-script',
+				'editor_style'  => 'ssp-block-editor-style',
+				'style'         => 'ssp-block-frontend-style',
 			)
 		);
 	}

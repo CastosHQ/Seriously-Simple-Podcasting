@@ -585,11 +585,11 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 				}
 				?>
 				<item>
-					<title><?php esc_html( the_title_rss() ); ?></title>
-					<link><?php esc_url( the_permalink_rss() ); ?></link>
+					<title><?php echo esc_html( get_the_title_rss() ); ?></title>
+					<link><?php the_permalink_rss(); ?></link>
 					<pubDate><?php echo $pub_date; ?></pubDate>
 					<dc:creator><?php echo $author; ?></dc:creator>
-					<guid isPermaLink="false"><?php esc_html( the_guid() ); ?></guid>
+					<guid isPermaLink="false"><?php the_guid(); ?></guid>
 					<description><![CDATA[<?php echo $description; ?>]]></description>
 					<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
 					<?php if ( $keywords ) : ?>

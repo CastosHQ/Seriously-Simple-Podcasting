@@ -612,11 +612,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 					<?php } ?>
 					<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 					<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
-						<?php if ( $episode_description_uses_excerpt ) { ?>
-							<itunes:summary><?php echo $itunes_summary; ?></itunes:summary>
-						<?php } else { ?>
-							<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
-						<?php } ?>
+						<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
 					<?php } ?>
 					<?php if ( $episode_image ) { ?>
 						<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
@@ -626,11 +622,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 					<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
 					<itunes:author><?php echo $author; ?></itunes:author>
 					<?php if ( 'off' === $turbo ) { ?>
-						<?php if ( $episode_description_uses_excerpt ) { ?>
-							<googleplay:description><?php echo $gp_description; ?></googleplay:description>
-						<?php } else { ?>
-							<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
-						<?php } ?>
+						<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
 						<?php if ( $episode_image ) { ?>
 							<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
 						<?php } ?>

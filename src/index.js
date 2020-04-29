@@ -4,10 +4,10 @@ import CastosPlayer from "./components/CastosPlayer";
 import EpisodeSelector from "./components/EpisodeSelector";
 import EditPlayer from './components/EditPlayer';
 /**
- * Initial attempt at Castos Player block
- * Just need to load the CSS ?
- * And then make it possible to edit the audio file, or choose an episode?
+ * Castos Player block
+ * Need to load the CSS for the player
  */
+
 registerBlockType('seriously-simple-podcasting/castos-player', {
 
 	title: 'Castos Player',
@@ -16,22 +16,52 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 
 	category: 'layout',
 
+	supports: {
+		multiple: false,
+	},
+
 	attributes: {
 		id: {
 			type: 'number',
+		},
+		image: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'image',
+		},
+		file: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'file',
+		},
+		title: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'title',
+		},
+		duration: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'duration',
+		},
+		download: {
+			type: 'string',
+			source: 'attribute',
+			attribute: 'download',
 		},
 	},
 
 	edit: EditPlayer,
 
-	save: () => {
+	save: props => {
+		const { id, image, file, title, duration, download } = props.attributes;
 		return (
 			<CastosPlayer
-				episodeImage="https://wphackercast.com/wp-content/uploads/2017/11/WP-Hacker-Cast-300x300.png"
-				episodeFileUrl="https://wphackercast.com/podcast-player/1143/wp-hackercast-episode-24-tammie-lister-the-future-of-digital-experiences-and-all-things-esoteric.mp3"
-				episodeTitle="WP HackerCast – Episode 24 – Tammie Lister – The Future of Digital Experiences and All Things Esoteric"
-				episodeDuration="00:59:37"
-				episodeDownloadUrl="https://wphackercast.com/podcast-download/1143/wp-hackercast-episode-24-tammie-lister-the-future-of-digital-experiences-and-all-things-esoteric.mp3?ref=download"
+				episodeImage={image}
+				episodeFileUrl={file}
+				episodeTitle={title}
+				episodeDuration={duration}
+				episodeDownloadUrl={download}
 			/>
 		);
 	},
@@ -40,7 +70,7 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 
 //https://developer.wordpress.org/block-editor/tutorials/block-tutorial/introducing-attributes-and-editable-fields/
 
-registerBlockType( 'seriously-simple-podcasting/example-03-editable-esnext', {
+/*registerBlockType( 'seriously-simple-podcasting/example-03-editable-esnext', {
 	title: 'Example: Editable (esnext)',
 	icon: 'universal-access-alt',
 	category: 'layout',
@@ -75,7 +105,7 @@ registerBlockType( 'seriously-simple-podcasting/example-03-editable-esnext', {
 		console.log(props);
 		return <RichText.Content tagName="p" value={ props.attributes.content } />;
 	},
-} );
+} );*/
 
 /**
 registerBlockType(

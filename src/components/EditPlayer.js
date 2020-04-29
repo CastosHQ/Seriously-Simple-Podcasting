@@ -1,10 +1,8 @@
-import CastosPlayer from "./CastosPlayer";
-
 /**
  * WordPress dependencies
  */
-const { __ } = wp.i18n;
-const { Component } = wp.element;
+const {__} = wp.i18n;
+const {Component} = wp.element;
 const {
 	BlockControls,
 	InspectorControls,
@@ -21,34 +19,72 @@ const {
 	Toolbar,
 } = wp.components;
 
-const { apiFetch } = wp;
+const {apiFetch} = wp;
+
+import CastosPlayer from "./CastosPlayer";
 
 class EditPlayer extends Component {
-	constructor( { className } ) {
-		super( ...arguments );
-		// edit component has its own src in the state so it can be edited
-		// without setting the actual value outside of the edit UI
-		this.state = {
-			editing: ! this.props.attributes.id,
-			className,
-		};
+	constructor({className}) {
+		super(...arguments);
 		this.episodeRef = React.createRef();
+		this.state = {
+			editing: !this.props.attributes.id,
+			className,
+			episodes: []
+		};
 	}
+
 	render() {
-		const episodes = [
-			{id: 5, title: 'Lipsum'},
-			{id: 28, title: 'Lipsum 2'},
-		]
+
+		const {editing, episodes} = this.state;
+
+		const { setAttributes, isSelected, attributes } = this.props;
+
+		const populateEpisodes = () => {
+			let fetchPost = 'ssp/v1/episodes';
+			apiFetch({path: fetchPost}).then(posts => {
+				let episodes = []
+				Object.keys(posts).map(function (key) {
+					let episode = {
+						id: posts[key].id,
+						title: posts[key].title.rendered
+					}
+					episodes.push(episode);
+				});
+				this.setState({
+					episodes: episodes,
+				});
+			});
+		}
 
 		const switchToEditing = () => {
-			this.setState( { editing: true } );
+			this.setState({editing: true});
 		};
 
 		const activateEpisode = () => {
-			// get the episode id from the ref
 			const episodeId = this.episodeRef.current.value;
-			console.log(episodeId);
-			this.setState( { editing: false } );
+			let fetchPost = 'ssp/v1/episodes?include='+episodeId;
+			apiFetch({path: fetchPost}).then(post => {
+				const episode = {
+					episodeImage: post[0].episode_featured_image,
+					episodeFileUrl: post[0].meta.audio_file,
+					episodeTitle: post[0].title.rendered,
+					episodeDuration: post[0].meta.duration,
+					episodeDownloadUrl: post[0].download_link,
+				}
+				this.setState({
+					episode: episode,
+					editing: false
+				});
+				setAttributes({
+					id: episodeId,
+					image: episode.episodeImage,
+					file: episode.episodeFileUrl,
+					title: episode.episodeTitle,
+					duration: episode.episodeDuration,
+					download: episode.episodeDownloadUrl
+				});
+			});
 		};
 
 		const controls = (
@@ -56,20 +92,24 @@ class EditPlayer extends Component {
 				<Toolbar>
 					<IconButton
 						className="components-icon-button components-toolbar__control"
-						label={ __( 'Select Podcast', 'seriously-simple-podcasting' ) }
-						onClick={ switchToEditing }
+						label={__('Select Podcast', 'seriously-simple-podcasting')}
+						onClick={switchToEditing}
 						icon="edit"
 					/>
 				</Toolbar>
 			</BlockControls>
 		);
-		if (this.state.editing){
+
+		if (editing) {
+			if (episodes.length === 0) {
+				populateEpisodes()
+			}
 			return (
 				<div>
 					Select podcast Episode
-					<select>
-						{episodes.map((item, key) =>
-							<option ref={this.episodeRef} value={item.id}>{item.title}</option>
+					<select ref={this.episodeRef}>
+						{this.state.episodes.map((item, key) =>
+							<option value={item.id}>{item.title}</option>
 						)}
 					</select>
 					<button onClick={activateEpisode}>Go</button>
@@ -79,11 +119,11 @@ class EditPlayer extends Component {
 			return [
 				controls, (
 					<CastosPlayer
-						episodeImage="https://wphackercast.com/wp-content/uploads/2017/11/WP-Hacker-Cast-300x300.png"
-						episodeFileUrl="https://wphackercast.com/podcast-player/1143/wp-hackercast-episode-24-tammie-lister-the-future-of-digital-experiences-and-all-things-esoteric.mp3"
-						episodeTitle="WP HackerCast – Episode 24 – Tammie Lister – The Future of Digital Experiences and All Things Esoteric"
-						episodeDuration="00:59:37"
-						episodeDownloadUrl="https://wphackercast.com/podcast-download/1143/wp-hackercast-episode-24-tammie-lister-the-future-of-digital-experiences-and-all-things-esoteric.mp3?ref=download"
+						episodeImage={this.state.episode.episodeImage}
+						episodeFileUrl={this.state.episode.episodeFileUrl}
+						episodeTitle={this.state.episode.episodeTitle}
+						episodeDuration={this.state.episode.episodeDuration}
+						episodeDownloadUrl={this.state.episode.episodeDownloadUrl}
 					/>
 				)];
 		}

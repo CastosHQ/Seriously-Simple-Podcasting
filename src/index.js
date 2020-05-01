@@ -3,7 +3,8 @@ import CastosPlayer from "./components/CastosPlayer";
 import EditPlayer from './components/EditPlayer';
 /**
  * Castos Player block
- *
+ * Check what the errors is on activation
+ * Don't load the block when editing a podcast enabled post type
  */
 registerBlockType('seriously-simple-podcasting/castos-player', {
 

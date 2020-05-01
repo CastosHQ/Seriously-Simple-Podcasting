@@ -137,7 +137,7 @@ class Frontend_Controller extends Controller {
 		//@todo this should be triggered when the player exists on the front end, when added from the block editor.
 		global $large_player_instance_number;
 		if ( ! (int) $large_player_instance_number > 0 ) {
-			//return;
+			return;
 		}
 		?>
 		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=<?php echo SSP_VERSION ?>"/>

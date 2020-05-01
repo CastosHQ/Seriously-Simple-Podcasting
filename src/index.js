@@ -3,7 +3,15 @@ import CastosPlayer from "./components/CastosPlayer";
 import EditPlayer from './components/EditPlayer';
 /**
  * Castos Player block
- * Check what the errors is on activation
+ * Delete block_editor.css
+ * Update block_style.css with any missing css
+ * Rename block class to match class name
+ * Remove todo in frontend controller
+ * Update readme
+ * Change APP_URL values
+ * Remove CastosPlayer.css
+ * Either move EpisodeSelector code to EpisodeSelector Component, or delete it
+ * Rebase beta off current master to bring up to date with latest changes
  * Don't load the block when editing a podcast enabled post type
  */
 registerBlockType('seriously-simple-podcasting/castos-player', {

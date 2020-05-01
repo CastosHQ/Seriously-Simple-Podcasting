@@ -68,6 +68,14 @@ class Player_Block extends Controller {
 		);
 
 		wp_register_script(
+			'ssp-block-media-player',
+			esc_url( SSP_PLUGIN_URL . 'assets/js/media.player.js' ),
+			array( 'jquery' ),
+			$this->asset_file['version'],
+			true
+		);
+
+		wp_register_script(
 			'ssp-block-html5-player',
 			esc_url( SSP_PLUGIN_URL . 'assets/js/html5.player.js' ),
 			array( 'jquery' ),
@@ -95,6 +103,7 @@ class Player_Block extends Controller {
 		);
 
 		wp_enqueue_script( 'ssp-block-wavesurfer' );
+		wp_enqueue_script( 'ssp-block-media-player' );
 		wp_enqueue_script( 'ssp-block-html5-player' );
 
 		wp_enqueue_style( 'ssp-block-style' );

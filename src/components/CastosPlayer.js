@@ -21,7 +21,7 @@ class CastosPlayer extends Component {
 		return (
 			<div className={this.props.className}>
 				<div className="ssp-player ssp-player-large"
-					 data-player-instance-number={1}
+					 data-player-instance-number={"1"}
 					 data-player-waveform-colour="#fff" data-player-waveform-progress-colour="#00d4f7"
 					 data-source-file={this.props.episodeFileUrl}
 					 id="ssp_player_id_1" style={playerBackgroundStyle}>

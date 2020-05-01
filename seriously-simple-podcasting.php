@@ -66,8 +66,8 @@ if ( is_admin() ) {
 	global $ssp_settings, $ssp_options;
 	$ssp_settings = new Settings_Controller( __FILE__, SSP_VERSION );
 	$ssp_options  = new Options_Controller( __FILE__, SSP_VERSION );
-	$ssp_block    = new Block( __FILE__, SSP_VERSION );
 }
+$ssp_block    = new Block( __FILE__, SSP_VERSION );
 /**
  * Only load WP REST API Endpoints if the WordPress version is newer than 4.7
  */

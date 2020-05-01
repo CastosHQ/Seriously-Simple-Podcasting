@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Blocks
  * @since       2.0.4
  */
-class Block extends Controller {
+class Player_Block extends Controller {
 
 	protected $asset_file;
 
@@ -29,8 +29,8 @@ class Block extends Controller {
 	protected function bootstrap() {
 		$this->asset_file = include SSP_PLUGIN_PATH . '/build/index.asset.php';
 		add_action( 'init', array( $this, 'register_castos_player_block' ) );
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_player_assets' ) );
-		add_action('enqueue_block_assets', array( $this, 'enqueue_player_assets' ));
+		add_action('enqueue_block_editor_assets', array($this, 'enqueue_player_assets'));
+		add_action('enqueue_block_assets', array($this, 'enqueue_player_assets'));
 	}
 
 	/**
@@ -67,7 +67,7 @@ class Block extends Controller {
 		);
 
 		wp_register_script(
-			'ssp-block-html4-player',
+			'ssp-block-html5-player',
 			esc_url( SSP_PLUGIN_URL . 'assets/js/html5.player.js' ),
 			array(),
 			$this->asset_file['version'],

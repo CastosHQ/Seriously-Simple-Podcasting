@@ -3,21 +3,8 @@
  */
 const {__} = wp.i18n;
 const {Component} = wp.element;
-const {
-	BlockControls,
-	InspectorControls,
-	MediaPlaceholder,
-	RichText,
-} = wp.blockEditor;
-const {
-	FormToggle,
-	IconButton,
-	PanelBody,
-	PanelRow,
-	SelectControl,
-	TextControl,
-	Toolbar,
-} = wp.components;
+const {BlockControls} = wp.blockEditor;
+const {Button, Toolbar} = wp.components;
 
 const {apiFetch} = wp;
 
@@ -27,10 +14,22 @@ class EditPlayer extends Component {
 	constructor({className}) {
 		super(...arguments);
 		this.episodeRef = React.createRef();
+		const episode = {
+			episodeImage: this.props.attributes.image || "",
+			episodeFileUrl: this.props.attributes.file || "",
+			episodeTitle: this.props.attributes.title || "",
+			episodeDuration: this.props.attributes.duration || "",
+			episodeDownloadUrl: this.props.attributes.download || "",
+		}
+		let editing = true;
+		if (this.props.attributes.title){
+			editing = false;
+		}
 		this.state = {
-			editing: !this.props.attributes.id,
+			editing: editing,
 			className,
-			episodes: []
+			episodes: [],
+			episode: episode
 		};
 	}
 
@@ -38,7 +37,7 @@ class EditPlayer extends Component {
 
 		const {editing, episodes} = this.state;
 
-		const { setAttributes, isSelected, attributes } = this.props;
+		const { setAttributes } = this.props;
 
 		const populateEpisodes = () => {
 			let fetchPost = 'ssp/v1/episodes';
@@ -66,6 +65,7 @@ class EditPlayer extends Component {
 			let fetchPost = 'ssp/v1/episodes?include='+episodeId;
 			apiFetch({path: fetchPost}).then(post => {
 				const episode = {
+					episodeId: episodeId,
 					episodeImage: post[0].episode_featured_image,
 					episodeFileUrl: post[0].meta.audio_file,
 					episodeTitle: post[0].title.rendered,
@@ -90,7 +90,7 @@ class EditPlayer extends Component {
 		const controls = (
 			<BlockControls key="controls">
 				<Toolbar>
-					<IconButton
+					<Button
 						className="components-icon-button components-toolbar__control"
 						label={__('Select Podcast', 'seriously-simple-podcasting')}
 						onClick={switchToEditing}
@@ -105,7 +105,7 @@ class EditPlayer extends Component {
 				populateEpisodes()
 			}
 			return (
-				<div>
+				<div className={this.state.className}>
 					Select podcast Episode
 					<select ref={this.episodeRef}>
 						{this.state.episodes.map((item, key) =>
@@ -118,12 +118,14 @@ class EditPlayer extends Component {
 		} else {
 			return [
 				controls, (
-					<CastosPlayer
-						episodeImage={this.state.episode.episodeImage}
-						episodeFileUrl={this.state.episode.episodeFileUrl}
-						episodeTitle={this.state.episode.episodeTitle}
-						episodeDuration={this.state.episode.episodeDuration}
-						episodeDownloadUrl={this.state.episode.episodeDownloadUrl}
+					<CastosPlayer className={this.state.className}
+								  method={"edit"}
+								  id={this.state.episodeId}
+								  episodeImage={this.state.episode.episodeImage}
+								  episodeFileUrl={this.state.episode.episodeFileUrl}
+								  episodeTitle={this.state.episode.episodeTitle}
+								  episodeDuration={this.state.episode.episodeDuration}
+								  episodeDownloadUrl={this.state.episode.episodeDownloadUrl}
 					/>
 				)];
 		}

@@ -136,7 +136,7 @@ class Frontend_Controller extends Controller {
 	public function html5_player_conditional_scripts() {
 		global $large_player_instance_number;
 		if ( ! (int) $large_player_instance_number > 0 ) {
-			return;
+			//return;
 		}
 		?>
 		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=<?php echo SSP_VERSION ?>"/>

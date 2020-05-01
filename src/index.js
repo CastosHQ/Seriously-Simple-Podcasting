@@ -3,11 +3,9 @@ import CastosPlayer from "./components/CastosPlayer";
 import EditPlayer from './components/EditPlayer';
 /**
  * Castos Player block
- * Revert back to the actual HTML and figure out the differences
- * Need to load the CSS for the player
- * And then check if it renders the correct player in the block editor
- * as well as on the front end
- * will probably need to load the css on the front end, when a block is in play?
+ * Fix the bug in the front end controller that needs to load the player styles when the block is rendered
+ * Is the block able to trigger the $large_player_instance_number variable
+ * Load the JS for the player so that things like playing is possible
  * Might be worth while to clean up the CastosPlayer component a bit
  */
 
@@ -51,7 +49,6 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 		return (
 			<CastosPlayer
 				className={className}
-				method={"save"}
 				episodeImage={image}
 				episodeFileUrl={file}
 				episodeTitle={title}

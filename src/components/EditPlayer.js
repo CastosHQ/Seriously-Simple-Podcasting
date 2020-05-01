@@ -119,8 +119,6 @@ class EditPlayer extends Component {
 			return [
 				controls, (
 					<CastosPlayer className={this.state.className}
-								  method={"edit"}
-								  id={this.state.episodeId}
 								  episodeImage={this.state.episode.episodeImage}
 								  episodeFileUrl={this.state.episode.episodeFileUrl}
 								  episodeTitle={this.state.episode.episodeTitle}

@@ -1,4 +1,4 @@
-build/
+src/
 node_modules/
 .github
 .git

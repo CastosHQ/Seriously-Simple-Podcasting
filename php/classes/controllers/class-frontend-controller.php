@@ -134,6 +134,7 @@ class Frontend_Controller extends Controller {
 	 * @todo this should really be done in a better way
 	 */
 	public function html5_player_conditional_scripts() {
+		//@todo this should be triggered when the player exists on the front end, when added from the block editor.
 		global $large_player_instance_number;
 		if ( ! (int) $large_player_instance_number > 0 ) {
 			//return;

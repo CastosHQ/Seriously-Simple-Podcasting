@@ -134,9 +134,8 @@ class Frontend_Controller extends Controller {
 	 * @todo this should really be done in a better way
 	 */
 	public function html5_player_conditional_scripts() {
-		//@todo this should be triggered when the player exists on the front end, when added from the block editor.
 		global $large_player_instance_number;
-		if ( ! (int) $large_player_instance_number > 0 ) {
+		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
 			return;
 		}
 		?>
@@ -154,7 +153,7 @@ class Frontend_Controller extends Controller {
 	 */
 	public function html5_player_styles() {
 		global $large_player_instance_number;
-		if ( ! (int) $large_player_instance_number > 0 ) {
+		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
 			return;
 		}
 		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5.player.css', array(), $this->version );

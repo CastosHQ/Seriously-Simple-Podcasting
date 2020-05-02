@@ -27,8 +27,10 @@ class Player_Block extends Controller {
 	}
 
 	protected function bootstrap() {
-		$this->asset_file = include SSP_PLUGIN_PATH . '/build/index.asset.php';
+		$this->asset_file = include SSP_PLUGIN_PATH . 'build/index.asset.php';
+		// register the actual block
 		add_action( 'init', array( $this, 'register_castos_player_block' ) );
+		// enqueue our plugin assets for the block editor and rednering the block
 		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_player_assets' ) );
 		add_action( 'enqueue_block_assets', array( $this, 'enqueue_player_assets' ) );
 	}
@@ -56,7 +58,7 @@ class Player_Block extends Controller {
 	}
 
 	/**
-	 * Enqueues the assets needed for the player to work.
+	 * Enqueues our plugin assets needed for the player to work.
 	 */
 	public function enqueue_player_assets() {
 		wp_register_script(

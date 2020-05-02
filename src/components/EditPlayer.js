@@ -105,6 +105,7 @@ class EditPlayer extends Component {
 				populateEpisodes()
 			}
 			return (
+				/* @todo this could be moved to it's own component */
 				<div className={this.state.className}>
 					Select podcast Episode
 					<select ref={this.episodeRef}>

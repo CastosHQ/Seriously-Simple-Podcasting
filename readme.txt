@@ -106,6 +106,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * 2020-05-01
 * [FIX] Adds a player block
 
+= 2.0.4 =
+* 2020-04-28
+* [FIX] Reverts a change to the itunes:summary and googleplay:description tags introduced in 2.0.1
+
 = 2.0.3 =
 * 2020-04-23
 * [FIX] Fixes a bug where, in some instances, the itunes:summary and googleplay:description tags contain invalid characters.

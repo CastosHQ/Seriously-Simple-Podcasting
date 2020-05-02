@@ -14,4 +14,3 @@ wp-cli.local.yml
 log
 package-lock.json
 webpack.config.min.js
-

@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.3.2
+Tested up to: 5.4
 Requires PHP: 5.6
-Stable tag: 2.0.0
+Stable tag: 2.0.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,8 +102,24 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.0.4 =
+* 2020-04-28
+* [FIX] Reverts a change to the itunes:summary and googleplay:description tags introduced in 2.0.1
+
+= 2.0.3 =
+* 2020-04-23
+* [FIX] Fixes a bug where, in some instances, the itunes:summary and googleplay:description tags contain invalid characters.
+
+= 2.0.2 =
+* 2020-04-22
+* [FIX] Fixes a bug where, in some instances, the itunes:summary and googleplay:description tags contain invalid &nbsp; characters.
+
+= 2.0.1 =
+* 2020-04-15
+* [FIX] Fixes a bug where the RSS feed itunes:summary and googleplay:description tags don't respect the RSS Feed settings for Episode description
+
 = 2.0.0 =
-* 2020-04-10
+* 2020-04-14
 * UPDATE SUMMARY:  Castos API updates, Series/Feed data improvements, Castos News dashboard widget, and various bug fixes
 * [UPDATE] Updated Castos API connection and data sync for Castos account users
 * [NEW] When creating a Series in the Series UI, the plugin will automatically add the Series name and description to the Feed settings Title, Subtitle and Description fields, respectively

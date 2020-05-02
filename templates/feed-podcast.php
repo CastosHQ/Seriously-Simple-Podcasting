@@ -284,7 +284,8 @@ if ( $series_id && $series_id > 0 ) {
 }
 
 // Get episode description setting
-$episode_description = get_option( 'ss_podcasting_episode_description', 'excerpt' );
+$episode_description              = get_option( 'ss_podcasting_episode_description', 'excerpt' );
+$episode_description_uses_excerpt = 'excerpt' === $episode_description;
 if ( $series_id && $series_id > 0 ) {
 	$series_episode_description = get_option( 'episode_description_' . $series_id );
 	if ( false !== $series_episode_description ) {
@@ -508,7 +509,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 				$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 
 				// Description is set based on feed setting
-				if ( 'excerpt' === $episode_description ) {
+				if ( $episode_description_uses_excerpt) {
 					ob_start();
 					the_excerpt_rss();
 					$description = ob_get_clean();
@@ -522,7 +523,7 @@ xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 				$description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
 
 				// iTunes summary excludes HTML and must be shorter than 4000 characters
-				$itunes_summary = wp_strip_all_tags( $content );
+				$itunes_summary = wp_strip_all_tags( $description );
 				$itunes_summary = mb_substr( $itunes_summary, 0, 3999 );
 				$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, get_the_ID() );
 

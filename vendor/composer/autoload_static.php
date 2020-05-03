@@ -4,10 +4,11 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit8d874f96dc6f44f7e49d5006fedbc95f
+class ComposerStaticInit5297198bf6d470a399d125591af3e364
 {
     public static $classMap = array (
         'SeriouslySimplePodcasting\\Ajax\\Ajax_Handler' => __DIR__ . '/../..' . '/php/classes/ajax/class-ajax-handler.php',
+        'SeriouslySimplePodcasting\\Blocks\\Player_Block' => __DIR__ . '/../..' . '/php/classes/blocks/class-player-block.php',
         'SeriouslySimplePodcasting\\Controllers\\Admin_Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-admin-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-controller.php',
         'SeriouslySimplePodcasting\\Controllers\\Episode_Controller' => __DIR__ . '/../..' . '/php/classes/controllers/class-episode-controller.php',
@@ -40,7 +41,7 @@ class ComposerStaticInit8d874f96dc6f44f7e49d5006fedbc95f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit8d874f96dc6f44f7e49d5006fedbc95f::$classMap;
+            $loader->classMap = ComposerStaticInit5297198bf6d470a399d125591af3e364::$classMap;
 
         }, null, ClassLoader::class);
     }

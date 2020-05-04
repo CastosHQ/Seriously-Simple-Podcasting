@@ -143,9 +143,11 @@ class Frontend_Controller extends Controller {
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>"/>
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>"/>
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>"/>
-		<?php /* <script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script> */ ?>
-		<script src="https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/3.3.3/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
-		<?php
+		<?php if (defined('SCRIPT_DEBUG')){ ?>
+			<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.js?v=<?php echo SSP_VERSION ?>"></script>
+		<?php } else { ?>
+			<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
+		<?php }
 	}
 
 	/**

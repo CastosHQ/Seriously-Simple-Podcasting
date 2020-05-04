@@ -63,7 +63,7 @@ class Player_Block extends Controller {
 	public function enqueue_player_assets() {
 		wp_register_script(
 			'ssp-block-wavesurfer',
-			'https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js',
+			'https://cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/3.3.3/wavesurfer.min.js',
 			array(),
 			$this->asset_file['version'],
 			true

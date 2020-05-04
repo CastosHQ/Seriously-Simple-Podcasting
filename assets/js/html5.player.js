@@ -82,6 +82,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 			// On Play/Pause button clicked
 			$('#ssp_player_id_' + player_instance_number + ' #ssp-play-pause').on('click', function (e) {
+				console.log('play pause clicked');
 				window.ssp_player[player_instance_number].playPause();
 			});
 

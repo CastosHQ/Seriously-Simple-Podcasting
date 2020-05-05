@@ -295,6 +295,9 @@ class Castos_Handler {
 		$app_response = wp_remote_post(
 			$api_url,
 			array(
+				'headers' => array(
+					'Content-Type' => 'application/json',
+				),
 				'timeout' => 45,
 				'body'    => $post_body,
 			)

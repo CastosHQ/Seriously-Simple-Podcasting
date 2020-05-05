@@ -292,16 +292,23 @@ class Castos_Handler {
 
 		$this->logger->log( 'Parameter post_body Contents', $post_body );
 
-		$app_response = wp_remote_post(
-			$api_url,
-			array(
-				'headers' => array(
-					'Content-Type' => 'application/json',
-				),
-				'timeout' => 45,
-				'body'    => $post_body,
-			)
-		);
+		/**
+		 * Convert to JSON so that we send it with the Content-Type of application/json
+		 * On some WordPress installs the Content-Type defaults to text/html
+		 * Just setting the Content-Type to application/json was not enough, so the post_body has to be converted
+		 * to JSON as well.
+		 */
+		$post_body = wp_json_encode( $post_body );
+
+		$options = [
+			'body'        => $post_body,
+			'headers'     => [
+				'Content-Type' => 'application/json',
+			],
+			'timeout'     => 60,
+		];
+
+		$app_response = wp_remote_post( $api_url, $options );
 
 		$this->logger->log( 'Upload Podcast app_response', $app_response );
 

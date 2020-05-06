@@ -135,7 +135,7 @@ class Frontend_Controller extends Controller {
 	 */
 	public function html5_player_conditional_scripts() {
 		global $large_player_instance_number;
-		if ( ! (int) $large_player_instance_number > 0 ) {
+		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
 			return;
 		}
 		?>
@@ -143,8 +143,11 @@ class Frontend_Controller extends Controller {
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>"/>
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>"/>
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>"/>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
-		<?php
+		<?php if (defined('SCRIPT_DEBUG')){ ?>
+			<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.js?v=<?php echo SSP_VERSION ?>"></script>
+		<?php } else { ?>
+			<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
+		<?php }
 	}
 
 	/**
@@ -153,7 +156,7 @@ class Frontend_Controller extends Controller {
 	 */
 	public function html5_player_styles() {
 		global $large_player_instance_number;
-		if ( ! (int) $large_player_instance_number > 0 ) {
+		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
 			return;
 		}
 		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5.player.css', array(), $this->version );

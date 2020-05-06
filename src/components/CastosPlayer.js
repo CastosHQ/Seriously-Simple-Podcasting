@@ -58,7 +58,7 @@ class CastosPlayer extends Component {
 															top: '0px',
 															bottom: '0px',
 															overflow: 'hidden',
-															width: '0px',
+															width: '4px',
 															display: 'block',
 															boxSizing: 'border-box',
 															borderRight: '1px solid rgb(51, 51, 51)'

@@ -300,13 +300,13 @@ class Castos_Handler {
 		 */
 		$post_body = wp_json_encode( $post_body );
 
-		$options = [
+		$options = array(
 			'body'        => $post_body,
-			'headers'     => [
+			'headers'     => array(
 				'Content-Type' => 'application/json',
-			],
+			),
 			'timeout'     => 60,
-		];
+		);
 
 		$app_response = wp_remote_post( $api_url, $options );
 

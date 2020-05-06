@@ -4,7 +4,7 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInit7f85975049cfe56163a30430d0df44bc
+class ComposerStaticInit70473bc2799cfb7eb7274dc10a202c54
 {
     public static $classMap = array (
         'SeriouslySimplePodcasting\\Ajax\\Ajax_Handler' => __DIR__ . '/../..' . '/php/classes/ajax/class-ajax-handler.php',
@@ -41,7 +41,7 @@ class ComposerStaticInit7f85975049cfe56163a30430d0df44bc
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->classMap = ComposerStaticInit7f85975049cfe56163a30430d0df44bc::$classMap;
+            $loader->classMap = ComposerStaticInit70473bc2799cfb7eb7274dc10a202c54::$classMap;
 
         }, null, ClassLoader::class);
     }

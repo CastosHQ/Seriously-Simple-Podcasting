@@ -66,7 +66,7 @@ class EditPlayer extends Component {
 			apiFetch({path: fetchPost}).then(post => {
 				const episode = {
 					episodeId: episodeId,
-					episodeImage: post[0].episode_featured_image,
+					episodeImage: post[0].episode_player_image,
 					episodeFileUrl: post[0].meta.audio_file,
 					episodeTitle: post[0].title.rendered,
 					episodeDuration: post[0].meta.duration,

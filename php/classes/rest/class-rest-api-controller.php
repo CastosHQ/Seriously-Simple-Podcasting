@@ -68,6 +68,8 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_episode_images' ) );
 
+		add_action( 'rest_api_init', array( $this, 'register_rest_player_images' ) );
+
 		add_action( 'rest_api_init', array( $this, 'register_rest_audio_download_link' ) );
 
 	}
@@ -216,6 +218,21 @@ class Rest_Api_Controller {
 	}
 
 	/**
+	 * Add the player image field to all Podcast post types
+	 */
+	public function register_rest_player_images() {
+		register_rest_field(
+			ssp_post_types(),
+			'episode_player_image',
+			array(
+				'get_callback'    => array( $this, 'get_rest_player_image' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+	/**
 	 * Add the audio file tracking url field to all Podcast post types
 	 */
 	public function register_rest_audio_download_link() {
@@ -245,6 +262,28 @@ class Rest_Api_Controller {
 			$img = wp_get_attachment_image_src( $object['featured_media'], 'app-thumb' );
 
 			return $img[0];
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the player image for valid Podcast post types
+	 * Call back for the register_rest_episode_images method
+	 *
+	 * @param $object
+	 * @param $field_name
+	 * @param $request
+	 *
+	 * @return bool
+	 */
+	public function get_rest_player_image( $object, $field_name, $request ) {
+		if ( ! empty( $object['id'] ) ) {
+			$episode_id         = $object['id'];
+			$episode_controller = new Episode_Controller( $this->file, $this->version );
+			$album_art          = $episode_controller->get_album_art( $episode_id );
+
+			return $album_art['src'];
 		}
 
 		return false;

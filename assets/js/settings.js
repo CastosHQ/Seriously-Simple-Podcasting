@@ -44,7 +44,7 @@ jQuery(document).ready(function($) {
 			})
 			.done(function( response ) {
 				if ( response.status == 'success' ){
-					$(".validate-api-credentials-message").html( "Credentials Valid" );
+					$(".validate-api-credentials-message").html( "Credentials Valid. Please click 'Save Settings' to save Credentials." );
 					$("#ssp-settings-submit").prop( "disabled", "" );
 				}else {
 					$(".validate-api-credentials-message").html( response.message );

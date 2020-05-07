@@ -43,46 +43,7 @@ class CastosPlayer extends Component {
 										</div>
 										<div className="ssp-wave-form">
 											<div className="ssp-inner">
-												<div data-waveform-id="waveform_1" id="waveform1" className="ssp-wave">
-													<wave style={{
-														display: 'block',
-														position: 'relative',
-														userSelect: 'none',
-														height: '8px',
-														overflow: 'hidden'
-													}}>
-														<wave style={{
-															position: 'absolute',
-															zIndex: 2,
-															left: '0px',
-															top: '0px',
-															bottom: '0px',
-															overflow: 'hidden',
-															width: '0px',
-															display: 'block',
-															boxSizing: 'border-box',
-															borderRight: '1px solid rgb(51, 51, 51)'
-														}}>
-															<canvas style={{
-																position: 'absolute',
-																left: '0px',
-																top: '0px',
-																bottom: '0px',
-																height: '100%',
-																width: '702px'
-															}} width={702} height={8}/>
-														</wave>
-														<canvas style={{
-															position: 'absolute',
-															zIndex: 1,
-															left: '0px',
-															top: '0px',
-															bottom: '0px',
-															height: '100%',
-															width: '702px'
-														}} width={702} height={8}/>
-													</wave>
-												</div>
+												<div data-waveform-id="waveform_1" id="waveform1" className="ssp-wave"></div>
 											</div>
 										</div>
 										<div className="ssp-time-volume">

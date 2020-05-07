@@ -1,11 +1,43 @@
 {
   "name": "seriously-simple-podcasting",
-  "version": "0.1.0",
-  "main": "Gruntfile.js",
-  "author": "Jonathan Bossenger",
+  "version": "2.0.4",
+  "main": "build/index.js",
+  "author": "Craig Hewitt",
   "devDependencies": {
-    "grunt": "^1.0.4",
-    "grunt-wp-i18n": "^1.0.3",
-    "grunt-wp-readme-to-markdown": "~1.0.0"
-  }
+    "@wordpress/scripts": "8.0.1"
+  },
+  "description": "[Seriously Simple Podcasting](https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "start": "wp-scripts start",
+    "build": "wp-scripts build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting.git"
+  },
+  "keywords": [
+    "podcast",
+    "audio",
+    "video",
+    "vodcast",
+    "rss",
+    "mp3",
+    "mp4",
+    "feed",
+    "itunes",
+    "podcasting",
+    "media",
+    "stitcher",
+    "google",
+    "play",
+    "playlist"
+  ],
+  "license": "GPL-2.0-only",
+  "bugs": {
+    "url": "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting/issues"
+  },
+  "homepage": "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting#readme"
 }

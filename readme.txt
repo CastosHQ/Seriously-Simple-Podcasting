@@ -102,6 +102,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.1.0-beta =
+* 2020-05-01
+* [FIX] Adds a player block
+
 = 2.0.4 =
 * 2020-04-28
 * [FIX] Reverts a change to the itunes:summary and googleplay:description tags introduced in 2.0.1

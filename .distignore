@@ -3,7 +3,7 @@ _repo_assets/
 bin/
 node_modules/
 src/
-tests
+tests/
 .git
 .idea
 .distignore

@@ -103,10 +103,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 2.1.0 =
-* 2020-05-08
+* 2020-05-11
 * [NEW] Block Editor support - adds a Castos Player block to the block editor, for use on posts and pages
 * [NEW] Minor UI message changes to the Hosting and Import settings
 * [FIX] Fixes a bug where in some instances, Castos users experience problems syncing episode data to their Castos account
+* [FIX] Fixes a bug in the Dashboard widget
 
 = 2.0.4 =
 * 2020-04-28

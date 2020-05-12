@@ -135,7 +135,7 @@ class Frontend_Controller extends Controller {
 	 */
 	public function html5_player_conditional_scripts() {
 		global $large_player_instance_number;
-		if ( ! (int) $large_player_instance_number > 0 ) {
+		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
 			return;
 		}
 		?>
@@ -143,8 +143,11 @@ class Frontend_Controller extends Controller {
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>"/>
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>"/>
 		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>"/>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
-		<?php
+		<?php if (defined('SCRIPT_DEBUG')){ ?>
+			<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.js?v=<?php echo SSP_VERSION ?>"></script>
+		<?php } else { ?>
+			<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
+		<?php }
 	}
 
 	/**
@@ -153,7 +156,7 @@ class Frontend_Controller extends Controller {
 	 */
 	public function html5_player_styles() {
 		global $large_player_instance_number;
-		if ( ! (int) $large_player_instance_number > 0 ) {
+		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
 			return;
 		}
 		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5.player.css', array(), $this->version );
@@ -345,129 +348,6 @@ class Frontend_Controller extends Controller {
 	}
 
 	/**
-	 * Get Album Art for Player
-	 *
-	 * Iteratively tries to find the correct album art based on whether the desired image is of square aspect ratio.
-	 * Falls back to default album art if it can not find the correct ones.
-	 *
-	 * @param $episode_id ID of the episode being loaded into the player
-	 *
-	 * @return array [ $src, $width, $height ]
-	 *
-	 * @since 1.19.4
-	 */
-	public function get_album_art( $episode_id = false ) {
-
-		/**
-		 * In case the episode id is not passed
-		 */
-		if ( ! $episode_id ) {
-			return $this->get_no_album_art_image_array();
-		}
-
-		/**
-		 * Option 1 : if the episode has a featured image that is square, then use that
-		 */
-		$thumb_id = get_post_thumbnail_id( $episode_id );
-		if ( ! empty( $thumb_id ) ) {
-			$image_data_array = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $thumb_id, 'medium' ) );
-			if ( $this->check_image_is_square( $image_data_array ) ) {
-				return $image_data_array;
-			}
-		}
-
-		/**
-		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
-		 */
-		$series_id    = false;
-		$series_image = '';
-
-		$series = get_the_terms( $episode_id, 'series' );
-
-		if ( $series ) {
-			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : false;
-		}
-
-		if ( $series_id ) {
-			$series_image = get_option( "ss_podcasting_data_image_{$series_id}", false );
-		}
-
-		if ( $series_image ) {
-			$series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
-			$image_data_array           = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $series_image_attachment_id, 'medium' ) );
-			if ( $this->check_image_is_square( $image_data_array ) ) {
-				return $image_data_array;
-			}
-		}
-
-		/**
-		 * Option 3: if the feed settings have an image that is square, then use that
-		 */
-		$feed_image = get_option( 'ss_podcasting_data_image', false );
-		if ( $feed_image ) {
-			$feed_image_attachment_id = ssp_get_image_id_from_url( $feed_image );
-			$image_data_array         = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $feed_image_attachment_id, 'medium' ) );
-			if ( $this->check_image_is_square( $image_data_array ) ) {
-				return $image_data_array;
-			}
-		}
-
-		/**
-		 * None of the above passed, return the no-album-art image
-		 */
-		return $this->get_no_album_art_image_array();
-	}
-
-	/**
-	 * Convert the array returned from wp_get_attachment_image_src into a human readable version
-	 * @todo check if there is a WordPress function for this
-	 *
-	 * @param $image_data_array
-	 *
-	 * @return mixed
-	 */
-	private function return_renamed_image_array_keys( $image_data_array ) {
-		$new_image_data_array = array();
-		if ( $image_data_array && ! empty( $image_data_array ) ) {
-			$new_image_data_array['src']    = isset( $image_data_array[0] ) ? $image_data_array[0] : '';
-			$new_image_data_array['width']  = isset( $image_data_array[1] ) ? $image_data_array[1] : '';
-			$new_image_data_array['height'] = isset( $image_data_array[2] ) ? $image_data_array[2] : '';
-		}
-
-		return $new_image_data_array;
-	}
-
-	/**
-	 * Check if the image in the formatted image_data_array is a square image
-	 *
-	 * @param array $image_data_array
-	 *
-	 * @return bool
-	 */
-	private function check_image_is_square( $image_data_array = array() ) {
-		if ( isset( $image_data_array['width'] ) && isset( $image_data_array['height'] ) ) {
-			if ( ( $image_data_array['width'] / $image_data_array['height'] ) === 1 ) {
-				return true;
-			}
-		}
-		return false;
-	}
-
-	/**
-	 * Returns the no album art image
-	 *
-	 * @return array
-	 */
-	private function get_no_album_art_image_array() {
-		$src    = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
-		$width  = 300;
-		$height = 300;
-
-		return compact( 'src', 'width', 'height' );
-	}
-
-
-	/**
 	 * Return media player for a given file. Used to enable other checks or to prevent the player from loading
 	 * @param string $src_file
 	 * @param int $episode_id
@@ -538,7 +418,7 @@ class Frontend_Controller extends Controller {
 						// ---- NEW PLAYER -----
 
 						// Get episode album art
-						$albumArt = $this->get_album_art( $episode_id );
+						$albumArt = $this->episode_controller->get_album_art( $episode_id );
 
 						$player_background_colour = get_option( 'ss_podcasting_player_background_skin_colour', false );
 						$player_wave_form_colour = get_option( 'ss_podcasting_player_wave_form_colour', false );

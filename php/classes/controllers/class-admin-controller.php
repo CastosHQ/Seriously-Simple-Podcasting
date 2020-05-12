@@ -1160,7 +1160,7 @@ HTML;
 			wp_widget_rss_output( $args['url'], $args );
 			echo '</div>';
 		}
-		$rss_output = ob_get_flush();
+		$rss_output = ob_get_clean();
 		/**
 		 * Set up the cached version to expire in 12 hours and output the content
 		 */

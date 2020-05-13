@@ -1660,4 +1660,58 @@ class Frontend_Controller extends Controller {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
 	}
 
+	/**
+	 * Render the HTML content for the podcast list dynamic block
+	 *
+	 * @return string
+	 */
+	public function render_podcast_list_dynamic_block() {
+		// Get registered Podcast Post Types
+		$podcast_post_types = ssp_post_types( true );
+
+		// Set up query arguments for fetching podcast episodes
+		$query_args = array(
+			'post_status'         => 'publish',
+			'post_type'           => $podcast_post_types,
+			'posts_per_page'      => 10,
+			'ignore_sticky_posts' => true,
+		);
+
+		// Make sure to only fetch episodes that have a media file
+		$query_args['meta_query'] = array(
+			array(
+				'key'     => 'audio_file',
+				'compare' => '!=',
+				'value'   => '',
+			),
+		);
+
+		$query_args = apply_filters( 'podcast_list_dynamic_block_query_arguments', $query_args );
+
+		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
+
+		// Fetch all episodes for display
+		$episodes = get_posts( $query_args );
+		ob_start();
+		foreach ( $episodes as $episode ) {
+			$episode_id = $episode->ID;
+			$file       = $this->get_enclosure( $episode_id );
+			if ( get_option( 'permalink_structure' ) ) {
+				$file = $this->get_episode_download_link( $episode_id );
+			}
+			$player = $this->load_media_player( $file, $episode_id, $player_style );
+			$player .= $this->episode_meta_details( $episode_id, 'content' );
+			?>
+			<div>
+				<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
+				<a href="<?php echo $episode->guid ?>"><?php echo $episode->post_title; ?></a>
+				<p><?php echo $episode->post_content; ?></p>
+				<p><?php echo $player; ?></p>
+			</div>
+		<?php }
+		$episodeItems = ob_get_clean();
+
+		return apply_filters( 'podcast_list_dynamic_block_html_content', '<div>' . $episodeItems . '</div>' );
+	}
+
 }

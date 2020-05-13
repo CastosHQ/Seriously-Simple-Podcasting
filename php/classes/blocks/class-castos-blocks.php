@@ -38,54 +38,8 @@ class Castos_Blocks extends Controller {
 	}
 
 	public function podcast_list_render_callback() {
-		$logger = new Log_Helper();
-		$logger->log('podcast_list_render_callback');
-
-		// Get registered Podcast Post Types
-		$podcast_post_types = ssp_post_types(true);
-
-		// Set up query arguments for fetching podcast episodes
-		$query_args = array(
-			'post_status'         => 'publish',
-			'post_type'           => $podcast_post_types,
-			'posts_per_page'      => 10,
-			'ignore_sticky_posts' => true,
-		);
-
-		// Make sure to only fetch episodes that have a media file
-		$query_args['meta_query'] = array(
-			array(
-				'key'     => 'audio_file',
-				'compare' => '!=',
-				'value'   => '',
-			),
-		);
-
 		global $ss_podcasting;
-
-		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
-
-		// Fetch all episodes for display
-		$episodes = get_posts( $query_args );
-		ob_start();
-		foreach ($episodes as $episode){
-			$episode_id = $episode->ID;
-			$file       = $ss_podcasting->get_enclosure( $episode_id );
-			if ( get_option( 'permalink_structure' ) ) {
-				$file = $ss_podcasting->get_episode_download_link( $episode_id );
-			}
-			$player = $ss_podcasting->load_media_player( $file, $episode_id, $player_style );
-			?>
-			<div>
-				<?php echo get_the_post_thumbnail($episode->ID, 'thumbnail'); ?>
-				<a href="<?php echo $episode->guid ?>"><?php echo $episode->post_title; ?></a>
-				<p><?php echo $episode->post_content; ?></p>
-				<p><?php echo $player; ?></p>
-			</div>
-		<?php }
-		$episodeItems = ob_get_clean();
-		return '<div>' . $episodeItems . '</div>';
-
+		return $ss_podcasting->render_podcast_list_dynamic_block();
 	}
 
 	protected function bootstrap() {

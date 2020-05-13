@@ -14,6 +14,7 @@ namespace SeriouslySimplePodcasting\Blocks;
 // Exit if accessed directly.
 use SeriouslySimplePodcasting\Controllers\Controller;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use SeriouslySimplePodcasting\Player\Media_Player;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -60,15 +61,26 @@ class Castos_Blocks extends Controller {
 			),
 		);
 
+		global $ss_podcasting;
+
+		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
+
 		// Fetch all episodes for display
 		$episodes = get_posts( $query_args );
 		ob_start();
-		foreach ($episodes as $episode){ ?>
+		foreach ($episodes as $episode){
+			$episode_id = $episode->ID;
+			$file       = $ss_podcasting->get_enclosure( $episode_id );
+			if ( get_option( 'permalink_structure' ) ) {
+				$file = $ss_podcasting->get_episode_download_link( $episode_id );
+			}
+			$player = $ss_podcasting->load_media_player( $file, $episode_id, $player_style );
+			?>
 			<div>
-				<?php echo get_the_post_thumbnail($episode->ID, 'thumbnail') ?>
-				<a href="<?php echo $episode->guid ?>"><?php echo $episode->post_title ?></a>
-				<p><?php echo $episode->post_content ?></p>
-				<p>Insert the Castos Player here</p>
+				<?php echo get_the_post_thumbnail($episode->ID, 'thumbnail'); ?>
+				<a href="<?php echo $episode->guid ?>"><?php echo $episode->post_title; ?></a>
+				<p><?php echo $episode->post_content; ?></p>
+				<p><?php echo $player; ?></p>
 			</div>
 		<?php }
 		$episodeItems = ob_get_clean();

@@ -50,7 +50,7 @@ class Player {
 		// Make sure we return and don't echo.
 		$args['echo'] = false;
 
-		$shortcode_player = $ss_podcasting->player->load_media_player( $file, $episode_id, $player_style );
+		$shortcode_player = $ss_podcasting->load_media_player( $file, $episode_id, $player_style );
 
 		if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, 'content' ) ) {
 			$shortcode_player .= $ss_podcasting->episode_meta_details( $episode_id, 'content' );

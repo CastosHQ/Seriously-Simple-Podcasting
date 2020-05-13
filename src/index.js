@@ -1,6 +1,9 @@
 import { registerBlockType } from '@wordpress/blocks';
+import { withSelect } from '@wordpress/data';
 import CastosPlayer from "./components/CastosPlayer";
 import EditPlayer from './components/EditPlayer';
+import EditPodcastList from "./components/EditPodcastList";
+
 /**
  * Castos Player block
  *
@@ -54,3 +57,18 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 		);
 	},
 });
+
+/**
+ * Podcast list block
+ */
+registerBlockType( 'seriously-simple-podcasting/podcast-list', {
+
+	title: 'Podcast List',
+
+	icon: 'megaphone',
+
+	category: 'widgets',
+
+	edit: EditPodcastList,
+
+} );

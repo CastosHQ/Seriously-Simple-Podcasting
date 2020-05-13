@@ -1,5 +1,4 @@
 import { registerBlockType } from '@wordpress/blocks';
-import { withSelect } from '@wordpress/data';
 import CastosPlayer from "./components/CastosPlayer";
 import EditPlayer from './components/EditPlayer';
 import EditPodcastList from "./components/EditPodcastList";

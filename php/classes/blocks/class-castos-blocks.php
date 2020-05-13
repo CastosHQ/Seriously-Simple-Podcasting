@@ -13,7 +13,6 @@ namespace SeriouslySimplePodcasting\Blocks;
 
 // Exit if accessed directly.
 use SeriouslySimplePodcasting\Controllers\Controller;
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Player\Media_Player;
 
 if ( ! defined( 'ABSPATH' ) ) {

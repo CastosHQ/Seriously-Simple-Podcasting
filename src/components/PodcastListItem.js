@@ -1,18 +1,25 @@
+import { decodeEntities } from '@wordpress/html-entities';
 import CastosPlayer from "./CastosPlayer";
+import CastosPlayerMeta from "./CastosPlayerMeta";
 
 const {Component} = wp.element;
 
 /**
  * Podcast List Item
+ * @todo fix content.rendered rendering
+ *
  */
 class EditPodcastListItem extends Component {
 	render() {
 		const {className, post} = this.props;
+		console.log(post.content.rendered);
+		const content = decodeEntities(post.content.rendered);
+		console.log(content);
 		return (
 			<div key={post.id}>
 				<img src={post.episode_featured_image} />
 				<a className={ className } href={ post.link }>{ post.title.rendered }</a>
-				<p>{post.content.rendered}</p>
+				<div>{content}</div>
 				<CastosPlayer
 					className={className}
 					episodeImage={post.episode_player_image}
@@ -21,6 +28,7 @@ class EditPodcastListItem extends Component {
 					episodeDuration={post.meta.duration}
 					episodeDownloadUrl={post.download_link}
 				/>
+				<CastosPlayerMeta />
 			</div>
 		);
 	}

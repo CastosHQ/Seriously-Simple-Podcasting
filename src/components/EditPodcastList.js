@@ -10,69 +10,46 @@ const {apiFetch} = wp;
 
 import PodcastListItem from './PodcastListItem';
 
-
-/*withSelect( ( select ) => {
-	return {
-		posts: select( 'core' ).getEntityRecords( 'postType', 'podcast' ),
-	};
-} )( ( { posts, className } ) => {
-	if ( ! posts ) {
-		return 'Loading...';
-	}
-
-	if ( posts && posts.length === 0 ) {
-		return 'No podcasts';
-	}
-
-	const postItems = posts.map((post) =>
-		<li key={post.id}>
-			<a className={ className } href={ post.link }>
-				{ post.title.rendered }
-			</a>
-		</li>
-	);
-
-	/!*const post = posts[ 0 ];*!/
-
-	return (
-		<ul>{postItems}</ul>
-	);
-} ),*/
-
 class EditPodcastList extends Component {
 	constructor({className}) {
 		super(...arguments);
+		this._isMounted = false;
 		this.state = {
+			isLoading: true,
 			className,
 			episodes: [],
 		};
 	}
 
+	componentDidMount() {
+		this._isMounted = true;
+
+		const fetchPost = 'ssp/v1/episodes?context=edit';
+		apiFetch({path: fetchPost}).then(posts => {
+			console.log(posts);
+			const episodes = []
+			Object.keys(posts).map(function (key) {
+				const episode = posts[key];
+				episodes.push(episode);
+			});
+			this.setState({
+				episodes: episodes,
+			});
+			if (this._isMounted) {
+				this.setState({
+					isLoading: false
+				})
+			}
+		});
+	}
+
+	componentWillUnmount() {
+		this._isMounted = false;
+	}
+
 	render() {
 
 		const {className, episodes} = this.state;
-
-		//const { setAttributes } = this.props;
-
-		const populateEpisodes = () => {
-			let fetchPost = 'ssp/v1/episodes';
-			apiFetch({path: fetchPost}).then(posts => {
-				let episodes = []
-				Object.keys(posts).map(function (key) {
-					let episode = posts[key];
-					episodes.push(episode);
-				});
-				this.setState({
-					episodes: episodes,
-				});
-			});
-		}
-
-		if (episodes.length === 0) {
-			populateEpisodes()
-		}
-
-		console.log(episodes);
 
 		const episodeItems = episodes.map((post) =>
 			<PodcastListItem key={post.id} className={className} post={post} />

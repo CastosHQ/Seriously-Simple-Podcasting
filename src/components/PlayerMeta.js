@@ -9,7 +9,7 @@ import {Component} from '@wordpress/element';
 
 class PlayerMeta extends Component {
 	render() {
-		const {title, download, duration} = props;
+		const {title, download, duration} = this.props;
 		const downloadLink = download + '?ref=download';
 		const openLink = download + '?ref=new_window';
 		return (

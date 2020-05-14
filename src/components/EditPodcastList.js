@@ -26,7 +26,7 @@ class EditPodcastList extends Component {
 
 		const fetchPost = 'ssp/v1/episodes?context=edit';
 		apiFetch({path: fetchPost}).then(posts => {
-			console.log(posts);
+			//console.log(posts);
 			const episodes = []
 			Object.keys(posts).map(function (key) {
 				const episode = posts[key];

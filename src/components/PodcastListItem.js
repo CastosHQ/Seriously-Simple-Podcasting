@@ -27,3 +27,18 @@ class EditPodcastListItem extends Component {
 }
 
 export default EditPodcastListItem;
+
+
+class PostListItem extends Component {
+	render() {
+		const {className, post} = this.props;
+		return (
+			<div key={post.id}>
+				<img src={post.episode_featured_image} />
+				<a className={ className } href={ post.link }>{ post.title.rendered }</a>
+				{post.content.rendered}
+				<div dangerouslySetInnerHTML={{__html: post.content.rendered}} />
+			</div>
+		);
+	}
+}

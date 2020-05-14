@@ -11,15 +11,14 @@ const {Component} = wp.element;
  */
 class EditPodcastListItem extends Component {
 	render() {
+		console.log(this.props);
 		const {className, post} = this.props;
-		console.log(post.content.rendered);
-		const content = decodeEntities(post.content.rendered);
-		console.log(content);
 		return (
 			<div key={post.id}>
 				<img src={post.episode_featured_image} />
 				<a className={ className } href={ post.link }>{ post.title.rendered }</a>
-				<div>{content}</div>
+				{/*Warning, if someone where able to inject XSS attack code into the REST API output, this could cause problems.*/}
+				<div dangerouslySetInnerHTML={{__html: post.content.rendered}} />
 				<CastosPlayer
 					className={className}
 					episodeImage={post.episode_player_image}
@@ -28,25 +27,10 @@ class EditPodcastListItem extends Component {
 					episodeDuration={post.meta.duration}
 					episodeDownloadUrl={post.download_link}
 				/>
-				<CastosPlayerMeta />
+				<PlayerMeta title={post.title.rendered} download={post.download_link} duration={post.meta.duration} />
 			</div>
 		);
 	}
 }
 
 export default EditPodcastListItem;
-
-
-class PostListItem extends Component {
-	render() {
-		const {className, post} = this.props;
-		return (
-			<div key={post.id}>
-				<img src={post.episode_featured_image} />
-				<a className={ className } href={ post.link }>{ post.title.rendered }</a>
-				{post.content.rendered}
-				<div dangerouslySetInnerHTML={{__html: post.content.rendered}} />
-			</div>
-		);
-	}
-}

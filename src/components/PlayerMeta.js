@@ -7,9 +7,9 @@ import {Component} from '@wordpress/element';
  * @todo pass player meta data as props
  */
 
-class CastosPlayerMeta extends Component {
+class PlayerMeta extends Component {
 	render() {
-		const {download, title, duration} = props;
+		const {title, download, duration} = props;
 		const downloadLink = download + '?ref=download';
 		const openLink = download + '?ref=new_window';
 		return (
@@ -26,4 +26,4 @@ class CastosPlayerMeta extends Component {
 	}
 }
 
-export default CastosPlayerMeta;
+export default PlayerMeta;

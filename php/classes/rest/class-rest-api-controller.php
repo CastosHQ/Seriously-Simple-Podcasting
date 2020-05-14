@@ -108,6 +108,18 @@ class Rest_Api_Controller {
 		$controller = new Episodes_Controller();
 		$controller->register_routes();
 
+		/**
+		 * Setting up custom route for the wp_audio_shortcode for a podcast
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/audio_player',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'get_rest_audio_player' ),
+			)
+		);
+
 	}
 
 	/**
@@ -163,6 +175,19 @@ class Rest_Api_Controller {
 		return $response;
 	}
 
+	/**
+	 * Gets the podcast audio player code from wp_audio_shortcode, or null if ssp_podcast_id is not a valid podcast
+	 *
+	 * @return array $podcast Podcast data
+	 */
+	public function get_rest_audio_player() {
+		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_SANITIZE_STRING ) : '' );
+		global $ss_podcasting;
+		$file   = $ss_podcasting->episode_controller->get_enclosure( $podcast_id );
+		$params = array( 'src' => $file, 'preload' => 'none' );
+
+		return array( 'audio_player' => wp_audio_shortcode( $params ) );
+	}
 
 	/**
 	 * Add additional fields to series taxonomy

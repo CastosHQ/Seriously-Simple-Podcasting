@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Frontend_Controller extends Controller {
 
-	protected $episode_controller;
+	public $episode_controller;
 
 	// @todo reference prior to analytics launch
 	public $style_guide = array(

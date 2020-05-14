@@ -1,4 +1,5 @@
-import { decodeEntities } from '@wordpress/html-entities';
+import Interweave from 'interweave';
+
 import CastosPlayer from "./CastosPlayer";
 import PlayerMeta from "./PlayerMeta";
 
@@ -16,7 +17,7 @@ class EditPodcastListItem extends Component {
 			<div key={post.id}>
 				<img src={post.episode_featured_image} />
 				<a className={ className } href={ post.link }>{ post.title.rendered }</a>
-				<div>{post.content.rendered}</div>
+				<Interweave content={post.content.rendered} />
 				<CastosPlayer
 					className={className}
 					episodeImage={post.episode_player_image}

@@ -15,12 +15,14 @@ class EditPlayer extends Component {
 	constructor({className}) {
 		super(...arguments);
 		this.episodeRef = React.createRef();
-		const episodeId = this.props.attributes.id || '';
-		let editing = ! this.props.attributes.id;
+		let editing = true;
+		if (this.props.attributes.id){
+			editing = false;
+		}
 		this.state = {
 			className,
 			editing: editing,
-			episodeId: episodeId,
+			episode: [],
 			episodes: []
 		}
 	}
@@ -42,9 +44,13 @@ class EditPlayer extends Component {
 		});
 	}
 
+	activateEpisode() {
+
+	}
+
 	render() {
 
-		const {editing, episodes, className, episodeId} = this.state;
+		const {editing, episodes, className, episode} = this.state;
 
 		const {setAttributes} = this.props;
 
@@ -54,16 +60,20 @@ class EditPlayer extends Component {
 
 		const activateEpisode = () => {
 			const episodeId = this.episodeRef.current.value;
-			console.log(episodeId);
-			this.setState({
-				episodeId: episodeId,
-				editing: false
+			let fetchPost = 'ssp/v1/episodes?include='+episodeId;
+			apiFetch({path: fetchPost}).then(post => {
+				const episode = {
+					episodeId: episodeId,
+					episodeTitle: post[0].title.rendered,
+				}
+				this.setState({
+					episode: episode,
+					editing: false
+				});
+				setAttributes({
+					id: episodeId,
+				});
 			});
-			setAttributes({
-				id: episodeId,
-			});
-			console.log(this.state);
-			console.log(this.props);
 		};
 
 		const controls = (
@@ -95,7 +105,7 @@ class EditPlayer extends Component {
 		} else {
 			return [
 				controls, (
-					<AudioPlayer className={className} episodeId={episodeId}/>
+					<AudioPlayer className={className} episode={episode}/>
 				)];
 		}
 	}

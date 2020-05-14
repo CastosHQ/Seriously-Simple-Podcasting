@@ -6,7 +6,7 @@ import {Component} from '@wordpress/element';
 const {apiFetch} = wp;
 
 class AudioPlayer extends Component {
-	constructor({className}) {
+	/*constructor({className}) {
 		super(...arguments);
 		const episodeId = this.props.episodeId || '';
 		this.state = {
@@ -23,11 +23,12 @@ class AudioPlayer extends Component {
 				audioPlayer: response.audio_player,
 			});
 		});
-	}
+	}*/
 
 	render() {
 		return (
-			<div dangerouslySetInnerHTML={{__html: this.state.audioPlayer}} />
+			<div className={this.props.className}>{this.props.episode.title}</div>
+			/*<div dangerouslySetInnerHTML={{__html: this.state.audioPlayer}} />*/
 		);
 	}
 }

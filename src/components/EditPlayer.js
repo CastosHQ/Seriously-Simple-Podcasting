@@ -1,6 +1,7 @@
 /**
  * WordPress dependencies
  */
+
 const {__} = wp.i18n;
 const {Component} = wp.element;
 const {BlockControls} = wp.blockEditor;
@@ -8,53 +9,44 @@ const {Button, Toolbar} = wp.components;
 
 const {apiFetch} = wp;
 
-import CastosPlayer from "./CastosPlayer";
+import AudioPlayer from "./AudioPlayer";
 
 class EditPlayer extends Component {
 	constructor({className}) {
 		super(...arguments);
 		this.episodeRef = React.createRef();
-		const episode = {
-			episodeImage: this.props.attributes.image || "",
-			episodeFileUrl: this.props.attributes.file || "",
-			episodeTitle: this.props.attributes.title || "",
-			episodeDuration: this.props.attributes.duration || "",
-			episodeDownloadUrl: this.props.attributes.download || "",
-		}
-		let editing = true;
-		if (this.props.attributes.title){
-			editing = false;
-		}
+		const episodeId = this.props.attributes.id || '';
+		let editing = ! this.props.attributes.id;
 		this.state = {
-			editing: editing,
 			className,
-			episodes: [],
-			episode: episode
-		};
+			editing: editing,
+			episodeId: episodeId,
+			episodes: []
+		}
+	}
+
+	componentDidMount() {
+		let fetchPost = 'ssp/v1/episodes';
+		apiFetch({path: fetchPost}).then(posts => {
+			let episodes = []
+			Object.keys(posts).map(function (key) {
+				let episode = {
+					id: posts[key].id,
+					title: posts[key].title.rendered
+				}
+				episodes.push(episode);
+			});
+			this.setState({
+				episodes: episodes,
+			});
+		});
 	}
 
 	render() {
 
-		const {editing, episodes} = this.state;
+		const {editing, episodes, className, episodeId} = this.state;
 
-		const { setAttributes } = this.props;
-
-		const populateEpisodes = () => {
-			let fetchPost = 'ssp/v1/episodes';
-			apiFetch({path: fetchPost}).then(posts => {
-				let episodes = []
-				Object.keys(posts).map(function (key) {
-					let episode = {
-						id: posts[key].id,
-						title: posts[key].title.rendered
-					}
-					episodes.push(episode);
-				});
-				this.setState({
-					episodes: episodes,
-				});
-			});
-		}
+		const {setAttributes} = this.props;
 
 		const switchToEditing = () => {
 			this.setState({editing: true});
@@ -62,29 +54,16 @@ class EditPlayer extends Component {
 
 		const activateEpisode = () => {
 			const episodeId = this.episodeRef.current.value;
-			let fetchPost = 'ssp/v1/episodes?include='+episodeId;
-			apiFetch({path: fetchPost}).then(post => {
-				const episode = {
-					episodeId: episodeId,
-					episodeImage: post[0].episode_player_image,
-					episodeFileUrl: post[0].meta.audio_file,
-					episodeTitle: post[0].title.rendered,
-					episodeDuration: post[0].meta.duration,
-					episodeDownloadUrl: post[0].download_link,
-				}
-				this.setState({
-					episode: episode,
-					editing: false
-				});
-				setAttributes({
-					id: episodeId,
-					image: episode.episodeImage,
-					file: episode.episodeFileUrl,
-					title: episode.episodeTitle,
-					duration: episode.episodeDuration,
-					download: episode.episodeDownloadUrl
-				});
+			console.log(episodeId);
+			this.setState({
+				episodeId: episodeId,
+				editing: false
 			});
+			setAttributes({
+				id: episodeId,
+			});
+			console.log(this.state);
+			console.log(this.props);
 		};
 
 		const controls = (
@@ -101,16 +80,13 @@ class EditPlayer extends Component {
 		);
 
 		if (editing) {
-			if (episodes.length === 0) {
-				populateEpisodes()
-			}
 			return (
 				/* @todo this could be moved to it's own component */
-				<div className={this.state.className}>
+				<div className={className}>
 					Select podcast Episode
 					<select ref={this.episodeRef}>
-						{this.state.episodes.map((item, key) =>
-							<option value={item.id}>{item.title}</option>
+						{episodes.map((item, key) =>
+							<option key={item.id} value={item.id}>{item.title}</option>
 						)}
 					</select>
 					<button onClick={activateEpisode}>Go</button>
@@ -119,13 +95,7 @@ class EditPlayer extends Component {
 		} else {
 			return [
 				controls, (
-					<CastosPlayer className={this.state.className}
-								  episodeImage={this.state.episode.episodeImage}
-								  episodeFileUrl={this.state.episode.episodeFileUrl}
-								  episodeTitle={this.state.episode.episodeTitle}
-								  episodeDuration={this.state.episode.episodeDuration}
-								  episodeDownloadUrl={this.state.episode.episodeDownloadUrl}
-					/>
+					<AudioPlayer className={className} episodeId={episodeId}/>
 				)];
 		}
 	}

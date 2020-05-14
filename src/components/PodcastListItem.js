@@ -1,6 +1,6 @@
 import { decodeEntities } from '@wordpress/html-entities';
 import CastosPlayer from "./CastosPlayer";
-import CastosPlayerMeta from "./CastosPlayerMeta";
+import PlayerMeta from "./PlayerMeta";
 
 const {Component} = wp.element;
 

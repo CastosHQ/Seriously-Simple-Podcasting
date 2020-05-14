@@ -71,6 +71,13 @@ class Castos_Blocks extends Controller {
 			)
 		);
 
+		register_block_type(
+			'seriously-simple-podcasting/audio-player',
+			array(
+				'editor_script' => 'ssp-block-script',
+			)
+		);
+
 		register_block_type( 'seriously-simple-podcasting/podcast-list',
 			array(
 				'editor_script'   => 'ssp-block-script',

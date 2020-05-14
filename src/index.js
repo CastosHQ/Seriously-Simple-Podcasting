@@ -1,7 +1,37 @@
 import { registerBlockType } from '@wordpress/blocks';
-import CastosPlayer from "./components/CastosPlayer";
 import EditPlayer from './components/EditPlayer';
+import CastosPlayer from "./components/CastosPlayer";
+import EditCastosPlayer from './components/EditCastosPlayer';
 import EditPodcastList from "./components/EditPodcastList";
+import AudioPlayer from "./components/AudioPlayer";
+
+registerBlockType('seriously-simple-podcasting/audio-player', {
+
+	title: 'Audio Player',
+
+	icon: 'controls-volumeon',
+
+	category: 'layout',
+
+	supports: {
+		multiple: false,
+	},
+
+	attributes: {
+		id: {
+			type: 'number',
+		},
+	},
+
+	edit: EditPlayer,
+
+	save: (props, className) => {
+		const { id } = props.attributes;
+		return (
+			<AudioPlayer className={className} episodeId={id} />
+		);
+	},
+});
 
 /**
  * Castos Player block
@@ -40,7 +70,7 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 		},
 	},
 
-	edit: EditPlayer,
+	edit: EditCastosPlayer,
 
 	save: (props, className) => {
 		const { id, image, file, title, duration, download } = props.attributes;

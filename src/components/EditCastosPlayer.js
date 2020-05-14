@@ -84,8 +84,6 @@ class EditCastosPlayer extends Component {
 					duration: episode.episodeDuration,
 					download: episode.episodeDownloadUrl
 				});
-				console.table(this.state);
-				console.table(this.props);
 			});
 		};
 

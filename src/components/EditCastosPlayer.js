@@ -1,3 +1,5 @@
+import EpisodeSelector from "./EpisodeSelector";
+
 const {__} = wp.i18n;
 const {Component} = wp.element;
 const {BlockControls} = wp.blockEditor;
@@ -49,7 +51,7 @@ class EditCastosPlayer extends Component {
 
 	render() {
 
-		const {editing, episodes} = this.state;
+		const {editing, episodes, className} = this.state;
 
 		const { setAttributes } = this.props;
 
@@ -99,26 +101,23 @@ class EditCastosPlayer extends Component {
 
 		if (editing) {
 			return (
-				/* @todo this could be moved to it's own component */
-				<div className={this.state.className}>
-					Select podcast Episode
-					<select ref={this.episodeRef}>
-						{this.state.episodes.map((item, key) =>
-							<option value={item.id}>{item.title}</option>
-						)}
-					</select>
-					<button onClick={activateEpisode}>Go</button>
-				</div>
+				<EpisodeSelector
+					className={className}
+					episodeRef={this.episodeRef}
+					episodes={episodes}
+					activateEpisode={activateEpisode}
+				/>
 			);
 		} else {
 			return [
 				controls, (
-					<CastosPlayer className={this.state.className}
-								  episodeImage={this.state.episode.episodeImage}
-								  episodeFileUrl={this.state.episode.episodeFileUrl}
-								  episodeTitle={this.state.episode.episodeTitle}
-								  episodeDuration={this.state.episode.episodeDuration}
-								  episodeDownloadUrl={this.state.episode.episodeDownloadUrl}
+					<CastosPlayer
+						className={this.state.className}
+						episodeImage={this.state.episode.episodeImage}
+						episodeFileUrl={this.state.episode.episodeFileUrl}
+						episodeTitle={this.state.episode.episodeTitle}
+						episodeDuration={this.state.episode.episodeDuration}
+						episodeDownloadUrl={this.state.episode.episodeDownloadUrl}
 					/>
 				)];
 		}

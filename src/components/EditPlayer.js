@@ -5,6 +5,7 @@ const {Button, Toolbar} = wp.components;
 
 const {apiFetch} = wp;
 
+import EpisodeSelector from "./EpisodeSelector";
 import AudioPlayer from "./AudioPlayer";
 
 class EditPlayer extends Component {
@@ -88,15 +89,12 @@ class EditPlayer extends Component {
 
 		if (editing) {
 			return (
-				<div className={className}>
-					Select podcast Episode
-					<select ref={this.episodeRef}>
-						{episodes.map((item, key) =>
-							<option key={item.id} value={item.id}>{item.title}</option>
-						)}
-					</select>
-					<button onClick={activateEpisode}>Go</button>
-				</div>
+				<EpisodeSelector
+					className={className}
+					episodeRef={this.episodeRef}
+					episodes={episodes}
+					activateEpisode={activateEpisode}
+				/>
 			);
 		} else {
 			return [

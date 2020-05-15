@@ -1666,6 +1666,9 @@ class Frontend_Controller extends Controller {
 	 * @return string
 	 */
 	public function render_podcast_list_dynamic_block() {
+
+		$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+
 		// Get registered Podcast Post Types
 		$podcast_post_types = ssp_post_types( true );
 
@@ -1673,7 +1676,7 @@ class Frontend_Controller extends Controller {
 		$query_args = array(
 			'post_status'         => 'publish',
 			'post_type'           => $podcast_post_types,
-			'posts_per_page'      => 10,
+			'posts_per_page'      => 10, // @todo replace this with the default setting from the blog
 			'ignore_sticky_posts' => true,
 		);
 
@@ -1690,10 +1693,15 @@ class Frontend_Controller extends Controller {
 
 		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
 
-		// Fetch all episodes for display
-		$episodes = get_posts( $query_args );
+		/**
+		 * Fetch all episodes
+		 */
+		// $episodes = get_posts( $query_args );
+		$episodes_query  = new WP_Query();
+		$query_result = $episodes_query->query( $query_args );
+
 		ob_start();
-		foreach ( $episodes as $episode ) {
+		foreach ( $query_result as $episode ) {
 			$episode_id = $episode->ID;
 			$file       = $this->get_enclosure( $episode_id );
 			if ( get_option( 'permalink_structure' ) ) {
@@ -1709,6 +1717,13 @@ class Frontend_Controller extends Controller {
 				<p><?php echo $player; ?></p>
 			</div>
 		<?php }
+
+		/**
+		 * Todo test this on multiple podcasts
+		 */
+		next_posts_link( 'Older Entries', $episodes_query->max_num_pages );
+		previous_posts_link( 'Next Entries &raquo;' );
+
 		$episodeItems = ob_get_clean();
 
 		return apply_filters( 'podcast_list_dynamic_block_html_content', '<div>' . $episodeItems . '</div>' );

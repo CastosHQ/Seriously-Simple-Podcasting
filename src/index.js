@@ -1,25 +1,20 @@
 import { registerBlockType } from '@wordpress/blocks';
 import EditPlayer from './components/EditPlayer';
+import AudioPlayer from "./components/AudioPlayer";
 import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
 import EditPodcastList from "./components/EditPodcastList";
-import AudioPlayer from "./components/AudioPlayer";
 
 registerBlockType('seriously-simple-podcasting/audio-player', {
-
 	title: 'Audio Player',
-
 	icon: 'controls-volumeon',
-
 	category: 'layout',
-
 	supports: {
 		multiple: false,
 	},
-
 	attributes: {
 		id: {
-			type: 'number',
+			type: 'string',
 		},
 		audio_player: {
 			type: 'string',
@@ -27,9 +22,7 @@ registerBlockType('seriously-simple-podcasting/audio-player', {
 			selector: 'span',
 		}
 	},
-
 	edit: EditPlayer,
-
 	save: (props, className) => {
 		const { id, audio_player } = props.attributes;
 		return (
@@ -43,20 +36,15 @@ registerBlockType('seriously-simple-podcasting/audio-player', {
  *
  */
 registerBlockType('seriously-simple-podcasting/castos-player', {
-
 	title: 'Castos Player',
-
 	icon: 'controls-volumeon',
-
 	category: 'layout',
-
 	supports: {
 		multiple: false,
 	},
-
 	attributes: {
 		id: {
-			type: 'number',
+			type: 'string',
 		},
 		image: {
 			type: 'string',
@@ -74,9 +62,7 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 			type: 'string',
 		},
 	},
-
 	edit: EditCastosPlayer,
-
 	save: (props, className) => {
 		const { id, image, file, title, duration, download } = props.attributes;
 		return (
@@ -96,13 +82,8 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
  * Podcast list block
  */
 registerBlockType( 'seriously-simple-podcasting/podcast-list', {
-
 	title: 'Podcast List',
-
 	icon: 'megaphone',
-
 	category: 'widgets',
-
 	edit: EditPodcastList,
-
-} );
+});

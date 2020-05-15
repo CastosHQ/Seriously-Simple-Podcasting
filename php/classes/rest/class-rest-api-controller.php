@@ -72,6 +72,8 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_audio_download_link' ) );
 
+		add_action( 'rest_api_init', array( $this, 'register_rest_audio_player' ) );
+
 	}
 
 	/**
@@ -116,7 +118,7 @@ class Rest_Api_Controller {
 			'/audio_player',
 			array(
 				'methods'  => 'GET',
-				'callback' => array( $this, 'get_rest_audio_player' ),
+				'callback' => array( $this, 'get_episode_audio_player' ),
 			)
 		);
 
@@ -180,7 +182,7 @@ class Rest_Api_Controller {
 	 *
 	 * @return array $podcast Podcast data
 	 */
-	public function get_rest_audio_player() {
+	public function get_episode_audio_player() {
 		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_SANITIZE_STRING ) : '' );
 		global $ss_podcasting;
 		$file   = $ss_podcasting->episode_controller->get_enclosure( $podcast_id );
@@ -277,6 +279,21 @@ class Rest_Api_Controller {
 	}
 
 	/**
+	 * Add the audio player code to all Podcast post types
+	 */
+	public function register_rest_audio_player() {
+		register_rest_field(
+			ssp_post_types(),
+			'audio_player',
+			array(
+				'get_callback'    => array( $this, 'get_rest_audio_player' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+	/**
 	 * Get the featured image for valid Podcast post types
 	 * Call back for the register_rest_episode_images method
 	 *
@@ -309,8 +326,8 @@ class Rest_Api_Controller {
 	public function get_rest_player_image( $object, $field_name, $request ) {
 		if ( ! empty( $object['id'] ) ) {
 			$episode_id         = $object['id'];
-			$episode_controller = new Episode_Controller( $this->file, $this->version );
-			$album_art          = $episode_controller->get_album_art( $episode_id );
+			global $ss_podcasting;
+			$album_art          = $ss_podcasting->episode_controller->get_album_art( $episode_id );
 
 			return $album_art['src'];
 		}
@@ -330,10 +347,35 @@ class Rest_Api_Controller {
 	 */
 	public function get_rest_audio_download_link( $object, $field_name, $request ) {
 		if ( ! empty( $object['meta']['audio_file'] ) ) {
-			$episode_controller = new Episode_Controller( $this->file, $this->version );
-			$download_link      = $episode_controller->get_episode_download_link( $object['id'] );
+			global $ss_podcasting;
+			$download_link      = $ss_podcasting->episode_controller->get_episode_download_link( $object['id'] );
 
 			return $download_link;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Return the Audio Player html
+	 *
+	 * @param $object
+	 * @param $field_name
+	 * @param $request
+	 *
+	 * @return bool|string|void
+	 */
+	public function get_rest_audio_player( $object, $field_name, $request ) {
+		if ( ! empty( $object['meta']['audio_file'] ) ) {
+			$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+
+			if ( 'standard' !== $player_style ) {
+				return;
+			}
+			global $ss_podcasting;
+			$file   = $ss_podcasting->episode_controller->get_enclosure( $object['id'] );
+			$params = array( 'src' => $file, 'preload' => 'none' );
+			return wp_audio_shortcode( $params );
 		}
 
 		return false;

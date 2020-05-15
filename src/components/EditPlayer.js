@@ -88,7 +88,6 @@ class EditPlayer extends Component {
 
 		if (editing) {
 			return (
-				/* @todo this could be moved to it's own component */
 				<div className={className}>
 					Select podcast Episode
 					<select ref={this.episodeRef}>

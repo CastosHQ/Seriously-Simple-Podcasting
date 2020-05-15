@@ -1,3 +1,8 @@
+.wp-block-seriously-simple-podcasting-castos-player select,
+.wp-block-seriously-simple-podcasting-audio-player select {
+	margin: 0 5px 3px 5px;
+}
+
 .wp-block-seriously-simple-podcasting-podcast-list .ssp-player.ssp-player-large,
 .wp-block-seriously-simple-podcasting-castos-player .ssp-player.ssp-player-large {
 	font-family: 'Roboto', sans-serif;

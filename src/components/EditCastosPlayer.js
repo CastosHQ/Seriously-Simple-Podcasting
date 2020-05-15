@@ -1,6 +1,3 @@
-/**
- * WordPress dependencies
- */
 const {__} = wp.i18n;
 const {Component} = wp.element;
 const {BlockControls} = wp.blockEditor;

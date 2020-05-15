@@ -21,14 +21,19 @@ registerBlockType('seriously-simple-podcasting/audio-player', {
 		id: {
 			type: 'number',
 		},
+		audio_player: {
+			type: 'string',
+			source: 'html',
+			selector: 'span',
+		}
 	},
 
 	edit: EditPlayer,
 
 	save: (props, className) => {
-		const { id } = props.attributes;
+		const { id, audio_player } = props.attributes;
 		return (
-			<AudioPlayer className={className} episodeId={id} />
+			<AudioPlayer className={className} audioPlayer={audio_player}/>
 		);
 	},
 });

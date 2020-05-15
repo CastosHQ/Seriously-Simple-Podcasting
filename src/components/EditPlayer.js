@@ -1,7 +1,3 @@
-/**
- * WordPress dependencies
- */
-
 const {__} = wp.i18n;
 const {Component} = wp.element;
 const {BlockControls} = wp.blockEditor;
@@ -16,13 +12,16 @@ class EditPlayer extends Component {
 		super(...arguments);
 		this.episodeRef = React.createRef();
 		let editing = true;
-		if (this.props.attributes.id){
+		if (this.props.attributes.audio_player){
 			editing = false;
+		}
+		const episode = {
+			audioPlayer: this.props.attributes.audio_player || "",
 		}
 		this.state = {
 			className,
 			editing: editing,
-			episode: [],
+			episode: episode,
 			episodes: []
 		}
 	}
@@ -44,10 +43,6 @@ class EditPlayer extends Component {
 		});
 	}
 
-	activateEpisode() {
-
-	}
-
 	render() {
 
 		const {editing, episodes, className, episode} = this.state;
@@ -60,11 +55,12 @@ class EditPlayer extends Component {
 
 		const activateEpisode = () => {
 			const episodeId = this.episodeRef.current.value;
-			let fetchPost = 'ssp/v1/episodes?include='+episodeId;
-			apiFetch({path: fetchPost}).then(post => {
+			const fetchAudioPlayer = 'ssp/v1/audio_player?ssp_podcast_id='+episodeId;
+			apiFetch({path: fetchAudioPlayer}).then(response => {
+				console.log(response);
 				const episode = {
 					episodeId: episodeId,
-					episodeTitle: post[0].title.rendered,
+					audioPlayer: response.audio_player
 				}
 				this.setState({
 					episode: episode,
@@ -72,6 +68,7 @@ class EditPlayer extends Component {
 				});
 				setAttributes({
 					id: episodeId,
+					audio_player: episode.audioPlayer
 				});
 			});
 		};
@@ -105,7 +102,7 @@ class EditPlayer extends Component {
 		} else {
 			return [
 				controls, (
-					<AudioPlayer className={className} episode={episode}/>
+					<AudioPlayer className={className} audioPlayer={episode.audioPlayer}/>
 				)];
 		}
 	}

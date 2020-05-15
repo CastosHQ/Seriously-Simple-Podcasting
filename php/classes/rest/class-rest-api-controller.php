@@ -186,7 +186,11 @@ class Rest_Api_Controller {
 		$file   = $ss_podcasting->episode_controller->get_enclosure( $podcast_id );
 		$params = array( 'src' => $file, 'preload' => 'none' );
 
-		return array( 'audio_player' => wp_audio_shortcode( $params ) );
+		return array(
+			'id'           => $podcast_id,
+			'file'         => $file,
+			'audio_player' => wp_audio_shortcode( $params )
+		);
 	}
 
 	/**

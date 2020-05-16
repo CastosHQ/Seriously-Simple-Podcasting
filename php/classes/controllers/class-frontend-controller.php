@@ -1667,20 +1667,15 @@ class Frontend_Controller extends Controller {
 	 */
 	public function render_podcast_list_dynamic_block() {
 
-		$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
-
-		// Get registered Podcast Post Types
+		$paged = ( get_query_var( 'paged' ) ) ?: 1;
 		$podcast_post_types = ssp_post_types( true );
-
-		// Set up query arguments for fetching podcast episodes
 		$query_args = array(
 			'post_status'         => 'publish',
 			'post_type'           => $podcast_post_types,
 			'posts_per_page'      => 10, // @todo replace this with the default setting from the blog
 			'ignore_sticky_posts' => true,
+			'paged'               => $paged
 		);
-
-		// Make sure to only fetch episodes that have a media file
 		$query_args['meta_query'] = array(
 			array(
 				'key'     => 'audio_file',
@@ -1688,43 +1683,46 @@ class Frontend_Controller extends Controller {
 				'value'   => '',
 			),
 		);
-
 		$query_args = apply_filters( 'podcast_list_dynamic_block_query_arguments', $query_args );
-
-		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
-
-		/**
-		 * Fetch all episodes
-		 */
-		// $episodes = get_posts( $query_args );
 		$episodes_query  = new WP_Query();
 		$query_result = $episodes_query->query( $query_args );
 
+		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
 		ob_start();
 		foreach ( $query_result as $episode ) {
-			$episode_id = $episode->ID;
-			$file       = $this->get_enclosure( $episode_id );
+			$file       = $this->get_enclosure( $episode->ID );
 			if ( get_option( 'permalink_structure' ) ) {
-				$file = $this->get_episode_download_link( $episode_id );
+				$file = $this->get_episode_download_link( $episode->ID );
 			}
-			$player = $this->load_media_player( $file, $episode_id, $player_style );
-			$player .= $this->episode_meta_details( $episode_id, 'content' );
+			$player = $this->load_media_player( $file, $episode->ID, $player_style );
+			$player .= $this->episode_meta_details( $episode->ID, 'content' );
 			?>
-			<div>
-				<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
-				<a href="<?php echo $episode->guid ?>"><?php echo $episode->post_title; ?></a>
-				<p><?php echo $episode->post_content; ?></p>
-				<p><?php echo $player; ?></p>
-			</div>
+			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast status-publish format-standard">
+				<header class="entry-header">
+					<h2 class="entry-title">
+						<a class="entry-title-link" rel="bookmark" href="<?php echo $episode->guid ?>">
+							<?php echo $episode->post_title; ?>
+						</a>
+					</h2>
+				</header>
+				<div class="entry-content">
+					<a class="entry-image-link" href="<?php echo $episode->guid ?>" aria-hidden="true" tabindex="-1">
+						<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
+					</a>
+					<p><?php echo get_the_excerpt($episode->ID); ?></p>
+					<p><?php echo $player; ?></p>
+				</div>
+			</article>
 		<?php }
 
-		/**
-		 * Todo test this on multiple podcasts
-		 */
-		next_posts_link( 'Older Entries', $episodes_query->max_num_pages );
-		previous_posts_link( 'Next Entries &raquo;' );
-
 		$episodeItems = ob_get_clean();
+
+		$next_episodes_link = get_next_posts_link( 'Older Episodes &raquo;', $episodes_query->max_num_pages );
+		$previous_episodes_link = get_previous_posts_link( '&laquo; Newer Episodes' );
+		if (!empty($previous_episodes_link)){
+			$episodeItems .= $previous_episodes_link . ' | ';
+		}
+		$episodeItems .= $next_episodes_link;
 
 		return apply_filters( 'podcast_list_dynamic_block_html_content', '<div>' . $episodeItems . '</div>' );
 	}

@@ -17,7 +17,7 @@ class EditPodcastList extends Component {
 	}
 
 	componentDidMount() {
-		const fetchPost = 'ssp/v1/episodes?context=edit';
+		const fetchPost = 'ssp/v1/episodes';
 		apiFetch({path: fetchPost}).then(posts => {
 			const episodes = []
 			Object.keys(posts).map(function (key) {

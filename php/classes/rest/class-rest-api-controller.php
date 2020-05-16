@@ -74,6 +74,15 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_audio_player' ) );
 
+		add_filter( 'rest_prepare_post', array( $this, 'rest_prepare_excerpt' ) );
+
+	}
+
+	public function rest_prepare_excerpt($response){
+		if ('excerpt' === $response->data['excerpt']['rendered']){
+			$response->data['excerpt']['rendered'] = get_the_excerpt();
+		}
+		return $response;
 	}
 
 	/**

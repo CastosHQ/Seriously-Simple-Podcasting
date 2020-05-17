@@ -1697,16 +1697,14 @@ class Frontend_Controller extends Controller {
 			$player = $this->load_media_player( $file, $episode->ID, $player_style );
 			$player .= $this->episode_meta_details( $episode->ID, 'content' );
 			?>
-			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast status-publish format-standard">
-				<header class="entry-header">
-					<h2 class="entry-title">
+			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
+					<h2>
 						<a class="entry-title-link" rel="bookmark" href="<?php echo $episode->guid ?>">
 							<?php echo $episode->post_title; ?>
 						</a>
 					</h2>
-				</header>
-				<div class="entry-content">
-					<a class="entry-image-link" href="<?php echo $episode->guid ?>" aria-hidden="true" tabindex="-1">
+				<div class="podcast-content">
+					<a class="podcast-image-link" href="<?php echo $episode->guid ?>" aria-hidden="true" tabindex="-1">
 						<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
 					</a>
 					<p><?php echo get_the_excerpt($episode->ID); ?></p>

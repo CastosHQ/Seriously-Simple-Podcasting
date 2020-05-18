@@ -502,6 +502,9 @@ if ( $stylesheet_url ) {
 				$author = esc_html( get_the_author() );
 				$author = apply_filters( 'ssp_feed_item_author', $author, get_the_ID() );
 
+				// Cache the post in case it changes
+				$post_id = get_the_ID();
+
 				// Episode content (with shortcodes and iframes removed)
 				$content = get_the_content_feed( 'rss2' );
 				$content = strip_shortcodes( $content );
@@ -521,6 +524,11 @@ if ( $stylesheet_url ) {
 					}
 				}
 				$description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
+
+				// Clean up after shortcodes in content and excerpts
+				if( $post_id !== get_the_ID() ) {
+					$qry->reset_postdata();
+				}
 
 				// iTunes summary excludes HTML and must be shorter than 4000 characters
 				$itunes_summary = wp_strip_all_tags( $description );

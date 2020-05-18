@@ -2,7 +2,6 @@ import {Component} from '@wordpress/element';
 
 /**
  * @todo clean up the inline styles better
- *
  */
 class CastosPlayer extends Component {
 	render() {

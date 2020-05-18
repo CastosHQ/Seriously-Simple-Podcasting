@@ -5,6 +5,9 @@ import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
 import EditPodcastList from "./components/EditPodcastList";
 
+/**
+ * Standard Audio Player Block
+ */
 registerBlockType('seriously-simple-podcasting/audio-player', {
 	title: 'Audio Player',
 	icon: 'controls-volumeon',
@@ -33,7 +36,6 @@ registerBlockType('seriously-simple-podcasting/audio-player', {
 
 /**
  * Castos Player block
- *
  */
 registerBlockType('seriously-simple-podcasting/castos-player', {
 	title: 'Castos Player',

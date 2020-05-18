@@ -7,7 +7,6 @@ const {Component} = wp.element;
 
 /**
  * Podcast List Item
- *
  */
 class EditPodcastListItem extends Component {
 	render() {

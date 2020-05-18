@@ -2,25 +2,21 @@
 
 /**
  * @todo
- * Ensure that the editor styling is correct
- * Decide on the html structure of the podcast list
- * Ensure that the block structure and styling matches the front end
  * Get the number of episodes from the Reading Settings
- * Render the breadcrumbs on the front end, and make sure they work
  */
 
 namespace SeriouslySimplePodcasting\Blocks;
 
-// Exit if accessed directly.
 use SeriouslySimplePodcasting\Controllers\Controller;
 use SeriouslySimplePodcasting\Player\Media_Player;
 
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
 /**
- * Main plugin class
+ * Blocks class, used to load blocks and any relevant block assets
  *
  * @author      Jonathan Bossenger
  * @category    Class
@@ -53,7 +49,7 @@ class Castos_Blocks extends Controller {
 	/**
 	 * Registers the Castos Player Block
 	 *
-	 * @return false|\WP_Block_Type
+	 * @return void
 	 */
 	public function register_castos_blocks() {
 		wp_register_script(
@@ -165,25 +161,6 @@ class Castos_Blocks extends Controller {
 			true
 		);
 
-		/**
-		 * @todo for some reason these are loaded all the time on the front end, and this should be fixed
-		 */
-/*		wp_register_script(
-			'ssp-block-media-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/js/media.player.js' ),
-			array( 'jquery' ),
-			$this->asset_file['version'],
-			true
-		);
-
-		wp_register_script(
-			'ssp-block-html5-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/js/html5.player.js' ),
-			array( 'jquery' ),
-			$this->asset_file['version'],
-			true
-		);*/
-
 		wp_register_style(
 			'ssp-block-style',
 			esc_url( SSP_PLUGIN_URL . 'assets/css/block_style.css' ),
@@ -204,8 +181,6 @@ class Castos_Blocks extends Controller {
 		);
 
 		wp_enqueue_script( 'ssp-block-wavesurfer' );
-		//wp_enqueue_script( 'ssp-block-media-player' );
-		//wp_enqueue_script( 'ssp-block-html5-player' );
 
 		wp_enqueue_style( 'ssp-block-style' );
 		wp_enqueue_style( 'ssp-block-fonts-style' );

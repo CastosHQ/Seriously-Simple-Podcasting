@@ -90,11 +90,16 @@ class Series extends WP_Widget {
 		/** This filter is documented in wp-includes/default-widgets.php */
 		$title = apply_filters( 'widget_title', $title, $instance, $this->id_base );
 
+		$number = ( ! empty( $instance['number'] ) ) ? absint( $instance['number'] ) : 5;
+		if ( ! $number ) {
+			$number = 5;
+		}
+
 		$show_title = isset( $instance['show_title'] ) ? $instance['show_title'] : false;
 		$show_desc = isset( $instance['show_desc'] ) ? $instance['show_desc'] : false;
 		$show_date = isset( $instance['show_date'] ) ? $instance['show_date'] : false;
 
-		$query_args = ssp_episodes( 999, $series->slug, true, 'widget' );
+		$query_args = ssp_episodes( $number, $series->slug, true, 'widget' );
 
 		$qry = new WP_Query( apply_filters( 'ssp_widget_series_episodes_args', $query_args ) );
 
@@ -139,9 +144,10 @@ class Series extends WP_Widget {
 	}
 
 	public function update( $new_instance, $old_instance ) {
-		$instance = $old_instance;
-		$instance['title'] 		= strip_tags( $new_instance['title'] );
+		$instance               = $old_instance;
+		$instance['title']      = strip_tags( $new_instance['title'] );
 		$instance['series_id']  = isset( $new_instance['series_id'] ) ? (int) $new_instance['series_id'] : 0;
+		$instance['number']     = (int) $new_instance['number'];
 		$instance['show_title'] = isset( $new_instance['show_title'] ) ? (bool) $new_instance['show_title'] : false;
 		$instance['show_desc']  = isset( $new_instance['show_desc'] ) ? (bool) $new_instance['show_desc'] : false;
 		$instance['show_date']  = isset( $new_instance['show_date'] ) ? (bool) $new_instance['show_date'] : false;
@@ -155,11 +161,12 @@ class Series extends WP_Widget {
 	}
 
 	public function form( $instance ) {
-		$title        = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
-		$series_id    = isset( $instance['series_id'] ) ? $instance['series_id'] : 0;
-		$show_title   = isset( $instance['show_title'] ) ? (bool) $instance['show_title'] : false;
-		$show_desc    = isset( $instance['show_desc'] ) ? (bool) $instance['show_desc'] : false;
-		$show_date    = isset( $instance['show_date'] ) ? (bool) $instance['show_date'] : false;
+		$title      = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
+		$series_id  = isset( $instance['series_id'] ) ? $instance['series_id'] : 0;
+		$number     = isset( $instance['number'] ) ? absint( $instance['number'] ) : 5;
+		$show_title = isset( $instance['show_title'] ) ? (bool) $instance['show_title'] : false;
+		$show_desc  = isset( $instance['show_desc'] ) ? (bool) $instance['show_desc'] : false;
+		$show_date  = isset( $instance['show_date'] ) ? (bool) $instance['show_date'] : false;
 
 		// Get all podcast series
 		$series = get_terms( 'series' );
@@ -176,6 +183,10 @@ class Series extends WP_Widget {
 			?>
 		</select>
 		</p>
+
+		<p><label for="<?php echo $this->get_field_id( 'number' ); ?>"><?php _e( 'Number of episodes to show:', 'seriously-simple-podcasting' ); ?></label>
+		<input id="<?php echo $this->get_field_id( 'number' ); ?>" name="<?php echo $this->get_field_name( 'number' ); ?>" type="text" value="<?php echo $number; ?>" size="3" /></p>
+
 
 		<p><input class="checkbox" type="checkbox" <?php checked( $show_title ); ?> id="<?php echo $this->get_field_id( 'show_title' ); ?>" name="<?php echo $this->get_field_name( 'show_title' ); ?>" />
 		<label for="<?php echo $this->get_field_id( 'show_title' ); ?>"><?php _e( 'Display series title inside widget?', 'seriously-simple-podcasting' ); ?></label></p>

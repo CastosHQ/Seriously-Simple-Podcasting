@@ -9,21 +9,22 @@ import EpisodeSelector from "./EpisodeSelector";
 import AudioPlayer from "./AudioPlayer";
 
 class EditPlayer extends Component {
-	constructor({className}) {
+	constructor({attributes, setAttributes, className}) {
 		super(...arguments);
 		this.episodeRef = React.createRef();
 		let editing = true;
-		if (this.props.attributes.audio_player){
+		if (attributes.audio_player){
 			editing = false;
 		}
 		const episode = {
-			audioPlayer: this.props.attributes.audio_player || "",
+			audioPlayer: attributes.audio_player || "",
 		}
 		this.state = {
 			className,
 			editing: editing,
 			episode: episode,
-			episodes: []
+			episodes: [],
+			setAttributes: setAttributes
 		}
 	}
 
@@ -46,9 +47,7 @@ class EditPlayer extends Component {
 
 	render() {
 
-		const {editing, episodes, className, episode} = this.state;
-
-		const {setAttributes} = this.props;
+		const {editing, episodes, episode, className, setAttributes} = this.state;
 
 		const switchToEditing = () => {
 			this.setState({editing: true});
@@ -58,7 +57,6 @@ class EditPlayer extends Component {
 			const episodeId = this.episodeRef.current.value;
 			const fetchAudioPlayer = 'ssp/v1/audio_player?ssp_podcast_id='+episodeId;
 			apiFetch({path: fetchAudioPlayer}).then(response => {
-				console.log(response);
 				const episode = {
 					episodeId: episodeId,
 					audioPlayer: response.audio_player

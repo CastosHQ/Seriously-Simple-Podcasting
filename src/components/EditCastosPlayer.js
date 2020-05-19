@@ -10,25 +10,26 @@ const {apiFetch} = wp;
 import CastosPlayer from "./CastosPlayer";
 
 class EditCastosPlayer extends Component {
-	constructor({className}) {
+	constructor({attributes, setAttributes, className}) {
 		super(...arguments);
 		this.episodeRef = React.createRef();
 		const episode = {
-			episodeImage: this.props.attributes.image || "",
-			episodeFileUrl: this.props.attributes.file || "",
-			episodeTitle: this.props.attributes.title || "",
-			episodeDuration: this.props.attributes.duration || "",
-			episodeDownloadUrl: this.props.attributes.download || "",
+			episodeImage: attributes.image || "",
+			episodeFileUrl: attributes.file || "",
+			episodeTitle: attributes.title || "",
+			episodeDuration: attributes.duration || "",
+			episodeDownloadUrl: attributes.download || "",
 		}
 		let editing = true;
-		if (this.props.attributes.title){
+		if (attributes.title){
 			editing = false;
 		}
 		this.state = {
 			editing: editing,
 			className,
 			episodes: [],
-			episode: episode
+			episode: episode,
+			setAttributes: setAttributes
 		};
 	}
 
@@ -51,9 +52,7 @@ class EditCastosPlayer extends Component {
 
 	render() {
 
-		const {editing, episodes, className} = this.state;
-
-		const { setAttributes } = this.props;
+		const {editing, episodes, episode, className, setAttributes} = this.state;
 
 		const switchToEditing = () => {
 			this.setState({editing: true});
@@ -113,11 +112,11 @@ class EditCastosPlayer extends Component {
 				controls, (
 					<CastosPlayer
 						className={this.state.className}
-						episodeImage={this.state.episode.episodeImage}
-						episodeFileUrl={this.state.episode.episodeFileUrl}
-						episodeTitle={this.state.episode.episodeTitle}
-						episodeDuration={this.state.episode.episodeDuration}
-						episodeDownloadUrl={this.state.episode.episodeDownloadUrl}
+						episodeImage={episode.episodeImage}
+						episodeFileUrl={episode.episodeFileUrl}
+						episodeTitle={episode.episodeTitle}
+						episodeDuration={episode.episodeDuration}
+						episodeDownloadUrl={episode.episodeDownloadUrl}
 					/>
 				)];
 		}

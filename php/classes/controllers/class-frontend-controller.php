@@ -626,12 +626,12 @@ class Frontend_Controller extends Controller {
 			switch( $key ) {
 
 				case 'link':
-					$podcast_display .= '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " class="podcast-meta-download">' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
+					$podcast_display .= '<a href="' . esc_url( $data ) . '" title="' . the_title_attribute('echo=0') . ' " class="podcast-meta-download">' . __( 'Download file' , 'seriously-simple-podcasting' ) . '</a>';
 					break;
 
 				case 'new_window':
 					$play_link = add_query_arg( 'ref', 'new_window', $link );
-					$podcast_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
+					$podcast_display .= '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . the_title_attribute('echo=0') . ' " class="podcast-meta-new-window">' . __( 'Play in new window' , 'seriously-simple-podcasting' ) . '</a>';
 					break;
 
 				case 'duration':

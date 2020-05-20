@@ -1,9 +1,12 @@
+const {apiFetch} = wp;
 import { registerBlockType } from '@wordpress/blocks';
+import classnames from "classnames";
 import EditPlayer from './components/EditPlayer';
 import AudioPlayer from "./components/AudioPlayer";
 import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
 import EditPodcastList from "./components/EditPodcastList";
+import PodcastListItem from "./components/PodcastListItem";
 
 /**
  * Standard Audio Player Block
@@ -83,9 +86,23 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 /**
  * Podcast list block
  */
-registerBlockType( 'seriously-simple-podcasting/podcast-list', {
+registerBlockType('seriously-simple-podcasting/podcast-list', {
 	title: 'Podcast List',
 	icon: 'megaphone',
 	category: 'widgets',
-	edit: EditPodcastList,
+	attributes: {
+		featuredImage: {
+			type: 'boolean',
+			default: false,
+		},
+		excerpt: {
+			type: 'boolean',
+			default: false,
+		},
+		player: {
+			type: 'boolean',
+			default: false,
+		},
+	},
+	edit: EditPodcastList
 });

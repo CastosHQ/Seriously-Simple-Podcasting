@@ -2,6 +2,7 @@ import Interweave from 'interweave';
 
 import Player from "./Player";
 import PlayerMeta from "./PlayerMeta";
+import classnames from "classnames";
 
 const {Component} = wp.element;
 
@@ -10,13 +11,20 @@ const {Component} = wp.element;
  */
 class EditPodcastListItem extends Component {
 	render() {
-		const {className, post} = this.props;
-		let imageLink = '';
-		if (post.episode_featured_image){
-			imageLink = <a className="podcast-image-link" href={post.link} aria-hidden="true" tabIndex="-1">
-				<img src={post.episode_featured_image}/>
-			</a>;
-		}
+		const {className, post, attributes} = this.props;
+		const imageClassNames = classnames(
+			"podcast-image-link",
+			{ 'hide-featured-image': !attributes.featuredImage },
+		);
+		const excerptClassNames = classnames(
+			"podcast-excerpt",
+			{ 'hide-excerpt': !attributes.excerpt },
+		);
+		const playerClassNames = classnames(
+			className,
+			"podcast-player",
+			{ 'hide-player': !attributes.player },
+		);
 		return (
 			<article className={className}>
 				<h2>
@@ -25,11 +33,13 @@ class EditPodcastListItem extends Component {
 					</a>
 				</h2>
 				<div className="podcast-content">
-					{imageLink}
-					<p><Interweave content={post.excerpt.rendered}/></p>
-					<Player className={className} post={post}/>
+					<a className={imageClassNames} href={post.link} aria-hidden="true" tabIndex="-1">
+						<img src={post.episode_featured_image}/>
+					</a>
+					<p className={excerptClassNames}><Interweave content={post.excerpt.rendered}/></p>
+					<Player className={playerClassNames} post={post}/>
 					<PlayerMeta
-						className={className}
+						className={playerClassNames}
 						title={post.title.rendered}
 						download={post.download_link}
 						duration={post.meta.duration}

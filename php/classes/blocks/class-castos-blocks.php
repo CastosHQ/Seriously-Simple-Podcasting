@@ -32,9 +32,9 @@ class Castos_Blocks extends Controller {
 		$this->bootstrap();
 	}
 
-	public function podcast_list_render_callback() {
+	public function podcast_list_render_callback($attributes) {
 		global $ss_podcasting;
-		return $ss_podcasting->render_podcast_list_dynamic_block();
+		return $ss_podcasting->render_podcast_list_dynamic_block($attributes);
 	}
 
 	protected function bootstrap() {

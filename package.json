@@ -41,6 +41,7 @@
   },
   "homepage": "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting#readme",
   "dependencies": {
+    "classnames": "^2.2.6",
     "interweave": "^12.5.0",
     "react": "^16.13.1"
   }

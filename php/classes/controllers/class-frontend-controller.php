@@ -452,7 +452,7 @@ class Frontend_Controller extends Controller {
 											</h3>
 										</div>
 										<div class="ssp-download-episode" style="overflow: hidden;text-align:right;"></div>
-										<div>&nbsp</div>
+										<div>&nbsp;</div>
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
 												<div class="ssp-play-pause" id="ssp-play-pause">

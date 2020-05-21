@@ -5,7 +5,9 @@ import Interweave from 'interweave';
 class AudioPlayer extends Component {
 	render() {
 		return (
-			<Interweave content={this.props.audioPlayer} />
+			<p className={this.props.className}>
+				<Interweave content={this.props.audioPlayer} />
+			</p>
 		);
 	}
 }

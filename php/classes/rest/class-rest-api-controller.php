@@ -74,14 +74,18 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_audio_player' ) );
 
-		add_filter( 'rest_prepare_post', array( $this, 'rest_prepare_excerpt' ) );
+		$post_types = ssp_post_types( true, false );
+		foreach ( $post_types as $post_type ) {
+			add_filter( 'rest_prepare_' . $post_type, array( $this, 'rest_prepare_excerpt' ), 10, 3 );
+		}
 
 	}
 
-	public function rest_prepare_excerpt($response){
-		if ('excerpt' === $response->data['excerpt']['rendered']){
+	public function rest_prepare_excerpt( $response, $post, $request ) {
+		if ( 'excerpt' === $response->data['excerpt']['rendered'] ) {
 			$response->data['excerpt']['rendered'] = get_the_excerpt();
 		}
+
 		return $response;
 	}
 
@@ -377,6 +381,9 @@ class Rest_Api_Controller {
 	public function get_rest_audio_player( $object, $field_name, $request ) {
 		if ( ! empty( $object['meta']['audio_file'] ) ) {
 			$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+			if ( empty( $player_style ) ) {
+				$player_style = 'standard';
+			}
 
 			if ( 'standard' !== $player_style ) {
 				return;

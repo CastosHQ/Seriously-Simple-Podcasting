@@ -455,10 +455,12 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 	 *
 	 * @param boolean $include_podcast Include the `podcast` post type or not
 	 *
+	 * @param bool $verify	Verify if the post type has been registered by register_post_type
+	 *
 	 * @return array                    Array of podcast post types
 	 * @since  1.8.7
 	 */
-	function ssp_post_types( $include_podcast = true ) {
+	function ssp_post_types( $include_podcast = true, $verify = true ) {
 
 		// Get saved podcast post type option (default to empty array)
 		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
@@ -472,16 +474,20 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 			$podcast_post_types[] = 'podcast';
 		}
 
-		$valid_podcast_post_types = array();
+		if ( $verify ) {
+			$valid_podcast_post_types = array();
 
-		// Check if post types exist
-		if ( ! empty( $podcast_post_types ) ) {
+			// Check if post types exist
+			if ( ! empty( $podcast_post_types ) ) {
 
-			foreach ( $podcast_post_types as $type ) {
-				if ( post_type_exists( $type ) ) {
-					$valid_podcast_post_types[] = $type;
+				foreach ( $podcast_post_types as $type ) {
+					if ( post_type_exists( $type ) ) {
+						$valid_podcast_post_types[] = $type;
+					}
 				}
 			}
+		} else {
+			$valid_podcast_post_types = $podcast_post_types;
 		}
 
 		// Return only the valid podcast post types

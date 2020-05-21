@@ -1,6 +1,8 @@
 const {Component} = wp.element;
 
 import CastosPlayer from "./CastosPlayer";
+import AudioPlayer from './AudioPlayer';
+
 /**
  * Renders either the standard player or the html player, depending on the value in post.audio_player
  */

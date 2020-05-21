@@ -14,7 +14,7 @@
  *
  * @package Seriously Simple Podcasting
  *
- * GitHub Plugin URI: https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting
+ * GitHub Plugin URI: https://github.com/CastosHQ/Seriously-Simple-Podcasting
  *
  */
 

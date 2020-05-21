@@ -1,4 +1,4 @@
-const {Component} = wp.element;
+import {Component} from '@wordpress/element';
 
 import Interweave from 'interweave';
 import classnames from "classnames";

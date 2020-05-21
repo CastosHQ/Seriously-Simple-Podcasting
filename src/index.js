@@ -1,10 +1,8 @@
 /**
  * WordPress dependencies
  */
-const {
-	registerBlockType,
-} = wp.blocks;
-const {__} = wp.i18n;
+import {__} from '@wordpress/i18n';
+import {registerBlockType} from '@wordpress/blocks';
 
 import EditPlayer from './components/EditPlayer';
 import AudioPlayer from "./components/AudioPlayer";

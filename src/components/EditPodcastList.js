@@ -1,8 +1,8 @@
-const {apiFetch} = wp;
-const {__} = wp.i18n;
-const {Component} = wp.element;
-const {InspectorControls} = wp.blockEditor;
-const {PanelBody, PanelRow, FormToggle} = wp.components;
+import {__} from '@wordpress/i18n';
+import {Component} from '@wordpress/element';
+import {InspectorControls} from '@wordpress/block-editor';
+import {PanelBody, PanelRow, FormToggle} from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 
 import PodcastListItem from './PodcastListItem';
 

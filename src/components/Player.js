@@ -1,4 +1,4 @@
-const {Component} = wp.element;
+import {Component} from '@wordpress/element';
 
 import CastosPlayer from "./CastosPlayer";
 import AudioPlayer from './AudioPlayer';

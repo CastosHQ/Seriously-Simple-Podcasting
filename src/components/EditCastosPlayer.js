@@ -1,8 +1,8 @@
-const {__} = wp.i18n;
-const {Component} = wp.element;
-const {BlockControls} = wp.blockEditor;
-const {Button, Toolbar} = wp.components;
-const {apiFetch} = wp;
+import {__} from '@wordpress/i18n';
+import {Component} from '@wordpress/element';
+import {BlockControls} from '@wordpress/block-editor';
+import {Button, Toolbar} from '@wordpress/components';
+import apiFetch from '@wordpress/api-fetch';
 
 import EpisodeSelector from "./EpisodeSelector";
 import CastosPlayer from "./CastosPlayer";

@@ -1,5 +1,4 @@
-import {Component} from '@wordpress/element';
-
+const {Component} = wp.element;
 /**
  * @todo clean up the inline styles better
  */

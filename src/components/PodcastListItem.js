@@ -1,10 +1,10 @@
+const {Component} = wp.element;
+
 import Interweave from 'interweave';
+import classnames from "classnames";
 
 import Player from "./Player";
 import PlayerMeta from "./PlayerMeta";
-import classnames from "classnames";
-
-const {Component} = wp.element;
 
 /**
  * Podcast List Item

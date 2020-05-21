@@ -1,4 +1,4 @@
-import {Component} from '@wordpress/element';
+const {Component} = wp.element;
 
 class PodcastList extends Component {
 	render(){

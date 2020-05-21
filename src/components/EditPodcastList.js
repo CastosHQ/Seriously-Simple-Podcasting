@@ -1,10 +1,9 @@
 const {apiFetch} = wp;
 const {__} = wp.i18n;
 const {Component} = wp.element;
-const {BlockControls, InspectorControls} = wp.blockEditor;
-const {Button, Toolbar, PanelBody, PanelRow, FormToggle} = wp.components;
+const {InspectorControls} = wp.blockEditor;
+const {PanelBody, PanelRow, FormToggle} = wp.components;
 
-import classnames from 'classnames';
 import PodcastListItem from './PodcastListItem';
 
 class EditPodcastList extends Component {

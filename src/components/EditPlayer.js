@@ -2,7 +2,6 @@ const {__} = wp.i18n;
 const {Component} = wp.element;
 const {BlockControls} = wp.blockEditor;
 const {Button, Toolbar} = wp.components;
-
 const {apiFetch} = wp;
 
 import EpisodeSelector from "./EpisodeSelector";

@@ -1,6 +1,6 @@
-import {Component} from '@wordpress/element';
-import CastosPlayer from "./CastosPlayer";
+const {Component} = wp.element;
 
+import CastosPlayer from "./CastosPlayer";
 /**
  * Renders either the standard player or the html player, depending on the value in post.audio_player
  */

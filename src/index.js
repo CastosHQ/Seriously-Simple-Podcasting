@@ -1,18 +1,22 @@
-const {apiFetch} = wp;
-import { registerBlockType } from '@wordpress/blocks';
-import classnames from "classnames";
+/**
+ * WordPress dependencies
+ */
+const {
+	registerBlockType,
+} = wp.blocks;
+const {__} = wp.i18n;
+
 import EditPlayer from './components/EditPlayer';
 import AudioPlayer from "./components/AudioPlayer";
 import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
 import EditPodcastList from "./components/EditPodcastList";
-import PodcastListItem from "./components/PodcastListItem";
 
 /**
  * Standard Audio Player Block
  */
 registerBlockType('seriously-simple-podcasting/audio-player', {
-	title: 'Audio Player',
+	title: __('Audio Player', 'seriously-simple-podcasting'),
 	icon: 'controls-volumeon',
 	category: 'layout',
 	supports: {
@@ -41,7 +45,7 @@ registerBlockType('seriously-simple-podcasting/audio-player', {
  * Castos Player block
  */
 registerBlockType('seriously-simple-podcasting/castos-player', {
-	title: 'Castos Player',
+	title: __('Castos Player', 'seriously-simple-podcasting'),
 	icon: 'controls-volumeon',
 	category: 'layout',
 	supports: {
@@ -87,9 +91,12 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
  * Podcast list block
  */
 registerBlockType('seriously-simple-podcasting/podcast-list', {
-	title: 'Podcast List',
+	title: __('Podcast List', 'seriously-simple-podcasting'),
 	icon: 'megaphone',
 	category: 'widgets',
+	supports: {
+		multiple: false,
+	},
 	attributes: {
 		featuredImage: {
 			type: 'boolean',

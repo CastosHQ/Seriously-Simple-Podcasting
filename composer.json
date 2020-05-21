@@ -3,7 +3,7 @@
   "description": "Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.",
   "keywords"   : ["wordpress", "podcasting"],
   "type"       : "wordpress-plugin",
-  "homepage"   : "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting",
+  "homepage"   : "https://github.com/CastosHQ/Seriously-Simple-Podcasting",
   "license"    : "GPL-2.0",
   "authors"    : [
     {
@@ -20,7 +20,7 @@
     }
   ],
   "support"    : {
-    "issues": "https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting/issues"
+    "issues": "https://github.com/CastosHQ/Seriously-Simple-Podcasting/issues"
   },
   "autoload"   : {
     "classmap": ["php/"]

@@ -32,7 +32,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Frontend_Controller extends Controller {
 
-	protected $episode_controller;
+	public $episode_controller;
 
 	// @todo reference prior to analytics launch
 	public $style_guide = array(
@@ -452,7 +452,7 @@ class Frontend_Controller extends Controller {
 											</h3>
 										</div>
 										<div class="ssp-download-episode" style="overflow: hidden;text-align:right;"></div>
-										<div>&nbsp</div>
+										<div>&nbsp;</div>
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
 												<div class="ssp-play-pause" id="ssp-play-pause">
@@ -1658,6 +1658,84 @@ class Frontend_Controller extends Controller {
 
 	public function load_localisation () {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
+	}
+
+	/**
+	 * Render the HTML content for the podcast list dynamic block
+	 *
+	 * @param $attributes block attributes
+	 *
+	 * @return string
+	 */
+	public function render_podcast_list_dynamic_block( $attributes ) {
+
+		$paged                    = ( get_query_var( 'paged' ) ) ?: 1;
+		$podcast_post_types       = ssp_post_types( true );
+		$query_args               = array(
+			'post_status'         => 'publish',
+			'post_type'           => $podcast_post_types,
+			'posts_per_page'      => get_option( 'posts_per_page', 10 ),
+			'ignore_sticky_posts' => true,
+			'paged'               => $paged
+		);
+		$query_args['meta_query'] = array(
+			array(
+				'key'     => 'audio_file',
+				'compare' => '!=',
+				'value'   => '',
+			),
+		);
+		$query_args               = apply_filters( 'podcast_list_dynamic_block_query_arguments', $query_args );
+		$episodes_query           = new WP_Query();
+		$query_result             = $episodes_query->query( $query_args );
+
+		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
+
+		ob_start();
+		foreach ( $query_result as $episode ) {
+			$player = '';
+			if ( isset( $attributes['player'] ) ) {
+				$file = $this->get_enclosure( $episode->ID );
+				if ( get_option( 'permalink_structure' ) ) {
+					$file = $this->get_episode_download_link( $episode->ID );
+				}
+				$player = $this->load_media_player( $file, $episode->ID, $player_style );
+				$player .= $this->episode_meta_details( $episode->ID, 'content' );
+			}
+			?>
+			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
+				<h2>
+					<a class="entry-title-link" rel="bookmark" href="<?php echo $episode->guid ?>">
+						<?php echo $episode->post_title; ?>
+					</a>
+				</h2>
+				<div class="podcast-content">
+					<?php if ( isset( $attributes['featuredImage'] ) ) { ?>
+						<a class="podcast-image-link" href="<?php echo $episode->guid ?>" aria-hidden="true"
+						   tabindex="-1">
+							<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
+						</a>
+					<?php } ?>
+					<?php if ( isset( $attributes['excerpt'] ) ) { ?>
+						<p><?php echo get_the_excerpt( $episode->ID ); ?></p>
+					<?php } ?>
+					<?php if ( ! empty( $player ) ) { ?>
+						<p><?php echo $player; ?></p>
+					<?php } ?>
+				</div>
+			</article>
+		<?php }
+
+		$episodeItems = ob_get_clean();
+
+		$next_episodes_link     = get_next_posts_link( 'Older Episodes &raquo;', $episodes_query->max_num_pages );
+		$previous_episodes_link = get_previous_posts_link( '&laquo; Newer Episodes' );
+		if ( ! empty( $previous_episodes_link ) ) {
+			$episodeItems .= $previous_episodes_link . ' | ';
+		}
+		$episodeItems .= $next_episodes_link;
+
+		return apply_filters( 'podcast_list_dynamic_block_html_content', '<div>' . $episodeItems . '</div>' );
 	}
 
 }

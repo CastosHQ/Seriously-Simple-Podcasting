@@ -42,15 +42,15 @@ class EditPodcastList extends Component {
 			});
 		}
 
-		const toggleExcerpt = () => {
-			setAttributes({
-				excerpt: !excerpt
-			});
-		}
-
 		const togglePlayer = () => {
 			setAttributes({
 				player: !player
+			});
+		}
+
+		const toggleExcerpt = () => {
+			setAttributes({
+				excerpt: !excerpt
 			});
 		}
 
@@ -69,19 +69,6 @@ class EditPodcastList extends Component {
 						/>
 					</PanelRow>
 				</PanelBody>
-				<PanelBody title={__('Podcast Excerpt', 'seriously-simple-podcasting')}>
-					<PanelRow>
-						<label htmlFor="podcast-excerpt-form-toggle">
-							{__('Show Podcast Excerpt', 'seriously-simple-podcasting')}
-						</label>
-						<FormToggle
-							id="podcast-excerpt-form-toggle"
-							label={__('Show Podcast Excerpt', 'seriously-simple-podcasting')}
-							checked={excerpt}
-							onChange={toggleExcerpt}
-						/>
-					</PanelRow>
-				</PanelBody>
 				<PanelBody title={__('Podcast Player', 'seriously-simple-podcasting')}>
 					<PanelRow>
 						<label htmlFor="podcast-player-form-toggle">
@@ -92,6 +79,19 @@ class EditPodcastList extends Component {
 							label={__('Show Podcast Player', 'seriously-simple-podcasting')}
 							checked={player}
 							onChange={togglePlayer}
+						/>
+					</PanelRow>
+				</PanelBody>
+				<PanelBody title={__('Podcast Excerpt', 'seriously-simple-podcasting')}>
+					<PanelRow>
+						<label htmlFor="podcast-excerpt-form-toggle">
+							{__('Show Podcast Excerpt', 'seriously-simple-podcasting')}
+						</label>
+						<FormToggle
+							id="podcast-excerpt-form-toggle"
+							label={__('Show Podcast Excerpt', 'seriously-simple-podcasting')}
+							checked={excerpt}
+							onChange={toggleExcerpt}
 						/>
 					</PanelRow>
 				</PanelBody>

@@ -16,14 +16,14 @@ class EditPodcastListItem extends Component {
 			"podcast-image-link",
 			{ 'hide-featured-image': !attributes.featuredImage },
 		);
-		const excerptClassNames = classnames(
-			"podcast-excerpt",
-			{ 'hide-excerpt': !attributes.excerpt },
-		);
 		const playerClassNames = classnames(
 			className,
 			"podcast-player",
 			{ 'hide-player': !attributes.player },
+		);
+		const excerptClassNames = classnames(
+			"podcast-excerpt",
+			{ 'hide-excerpt': !attributes.excerpt },
 		);
 		return (
 			<article className={className}>

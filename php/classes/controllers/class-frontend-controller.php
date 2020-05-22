@@ -1716,11 +1716,11 @@ class Frontend_Controller extends Controller {
 							<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
 						</a>
 					<?php } ?>
-					<?php if ( isset( $attributes['excerpt'] ) ) { ?>
-						<p><?php echo get_the_excerpt( $episode->ID ); ?></p>
-					<?php } ?>
 					<?php if ( ! empty( $player ) ) { ?>
 						<p><?php echo $player; ?></p>
+					<?php } ?>
+					<?php if ( isset( $attributes['excerpt'] ) ) { ?>
+						<p><?php echo get_the_excerpt( $episode->ID ); ?></p>
 					<?php } ?>
 				</div>
 			</article>

@@ -36,7 +36,6 @@ class EditPodcastListItem extends Component {
 					<a className={imageClassNames} href={post.link} aria-hidden="true" tabIndex="-1">
 						<img src={post.episode_featured_image}/>
 					</a>
-					<p className={excerptClassNames}><Interweave content={post.excerpt.rendered}/></p>
 					<Player className={playerClassNames} post={post}/>
 					<PlayerMeta
 						className={playerClassNames}
@@ -44,6 +43,7 @@ class EditPodcastListItem extends Component {
 						download={post.download_link}
 						duration={post.meta.duration}
 					/>
+					<p className={excerptClassNames}><Interweave content={post.excerpt.rendered}/></p>
 				</div>
 			</article>
 		);

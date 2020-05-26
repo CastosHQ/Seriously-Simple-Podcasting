@@ -11,54 +11,120 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
 
 == Description ==
+Seriously Simple Podcasting is a top-rated podcasting plugin for WordPress for beginners and power-users built by [Castos](http://castos.com/podcast-hosting-wordpress). Using our straight-forward set up instructions, advanced features, and plenty of customization options, Seriously Simple Podcasting powers over 20K+ podcasts.
 
-[Seriously Simple Podcasting](https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019) is an easy-to-use podcasting solution for WordPress that is as powerful as it is simple. It uses a native WordPress interface and has minimal settings so as not to distract you from what you really need to do - publish your content.
+The plugin will *always* remain free to use. The only costs associated with using Seriously Simple Podcasting is if you choose to host your audio files with a dedicated podcast hosting provider. Similar to using a website hosting provider to keep your WordPress site fast and running smoothly, we recommend hosting podcast files with a dedicated provider. But remember, this isn't required!
 
-**Primary Features**
+Every plugin feature is fully functional no matter who you choose as your podcast hosting provider. Seriously Simple Podcasting gives you more control over your content so you can start podcasting without limits.
 
-- Simple settings so you can get your podcast up and running quickly
-- Integrated podcast hosting platform, [Castos](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019), which allows you to host your podcast media files on a dedicated platform, without ever having to leave the WordPress dashboard.
-- Newly redesigned, customizable media player that includes your podcast cover image
-- Run multiple podcasts from the same site - each with their own, unique RSS feed
-- Gather thorough stats on your listeners using the [free stats add-on](https://wordpress.org/plugins/seriously-simple-stats/)
-- Supports both audio *and* video podcasting
-- New `podcast` post type and `series` taxonomy for managing your podcast episodes
-- Use any post type for your podcast episodes
-- Highly configurable and robust RSS feed designed for *all* podcast services and feed readers - including iTunes, Google Play and Stitcher
-- Shortcodes & widgets for displaying podcast episode lists, single episodes and podcast playlists anywhere on your site
-- The freedom to host your media files wherever you like - on the same site, our integrated Castos hosting platform, or any other server
-- Complete user and developer [documentation](https://support.castos.com/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019)
-- [Full i18n support](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting)
+However, Castos is specifically designed to sync with Seriously Simple Podcasting to save you time.  This means anytime you update your podcast's information or upload a new episode file, the changes automatically sync with your Castos hosting account. You only have to do the action once, saving hours each week. Read more about how [Castos and Seriously Simple Podcasting work together](https://castos.com/how-castos-and-seriously-simple-podcasting-work-together/).
 
-**Podcast Hosting Platform**
+With other podcast providers, you'll need to make updates to your podcast's RSS feed via your hosting provider account and again on WordPress to manually sync the information. Seriously Simple Podcasting is also unable to read a few metadata fields (like episode duration and publish date) from 3rd party hosting providers. For each episode, you'll manually add that information as well.
 
-If you're looking for a podcast hosting platform that is as simple as it is powerful check out [Castos](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019).  Our integrated podcast hosting platform allows you to upload your podcast audio files directly to a dedicated media host, without ever having to leave the WordPress dashboard.
+**HOW TO SET UP SERIOUSLY SIMPLE PODCASTING**
 
-https://youtu.be/Se3H1IDAYtw
+Getting started with Seriously Simple Podcasting is a seriously simple process. In just four steps, you'll go from installing the plugin to your WordPress site to submitting a functioning RSS feed to every podcast directory.
 
-Give your website a performance boost by offloading all of your media files to a dedicated hosting provider, and your podcast listeners a terrific listening experience at the same time.
+<iframe width="560" height="315" src="[https://www.youtube.com/embed/sKjZTx02Ng0](https://www.youtube.com/embed/sKjZTx02Ng0)" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
-**Beautifully Designed Media Player**
+1. Install Seriously Simple Podcasting plugin to your WordPress site and link it to your podcast hosting provider.
+2. From your WordPress dashboard, upload an episode, and add its corresponding details.
+3. Inside the plugin's settings, include details about your podcast to finish creating the RSS feed. Details include the podcast's name, description, cover art, and category selection.
+4. The RSS feed is generated and ready to be submitted to each podcast listening platform.
 
-No need to look around for a premium podcast player for your website, we've built in an industry leading podcast player right into Seriously Simple Podcasting, for Free!
+**SERIOUSLY SIMPLE PODCASTING KEY FEATURES**
 
-Choose from a compact or full size design, complete with your podcast cover image proudly displayed right alongside your player.
+Seriously Simple Podcasting offers all of our advanced features through our free plugin. You're not required to pay for additional add-ons or use a specific podcast hosting provider.
+
+MANAGE YOUR RSS FEED FROM WORDPRESS
+
+Seriously Simple Podcasting generates an RSS feed that's fully compliant with Apple Podcasts, Spotify, Google Podcasts, and every other listening platform.
+
+- Set your podcast’s title, subtitle, description, category and sub-category selections, cover art, explicit rating, and copyright information from WordPress.
+- Manage all updates to your podcast's RSS feed from WordPress and changes automatically sync with your podcast hosting provider.
+- Turbo-charge RSS feeds to increase the number of episodes displayed on podcasting apps and speed up the feed’s load time.
+- Create password protected RSS feeds to restrict access to premium content.
+- With Castos, use the [one-click submission feature](https://support.castos.com/article/7-submit-your-podcast-to-spotify) to easily submit your podcast to Spotify.
+
+MANAGE MULTIPLE PODCASTS FROM THE SAME SITE
+
+[Create unique RSS feeds for multiple podcasts](https://support.castos.com/article/24-working-with-podcast-series) and feature them on the same website.
+
+- Save unique settings per podcast for easy management.
+- Create custom subscribe buttons for each podcast you create
+- Optional "catch-all" feed for podcast networks that want to aggregate all of their shows into a single feed.
+- With Castos, pay one price to host multiple podcasts under one account. Each plan features unlimited uploads and bandwidth so you’ll never hit a limit when managing more than one show.
+
+CUSTOMIZE THE EMBEDDED MEDIA PLAYER
+
+Choose between a standard compact player or feature-rich HTML5 media player that displays your cover art or episode-specific images. Change the settings to display your podcast exactly how you want it.
+
+- Display customizable subscribe links to Apple Podcast, Spotify, Google Play, Stitcher, Overcast, and Pocketcasts. Also include links to download the content or play it in a new window.
+- Display episode meta data like episode durations and date published beneath the player.
+- Customize the background and player progress bar colors to match your brand.
+- Select the player’s position either above or below the post content.
+- Media player is mobile-responsive so podcast posts look great across desktop browsers and mobile devices.
+- NEW: Use the Castos Player block to feature the player anywhere on your website.
+
+USE CUSTOM WIDGETS TO CREATE PLAYLISTS & DISPLAY THEM ANY WHERE
+
+Curate custom playlists with embeddable widgets then display them anywhere on your website.
+
+- Feature single episodes anywhere on your website with the [Podcast Episode shortcode](https://support.castos.com/article/42-podcastepisode-shortcode).
+- Create playlists featuring all episodes from specific seasons of your podcast with the [Podcast Series widget](https://support.castos.com/article/38-series-widget).
+- Curate custom playlists with specific episodes with the [Podcast Playlist widget](https://support.castos.com/article/41-podcastplaylist-shortcode).
+
+PUBLISH PODCAST EPISODES ON ANY POST TYPE
+
+You have full control over how podcast epsidoes appear on your website by picking which post type to apply the plugin settings.
+
+- Choose which post type (from posts, the Podcast post type that SSP creates, or any other custom post type on your site) to enable podcast functions. This adds all podcast posts from the specific type to your feed.
+
+SUPPORTS VIDEO PODCASTING
+
+Feature embedded video players within any podcast post.
+
+- Embed video players from YouTube, Vimeo, VideoPress, or the common video block.
+- Display the embedded video player anywhere within your podcast post.
+- With Castos, host your audio and video podcast files with our [Growth and Pro plans](https://castos.com/pricing/).
+
+FREE ANALYTICS ADD-ONS & INTEGRATIONS
+
+Understand how your podcast is performing with our free Seriously Simple Stats add-on.
+
+- Install [Seriously Simple Stats](https://wordpress.org/plugins/seriously-simple-stats/) to access listener statistics for free. Track total listens per episode, by date range, and by listening sources.
+- Connect 3rd party analytics platforms like Podtrac or Chartable.
+- With Castos, view advanced analytics by geographic location, device, and listening platform plus total unique subscribers. Also access your Spotify-specific data from your dashboard for a holistic view of your podcast’s performance.
+
+SIMPLIFIED IMPORTS, MIGRATIONS, AND REDIRECTS
+
+Seriously Simple Podcasting works with any podcast hosting provider. Easily import or migrate your podcast files to the plugin then start managing your show via WordPress.
+
+- [Easily import podcasts to Seriously Simple Podcasting](https://support.castos.com/article/85-import-podcast-content-into-your-wordpress-site-from-an-external-rss-feed) from LibSyn, Buzzsprout, Podbean, Soundcloud, or Simplecast.
+- [Migrate existing podcasts from other WordPress podcasting plugins](https://support.castos.com/article/104-migrating-from-powerpress-to-seriously-simple-podcasting) to Seriously Simple Podcasting.
+- With Castos, connect Seriously Simple Podcasting to your Castos account in one click. Your podcast content will automatically sync with your Castos account as you make changes or upload new episodes from WordPress.
+- Redirect RSS feedd to a new location by supplying the new feed’s URL.
+
+FULLY INTEGRATED WITH CASTOS PODCAST HOSTING
+
+You can host your podcast with any podcast hosting provider. If you choose to host your podcast with Castos, you’ll access these unique features from your Castos dashboard.
+
+- Automatic syncing: Seriously Simple Podcasting automatically syncs with any Castos plan. Fully manage your podcast from WordPress while hosting your podcast files on our dedicated servers.
+- [Pay-as-you-go transcriptions](https://castos.com/transcription/): Pay $0.10/minute and access on-demand episode transcriptions. Use these transcriptions on your website to make your podcast more accessible.
+- [Automatic YouTube republishing](https://castos.com/upload-a-podcast-to-youtube/#Castos-YouTube-Republishing): Castos supports video file hosting and can automatically publish your podcast to YouTube.
+- Unlimited storage and bandwidth: Every [Castos plan](https://castos.com/podcast-hosting-wordpress/) includes unlimited uploads and bandwidth. You can also host multiple podcasts under one account for one price.
 
 **Where to find help**
 
-Seriously Simple Podcasting comes with complete user and developer [documentation](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
-
-**Add-ons**
-
-Seriously Simple Podcasting comes with a growing [library of add-ons](https://castos.com/add-ons/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019). Just like the core plugin itself, **all of the add-ons are 100% free to use and will always remain that way**.
+Seriously Simple Podcasting comes with complete user and developer [documentation](https://castos.com/podcast-hosting-wordpress/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019). Please read this documentation thoroughly before posting on [the support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting).
 
 **How to contribute**
 
-If you want to contribute to Seriously Simple Podcasting, you can [fork the GitHub repository](https://github.com/thecraighewitt/Seriously-Simple-Podcasting) - please read the [contributor guidelines](https://github.com/thecraighewitt/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information on how you can do this.
+If you want to contribute to Seriously Simple Podcasting, you can [fork the GitHub repository](https://github.com/thecraighewitt/Seriously-Simple-Podcasting) – please read the [contributor guidelines](https://github.com/thecraighewitt/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information on how you can do this.
 
 **Help translate this plugin**
 
-If you would like to contribute translations to this plugin you can do so through [a simple web interface](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting). Any and all translations (new languages or updates to existing ones) are always welcome.
+If you would like to contribute translations to this plugin you can do so through [a simple web interface](https://translate.wordpress.org/projects/wp-plugins/seriously-simple-podcasting). Any and all translations (new languages or updates to existing ones) are always welcome.
 
 == Usage ==
 
@@ -85,20 +151,21 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Screenshots ==
 
-1. Media player and episode details displayed on the frontend above post content.
-2. The only info that you need to add to each podcast episode.
-3. Set up your podcast.
-4. Customise your podcast feed.
-5. Secure your podcast feed.
-6. Handle redirection for your feed.
-7. Publish your podcast.
-8. The podcast admin menu location.
-9. Podcast episodes are shown in the At a Glance dashboard widget.
-10. Recent episodes widget.
-11. Single episode widget.
-12. Podcast series widget.
-13. Podcast playlist widget.
-14. An example of the styled podcast RSS feed when viewed directly in the browser.
+1. Step 1 to set up Seriously Simple Podcasting is to install the plugin on your WordPress site.
+2. Step  2 to set up Seriously Simple Podcasting is to add your first episode. Upload the audio or video file and complete the episode's title, duration, and publish date.
+3. Step 3 to set up Seriously Simple Podcasting is to complete the podcast's RSS feed details. This includes things like the podcast's name, category selection, and cover art image. If you host your podcast with Castos, these details will automatically sync with your Castos dashboard.
+4. Step 4 to set up Seriously Simple Podcasting is to submit the completed RSS feed URL to podcast listing apps like Apple Podcasts and Spotify.
+5. Customize your podcast's RSS feed details from the Settings > Feed Details tab.
+6. Upload audio or video episode files directly to WordPress.
+7. Customize the embedded media player settings to match your brand colors and pick the preferred location.
+8. Example of the HTML5 player within a podcast post from Rolf Pott's podcast, Deviate.
+9. Example of HTML5 player with a collection page featuring every episode from Rolf Pott's podcast, Deviate.
+10. Example of a styled RSS feed when viewed in a browswer.
+11. Automatically sync Castos accounts with Seriously Simple Podcasting in a few clicks.
+12. Import RSS feeds from any podcast hosting provider using Seriously Simple Podcasting.
+13. Customize on which post type to enable podcasting features.
+14. Create password protected podcast RSS feeds from the Settings > Security tag. Use this feature in combination with a membership plugin to restrict access to your podcast.
+15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
 

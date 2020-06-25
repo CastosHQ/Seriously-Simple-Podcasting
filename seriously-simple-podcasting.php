@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 2.1.1
+ * Version: 2.2.0
  * Plugin URI: https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
@@ -14,7 +14,7 @@
  *
  * @package Seriously Simple Podcasting
  *
- * GitHub Plugin URI: https://github.com/TheCraigHewitt/Seriously-Simple-Podcasting
+ * GitHub Plugin URI: https://github.com/CastosHQ/Seriously-Simple-Podcasting
  *
  */
 
@@ -23,14 +23,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+use SeriouslySimplePodcasting\Blocks\Castos_Blocks;
 use SeriouslySimplePodcasting\Controllers\Admin_Controller;
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
-use SeriouslySimplePodcasting\Blocks\Player_Block;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 
-define( 'SSP_VERSION', '2.1.1' );
+define( 'SSP_VERSION', '2.2.0' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -72,7 +72,7 @@ if ( is_admin() ) {
  */
 global $wp_version;
 if ( version_compare( $wp_version, '5.0', '>=' ) ) {
-	$ssp_player_block = new Player_Block(__FILE__, SSP_VERSION);
+	$ssp_castos_blocks = new Castos_Blocks(__FILE__, SSP_VERSION);
 }
 /**
  * Only load WP REST API Endpoints if the WordPress version is newer than 4.7

@@ -1,11 +1,6 @@
-/**
- * WordPress dependencies
- */
 import {Component} from '@wordpress/element';
-
 /**
  * @todo clean up the inline styles better
- * This will do for a v1 release
  */
 class CastosPlayer extends Component {
 	render() {

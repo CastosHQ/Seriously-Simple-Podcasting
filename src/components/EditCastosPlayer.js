@@ -5,26 +5,30 @@ import {Button, Toolbar} from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 import EpisodeSelector from "./EpisodeSelector";
-import AudioPlayer from "./AudioPlayer";
+import CastosPlayer from "./CastosPlayer";
 
-class EditPlayer extends Component {
+class EditCastosPlayer extends Component {
 	constructor({attributes, setAttributes, className}) {
 		super(...arguments);
 		this.episodeRef = React.createRef();
+		const episode = {
+			episodeImage: attributes.image || "",
+			episodeFileUrl: attributes.file || "",
+			episodeTitle: attributes.title || "",
+			episodeDuration: attributes.duration || "",
+			episodeDownloadUrl: attributes.download || "",
+		}
 		let editing = true;
-		if (attributes.audio_player){
+		if (attributes.title){
 			editing = false;
 		}
-		const episode = {
-			audioPlayer: attributes.audio_player || "",
-		}
 		this.state = {
-			className,
 			editing: editing,
-			episode: episode,
+			className,
 			episodes: [],
+			episode: episode,
 			setAttributes: setAttributes
-		}
+		};
 	}
 
 	componentDidMount() {
@@ -54,11 +58,15 @@ class EditPlayer extends Component {
 
 		const activateEpisode = () => {
 			const episodeId = this.episodeRef.current.value;
-			const fetchAudioPlayer = 'ssp/v1/audio_player?ssp_podcast_id='+episodeId;
-			apiFetch({path: fetchAudioPlayer}).then(response => {
+			let fetchPost = 'ssp/v1/episodes?include='+episodeId;
+			apiFetch({path: fetchPost}).then(post => {
 				const episode = {
 					episodeId: episodeId,
-					audioPlayer: response.audio_player
+					episodeImage: post[0].episode_player_image,
+					episodeFileUrl: post[0].meta.audio_file,
+					episodeTitle: post[0].title.rendered,
+					episodeDuration: post[0].meta.duration,
+					episodeDownloadUrl: post[0].download_link,
 				}
 				this.setState({
 					episode: episode,
@@ -66,7 +74,11 @@ class EditPlayer extends Component {
 				});
 				setAttributes({
 					id: episodeId,
-					audio_player: episode.audioPlayer
+					image: episode.episodeImage,
+					file: episode.episodeFileUrl,
+					title: episode.episodeTitle,
+					duration: episode.episodeDuration,
+					download: episode.episodeDownloadUrl
 				});
 			});
 		};
@@ -96,10 +108,17 @@ class EditPlayer extends Component {
 		} else {
 			return [
 				controls, (
-					<AudioPlayer className={className} audioPlayer={episode.audioPlayer}/>
+					<CastosPlayer
+						className={this.state.className}
+						episodeImage={episode.episodeImage}
+						episodeFileUrl={episode.episodeFileUrl}
+						episodeTitle={episode.episodeTitle}
+						episodeDuration={episode.episodeDuration}
+						episodeDownloadUrl={episode.episodeDownloadUrl}
+					/>
 				)];
 		}
 	}
 }
 
-export default EditPlayer;
+export default EditCastosPlayer;

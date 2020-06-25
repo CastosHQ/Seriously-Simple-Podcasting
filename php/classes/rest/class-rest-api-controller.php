@@ -72,6 +72,21 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_audio_download_link' ) );
 
+		add_action( 'rest_api_init', array( $this, 'register_rest_audio_player' ) );
+
+		$post_types = ssp_post_types( true, false );
+		foreach ( $post_types as $post_type ) {
+			add_filter( 'rest_prepare_' . $post_type, array( $this, 'rest_prepare_excerpt' ), 10, 3 );
+		}
+
+	}
+
+	public function rest_prepare_excerpt( $response, $post, $request ) {
+		if ( 'excerpt' === $response->data['excerpt']['rendered'] ) {
+			$response->data['excerpt']['rendered'] = get_the_excerpt();
+		}
+
+		return $response;
 	}
 
 	/**
@@ -107,6 +122,18 @@ class Rest_Api_Controller {
 		 */
 		$controller = new Episodes_Controller();
 		$controller->register_routes();
+
+		/**
+		 * Setting up custom route for the wp_audio_shortcode for a podcast
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/audio_player',
+			array(
+				'methods'  => 'GET',
+				'callback' => array( $this, 'get_episode_audio_player' ),
+			)
+		);
 
 	}
 
@@ -163,6 +190,23 @@ class Rest_Api_Controller {
 		return $response;
 	}
 
+	/**
+	 * Gets the podcast audio player code from wp_audio_shortcode, or null if ssp_podcast_id is not a valid podcast
+	 *
+	 * @return array $podcast Podcast data
+	 */
+	public function get_episode_audio_player() {
+		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_SANITIZE_STRING ) : '' );
+		global $ss_podcasting;
+		$file   = $ss_podcasting->episode_controller->get_enclosure( $podcast_id );
+		$params = array( 'src' => $file, 'preload' => 'none' );
+
+		return array(
+			'id'           => $podcast_id,
+			'file'         => $file,
+			'audio_player' => wp_audio_shortcode( $params )
+		);
+	}
 
 	/**
 	 * Add additional fields to series taxonomy
@@ -248,6 +292,21 @@ class Rest_Api_Controller {
 	}
 
 	/**
+	 * Add the audio player code to all Podcast post types
+	 */
+	public function register_rest_audio_player() {
+		register_rest_field(
+			ssp_post_types(),
+			'audio_player',
+			array(
+				'get_callback'    => array( $this, 'get_rest_audio_player' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+	/**
 	 * Get the featured image for valid Podcast post types
 	 * Call back for the register_rest_episode_images method
 	 *
@@ -280,8 +339,8 @@ class Rest_Api_Controller {
 	public function get_rest_player_image( $object, $field_name, $request ) {
 		if ( ! empty( $object['id'] ) ) {
 			$episode_id         = $object['id'];
-			$episode_controller = new Episode_Controller( $this->file, $this->version );
-			$album_art          = $episode_controller->get_album_art( $episode_id );
+			global $ss_podcasting;
+			$album_art          = $ss_podcasting->episode_controller->get_album_art( $episode_id );
 
 			return $album_art['src'];
 		}
@@ -301,10 +360,38 @@ class Rest_Api_Controller {
 	 */
 	public function get_rest_audio_download_link( $object, $field_name, $request ) {
 		if ( ! empty( $object['meta']['audio_file'] ) ) {
-			$episode_controller = new Episode_Controller( $this->file, $this->version );
-			$download_link      = $episode_controller->get_episode_download_link( $object['id'] );
+			global $ss_podcasting;
+			$download_link      = $ss_podcasting->episode_controller->get_episode_download_link( $object['id'] );
 
 			return $download_link;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Return the Audio Player html
+	 *
+	 * @param $object
+	 * @param $field_name
+	 * @param $request
+	 *
+	 * @return bool|string|void
+	 */
+	public function get_rest_audio_player( $object, $field_name, $request ) {
+		if ( ! empty( $object['meta']['audio_file'] ) ) {
+			$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+			if ( empty( $player_style ) ) {
+				$player_style = 'standard';
+			}
+
+			if ( 'standard' !== $player_style ) {
+				return;
+			}
+			global $ss_podcasting;
+			$file   = $ss_podcasting->episode_controller->get_enclosure( $object['id'] );
+			$params = array( 'src' => $file, 'preload' => 'none' );
+			return wp_audio_shortcode( $params );
 		}
 
 		return false;

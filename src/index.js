@@ -1,25 +1,57 @@
-import { registerBlockType } from '@wordpress/blocks';
-import CastosPlayer from "./components/CastosPlayer";
-import EditPlayer from './components/EditPlayer';
 /**
- * Castos Player block
- *
+ * WordPress dependencies
  */
-registerBlockType('seriously-simple-podcasting/castos-player', {
+import {__} from '@wordpress/i18n';
+import {registerBlockType} from '@wordpress/blocks';
 
-	title: 'Castos Player',
+import EditPlayer from './components/EditPlayer';
+import AudioPlayer from "./components/AudioPlayer";
+import CastosPlayer from "./components/CastosPlayer";
+import EditCastosPlayer from './components/EditCastosPlayer';
+import EditPodcastList from "./components/EditPodcastList";
 
+/**
+ * Standard Audio Player Block
+ */
+registerBlockType('seriously-simple-podcasting/audio-player', {
+	title: __('Audio Player', 'seriously-simple-podcasting'),
 	icon: 'controls-volumeon',
-
 	category: 'layout',
-
 	supports: {
 		multiple: false,
 	},
-
 	attributes: {
 		id: {
-			type: 'number',
+			type: 'string',
+		},
+		audio_player: {
+			type: 'string',
+			source: 'html',
+			selector: 'span',
+		}
+	},
+	edit: EditPlayer,
+	save: (props, className) => {
+		const { id, audio_player } = props.attributes;
+		return (
+			<AudioPlayer className={className} audioPlayer={audio_player}/>
+		);
+	},
+});
+
+/**
+ * Castos Player block
+ */
+registerBlockType('seriously-simple-podcasting/castos-player', {
+	title: __('Castos Player', 'seriously-simple-podcasting'),
+	icon: 'controls-volumeon',
+	category: 'layout',
+	supports: {
+		multiple: false,
+	},
+	attributes: {
+		id: {
+			type: 'string',
 		},
 		image: {
 			type: 'string',
@@ -37,9 +69,7 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 			type: 'string',
 		},
 	},
-
-	edit: EditPlayer,
-
+	edit: EditCastosPlayer,
 	save: (props, className) => {
 		const { id, image, file, title, duration, download } = props.attributes;
 		return (
@@ -53,4 +83,31 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 			/>
 		);
 	},
+});
+
+/**
+ * Podcast list block
+ */
+registerBlockType('seriously-simple-podcasting/podcast-list', {
+	title: __('Podcast List', 'seriously-simple-podcasting'),
+	icon: 'megaphone',
+	category: 'widgets',
+	supports: {
+		multiple: false,
+	},
+	attributes: {
+		featuredImage: {
+			type: 'boolean',
+			default: false,
+		},
+		excerpt: {
+			type: 'boolean',
+			default: false,
+		},
+		player: {
+			type: 'boolean',
+			default: false,
+		},
+	},
+	edit: EditPodcastList
 });

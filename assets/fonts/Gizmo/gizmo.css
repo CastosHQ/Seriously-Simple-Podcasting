@@ -12,7 +12,7 @@
 
 }
 
-[data-icon]:before {
+/*[data-icon]:before {
   font-family: "gizmo" !important;
   content: attr(data-icon);
   font-style: normal !important;
@@ -23,7 +23,7 @@
   line-height: 1;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
+}*/
 
 /**
 Only apply this to classes starting with icon or containing icon, but also only with the ssp_player class

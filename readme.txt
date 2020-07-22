@@ -159,6 +159,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.2.2 =
+* 2020-07-01
+* [FIX] Remove unused CSS font style
+
 = 2.2.1 =
 * 2020-07-01
 * [FIX] Remove unused CSS font style

@@ -225,7 +225,7 @@ class Settings_Handler {
 				'label' => __( 'Video Games', 'seriously-simple-podcasting' ),
 				'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
 			),
-			'Music Commentary '  => array(
+			'Music Commentary'  => array(
 				'label' => __( 'Music Commentary', 'seriously-simple-podcasting' ),
 				'group' => __( 'Music', 'seriously-simple-podcasting' ),
 			),
@@ -257,7 +257,7 @@ class Settings_Handler {
 				'label' => __( 'Politics', 'seriously-simple-podcasting' ),
 				'group' => __( 'News', 'seriously-simple-podcasting' ),
 			),
-			'Sports News '       => array(
+			'Sports News'       => array(
 				'label' => __( 'Sports News ', 'seriously-simple-podcasting' ),
 				'group' => __( 'News', 'seriously-simple-podcasting' ),
 			),
@@ -357,7 +357,7 @@ class Settings_Handler {
 				'label' => __( 'Cricket', 'seriously-simple-podcasting' ),
 				'group' => __( 'Sports', 'seriously-simple-podcasting' ),
 			),
-			'Fantasy Sports '    => array(
+			'Fantasy Sports'    => array(
 				'label' => __( 'Fantasy Sports ', 'seriously-simple-podcasting' ),
 				'group' => __( 'Sports', 'seriously-simple-podcasting' ),
 			),

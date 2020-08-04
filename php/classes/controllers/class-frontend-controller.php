@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use stdClass;
 use WP_Query;
 
@@ -1279,8 +1280,19 @@ class Frontend_Controller extends Controller {
 					// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
 					$file = str_replace( ' ', '%20', $file );
 
-					// Use ssp_readfile_chunked() if allowed on the server or simply access file directly
-					@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
+					$ssp_file_download_method = 'chunked';
+					$ssp_file_download_method = apply_filters('ssp_file_download_method', $ssp_file_download_method);
+
+					$log_helper = new Log_Helper();
+					$log_helper->log( 'File download method', $ssp_file_download_method );
+
+					if ( 'chunked' !== $ssp_file_download_method ) {
+						header( 'Location: ' . $file );
+					} else {
+						// Use ssp_readfile_chunked() if allowed on the server or simply access file directly
+						@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
+					}
+
 				} else {
 
 					// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)

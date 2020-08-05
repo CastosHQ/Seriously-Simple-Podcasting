@@ -8,7 +8,7 @@
  * Author URI: https://castos.com/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Requires PHP: 5.6
  * Requires at least: 4.4
- * Tested up to: 5.4
+ * Tested up to: 5.5
  *
  * Text Domain: seriously-simple-podcasting
  *

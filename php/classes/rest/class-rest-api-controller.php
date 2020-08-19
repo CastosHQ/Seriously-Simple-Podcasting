@@ -102,6 +102,7 @@ class Rest_Api_Controller {
 			array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'get_rest_podcast' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -114,6 +115,7 @@ class Rest_Api_Controller {
 			array(
 				'methods'  => 'POST',
 				'callback' => array( $this, 'update_rest_podcast' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 
@@ -132,6 +134,7 @@ class Rest_Api_Controller {
 			array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'get_episode_audio_player' ),
+				'permission_callback' => '__return_true',
 			)
 		);
 

@@ -24,6 +24,11 @@ class Players_Controller extends Controller {
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->render = new Renderer();
+		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
+		
+	}
+	
+	public regsiter_shortcodes(){
 		add_shortcode('elementor_html_player', array($this, 'elementor_html_player'));
 	}
 	

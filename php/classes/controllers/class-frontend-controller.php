@@ -192,6 +192,9 @@ class Frontend_Controller extends Controller {
 
 		wp_register_script( 'html5-player', $this->assets_url . 'js/html5.player.js', array( 'jquery' ), $this->version, true );
 		wp_enqueue_script( 'html5-player' );
+
+		wp_register_script( 'new-html5-player', $this->assets_url . 'js/new.html5.player.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'new-html5-player' );
 	}
 
 	/**
@@ -200,6 +203,9 @@ class Frontend_Controller extends Controller {
 	public function load_scripts() {
 		wp_register_style( 'ssp-frontend-player', $this->assets_url . 'css/player.css', array(), $this->version );
 		wp_enqueue_style( 'ssp-frontend-player' );
+
+		wp_register_style( 'ssp-new-frontend-player', $this->assets_url . 'css/new_player.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-new-frontend-player' );
 	}
 
 	/**

@@ -29,16 +29,17 @@ use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
+use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
 define( 'SSP_VERSION', '2.2.2' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( ! defined( 'SSP_CASTOS_APP_URL' ) ) {
-	define( 'SSP_CASTOS_APP_URL', 'https://app.castos.com/' );
+	define( 'SSP_CASTOS_APP_URL', 'https://seriouslysimplehosting.test/' );
 }
 if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
-	define( 'SSP_CASTOS_EPISODES_URL', 'https://episodes.castos.com/' );
+	define( 'SSP_CASTOS_EPISODES_URL', 'https://episodes.seriouslysimplehosting.com/' );
 }
 
 require_once SSP_PLUGIN_PATH . 'php/includes/ssp-functions.php';
@@ -56,9 +57,10 @@ require SSP_PLUGIN_PATH . 'vendor/autoload.php';
  * @todo the admin_controller should really be renamed, as it's not really 'admin' specific
  * @todo alternatively the non admin specific functionality should be moved into it's own 'foundation' controller, perhaps even the parent controller, or a trait
  */
-global $ssp_admin, $ss_podcasting;
+global $ssp_admin, $ss_podcasting, $ssp_player;
 $ssp_admin     = new Admin_Controller( __FILE__, SSP_VERSION );
 $ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
+$ssp_player = new Players_Controller(__FILE__, SSP_VERSION);
 /**
  * Only load the settings if we're in the admin dashboard
  */

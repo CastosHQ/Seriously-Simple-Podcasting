@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -20,36 +21,74 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Players_Controller extends Controller {
 
 	public $renderer = null;
+	public $episode_controller;
 
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->render = new Renderer();
-		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
-		
+		$this->episode_controller = new Episode_Controller($file, $version );
+		add_action( 'init', array( $this, 'regsiter_shortcodes' ), 1 );
 	}
-	
-	public regsiter_shortcodes(){
+
+	public function regsiter_shortcodes() {
 		add_shortcode('elementor_html_player', array($this, 'elementor_html_player'));
 	}
-	
-	public function elementor_html_player($atttributes){
-		return $this->html_player($atttributes['id'])
+
+	public function elementor_html_player($attributes) {
+		return $this->html_player($attributes['id']);
 	}
 
-	public function html_player($id){
+	public function get_feed_url() {
+		// Get feed slug
+		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+
+		if ( get_option( 'permalink_structure' ) ) {
+			$feed_url = $this->home_url . 'feed/' . $feed_slug;
+		} else {
+			$feed_url = $this->home_url . '?feed=' . $feed_slug;
+		}
+
+		$custom_feed_url = get_option( 'ss_podcasting_feed_url' );
+		if ( $custom_feed_url ) {
+			$feed_url = $custom_feed_url;
+		}
+
+		$feed_url = apply_filters( 'ssp_feed_url', $feed_url );
+
+		return $feed_url;
+	}
+
+	public function html_player($id) {
+
 		$episode = get_post($id);
+		$episodeDuration = get_post_meta($id, 'duration', true);
+		$audioFile = get_post_meta($id, 'audio_file', true);
+		$albumArt = $this->episode_controller->get_album_art($id);
+		$podcastTitle = get_option('ss_podcasting_data_title');
+
+		$itunes = get_option('ss_podcasting_itunes_url');
+		$stitcher = get_option('ss_podcasting_stitcher_url');
+		$spotify = get_option('ss_podcasting_spotify_url');
+		$googlePlay = get_option('ss_podcasting_google_play_url');
+		$feedUrl = $this->get_feed_url();
 		// set any other info
 		$templateData = array(
-			'episode'    => $episode,
-			'additional' => array(
-				'feedUrl' => $feedUrl,
-			)
+			'episode' => $episode,
+			'duration' => $episodeDuration,
+			'audioFile' => $audioFile,
+			'albumArt' => $albumArt,
+			'podcastTitle' => $podcastTitle,
+			'feedUrl' => $feedUrl,
+			'itunes' => $itunes,
+			'stitcher' => $stitcher,
+			'spotify' => $spotify,
+			'googlePlay' => $googlePlay
 		);
 
-		$templateData = apply_filters( 'html_player_data', $templateData );
+		//$templateData = apply_filters( 'html_player_data', $templateData );
 
-		$this->render->render($templateData, 'players/html-player');
-
+		// fix this later (return part) according to elementor integration demands
+		return $this->render->render($templateData, 'players/html-player');
 	}
 
 }

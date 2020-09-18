@@ -268,8 +268,8 @@ body {
 }
 
 .subscribe-icons .google-play span {
-    mask-image: url('images/player/images/brands/icon-brand-google-play.jpg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-google-play.jpg');
+    mask-image: url('images/player/images/brands/icon-brand-google-play.svg');
+    -webkit-mask-image: url('images/player/images/brands/icon-brand-google-play.svg');
 }
 
 /* Currently Playing */

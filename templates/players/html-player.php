@@ -139,6 +139,10 @@
                 <div class="title">
                            Embed
                 </div>
+                <div>
+                    <input value="<iframe src='{{ $episode->getIframeUrl() }}' frameborder='0' scrolling='no' width='100%' height='150'></iframe>"
+                           class="input-embed" />
+                </div>
                 <button class="copy-embed"></button>
             </div>
         </div>

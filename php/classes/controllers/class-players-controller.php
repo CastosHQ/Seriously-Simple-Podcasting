@@ -13,10 +13,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Main plugin class
  *
- * @author      Hugh Lashbrooke
+ * @author      Danilo Radovic
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
- * @since       1.0
+ * @since       2.3
  */
 class Players_Controller extends Controller {
 
@@ -28,8 +28,17 @@ class Players_Controller extends Controller {
 		$this->render = new Renderer();
 		$this->episode_controller = new Episode_Controller($file, $version );
 		add_action( 'init', array( $this, 'regsiter_shortcodes' ), 1 );
+
+		$this->load_player_assets();
+
 	}
 
+	public function load_player_assets() {
+		wp_register_style( 'html5-player-v2', $this->assets_url . 'css/html5-player-v2.css', array(), $this->version );
+		wp_enqueue_style( 'html5-player-v2' );
+		wp_register_script( 'html5-player-v2', $this->assets_url . 'js/html5-player-v2.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'html5-player-v2' );
+	}
 	public function regsiter_shortcodes() {
 		add_shortcode('elementor_html_player', array($this, 'elementor_html_player'));
 	}

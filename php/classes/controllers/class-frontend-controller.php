@@ -491,7 +491,7 @@ class Frontend_Controller extends Controller {
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
 												<div class="ssp-play-pause" id="ssp-play-pause">
-													<span class="ssp-icon ssp-icon-play_icon">&nbsp;</span>
+													<span class="ssp-icon ssp-icon-play_icon"><span class="screen-reader-text">Play/Pause Episode</span></span>
 												</div>
 												<div class="ssp-wave-form">
 													<div class="ssp-inner">
@@ -505,7 +505,7 @@ class Frontend_Controller extends Controller {
 													<div class="ssp-volume">
 														<div class="ssp-back-thirty-container">
 															<div class="ssp-back-thirty-control" id="ssp-back-thirty">
-																<i class="ssp-icon icon-replay">&nbsp;</i>
+																<i class="ssp-icon icon-replay"><span class="screen-reader-text">Rewind 30 Seconds</span></i>
 															</div>
 														</div>
 														<div class="ssp-playback-speed-label-container">
@@ -515,7 +515,7 @@ class Frontend_Controller extends Controller {
 														</div>
 														<div class="ssp-download-container">
 															<div class="ssp-download-control">
-																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
+																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download"><span class="screen-reader-text">Download Episode</span></i></a>
 															</div>
 														</div>
 													</div>

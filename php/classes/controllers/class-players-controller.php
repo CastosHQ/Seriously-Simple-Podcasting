@@ -83,7 +83,6 @@ class Players_Controller extends Controller {
 	 * @return string
 	 */
 	public function html_player( $id ) {
-		return $id;
 
 		$episode         = get_post( $id );
 		$episodeDuration = get_post_meta( $id, 'duration', true );

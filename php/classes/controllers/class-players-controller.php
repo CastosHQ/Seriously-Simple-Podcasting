@@ -26,9 +26,19 @@ class Players_Controller extends Controller {
 		parent::__construct( $file, $version );
 		$this->renderer           = new Renderer();
 		$this->episode_controller = new Episode_Controller( $file, $version );
+		$this->init();
+	}
 
-		$this->load_player_assets();
-		$this->load_shortcodes();
+	public function init() {
+		/**
+		 * Only register shortcodes once the init hook is triggered
+		 */
+		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
+		/**
+		 * Only load player assets once the wp_enqueue_scripts hook is triggered
+		 * @todo ideally only when the player is loaded...
+		 */
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_player_assets' ) );
 	}
 
 	public function load_player_assets() {
@@ -36,10 +46,6 @@ class Players_Controller extends Controller {
 		wp_enqueue_style( 'html5-player-v2' );
 		wp_register_script( 'html5-player-v2', $this->assets_url . 'js/html5-player-v2.js', array( 'jquery' ), $this->version, true );
 		wp_enqueue_script( 'html5-player-v2' );
-	}
-
-	public function load_shortcodes() {
-		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
 	}
 
 	public function register_shortcodes() {
@@ -106,7 +112,7 @@ class Players_Controller extends Controller {
 			'googlePlay'   => $subscribeLinks['googlePlay']
 		);
 
-		$templateData = apply_filters( 'html_player_data', $templateData );
+		$templateData = apply_filters( 'ssp_html_player_data', $templateData );
 
 		// fix this later (return part) according to elementor integration demands
 		return $this->renderer->render( $templateData, 'players/html-player' );

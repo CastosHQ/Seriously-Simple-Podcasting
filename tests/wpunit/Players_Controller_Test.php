@@ -25,26 +25,25 @@ class Players_Controller_Test extends \Codeception\TestCase\WPTestCase
         parent::tearDown();
     }
 
-    // Tests
-    public function testItWorks()
-    {
-        $post = static::factory()->post->create_and_get();
-
-        $this->assertInstanceOf(\WP_Post::class, $post);
-    }
-
-	public function test_player_controller_is_the_correct_type() {
-		$this->players_controller = new Players_Controller( __FILE__, '1.0.0' );
-		$this->assertInstanceOf( Players_Controller::class, $this->players_controller );
-	}
-
+	/**
+	 * Tests that the Players_Controller::html_player method returns the new html player code
+	 * @covers Players_Controller::html_player
+	 * @group player-controller-html-player
+	 */
 	public function test_player_controller_html_player_method() {
 		$this->players_controller = new Players_Controller( __FILE__, '1.0.0' );
-		$podcast = $this->factory->post->create(
-			[ 'post_type' => 'podcast' ]
+		$episode_id               = $this->factory->post->create(
+			array(
+				'title'       => 'My Custom Podcast',
+				'post_status' => 'publish',
+				'post_type'   => 'podcast',
+			)
 		);
-		$return = $this->players_controller->html_player();
-		//$this->assertEquals( 2, $return  );
-	}
+		$episode                  = get_post( $episode_id );
+		$html_player_content      = $this->players_controller->html_player( $episode->ID );
 
+		$this->assertStringContainsString( '<div id="embed-app" class="dark-mode">', $html_player_content );
+		$this->assertStringContainsString('Your browser does not support the audio tag.', $html_player_content);
+		$this->assertStringContainsString( $episode->post_title, $html_player_content );
+	}
 }

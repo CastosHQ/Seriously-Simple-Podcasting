@@ -1,4 +1,3 @@
-
 <div id="embed-app" class="dark-mode">
     <div class="player">
         <div class="player__main">
@@ -21,7 +20,7 @@
                         <audio class="clip">
                             <source loop preload="none"
                                     src="<?php echo $audioFile ?>">
-                                        Your bplayer-panel-rowser does not support the audio tag.
+                                        Your browser does not support the audio tag.
                         </audio>
                         <div class="progress" title="Seek">
                             <span class="progress__filled"></span>
@@ -112,11 +111,11 @@
                            Share
                 </div>
                 <div class="icons-holder">
-                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audioFile; ?>&t=<?php echo $episodeTitle; ?>"
+                    <a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audioFile; ?>&t=<?php echo $episode->post_title; ?>"
                        target="_blank" class="share-icon facebook" title="Share on Facebook">
                         <span></span>
                     </a>
-                    <a href="https://twitter.com/intent/tweet?text=<?php echo $audioFile; ?>&url=<?php echo $episodeTitle; ?>"
+                    <a href="https://twitter.com/intent/tweet?text=<?php echo $audioFile; ?>&url=<?php echo $episode->post_title; ?>"
                        target="_blank" class="share-icon twitter" title="Share on Twitter">
                         <span></span>
                     </a>

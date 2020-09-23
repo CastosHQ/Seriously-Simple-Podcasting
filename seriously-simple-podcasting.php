@@ -57,10 +57,10 @@ require SSP_PLUGIN_PATH . 'vendor/autoload.php';
  * @todo the admin_controller should really be renamed, as it's not really 'admin' specific
  * @todo alternatively the non admin specific functionality should be moved into it's own 'foundation' controller, perhaps even the parent controller, or a trait
  */
-global $ssp_admin, $ss_podcasting, $ssp_player;
+global $ssp_admin, $ss_podcasting, $ssp_players;
 $ssp_admin     = new Admin_Controller( __FILE__, SSP_VERSION );
 $ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
-$ssp_player = new Players_Controller(__FILE__, SSP_VERSION);
+$ssp_players = new Players_Controller(__FILE__, SSP_VERSION);
 /**
  * Only load the settings if we're in the admin dashboard
  */

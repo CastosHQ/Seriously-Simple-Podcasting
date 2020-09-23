@@ -18,9 +18,7 @@
                     </div>
                     <div>
                         <audio class="clip">
-                            <source loop preload="none"
-                                    src="<?php echo $audioFile ?>">
-                                        Your browser does not support the audio tag.
+                            <source loop preload="none" src="<?php echo $audioFile ?>">
                         </audio>
                         <div class="progress" title="Seek">
                             <span class="progress__filled"></span>

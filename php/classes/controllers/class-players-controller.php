@@ -39,12 +39,15 @@ class Players_Controller extends Controller {
 		wp_register_script( 'html5-player-v2', $this->assets_url . 'js/html5-player-v2.js', array( 'jquery' ), $this->version, true );
 		wp_enqueue_script( 'html5-player-v2' );
 	}
+
 	public function regsiter_shortcodes() {
 		add_shortcode('elementor_html_player', array($this, 'elementor_html_player'));
 	}
 
 	public function elementor_html_player($attributes) {
-		return $this->html_player($attributes['id']);
+		$templateData = $this->html_player($attributes['id']);
+
+		return $this->render->render($templateData, 'players/html-player');
 	}
 
 	/**
@@ -104,8 +107,7 @@ class Players_Controller extends Controller {
 
 		$templateData = apply_filters( 'html_player_data', $templateData );
 
-		// fix this later (return part) according to elementor integration demands
-		return $this->render->render($templateData, 'players/html-player');
+		return $templateData;
 	}
 
 	/**

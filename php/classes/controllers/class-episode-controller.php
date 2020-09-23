@@ -2,12 +2,27 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use Codeception\Module\WPQueries;
+use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Controllers\Players_Controller;
+use WP_Query;
+
 /**
  * SSP Episode Controller
  *
  * @package Seriously Simple Podcasting
  */
 class Episode_Controller extends Controller {
+
+
+	public $renderer = null;
+
+	public function __construct( $file, $version ) {
+		parent::__construct( $file, $version );
+		$this->renderer = new Renderer();
+
+		add_action( 'init', array( $this, 'register_shortcode' ), 1 );
+	}
 
 	/**
 	 * Get episode enclosure
@@ -185,5 +200,48 @@ class Episode_Controller extends Controller {
 		 * None of the above passed, return the no-album-art image
 		 */
 		return $this->get_no_album_art_image_array();
+	}
+
+	/**
+	 * Get Episode List
+	 *
+	 * @param array $episode_ids, array of episode ids being loaded into the player
+	 * @param $include_title
+	 * @param $include_excerpt
+	 * @param $include_player
+	 * @param $include_subscribe_links
+	 * @return array [ $src, $width, $height ]
+	 *
+	 * @since 2.2.3
+	 */
+	public function episode_list( $episode_ids, $include_title = false, $include_excerpt = false, $include_player = false, $include_subscribe_links = false ) {
+		$episodes = null;
+		$renderer = new Renderer();
+		if( !empty($episode_ids) ) {
+			$args = array(
+				'id' => array_values($episode_ids),
+				'post_type' => 'podcast'
+			);
+
+			$episodes = get_posts( $args );
+		}
+
+		$episodesTemplateData = array(
+			'episodes' => $episodes,
+		);
+
+		$episodesTemplateData = apply_filters('episode_list_data', $episodesTemplateData);
+
+		return $this->renderer->render($episodesTemplateData, 'episodes/episode-list');
+	}
+
+	public function register_shortcode() {
+		add_shortcode('elementor_episode_list', array($this, 'elementor_episode_list'));
+	}
+
+	public function elementor_episode_list($attributes) {
+		$episode_ids = explode(',', $attributes['id']);
+
+		return $this->episode_list($episode_ids);
 	}
 }

@@ -216,11 +216,12 @@ class Episode_Controller extends Controller {
 	 */
 	public function episode_list( $episode_ids, $include_title = false, $include_excerpt = false, $include_player = false, $include_subscribe_links = false ) {
 		$episodes = null;
-		$renderer = new Renderer();
+
 		if( !empty($episode_ids) ) {
 			$args = array(
-				'id' => array_values($episode_ids),
-				'post_type' => 'podcast'
+				'include' => array_values($episode_ids),
+				'post_type' => 'podcast',
+				'numberposts' => 10
 			);
 
 			$episodes = get_posts( $args );

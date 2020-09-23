@@ -14,7 +14,7 @@ foreach ( $episodes as $podcastEpisode ) {
 			</h5>
 				<?php
 					echo $player->media_player($podcastEpisode->ID);
-					echo do_shortcode('[elementor_html_player id=' . $podcastEpisode->ID . ']');
+					//echo do_shortcode('[elementor_html_player id=' . $podcastEpisode->ID . ']');
 				?>
 		</article>
 	<?php }

@@ -17,12 +17,12 @@ class Renderer {
 		ob_start();
 
 		// include the $template_path
-		$template_file = SSP_PLUGIN_PATH . '/templates/' . $template_path . '.php';
-		include_once($template_file);
+		$template_file = SSP_PLUGIN_PATH . 'templates/' . $template_path . '.php';
+		include_once $template_file;
 
 		$template_content = ob_get_clean();
 
-		$template_content = apply_filters( 'render_template', $template_content );
+		$template_content = apply_filters( 'ssp_render_template', $template_content );
 
 		return $template_content;
 	}

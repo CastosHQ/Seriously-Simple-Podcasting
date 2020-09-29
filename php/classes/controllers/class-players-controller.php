@@ -51,12 +51,19 @@ class Players_Controller extends Controller {
 
 	public function register_shortcodes() {
 		add_shortcode('elementor_html_player', array($this, 'elementor_html_player'));
+		add_shortcode('elementor_subscribe_links', array($this, 'elementor_subscribe_links'));
 	}
 
 	public function elementor_html_player($attributes) {
 		$templateData = $this->html_player($attributes['id']);
 
 		return $this->renderer->render($templateData, 'players/html-player');
+	}
+
+	public function elementor_subscribe_links($attributes) {
+		$templateData = $this->get_subscribe_links( $attributes['id'] );
+
+		return $this->renderer->render( $templateData, 'players/subscribe-links' );
 	}
 
 	/**
@@ -98,7 +105,7 @@ class Players_Controller extends Controller {
 		$albumArt        = $this->episode_controller->get_album_art( $id );
 		$podcastTitle    = get_option( 'ss_podcasting_data_title' );
 
-		$subscribeLinks = $this->subscribe_links( $id );
+		$subscribeLinks = $this->get_subscribe_links( $id );
 
 		$feedUrl = $this->get_feed_url();
 		// set any other info
@@ -118,7 +125,6 @@ class Players_Controller extends Controller {
 		$templateData = apply_filters( 'ssp_html_player_data', $templateData );
 
 		return $templateData;
-
 	}
 
 	/**
@@ -141,7 +147,7 @@ class Players_Controller extends Controller {
 		return $mediaPlayer;
 	}
 
-	public function subscribe_links( $id ) {
+	public function get_subscribe_links( $id ) {
 
 		$seriesId = $this->get_series_id( $id );
 
@@ -158,21 +164,29 @@ class Players_Controller extends Controller {
 		}
 
 		$subscribeLinks = array(
-			'itunes'     => $itunes,
-			'stitcher'   => $stitcher,
-			'spotify'    => $spotify,
-			'googlePlay' => $googlePlay
+			'itunes'     => ['title' => 'iTunes', 'link' => $itunes],
+			'stitcher'   => ['title' => 'Stitcher', 'link' => $stitcher],
+			'spotify'    => ['title' => 'Spotify', 'link' => $spotify],
+			'googlePlay' => ['title' => 'GooglePlay', 'link' => $googlePlay]
 		);
 
 		return $subscribeLinks;
 	}
 
+	public function subscribe_links( $id ) {
+		$templateData = $this->get_subscribe_links( $id );
+
+		$templateData = apply_filters('ssp_subscribe_links_data', $templateData);
+
+		return $this->renderer->render($templateData, 'players/subscribe-links.php');
+	}
+
 	public function get_series_id( $episode_id ) {
-		$series_id = false;
+		$series_id = 0;
 		$series    = get_the_terms( $episode_id, 'series' );
 
 		if ( $series ) {
-			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : false;
+			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : 0;
 		}
 
 		return $series_id;

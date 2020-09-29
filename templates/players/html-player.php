@@ -58,30 +58,30 @@
             </div>
             <div class="panel__inner">
                 <div class="subscribe-icons">
-                   <?php if($itunes): ?>
-                    <a href="<?php echo $itunes ?>"
+                   <?php if($itunes['link']): ?>
+                    <a href="<?php echo $itunes['link'] ?>"
                         target="_blank" class="apple-podcasts" title="Subscribe on Apple Podcasts">
                         <span></span>
                         Apple Podcasts
                     </a>
                     <?php endif; ?>
-                    <?php if($stitcher): ?>
-                        <a href="<?php echo $stitcher ?>" target="_blank" class="sticher"
+                    <?php if($stitcher['link']): ?>
+                        <a href="<?php echo $stitcher['link'] ?>" target="_blank" class="sticher"
                            title="Subscribe on Stitcher">
                             <span></span>
                                     Stitcher
                         </a>
                     <?php endif; ?>
-                    <?php if($spotify): ?>
-                        <a href="<?php echo $spotify ?>" target="_blank"
+                    <?php if($spotify['link']): ?>
+                        <a href="<?php echo $spotify['link'] ?>" target="_blank"
                            class="spotify"
                            title="Subscribe on Spotify">
                             <span></span>
                                     Spotify
                         </a>
                     <?php endif; ?>
-                    <?php if($googlePlay): ?>
-                        <a href="<?php echo $googlePlay ?>" target="_blank" class="google-play"
+                    <?php if($googlePlay['link']): ?>
+                        <a href="<?php echo $googlePlay['link'] ?>" target="_blank" class="google-play"
                            title="Subscribe on Google Play">
                             <span></span>
                             Google Play

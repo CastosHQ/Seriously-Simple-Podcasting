@@ -87,8 +87,9 @@ if ( version_compare( $wp_version, '4.7', '>=' ) ) {
 	$ssp_wp_rest_api = new Rest_Api_Controller( __FILE__, SSP_VERSION );
 }
 
-//if ( ssp_is_elementor_ok() === false) {
-//	return;
-//} else {
+if ( !ssp_is_elementor_ok()) {
+	return;
+} else {
 	Main::instance();
-//}
+}
+

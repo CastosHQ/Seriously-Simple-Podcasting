@@ -2,20 +2,19 @@
 
 namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
 
-use SeriouslySimplePodcasting\Controllers\Players_Controller;
-use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 
-class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
+class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 	public function get_name() {
-		return 'HTML Player';
+		return 'Episode List';
 	}
 
 	public function get_title() {
-		return __( 'HTML Player', 'seriously-simple-podcasting' );
+		return __( 'Episode List', 'seriously-simple-podcasting' );
 	}
 
 	public function get_icon() {
-		return 'fa fa-html5';
+		return 'fa fa-list';
 	}
 
 	public function get_categories() {
@@ -56,8 +55,9 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 				'label' => __( 'Show Elements', 'plugin-domain' ),
 				'type' => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
+				'multiple' => true,
 				'default' => array_shift(array_values($episodeOptions))
-		]
+			]
 		);
 
 		$this->end_controls_section();
@@ -65,21 +65,14 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$i = 0;
+		foreach($settings['show_elements'] as $element) {
+			$episodeIds[$i] = $element;
+			$i++;
+		}
 
-		$player = new Players_Controller(__FILE__, SSP_VERSION);
-		$render = new Renderer();
+		$episodeController = new Episode_Controller(__FILE__, SSP_VERSION);
 
-		$html_player_data = $player->html_player($settings['show_elements']);
-		$html_player = $render->render($html_player_data, 'players/html-player');
-
-		echo $html_player;
-	}
-
-	protected function _content_template() {
-		?>
-		<# _.each( settings.show_elements, function( element ) { #>
-		<div>{{{ element }}}</div>
-		<# } ) #>
-		<?php
+		echo $episodeController->episode_list($episodeIds);
 	}
 }

@@ -1117,3 +1117,15 @@ if ( ! function_exists( 'get_keywords_for_episode' ) ) {
 
 	}
 }
+
+if (! function_exists('ssp_is_elementor_ok') ) {
+
+    function ssp_is_elementor_ok() {
+	    // Check if Elementor installed and activated
+	    if ( ! did_action( 'elementor/loaded' ) ) {
+		    return false;
+	    }
+
+	    return true;
+    }
+}

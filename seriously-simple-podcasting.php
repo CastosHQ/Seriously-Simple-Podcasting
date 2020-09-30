@@ -30,6 +30,7 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
+use SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Main;
 
 define( 'SSP_VERSION', '2.2.2' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
@@ -49,6 +50,7 @@ if ( ! ssp_is_php_version_ok() ) {
 if ( ! ssp_is_vendor_ok() ) {
 	return;
 }
+
 ssp_beta_check();
 require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
@@ -84,3 +86,9 @@ if ( version_compare( $wp_version, '4.7', '>=' ) ) {
 	global $ssp_wp_rest_api;
 	$ssp_wp_rest_api = new Rest_Api_Controller( __FILE__, SSP_VERSION );
 }
+
+//if ( ssp_is_elementor_ok() === false) {
+//	return;
+//} else {
+	Main::instance();
+//}

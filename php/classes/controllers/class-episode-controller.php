@@ -26,7 +26,9 @@ class Episode_Controller extends Controller {
 
 	/**
 	 * Get episode enclosure
-	 * @param  integer $episode_id ID of episode
+	 *
+	 * @param integer $episode_id ID of episode
+	 *
 	 * @return string              URL of enclosure
 	 */
 	public function get_enclosure( $episode_id = 0 ) {
@@ -95,11 +97,12 @@ class Episode_Controller extends Controller {
 
 	/**
 	 * Convert the array returned from wp_get_attachment_image_src into a human readable version
-	 * @todo check if there is a WordPress function for this
 	 *
 	 * @param $image_data_array
 	 *
 	 * @return mixed
+	 * @todo check if there is a WordPress function for this
+	 *
 	 */
 	private function return_renamed_image_array_keys( $image_data_array ) {
 		$new_image_data_array = array();
@@ -125,6 +128,7 @@ class Episode_Controller extends Controller {
 				return true;
 			}
 		}
+
 		return false;
 	}
 
@@ -205,11 +209,12 @@ class Episode_Controller extends Controller {
 	/**
 	 * Get Episode List
 	 *
-	 * @param array $episode_ids, array of episode ids being loaded into the player
+	 * @param array $episode_ids , array of episode ids being loaded into the player
 	 * @param $include_title
 	 * @param $include_excerpt
 	 * @param $include_player
 	 * @param $include_subscribe_links
+	 *
 	 * @return array [ $src, $width, $height ]
 	 *
 	 * @since 2.2.3
@@ -217,32 +222,32 @@ class Episode_Controller extends Controller {
 	public function episode_list( $episode_ids, $include_title = false, $include_excerpt = false, $include_player = false, $include_subscribe_links = false ) {
 		$episodes = null;
 
-		if( !empty($episode_ids) ) {
+		if ( ! empty( $episode_ids ) ) {
 			$args = array(
-				'include' => array_values($episode_ids),
-				'post_type' => 'podcast',
+				'include'     => array_values( $episode_ids ),
+				'post_type'   => 'podcast',
 				'numberposts' => 10
 			);
 
 			$episodes = get_posts( $args );
 		}
 
-		$episodesTemplateData = array(
+		$episodes_template_data = array(
 			'episodes' => $episodes,
 		);
 
-		$episodesTemplateData = apply_filters('episode_list_data', $episodesTemplateData);
+		$episodesTemplateData = apply_filters( 'episode_list_data', $episodesTemplateData );
 
-		return $this->renderer->render($episodesTemplateData, 'episodes/episode-list');
+		return $this->renderer->render( $episodes_template_data, 'episodes/episode-list' );
 	}
 
 	public function register_shortcode() {
-		add_shortcode('elementor_episode_list', array($this, 'elementor_episode_list'));
+		add_shortcode( 'elementor_episode_list', array( $this, 'elementor_episode_list' ) );
 	}
 
-	public function elementor_episode_list($attributes) {
-		$episode_ids = explode(',', $attributes['id']);
+	public function elementor_episode_list( $attributes ) {
+		$episode_ids = explode( ',', $attributes['id'] );
 
-		return $this->episode_list($episode_ids);
+		return $this->episode_list( $episode_ids );
 	}
 }

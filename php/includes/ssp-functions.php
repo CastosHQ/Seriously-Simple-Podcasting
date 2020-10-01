@@ -1122,7 +1122,7 @@ if (! function_exists('ssp_is_elementor_ok') ) {
 
     function ssp_is_elementor_ok() {
 	    // Check if Elementor installed and activated
-	    if ( did_action( 'elementor/loaded' ) ) {
+	    if ( did_action( 'elementor/loaded' ) === 0 ) {
 		    return true;
 	    }
 	    return false;

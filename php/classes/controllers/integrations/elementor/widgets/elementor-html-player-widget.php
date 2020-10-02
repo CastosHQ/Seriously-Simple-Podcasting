@@ -24,15 +24,15 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 
 	public function get_episodes() {
 		$args = array(
-			'fields'          => array('post_title, id'),
-			'posts_per_page'  => -1,
-			'post_type' => 'podcast'
+			'fields'         => array( 'post_title, id' ),
+			'posts_per_page' => - 1,
+			'post_type'      => 'podcast'
 		);
 
-		$episodes = get_posts($args);
+		$episodes       = get_posts( $args );
 		$episodeOptions = [];
-		foreach($episodes as $episode) {
-			$episodeOptions[$episode->ID] = $episode->post_title;
+		foreach ( $episodes as $episode ) {
+			$episodeOptions[ $episode->ID ] = $episode->post_title;
 		}
 
 		return $episodeOptions;
@@ -44,7 +44,7 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 			'content_section',
 			[
 				'label' => __( 'Content', 'seriously-simple-podcasting' ),
-				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
 			]
 		);
 
@@ -53,11 +53,11 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'show_elements',
 			[
-				'label' => __( 'Show Elements', 'plugin-domain' ),
-				'type' => \Elementor\Controls_Manager::SELECT2,
+				'label'   => __( 'Show Elements', 'plugin-domain' ),
+				'type'    => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
-				'default' => array_shift(array_values($episodeOptions))
-		]
+				'default' => array_shift( array_values( $episodeOptions ) )
+			]
 		);
 
 		$this->end_controls_section();
@@ -66,20 +66,22 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	protected function render() {
 		$settings = $this->get_settings_for_display();
 
-		$player = new Players_Controller(__FILE__, SSP_VERSION);
+		$episode_id = $settings['show_elements'];
+
+		$player = new Players_Controller( __FILE__, SSP_VERSION );
 		$render = new Renderer();
 
-		$html_player_data = $player->html_player($settings['show_elements']);
-		$html_player = $render->render($html_player_data, 'players/html-player');
+		$html_player_data = $player->html_player( $episode_id );
+		$html_player      = $render->render( $html_player_data, 'players/html-player' );
 
 		echo $html_player;
 	}
 
 	protected function _content_template() {
 		?>
-		<# _.each( settings.show_elements, function( element ) { #>
-		<div>{{{ element }}}</div>
-		<# } ) #>
+        <# _.each( settings.show_elements, function( element ) { #>
+        <div>{{{ element }}}</div>
+        <# } ) #>
 		<?php
 	}
 }

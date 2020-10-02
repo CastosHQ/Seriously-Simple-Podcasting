@@ -48,7 +48,6 @@ class Players_Controller extends Controller {
 		wp_enqueue_script( 'html5-player-v2' );
 	}
 
-
 	public function register_shortcodes() {
 		add_shortcode( 'elementor_html_player', array( $this, 'elementor_html_player' ) );
 		add_shortcode( 'elementor_subscribe_links', array( $this, 'elementor_subscribe_links' ) );
@@ -99,23 +98,25 @@ class Players_Controller extends Controller {
 	 * @return string
 	 */
 	public function html_player( $id ) {
-		$episode         = get_post( $id );
+		$episode          = get_post( $id );
 		$episode_duration = get_post_meta( $id, 'duration', true );
 		$audio_file       = get_post_meta( $id, 'audio_file', true );
 		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
+		$episode_id       = $id;
 
 		$subscribe_links = $this->get_subscribe_links( $id );
 
-		$feedUrl = $this->get_feed_url();
+		$feed_url = $this->get_feed_url();
 		// set any other info
 		$templateData = array(
 			'episode'      => $episode,
+			'episode_id'   => $episode_id,
 			'duration'     => $episode_duration,
 			'audioFile'    => $audio_file,
 			'albumArt'     => $album_art,
 			'podcastTitle' => $podcast_title,
-			'feedUrl'      => $feedUrl,
+			'feedUrl'      => $feed_url,
 			'itunes'       => $subscribe_links['itunes'],
 			'stitcher'     => $subscribe_links['stitcher'],
 			'spotify'      => $subscribe_links['spotify'],
@@ -137,7 +138,7 @@ class Players_Controller extends Controller {
 	public function media_player( $id ) {
 		// get src file
 		$src_file = get_post_meta( $id, 'audio_file', true );
-		$params  = array(
+		$params   = array(
 			'src'     => $src_file,
 			'preload' => 'none'
 		);
@@ -157,9 +158,9 @@ class Players_Controller extends Controller {
 			$spotify    = get_option( "ss_podcasting_spotify_url_{$series_id}" );
 			$googlePlay = get_option( "ss_podcasting_google_play_url_{$series_id}" );
 		} else {
-			$itunes     = get_option( "ss_podcasting_itunes_url" );
-			$stitcher   = get_option( "ss_podcasting_stitcher_url" );
-			$spotify    = get_option( "ss_podcasting_spotify_url" );
+			$itunes      = get_option( "ss_podcasting_itunes_url" );
+			$stitcher    = get_option( "ss_podcasting_stitcher_url" );
+			$spotify     = get_option( "ss_podcasting_spotify_url" );
 			$google_play = get_option( "ss_podcasting_google_play_url" );
 		}
 

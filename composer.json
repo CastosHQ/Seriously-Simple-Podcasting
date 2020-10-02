@@ -26,6 +26,9 @@
     "classmap": ["php/"]
   },
   "require-dev": {
-    "lucatume/wp-browser": "^2.2"
+    "lucatume/wp-browser": "^2.2",
+    "squizlabs/php_codesniffer": "^3.5",
+    "wp-coding-standards/wpcs": "^2.3",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0"
   }
 }

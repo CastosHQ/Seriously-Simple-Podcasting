@@ -7,11 +7,11 @@ use SeriouslySimplePodcasting\Renderers\Renderer;
 
 class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	public function get_name() {
-		return 'HTML Player';
+		return 'Castos Player';
 	}
 
 	public function get_title() {
-		return __( 'HTML Player', 'seriously-simple-podcasting' );
+		return __( 'Castos Player', 'seriously-simple-podcasting' );
 	}
 
 	public function get_icon() {

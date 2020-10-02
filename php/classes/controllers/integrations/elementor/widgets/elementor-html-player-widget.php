@@ -72,7 +72,7 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 		$render = new Renderer();
 
 		$html_player_data = $player->html_player( $episode_id );
-		$html_player      = $render->render( $html_player_data, 'players/html-player' );
+		$html_player      = $render->render( $html_player_data, 'players/castos-player-v1' );
 
 		echo $html_player;
 	}

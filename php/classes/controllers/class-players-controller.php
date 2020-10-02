@@ -42,10 +42,10 @@ class Players_Controller extends Controller {
 	}
 
 	public function load_player_assets() {
-		wp_register_style( 'html5-player-v2', $this->assets_url . 'css/html5-player-v2.css', array(), $this->version );
-		wp_enqueue_style( 'html5-player-v2' );
-		wp_register_script( 'html5-player-v2', $this->assets_url . 'js/html5-player-v2.js', array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'html5-player-v2' );
+		wp_register_style( 'castos-player-v1', $this->assets_url . 'css/castos-player-v1.css', array(), $this->version );
+		wp_enqueue_style( 'castos-player-v1' );
+		wp_register_script( 'castos-player-v1', $this->assets_url . 'js/castos-player-v1.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'castos-player-v1' );
 	}
 
 	public function register_shortcodes() {
@@ -56,7 +56,7 @@ class Players_Controller extends Controller {
 	public function elementor_html_player( $attributes ) {
 		$template_data = $this->html_player( $attributes['id'] );
 
-		return $this->renderer->render( $template_data, 'players/html-player' );
+		return $this->renderer->render( $template_data, 'players/castos-player-v1' );
 	}
 
 	public function elementor_subscribe_links( $attributes ) {

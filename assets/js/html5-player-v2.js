@@ -2,6 +2,7 @@
 // PLAYER
 ///////////////////////////////////////////////////////////////////////////////
 /* Get Our Elements */
+
 const playback = document.querySelector('.playback');
 const audio = document.querySelector('.clip');
 const playBtn = document.querySelector('.play-btn');

@@ -40,8 +40,8 @@
 					</div>
 				</div>
 				<nav class="player-panels-nav">
-					<button id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe">Subscribe</button>
-					<button id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
+					<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe">Subscribe</button>
+					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
 				</nav>
 			</div>
 			<span class="powered-by">

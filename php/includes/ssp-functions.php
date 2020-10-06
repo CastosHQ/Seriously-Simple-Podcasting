@@ -1123,7 +1123,8 @@ if ( ! function_exists( 'get_keywords_for_episode' ) ) {
  */
 if ( ! function_exists( 'ssp_is_elementor_ok' ) ) {
 	function ssp_is_elementor_ok() {
-		if ( did_action( 'elementor/loaded' ) === 1 ) {
+
+		if ( did_action( 'elementor/loaded' ) !== 0 ) {
 			return true;
 		}
 

@@ -16,10 +16,10 @@ class CastosPlayerDeprecated extends Component {
 		return (
 			<div className={this.props.className}>
 				<div className="ssp-player ssp-player-large"
-				     data-player-instance-number={"1"}
-				     data-player-waveform-colour="#fff" data-player-waveform-progress-colour="#00d4f7"
-				     data-source-file={this.props.episodeFileUrl}
-				     id="ssp_player_id_1" style={playerBackgroundStyle}>
+					 data-player-instance-number={"1"}
+					 data-player-waveform-colour="#fff" data-player-waveform-progress-colour="#00d4f7"
+					 data-source-file={this.props.episodeFileUrl}
+					 id="ssp_player_id_1" style={playerBackgroundStyle}>
 					<div className="ssp-album-art-container">
 						<div className="ssp-album-art" style={imageStyle}/>
 					</div>
@@ -55,8 +55,8 @@ class CastosPlayerDeprecated extends Component {
 												<div className="ssp-playback-speed-label-container">
 													<div className="ssp-playback-speed-label-wrapper">
 														<span data-playback-speed-id="ssp_playback_speed_1"
-														      id="ssp_playback_speed1"
-														      data-ssp-playback-rate={1}>1X</span>
+															  id="ssp_playback_speed1"
+															  data-ssp-playback-rate={1}>1X</span>
 													</div>
 												</div>
 												<div className="ssp-download-container">

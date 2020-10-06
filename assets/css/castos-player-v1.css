@@ -2,7 +2,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&family=Roboto:wght@400;500&display=swap');
 
 /* Defaults */
-#embed-app {
+.castos-player {
     font-family: 'Roboto', sans-serif;
     line-height: 1;
     position: relative;
@@ -194,7 +194,7 @@ body {
     -webkit-mask-image: url('images/player/images/icon-download.svg');
 }
 
-#embed-app .share-icon:hover {
+.castos-player .share-icon:hover {
     background-color: #df4e4f !important;
 }
 .player-panel .player-panel-row input {
@@ -510,59 +510,59 @@ body {
 /* ///////////////////////////////////////////////////////////////////////// */
 /* LIGHT MODE */
 /* ///////////////////////////////////////////////////////////////////////// */
-#embed-app.light-mode .player {
+.castos-player.light-mode .player {
     background: linear-gradient(359.68deg, #dddddd 1.03%, #f0f0f0 77.9%);
 }
-#embed-app.light-mode .powered-by {
+.castos-player.light-mode .powered-by {
     background: url('images/player/images/castos-logo-dark.svg');
 }
-#embed-app.light-mode .player-panels .player-panel {
+.castos-player.light-mode .player-panels .player-panel {
     background: #fff;
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 }
-#embed-app.light-mode .close-btn {
+.castos-player.light-mode .close-btn {
     background-color: #423d4c;
 }
-#embed-app.light-mode .close-btn span {
+.castos-player.light-mode .close-btn span {
     background-color: #fff;
 }
-#embed-app.light-mode .episode-title,
-#embed-app.light-mode .currently-playing .show,
-#embed-app.light-mode .subscribe-icons a,
-#embed-app.light-mode .player-panel h3,
-#embed-app.light-mode .player-panel .player-panel-row .title,
-#embed-app.light-mode .playback__timers {
+.castos-player.light-mode .episode-title,
+.castos-player.light-mode .currently-playing .show,
+.castos-player.light-mode .subscribe-icons a,
+.castos-player.light-mode .player-panel h3,
+.castos-player.light-mode .player-panel .player-panel-row .title,
+.castos-player.light-mode .playback__timers {
     color: #4b4659;
 }
-#embed-app.light-mode .share-icon,
-#embed-app.light-mode .player-panel .player-panel-row input {
+.castos-player.light-mode .share-icon,
+.castos-player.light-mode .player-panel .player-panel-row input {
     background-color: #f1f1f1;
 }
-#embed-app.light-mode .player-panel .player-panel-row input {
+.castos-player.light-mode .player-panel .player-panel-row input {
     color: #5f596e;
 }
-#embed-app.light-mode .player-panels-nav button {
+.castos-player.light-mode .player-panels-nav button {
     color: #2e2a37;
     background-color: rgba(0, 0, 0, 0);
 }
-#embed-app.light-mode .player:hover .player-panels-nav button:hover {
+.castos-player.light-mode .player:hover .player-panels-nav button:hover {
     background-color: rgba(0, 0, 0, 0.05);
 }
-#embed-app.light-mode .player-btn__speed {
+.castos-player.light-mode .player-btn__speed {
     color: #4b4659;
     border: 1px solid #4b4659;
 }
-#embed-app.light-mode .progress {
+.castos-player.light-mode .progress {
     background-color: #d3d3d3;
 }
-#embed-app.light-mode .player-panel .player-panel-row button {
+.castos-player.light-mode .player-panel .player-panel-row button {
     background-color: #5f596e;
 }
-#embed-app.light-mode .subscribe-icons span,
-#embed-app.light-mode .share-icon span,
-#embed-app.light-mode .player-btn__volume,
-#embed-app.light-mode .player-btn__rwd,
-#embed-app.light-mode .player-btn__fwd {
+.castos-player.light-mode .subscribe-icons span,
+.castos-player.light-mode .share-icon span,
+.castos-player.light-mode .player-btn__volume,
+.castos-player.light-mode .player-btn__rwd,
+.castos-player.light-mode .player-btn__fwd {
     background-color: #4c4659;
 }
 
@@ -570,59 +570,59 @@ body {
 /* AUTO DETECT LIGHT MODE */
 /* ///////////////////////////////////////////////////////////////////////// */
 @media (prefers-color-scheme: light) {
-    #embed-app .player {
+    .castos-player .player {
         background: linear-gradient(359.68deg, #dddddd 1.03%, #f0f0f0 77.9%);
     }
-    #embed-app .powered-by {
+    .castos-player .powered-by {
         background: url('images/player/images/castos-logo-dark.svg');
     }
-    #embed-app .player-panels .player-panel {
+    .castos-player .player-panels .player-panel {
         background: #fff;
         box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
     }
-    #embed-app .close-btn {
+    .castos-player .close-btn {
         background-color: #423d4c;
     }
-    #embed-app .close-btn span {
+    .castos-player .close-btn span {
         background-color: #fff;
     }
-    #embed-app .episode-title,
-    #embed-app .currently-playing .show,
-    #embed-app .subscribe-icons a,
-    #embed-app .player-panel h3,
-    #embed-app .player-panel .player-panel-row .title,
-    #embed-app .playback__timers {
+    .castos-player .episode-title,
+    .castos-player .currently-playing .show,
+    .castos-player .subscribe-icons a,
+    .castos-player .player-panel h3,
+    .castos-player .player-panel .player-panel-row .title,
+    .castos-player .playback__timers {
         color: #4b4659;
     }
-    #embed-app .share-icon,
-    #embed-app .player-panel .player-panel-row input {
+    .castos-player .share-icon,
+    .castos-player .player-panel .player-panel-row input {
         background-color: #f1f1f1;
     }
-    #embed-app .player-panel .player-panel-row input {
+    .castos-player .player-panel .player-panel-row input {
         color: #5f596e;
     }
-    #embed-app .player-panels-nav button {
+    .castos-player .player-panels-nav button {
         color: #2e2a37;
         background-color: rgba(0, 0, 0, 0);
     }
-    #embed-app .player:hover .player-panels-nav button:hover {
+    .castos-player .player:hover .player-panels-nav button:hover {
         background-color: rgba(0, 0, 0, 0.05);
     }
-    #embed-app .player-btn__speed {
+    .castos-player .player-btn__speed {
         color: #4b4659;
         border: 1px solid #4b4659;
     }
-    #embed-app .progress {
+    .castos-player .progress {
         background-color: #d3d3d3;
     }
-    #embed-app .player-panel .player-panel-row button {
+    .castos-player .player-panel .player-panel-row button {
         background-color: #5f596e;
     }
-    #embed-app .subscribe-icons span,
-    #embed-app .share-icon span,
-    #embed-app .player-btn__volume,
-    #embed-app .player-btn__rwd,
-    #embed-app .player-btn__fwd {
+    .castos-player .subscribe-icons span,
+    .castos-player .share-icon span,
+    .castos-player .player-btn__volume,
+    .castos-player .player-btn__rwd,
+    .castos-player .player-btn__fwd {
         background-color: #4c4659;
     }
 }
@@ -630,61 +630,61 @@ body {
 /* ///////////////////////////////////////////////////////////////////////// */
 /* DARK MODE */
 /* ///////////////////////////////////////////////////////////////////////// */
-#embed-app.dark-mode .player {
+.castos-player.dark-mode .player {
     background: linear-gradient(359.68deg, #24212c 1.03%, #383344 77.9%);
 }
-#embed-app.dark-mode .powered-by {
+.castos-player.dark-mode .powered-by {
     background: url('images/player/images/castos-logo-light.svg');
 }
-#embed-app.dark-mode .player-panels .player-panel {
+.castos-player.dark-mode .player-panels .player-panel {
     background: #2e2a37;
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 }
-#embed-app.dark-mode .close-btn {
+.castos-player.dark-mode .close-btn {
     background-color: #fff;
 }
-#embed-app.dark-mode .close-btn span {
+.castos-player.dark-mode .close-btn span {
     background-color: #df4e4f;
 }
-#embed-app.dark-mode .episode-title,
-#embed-app.dark-mode .currently-playing .show,
-#embed-app.dark-mode .subscribe-icons a,
-#embed-app.dark-mode .player-panel h3,
-#embed-app.dark-mode .player-panel .player-panel-row .title,
-#embed-app.dark-mode .playback__timers {
+.castos-player.dark-mode .episode-title,
+.castos-player.dark-mode .currently-playing .show,
+.castos-player.dark-mode .subscribe-icons a,
+.castos-player.dark-mode .player-panel h3,
+.castos-player.dark-mode .player-panel .player-panel-row .title,
+.castos-player.dark-mode .playback__timers {
     color: #fff;
 }
-#embed-app.dark-mode .share-icon,
-#embed-app.dark-mode .player-panel .player-panel-row input {
+.castos-player.dark-mode .share-icon,
+.castos-player.dark-mode .player-panel .player-panel-row input {
     color: #d4c9c9;
     background-color: #423d4c;
 }
-#embed-app.dark-mode .player-panels-nav button {
+.castos-player.dark-mode .player-panels-nav button {
     color: #fff;
     background-color: rgba(255, 255, 255, 0);
 }
-#embed-app.dark-mode .player:hover .player-panels-nav button:hover {
+.castos-player.dark-mode .player:hover .player-panels-nav button:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
-#embed-app.dark-mode .player-btn__speed {
+.castos-player.dark-mode .player-btn__speed {
     color: #fff;
     border: 1px solid #fff;
 }
-#embed-app.dark-mode .progress {
+.castos-player.dark-mode .progress {
     background-color: #4c4659;
 }
-#embed-app.dark-mode .player-panel .player-panel-row button {
+.castos-player.dark-mode .player-panel .player-panel-row button {
     background-color: #f8f6f6;
 }
-#embed-app.dark-mode .subscribe-icons span,
-#embed-app.dark-mode .share-icon span {
+.castos-player.dark-mode .subscribe-icons span,
+.castos-player.dark-mode .share-icon span {
     background-color: #fff;
 }
-#embed-app.dark-mode .subscribe-icons span,
-#embed-app.dark-mode .share-icon span,
-#embed-app.dark-mode .player-btn__volume,
-#embed-app.dark-mode .player-btn__rwd,
-#embed-app.dark-mode .player-btn__fwd {
+.castos-player.dark-mode .subscribe-icons span,
+.castos-player.dark-mode .share-icon span,
+.castos-player.dark-mode .player-btn__volume,
+.castos-player.dark-mode .player-btn__rwd,
+.castos-player.dark-mode .player-btn__fwd {
     background-color: #fff;
 }
 

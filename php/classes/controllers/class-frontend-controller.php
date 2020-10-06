@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Renderers\Renderer;
 use stdClass;
 use WP_Query;
 
@@ -34,15 +35,6 @@ class Frontend_Controller extends Controller {
 
 	public $episode_controller;
 
-	// @todo reference prior to analytics launch
-	public $style_guide = array(
-		'dark'     => '#3A3A3A',
-		'medium'   => '#666666',
-		'light'    => '#939393',
-		'lightest' => '#f9f9f9',
-		'accent'   => '#ea5451',
-	);
-
 	/**
 	 * Constructor
 	 *
@@ -54,12 +46,6 @@ class Frontend_Controller extends Controller {
 		parent::__construct( $file, $version );
 
 		$this->episode_controller = new Episode_Controller( $file, $version );
-
-		global $large_player_instance_number;
-		$large_player_instance_number = 0;
-
-		// Apply filters to the style guide so that users may swap out colours of the player
-		$this->style_guide = apply_filters( 'ssp_filter_style_guide', $this->style_guide );
 
 		$this->register_hooks_and_filters();
 	}
@@ -114,92 +100,6 @@ class Frontend_Controller extends Controller {
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 
-		// Load fonts, styles and javascript
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_styles_and_scripts' ) );
-
-		// Enqueue HTML5 scripts only if the page has an HTML5 player on it
-		add_action( 'wp_print_footer_scripts', array( $this, 'html5_player_conditional_scripts' ) );
-
-		// Enqueue HTML5 styles only if the page has an HTML5 player on it
-		add_action( 'wp_print_footer_scripts', array( $this, 'html5_player_styles' ) );
-
-		// Add overridable styles to footer
-		add_action( 'wp_footer', array( $this, 'ssp_override_player_styles' ) );
-
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_scripts' ) );
-	}
-
-	/**
-	 * HTML5 player additional scripts
-	 * @todo this should really be done in a better way
-	 */
-	public function html5_player_conditional_scripts() {
-		global $large_player_instance_number;
-		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
-			return;
-		}
-		?>
-		<link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700&v=<?php echo SSP_VERSION ?>"/>
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/icon_fonts.css?v=<?php echo SSP_VERSION ?>"/>
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/fonts/Gizmo/gizmo.css?v=<?php echo SSP_VERSION ?>"/>
-		<link rel="stylesheet" href="<?php echo SSP_PLUGIN_URL ?>assets/css/frontend.css?v=<?php echo SSP_VERSION ?>"/>
-		<?php if (defined('SCRIPT_DEBUG')){ ?>
-			<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.js?v=<?php echo SSP_VERSION ?>"></script>
-		<?php } else { ?>
-			<script src="//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.min.js?v=<?php echo SSP_VERSION ?>"></script>
-		<?php }
-	}
-
-	/**
-	 * Register Custom HTML player styles
-	 * @todo can this be merged into the load_styles_and_scripts function
-	 */
-	public function html5_player_styles() {
-		global $large_player_instance_number;
-		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
-			return;
-		}
-		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5-player.css', array(), $this->version );
-		wp_enqueue_style( 'ssp-html5-player' );
-	}
-
-	/**
-	 * Override player styles
-	 * @todo what is this used for
-	 */
-	public function ssp_override_player_styles() {
-		$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
-		?>
-		<style type="text/css">
-			.ssp-wave wave wave {
-				background: <?php echo $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1"; ?> !important;
-			}
-		</style>
-		<?php
-	}
-
-	/**
-	 * Enqueue styles and scripts
-	 */
-	public function load_styles_and_scripts() {
-		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
-
-		if ( 'standard' === $player_style ) {
-			return;
-		}
-		wp_register_script( 'media-player', $this->assets_url . 'js/media.player.js', array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'media-player' );
-
-		wp_register_script( 'html5-player', $this->assets_url . 'js/html5.player.js', array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'html5-player' );
-	}
-
-	/**
-	 * @todo can this be merged into the load_styles_and_scripts method?
-	 */
-	public function load_scripts() {
-		wp_register_style( 'ssp-frontend-player', $this->assets_url . 'css/player.css', array(), $this->version );
-		wp_enqueue_style( 'ssp-frontend-player' );
 	}
 
 	/**
@@ -393,165 +293,61 @@ class Frontend_Controller extends Controller {
 		if ( $show_player ) {
 			$media_player = $this->load_media_player( $src_file, $episode_id, $player_size );
 		}
-
 		return $media_player;
 	}
 
 	/**
-	 * Load media player for given file
-	 * @param  string  $src_file        Source of file
-	 * @param  integer $episode_id Episode ID for audio file
-	 * @param  string $player_size mini or large
-	 * @return string              Media player HTML on success, empty string on failure
+	 * @param $src_file
+	 * @param $episode_id
+	 * @param $player_size
+	 *
+	 * @return mixed|void
 	 */
-	public function load_media_player($src_file = '', $episode_id = 0, $player_size){
+	public function load_media_player( $src_file, $episode_id, $player_size ) {
+		$players_controller = new Players_Controller( $this->file, $this->version );
+		$renderer           = new Renderer();
+
+		// Get episode type and default to audio
+		$type = $this->get_episode_type( $episode_id );
+		if ( ! $type ) {
+			$type = 'audio';
+		}
+
+		/**
+		 * If the media file is of type video
+		 * @todo is this necessary in the case of the HTML5 player?
+		 */
+		if ( 'video' === $type ) {
+			// Use featured image as video poster
+			if ( $episode_id && has_post_thumbnail( $episode_id ) ) {
+				$poster = wp_get_attachment_url( get_post_thumbnail_id( $episode_id ) );
+				if ( $poster ) {
+					$params['poster'] = $poster;
+				}
+			}
+
+			$player = wp_video_shortcode( $params );
+			// Allow filtering so that alternative players can be used
+			return apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
+		}
+
 		/**
 		 * Check if this player is being loaded via the AMP for WordPress plugin and if so, force the standard player
 		 * https://wordpress.org/plugins/amp/
 		 */
 		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			$player_size = 'mini';
+			$player_size = 'standard';
 		}
 
-		if ( $player_size == 'large' || $player_size == 'larger' ) {
-			global $large_player_instance_number;
-			$large_player_instance_number++;
+		if ( 'standard' === $player_size ) {
+			$player = $players_controller->media_player( $episode_id );
+		} else {
+			$template_data = $players_controller->html_player( $episode_id );
+			$player = $renderer->render( $template_data, 'players/castos-player-v1' );
 		}
 
-		$player = '';
-
-		if ( $src_file ) {
-
-			// Get episode type and default to audio
-			$type = $this->get_episode_type( $episode_id );
-			if( ! $type ) {
-				$type = 'audio';
-			}
-
-			// Switch to podcast player URL
-			$src_file = str_replace( 'podcast-download', 'podcast-player', $src_file );
-
-			// Set up parameters for media player
-			$params = array( 'src' => $src_file, 'preload' => 'none' );
-
-			// Use built-in WordPress media player
-			// Or use new custom player if user has selected as such
-
-			switch( $type ) {
-
-				case 'audio' :
-
-					$player_style = (string) get_option( 'ss_podcasting_player_style' );
-					if( $player_size == "large" ){
-						$player_style = "larger";
-					}
-
-					if( "larger" !== $player_style || "mini" === $player_size ){
-						$player = wp_audio_shortcode( $params );
-					}else{
-
-						// ---- NEW PLAYER -----
-
-						// Get episode album art
-						$albumArt = $this->episode_controller->get_album_art( $episode_id );
-
-						$player_background_colour = get_option( 'ss_podcasting_player_background_skin_colour', false );
-						$player_wave_form_colour = get_option( 'ss_podcasting_player_wave_form_colour', false );
-						$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
-
-						$player_background_colour = ( $player_background_colour ? ' style="background: ' . $player_background_colour . ';"' : 'background: #333;' );
-						$player_wave_form_progress_colour = ( $player_wave_form_progress_colour ? $player_wave_form_progress_colour : "#28c0e1" );
-
-						$meta = $this->episode_meta_details( $episode_id, '', true );
-
-						ob_start();
-						// @todo move this all into an overridable template file
-						?>
-						<div class="ssp-player ssp-player-large" data-player-instance-number="<?php echo $large_player_instance_number; ?>" data-player-waveform-colour="<?php echo $player_wave_form_colour; ?>" data-player-waveform-progress-colour="<?php echo $player_wave_form_progress_colour; ?>" data-source-file="<?php echo $src_file ?>" id="ssp_player_id_<?php echo $large_player_instance_number; ?>" <?php echo $player_background_colour ?>>
-							<?php if( apply_filters( 'ssp_show_album_art', true, get_the_ID() ) ) { ?>
-								<div class="ssp-album-art-container">
-									<div class="ssp-album-art" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;"></div>
-								</div>
-							<?php }; ?>
-							<div style="overflow: hidden">
-								<div class="ssp-player-inner" style="overflow: hidden;">
-									<div class="ssp-player-info">
-										<div style="width: 80%; float:left;">
-											<h3 class="ssp-player-title episode-title">
-												<?php
-												echo apply_filters( 'ssp_podcast_title', get_the_title( $episode_id ), get_the_ID() );
-												if( $series = get_the_terms( $episode_id, 'series' ) ){
-													echo ( !empty( $series ) && isset( $series[0] ) ) ? '<br><span class="ssp-player-series">' . substr( $series[0]->name, 0, 35) . ( strlen( $series[0]->name ) > 35 ? '...' : '' ) . '</span>' : '';
-												}
-												?>
-											</h3>
-										</div>
-										<div class="ssp-download-episode" style="overflow: hidden;text-align:right;"></div>
-										<div>&nbsp;</div>
-										<div class="ssp-media-player">
-											<div class="ssp-custom-player-controls">
-												<div class="ssp-play-pause" id="ssp-play-pause">
-													<span class="ssp-icon ssp-icon-play_icon">&nbsp;</span>
-												</div>
-												<div class="ssp-wave-form">
-													<div class="ssp-inner">
-														<div data-waveform-id="waveform_<?php echo $large_player_instance_number; ?>" id="waveform<?php echo $large_player_instance_number; ?>" class="ssp-wave"></div>
-													</div>
-												</div>
-												<div class="ssp-time-volume">
-													<div class="ssp-duration">
-														<span id="sspPlayedDuration">00:00</span> / <span id="sspTotalDuration"><?php echo $meta['duration']; ?></span>
-													</div>
-													<div class="ssp-volume">
-														<div class="ssp-back-thirty-container">
-															<div class="ssp-back-thirty-control" id="ssp-back-thirty">
-																<i class="ssp-icon icon-replay">&nbsp;</i>
-															</div>
-														</div>
-														<div class="ssp-playback-speed-label-container">
-															<div class="ssp-playback-speed-label-wrapper">
-																<span data-playback-speed-id="ssp_playback_speed_<?php echo $large_player_instance_number; ?>" id="ssp_playback_speed<?php echo $large_player_instance_number; ?>" data-ssp-playback-rate="1">1X</span>
-															</div>
-														</div>
-														<div class="ssp-download-container">
-															<div class="ssp-download-control">
-																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
-															</div>
-														</div>
-													</div>
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-						<?php
-						$player = ob_get_clean();
-						// ---- /NEW PLAYER -----
-					}
-
-					break;
-
-				case 'video':
-
-					// Use featured image as video poster
-					if( $episode_id && has_post_thumbnail( $episode_id ) ) {
-						$poster = wp_get_attachment_url( get_post_thumbnail_id( $episode_id ) );
-						if( $poster ) {
-							$params['poster'] = $poster;
-						}
-					}
-
-					$player = wp_video_shortcode( $params );
-					break;
-			}
-
-			// Allow filtering so that alternative players can be used
-			$player = apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
-		}
-
-		return $player;
+		// Allow filtering so that alternative players can be used
+		return apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
 	}
 
 	/**
@@ -1526,153 +1322,6 @@ class Frontend_Controller extends Controller {
 		add_shortcode( 'ss_podcast', array( new Podcast(), 'shortcode' ) );
 		add_shortcode( 'podcast_episode', array( new Podcast_Episode(), 'shortcode' ) );
 		add_shortcode( 'podcast_playlist', array( new Podcast_Playlist(), 'shortcode' ) );
-	}
-
-	/**
-	 * Show single podcast episode with specified content items
-	 * @param  integer $episode_id    ID of episode post
-	 * @param  array   $content_items Orderd array of content items to display
-	 * @return string                 HTML of episode with specified content items
-	 */
-	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '', $style = 'mini' ) {
-
-		global $post, $episode_context, $large_player_instance_number;
-
-		$player_background_colour = get_option( 'ss_podcasting_player_background_skin_colour', false );
-		$player_wave_form_colour = get_option( 'ss_podcasting_player_wave_form_colour', false );
-		$player_wave_form_progress_colour = get_option( 'ss_podcasting_player_wave_form_progress_colour', false );
-
-		if ( $style == 'large' || $style == 'larger' ) {
-			$large_player_instance_number+= 1;
-		}
-
-		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
-			return;
-		}
-
-		// Get episode object
-		$episode = get_post( $episode_id );
-
-		if ( ! $episode || is_wp_error( $episode ) ) {
-			return;
-		}
-
-		$html = '<div class="podcast-episode episode-' . esc_attr( $episode_id ) . '">' . "\n";
-
-		// Setup post data for episode post object
-		$post = $episode;
-		setup_postdata( $post );
-
-		$episode_context = $context;
-
-		// Get episode album art
-		$thumb_id = get_post_thumbnail_id( $episode_id );
-		if ( ! empty( $thumb_id ) ) {
-			list( $src, $width, $height ) = wp_get_attachment_image_src( $thumb_id, 'full' );
-			$albumArt = compact( 'src', 'width', 'height' );
-		} else {
-			$albumArt['src'] = SSP_PLUGIN_URL . '/assets/images/no-album-art.png';
-			$albumArt['width'] = 300;
-			$albumArt['height'] = 300;
-		}
-
-		// Render different player styles
-		/**
-		 * This is very much the start of what needs to become a more integrated player.
-		 * This player needs to also adapt for embeds, and needs to look presentable in many sizes
-		 * @author Simon Dowdles - SSP <simon.dowdles@gmail.com>
-		 * @todo Seperate logic into own js file
-		 * @todo Work on styles
-		 * @todo Work on feedback on player
-		 * @todo Move CSS to own file
-		 * @todo Add filters
-		 * @todo Add settings pages to customize layout / colours
-		 */
-
-		if( 'mini' !== $style ){
-			if( 'large' == $style ){
-
-				foreach ( $content_items as $item ) {
-
-					switch( $item ) {
-
-						case 'title':
-							$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
-							break;
-
-						case 'excerpt':
-							$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
-							break;
-
-						case 'content':
-							$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
-							break;
-
-						case 'player':
-							$file = $this->get_enclosure( $episode_id );
-							if ( get_option( 'permalink_structure' ) ) {
-								$file = $this->get_episode_download_link( $episode_id );
-							}
-							$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, "large" ) . '</div>' . "\n";
-							break;
-
-						case 'details':
-							$html .= $this->episode_meta_details( $episode_id, $episode_context );
-							break;
-
-						case 'image':
-							$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
-							break;
-
-					}
-				}
-			}
-		}
-
-		if( 'mini' === $style ){
-			// Display specified content items in the order supplied
-			foreach ( $content_items as $item ) {
-
-				switch( $item ) {
-
-					case 'title':
-						$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
-						break;
-
-					case 'excerpt':
-						$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
-						break;
-
-					case 'content':
-						$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
-						break;
-
-					case 'player':
-						$file = $this->get_enclosure( $episode_id );
-						if ( get_option( 'permalink_structure' ) ) {
-							$file = $this->get_episode_download_link( $episode_id );
-						}
-						$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $style ) . '</div>' . "\n";
-						break;
-
-					case 'details':
-						$html .= $this->episode_meta_details( $episode_id, $episode_context );
-						break;
-
-					case 'image':
-						$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
-						break;
-
-				}
-			}
-		}
-
-		// Reset post data after fetching episode details
-		wp_reset_postdata();
-
-		$html .= '</div>' . "\n";
-
-		return $html;
 	}
 
 	/**

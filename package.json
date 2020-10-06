@@ -15,7 +15,8 @@
   },
   "scripts": {
     "start": "wp-scripts start",
-    "build": "wp-scripts build"
+    "build": "wp-scripts build",
+    "prepare": "grunt uglify && grunt cssmin && wp-scripts build"
   },
   "repository": {
     "type": "git",

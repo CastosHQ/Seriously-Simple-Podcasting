@@ -809,7 +809,29 @@ body {
 }
 
 .podcast-meta-itunes:active,
-.podcast-meta-itunes:focus {
+.podcast-meta-itunes:focus,
+.play-btn:active,
+.play-btn:focus,
+.pause-btn:focus,
+.pause-btn:focus,
+.player-btn__speed:active,
+.player-btn__speed:focus,
+.player-btn__volume:active,
+.player-btn__volume:focus,
+.share-btn:active,
+.share-btn:focus,
+.subscribe-btn:active,
+.subscribe-btn:focus,
+.share-icon:active,
+.share-icon:focus,
+.apple-podcasts:active,
+.apple-podcasts:focus,
+.sticher:active,
+.sticher:focus,
+.spotify:active,
+.spotify:focus,
+.google-play:active,
+.google-play:focus {
     outline: 0;
     border: none;
     -moz-outline-style: none;

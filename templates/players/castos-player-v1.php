@@ -40,8 +40,8 @@
 					</div>
 				</div>
 				<nav class="player-panels-nav">
-					<button id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe">Subscribe</button>
-					<button id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
+					<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe">Subscribe</button>
+					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
 				</nav>
 			</div>
 			<span class="powered-by">
@@ -137,7 +137,7 @@
 					Embed
 				</div>
 				<div>
-					<input value="<iframe src='{{ $episode->getIframeUrl() }}' frameborder='0' scrolling='no' width='100%' height='150'></iframe>"
+					<input value="<iframe src='<?php echo $audioFile ?>' frameborder='0' scrolling='no' width='100%' height='150'></iframe>"
 					       class="input-embed input-embed-<?php echo $episode_id ?>" />
 				</div>
 				<button class="copy-embed copy-embed-<?php echo $episode_id ?>"></button>

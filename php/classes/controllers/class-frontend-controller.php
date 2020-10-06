@@ -331,7 +331,6 @@ class Frontend_Controller extends Controller {
 				}
 			}
 			$player = wp_video_shortcode( $params );
-
 			// Allow filtering so that alternative players can be used
 			return apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
 		}

@@ -100,8 +100,8 @@ class Rest_Api_Controller {
 			'ssp/v1',
 			'/podcast',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'get_rest_podcast' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_rest_podcast' ),
 				'permission_callback' => '__return_true',
 			)
 		);
@@ -113,8 +113,8 @@ class Rest_Api_Controller {
 			'ssp/v1',
 			'/podcast_update',
 			array(
-				'methods'  => 'POST',
-				'callback' => array( $this, 'update_rest_podcast' ),
+				'methods'             => 'POST',
+				'callback'            => array( $this, 'update_rest_podcast' ),
 				'permission_callback' => '__return_true',
 			)
 		);
@@ -132,8 +132,8 @@ class Rest_Api_Controller {
 			'ssp/v1',
 			'/audio_player',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'get_episode_audio_player' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_episode_audio_player' ),
 				'permission_callback' => '__return_true',
 			)
 		);

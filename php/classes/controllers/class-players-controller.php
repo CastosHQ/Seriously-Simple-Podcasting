@@ -152,7 +152,7 @@ class Players_Controller extends Controller {
 
 		$series_id = $this->get_series_id( $id );
 
-		if ( $seriesId ) {
+		if ( $series_id ) {
 			$itunes     = get_option( "ss_podcasting_itunes_url_{$series_id}" );
 			$stitcher   = get_option( "ss_podcasting_stitcher_url_{$series_id}" );
 			$spotify    = get_option( "ss_podcasting_spotify_url_{$series_id}" );

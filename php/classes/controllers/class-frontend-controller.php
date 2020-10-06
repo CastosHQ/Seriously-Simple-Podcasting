@@ -159,7 +159,7 @@ class Frontend_Controller extends Controller {
 		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
 			return;
 		}
-		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5.player.css', array(), $this->version );
+		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5-player.css', array(), $this->version );
 		wp_enqueue_style( 'ssp-html5-player' );
 	}
 

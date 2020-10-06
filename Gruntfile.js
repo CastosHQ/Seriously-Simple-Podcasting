@@ -21,12 +21,44 @@ module.exports = function (a) {
 					updateTimestamp: true
 				}
 			}
-		}
+		},
+		uglify: {
+			dev: {
+				files: [{
+					expand: true,
+					src: ['assets/js/*.js', '!assets/js/*.min.js'],
+					dest: 'assets/js',
+					cwd: '.',
+					rename: function (dst, src) {
+						// To keep the source js files and make new files as `*.min.js`:
+						// return src.replace('.js', '.min.js');
+						// Or to override to src:
+						// return src;
+						return src.replace('.js', '.min.js');
+					}
+				}]
+			}
+		},
+		cssmin: {
+			target: {
+				files: [{
+					expand: true,
+					cwd: 'assets/css',
+					src: ['*.css', '!*.min.css'],
+					dest: 'assets/css',
+					ext: '.min.css'
+				}]
+			}
+		},
 	});
+	a.loadNpmTasks('grunt-contrib-cssmin');
+	a.loadNpmTasks('grunt-contrib-uglify');
+/*
 	a.loadNpmTasks("grunt-wp-i18n");
 	a.loadNpmTasks("grunt-wp-readme-to-markdown");
 	a.registerTask("default", ["i18n", "readme"]);
 	a.registerTask("i18n", ["addtextdomain", "makepot"]);
 	a.registerTask("readme", ["wp_readme_to_markdown"]);
+*/
 	a.util.linefeed = "\n"
 };

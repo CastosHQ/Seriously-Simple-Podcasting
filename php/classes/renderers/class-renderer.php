@@ -13,7 +13,7 @@ class Renderer {
 		// enqueue any css or js, based ont he data being passed
 		// start ob
 
-		extract($data);
+		extract( $data, EXTR_OVERWRITE );
 		ob_start();
 
 		// include the $template_path

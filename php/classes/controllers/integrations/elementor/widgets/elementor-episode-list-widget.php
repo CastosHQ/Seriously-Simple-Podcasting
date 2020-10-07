@@ -49,6 +49,7 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 
 		$episodeOptions = $this->get_episodes();
 
+		$episodeOptionsValues = array_values( $episodeOptions );
 		$this->add_control(
 			'show_elements',
 			[
@@ -56,7 +57,7 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 				'type' => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
 				'multiple' => true,
-				'default' => array_shift(array_values($episodeOptions))
+				'default' => array_shift( $episodeOptionsValues )
 			]
 		);
 

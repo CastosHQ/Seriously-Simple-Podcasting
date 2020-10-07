@@ -71,7 +71,7 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 		$media_player = new Players_Controller(__FILE__, SSP_VERSION);
 		foreach ( $settings['show_elements'] as $element ) {
 			echo '<div>' . $episodes[$element] . '</div>';
-			echo '<div>' . $media_player->media_player($element) . '</div>';
+			echo '<div>' . $media_player->render_media_player($element) . '</div>';
 		}
 
 	}

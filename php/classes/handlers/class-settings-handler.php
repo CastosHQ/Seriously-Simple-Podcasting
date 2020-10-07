@@ -449,6 +449,20 @@ class Settings_Handler {
 					'default'     => '',
 				),
 				array(
+					'id'          => 'itunes_fields_enabled',
+					'label'       => __( 'Enable iTunes fields ', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+				),
+			),
+		);
+
+		$settings['player-settings'] = array(
+			'title' => __('Player', 'seriously-simple-podcasting'),
+			'description' => __( 'Player Settings', 'seriously-simple-podcasting' ),
+			'fields' => array(
+				array(
 					'id'          => 'player_locations',
 					'label'       => __( 'Media player locations', 'seriously-simple-podcasting' ),
 					'description' => __( 'Select where to show the podcast media player along with the episode data (download link, duration and file size)', 'seriously-simple-podcasting' ),
@@ -481,13 +495,6 @@ class Settings_Handler {
 						'membersonly' => __( 'Only logged in users', 'seriously-simple-podcasting' ),
 					),
 					'default'     => 'all',
-				),
-				array(
-					'id'          => 'itunes_fields_enabled',
-					'label'       => __( 'Enable iTunes fields ', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => '',
 				),
 				array(
 					'id'          => 'player_meta_data_enabled',
@@ -531,7 +538,7 @@ class Settings_Handler {
 					'default'     => '#00d4f7',
 					'class'       => 'ssp-color-picker',
 				),
-			),
+			)
 		);
 
 		$settings['feed-details'] = array(

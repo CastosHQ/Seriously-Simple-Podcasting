@@ -159,6 +159,9 @@ class Players_Controller extends Controller {
 		$subscribe_links = $this->get_subscribe_links( $id );
 
 		$feed_url = $this->get_feed_url();
+
+		$embed_code = preg_replace('/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ));
+
 		// set any other info
 		$templateData = array(
 			'episode'      => $episode,
@@ -171,7 +174,8 @@ class Players_Controller extends Controller {
 			'itunes'       => $subscribe_links['itunes'],
 			'stitcher'     => $subscribe_links['stitcher'],
 			'spotify'      => $subscribe_links['spotify'],
-			'googlePlay'   => $subscribe_links['googlePlay']
+			'googlePlay'   => $subscribe_links['googlePlay'],
+			'embed_code'   => $embed_code
 		);
 
 		$template_data = apply_filters( 'ssp_html_player_data', $templateData );

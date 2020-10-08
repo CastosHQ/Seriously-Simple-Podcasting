@@ -224,21 +224,39 @@ class Episode_Controller extends Controller {
 
 		if ( ! empty( $episode_ids ) ) {
 			$args = array(
-				'include'     => array_values( $episode_ids ),
-				'post_type'   => 'podcast',
-				'numberposts' => 10
+				'include'        => array_values( $episode_ids ),
+				'post_type'      => 'podcast',
+				'numberposts'    => -1
 			);
 
 			$episodes = get_posts( $args );
 		}
 
 		$episodes_template_data = array(
+			'episodes'       => $episodes,
+		);
+
+		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
+
+		return $this->renderer->render( $episodes_template_data, 'episodes/episode-list' );
+	}
+
+	public function all_episodes() {
+		$paged = ( get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1 );
+		$args  = array(
+			'post_type'      => 'podcast',
+			'posts_per_page' => 3,
+			'paged'          => $paged
+		);
+
+		$episodes               = new WP_Query( $args );
+		$episodes_template_data = array(
 			'episodes' => $episodes,
 		);
 
-		$episodesTemplateData = apply_filters( 'episode_list_data', $episodesTemplateData );
+		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
 
-		return $this->renderer->render( $episodes_template_data, 'episodes/episode-list' );
+		return $this->renderer->render( $episodes_template_data, 'episodes/all-episodes-list' );
 	}
 
 	public function register_shortcode() {

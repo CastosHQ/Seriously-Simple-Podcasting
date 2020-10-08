@@ -53,7 +53,7 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'show_elements',
 			[
-				'label' => __( 'Show Elements', 'seriously-simple-podcasting' ),
+				'label' => __( 'Select Episode', 'seriously-simple-podcasting' ),
 				'type' => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
 				'default' => array_shift( $episodeOptionsValues )

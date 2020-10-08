@@ -4,13 +4,13 @@ namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
-class Elementor_Subscribe_Links extends \Elementor\Widget_Base {
+class Elementor_Subscribe_Buttons extends \Elementor\Widget_Base {
 	public function get_name() {
-		return 'Subscribe Links';
+		return 'Subscribe Buttons';
 	}
 
 	public function get_title() {
-		return __( 'Subscribe Links', 'seriously-simple-podcasting' );
+		return __( 'Subscribe Buttons', 'seriously-simple-podcasting' );
 	}
 
 	public function get_icon() {
@@ -48,7 +48,7 @@ class Elementor_Subscribe_Links extends \Elementor\Widget_Base {
 		);
 
 		$episodeOptions = $this->get_episodes();
-
+		$episodeOptionsValues = array_values( $episodeOptions );
 		$this->add_control(
 			'show_elements',
 			[
@@ -56,7 +56,7 @@ class Elementor_Subscribe_Links extends \Elementor\Widget_Base {
 				'type' => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
 				'multiple' => false,
-				'default' => array_shift(array_values($episodeOptions))
+				'default' => array_shift( $episodeOptionsValues )
 			]
 		);
 
@@ -68,7 +68,7 @@ class Elementor_Subscribe_Links extends \Elementor\Widget_Base {
 
 		$player = new Players_Controller(__FILE__, SSP_VERSION);
 		$episode['id'] = $settings['show_elements'];
-		echo $player->elementor_subscribe_links( $episode );
+		echo $player->render_subscribe_buttons( $episode );
 	}
 
 }

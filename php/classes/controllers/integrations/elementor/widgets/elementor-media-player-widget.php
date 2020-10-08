@@ -24,15 +24,15 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 
 	public function get_episodes() {
 		$args = array(
-			'fields'          => array('post_title, id'), // Only get post IDs
-			'posts_per_page'  => -1,
-			'post_type' => 'podcast'
+			'fields'         => array( 'post_title, id' ), // Only get post IDs
+			'posts_per_page' => - 1,
+			'post_type'      => 'podcast'
 		);
 
-		$episodes = get_posts($args);
+		$episodes       = get_posts( $args );
 		$episodeOptions = [];
-		foreach($episodes as $episode) {
-			$episodeOptions[$episode->ID] = $episode->post_title;
+		foreach ( $episodes as $episode ) {
+			$episodeOptions[ $episode->ID ] = $episode->post_title;
 		}
 
 		return $episodeOptions;
@@ -49,14 +49,14 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 		);
 
 		$episodeOptions = $this->get_episodes();
-
+		$episodeOptionsValues = array_values( $episodeOptions );
 		$this->add_control(
 			'show_elements',
 			[
-				'label' => __( 'Show Elements', 'plugin-domain' ),
+				'label' => __( 'Show Elements', 'seriously-simple-podcasting' ),
 				'type' => \Elementor\Controls_Manager::SELECT2,
-				'multiple' => true,
 				'options' => $episodeOptions,
+				'default' => array_shift( $episodeOptionsValues )
 			]
 		);
 
@@ -68,12 +68,11 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 		$settings = $this->get_settings_for_display();
 		$episodes = $this->get_episodes();
 
-		$media_player = new Players_Controller(__FILE__, SSP_VERSION);
-		foreach ( $settings['show_elements'] as $element ) {
-			echo '<div>' . $episodes[$element] . '</div>';
-			echo '<div>' . $media_player->render_media_player($element) . '</div>';
-		}
+		$episode_id = $settings['show_elements'];
 
+		$media_player = new Players_Controller( __FILE__, SSP_VERSION );
+		echo '<div>' . $episodes[ $episode_id ] . '</div>';
+		echo '<div>' . $media_player->render_media_player( $episode_id ) . '</div>';
 	}
 
 	protected function _content_template() {

@@ -20,8 +20,6 @@ class Episode_Controller extends Controller {
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->renderer = new Renderer();
-
-		add_action( 'init', array( $this, 'register_shortcode' ), 1 );
 	}
 
 	/**

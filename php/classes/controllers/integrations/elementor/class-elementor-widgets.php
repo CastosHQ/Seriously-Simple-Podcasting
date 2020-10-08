@@ -23,8 +23,8 @@ final class Elementor_Widgets {
 		// Register widgets
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Media_Player_Widget() );
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Html_Player_Widget() );
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Select_Episode_Widget() );    
 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Subscribe_Buttons() );
- 		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Episode_List_Widget() );
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Episode_List_Widget() );
+		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Select_Episode_Widget() );
 	}
 }

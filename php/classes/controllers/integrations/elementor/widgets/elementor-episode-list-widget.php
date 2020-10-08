@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use WP_Query;
 
 class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
@@ -41,11 +42,54 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 		return $episodeOptions;
 	}
 
-	protected function _register_controls() {}
+	protected function _register_controls() {
+
+		$this->start_controls_section(
+			'content_section',
+			[
+				'label' => __( 'Content', 'seriously-simple-podcasting' ),
+				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
+			]
+		);
+
+		$this->add_control(
+			'show_featured_image',
+			[
+				'label'   => __( 'Show Featured Image', 'seriously-simple-podcasting' ),
+				'type'    => \Elementor\Controls_Manager::SWITCHER,
+				'default' => false
+			]
+		);
+		$this->add_control(
+			'show_episode_player',
+			[
+				'label'   => __( 'Show Episode Player', 'seriously-simple-podcasting' ),
+				'type'    => \Elementor\Controls_Manager::SWITCHER,
+				'default' => false
+			]
+		);
+		$this->add_control(
+			'show_episode_excerpt',
+			[
+				'label'   => __( 'Show Episode Excerpt', 'seriously-simple-podcasting' ),
+				'type'    => \Elementor\Controls_Manager::SWITCHER,
+				'default' => false
+			]
+		);
+
+		$this->end_controls_section();
+	}
 
 	protected function render() {
-		$episodeController = new Episode_Controller(__FILE__, SSP_VERSION);
-
-		echo $episodeController->all_episodes();
+		$settings          = $this->get_settings_for_display();
+		$render_settings         = array(
+			'show_featured_image'  => $settings['show_featured_image'],
+			'show_episode_player'  => $settings['show_episode_player'],
+			'show_episode_excerpt' => $settings['show_episode_excerpt'],
+		);
+		$logger = new Log_Helper();
+		$logger->log('Settings', $render_settings);
+		$episodeController = new Episode_Controller( __FILE__, SSP_VERSION );
+		echo $episodeController->render_episodes( $render_settings );
 	}
 }

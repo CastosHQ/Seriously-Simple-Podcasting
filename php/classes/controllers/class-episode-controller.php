@@ -251,11 +251,9 @@ class Episode_Controller extends Controller {
 	 */
 	public function render_episodes($settings) {
 		$player       = new Players_Controller( $this->file, $this->version );
-		$paged = ( get_query_var( 'paged' ) ? get_query_var( 'paged' ) : 1 );
 		$args  = array(
 			'post_type'      => 'podcast',
-			'posts_per_page' => 3,
-			'paged'          => $paged
+			'posts_per_page' => 10,
 		);
 
 		$episodes               = new WP_Query( $args );

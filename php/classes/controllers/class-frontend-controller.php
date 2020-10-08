@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use stdClass;
 use WP_Query;
 
@@ -665,8 +664,6 @@ class Frontend_Controller extends Controller {
 		// @todo implement dependancy injection
 		$options_handler = new Options_Handler();
 		$subscribe_urls  = $options_handler->get_subscribe_urls( $episode_id, $context );
-		$logger = new Log_Helper();
-		$logger->log( 'Subscribe Urls', $subscribe_urls );
 
 		foreach( $subscribe_urls as $key => $data ){
 

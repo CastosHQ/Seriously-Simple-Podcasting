@@ -136,9 +136,9 @@
 				<div class="title">
 					Embed
 				</div>
-				<div>
-					<input value="<iframe src='<?php echo $audioFile ?>' frameborder='0' scrolling='no' width='100%' height='150'></iframe>"
-					       class="input-embed input-embed-<?php echo $episode_id ?>" />
+				<div style="height: 10px;">
+					<input value='<?php echo $embed_code ?>'
+					       class="input-embed input-embed-<?php echo $episode_id ?>"/>
 				</div>
 				<button class="copy-embed copy-embed-<?php echo $episode_id ?>"></button>
 			</div>

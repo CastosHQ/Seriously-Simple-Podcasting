@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
+use WP_Query;
 
 class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 	public function get_name() {
@@ -23,18 +24,19 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 
 	public function get_episodes() {
 		$args = array(
-			'fields'          => array('post_title, id'),
-			'posts_per_page'  => -1,
-			'post_type' => 'podcast'
+			'fields'         => array( 'post_title, id' ),
+			'posts_per_page' => - 1,
+			'post_type'      => 'podcast'
 		);
 
-		$episodes = get_posts($args);
-		$episodeOptions = [];
-		foreach($episodes as $episode) {
-			$episodeOptions[$episode->ID] = $episode->post_title;
+		$episodes = new \WP_Query( $args );
+
+		$episode_options = [];
+		foreach ( $episodes as $episode ) {
+			$episode_options[ $episode->ID ] = $episode->post_title;
 		}
 
-		return $episodeOptions;
+		return $episode_options;
 	}
 
 	protected function _register_controls() {
@@ -47,16 +49,28 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 			]
 		);
 
-		$episodeOptions = $this->get_episodes();
-
 		$this->add_control(
-			'show_elements',
+			'show_featured_image',
 			[
-				'label' => __( 'Show Elements', 'plugin-domain' ),
-				'type' => \Elementor\Controls_Manager::SELECT2,
-				'options' => $episodeOptions,
-				'multiple' => true,
-				'default' => array_shift(array_values($episodeOptions))
+				'label'   => __( 'Show Featured Image', 'seriously-simple-podcasting' ),
+				'type'    => \Elementor\Controls_Manager::SWITCHER,
+				'default' => false
+			]
+		);
+		$this->add_control(
+			'show_episode_player',
+			[
+				'label'   => __( 'Show Episode Player', 'seriously-simple-podcasting' ),
+				'type'    => \Elementor\Controls_Manager::SWITCHER,
+				'default' => false
+			]
+		);
+		$this->add_control(
+			'show_episode_excerpt',
+			[
+				'label'   => __( 'Show Episode Excerpt', 'seriously-simple-podcasting' ),
+				'type'    => \Elementor\Controls_Manager::SWITCHER,
+				'default' => false
 			]
 		);
 
@@ -64,15 +78,13 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 	}
 
 	protected function render() {
-		$settings = $this->get_settings_for_display();
-		$i = 0;
-		foreach($settings['show_elements'] as $element) {
-			$episodeIds[$i] = $element;
-			$i++;
-		}
-
-		$episodeController = new Episode_Controller(__FILE__, SSP_VERSION);
-
-		echo $episodeController->episode_list($episodeIds);
+		$settings          = $this->get_settings_for_display();
+		$render_settings         = array(
+			'show_featured_image'  => $settings['show_featured_image'],
+			'show_episode_player'  => $settings['show_episode_player'],
+			'show_episode_excerpt' => $settings['show_episode_excerpt'],
+		);
+		$episode_controller = new Episode_Controller( __FILE__, SSP_VERSION );
+		echo $episode_controller->render_episodes( $render_settings );
 	}
 }

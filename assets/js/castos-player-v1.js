@@ -30,14 +30,12 @@ players.forEach(function (player) {
 	}
 
 	function formatTime(totalSeconds) {
-		hours = Math.floor(totalSeconds / 3600);
+		var hours = Math.floor(totalSeconds / 3600);
 		totalSeconds %= 3600;
-		minutes = Math.floor(totalSeconds / 60);
-		seconds = Math.floor(totalSeconds % 60);
-
+		var minutes = Math.floor(totalSeconds / 60);
+		var seconds = Math.floor(totalSeconds % 60);
 		var output = void 0;
 		hours > 0 ? output = padNum(hours) + ' : ' + padNum(minutes) + ' : ' + padNum(seconds) : output = padNum(minutes) + ':' + padNum(seconds);
-
 		return output;
 	}
 

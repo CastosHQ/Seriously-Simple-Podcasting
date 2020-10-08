@@ -224,30 +224,48 @@ class Episode_Controller extends Controller {
 
 		if ( ! empty( $episode_ids ) ) {
 			$args = array(
-				'include'     => array_values( $episode_ids ),
-				'post_type'   => 'podcast',
-				'numberposts' => 10
+				'include'        => array_values( $episode_ids ),
+				'post_type'      => 'podcast',
+				'numberposts'    => -1
 			);
 
 			$episodes = get_posts( $args );
 		}
 
 		$episodes_template_data = array(
-			'episodes' => $episodes,
+			'episodes'       => $episodes,
 		);
 
-		$episodesTemplateData = apply_filters( 'episode_list_data', $episodesTemplateData );
+		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
 
 		return $this->renderer->render( $episodes_template_data, 'episodes/episode-list' );
 	}
 
-	public function register_shortcode() {
-		add_shortcode( 'elementor_episode_list', array( $this, 'elementor_episode_list' ) );
+	/**
+	 * Render a list of all episodes, based on settings sent
+	 * @todo, currently used for Elementor, update to use for the Block editor as well.
+	 *
+	 * @param $settings
+	 *
+	 * @return mixed|void
+	 */
+	public function render_episodes($settings) {
+		$player       = new Players_Controller( $this->file, $this->version );
+		$args  = array(
+			'post_type'      => 'podcast',
+			'posts_per_page' => 10,
+		);
+
+		$episodes               = new WP_Query( $args );
+		$episodes_template_data = array(
+			'player' => $player,
+			'episodes' => $episodes,
+			'settings' => $settings,
+		);
+
+		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
+
+		return $this->renderer->render( $episodes_template_data, 'episodes/all-episodes-list' );
 	}
 
-	public function elementor_episode_list( $attributes ) {
-		$episode_ids = explode( ',', $attributes['id'] );
-
-		return $this->episode_list( $episode_ids );
-	}
 }

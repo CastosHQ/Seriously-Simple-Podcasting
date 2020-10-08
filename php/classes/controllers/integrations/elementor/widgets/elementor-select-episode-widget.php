@@ -2,19 +2,19 @@
 
 namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
 
-use SeriouslySimplePodcasting\Controllers\Players_Controller;
+use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 
-class Elementor_Subscribe_Links extends \Elementor\Widget_Base {
+class Elementor_Select_Episode_Widget extends \Elementor\Widget_Base {
 	public function get_name() {
-		return 'Subscribe Links';
+		return 'Select Episode';
 	}
 
 	public function get_title() {
-		return __( 'Subscribe Links', 'seriously-simple-podcasting' );
+		return __( 'Select Episode', 'seriously-simple-podcasting' );
 	}
 
 	public function get_icon() {
-		return 'fa fa-link';
+		return 'fa fa-check';
 	}
 
 	public function get_categories() {
@@ -55,7 +55,7 @@ class Elementor_Subscribe_Links extends \Elementor\Widget_Base {
 				'label' => __( 'Show Elements', 'plugin-domain' ),
 				'type' => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
-				'multiple' => false,
+				'multiple' => true,
 				'default' => array_shift(array_values($episodeOptions))
 			]
 		);
@@ -65,10 +65,14 @@ class Elementor_Subscribe_Links extends \Elementor\Widget_Base {
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
+		$i = 0;
+		foreach($settings['show_elements'] as $element) {
+			$episodeIds[$i] = $element;
+			$i++;
+		}
 
-		$player = new Players_Controller(__FILE__, SSP_VERSION);
-		$episode['id'] = $settings['show_elements'];
-		echo $player->elementor_subscribe_links( $episode );
+		$episodeController = new Episode_Controller(__FILE__, SSP_VERSION);
+
+		echo $episodeController->episode_list($episodeIds);
 	}
-
 }

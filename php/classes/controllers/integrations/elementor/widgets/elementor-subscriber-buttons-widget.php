@@ -4,18 +4,17 @@ namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
-class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
-
+class Elementor_Subscribe_Buttons extends \Elementor\Widget_Base {
 	public function get_name() {
-		return 'Media Player';
+		return 'Subscribe Buttons';
 	}
 
 	public function get_title() {
-		return __( 'Media Player', 'seriously-simple-podcasting' );
+		return __( 'Subscribe Buttons', 'seriously-simple-podcasting' );
 	}
 
 	public function get_icon() {
-		return 'fa fa-play';
+		return 'fa fa-link';
 	}
 
 	public function get_categories() {
@@ -24,15 +23,15 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 
 	public function get_episodes() {
 		$args = array(
-			'fields'         => array( 'post_title, id' ), // Only get post IDs
-			'posts_per_page' => - 1,
-			'post_type'      => 'podcast'
+			'fields'          => array('post_title, id'),
+			'posts_per_page'  => -1,
+			'post_type' => 'podcast'
 		);
 
-		$episodes       = get_posts( $args );
+		$episodes = get_posts($args);
 		$episodeOptions = [];
-		foreach ( $episodes as $episode ) {
-			$episodeOptions[ $episode->ID ] = $episode->post_title;
+		foreach($episodes as $episode) {
+			$episodeOptions[$episode->ID] = $episode->post_title;
 		}
 
 		return $episodeOptions;
@@ -53,33 +52,23 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'show_elements',
 			[
-				'label' => __( 'Select Episode', 'seriously-simple-podcasting' ),
+				'label' => __( 'Show Elements', 'plugin-domain' ),
 				'type' => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
+				'multiple' => false,
 				'default' => array_shift( $episodeOptionsValues )
 			]
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	protected function render() {
 		$settings = $this->get_settings_for_display();
-		$episodes = $this->get_episodes();
 
-		$episode_id = $settings['show_elements'];
-
-		$media_player = new Players_Controller( __FILE__, SSP_VERSION );
-		echo '<div>' . $episodes[ $episode_id ] . '</div>';
-		echo '<div>' . $media_player->render_media_player( $episode_id ) . '</div>';
+		$player = new Players_Controller(__FILE__, SSP_VERSION);
+		$episode['id'] = $settings['show_elements'];
+		echo $player->render_subscribe_buttons( $episode );
 	}
 
-	protected function _content_template() {
-		?>
-		<# _.each( settings.show_elements, function( element ) { #>
-		<div>{{{ element }}}</div>
-		<# } ) #>
-		<?php
-	}
 }

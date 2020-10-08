@@ -174,7 +174,7 @@ class Players_Controller extends Controller {
 			'itunes'       => $subscribe_links['itunes'],
 			'stitcher'     => $subscribe_links['stitcher'],
 			'spotify'      => $subscribe_links['spotify'],
-			'googlePlay'   => $subscribe_links['googlePlay'],
+			'googlePlay'   => $subscribe_links['google_play'],
 			'embed_code'   => $embed_code
 		);
 

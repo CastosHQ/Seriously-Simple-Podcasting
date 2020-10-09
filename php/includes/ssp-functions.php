@@ -1118,14 +1118,18 @@ if ( ! function_exists( 'get_keywords_for_episode' ) ) {
 	}
 }
 
-if (! function_exists('ssp_is_elementor_ok') ) {
-
-    function ssp_is_elementor_ok() {
-	    // Check if Elementor installed and activated
-	    if ( ! did_action( 'elementor/loaded' ) ) {
-		    return false;
-	    }
-
-	    return true;
-    }
+/**
+ * Checks of the Elementor plugin is installed and active, by checking the WordPress list of active plugins
+ */
+if ( ! function_exists( 'ssp_is_elementor_ok' ) ) {
+	function ssp_is_elementor_ok() {
+		$active_plugins = (array) get_option( 'active_plugins', array() );
+		if ( is_multisite() ) {
+			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
+		}
+		if ( array_key_exists( 'elementor/elementor.php', $active_plugins ) || in_array( 'elementor/elementor.php', $active_plugins, true ) ) {
+			return true;
+		}
+		return false;
+	}
 }

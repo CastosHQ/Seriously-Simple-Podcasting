@@ -27,6 +27,7 @@ class Extensions_Controller extends Controller {
 
 	public function render_seriously_simple_extensions() {
 		add_thickbox();
+
 		$image_dir  = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
 		$extensions = array(
 			'connect'     => array(
@@ -113,13 +114,25 @@ class Extensions_Controller extends Controller {
 				'new_window'  => true,
 				'button_text' => __( 'Get Second Line Themes', 'seriously-simple-podcasting' ),
 			),
+			'elementor-templates' => array(
+				'title'       => __( 'Elementor Templates', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'elementor.png',
+				'url'         => admin_url( 'edit.php?post_type=podcast&page=podcast_settings&tab=extensions&elementor-import-templates=true' ),
+				'description' => __( 'Looking for a custom elementor template to use with Seriously Simple Podcasting? Click here to import all of them righ now!', 'seriously-simple-podcasting' ),
+				'button_text' => __( 'Import Templates', 'seriously-simple-podcasting' ),
+				'new_window'  => 'redirect'
+			),
 		);
 
 		$html = '<div id="ssp-extensions">';
 		foreach ( $extensions as $extension ) {
 			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>';
 			if ( ! empty( $extension['new_window'] ) ) {
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+				if ( $extensions['elementor-templates']['new_window'] === 'redirect' ) {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+				} else {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+				}
 			} else {
 				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
 			}
@@ -131,7 +144,11 @@ class Extensions_Controller extends Controller {
 				$button_text = $extension['button_text'];
 			}
 			if ( ! empty( $extension['new_window'] ) ) {
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">' . $button_text . '</a>';
+				if ( $extensions['elementor-templates']['new_window'] === 'redirect' ) {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="button-secondary">' . $button_text . '</a>';
+				} else {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">' . $button_text . '</a>';
+				}
 			} else {
 				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">' . $button_text . '</a>';
 			}

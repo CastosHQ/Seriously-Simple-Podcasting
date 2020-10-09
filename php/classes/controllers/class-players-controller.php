@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 
 // Exit if accessed directly.
@@ -21,57 +22,15 @@ class Players_Controller extends Controller {
 
 	public $renderer = null;
 	public $episode_controller;
-
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
-		$this->renderer           = new Renderer();
-		$this->episode_controller = new Episode_Controller( $file, $version );
-		$this->init();
-	}
-
-	public function init() {
-		/**
-		 * Only register shortcodes once the init hook is triggered
-		 */
-		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
-		/**
-		 * Only load player assets once the wp_enqueue_scripts hook is triggered
-		 * @todo ideally only when the player is loaded...
-		 */
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_player_assets' ) );
-	}
-
-	public function load_player_assets() {
-		wp_register_style( 'html5-player-v2', $this->assets_url . 'css/html5-player-v2.css', array(), $this->version );
-		wp_enqueue_style( 'html5-player-v2' );
-		wp_register_script( 'html5-player-v2', $this->assets_url . 'js/html5-player-v2.js', array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'html5-player-v2' );
-	}
-
-
-	public function register_shortcodes() {
-		add_shortcode('elementor_html_player', array($this, 'elementor_html_player'));
-		add_shortcode('elementor_subscribe_links', array($this, 'elementor_subscribe_links'));
-	}
-
-	public function elementor_html_player($attributes) {
-		$templateData = $this->html_player($attributes['id']);
-
-		return $this->renderer->render($templateData, 'players/html-player');
-	}
-
-	public function elementor_subscribe_links($attributes) {
-		$templateData = $this->get_subscribe_links( $attributes['id'] );
-
-		return $this->renderer->render( $templateData, 'players/subscribe-links' );
-	}
+	public $options_handler;
 
 	/**
 	 * Return feed url.
+	 * @todo we might need to take into account the series feed url here
 	 *
 	 * @return string
 	 */
-	public function get_feed_url() {
+	protected function get_feed_url() {
 		// Get feed slug
 		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
 
@@ -92,96 +51,49 @@ class Players_Controller extends Controller {
 	}
 
 	/**
-	 * Return html player for a given podcast (episode) id.
+	 * Returns the subscribe links for a specific series by id
+	 * @todo see if this can be replaced by the Options_Handler::get_subscribe_urls method
 	 *
-	 * @param int $id
+	 * @param $id
 	 *
-	 * @return string
+	 * @return array[]
 	 */
-	public function html_player( $id ) {
-		$episode         = get_post( $id );
-		$episodeDuration = get_post_meta( $id, 'duration', true );
-		$audioFile       = get_post_meta( $id, 'audio_file', true );
-		$albumArt        = $this->episode_controller->get_album_art( $id );
-		$podcastTitle    = get_option( 'ss_podcasting_data_title' );
 
-		$subscribeLinks = $this->get_subscribe_links( $id );
+	protected function get_subscribe_links( $id ) {
 
-		$feedUrl = $this->get_feed_url();
-		// set any other info
-		$templateData = array(
-			'episode'      => $episode,
-			'duration'     => $episodeDuration,
-			'audioFile'    => $audioFile,
-			'albumArt'     => $albumArt,
-			'podcastTitle' => $podcastTitle,
-			'feedUrl'      => $feedUrl,
-			'itunes'       => $subscribeLinks['itunes'],
-			'stitcher'     => $subscribeLinks['stitcher'],
-			'spotify'      => $subscribeLinks['spotify'],
-			'googlePlay'   => $subscribeLinks['googlePlay']
+		$series_id = $this->get_series_id( $id );
+
+		if ( $series_id ) {
+			$itunes      = get_option( 'ss_podcasting_itunes_url_' . $series_id );
+			$stitcher    = get_option( 'ss_podcasting_stitcher_url_' . $series_id );
+			$spotify     = get_option( 'ss_podcasting_spotify_url_' . $series_id );
+			$google_play = get_option( 'ss_podcasting_google_play_url_' . $series_id );
+		} else {
+			$itunes      = get_option( 'ss_podcasting_itunes_url' );
+			$stitcher    = get_option( 'ss_podcasting_stitcher_url' );
+			$spotify     = get_option( 'ss_podcasting_spotify_url' );
+			$google_play = get_option( 'ss_podcasting_google_play_url' );
+		}
+
+		$subscribe_links = array(
+			'itunes'      => [ 'title' => 'iTunes', 'link' => $itunes ],
+			'stitcher'    => [ 'title' => 'Stitcher', 'link' => $stitcher ],
+			'spotify'     => [ 'title' => 'Spotify', 'link' => $spotify ],
+			'google_play' => [ 'title' => 'Google Play', 'link' => $google_play ],
 		);
 
-		$templateData = apply_filters( 'ssp_html_player_data', $templateData );
-
-		return $templateData;
+		return $subscribe_links;
 	}
 
 	/**
-	 * Return media player for a given podcast (episode) id.
+	 * Return a series id for an episode
+	 * @todo check if there is a global function for this, and use it.
 	 *
-	 * @param int $id
+	 * @param $episode_id
 	 *
-	 * @return string
+	 * @return int
 	 */
-	public function media_player( $id ) {
-		// get src file
-		$srcFile = get_post_meta( $id, 'audio_file', true );
-		$params  = array(
-			'src'     => $srcFile,
-			'preload' => 'none'
-		);
-
-		$mediaPlayer = wp_audio_shortcode( $params );
-
-		return $mediaPlayer;
-	}
-
-	public function get_subscribe_links( $id ) {
-
-		$seriesId = $this->get_series_id( $id );
-
-		if ( $seriesId ) {
-			$itunes     = get_option( "ss_podcasting_itunes_url_{$seriesId}" );
-			$stitcher   = get_option( "ss_podcasting_stitcher_url_{$seriesId}" );
-			$spotify    = get_option( "ss_podcasting_spotify_url_{$seriesId}" );
-			$googlePlay = get_option( "ss_podcasting_google_play_url_{$seriesId}" );
-		} else {
-			$itunes     = get_option( "ss_podcasting_itunes_url" );
-			$stitcher   = get_option( "ss_podcasting_stitcher_url" );
-			$spotify    = get_option( "ss_podcasting_spotify_url" );
-			$googlePlay = get_option( "ss_podcasting_google_play_url" );
-		}
-
-		$subscribeLinks = array(
-			'itunes'     => ['title' => 'iTunes', 'link' => $itunes],
-			'stitcher'   => ['title' => 'Stitcher', 'link' => $stitcher],
-			'spotify'    => ['title' => 'Spotify', 'link' => $spotify],
-			'googlePlay' => ['title' => 'GooglePlay', 'link' => $googlePlay]
-		);
-
-		return $subscribeLinks;
-	}
-
-	public function subscribe_links( $id ) {
-		$templateData = $this->get_subscribe_links( $id );
-
-		$templateData = apply_filters('ssp_subscribe_links_data', $templateData);
-
-		return $this->renderer->render($templateData, 'players/subscribe-links.php');
-	}
-
-	public function get_series_id( $episode_id ) {
+	protected function get_series_id( $episode_id ) {
 		$series_id = 0;
 		$series    = get_the_terms( $episode_id, 'series' );
 
@@ -192,4 +104,131 @@ class Players_Controller extends Controller {
 		return $series_id;
 	}
 
+	public function __construct( $file, $version ) {
+		parent::__construct( $file, $version );
+		$this->renderer           = new Renderer();
+		$this->episode_controller = new Episode_Controller( $file, $version );
+		$this->options_handler    = new Options_Handler();
+		$this->init();
+	}
+
+	public function init() {
+		/**
+		 * Only load player assets once the wp_enqueue_scripts hook is triggered
+		 * @todo ideally only when the player is loaded...
+		 */
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_player_assets' ) );
+
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_subscribe_buttons_assets' ) );
+
+	}
+
+	/**
+	 * Loads the HTML5 player CSS and JavaScript
+	 */
+	public function load_player_assets() {
+		wp_register_style( 'castos-player-v1', $this->assets_url . 'css/castos-player-v1.css', array(), $this->version );
+		wp_enqueue_style( 'castos-player-v1' );
+		wp_register_script( 'castos-player-v1', $this->assets_url . 'js/castos-player-v1.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'castos-player-v1' );
+	}
+
+	/**
+	 * Loads the Subscribe Buttons CSS
+	 */
+	public function load_subscribe_buttons_assets() {
+		wp_register_style( 'ssp-subscribe-buttons', $this->assets_url . 'css/subscribe-buttons.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-subscribe-buttons' );
+	}
+
+	/**
+	 * Sets up the template data for the HTML5 player, based on the episode id passed.
+	 *
+	 * @param int $id
+	 *
+	 * @return string
+	 */
+	public function html_player( $id ) {
+		$episode          = get_post( $id );
+		$episode_duration = get_post_meta( $id, 'duration', true );
+		$audio_file       = get_post_meta( $id, 'audio_file', true );
+		$album_art        = $this->episode_controller->get_album_art( $id );
+		$podcast_title    = get_option( 'ss_podcasting_data_title' );
+		$episode_id       = $id;
+
+		$subscribe_links = $this->get_subscribe_links( $id );
+
+		$feed_url = $this->get_feed_url();
+
+		$embed_code = preg_replace('/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ));
+
+		// set any other info
+		$templateData = array(
+			'episode'      => $episode,
+			'episode_id'   => $episode_id,
+			'duration'     => $episode_duration,
+			'audioFile'    => $audio_file,
+			'albumArt'     => $album_art,
+			'podcastTitle' => $podcast_title,
+			'feedUrl'      => $feed_url,
+			'itunes'       => $subscribe_links['itunes'],
+			'stitcher'     => $subscribe_links['stitcher'],
+			'spotify'      => $subscribe_links['spotify'],
+			'googlePlay'   => $subscribe_links['google_play'],
+			'embed_code'   => $embed_code
+		);
+
+		$template_data = apply_filters( 'ssp_html_player_data', $templateData );
+
+		return $template_data;
+	}
+
+	/**
+	 * Renders the HTML5 player, based on the attributes sent to the method
+	 *
+	 *
+	 * @param $attributes
+	 *
+	 * @return mixed|void
+	 */
+	public function render_html_player( $attributes ) {
+		$template_data = $this->html_player( $attributes['id'] );
+
+		return $this->renderer->render( $template_data, 'players/castos-player-v1' );
+	}
+
+	/**
+	 * Renders the Subscribe Buttons, based on the attributes sent to the method
+	 *
+	 * @param $attributes
+	 *
+	 * @return mixed|void
+	 */
+	public function render_subscribe_buttons( $attributes ) {
+		$subscribe_urls                  = $this->options_handler->get_subscribe_urls( $attributes['id'], 'subscribe_buttons' );
+		$template_data['subscribe_urls'] = $subscribe_urls;
+		$template_data                   = apply_filters( 'ssp_subscribe_buttons_data', $template_data );
+
+		return $this->renderer->render( $template_data, 'players/subscribe-buttons' );
+	}
+
+	/**
+	 * Return media player for a given podcast (episode) id.
+	 *
+	 * @param int $id
+	 *
+	 * @return string
+	 */
+	public function render_media_player( $id ) {
+		// get src file
+		$src_file = get_post_meta( $id, 'audio_file', true );
+		$params   = array(
+			'src'     => $src_file,
+			'preload' => 'none'
+		);
+
+		$media_player = wp_audio_shortcode( $params );
+
+		return $media_player;
+	}
 }

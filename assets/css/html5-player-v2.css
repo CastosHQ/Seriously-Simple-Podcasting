@@ -798,3 +798,17 @@ body {
         width: calc(100vw - 100px);
     }
 }
+
+.podcast-meta-itunes,
+.podcast-meta-itunes:hover,
+.podcast-meta-itunes:visited {
+    text-decoration: none !important;
+    color: #000000;
+}
+
+.podcast-meta-itunes:active,
+.podcast-meta-itunes:focus {
+    outline: 0;
+    border: none;
+    -moz-outline-style: none;
+}

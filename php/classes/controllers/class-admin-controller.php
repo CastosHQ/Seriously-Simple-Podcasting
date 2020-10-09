@@ -1247,7 +1247,7 @@ HTML;
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			global $post;
 			if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
-				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery.peekabar.css' ), array(), $this->version );
+				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery-peekabar.css' ), array(), $this->version );
 				wp_enqueue_style( 'jquery-peekabar' );
 			}
 		}
@@ -1262,7 +1262,7 @@ HTML;
 			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness.css' ), array(), $this->version );
 			wp_enqueue_style( 'jquery-ui-smoothness' );
 
-			wp_register_style( 'import-rss', esc_url( $this->assets_url . 'css/import.rss.css' ), array(), $this->version );
+			wp_register_style( 'import-rss', esc_url( $this->assets_url . 'css/import-rss.css' ), array(), $this->version );
 			wp_enqueue_style( 'import-rss' );
 
 		}

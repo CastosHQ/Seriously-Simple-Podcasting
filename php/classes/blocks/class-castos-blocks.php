@@ -41,9 +41,9 @@ class Castos_Blocks extends Controller {
 		$this->asset_file = include SSP_PLUGIN_PATH . 'build/index.asset.php';
 		// register the actual blocks
 		add_action( 'init', array( $this, 'register_castos_blocks' ) );
-		// enqueue our plugin assets for the block editor and rednering the block
-		add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
-		add_action( 'enqueue_block_assets', array( $this, 'enqueue_player_assets' ) );
+		// enqueue our plugin assets for the block editor and rendering the block
+		//add_action( 'enqueue_block_editor_assets', array( $this, 'enqueue_block_editor_assets' ) );
+		//add_action( 'enqueue_block_assets', array( $this, 'enqueue_player_assets' ) );
 	}
 
 	/**
@@ -52,6 +52,15 @@ class Castos_Blocks extends Controller {
 	 * @return void
 	 */
 	public function register_castos_blocks() {
+
+		$script_asset_path = SSP_PLUGIN_PATH . 'build/index.asset.php';
+		if ( ! file_exists( $script_asset_path ) ) {
+			// @todo make this an admin notice and exit gracefully
+			throw new Error(
+				'An error has occurred in loading the block assets. Please report this to the plugin developer.'
+			);
+		}
+
 		wp_register_script(
 			'ssp-block-script',
 			esc_url( SSP_PLUGIN_URL . 'build/index.js' ),
@@ -60,10 +69,18 @@ class Castos_Blocks extends Controller {
 			true
 		);
 
+		wp_register_style(
+			'ssp-block-style',
+			esc_url( SSP_PLUGIN_URL . 'build/index.css' ),
+			array(),
+			$this->asset_file['version']
+		);
+
 		register_block_type(
 			'seriously-simple-podcasting/castos-player',
 			array(
 				'editor_script' => 'ssp-block-script',
+				'editor_style'  => 'ssp-block-style',
 			)
 		);
 
@@ -80,6 +97,15 @@ class Castos_Blocks extends Controller {
 				'render_callback' => array( $this, 'podcast_list_render_callback' )
 			)
 		);
+
+		/*register_block_type( 'seriously-simple-podcasting/block-name',
+			array(
+				'editor_script' => '',
+				'editor_style'  => '',
+				'script'        => '',
+				'style'         => '',
+			)
+		);*/
 
 	}
 

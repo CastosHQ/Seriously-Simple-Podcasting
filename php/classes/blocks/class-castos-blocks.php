@@ -69,18 +69,18 @@ class Castos_Blocks extends Controller {
 			true
 		);
 
-		wp_register_style(
+		/*wp_register_style(
 			'ssp-block-style',
 			esc_url( SSP_PLUGIN_URL . 'build/index.css' ),
 			array(),
 			$this->asset_file['version']
-		);
+		);*/
 
 		register_block_type(
 			'seriously-simple-podcasting/castos-player',
 			array(
 				'editor_script' => 'ssp-block-script',
-				'editor_style'  => 'ssp-block-style',
+				/*'editor_style'  => 'ssp-block-style',*/
 			)
 		);
 

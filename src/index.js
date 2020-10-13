@@ -75,6 +75,7 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 		return (
 			<CastosPlayer
 				className={className}
+				episodeId={id}
 				episodeImage={image}
 				episodeFileUrl={file}
 				episodeTitle={title}

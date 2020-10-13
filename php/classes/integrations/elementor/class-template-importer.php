@@ -35,6 +35,9 @@ class Template_Importer {
 
 	public function process_template_import() {
 		// @todo add is_admin checking
+		if ( ! is_admin() ) {
+			return;
+		}
 		// @todo add user caps checks
 		// @todo add nonce checking
 		$action = ( isset( $_POST['action'] ) ? sanitize_text_field( $_POST['action'] ) : '' );

@@ -88,6 +88,5 @@ if ( version_compare( $wp_version, '4.7', '>=' ) ) {
 }
 
 if ( ssp_is_elementor_ok() ) {
-	$elementor_widgets           = new Elementor_Widgets();
-//	$elementor_template_importer = new Template_Importer();
+	$elementor_widgets = new Elementor_Widgets();
 }

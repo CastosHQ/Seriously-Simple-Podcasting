@@ -69,6 +69,7 @@ class EditCastosPlayer extends Component {
 					episodeDownloadUrl: post[0].download_link,
 				}
 				this.setState({
+					key: episodeId,
 					episode: episode,
 					editing: false
 				});

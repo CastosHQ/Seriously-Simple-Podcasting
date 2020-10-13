@@ -69,18 +69,18 @@ class Castos_Blocks extends Controller {
 			true
 		);
 
-		/*wp_register_style(
-			'ssp-block-style',
-			esc_url( SSP_PLUGIN_URL . 'build/index.css' ),
+		wp_register_style(
+			'ssp-castos-player',
+			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player-v1.css' ),
 			array(),
 			$this->asset_file['version']
-		);*/
+		);
 
 		register_block_type(
 			'seriously-simple-podcasting/castos-player',
 			array(
 				'editor_script' => 'ssp-block-script',
-				/*'editor_style'  => 'ssp-block-style',*/
+				'editor_style'  => 'ssp-castos-player',
 			)
 		);
 
@@ -112,7 +112,7 @@ class Castos_Blocks extends Controller {
 	/**
 	 * Enqueues all front end assets needed to render the Castos player correctly
 	 */
-	public function enqueue_block_editor_assets(){
+	/*public function enqueue_block_editor_assets(){
 		if ( defined( 'SCRIPT_DEBUG' ) ) {
 			$wavesurfer_src = '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.js';
 		} else {
@@ -168,12 +168,12 @@ class Castos_Blocks extends Controller {
 		wp_enqueue_style( 'ssp-block-style' );
 		wp_enqueue_style( 'ssp-block-fonts-style' );
 		wp_enqueue_style( 'ssp-block-gizmo-fonts-style' );
-	}
+	}*/
 
 	/**
 	 * Enqueues SSP plugin assets needed for the player to work.
 	 */
-	public function enqueue_player_assets() {
+	/*public function enqueue_player_assets() {
 		if ( defined( 'SCRIPT_DEBUG' ) ) {
 			$wavesurfer_src = '//cdnjs.cloudflare.com/ajax/libs/wavesurfer.js/1.4.0/wavesurfer.js';
 		} else {
@@ -211,5 +211,5 @@ class Castos_Blocks extends Controller {
 		wp_enqueue_style( 'ssp-block-style' );
 		wp_enqueue_style( 'ssp-block-fonts-style' );
 		wp_enqueue_style( 'ssp-block-gizmo-fonts-style' );
-	}
+	}*/
 }

@@ -1,5 +1,6 @@
 import {Component} from '@wordpress/element';
 import classnames from "classnames";
+import CastosPlayerPanels from "./CastosPlayerPanels";
 /**
  * @todo clean up the inline styles better
  */
@@ -81,6 +82,12 @@ class CastosPlayer extends Component {
                         </span>*/}
 					</div>
 				</div>
+				<CastosPlayerPanels
+					className={className}
+					episodeId={episodeId}
+					episodeFileUrl={episodeFileUrl}
+					episodeTitle={episodeTitle}
+				/>
 			</div>
 		);
 	}

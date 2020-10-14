@@ -207,7 +207,18 @@ class Players_Controller extends Controller {
 	public function render_subscribe_buttons( $attributes ) {
 		$subscribe_urls                  = $this->options_handler->get_subscribe_urls( $attributes['id'], 'subscribe_buttons' );
 		$template_data['subscribe_urls'] = $subscribe_urls;
-		$template_data                   = apply_filters( 'ssp_subscribe_buttons_data', $template_data );
+
+		if ( isset( $template_data['subscribe_urls']['itunes_url'] ) ) {
+			$template_data['subscribe_urls']['itunes_url']['label'] = 'Apple Podcast';
+			$template_data['subscribe_urls']['itunes_url']['icon']  = 'apple-podcasts.png';
+		}
+
+		if ( isset( $template_data['subscribe_urls']['google_play_url'] ) ) {
+			$template_data['subscribe_urls']['google_play_url']['label'] = 'Google Podcast';
+			$template_data['subscribe_urls']['google_play_url']['icon']  = 'google-podcasts.png';
+		}
+
+		$template_data = apply_filters( 'ssp_subscribe_buttons_data', $template_data );
 
 		return $this->renderer->render( $template_data, 'players/subscribe-buttons' );
 	}

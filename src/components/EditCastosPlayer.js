@@ -116,6 +116,9 @@ class EditCastosPlayer extends Component {
 						episodeTitle={episode.episodeTitle}
 						episodeDuration={episode.episodeDuration}
 						episodeDownloadUrl={episode.episodeDownloadUrl}
+						subscribeUrls={}
+						rssFeedUrl={}
+						episodeEmbedCode={}
 					/>
 				)];
 		}

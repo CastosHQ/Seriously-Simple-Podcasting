@@ -2,7 +2,9 @@ import {Component} from '@wordpress/element';
 
 class CastosPlayerPanels extends Component {
 	render() {
-		const {className, episodeId, episodeTitle, episodeFileUrl} = this.props
+		const {className, episodeId, episodeTitle, episodeFileUrl, subscribeUrls, rssFeedUrl, episodeEmbedCode} = this.props;
+		const {applePodcastsUrl, stitcherUrl, spotifyUrl, googlePlayUrl} = subscribeUrls;
+
 		return (
 			<div className={'player-panels player-panels-' + episodeId}>
 				<div className={'subscribe player-panel subscribe-' + episodeId}>
@@ -13,22 +15,22 @@ class CastosPlayerPanels extends Component {
 					<div className="panel__inner">
 						<div className="subscribe-icons">
 
-							<a href="" target="_blank" className="apple-podcasts" title="Subscribe on Apple Podcasts">
+							<a href={applePodcastsUrl} target="_blank" className="apple-podcasts" title="Subscribe on Apple Podcasts">
 								<span></span>
 								Apple Podcasts
 							</a>
 
-							<a href="" target="_blank" className="sticher" title="Subscribe on Stitcher">
+							<a href={stitcherUrl} target="_blank" className="sticher" title="Subscribe on Stitcher">
 								<span></span>
 								Stitcher
 							</a>
 
-							<a href="" target="_blank" className="spotify" title="Subscribe on Spotify">
+							<a href={spotifyUrl} target="_blank" className="spotify" title="Subscribe on Spotify">
 								<span></span>
 								Spotify
 							</a>
 
-							<a href="<?php echo $googlePlay['link'] ?>" target="_blank" className="google-play"
+							<a href={googlePlayUrl} target="_blank" className="google-play"
 							   title="Subscribe on Google Play">
 								<span></span>
 								Google Play
@@ -40,7 +42,7 @@ class CastosPlayerPanels extends Component {
 								RSS Feed
 							</div>
 							<div>
-								<input readOnly value="https://domain.com/podcast/feed" className={'input-rss input-rss-' + episodeId}/>
+								<input readOnly value={rssFeedUrl} className={'input-rss input-rss-' + episodeId}/>
 							</div>
 							<button className={'copy-rss copy-rss-' + episodeId}></button>
 						</div>
@@ -84,7 +86,7 @@ class CastosPlayerPanels extends Component {
 							Embed
 						</div>
 						<div style={{height: '10px'}}>
-							<input readOnly value='embed code here' className={'input-embed input-embed-' + episodeId}/>
+							<input readOnly value={episodeEmbedCode} className={'input-embed input-embed-' + episodeId}/>
 						</div>
 						<button className={'copy-embed copy-embed-' + episodeId}></button>
 					</div>

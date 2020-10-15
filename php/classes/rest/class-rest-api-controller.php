@@ -81,6 +81,15 @@ class Rest_Api_Controller {
 
 	}
 
+	/**
+	 * Prepares the Post excerpt for any podcast post types in the REST API
+	 *
+	 * @param $response
+	 * @param $post
+	 * @param $request
+	 *
+	 * @return mixed
+	 */
 	public function rest_prepare_excerpt( $response, $post, $request ) {
 		if ( 'excerpt' === $response->data['excerpt']['rendered'] ) {
 			$response->data['excerpt']['rendered'] = get_the_excerpt();
@@ -134,6 +143,19 @@ class Rest_Api_Controller {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'get_episode_audio_player' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		/**
+		 * Setting up custom route for getting player specific data by episode
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/player_data',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_episode_player_data' ),
 				'permission_callback' => '__return_true',
 			)
 		);
@@ -209,6 +231,31 @@ class Rest_Api_Controller {
 			'file'         => $file,
 			'audio_player' => wp_audio_shortcode( $params )
 		);
+	}
+
+	public function get_episode_player_data() {
+		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_SANITIZE_STRING ) : '' );
+		$episode    = get_post( $podcast_id, ARRAY_A );
+
+		/**
+		 * Get the feed url
+		 */
+		if ( get_option( 'permalink_structure' ) ) {
+			$feed_url = $this->home_url . 'feed/' . $feed_slug;
+		} else {
+			$feed_url = $this->home_url . '?feed=' . $feed_slug;
+		}
+
+		$custom_feed_url = get_option( 'ss_podcasting_feed_url' );
+		if ( $custom_feed_url ) {
+			$feed_url = $custom_feed_url;
+		}
+
+		/*subscribeUrls
+		rssFeedUrl
+		episodeEmbedCode*/
+
+		return $episode;
 	}
 
 	/**

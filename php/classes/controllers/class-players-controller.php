@@ -104,6 +104,27 @@ class Players_Controller extends Controller {
 		return $series_id;
 	}
 
+	/**
+	 * Get the latest episode ID for a player
+	 *
+	 * @return int
+	 */
+	public function get_latest_episode_id() {
+		$args     = array(
+			'fields'         => array( 'post_title, id' ),
+			'posts_per_page' => 1,
+			'post_type'      => ssp_post_types( true ),
+			'post_status'    => array( 'publish', 'draft', 'future' ),
+		);
+		$episodes = get_posts( $args );
+		if ( empty( $episodes ) ) {
+			return 0;
+		}
+		$episode = $episodes[0];
+
+		return $episode->ID;
+	}
+
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->renderer           = new Renderer();
@@ -149,23 +170,26 @@ class Players_Controller extends Controller {
 	 * @return string
 	 */
 	public function html_player( $id ) {
+		/**
+		 * Get the episode (post) object
+		 * If the id passed is empty or 0, get_post will return the current post
+		 */
 		$episode          = get_post( $id );
-		$episode_duration = get_post_meta( $id, 'duration', true );
-		$audio_file       = get_post_meta( $id, 'audio_file', true );
-		$album_art        = $this->episode_controller->get_album_art( $id );
+		$episode_duration = get_post_meta( $episode->ID, 'duration', true );
+		$audio_file       = get_post_meta( $episode->ID, 'audio_file', true );
+		$album_art        = $this->episode_controller->get_album_art( $episode->ID );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
-		$episode_id       = $id;
 
-		$subscribe_links = $this->get_subscribe_links( $id );
+		$subscribe_links = $this->get_subscribe_links( $episode->ID );
 
 		$feed_url = $this->get_feed_url();
 
-		$embed_code = preg_replace('/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ));
+		$embed_code = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
 
 		// set any other info
 		$templateData = array(
 			'episode'      => $episode,
-			'episode_id'   => $episode_id,
+			'episode_id'   => $episode->ID,
 			'duration'     => $episode_duration,
 			'audioFile'    => $audio_file,
 			'albumArt'     => $album_art,
@@ -175,7 +199,7 @@ class Players_Controller extends Controller {
 			'stitcher'     => $subscribe_links['stitcher'],
 			'spotify'      => $subscribe_links['spotify'],
 			'googlePlay'   => $subscribe_links['google_play'],
-			'embed_code'   => $embed_code
+			'embed_code'   => $embed_code,
 		);
 
 		$template_data = apply_filters( 'ssp_html_player_data', $templateData );
@@ -187,12 +211,12 @@ class Players_Controller extends Controller {
 	 * Renders the HTML5 player, based on the attributes sent to the method
 	 *
 	 *
-	 * @param $attributes
+	 * @param $episode_id
 	 *
 	 * @return mixed|void
 	 */
-	public function render_html_player( $attributes ) {
-		$template_data = $this->html_player( $attributes['id'] );
+	public function render_html_player( $episode_id ) {
+		$template_data = $this->html_player( $episode_id );
 
 		return $this->renderer->render( $template_data, 'players/castos-player-v1' );
 	}
@@ -200,16 +224,37 @@ class Players_Controller extends Controller {
 	/**
 	 * Renders the Subscribe Buttons, based on the attributes sent to the method
 	 *
-	 * @param $attributes
+	 * @param $episode_id
 	 *
 	 * @return mixed|void
 	 */
-	public function render_subscribe_buttons( $attributes ) {
-		$subscribe_urls                  = $this->options_handler->get_subscribe_urls( $attributes['id'], 'subscribe_buttons' );
+	public function render_subscribe_buttons( $episode_id ) {
+		$subscribe_urls                  = $this->options_handler->get_subscribe_urls( $episode_id, 'subscribe_buttons' );
 		$template_data['subscribe_urls'] = $subscribe_urls;
 		$template_data                   = apply_filters( 'ssp_subscribe_buttons_data', $template_data );
 
 		return $this->renderer->render( $template_data, 'players/subscribe-buttons' );
+	}
+
+	public function media_player( $id ) {
+		/**
+		 * Get the episode (post) object
+		 * If the id passed is empty or 0, get_post will return the current post
+		 */
+		$episode  = get_post( $id );
+		$src_file = get_post_meta( $episode->ID, 'audio_file', true );
+		$params   = array(
+			'src'     => $src_file,
+			'preload' => 'none',
+		);
+
+		$audio_player = wp_audio_shortcode( $params );
+		$template_data = array(
+			'episode'      => $episode,
+			'audio_player' => $audio_player,
+		);
+
+		return $template_data;
 	}
 
 	/**
@@ -220,15 +265,8 @@ class Players_Controller extends Controller {
 	 * @return string
 	 */
 	public function render_media_player( $id ) {
-		// get src file
-		$src_file = get_post_meta( $id, 'audio_file', true );
-		$params   = array(
-			'src'     => $src_file,
-			'preload' => 'none'
-		);
+		$template_data = $this->media_player( $id );
 
-		$media_player = wp_audio_shortcode( $params );
-
-		return $media_player;
+		return $this->renderer->render( $template_data, 'players/media-player' );
 	}
 }

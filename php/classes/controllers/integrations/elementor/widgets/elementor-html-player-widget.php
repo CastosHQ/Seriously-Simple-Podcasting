@@ -26,7 +26,8 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
 			'posts_per_page' => - 1,
-			'post_type'      => 'podcast'
+			'post_type'      => ssp_post_types( true ),
+			'post_status'    => array( 'publish', 'draft', 'future' ),
 		);
 
 		$episodes       = get_posts( $args );

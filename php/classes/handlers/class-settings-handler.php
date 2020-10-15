@@ -515,29 +515,14 @@ class Settings_Handler {
 					'default'     => 'all',
 				),
 				array(
-					'id'          => 'player_background_skin_colour',
-					'label'       => __( 'Background skin colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#222222',
-					'class'       => 'ssp-color-picker',
-				),
-				array(
-					'id'          => 'player_wave_form_colour',
-					'label'       => __( 'Player progress bar colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#fff',
-					'class'       => 'ssp-color-picker',
-				),
-				array(
-					'id'          => 'player_wave_form_progress_colour',
-					'label'       => __( 'Player progress bar progress colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#00d4f7',
-					'class'       => 'ssp-color-picker',
-				),
+					'id' => 'player_mode',
+					'label' => 'Select player color mode',
+					'type' => 'radio',
+					'options' => array(
+						'dark' => __( 'Dark player', 'seriously-simple-podcasting' ),
+						'light' =>  __( 'Light player', 'seriously-simple-podcasting' ),
+					)
+				)
 			)
 		);
 

@@ -26,9 +26,9 @@ class Players_Controller extends Controller {
 
 	/**
 	 * Return feed url.
+	 * @return string
 	 * @todo we might need to take into account the series feed url here
 	 *
-	 * @return string
 	 */
 	protected function get_feed_url() {
 		// Get feed slug
@@ -52,11 +52,12 @@ class Players_Controller extends Controller {
 
 	/**
 	 * Returns the subscribe links for a specific series by id
-	 * @todo see if this can be replaced by the Options_Handler::get_subscribe_urls method
 	 *
 	 * @param $id
 	 *
 	 * @return array[]
+	 * @todo see if this can be replaced by the Options_Handler::get_subscribe_urls method
+	 *
 	 */
 
 	protected function get_subscribe_links( $id ) {
@@ -87,11 +88,12 @@ class Players_Controller extends Controller {
 
 	/**
 	 * Return a series id for an episode
-	 * @todo check if there is a global function for this, and use it.
 	 *
 	 * @param $episode_id
 	 *
 	 * @return int
+	 * @todo check if there is a global function for this, and use it.
+	 *
 	 */
 	protected function get_series_id( $episode_id ) {
 		$series_id = 0;
@@ -150,23 +152,25 @@ class Players_Controller extends Controller {
 	 */
 	public function html_player( $id ) {
 		$episode          = get_post( $id );
+		$episode_url      = get_post_permalink( $id );
 		$episode_duration = get_post_meta( $id, 'duration', true );
 		$audio_file       = get_post_meta( $id, 'audio_file', true );
 		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$episode_id       = $id;
-
-		$subscribe_links = $this->get_subscribe_links( $id );
+		$player_mode      = get_option( 'ss_podcasting_player_mode' );
+		$subscribe_links  = $this->get_subscribe_links( $id );
 
 		$feed_url = $this->get_feed_url();
 
-		$embed_code = preg_replace('/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ));
+		$embed_code = get_post_embed_html( 500, 350, $episode );
 
 		// set any other info
 		$templateData = array(
 			'episode'      => $episode,
 			'episode_id'   => $episode_id,
 			'duration'     => $episode_duration,
+			'episodeUrl'   => $episode_url,
 			'audioFile'    => $audio_file,
 			'albumArt'     => $album_art,
 			'podcastTitle' => $podcast_title,
@@ -175,7 +179,8 @@ class Players_Controller extends Controller {
 			'stitcher'     => $subscribe_links['stitcher'],
 			'spotify'      => $subscribe_links['spotify'],
 			'googlePlay'   => $subscribe_links['google_play'],
-			'embed_code'   => $embed_code
+			'embed_code'   => $embed_code,
+			'player_mode'  => $player_mode
 		);
 
 		$template_data = apply_filters( 'ssp_html_player_data', $templateData );
@@ -207,7 +212,18 @@ class Players_Controller extends Controller {
 	public function render_subscribe_buttons( $attributes ) {
 		$subscribe_urls                  = $this->options_handler->get_subscribe_urls( $attributes['id'], 'subscribe_buttons' );
 		$template_data['subscribe_urls'] = $subscribe_urls;
-		$template_data                   = apply_filters( 'ssp_subscribe_buttons_data', $template_data );
+
+		if ( isset( $template_data['subscribe_urls']['itunes_url'] ) ) {
+			$template_data['subscribe_urls']['itunes_url']['label'] = 'Apple Podcast';
+			$template_data['subscribe_urls']['itunes_url']['icon']  = 'apple-podcasts.png';
+		}
+
+		if ( isset( $template_data['subscribe_urls']['google_play_url'] ) ) {
+			$template_data['subscribe_urls']['google_play_url']['label'] = 'Google Podcast';
+			$template_data['subscribe_urls']['google_play_url']['icon']  = 'google-podcasts.png';
+		}
+
+		$template_data = apply_filters( 'ssp_subscribe_buttons_data', $template_data );
 
 		return $this->renderer->render( $template_data, 'players/subscribe-buttons' );
 	}

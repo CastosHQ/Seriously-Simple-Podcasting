@@ -1,99 +1,99 @@
 import {Component} from '@wordpress/element';
-
-class CastosPlayerPanels extends Component {
+import classnames from "classnames";
+import CastosPlayerPanels from "./CastosPlayerPanels";
+/**
+ * @todo clean up the inline styles better
+ */
+class CastosPlayer extends Component {
 	render() {
-		const {className, episodeId, episodeTitle, episodeFileUrl, subscribeUrls, rssFeedUrl, episodeEmbedCode} = this.props;
-		const {applePodcastsUrl, stitcherUrl, spotifyUrl, googlePlayUrl} = subscribeUrls;
-
+		const {className, episodeId, episodeImage, episodeTitle, episodeFileUrl, episodeDuration, subscribeUrls, rssFeedUrl, episodeEmbedCode} = this.props
+		const playerClassNames = classnames(
+			className,
+			'castos-player',
+			'dark-mode',
+		);
+		const playerBackgroundStyle = {
+			background: 'url(' + episodeImage + ') center center no-repeat',
+			WebkitBackgroundSize: 'cover',
+			backgroundSize: 'cover'
+		};
+		const playerBackgroundClass = 'player__artwork player__artwork-'+episodeId;
+		const playButtonClass = 'play-btn play-btn-'+episodeId;
+		const pauseButtonClass = 'pause-btn pause-btn-'+episodeId+' hide';
+		const loaderSVG = "../assets/css/images/player/images/icon-loader.svg"; // @todo might need to sort out path
+		const loaderClass = 'loader loader-'+episodeId+' hide';
+		const audioElementClass = 'clip clip-'+episodeId;
+		const progressClass = 'progress progress-'+episodeId;
+		const playProgressClass = 'progress__filled progress__filled-'+episodeId;
+		const playbackClass = 'playback playback-'+episodeId;
+		const muteClass = 'player-btn__volume player-btn__volume-'+episodeId;
+		const speedClass = 'player-btn__speed player-btn__speed-'+episodeId;
+		const timerId = 'timer-'+episodeId;
+		const durationId = 'duration-'+episodeId;
+		const subscribeButtonId = 'subscribe-btn-'+episodeId;
+		const shareButtonId = 'share-btn-'+episodeId;
 		return (
-			<div className={'player-panels player-panels-' + episodeId}>
-				<div className={'subscribe player-panel subscribe-' + episodeId}>
-					<div className={'close-btn close-btn-' + episodeId}>
-						<span></span>
-						<span></span>
-					</div>
-					<div className="panel__inner">
-						<div className="subscribe-icons">
-
-							<a href={applePodcastsUrl} target="_blank" className="apple-podcasts" title="Subscribe on Apple Podcasts">
-								<span></span>
-								Apple Podcasts
-							</a>
-
-							<a href={stitcherUrl} target="_blank" className="sticher" title="Subscribe on Stitcher">
-								<span></span>
-								Stitcher
-							</a>
-
-							<a href={spotifyUrl} target="_blank" className="spotify" title="Subscribe on Spotify">
-								<span></span>
-								Spotify
-							</a>
-
-							<a href={googlePlayUrl} target="_blank" className="google-play"
-							   title="Subscribe on Google Play">
-								<span></span>
-								Google Play
-							</a>
-
-						</div>
-						<div className="player-panel-row">
-							<div className="title">
-								RSS Feed
+			<div className={playerClassNames} data-episode={episodeId}>
+				<div className="player">
+					<div className="player__main">
+						<div className={playerBackgroundClass} style={playerBackgroundStyle}></div>
+						<div className="player__body">
+							<div className="currently-playing">
+								<div className="show">
+									<strong>{episodeTitle}</strong>
+								</div>
+								<div className="episode-title">{episodeTitle}</div>
 							</div>
-							<div>
-								<input readOnly value={rssFeedUrl} className={'input-rss input-rss-' + episodeId}/>
+							<div className="play-progress">
+								<div className="play-pause-controls">
+									<button title="Play" className={playButtonClass}></button>
+									<button alt="Pause" className={pauseButtonClass}></button>
+									<img src={loaderSVG} className={loaderClass}/>
+								</div>
+								<div>
+									<audio className={audioElementClass}>
+										<source loop preload="none" src={episodeFileUrl} />
+									</audio>
+									<div className={progressClass} title="Seek">
+										<span className={playProgressClass}></span>
+									</div>
+									<div className={playbackClass}>
+										<div className="playback__controls">
+											<button className={muteClass} title="Mute/Unmute"></button>
+											<button data-skip="-10" className="player-btn__rwd" title="Rewind 10 seconds"></button>
+											<button data-speed="1" className={speedClass} title="Playback Speed">1x</button>
+											<button data-skip="30" className="player-btn__fwd" title="Fast Forward 30 seconds"></button>
+										</div>
+										<div className="playback__timers">
+											<time id={timerId}>00:00</time>
+											<span>/</span>
+											<time id={durationId}>{episodeDuration}</time>
+										</div>
+									</div>
+								</div>
 							</div>
-							<button className={'copy-rss copy-rss-' + episodeId}></button>
+							<nav className="player-panels-nav">
+								<button className="subscribe-btn" id={subscribeButtonId} title="Subscribe">Subscribe</button>
+								<button className="share-btn" id={shareButtonId} title="Share">Share</button>
+							</nav>
 						</div>
+						{/*<span className="powered-by">
+                            <a target="_blank" title="Broadcast by Castos" href="https://castos.com"></a>
+                        </span>*/}
 					</div>
 				</div>
-				<div className={'share share-' + episodeId + ' player-panel'}>
-					<div className={'close-btn close-btn-' + episodeId}>
-						<span></span>
-						<span></span>
-					</div>
-					<div className="player-panel-row">
-						<div className="title">
-							Share
-						</div>
-						<div className="icons-holder">
-							<a href={'https://www.facebook.com/sharer/sharer.php?u=' + episodeFileUrl + '&t=' + episodeTitle}
-							   target="_blank" className="share-icon facebook" title="Share on Facebook">
-								<span></span>
-							</a>
-							<a href={'https://twitter.com/intent/tweet?text=' + episodeFileUrl + '&url=' + episodeTitle}
-							   target="_blank" className="share-icon twitter" title="Share on Twitter">
-								<span></span>
-							</a>
-							<a href={episodeFileUrl} target="_blank" className="share-icon download" title="Download"
-							   download>
-								<span></span>
-							</a>
-						</div>
-					</div>
-					<div className="player-panel-row">
-						<div className="title">
-							Link
-						</div>
-						<div>
-							<input readOnly value={episodeFileUrl} className={'input-link input-link-' + episodeId}/>
-						</div>
-						<button className={'copy-link copy-link-' + episodeId}></button>
-					</div>
-					<div className="player-panel-row">
-						<div className="title">
-							Embed
-						</div>
-						<div style={{height: '10px'}}>
-							<input readOnly value={episodeEmbedCode} className={'input-embed input-embed-' + episodeId}/>
-						</div>
-						<button className={'copy-embed copy-embed-' + episodeId}></button>
-					</div>
-				</div>
+				<CastosPlayerPanels
+					className={className}
+					episodeId={episodeId}
+					episodeFileUrl={episodeFileUrl}
+					episodeTitle={episodeTitle}
+					subscribeUrls={subscribeUrls}
+					rssFeedUrl={rssFeedUrl}
+					episodeEmbedCode={episodeEmbedCode}
+				/>
 			</div>
-		)
+		);
 	}
 }
 
-export default CastosPlayerPanels;
+export default CastosPlayer;

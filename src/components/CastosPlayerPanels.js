@@ -2,13 +2,9 @@ import {Component} from '@wordpress/element';
 
 class CastosPlayerPanels extends Component {
 	render() {
-<<<<<<< HEAD
 		const {className, episodeId, episodeTitle, episodeFileUrl, subscribeUrls, rssFeedUrl, episodeEmbedCode} = this.props;
 		const {applePodcastsUrl, stitcherUrl, spotifyUrl, googlePlayUrl} = subscribeUrls;
 
-=======
-		const {className, episodeId, episodeTitle, episodeFileUrl} = this.props
->>>>>>> Completing Castos Player Block
 		return (
 			<div className={'player-panels player-panels-' + episodeId}>
 				<div className={'subscribe player-panel subscribe-' + episodeId}>
@@ -19,38 +15,22 @@ class CastosPlayerPanels extends Component {
 					<div className="panel__inner">
 						<div className="subscribe-icons">
 
-<<<<<<< HEAD
 							<a href={applePodcastsUrl} target="_blank" className="apple-podcasts" title="Subscribe on Apple Podcasts">
-=======
-							<a href="" target="_blank" className="apple-podcasts" title="Subscribe on Apple Podcasts">
->>>>>>> Completing Castos Player Block
 								<span></span>
 								Apple Podcasts
 							</a>
 
-<<<<<<< HEAD
 							<a href={stitcherUrl} target="_blank" className="sticher" title="Subscribe on Stitcher">
-=======
-							<a href="" target="_blank" className="sticher" title="Subscribe on Stitcher">
->>>>>>> Completing Castos Player Block
 								<span></span>
 								Stitcher
 							</a>
 
-<<<<<<< HEAD
 							<a href={spotifyUrl} target="_blank" className="spotify" title="Subscribe on Spotify">
-=======
-							<a href="" target="_blank" className="spotify" title="Subscribe on Spotify">
->>>>>>> Completing Castos Player Block
 								<span></span>
 								Spotify
 							</a>
 
-<<<<<<< HEAD
 							<a href={googlePlayUrl} target="_blank" className="google-play"
-=======
-							<a href="<?php echo $googlePlay['link'] ?>" target="_blank" className="google-play"
->>>>>>> Completing Castos Player Block
 							   title="Subscribe on Google Play">
 								<span></span>
 								Google Play
@@ -62,11 +42,7 @@ class CastosPlayerPanels extends Component {
 								RSS Feed
 							</div>
 							<div>
-<<<<<<< HEAD
 								<input readOnly value={rssFeedUrl} className={'input-rss input-rss-' + episodeId}/>
-=======
-								<input readOnly value="https://domain.com/podcast/feed" className={'input-rss input-rss-' + episodeId}/>
->>>>>>> Completing Castos Player Block
 							</div>
 							<button className={'copy-rss copy-rss-' + episodeId}></button>
 						</div>
@@ -110,11 +86,7 @@ class CastosPlayerPanels extends Component {
 							Embed
 						</div>
 						<div style={{height: '10px'}}>
-<<<<<<< HEAD
 							<input readOnly value={episodeEmbedCode} className={'input-embed input-embed-' + episodeId}/>
-=======
-							<input readOnly value='embed code here' className={'input-embed input-embed-' + episodeId}/>
->>>>>>> Completing Castos Player Block
 						</div>
 						<button className={'copy-embed copy-embed-' + episodeId}></button>
 					</div>

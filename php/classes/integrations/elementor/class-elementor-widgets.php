@@ -1,6 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor;
+namespace SeriouslySimplePodcasting\Integrations\Elementor;
 
 use SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets\Elementor_Episode_List_Widget;
 use SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets\Elementor_Select_Episode_Widget;

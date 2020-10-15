@@ -1,21 +1,21 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
+namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
-use SeriouslySimplePodcasting\Renderers\Renderer;
 
-class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
+class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
+
 	public function get_name() {
-		return 'Castos Player';
+		return 'Media Player';
 	}
 
 	public function get_title() {
-		return __( 'Castos Player', 'seriously-simple-podcasting' );
+		return __( 'Media Player', 'seriously-simple-podcasting' );
 	}
 
 	public function get_icon() {
-		return 'fa fa-html5';
+		return 'fa fa-play';
 	}
 
 	public function get_categories() {
@@ -45,7 +45,7 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 			'content_section',
 			[
 				'label' => __( 'Content', 'seriously-simple-podcasting' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
 			]
 		);
 
@@ -54,14 +54,15 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'show_elements',
 			[
-				'label'   => __( 'Select Episode', 'seriously-simple-podcasting' ),
-				'type'    => \Elementor\Controls_Manager::SELECT2,
+				'label' => __( 'Select Episode', 'seriously-simple-podcasting' ),
+				'type' => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
 				'default' => '0'
 			]
 		);
 
 		$this->end_controls_section();
+
 	}
 
 	protected function render() {
@@ -71,15 +72,15 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 		if ( empty( $episode_id ) ) {
 			$episode_id = $players_controller->get_latest_episode_id();
 		}
-		$html_player = $players_controller->render_html_player( $episode_id );
-		echo $html_player;
+		$media_player = $players_controller->render_media_player( $episode_id );
+		echo $media_player;
 	}
 
 	protected function _content_template() {
 		?>
-        <# _.each( settings.show_elements, function( element ) { #>
-        <div>{{{ element }}}</div>
-        <# } ) #>
+		<# _.each( settings.show_elements, function( element ) { #>
+		<div>{{{ element }}}</div>
+		<# } ) #>
 		<?php
 	}
 }

@@ -185,7 +185,7 @@ class Players_Controller extends Controller {
 		$feed_url         = $this->get_feed_url();
 		$subscribe_links  = $this->get_subscribe_links( $episode->ID );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
-		$player_mode      = get_option( 'ss_podcasting_player_mode' );
+		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
 
 		// set any other info
 		$templateData = array(

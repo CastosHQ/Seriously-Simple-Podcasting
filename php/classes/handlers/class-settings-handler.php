@@ -459,9 +459,9 @@ class Settings_Handler {
 		);
 
 		$settings['player-settings'] = array(
-			'title' => __('Player', 'seriously-simple-podcasting'),
+			'title'       => __( 'Player', 'seriously-simple-podcasting' ),
 			'description' => __( 'Player Settings', 'seriously-simple-podcasting' ),
-			'fields' => array(
+			'fields'      => array(
 				array(
 					'id'          => 'player_locations',
 					'label'       => __( 'Media player locations', 'seriously-simple-podcasting' ),
@@ -515,15 +515,17 @@ class Settings_Handler {
 					'default'     => 'all',
 				),
 				array(
-					'id' => 'player_mode',
-					'label' => 'Select player color mode',
-					'type' => 'radio',
-					'options' => array(
-						'dark' => __( 'Dark player', 'seriously-simple-podcasting' ),
-						'light' =>  __( 'Light player', 'seriously-simple-podcasting' ),
-					)
-				)
-			)
+					'id'          => 'player_mode',
+					'label'       => 'Player color mode',
+					'description' => __( 'Select light or dark mode for the HTML5 player.', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array(
+						'dark'  => __( 'Dark player', 'seriously-simple-podcasting' ),
+						'light' => __( 'Light player', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'dark',
+				),
+			),
 		);
 
 		$settings['feed-details'] = array(

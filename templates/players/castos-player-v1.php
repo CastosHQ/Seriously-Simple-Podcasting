@@ -1,4 +1,4 @@
-<div id="embed-app" class="dark-mode castos-player" data-episode="<?php echo $episode_id?>">
+<div id="embed-app" class="<?php echo $player_mode ?>-mode castos-player" data-episode="<?php echo $episode_id?>">
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo $episode_id?>" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;">
@@ -44,10 +44,10 @@
 					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
 				</nav>
 			</div>
-			<span class="powered-by">
-              <a target="_blank" title="Broadcast by Castos" href="https://castos.com">
-              </a>
-            </span>
+<!--			<span class="powered-by">-->
+<!--              <a target="_blank" title="Broadcast by Castos" href="https://castos.com">-->
+<!--              </a>-->
+<!--            </span>-->
 		</div>
 	</div>
 	<div class="player-panels player-panels-<?php echo $episode_id ?>">
@@ -82,9 +82,9 @@
 					<?php endif; ?>
 					<?php if($googlePlay['link']): ?>
 						<a href="<?php echo $googlePlay['link'] ?>" target="_blank" class="google-play"
-						   title="Subscribe on Google Play">
+						   title="Subscribe on Google Podcast}">
 							<span></span>
-							Google Play
+							Google Podcast
 						</a>
 					<?php endif; ?>
 				</div>
@@ -128,7 +128,7 @@
 					Link
 				</div>
 				<div>
-					<input value="<?php echo $audioFile ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
+					<input value="<?php echo $episodeUrl ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
 				</div>
 				<button class="copy-link copy-link-<?php echo $episode_id ?>"></button>
 			</div>
@@ -137,7 +137,7 @@
 					Embed
 				</div>
 				<div style="height: 10px;">
-					<input value='<?php echo $embed_code ?>'
+					<input type="text" value='<?php echo $embed_code ?>'
 					       class="input-embed input-embed-<?php echo $episode_id ?>"/>
 				</div>
 				<button class="copy-embed copy-embed-<?php echo $episode_id ?>"></button>

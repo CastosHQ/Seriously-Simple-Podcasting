@@ -1,6 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
+namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 
@@ -18,7 +18,7 @@ class Elementor_Select_Episode_Widget extends \Elementor\Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'podcasting' ];
 	}
 
 	public function get_episodes() {

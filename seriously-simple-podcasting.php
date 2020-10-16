@@ -30,7 +30,7 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
-use SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Elementor_Widgets;
+use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
 
 define( 'SSP_VERSION', '2.2.4-dev' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

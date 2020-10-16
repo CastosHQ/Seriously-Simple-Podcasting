@@ -20,6 +20,16 @@ class Episode_Controller extends Controller {
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->renderer = new Renderer();
+		$this->init();
+	}
+
+	public function init() {
+		add_action( 'wp_enqueue_scripts', array( $this, 'load_recent_episodes_assets' ) );
+	}
+
+	public function load_recent_episodes_assets() {
+		wp_register_style( 'ssp-recent-episodes', $this->assets_url . 'css/recent-episodes.css', array(), $this->version );
+		wp_enqueue_style( 'ssp-recent-episodes' );
 	}
 
 	/**
@@ -264,6 +274,38 @@ class Episode_Controller extends Controller {
 		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
 
 		return $this->renderer->render( $episodes_template_data, 'episodes/all-episodes-list' );
+	}
+
+	/**
+	 * Gather a list of the last 3 episodes for the Elementor Recent Episodes Widget
+	 *
+	 * @return mixed|void
+	 */
+	public function recent_episodes() {
+		$args = array(
+			'posts_per_page' => 3,
+			'offset'         => 1,
+			'post_type'      => ssp_post_types( true ),
+			'post_status'    => array( 'publish' ),
+		);
+
+		$episodes_query      = new WP_Query( $args );
+		$template_data = array(
+			'episodes' => $episodes_query->get_posts(),
+		);
+
+		return apply_filters( 'recent_episodes_template_data', $template_data );
+	}
+
+	/**
+	 * Render the template for the Elementor Recent Episodes Widget
+	 *
+	 * @return mixed|void
+	 */
+	public function render_recent_episodes() {
+		$template_data = $this->recent_episodes();
+
+		return $this->renderer->render( $template_data, 'episodes/recent-episodes' );
 	}
 
 }

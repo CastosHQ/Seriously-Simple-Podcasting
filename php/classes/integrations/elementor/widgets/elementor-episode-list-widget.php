@@ -1,6 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
+namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use WP_Query;
@@ -19,7 +19,7 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'podcasting' ];
 	}
 
 	public function get_episodes() {
@@ -54,7 +54,7 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 			[
 				'label'   => __( 'Show Featured Image', 'seriously-simple-podcasting' ),
 				'type'    => \Elementor\Controls_Manager::SWITCHER,
-				'default' => false
+				'default' => 'yes'
 			]
 		);
 		$this->add_control(
@@ -62,7 +62,7 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 			[
 				'label'   => __( 'Show Episode Player', 'seriously-simple-podcasting' ),
 				'type'    => \Elementor\Controls_Manager::SWITCHER,
-				'default' => false
+				'default' => 'yes'
 			]
 		);
 		$this->add_control(
@@ -70,7 +70,7 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 			[
 				'label'   => __( 'Show Episode Excerpt', 'seriously-simple-podcasting' ),
 				'type'    => \Elementor\Controls_Manager::SWITCHER,
-				'default' => false
+				'default' => 'yes'
 			]
 		);
 

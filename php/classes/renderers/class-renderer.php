@@ -9,6 +9,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Renderer {
 
+
+
 	public function render($data, $template_path){
 		// enqueue any css or js, based ont he data being passed
 		// start ob

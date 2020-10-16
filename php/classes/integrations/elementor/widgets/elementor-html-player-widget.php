@@ -1,6 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Widgets;
+namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 use SeriouslySimplePodcasting\Renderers\Renderer;
@@ -19,18 +19,19 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'podcasting' ];
 	}
 
 	public function get_episodes() {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
 			'posts_per_page' => - 1,
-			'post_type'      => 'podcast'
+			'post_type'      => ssp_post_types( true ),
+			'post_status'    => array( 'publish', 'draft', 'future' ),
 		);
 
 		$episodes       = get_posts( $args );
-		$episodeOptions = [];
+		$episodeOptions = [0 => 'Latest Epsiode'];
 		foreach ( $episodes as $episode ) {
 			$episodeOptions[ $episode->ID ] = $episode->post_title;
 		}
@@ -56,7 +57,7 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 				'label'   => __( 'Select Episode', 'seriously-simple-podcasting' ),
 				'type'    => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episodeOptions,
-				'default' => array_shift( $episodeOptionsValues )
+				'default' => '0'
 			]
 		);
 
@@ -64,16 +65,13 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	}
 
 	protected function render() {
-		$settings = $this->get_settings_for_display();
-
-		$episode_id = $settings['show_elements'];
-
-		$player = new Players_Controller( __FILE__, SSP_VERSION );
-		$render = new Renderer();
-
-		$html_player_data = $player->html_player( $episode_id );
-		$html_player      = $render->render( $html_player_data, 'players/castos-player-v1' );
-
+		$players_controller = new Players_Controller( __FILE__, SSP_VERSION );
+		$settings           = $this->get_settings_for_display();
+		$episode_id         = $settings['show_elements'];
+		if ( empty( $episode_id ) ) {
+			$episode_id = $players_controller->get_latest_episode_id();
+		}
+		$html_player = $players_controller->render_html_player( $episode_id );
 		echo $html_player;
 	}
 

@@ -1740,13 +1740,13 @@ class Frontend_Controller extends Controller {
 			?>
 			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
 				<h2>
-					<a class="entry-title-link" rel="bookmark" href="<?php echo $episode->guid ?>">
+					<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_permalink( $episode->ID ) ); ?>">
 						<?php echo $episode->post_title; ?>
 					</a>
 				</h2>
 				<div class="podcast-content">
 					<?php if ( isset( $attributes['featuredImage'] ) ) { ?>
-						<a class="podcast-image-link" href="<?php echo $episode->guid ?>" aria-hidden="true"
+						<a class="podcast-image-link" href="<?php echo esc_url( get_permalink( $episode->ID ) ) ?>" aria-hidden="true"
 						   tabindex="-1">
 							<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
 						</a>

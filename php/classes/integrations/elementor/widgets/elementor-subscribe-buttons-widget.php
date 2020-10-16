@@ -4,7 +4,7 @@ namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
-class Elementor_Subscribe_Buttons extends \Elementor\Widget_Base {
+class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 	public function get_name() {
 		return 'Subscribe Buttons';
 	}
@@ -18,7 +18,7 @@ class Elementor_Subscribe_Buttons extends \Elementor\Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'podcasting' ];
 	}
 
 	public function get_episodes() {

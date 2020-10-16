@@ -19,7 +19,7 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'basic' ];
+		return [ 'podcasting' ];
 	}
 
 	public function get_episodes() {

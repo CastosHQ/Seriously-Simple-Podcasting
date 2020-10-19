@@ -13,7 +13,7 @@ while ( $episodes->have_posts() ) : $episodes->the_post();
 	?>
 	<article class="podcast-<?php echo get_post()->ID ?> podcast type-podcast">
 		<h5>
-			<a class="entry-title-link" rel="bookmark" href="<?php echo get_post()->guid ?>">
+			<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_the_permalink( get_post()->ID ) ); ?>">
 				<?php echo get_post()->post_title; ?>
 			</a>
 		</h5>

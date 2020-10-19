@@ -1,0 +1,47 @@
+.ssp-recent-episodes-items {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 30px;
+}
+.ssp-recent-episodes-items .ssp-recent-episode-post h4 {
+	margin: 2rem 0;
+	/* Elementor Globals */
+	font-family: var(--e-global-typography-primary-font-family);
+	font-weight: var(--e-global-typography-primary-font-weight);
+	color: var(--e-global-color-text);
+	padding-left: 10px;
+}
+.ssp-recent-episodes-items .ssp-recent-episode-post p {
+	padding-left: 10px;
+}
+.ssp-recent-episodes-items .ssp-recent-episode-post h4 a {
+	color: var(--e-global-color-text);
+}
+.ssp-recent-episodes-items .ssp-recent-episode-post h4 a:hover {
+	border-bottom: 2px solid var(--e-global-color-primary);
+}
+.ssp-recent-episode-post a img {
+	width: 100%;
+	border-radius: 4px;
+}
+.ssp-recent-episodes-items .ssp-recent-episode-post a.view-episode {
+	color: var(--e-global-color-primary);
+	font-weight: var(--e-global-typography-primary-font-weight);
+	font-size: 23px;
+	padding: 5px 10px;
+	border-radius: 4px;
+}
+.ssp-recent-episodes-items .ssp-recent-episode-post a.view-episode:hover {
+	color: var(--e-global-color-text);
+	background-color: var(--e-global-color-primary);
+}
+@media (max-width: 960px) {
+	.ssp-recent-episodes-items {
+		grid-template-columns: repeat(2, 1fr);
+	}
+}
+@media (max-width: 768px) {
+	.ssp-recent-episodes-items {
+		grid-template-columns: 1fr;
+	}
+}

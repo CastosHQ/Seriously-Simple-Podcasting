@@ -14,13 +14,12 @@
 							   title="<?php echo $episode->post_title ?>"><?php echo $episode->post_title ?></a>
 						</h4>
 						<p><?php echo $episode->post_excerpt ?></p>
-						<a href="<?php echo get_the_permalink( $episode->ID ); ?>"
-						   title="<?php echo $episode->post_title ?>">Listen -></a>
+						<a href="<?php echo get_the_permalink( $episode->ID ); ?>" title="<?php echo $episode->post_title ?>" class="view-episode">Listen →</a>
 					</div>
 				<?php } ?>
 			</div>
 			<div>
-				<a href="<?php echo get_the_permalink( $episode->ID ); ?>" title="<?php echo $episode->post_title ?>" class="view-episode">Listen →</a>
+				<a href="<?php echo site_url( 'podcasts' ) ?>>" title="All Epsiodes">All Episodes</a>
 			</div>
 		</div>
 	</div>

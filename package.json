@@ -16,7 +16,8 @@
   "scripts": {
     "start": "wp-scripts start",
     "build": "wp-scripts build",
-    "prepare": "rm -rf vendor/ && composer install --prefer-dist --no-dev && grunt uglify && grunt cssmin && wp-scripts build"
+    "postinstall": "rm -rf vendor/ && composer install && wp-scripts build",
+    "predeploy": "rm -rf vendor/ && composer install --prefer-dist --no-dev && grunt uglify && grunt cssmin && wp-scripts build"
   },
   "repository": {
     "type": "git",

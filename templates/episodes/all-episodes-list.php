@@ -1,44 +1,37 @@
 <?php
 
-use SeriouslySimplePodcasting\Controllers\Players_Controller;
-
-while ( $episodes->have_posts() ) : $episodes->the_post();
+foreach ( $episodes as $episode ) {
 	$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
 	if ( $player_style === 'standard' ) {
-		$media_player = $player->media_player( get_post()->ID );
+		$media_player = $player->media_player( $episode->ID );
 	} else {
-		$episode_id['id'] = get_post()->ID;
-		$media_player     = $player->render_html_player( $episode_id );
+		$media_player     = $player->render_html_player( $episode->ID );
 	}
 	?>
-	<article class="podcast-<?php echo get_post()->ID ?> podcast type-podcast">
+	<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
 		<h5>
-			<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_the_permalink( get_post()->ID ) ); ?>">
-				<?php echo get_post()->post_title; ?>
+			<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_the_permalink( $episode->ID ) ); ?>">
+				<?php echo $episode->post_title; ?>
 			</a>
 		</h5>
 		<?php if ( isset( $settings['show_featured_image'] ) && 'yes' === $settings['show_featured_image'] ) { ?>
-			<a class="podcast-image-link" href="<?php echo get_post()->guid ?>" aria-hidden="true"
+			<a class="podcast-image-link" href="<?php echo esc_url( get_the_permalink( $episode->ID ) ); ?>" aria-hidden="true"
 			   tabindex="-1">
-				<?php echo get_the_post_thumbnail( get_post()->ID, 'full' ); ?>
+				<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
 			</a>
 		<?php } ?>
 		<?php if ( isset( $settings['show_episode_player'] ) && 'yes' === $settings['show_episode_player'] ) {
 			echo $media_player;
 		} ?>
 		<?php if ( isset( $settings['show_episode_excerpt'] ) && 'yes' === $settings['show_episode_excerpt'] ) { ?>
-			<p><?php echo get_the_excerpt( get_post()->ID ); ?></p>
+			<p><?php echo get_the_excerpt( $episode->ID ); ?></p>
 		<?php } ?>
 	</article>
 <?php
-endwhile;
-
-$total_pages = $episodes->max_num_pages;
+};
 
 if ( $total_pages > 1 ) {
-
 	$current_page = max( 1, get_query_var( 'paged' ) );
-
 	echo paginate_links( array(
 		'base'      => get_pagenum_link( 1 ) . '%_%',
 		'format'    => '/page/%#%',

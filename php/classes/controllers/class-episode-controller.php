@@ -257,19 +257,23 @@ class Episode_Controller extends Controller {
 	 *
 	 * @return mixed|void
 	 */
-	public function render_episodes($settings) {
-		$player       = new Players_Controller( $this->file, $this->version );
-		$args  = array(
+	public function render_episodes( $settings ) {
+		$player = new Players_Controller( $this->file, $this->version );
+		$args   = array(
 			'post_type'      => 'podcast',
 			'posts_per_page' => 10,
 		);
 
-		$episodes               = new WP_Query( $args );
+		$episodes_query         = new WP_Query( $args );
+		$episodes               = $episodes_query->get_posts();
+		$total_pages            = $episodes_query->max_num_pages;
 		$episodes_template_data = array(
-			'player' => $player,
+			'player'   => $player,
 			'episodes' => $episodes,
+			'total_pages' => $total_pages,
 			'settings' => $settings,
 		);
+		wp_reset_postdata();
 
 		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
 
@@ -293,6 +297,7 @@ class Episode_Controller extends Controller {
 		$template_data = array(
 			'episodes' => $episodes_query->get_posts(),
 		);
+		wp_reset_postdata();
 
 		return apply_filters( 'recent_episodes_template_data', $template_data );
 	}

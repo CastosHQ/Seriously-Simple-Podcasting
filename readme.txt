@@ -1,10 +1,10 @@
 === Seriously Simple Podcasting ===
-Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
+Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake, mikelittle
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.5
+Tested up to: 5.5.1
 Requires PHP: 5.6
-Stable tag: 2.2.3
+Stable tag: 2.2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.2.4 =
+* 2020-10-20
+* [FIX] Changes the dynamic podcast list block to use get_permalink() instead of the episode guid. (props [mikelittle](https://profiles.wordpress.org/mikelittle))
+* [NEW] Added "Play/Pause", "Rewind 30 Seconds", and "Download Epsiode" anchor text for elements in the HTML5 player, for better accessibility with screen readers. (props [edequalsawesome](https://github.com/edequalsawesome))
 
 = 2.2.3 =
 * 2020-08-19

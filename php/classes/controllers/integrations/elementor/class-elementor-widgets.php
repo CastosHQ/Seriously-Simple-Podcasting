@@ -18,7 +18,7 @@ final class Elementor_Widgets {
 	public function init() {
 		// Add Plugin actions
 		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
-		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_template_importer' ] );
+		add_action( 'elementor/init', [ $this, 'init_template_importer' ] );
 	}
 
 	public function init_widgets() {

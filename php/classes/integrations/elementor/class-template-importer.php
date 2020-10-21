@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Template_Importer {
 
-	protected $template_name = 'ssp-elementor-template-2020-09-30.json';
 	protected $template_path = SSP_PLUGIN_PATH . 'templates/elementor/';
 
 	protected $template_library_manager;
@@ -34,14 +33,15 @@ class Template_Importer {
 	}
 
 	public function process_template_import() {
-		// @todo add is_admin checking
 
 		if ( ! is_admin() ) {
 			return;
 		}
-
+		// verify template import nonce
+		if ( ! isset( $_GET['import_template_nonce'] ) || ! wp_verify_nonce( $_GET['import_template_nonce'], '' ) ) {
+			return;
+		}
 		// @todo add user caps checks
-		// @todo add nonce checking
 		if ( ! isset( $_GET['elementor_import_templates'] ) ) {
 			return;
 		}
@@ -51,13 +51,6 @@ class Template_Importer {
 		}
 
 		if ( $_GET['tab'] != 'extensions' ) {
-			return;
-		}
-
-		// verify template import nonce
-		if ( ! isset( $_GET['import_template_nonce'] ) || ! wp_verify_nonce( $_GET['import_template_nonce'], '' ) ) {
-			add_action( 'admin_notices', array( $this, 'nonce_admin_message' ) );
-
 			return;
 		}
 
@@ -94,7 +87,6 @@ class Template_Importer {
 	public function import_template( $templates_for_import ) {
 		$source = $this->template_library_manager->get_source( 'local' );
 
-		// @todo replace this with a loop over the templates directory, once we have all the templates.
 		if ( ! empty( $templates_for_import ) ) {
 			foreach ( $templates_for_import as $file_name ) {
 				$template = $source->import_template( $file_name, $this->template_path . $file_name );
@@ -106,22 +98,28 @@ class Template_Importer {
 	}
 
 	public function templates_imported_notice() {
-		$class   = 'notice notice-success is-dismissible';
-		$message = __( 'Great job! Templates imported!', 'sample-text-domain' );
-
-		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+		$template_link = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
+		$message       = '
+			<div class="notice notice-success is-dismissible">
+          		<p>Great Job, the Elementor templates have been imported. You can view the list of templates in yourn <a href="' . $template_link . '">Elementor Template Library</a>.</p>
+         	</div>'
+		?>
+		<div class="<?php echo $class; ?>">
+			<p><?php echo $message; ?></p>
+		</div>
+		<?php
 	}
 
 	public function no_new_templates_to_import() {
 		$class   = 'notice notice-success is-dismissible';
-		$message = __( "There are no new templates to be imported!", 'sample-text-domain' );
+		$message = __( "There are no new templates to be imported!", 'seriously-simple-podcasting' );
 
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 	}
 
 	public function nonce_admin_message() {
 		$class   = 'notice notice-error';
-		$message = __( 'Irks! Request validation error.', 'sample-text-domain' );
+		$message = __( 'Irks! Request validation error.', 'seriously-simple-podcasting' );
 
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 

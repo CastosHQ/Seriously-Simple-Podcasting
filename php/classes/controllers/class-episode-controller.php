@@ -180,8 +180,11 @@ class Episode_Controller extends Controller {
 
 		$series = get_the_terms( $episode_id, 'series' );
 
-		if ( $series ) {
-			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : false;
+		/**
+		 * In some instances, this could return a WP_Error object
+		 */
+		if ( ! is_wp_error( $series ) && $series ) {
+			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : false;
 		}
 
 		if ( $series_id ) {

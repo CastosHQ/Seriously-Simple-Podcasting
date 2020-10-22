@@ -9,6 +9,11 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+// Check if Elementor installed and activated
+if ( ! did_action( 'elementor/loaded' ) ) {
+	return false;
+}
+
 /**
  * Template Importer for Elementor
  *
@@ -46,15 +51,15 @@ class Elementor_Template_Importer {
 			return;
 		}
 
-		if ( ! $_GET['elementor_import_templates'] == true ) {
+		if ( 'true' != $_GET['elementor_import_templates'] ) {
 			return;
 		}
 
-		if ( $_GET['tab'] != 'extensions' ) {
+		if ( 'extensions' !== $_GET['tab'] ) {
 			return;
 		}
 
-		$elementor_template_files      = glob( $this->template_path . "*.json" );
+		$elementor_template_files      = glob( $this->template_path . '*.json', GLOB_NOSORT );
 		$elementor_template_file_names = array();
 		if ( ! empty( $elementor_template_files ) ) {
 			$i = 0;
@@ -101,26 +106,20 @@ class Elementor_Template_Importer {
 		$template_link = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
 		$message       = '
 			<div class="notice notice-success is-dismissible">
-          		<p>Great Job, the Elementor templates have been imported. You can view the list of templates in yourn <a href="' . $template_link . '">Elementor Template Library</a>.</p>
-         	</div>'
-		?>
-		<div class="<?php echo $class; ?>">
-			<p><?php echo $message; ?></p>
-		</div>
-		<?php
+          		<p>Great Job, the Elementor templates have been imported. You can view the list of templates in your <a href="' . $template_link . '">Elementor Template Library</a>.</p>
+         	</div>';
+		echo $message;
 	}
 
 	public function no_new_templates_to_import() {
 		$class   = 'notice notice-success is-dismissible';
 		$message = __( "There are no new templates to be imported!", 'seriously-simple-podcasting' );
-
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 	}
 
 	public function nonce_admin_message() {
 		$class   = 'notice notice-error';
 		$message = __( 'Irks! Request validation error.', 'seriously-simple-podcasting' );
-
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 
 	}

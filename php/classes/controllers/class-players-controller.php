@@ -99,8 +99,11 @@ class Players_Controller extends Controller {
 		$series_id = 0;
 		$series    = get_the_terms( $episode_id, 'series' );
 
-		if ( $series ) {
-			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : 0;
+		/**
+		 * In some instances, this could return a WP_Error object
+		 */
+		if ( ! is_wp_error( $series ) && $series ) {
+			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : 0;
 		}
 
 		return $series_id;
@@ -177,20 +180,20 @@ class Players_Controller extends Controller {
 		 * If the id passed is empty or 0, get_post will return the current post
 		 */
 		$episode          = get_post( $id );
-		$episode_duration = get_post_meta( $episode->ID, 'duration', true );
+		$episode_duration = get_post_meta( $id, 'duration', true );
 		$episode_url      = get_post_permalink( $id );
-		$audio_file       = get_post_meta( $episode->ID, 'audio_file', true );
-		$album_art        = $this->episode_controller->get_album_art( $episode->ID );
+		$audio_file       = get_post_meta( $id, 'audio_file', true );
+		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$feed_url         = $this->get_feed_url();
-		$subscribe_links  = $this->get_subscribe_links( $episode->ID );
+		$subscribe_links  = $this->get_subscribe_links( $id );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
 		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
 
 		// set any other info
-		$templateData = array(
+		$template_data = array(
 			'episode'      => $episode,
-			'episode_id'   => $episode->ID,
+			'episode_id'   => $id,
 			'duration'     => $episode_duration,
 			'episodeUrl'   => $episode_url,
 			'audioFile'    => $audio_file,
@@ -205,7 +208,7 @@ class Players_Controller extends Controller {
 			'player_mode'  => $player_mode,
 		);
 
-		$template_data = apply_filters( 'ssp_html_player_data', $templateData );
+		$template_data = apply_filters( 'ssp_html_player_data', $template_data );
 
 		return $template_data;
 	}

@@ -30,13 +30,9 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
-<<<<<<< HEAD
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
+use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Template_Importer;
 
-=======
-use SeriouslySimplePodcasting\Controllers\Integrations\Elementor\Elementor_Widgets;
-use SeriouslySimplePodcasting\Integrations\Elementor\Template_Importer;
->>>>>>> 225ed4a626a0318d335d6ba146513038b42a7098
 define( 'SSP_VERSION', '2.2.4-dev' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
@@ -93,5 +89,6 @@ if ( version_compare( $wp_version, '4.7', '>=' ) ) {
 }
 
 if ( ssp_is_elementor_ok() ) {
-	$elementor_widgets = new Elementor_Widgets();
+	$elementor_widgets           = new Elementor_Widgets();
+	$elementor_template_importer = new Template_Importer();
 }

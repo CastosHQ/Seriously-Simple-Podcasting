@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.19.18
  */
-class Template_Importer {
+class Elementor_Template_Importer {
 
 	protected $template_path = SSP_PLUGIN_PATH . 'templates/elementor/';
 

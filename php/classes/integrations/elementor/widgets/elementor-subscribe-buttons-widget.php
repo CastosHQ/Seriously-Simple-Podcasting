@@ -47,32 +47,33 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 			]
 		);
 
-		$episodeOptions = $this->get_episodes();
-
-		$series = get_terms( array(
-				'taxonomy' => 'series'
+		$series = get_terms(
+			array(
+				'taxonomy' => 'series',
 			)
 		);
 
-		$seriesOptions = array(
-			0 => 'Default'
+		$series_options = array(
+			0 => 'Default',
 		);
 
-		foreach ( $series as $key => $series ) {
-			$seriesOptions[ $series->term_id ] = $series->name;
+		if ( ! empty( $series ) ) {
+			foreach ( $series as $key => $series ) {
+				if ( is_object( $series ) ) {
+					$series_options[ $series->term_id ] = $series->name;
+				}
+			}
 		}
 
-		$seriesOptionsIds = array_keys( $seriesOptions );
-
-		$episodeOptionsValues = array_values( $episodeOptions );
+		$series_options_ids = array_keys( $series_options );
 		$this->add_control(
 			'show_elements',
 			[
 				'label'    => __( 'Select Podcast', 'plugin-domain' ),
 				'type'     => \Elementor\Controls_Manager::SELECT2,
-				'options'  => $seriesOptions,
+				'options'  => $series_options,
 				'multiple' => false,
-				'default'  => array_shift( $seriesOptionsIds )
+				'default'  => array_shift( $series_options_ids )
 			]
 		);
 

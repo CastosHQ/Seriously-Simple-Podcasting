@@ -3,7 +3,6 @@
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
-use SeriouslySimplePodcasting\Renderers\Renderer;
 
 class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	public function get_name() {

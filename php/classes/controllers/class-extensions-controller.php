@@ -27,6 +27,7 @@ class Extensions_Controller extends Controller {
 
 	public function render_seriously_simple_extensions() {
 		add_thickbox();
+
 		$image_dir  = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
 
 		$extensions = array(
@@ -133,7 +134,11 @@ class Extensions_Controller extends Controller {
 		foreach ( $extensions as $extension ) {
 			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>';
 			if ( ! empty( $extension['new_window'] ) ) {
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+				if ( $extensions['elementor-templates']['new_window'] === 'redirect' ) {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+				} else {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+				}
 			} else {
 				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
 			}
@@ -145,7 +150,11 @@ class Extensions_Controller extends Controller {
 				$button_text = $extension['button_text'];
 			}
 			if ( ! empty( $extension['new_window'] ) ) {
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">' . $button_text . '</a>';
+				if ( $extensions['elementor-templates']['new_window'] === 'redirect' ) {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="button-secondary">' . $button_text . '</a>';
+				} else {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">' . $button_text . '</a>';
+				}
 			} else {
 				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">' . $button_text . '</a>';
 			}

@@ -9,7 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Check if Elementor installed and activated
+// Exit if Elementor not installed and activated
 if ( ! did_action( 'elementor/loaded' ) ) {
 	return false;
 }
@@ -38,11 +38,9 @@ class Elementor_Template_Importer {
 	}
 
 	public function process_template_import() {
-
 		if ( ! is_admin() ) {
 			return;
 		}
-		// verify template import nonce
 		if ( ! isset( $_GET['import_template_nonce'] ) || ! wp_verify_nonce( $_GET['import_template_nonce'], '' ) ) {
 			return;
 		}
@@ -50,51 +48,30 @@ class Elementor_Template_Importer {
 		if ( ! isset( $_GET['elementor_import_templates'] ) ) {
 			return;
 		}
-
 		if ( 'true' != $_GET['elementor_import_templates'] ) {
 			return;
 		}
 
-		if ( 'extensions' !== $_GET['tab'] ) {
-			return;
-		}
-
-		$elementor_template_files      = glob( $this->template_path . '*.json', GLOB_NOSORT );
-		$elementor_template_file_names = array();
-		if ( ! empty( $elementor_template_files ) ) {
-			$i = 0;
-			foreach ( $elementor_template_files as $file ) {
-				$elementor_template_file_names[ $i ] = substr( $file, strrpos( $file, '/' ) + 1 );
-				$i ++;
+		$elementor_template_files          = glob( $this->template_path . '*.json', GLOB_NOSORT );
+		$templates_for_import              = array();
+		$ss_podcasting_elementor_templates = get_option( 'ss_podcasting_elementor_templates', array() );
+		foreach ( $elementor_template_files as $elementor_template_file ) {
+			$elementor_template_file_name = basename( $elementor_template_file );
+			if ( ! in_array( $elementor_template_file_name, $ss_podcasting_elementor_templates ) ) {
+				$ss_podcasting_elementor_templates[] = $elementor_template_file_name;
+				$templates_for_import[]              = $elementor_template_file_name;
 			}
 		}
-
-		$elementor_template_options = get_option( 'ss_podcasting_elementor_templates' );
-		if ( $elementor_template_options == false ) {
-			$elementor_template_options = array();
-			add_option( 'ss_podcasting_elementor_templates', $elementor_template_options );
-		}
-
-		$templates_for_import = array();
-		if ( ! empty( $elementor_template_file_names ) ) {
-			foreach ( $elementor_template_file_names as $template ) {
-				if ( ! in_array( $template, $elementor_template_options ) ) {
-					$templates_for_import[] = $elementor_template_options[] = $template;
-				}
-			}
-		}
-
-		update_option( 'ss_podcasting_elementor_templates', $elementor_template_options );
+		update_option( 'ss_podcasting_elementor_templates', $ss_podcasting_elementor_templates );
 
 		return $this->import_template( $templates_for_import );
 	}
 
 	public function import_template( $templates_for_import ) {
 		$source = $this->template_library_manager->get_source( 'local' );
-
 		if ( ! empty( $templates_for_import ) ) {
 			foreach ( $templates_for_import as $file_name ) {
-				$template = $source->import_template( $file_name, $this->template_path . $file_name );
+				$source->import_template( $file_name, $this->template_path . $file_name );
 			}
 			add_action( 'admin_notices', array( $this, 'templates_imported_notice' ) );
 		} else {
@@ -104,6 +81,7 @@ class Elementor_Template_Importer {
 
 	public function templates_imported_notice() {
 		$template_link = admin_url( 'edit.php?post_type=elementor_library&tabs_group=library' );
+		// @todo convert this into a translatable and escapable notice
 		$message       = '
 			<div class="notice notice-success is-dismissible">
           		<p>Great Job, the Elementor templates have been imported. You can view the list of templates in your <a href="' . $template_link . '">Elementor Template Library</a>.</p>
@@ -113,7 +91,7 @@ class Elementor_Template_Importer {
 
 	public function no_new_templates_to_import() {
 		$class   = 'notice notice-success is-dismissible';
-		$message = __( "There are no new templates to be imported!", 'seriously-simple-podcasting' );
+		$message = __( 'There are no new templates to be imported!', 'seriously-simple-podcasting' );
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 	}
 
@@ -121,7 +99,6 @@ class Elementor_Template_Importer {
 		$class   = 'notice notice-error';
 		$message = __( 'Irks! Request validation error.', 'seriously-simple-podcasting' );
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
-
 	}
 
 }

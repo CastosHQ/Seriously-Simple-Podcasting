@@ -183,26 +183,23 @@ class Players_Controller extends Controller {
 		$album_art        = $this->episode_controller->get_album_art( $episode->ID );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$feed_url         = $this->get_feed_url();
-		$subscribe_links  = $this->get_subscribe_links( $episode->ID );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
 		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
+		$subscribe_links  = $this->options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
 
 		// set any other info
 		$templateData = array(
-			'episode'      => $episode,
-			'episode_id'   => $episode->ID,
-			'duration'     => $episode_duration,
-			'episodeUrl'   => $episode_url,
-			'audioFile'    => $audio_file,
-			'albumArt'     => $album_art,
-			'podcastTitle' => $podcast_title,
-			'feedUrl'      => $feed_url,
-			'itunes'       => $subscribe_links['itunes'],
-			'stitcher'     => $subscribe_links['stitcher'],
-			'spotify'      => $subscribe_links['spotify'],
-			'googlePlay'   => $subscribe_links['google_play'],
-			'embed_code'   => $embed_code,
-			'player_mode'  => $player_mode,
+			'episode'         => $episode,
+			'episode_id'      => $episode->ID,
+			'duration'        => $episode_duration,
+			'episodeUrl'      => $episode_url,
+			'audioFile'       => $audio_file,
+			'albumArt'        => $album_art,
+			'podcastTitle'    => $podcast_title,
+			'feedUrl'         => $feed_url,
+			'subscribe_links' => $subscribe_links,
+			'embed_code'      => $embed_code,
+			'player_mode'     => $player_mode,
 		);
 
 		$template_data = apply_filters( 'ssp_html_player_data', $templateData );

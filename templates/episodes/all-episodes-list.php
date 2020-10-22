@@ -1,34 +1,35 @@
 <?php
 
-use SeriouslySimplePodcasting\Controllers\Players_Controller;
-
 while ( $episodes->have_posts() ) : $episodes->the_post();
+
 	$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+
 	if ( $player_style === 'standard' ) {
 		$media_player = $player->media_player( get_post()->ID );
 	} else {
-		$episode_id['id'] = get_post()->ID;
-		$media_player     = $player->render_html_player( $episode_id );
+		$media_player = $player->render_html_player( get_post()->ID );
 	}
 	?>
 	<article class="podcast-<?php echo get_post()->ID ?> podcast type-podcast">
-		<h5>
+		<h2>
 			<a class="entry-title-link" rel="bookmark" href="<?php echo get_post()->guid ?>">
 				<?php echo get_post()->post_title; ?>
 			</a>
-		</h5>
-		<?php if ( isset( $settings['show_featured_image'] ) && 'yes' === $settings['show_featured_image'] ) { ?>
-			<a class="podcast-image-link" href="<?php echo get_post()->guid ?>" aria-hidden="true"
-			   tabindex="-1">
-				<?php echo get_the_post_thumbnail( get_post()->ID, 'full' ); ?>
-			</a>
-		<?php } ?>
-		<?php if ( isset( $settings['show_episode_player'] ) && 'yes' === $settings['show_episode_player'] ) {
-			echo $media_player;
-		} ?>
-		<?php if ( isset( $settings['show_episode_excerpt'] ) && 'yes' === $settings['show_episode_excerpt'] ) { ?>
-			<p><?php echo get_the_excerpt( get_post()->ID ); ?></p>
-		<?php } ?>
+		</h2>
+        <div class="podcast-content">
+            <?php if ( isset( $settings['show_featured_image'] ) && 'yes' === $settings['show_featured_image'] ) { ?>
+                <a class="podcast-image-link" href="<?php echo get_post()->guid ?>" aria-hidden="true"
+                   tabindex="-1">
+                    <?php echo get_the_post_thumbnail( get_post()->ID, 'full' ); ?>
+                </a>
+            <?php } ?>
+            <?php if ( isset( $settings['show_episode_player'] ) && 'yes' === $settings['show_episode_player'] ) {
+                echo $media_player;
+            } ?>
+            <?php if ( isset( $settings['show_episode_excerpt'] ) && 'yes' === $settings['show_episode_excerpt'] ) { ?>
+                <p><?php echo get_the_excerpt( get_post()->ID ); ?></p>
+            <?php } ?>
+        </div>
 	</article>
 <?php
 endwhile;

@@ -58,35 +58,13 @@
 			</div>
 			<div class="panel__inner">
 				<div class="subscribe-icons">
-					<?php if($itunes['link']): ?>
-						<a href="<?php echo $itunes['link'] ?>"
-						   target="_blank" class="apple-podcasts" title="Subscribe on Apple Podcasts">
-							<span></span>
-							Apple Podcasts
-						</a>
-					<?php endif; ?>
-					<?php if($stitcher['link']): ?>
-						<a href="<?php echo $stitcher['link'] ?>" target="_blank" class="sticher"
-						   title="Subscribe on Stitcher">
-							<span></span>
-							Stitcher
-						</a>
-					<?php endif; ?>
-					<?php if($spotify['link']): ?>
-						<a href="<?php echo $spotify['link'] ?>" target="_blank"
-						   class="spotify"
-						   title="Subscribe on Spotify">
-							<span></span>
-							Spotify
-						</a>
-					<?php endif; ?>
-					<?php if($googlePlay['link']): ?>
-						<a href="<?php echo $googlePlay['link'] ?>" target="_blank" class="google-play"
-						   title="Subscribe on Google Podcast}">
-							<span></span>
-							Google Podcast
-						</a>
-					<?php endif; ?>
+                    <?php foreach ($subscribe_links as $key => $subscribe_link) : ?>
+                    <a href="<?php echo $subscribe_link['url'] ?>"
+                       target="_blank" class="<?php echo explode('.', $subscribe_link['icon'], 2)[0]?>" title="Subscribe on " <?php echo $subscribe_link['label'] ?>>
+                        <span></span>
+	                    <?php echo $subscribe_link['label'] ?>
+                    </a>
+                    <?php endforeach ?>
 				</div>
 				<div class="player-panel-row">
 					<div class="title">

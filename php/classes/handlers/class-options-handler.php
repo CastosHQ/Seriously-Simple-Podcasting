@@ -214,9 +214,16 @@ class Options_Handler {
 					}
 				}
 			}
+
+			/**
+			 * extract icon name from $key
+			 */
+			$icon_name = \str_replace( array( '_url', '_' ), array( '', '-' ), $key );
+
 			$subscribe_array[ $key ] = array(
 				'url'   => $url,
 				'label' => $label,
+				'icon'  => $icon_name . '.png',
 			);
 		}
 

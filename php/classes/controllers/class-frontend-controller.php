@@ -159,7 +159,7 @@ class Frontend_Controller extends Controller {
 		if ( ( ! (int) $large_player_instance_number ) > 0 ) {
 			return;
 		}
-		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5.player.css', array(), $this->version );
+		wp_register_style( 'ssp-html5-player', $this->assets_url . 'css/html5-player.css', array(), $this->version );
 		wp_enqueue_style( 'ssp-html5-player' );
 	}
 
@@ -308,12 +308,22 @@ class Frontend_Controller extends Controller {
 			// Show audio player if requested
 			$player_style = get_option( 'ss_podcasting_player_style' );
 
+			/**
+			 * Check if the user is using the ss_player shortcode anywhere in this post
+			 */
 			if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
+				$show_player = false;
+			}
 
-				if ( $show_player ) {
-					$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
-				}
+			/**
+			 * Check if the user is using another version of the player, like a block or widget, in this post.
+			 */
+			if ( ! ssp_check_if_podcast_has_player( $episode_id ) ) {
+				$show_player = false;
+			}
 
+			if ( $show_player ) {
+				$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
 				if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
 					$meta .= $this->episode_meta_details( $episode_id, $context );
 				}
@@ -356,10 +366,25 @@ class Frontend_Controller extends Controller {
 	 * @return string
 	 */
 	public function media_player( $src_file = '', $episode_id = 0, $player_size = "large" ) {
-		// check if the ss_player shortcode has been used in the episode already
+		$media_player = '';
+		$show_player  = true;
+		/**
+		 * Check if the user is using the ss_player shortcode anywhere in this post
+		 */
 		if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
-			return $this->load_media_player( $src_file, $episode_id, $player_size );
+			$show_player = false;
 		}
+		/**
+		 * Check if the user is using another version of the player, like a block or widget, in this post.
+		 */
+		if ( ! ssp_check_if_podcast_has_player( $episode_id ) ) {
+			$show_player = false;
+		}
+		if ( $show_player ) {
+			$media_player = $this->load_media_player( $src_file, $episode_id, $player_size );
+		}
+
+		return $media_player;
 	}
 
 	/**

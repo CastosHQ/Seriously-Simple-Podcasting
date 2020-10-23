@@ -941,6 +941,24 @@ if ( ! function_exists( 'ssp_check_if_podcast_has_shortcode' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ssp_check_if_podcast_has_player' ) ) {
+	/**
+	 * Checks to see if the episode has the new player WIP
+	 *
+	 * @param int $podcast_id
+	 *
+	 * @return false
+	 */
+	function ssp_check_if_podcast_has_player( $podcast_id = 0 ) {
+		if ( empty( $podcast_id ) ) {
+			return false;
+		}
+		//$document = \Elementor\Plugin::$instance->documents->get_doc_for_frontend( $podcast_id );
+		//$data = $document->get_elements_data();
+		return false;
+	}
+}
+
 if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
 	/**
 	 * Get the series id from a podcast episode
@@ -1115,5 +1133,21 @@ if ( ! function_exists( 'get_keywords_for_episode' ) ) {
 
 		return implode( ',', $keyword_array );
 
+	}
+}
+
+/**
+ * Checks of the Elementor plugin is installed and active, by checking the WordPress list of active plugins
+ */
+if ( ! function_exists( 'ssp_is_elementor_ok' ) ) {
+	function ssp_is_elementor_ok() {
+		$active_plugins = (array) get_option( 'active_plugins', array() );
+		if ( is_multisite() ) {
+			$active_plugins = array_merge( $active_plugins, get_site_option( 'active_sitewide_plugins', array() ) );
+		}
+		if ( array_key_exists( 'elementor/elementor.php', $active_plugins ) || in_array( 'elementor/elementor.php', $active_plugins, true ) ) {
+			return true;
+		}
+		return false;
 	}
 }

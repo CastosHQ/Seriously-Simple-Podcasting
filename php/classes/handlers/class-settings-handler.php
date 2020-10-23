@@ -449,6 +449,20 @@ class Settings_Handler {
 					'default'     => '',
 				),
 				array(
+					'id'          => 'itunes_fields_enabled',
+					'label'       => __( 'Enable iTunes fields ', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+				),
+			),
+		);
+
+		$settings['player-settings'] = array(
+			'title'       => __( 'Player', 'seriously-simple-podcasting' ),
+			'description' => __( 'Player Settings', 'seriously-simple-podcasting' ),
+			'fields'      => array(
+				array(
 					'id'          => 'player_locations',
 					'label'       => __( 'Media player locations', 'seriously-simple-podcasting' ),
 					'description' => __( 'Select where to show the podcast media player along with the episode data (download link, duration and file size)', 'seriously-simple-podcasting' ),
@@ -483,13 +497,6 @@ class Settings_Handler {
 					'default'     => 'all',
 				),
 				array(
-					'id'          => 'itunes_fields_enabled',
-					'label'       => __( 'Enable iTunes fields ', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => '',
-				),
-				array(
 					'id'          => 'player_meta_data_enabled',
 					'label'       => __( 'Enable Player meta data ', 'seriously-simple-podcasting' ),
 					'description' => __( 'Turn this on to enable player meta data underneath the player. (download link, episode duration and date recorded).', 'seriously-simple-podcasting' ),
@@ -508,28 +515,15 @@ class Settings_Handler {
 					'default'     => 'all',
 				),
 				array(
-					'id'          => 'player_background_skin_colour',
-					'label'       => __( 'Background skin colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#222222',
-					'class'       => 'ssp-color-picker',
-				),
-				array(
-					'id'          => 'player_wave_form_colour',
-					'label'       => __( 'Player progress bar colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#fff',
-					'class'       => 'ssp-color-picker',
-				),
-				array(
-					'id'          => 'player_wave_form_progress_colour',
-					'label'       => __( 'Player progress bar progress colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#00d4f7',
-					'class'       => 'ssp-color-picker',
+					'id'          => 'player_mode',
+					'label'       => 'Player color mode',
+					'description' => __( 'Select light or dark mode for the HTML5 player.', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array(
+						'dark'  => __( 'Dark player', 'seriously-simple-podcasting' ),
+						'light' => __( 'Light player', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'dark',
 				),
 			),
 		);

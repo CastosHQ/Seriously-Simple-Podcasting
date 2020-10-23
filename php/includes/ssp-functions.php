@@ -942,19 +942,19 @@ if ( ! function_exists( 'ssp_check_if_podcast_has_shortcode' ) ) {
 }
 
 if ( ! function_exists( 'ssp_check_if_podcast_has_player' ) ) {
+	/**
+	 * Checks to see if the episode has the new player WIP
+	 *
+	 * @param int $podcast_id
+	 *
+	 * @return false
+	 */
 	function ssp_check_if_podcast_has_player( $podcast_id = 0 ) {
 		if ( empty( $podcast_id ) ) {
 			return false;
 		}
-		$document = \Elementor\Plugin::$instance->documents->get_doc_for_frontend( $podcast_id );
-		$data = $document->get_elements_data();
-
-		$logger = new \SeriouslySimplePodcasting\Helpers\Log_Helper();
-		$logger->log('Elements Data', $data);
-
-		//$podcast         = get_post( $podcast_id );
-		//$podcast_content = $podcast->post_content;
-
+		//$document = \Elementor\Plugin::$instance->documents->get_doc_for_frontend( $podcast_id );
+		//$data = $document->get_elements_data();
 		return false;
 	}
 }

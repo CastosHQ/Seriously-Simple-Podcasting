@@ -29,12 +29,12 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 		);
 
 		$episodes       = get_posts( $args );
-		$episodeOptions = [];
+		$episode_options = [];
 		foreach ( $episodes as $episode ) {
-			$episodeOptions[ $episode->ID ] = $episode->post_title;
+			$episode_options[ $episode->ID ] = $episode->post_title;
 		}
 
-		return $episodeOptions;
+		return $episode_options;
 	}
 
 	protected function _register_controls() {
@@ -47,9 +47,8 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 			]
 		);
 
-		$series = get_terms(
-			array(
-				'taxonomy' => 'series',
+		$series = get_terms( array(
+				'taxonomy' => 'series'
 			)
 		);
 
@@ -66,6 +65,7 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 		}
 
 		$series_options_ids = array_keys( $series_options );
+
 		$this->add_control(
 			'show_elements',
 			[
@@ -84,7 +84,7 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 		$settings = $this->get_settings_for_display();
 
 		$player   = new Players_Controller( __FILE__, SSP_VERSION );
-		$seriesId = $settings['show_elements'];
+		$series_id = $settings['show_elements'];
 
 		$episode = array();
 
@@ -94,7 +94,7 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 				array(
 					'taxonomy' => 'series',
 					'field'    => 'term_id',
-					'terms'    => $seriesId,
+					'terms'    => $series_id,
 				)
 			)
 		);

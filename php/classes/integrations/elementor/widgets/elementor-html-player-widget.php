@@ -24,18 +24,18 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	public function get_episodes() {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
-			'posts_per_page' => - 1,
+			'posts_per_page' => get_option('posts_per_page', 10),
 			'post_type'      => ssp_post_types( true ),
 			'post_status'    => array( 'publish', 'draft', 'future' ),
 		);
 
 		$episodes       = get_posts( $args );
-		$episodeOptions = [0 => 'Latest Epsiode'];
+		$episode_options = [0 => 'Latest Epsiode'];
 		foreach ( $episodes as $episode ) {
-			$episodeOptions[ $episode->ID ] = $episode->post_title;
+			$episode_options[ $episode->ID ] = $episode->post_title;
 		}
 
-		return $episodeOptions;
+		return $episode_options;
 	}
 
 	protected function _register_controls() {
@@ -48,14 +48,14 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 			]
 		);
 
-		$episodeOptions = $this->get_episodes();
-		$episodeOptionsValues = array_values( $episodeOptions );
+		$episode_options = $this->get_episodes();
+
 		$this->add_control(
 			'show_elements',
 			[
 				'label'   => __( 'Select Episode', 'seriously-simple-podcasting' ),
 				'type'    => \Elementor\Controls_Manager::SELECT2,
-				'options' => $episodeOptions,
+				'options' => $episode_options,
 				'default' => '0'
 			]
 		);

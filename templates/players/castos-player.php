@@ -6,7 +6,7 @@
 			<div class="player__body">
 				<div class="currently-playing">
 					<div class="show">
-						<strong><?php echo $podcastTitle ?></strong>
+						<strong><?php echo $podcast_title ?></strong>
 					</div>
 					<div class="episode-title"><?php echo $episode->post_title ?></div>
 				</div>
@@ -18,7 +18,7 @@
 					</div>
 					<div>
 						<audio class="clip clip-<?php echo $episode_id?>">
-							<source loop preload="none" src="<?php echo $audioFile ?>">
+							<source loop preload="none" src="<?php echo $audio_file ?>">
 						</audio>
 						<div class="progress progress-<?php echo $episode_id ?>" title="Seek">
 							<span class="progress__filled progress__filled-<?php echo $episode_id ?>"></span>
@@ -58,42 +58,20 @@
 			</div>
 			<div class="panel__inner">
 				<div class="subscribe-icons">
-					<?php if($itunes['link']): ?>
-						<a href="<?php echo $itunes['link'] ?>"
-						   target="_blank" class="apple-podcasts" title="Subscribe on Apple Podcasts">
-							<span></span>
-							Apple Podcasts
-						</a>
-					<?php endif; ?>
-					<?php if($stitcher['link']): ?>
-						<a href="<?php echo $stitcher['link'] ?>" target="_blank" class="sticher"
-						   title="Subscribe on Stitcher">
-							<span></span>
-							Stitcher
-						</a>
-					<?php endif; ?>
-					<?php if($spotify['link']): ?>
-						<a href="<?php echo $spotify['link'] ?>" target="_blank"
-						   class="spotify"
-						   title="Subscribe on Spotify">
-							<span></span>
-							Spotify
-						</a>
-					<?php endif; ?>
-					<?php if($googlePlay['link']): ?>
-						<a href="<?php echo $googlePlay['link'] ?>" target="_blank" class="google-play"
-						   title="Subscribe on Google Podcast}">
-							<span></span>
-							Google Podcast
-						</a>
-					<?php endif; ?>
+                    <?php foreach ($subscribe_links as $key => $subscribe_link) : ?>
+                    <a href="<?php echo $subscribe_link['url'] ?>"
+                       target="_blank" class="<?php echo explode('.', $subscribe_link['icon'], 2)[0]?>" title="Subscribe on " <?php echo $subscribe_link['label'] ?>>
+                        <span></span>
+	                    <?php echo $subscribe_link['label'] ?>
+                    </a>
+                    <?php endforeach ?>
 				</div>
 				<div class="player-panel-row">
 					<div class="title">
 						RSS Feed
 					</div>
 					<div>
-						<input value="<?php echo $feedUrl ?>" class="input-rss input-rss-<?php echo $episode_id ?>" />
+						<input value="<?php echo $feed_url ?>" class="input-rss input-rss-<?php echo $episode_id ?>" />
 					</div>
 					<button class="copy-rss copy-rss-<?php echo $episode_id ?>"></button>
 				</div>
@@ -109,15 +87,15 @@
 					Share
 				</div>
 				<div class="icons-holder">
-					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audioFile; ?>&t=<?php echo $episode->post_title; ?>"
+					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audio_file; ?>&t=<?php echo $episode->post_title; ?>"
 					   target="_blank" class="share-icon facebook" title="Share on Facebook">
 						<span></span>
 					</a>
-					<a href="https://twitter.com/intent/tweet?text=<?php echo $audioFile; ?>&url=<?php echo $episode->post_title; ?>"
+					<a href="https://twitter.com/intent/tweet?text=<?php echo $audio_file; ?>&url=<?php echo $episode->post_title; ?>"
 					   target="_blank" class="share-icon twitter" title="Share on Twitter">
 						<span></span>
 					</a>
-					<a href="<?php echo $audioFile ?>"
+					<a href="<?php echo $audio_file ?>"
 					   target="_blank" class="share-icon download" title="Download" download>
 						<span></span>
 					</a>
@@ -128,7 +106,7 @@
 					Link
 				</div>
 				<div>
-					<input value="<?php echo $episodeUrl ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
+					<input value="<?php echo $episode_url ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
 				</div>
 				<button class="copy-link copy-link-<?php echo $episode_id ?>"></button>
 			</div>

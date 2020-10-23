@@ -51,42 +51,6 @@ class Players_Controller extends Controller {
 	}
 
 	/**
-	 * Returns the subscribe links for a specific series by id
-	 *
-	 * @param $id
-	 *
-	 * @return array[]
-	 * @todo see if this can be replaced by the Options_Handler::get_subscribe_urls method
-	 *
-	 */
-
-	protected function get_subscribe_links( $id ) {
-
-		$series_id = $this->get_series_id( $id );
-
-		if ( $series_id ) {
-			$itunes      = get_option( 'ss_podcasting_itunes_url_' . $series_id );
-			$stitcher    = get_option( 'ss_podcasting_stitcher_url_' . $series_id );
-			$spotify     = get_option( 'ss_podcasting_spotify_url_' . $series_id );
-			$google_play = get_option( 'ss_podcasting_google_play_url_' . $series_id );
-		} else {
-			$itunes      = get_option( 'ss_podcasting_itunes_url' );
-			$stitcher    = get_option( 'ss_podcasting_stitcher_url' );
-			$spotify     = get_option( 'ss_podcasting_spotify_url' );
-			$google_play = get_option( 'ss_podcasting_google_play_url' );
-		}
-
-		$subscribe_links = array(
-			'itunes'      => [ 'title' => 'iTunes', 'link' => $itunes ],
-			'stitcher'    => [ 'title' => 'Stitcher', 'link' => $stitcher ],
-			'spotify'     => [ 'title' => 'Spotify', 'link' => $spotify ],
-			'google_play' => [ 'title' => 'Google Play', 'link' => $google_play ],
-		);
-
-		return $subscribe_links;
-	}
-
-	/**
 	 * Return a series id for an episode
 	 *
 	 * @param $episode_id
@@ -153,10 +117,10 @@ class Players_Controller extends Controller {
 	 * Loads the HTML5 player CSS and JavaScript
 	 */
 	public function load_player_assets() {
-		wp_register_style( 'castos-player-v1', $this->assets_url . 'css/castos-player-v1.css', array(), $this->version );
-		wp_enqueue_style( 'castos-player-v1' );
-		wp_register_script( 'castos-player-v1', $this->assets_url . 'js/castos-player-v1.js', array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'castos-player-v1' );
+		wp_register_style( 'castos-player', $this->assets_url . 'css/castos-player.css', array(), $this->version );
+		wp_enqueue_style( 'castos-player' );
+		wp_register_script( 'castos-player', $this->assets_url . 'js/castos-player.js', array( 'jquery' ), $this->version, true );
+		wp_enqueue_script( 'castos-player' );
 	}
 
 	/**
@@ -186,26 +150,23 @@ class Players_Controller extends Controller {
 		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$feed_url         = $this->get_feed_url();
-		$subscribe_links  = $this->get_subscribe_links( $id );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
 		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
+		$subscribe_links  = $this->options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
 
 		// set any other info
 		$template_data = array(
-			'episode'      => $episode,
-			'episode_id'   => $id,
-			'duration'     => $episode_duration,
-			'episodeUrl'   => $episode_url,
-			'audioFile'    => $audio_file,
-			'albumArt'     => $album_art,
-			'podcastTitle' => $podcast_title,
-			'feedUrl'      => $feed_url,
-			'itunes'       => $subscribe_links['itunes'],
-			'stitcher'     => $subscribe_links['stitcher'],
-			'spotify'      => $subscribe_links['spotify'],
-			'googlePlay'   => $subscribe_links['google_play'],
-			'embed_code'   => $embed_code,
-			'player_mode'  => $player_mode,
+			'episode'         => $episode,
+			'episode_id'      => $episode->ID,
+			'duration'        => $episode_duration,
+			'episode_url'      => $episode_url,
+			'audio_file'       => $audio_file,
+			'album_art'        => $album_art,
+			'podcast_title'    => $podcast_title,
+			'feed_url'         => $feed_url,
+			'subscribe_links' => $subscribe_links,
+			'embed_code'      => $embed_code,
+			'player_mode'     => $player_mode,
 		);
 
 		$template_data = apply_filters( 'ssp_html_player_data', $template_data );
@@ -224,7 +185,7 @@ class Players_Controller extends Controller {
 	public function render_html_player( $episode_id ) {
 		$template_data = $this->html_player( $episode_id );
 
-		return $this->renderer->render( $template_data, 'players/castos-player-v1' );
+		return $this->renderer->render( $template_data, 'players/castos-player' );
 	}
 
 	/**

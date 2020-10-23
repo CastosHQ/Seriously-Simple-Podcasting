@@ -242,11 +242,13 @@ body {
     height: 20px;
     background-color: #fff;
 }
-.subscribe-icons .apple-podcasts span {
+.subscribe-icons .apple-podcasts span,
+.subscribe-icons .itunes span {
     mask-image: url('images/player/images/brands/icon-brand-apple-podcasts.svg');
     -webkit-mask-image: url('images/player/images/brands/icon-brand-apple-podcasts.svg');
 }
-.subscribe-icons .sticher span {
+.subscribe-icons .sticher span,
+.subscribe-icons .stitcher span {
     mask-image: url('images/player/images/brands/icon-brand-sticher.svg');
     -webkit-mask-image: url('images/player/images/brands/icon-brand-sticher.svg');
 }
@@ -272,6 +274,20 @@ body {
     -webkit-mask-image: url('images/player/images/brands/icon-brand-google-play.svg');
 }
 
+.subscribe-icons .deezer span {
+    mask-image: url('images/player/images/brands/deezer.svg');
+    -webkit-mask-image: url('images/player/images/brands/deezer.svg');
+}
+
+.subscribe-icons .tunein span {
+    mask-image: url('images/player/images/brands/tunein.svg');
+    -webkit-mask-image: url('images/player/images/brands/tunein.svg');
+}
+
+.subscribe-icons .castbox span {
+    mask-image: url('images/player/images/brands/castbox.svg');
+    -webkit-mask-image: url('images/player/images/brands/castbox.svg');
+}
 /* Currently Playing */
 .currently-playing {
     overflow: hidden;

@@ -25,7 +25,7 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 	public function get_episodes() {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
-			'posts_per_page' => - 1,
+			'posts_per_page' => get_option('posts_per_page', 10),
 			'post_type'      => 'podcast'
 		);
 

@@ -37,10 +37,10 @@ define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
 if ( ! defined( 'SSP_CASTOS_APP_URL' ) ) {
-	define( 'SSP_CASTOS_APP_URL', 'https://seriouslysimplehosting.test/' );
+	define( 'SSP_CASTOS_APP_URL', 'https://app.castos.com/' );
 }
 if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
-	define( 'SSP_CASTOS_EPISODES_URL', 'https://episodes.seriouslysimplehosting.com/' );
+	define( 'SSP_CASTOS_EPISODES_URL', 'https://episodes.castos.com/' );
 }
 
 require_once SSP_PLUGIN_PATH . 'php/includes/ssp-functions.php';

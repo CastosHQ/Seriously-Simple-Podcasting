@@ -6,7 +6,7 @@
 			<div class="player__body">
 				<div class="currently-playing">
 					<div class="show">
-						<strong><?php echo $podcastTitle ?></strong>
+						<strong><?php echo $podcast_title ?></strong>
 					</div>
 					<div class="episode-title"><?php echo $episode->post_title ?></div>
 				</div>
@@ -18,7 +18,7 @@
 					</div>
 					<div>
 						<audio class="clip clip-<?php echo $episode_id?>">
-							<source loop preload="none" src="<?php echo $audioFile ?>">
+							<source loop preload="none" src="<?php echo $audio_file ?>">
 						</audio>
 						<div class="progress progress-<?php echo $episode_id ?>" title="Seek">
 							<span class="progress__filled progress__filled-<?php echo $episode_id ?>"></span>
@@ -71,7 +71,7 @@
 						RSS Feed
 					</div>
 					<div>
-						<input value="<?php echo $feedUrl ?>" class="input-rss input-rss-<?php echo $episode_id ?>" />
+						<input value="<?php echo $feed_url ?>" class="input-rss input-rss-<?php echo $episode_id ?>" />
 					</div>
 					<button class="copy-rss copy-rss-<?php echo $episode_id ?>"></button>
 				</div>
@@ -87,15 +87,15 @@
 					Share
 				</div>
 				<div class="icons-holder">
-					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audioFile; ?>&t=<?php echo $episode->post_title; ?>"
+					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audio_file; ?>&t=<?php echo $episode->post_title; ?>"
 					   target="_blank" class="share-icon facebook" title="Share on Facebook">
 						<span></span>
 					</a>
-					<a href="https://twitter.com/intent/tweet?text=<?php echo $audioFile; ?>&url=<?php echo $episode->post_title; ?>"
+					<a href="https://twitter.com/intent/tweet?text=<?php echo $audio_file; ?>&url=<?php echo $episode->post_title; ?>"
 					   target="_blank" class="share-icon twitter" title="Share on Twitter">
 						<span></span>
 					</a>
-					<a href="<?php echo $audioFile ?>"
+					<a href="<?php echo $audio_file ?>"
 					   target="_blank" class="share-icon download" title="Download" download>
 						<span></span>
 					</a>
@@ -106,7 +106,7 @@
 					Link
 				</div>
 				<div>
-					<input value="<?php echo $episodeUrl ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
+					<input value="<?php echo $episode_url ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
 				</div>
 				<button class="copy-link copy-link-<?php echo $episode_id ?>"></button>
 			</div>

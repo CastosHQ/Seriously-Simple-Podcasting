@@ -53,11 +53,15 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 		);
 
 		$series_options = array(
-			0 => 'Default'
+			0 => 'Default',
 		);
 
-		foreach ( $series as $key => $series ) {
-			$series_options[ $series->term_id ] = $series->name;
+		if ( ! empty( $series ) ) {
+			foreach ( $series as $key => $series ) {
+				if ( is_object( $series ) ) {
+					$series_options[ $series->term_id ] = $series->name;
+				}
+			}
 		}
 
 		$series_options_ids = array_keys( $series_options );

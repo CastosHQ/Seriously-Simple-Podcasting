@@ -28,6 +28,8 @@ final class Elementor_Widgets {
 	 */
 	const MINIMUM_PHP_VERSION = '7.0';
 
+	protected $template_importer;
+
 	public function __construct() {
 		add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ] );
 	}
@@ -56,6 +58,7 @@ final class Elementor_Widgets {
 	}
 
 	public function init() {
+		$this->template_importer = new Elementor_Template_Importer();
 		add_action( 'elementor/elements/categories_registered', [ $this, 'add_elementor_widget_categories' ] );
 		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
 	}

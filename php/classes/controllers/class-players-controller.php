@@ -63,8 +63,11 @@ class Players_Controller extends Controller {
 		$series_id = 0;
 		$series    = get_the_terms( $episode_id, 'series' );
 
-		if ( $series ) {
-			$series_id = ( ! empty( $series ) && isset( $series[0] ) ) ? $series[0]->term_id : 0;
+		/**
+		 * In some instances, this could return a WP_Error object
+		 */
+		if ( ! is_wp_error( $series ) && $series ) {
+			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : 0;
 		}
 
 		return $series_id;
@@ -141,10 +144,10 @@ class Players_Controller extends Controller {
 		 * If the id passed is empty or 0, get_post will return the current post
 		 */
 		$episode          = get_post( $id );
-		$episode_duration = get_post_meta( $episode->ID, 'duration', true );
+		$episode_duration = get_post_meta( $id, 'duration', true );
 		$episode_url      = get_post_permalink( $id );
-		$audio_file       = get_post_meta( $episode->ID, 'audio_file', true );
-		$album_art        = $this->episode_controller->get_album_art( $episode->ID );
+		$audio_file       = get_post_meta( $id, 'audio_file', true );
+		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$feed_url         = $this->get_feed_url();
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );

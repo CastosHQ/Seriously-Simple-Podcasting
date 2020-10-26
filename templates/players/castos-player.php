@@ -1,7 +1,7 @@
 <div id="embed-app" class="<?php echo $player_mode ?>-mode castos-player" data-episode="<?php echo $episode_id?>">
 	<div class="player">
 		<div class="player__main">
-			<div class="player__artwork player__artwork-<?php echo $episode_id?>" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $albumArt['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;">
+			<div class="player__artwork player__artwork-<?php echo $episode_id?>" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;">
 			</div>
 			<div class="player__body">
 				<div class="currently-playing">

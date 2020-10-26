@@ -29,7 +29,6 @@ class Elementor_Template_Importer {
 	protected $template_library_manager;
 
 	public function __construct() {
-		$this->template_library_manager = new Manager();
 		$this->init();
 	}
 
@@ -68,6 +67,7 @@ class Elementor_Template_Importer {
 	}
 
 	public function import_template( $templates_for_import ) {
+		$this->template_library_manager = new Manager();
 		$source = $this->template_library_manager->get_source( 'local' );
 		if ( ! empty( $templates_for_import ) ) {
 			foreach ( $templates_for_import as $file_name ) {

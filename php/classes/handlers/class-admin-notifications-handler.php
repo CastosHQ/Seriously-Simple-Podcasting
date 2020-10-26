@@ -49,6 +49,9 @@ class Admin_Notifications_Handler {
 		// Check if the podcast feed category update message needs to trigger
 		add_action( 'admin_init', array( $this, 'check_category_update_required' ) );
 
+		// Trigger the Elementor Templates message
+		add_action( 'admin_init', array( $this, 'show_elementor_templates_available' ) );
+
 	}
 
 	/**
@@ -378,4 +381,62 @@ class Admin_Notifications_Handler {
 		</div>
 		<?php
 	}
+
+	public function show_elementor_templates_available(){
+		// only show this on podcast list pages
+		$post_type = ( isset( $_GET['post_type'] ) ? filter_var( $_GET['post_type'], FILTER_SANITIZE_STRING ) : '' );
+		if ( empty( $post_type ) || 'podcast' !== $post_type ) {
+			return;
+		}
+		// only show this is elementor is installed
+		if ( ! ssp_is_elementor_ok() ) {
+			return;
+		}
+		// only show if the user hasn't already disabled this notice
+		$ss_podcasting_elementor_templates_disabled = get_option( 'ss_podcasting_elementor_templates_disabled', 'false' );
+		if ( 'true' === $ss_podcasting_elementor_templates_disabled ) {
+			return;
+		}
+
+		add_action( 'admin_notices', array( $this, 'show_elementor_templates_notice' ) );
+	}
+
+	public function show_elementor_templates_notice() {
+
+		$elementor_templates_link = sprintf(
+			wp_kses(
+			// translators: Placeholder is the url to dismiss the message
+				__( 'Using Elementor? Seriously Simple Podcasting now has built in Elementor templates to build podcast specific pages. <a href="%s">Click here to install them now.</a> ', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href'   => array(),
+						'target' => true,
+					),
+				)
+			),
+			esc_url( admin_url('edit.php?post_type=podcast&page=podcast_settings&tab=extensions') )
+		);
+
+		$ignore_message_url = add_query_arg( array( 'ssp_disable_elementor_template_notice' => 'true' ) );
+		$ignore_message_link = sprintf(
+			wp_kses(
+			// translators: Placeholder is the url to dismiss the message
+				__( 'Alternatively you can <a href="%s">dismiss this message</a>.', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href' => array(),
+					),
+				)
+			),
+			esc_url( $ignore_message_url )
+		);
+
+		?>
+		<div class="notice notice-info is-dismissible">
+			<p><?php echo $elementor_templates_link; // phpcs:ignore ?></p>
+			<p><?php echo $ignore_message_link; ?></p>
+		</div>
+		<?php
+	}
+
 }

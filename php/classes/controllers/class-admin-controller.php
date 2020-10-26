@@ -93,6 +93,9 @@ class Admin_Controller extends Controller {
 		// Dismiss the categories update screen
 		add_action( 'init', array( $this, 'dismiss_categories_update' ) );
 
+		// Dismiss the categories update screen
+		add_action( 'init', array( $this, 'disable_elementor_template_notice' ) );
+
 		// Hide WP SEO footer text for podcast RSS feed.
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
@@ -1780,6 +1783,18 @@ HTML;
 			return;
 		}
 		update_option( 'ssp_categories_update_dismissed', 'true' );
+	}
+
+	/**
+	 * Dismiss Elementor templates message when user clicks 'Dismiss' link
+	 */
+	public function disable_elementor_template_notice() {
+		// Check if the ssp_disable_elementor_template_notice variable exists
+		$ssp_disable_elementor_template_notice = ( isset( $_GET['ssp_disable_elementor_template_notice'] ) ? sanitize_text_field( $_GET['ssp_disable_elementor_template_notice'] ) : '' );
+		if ( empty( $ssp_disable_elementor_template_notice ) ) {
+			return;
+		}
+		update_option( 'ss_podcasting_elementor_templates_disabled', 'true' );
 	}
 
 }

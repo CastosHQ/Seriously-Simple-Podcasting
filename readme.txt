@@ -160,8 +160,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 2.4-beta =
-* 2020-10-23
-* [FIX] Update the custom REST API endpoints which where throwing a _doing_it_wrong notice.
+* 2020-10-27
+* UPDATE SUMMARY: Adds support for the Elementor Page Builder, by adding Elementor specific podcasting widgets.
+* [NEW] Adds Podcast specific widgets for Elementor: Media Player, Castos Player, Subscribe Buttons, Recent Episodes and Episode List.
+* [NEW] Adds Podcast specific Elementor Templates: Podcast Landing page and Podcast Subscribe Page
+* [UPDATE] Moves the HTML player settings to their own tab
 
 = 2.2.3 =
 * 2020-08-19

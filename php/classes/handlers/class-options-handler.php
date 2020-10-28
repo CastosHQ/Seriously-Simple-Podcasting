@@ -230,4 +230,40 @@ class Options_Handler {
 		return apply_filters( 'ssp_episode_subscribe_details', $subscribe_array, $episode_id, $context );
 
 	}
+
+	public function get_subscribe_url_data() {
+		$subscribe_array   = array();
+		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+
+		$all_series = get_terms(
+			array(
+				'taxonomy'   => 'series',
+				'hide_empty' => false,
+			)
+		);
+
+		if ( empty( $all_series ) ) {
+			foreach ( $subscribe_options as $key => $label ) {
+				$url                     = get_option( 'ss_podcasting_' . $key, '' );
+				$subscribe_array[ $key ] = array(
+					'label' => $label,
+					'url'   => $url,
+				);
+			}
+
+			return $subscribe_array;
+		}
+
+		foreach ( $all_series as $series ) {
+			foreach ( $subscribe_options as $key => $label ) {
+				$url                     = get_option( 'ss_podcasting_' . $key . '_' . $series->term_id, '' );
+				$subscribe_array[ $key ] = array(
+					'label' => $label,
+					'url'   => $url,
+				);
+			}
+		}
+
+		return $subscribe_array;
+	}
 }

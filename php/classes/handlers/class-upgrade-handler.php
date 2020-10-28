@@ -31,6 +31,10 @@ class Upgrade_Handler {
 		}
 
 		if ( version_compare( $previous_version, '2.2.4', '<' ) ) {
+			$this->enable_distribution_upgrade_notice();
+		}
+
+		if ( version_compare( $previous_version, '2.2.4', '<' ) ) {
 			$this->enable_elementor_template_notice();
 		}
 
@@ -95,4 +99,14 @@ class Upgrade_Handler {
 		update_option( 'ss_podcasting_elementor_templates_disabled', 'false' );
 	}
 
+	/**
+	 * Update or create the ss_podcasting_distribution_upgrade_disabled option, to show the admin notice if it's off
+	 */
+	public function enable_distribution_upgrade_notice() {
+		$ss_podcasting_distribution_upgrade_disabled = get_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
+		if ( 'true' === $ss_podcasting_distribution_upgrade_disabled ) {
+			return;
+		}
+		update_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
+	}
 }

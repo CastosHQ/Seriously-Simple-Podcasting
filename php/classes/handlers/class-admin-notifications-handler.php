@@ -49,6 +49,9 @@ class Admin_Notifications_Handler {
 		// Check if the podcast feed category update message needs to trigger
 		add_action( 'admin_init', array( $this, 'check_category_update_required' ) );
 
+		// Trigger the Distribution links update message
+		add_action( 'admin_init', array( $this, 'show_distribution_links_update' ) );
+
 		// Trigger the Elementor Templates message
 		add_action( 'admin_init', array( $this, 'show_elementor_templates_available' ) );
 
@@ -382,7 +385,38 @@ class Admin_Notifications_Handler {
 		<?php
 	}
 
-	public function show_elementor_templates_available(){
+	public function show_distribution_links_update() {
+		// only show if the user hasn't already disabled this notice, by performing the upgrade
+		$ss_podcasting_distribution_upgrade_disabled = get_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
+		if ( 'true' === $ss_podcasting_distribution_upgrade_disabled ) {
+			return;
+		}
+		add_action( 'admin_notices', array( $this, 'show_distribution_links_update_notice' ) );
+	}
+
+	public function show_distribution_links_update_notice() {
+		$elementor_templates_link = sprintf(
+			wp_kses(
+			// translators: Placeholder is the url to dismiss the message
+				__( 'Seriously Simple Podcasting has updated the process of managing your Subscribe/Distribution links, and needs to perform a data upgrade. Please visit the <a href="%s">Plugin Options</a> to perform this upgrade.', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href'   => array(),
+						'target' => true,
+					),
+				)
+			),
+			esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options' ) )
+		);
+		?>
+		<div class="notice notice-info">
+			<p><?php echo $elementor_templates_link; // phpcs:ignore
+				?></p>
+		</div>
+		<?php
+	}
+
+	public function show_elementor_templates_available() {
 		// only show this on podcast list pages
 		$post_type = ( isset( $_GET['post_type'] ) ? filter_var( $_GET['post_type'], FILTER_SANITIZE_STRING ) : '' );
 		if ( empty( $post_type ) || 'podcast' !== $post_type ) {

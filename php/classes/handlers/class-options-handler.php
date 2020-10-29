@@ -233,6 +233,11 @@ class Options_Handler {
 
 	}
 
+	/**
+	 * Gather the subscribe links for a CSV export
+	 *
+	 * @return array $subscribe_links
+	 */
 	public function get_subscribe_url_data() {
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
 
@@ -273,5 +278,33 @@ class Options_Handler {
 		}
 
 		return $subscribe_links;
+	}
+
+	public function send_subscribe_links_to_browser_download(  ) {
+		$subscribe_links_data = $this->get_subscribe_url_data();
+		$upload_dir      = wp_upload_dir();
+		$export_file     = trailingslashit( $upload_dir['path'] ) . 'subscribe_options.csv';
+		$export_file_url = trailingslashit( $upload_dir['url'] ) . 'subscribe_options.csv';
+
+		$export_file_pointer = fopen( $export_file, 'w' );
+		foreach ( $subscribe_links_data as $subscribe_links_items ) {
+			fputcsv( $export_file_pointer, $subscribe_links_items );
+		}
+		fclose( $export_file_pointer );
+
+		header( "Pragma: no-cache" );
+		header( "Expires: 0" );
+		header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+		header( "Robots: none" );
+		header( "Content-Length: " . filesize( $export_file ) );
+		header( "Content-Type: application/force-download" );
+
+		// Set other relevant headers
+		header( "Content-Description: File Transfer" );
+		header( "Content-Disposition: attachment; filename=\"" . basename( $export_file ) . "\";" );
+		header( "Content-Transfer-Encoding: binary" );
+
+		header( 'Location: ' . $export_file_url );
+		exit;
 	}
 }

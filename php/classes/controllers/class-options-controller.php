@@ -126,30 +126,6 @@ class Options_Controller extends Controller {
 
 		$subscribe_links_data = $this->options_handler->get_subscribe_url_data();
 
-		$upload_dir      = wp_upload_dir();
-		$export_file     = trailingslashit( $upload_dir['path'] ) . 'subscribe_options.csv';
-		$export_file_url = trailingslashit( $upload_dir['url'] ) . 'subscribe_options.csv';
-
-		$export_file_pointer = fopen( $export_file, 'w' );
-		foreach ( $subscribe_links_data as $subscribe_links_items ) {
-			fputcsv( $export_file_pointer, $subscribe_links_items );
-		}
-		fclose( $export_file_pointer );
-
-		header( "Pragma: no-cache" );
-		header( "Expires: 0" );
-		header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-		header( "Robots: none" );
-		header( "Content-Length: " . filesize( $export_file ) );
-		header( "Content-Type: application/force-download" );
-
-		// Set other relevant headers
-		header( "Content-Description: File Transfer" );
-		header( "Content-Disposition: attachment; filename=\"" . basename( $export_file ) . "\";" );
-		header( "Content-Transfer-Encoding: binary" );
-
-		header( 'Location: ' . $export_file_url );
-
 		exit;
 
 	}

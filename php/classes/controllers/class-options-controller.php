@@ -91,64 +91,66 @@ class Options_Controller extends Controller {
 	 * Send the current subscribe/distribution options to the browser as a file download
 	 */
 	public function download_existing_options() {
-		$logger = new Log_Helper();
-		// Only trigger this functionality if the export_options query var is set
-		if ( ! isset( $_GET['export_options'] ) ) {
-			wp_die('export_options not set');
-			return;
-		}
-
 		// Only trigger this if we're in the plugin Options area
 		if ( ! isset( $_GET['post_type'], $_GET['page'] ) ) {
-			wp_die('post_type or page not set');
 			return;
 		}
 		$post_type = ( isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : '' );
 		if ( 'podcast' !== $post_type ) {
-			wp_die('post_type not podcast');
 			return;
 		}
-		$page      = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
+		$page = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
 		if ( 'podcast_options' !== $page ) {
-			wp_die('page not podcast_options');
+			return;
+		}
+
+		// Only trigger this functionality if the export_options query var is set
+		if ( ! isset( $_GET['export_options'] ) ) {
 			return;
 		}
 
 		// Only show this message if the user has the capabilities to download the options
 		if ( ! current_user_can( 'manage_podcast' ) ) {
-			wp_die( 'Does not have valid permissions' );
-
 			return;
 		}
 
 		// Nonce verification check, the request came from the right place
-		$nonce    = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( $_GET['_wpnonce'] ) : '';
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( $_GET['_wpnonce'] ) : '';
 		if ( empty( $nonce ) ) {
-			wp_die('export_options not set');
 			return;
 		}
 		$verified = wp_verify_nonce( $nonce, 'export_options' );
 		if ( ! $verified ) {
-			wp_die('not verified');
 			return;
 		}
 
 		$subscribe_links_data = $this->options_handler->get_subscribe_url_data();
 
-		$logger->log('Subscribe Links Data', $subscribe_links_data);
+		$upload_dir      = wp_upload_dir();
+		$export_file     = trailingslashit( $upload_dir['path'] ) . 'subscribe_options.csv';
+		$export_file_url = trailingslashit( $upload_dir['url'] ) . 'subscribe_options.csv';
 
-		/*$upload_dir = wp_upload_dir();
+		$export_file_pointer = fopen( $export_file, 'w' );
+		foreach ( $subscribe_links_data as $subscribe_links_items ) {
+			fputcsv( $export_file_pointer, $subscribe_links_items );
+		}
+		fclose( $export_file_pointer );
 
 		header( "Pragma: no-cache" );
 		header( "Expires: 0" );
 		header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
 		header( "Robots: none" );
+		header( "Content-Length: " . filesize( $export_file ) );
 		header( "Content-Type: application/force-download" );
 
 		// Set other relevant headers
 		header( "Content-Description: File Transfer" );
-		header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
-		header( "Content-Transfer-Encoding: binary" );*/
+		header( "Content-Disposition: attachment; filename=\"" . basename( $export_file ) . "\";" );
+		header( "Content-Transfer-Encoding: binary" );
+
+		header( 'Location: ' . $export_file_url );
+
+		exit;
 
 	}
 

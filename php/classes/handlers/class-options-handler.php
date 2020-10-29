@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
+
 /**
  * SSP Options Handler
  *
@@ -232,8 +234,18 @@ class Options_Handler {
 	}
 
 	public function get_subscribe_url_data() {
-		$subscribe_array   = array();
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+
+		$headers = array( 'Feed name' );
+		foreach ( $subscribe_options as $key => $label ) {
+			$headers[] = $label;
+		}
+
+		$links = array( 'Default feed' );
+		foreach ( $subscribe_options as $key => $label ) {
+			$url     = get_option( 'ss_podcasting_' . $key, '' );
+			$links[] = $url;
+		}
 
 		$all_series = get_terms(
 			array(
@@ -243,27 +255,23 @@ class Options_Handler {
 		);
 
 		if ( empty( $all_series ) ) {
-			foreach ( $subscribe_options as $key => $label ) {
-				$url                     = get_option( 'ss_podcasting_' . $key, '' );
-				$subscribe_array[ $key ] = array(
-					'label' => $label,
-					'url'   => $url,
-				);
-			}
-
-			return $subscribe_array;
+			return array(
+				$headers,
+				$links,
+			);
 		}
+
+		$subscribe_links = array( $headers, $links );
 
 		foreach ( $all_series as $series ) {
+			$series_links = array( $series->name . ' feed' );
 			foreach ( $subscribe_options as $key => $label ) {
-				$url                     = get_option( 'ss_podcasting_' . $key . '_' . $series->term_id, '' );
-				$subscribe_array[ $key ] = array(
-					'label' => $label,
-					'url'   => $url,
-				);
+				$url            = get_option( 'ss_podcasting_' . $key . '_' . $series->term_id, '' );
+				$series_links[] = $url;
 			}
+			$subscribe_links[] = $series_links;
 		}
 
-		return $subscribe_array;
+		return $subscribe_links;
 	}
 }

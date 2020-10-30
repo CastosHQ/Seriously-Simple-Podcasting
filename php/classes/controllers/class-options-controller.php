@@ -40,8 +40,11 @@ class Options_Controller extends Controller {
 		// Register podcast options.
 		add_action( 'admin_init', array( $this, 'register_options' ) );
 
-		// Register podcast options.
+		// Download existing subscribe options.
 		add_action( 'admin_init', array( $this, 'download_existing_options' ) );
+
+		// Upgrade subscribe options.
+		add_action( 'admin_init', array( $this, 'upgrade_existing_options' ) );
 
 		// Enqueue scripts for this controller
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10, 1 );
@@ -103,17 +106,14 @@ class Options_Controller extends Controller {
 		if ( 'podcast_options' !== $page ) {
 			return;
 		}
-
 		// Only trigger this functionality if the export_options query var is set
 		if ( ! isset( $_GET['export_options'] ) ) {
 			return;
 		}
-
 		// Only show this message if the user has the capabilities to download the options
 		if ( ! current_user_can( 'manage_podcast' ) ) {
 			return;
 		}
-
 		// Nonce verification check, the request came from the right place
 		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( $_GET['_wpnonce'] ) : '';
 		if ( empty( $nonce ) ) {
@@ -123,11 +123,18 @@ class Options_Controller extends Controller {
 		if ( ! $verified ) {
 			return;
 		}
-
-		$subscribe_links_data = $this->options_handler->get_subscribe_url_data();
-
+		$this->options_handler->send_subscribe_links_to_browser_download();
 		exit;
 
+	}
+
+
+	public function upgrade_existing_options() {
+		$subscribe_urls = $this->options_handler->get_all_subscribe_urls();
+		echo '<pre>';
+		print_r( $subscribe_urls );
+		echo '</pre>';
+		exit;
 	}
 
 	/**

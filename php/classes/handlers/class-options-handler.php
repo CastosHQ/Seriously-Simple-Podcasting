@@ -234,6 +234,40 @@ class Options_Handler {
 	}
 
 	/**
+	 * Returns all subscribe urls regardless of episode or series
+	 *
+	 * @return array
+	 */
+	public function get_all_subscribe_urls() {
+		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+		$all_series        = get_terms(
+			array(
+				'taxonomy'   => 'series',
+				'hide_empty' => false,
+			)
+		);
+		$subscribe_array   = array();
+		foreach ( $subscribe_options as $key => $label ) {
+			$url = get_option( 'ss_podcasting_' . $key, '' );
+			if ( is_array( $all_series ) ) {
+				foreach ( $all_series as $series ) {
+					if ( false !== get_option( 'ss_podcasting_' . $key . '_' . $series->term_id ) ) {
+						$url = get_option( 'ss_podcasting_' . $key . '_' . $series->term_id, '' );
+					}
+				}
+			}
+			$icon_name                     = \str_replace( array( '_url', '_' ), array( '', '-' ), $key );
+			$subscribe_array[ $icon_name ] = array(
+				'url'   => $url,
+				'label' => $label,
+				'icon'  => $icon_name . '.png',
+			);
+		}
+
+		return $subscribe_array;
+	}
+
+	/**
 	 * Gather the subscribe links for a CSV export
 	 *
 	 * @return array $subscribe_links
@@ -280,11 +314,14 @@ class Options_Handler {
 		return $subscribe_links;
 	}
 
-	public function send_subscribe_links_to_browser_download(  ) {
+	/**
+	 * Gather the existing subscribe data and send to the browser as a csv download
+	 */
+	public function send_subscribe_links_to_browser_download() {
 		$subscribe_links_data = $this->get_subscribe_url_data();
-		$upload_dir      = wp_upload_dir();
-		$export_file     = trailingslashit( $upload_dir['path'] ) . 'subscribe_options.csv';
-		$export_file_url = trailingslashit( $upload_dir['url'] ) . 'subscribe_options.csv';
+		$upload_dir           = wp_upload_dir();
+		$export_file          = trailingslashit( $upload_dir['path'] ) . 'subscribe_options.csv';
+		$export_file_url      = trailingslashit( $upload_dir['url'] ) . 'subscribe_options.csv';
 
 		$export_file_pointer = fopen( $export_file, 'w' );
 		foreach ( $subscribe_links_data as $subscribe_links_items ) {
@@ -292,17 +329,15 @@ class Options_Handler {
 		}
 		fclose( $export_file_pointer );
 
-		header( "Pragma: no-cache" );
-		header( "Expires: 0" );
-		header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-		header( "Robots: none" );
-		header( "Content-Length: " . filesize( $export_file ) );
-		header( "Content-Type: application/force-download" );
-
-		// Set other relevant headers
-		header( "Content-Description: File Transfer" );
-		header( "Content-Disposition: attachment; filename=\"" . basename( $export_file ) . "\";" );
-		header( "Content-Transfer-Encoding: binary" );
+		header( 'Pragma: no-cache' );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+		header( 'Robots: none' );
+		header( 'Content-Length: ' . filesize( $export_file ) );
+		header( 'Content-Type: application/force-download' );
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Disposition: attachment; filename="' . basename( $export_file ) . '";' );
+		header( 'Content-Transfer-Encoding: binary' );
 
 		header( 'Location: ' . $export_file_url );
 		exit;

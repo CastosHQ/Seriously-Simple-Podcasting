@@ -449,6 +449,7 @@ class Admin_Notifications_Handler {
 			),
 			$distribution_backup_url //esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options&export_options=true' ) )
 		);
+		$distribution_upgrade_url = add_query_arg( '_wpnonce', wp_create_nonce( 'upgrade_options' ), admin_url( 'edit.php?post_type=podcast&page=podcast_options&upgrade_options=true' ) );
 		$distribution_upgrade = sprintf(
 			wp_kses(
 				// translators: Placeholders are the url to run the upgrade, and the url to the relevant help document
@@ -460,7 +461,7 @@ class Admin_Notifications_Handler {
 					),
 				)
 			),
-			esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options&upgrade_options=true' ) ),
+			$distribution_upgrade_url, //esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options&upgrade_options=true' ) ),
 			esc_url( 'https://support.castos.com/article/166-add-subscription-links-to-your-podcast-player' )
 		);
 		?>

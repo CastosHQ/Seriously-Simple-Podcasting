@@ -11,6 +11,68 @@ use SeriouslySimplePodcasting\Helpers\Log_Helper;
  */
 class Options_Handler {
 
+	protected $available_subscribe_options = array(
+		'acast'            => 'Acast',
+		'amazon-alexa'     => 'Amazon Alexa',
+		'anchor'           => 'Anchor',
+		'apple-podcasts'   => 'Apple Podcasts',
+		'blubrry'          => 'Blubrry',
+		'breaker'          => 'Breaker',
+		'bullhorn'         => 'Bullhorn',
+		'castbox'          => 'CastBox',
+		'castro'           => 'Castro',
+		'clammr'           => 'Clammr',
+		'deezer'           => 'Deezer',
+		'downcast'         => 'Downcast',
+		'google-play'      => 'Google Play',
+		'google-podcasts'  => 'Google Podcasts',
+		'himalaya.com'     => 'Himalaya.com',
+		'laughable'        => 'Laughable',
+		'libsyn'           => 'Libsyn',
+		'listen-notes'     => 'Listen Notes',
+		'miro'             => 'Miro',
+		'mixcloud'         => 'MixCloud',
+		'overcast'         => 'Overcast',
+		'owltail'          => 'OwlTail',
+		'pandora'          => 'Pandora',
+		'patreon'          => 'Patreon',
+		'player.fm'        => 'Player.fm',
+		'plex'             => 'Plex',
+		'pocketcasts'      => 'PocketCasts',
+		'podbay'           => 'Podbay',
+		'podbean'          => 'Podbean',
+		'podcast-addict'   => 'Podcast Addict',
+		'podcast-republic' => 'Podcast Republic',
+		'podcast.de'       => 'Podcast.de',
+		'podchaser'        => 'Podchaser',
+		'podcoin'          => 'Podcoin',
+		'podfan'           => 'Podfan',
+		'podkicker'        => 'Podkicker',
+		'podknife'         => 'Podknife',
+		'podtail'          => 'Podtail',
+		'rss'              => 'RSS',
+		'rssradio'         => 'RSSRadio',
+		'radio-public'     => 'Radio Public',
+		'radio.com'        => 'Radio.com',
+		'redcircle'        => 'RedCircle',
+		'soundcloud'       => 'SoundCloud',
+		'spotify'          => 'Spotify',
+		'spreaker'         => 'Spreaker',
+		'stitcher'         => 'Stitcher',
+		'the-podcast-app'  => 'The Podcast App',
+		'tunein'           => 'TuneIn',
+		'vkontakte'        => 'VKontakte',
+		'we.fo'            => 'We.fo',
+		'yandex'           => 'Yandex',
+		'youtube'          => 'YouTube',
+		'custom'           => 'custom',
+		'fyyd.de'          => 'fyyd.de',
+		'iheartradio'      => 'iHeartRadio',
+		'itunes'           => 'iTunes',
+		'ivoox'            => 'iVoox',
+		'mytuner-radio'    => 'myTuner Radio',
+	);
+
 	/**
 	 * Build options fields
 	 *
@@ -96,20 +158,15 @@ class Options_Handler {
 		}
 
 		$count = 1;
-		foreach ( $subscribe_options as $key => $title ) {
-			if ( 'new_url' === $key ) {
-				$label = 'New';
-			} else {
-				$label = $title;
-			}
+		foreach ( $this->available_subscribe_options as $key => $title ) {
 			$subscribe_field_options[] = array(
 				'id'          => 'subscribe_option_' . $count,
 				// translators: %s: Service title eg iTunes
-				'label'       => sprintf( __( '%s URL field label', 'seriously-simple-podcasting' ), $label ),
+				'label'       => sprintf( __( '%s', 'seriously-simple-podcasting' ), $title ),
 				// translators: %1$s and %2$s: HTML anchor opening and closing tags
 				'description' => sprintf( __( '%1$sDelete%2$s', 'seriously-simple-podcasting' ), '<a class="delete_subscribe_option" data-count="' . $count . '" data-option="' . $key . '" href="#delete">', '</a>' ),
-				'type'        => 'text',
-				'default'     => $title,
+				'type'        => 'checkbox',
+				'default'     => 'off', // check against stored options and turn on as needed
 				'placeholder' => __( 'Subscribe button label', 'seriously-simple-podcasting' ),
 				'callback'    => 'wp_strip_all_tags',
 				'class'       => 'text subscribe-option',

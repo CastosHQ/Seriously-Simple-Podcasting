@@ -778,6 +778,13 @@ class Settings_Handler {
 				'callback'    => 'esc_url_raw',
 				'class'       => 'regular-text',
 			),
+			array(
+				'id'          => '',
+				'label'       => __( 'Subscribe button links', 'seriously-simple-podcasting' ),
+				'description' => __( 'To create Subscribe Buttons for your site visitors, enter the Distribution URL to your show in the directories below.', 'seriously-simple-podcasting' ),
+				'type'        => '',
+				'placeholder' => __( 'Subscribe button links', 'seriously-simple-podcasting' ),
+			),
 		);
 
 		$subscribe_options_array            = $this->get_subscribe_field_options();

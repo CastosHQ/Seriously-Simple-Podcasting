@@ -49,6 +49,9 @@ class Admin_Notifications_Handler {
 		// Check if the podcast feed category update message needs to trigger
 		add_action( 'admin_init', array( $this, 'check_category_update_required' ) );
 
+		// Trigger the Distribution links update message
+		add_action( 'admin_init', array( $this, 'add_distribution_links_update_notice' ) );
+
 		// Trigger the Elementor Templates message
 		add_action( 'admin_init', array( $this, 'show_elementor_templates_available' ) );
 
@@ -363,7 +366,7 @@ class Admin_Notifications_Handler {
 
 		$second_line_themes_link = sprintf(
 			wp_kses(
-				// translators: Placeholder is the url to dismiss the message
+				// translators: Placeholder is the url to Second Line Themes
 				__( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out  <a href="%s" target="_blank">Second Line Themes.</a> ', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
@@ -382,7 +385,94 @@ class Admin_Notifications_Handler {
 		<?php
 	}
 
-	public function show_elementor_templates_available(){
+	/**
+	 * Adds the Distribution Links update notice to admin_notices
+	 */
+	public function add_distribution_links_update_notice() {
+		// Only show this message if the user has the capabilities to perform this upgrade
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return;
+		}
+		// only show if the user hasn't already disabled this notice, by performing the upgrade
+		$ss_podcasting_distribution_upgrade_disabled = get_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
+		if ( 'true' === $ss_podcasting_distribution_upgrade_disabled ) {
+			return;
+		}
+		// Don't show this on the Podcast Options page
+		$page = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
+		if ( 'podcast_options' === $page ) {
+			add_action( 'admin_notices', array( $this, 'show_distribution_links_upgrade_notice' ) );
+			return;
+		}
+		add_action( 'admin_notices', array( $this, 'show_distribution_links_update_notice' ) );
+	}
+
+	/**
+	 * Show the Distribution Link Update notice, warning the user of the pending upgrade
+	 */
+	public function show_distribution_links_update_notice() {
+		$distribution_links_update = sprintf(
+			wp_kses(
+				// translators: Placeholder is the url to the Plugin Options
+				__( 'Seriously Simple Podcasting has updated the process of managing your Subscribe/Distribution links, and needs to perform a data upgrade. Please visit the <a href="%s">Plugin Options</a> to perform this upgrade.', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href'   => array(),
+						'target' => true,
+					),
+				)
+			),
+			esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options' ) )
+		);
+		?>
+		<div class="notice notice-info">
+			<p><?php echo $distribution_links_update; // phpcs:ignore ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Show the Distrubution Links Upgrade notice, prompting the user to trigger the upgrade, as well as download a copy of their current settings
+	 */
+	public function show_distribution_links_upgrade_notice() {
+		$distribution_backup_url = add_query_arg( '_wpnonce', wp_create_nonce( 'export_options' ), admin_url( 'edit.php?post_type=podcast&page=podcast_options&export_options=true' ) );
+		$distribution_backup = sprintf(
+			wp_kses(
+				// translators: Placeholder is the url to download the current options
+				__( 'Seriously Simple Podcasting has updated the process of managing your Subscribe/Distribution links, we recommend you download up your current subscribe links by using <a href="%s">this link</a>.', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href'   => array(),
+						'target' => true,
+					),
+				)
+			),
+			$distribution_backup_url //esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options&export_options=true' ) )
+		);
+		$distribution_upgrade_url = add_query_arg( '_wpnonce', wp_create_nonce( 'upgrade_options' ), admin_url( 'edit.php?post_type=podcast&page=podcast_options&upgrade_options=true' ) );
+		$distribution_upgrade = sprintf(
+			wp_kses(
+				// translators: Placeholders are the url to run the upgrade, and the url to the relevant help document
+				__( 'Once you have downloaded your subscribe links, you can run the upgrade by clicking <a href="%1$s">this link</a>. You can read more about this upgrade <a href="%2$s">here</a>', 'seriously-simple-podcasting' ),
+				array(
+					'a' => array(
+						'href'   => array(),
+						'target' => true,
+					),
+				)
+			),
+			$distribution_upgrade_url, //esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options&upgrade_options=true' ) ),
+			esc_url( 'https://support.castos.com/article/166-add-subscription-links-to-your-podcast-player' )
+		);
+		?>
+		<div class="notice notice-info">
+			<p><?php echo $distribution_backup; // phpcs:ignore ?></p>
+			<p><?php echo $distribution_upgrade; // phpcs:ignore ?></p>
+		</div>
+		<?php
+	}
+
+	public function show_elementor_templates_available() {
 		// only show this on podcast list pages
 		$post_type = ( isset( $_GET['post_type'] ) ? filter_var( $_GET['post_type'], FILTER_SANITIZE_STRING ) : '' );
 		if ( empty( $post_type ) || 'podcast' !== $post_type ) {

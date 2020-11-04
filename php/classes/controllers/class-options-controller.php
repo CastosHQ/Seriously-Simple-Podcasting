@@ -46,41 +46,8 @@ class Options_Controller extends Controller {
 		// Upgrade subscribe options.
 		add_action( 'admin_init', array( $this, 'upgrade_existing_options' ) );
 
-		// Enqueue scripts for this controller
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10, 1 );
-
 		// Add options page to menu.
 		add_action( 'admin_menu', array( $this, 'add_menu_item' ) );
-	}
-
-	/**
-	 * @param $hook
-	 */
-	public function enqueue_admin_scripts( $hook ) {
-		/**
-		 * Only load the options js when the options screen is loaded
-		 */
-		if ( 'podcast_page_podcast_options' !== $hook ) {
-			return;
-		}
-
-		wp_register_script(
-			'ssp-options',
-			esc_url( $this->assets_url . 'js/options' . $this->script_suffix . '.js' ),
-			array( 'jquery' ),
-			$this->version,
-			true
-		);
-		wp_enqueue_script( 'ssp-options' );
-
-		$options_nonce = wp_create_nonce( 'ssp_ajax_options_nonce' );
-		wp_localize_script(
-			'ssp-options',
-			'options_ajax_object',
-			array(
-				'nonce' => $options_nonce,
-			)
-		);
 	}
 
 	/**
@@ -128,7 +95,9 @@ class Options_Controller extends Controller {
 
 	}
 
-
+	/**
+	 * Upgrade the subscribe/distribution links post 2.4 update
+	 */
 	public function upgrade_existing_options() {
 		// Only trigger this if we're in the plugin Options area
 		if ( ! isset( $_GET['post_type'], $_GET['page'] ) ) {
@@ -151,29 +120,9 @@ class Options_Controller extends Controller {
 			return;
 		}
 
+		$this->options_handler->store_existing_subscribe_links_to_a_file();
+
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
-
-		/*
-		Array
-		(
-			[itunes_url] => iTunes
-			[stitcher_url] => Stitcher
-			[google_play_url] => Google Play
-			[spotify_url] => Spotify
-			[amazon_url] => Amazon
-			[castro_url] => Castro
-		)
-		*/
-		/**
-		 * itunes -> apple_podcasts
-		 * google_play -> google_podcasts
-		 * loop through the array
-		 * look for default feed value ss_podcasting_itunes_url
-		 * also look for series feed value ss_podcasting_itunes_url_{series_id}
-		 * delete old value and add new one
-		 * Update ss_podcasting_subscribe_options
-		 */
-
 
 		$all_series        = get_terms(
 			array(
@@ -234,6 +183,27 @@ class Options_Controller extends Controller {
 			unset( $subscribe_options['google_play_url'] );
 			$subscribe_options['google_podcasts_url'] = 'Google Podcasts';
 		}
+
+		ksort( $subscribe_options );
+
+		update_option( 'ss_podcasting_subscribe_options', $subscribe_options );
+		update_option( 'ss_podcasting_distribution_upgrade_disabled', 'true' );
+
+		add_action( 'admin_notices', array( $this, 'show_options_upgraded_notice' ) );
+
+	}
+
+	/**
+	 * Show the subscribe/distribution links upgrade success message
+	 */
+	public function show_options_upgraded_notice() {
+		$message = '';
+		$message .= '<p>You have successfully upgraded your Subscribe/Distribution options</p>';
+		?>
+		<div class="notice notice-success is-dismissible">
+			<p><?php _e( $message, 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
 	}
 
 	/**
@@ -451,8 +421,6 @@ class Options_Controller extends Controller {
 		}
 		do_settings_sections( 'options_page' );
 		$html .= ob_get_clean();
-
-		$html .= $this->options_handler->get_extra_html_content();
 
 		// Submit button
 		$html .= '<p class="submit">' . "\n";

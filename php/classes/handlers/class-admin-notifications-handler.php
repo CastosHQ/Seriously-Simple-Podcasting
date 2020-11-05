@@ -269,9 +269,17 @@ class Admin_Notifications_Handler {
 	}
 
 	/**
-	 * Checks to see if we're on a version higher than 1.20.6
+	 * Checks to see if we need to notify the user about the category update
 	 */
 	public function check_category_update_required() {
+		// check if we're on version higher than 1.20.6, if so, dismiss and ignore this message
+		$ssp_version = get_option( 'ssp_version', '1.0.0' );
+		if ( version_compare( $ssp_version, '1.20.6', '>' ) ) {
+			update_option( 'ssp_categories_update_dismissed', 'true' );
+
+			return;
+		}
+
 		// check if the user has dismissed this notice previously
 		$ssp_categories_update_dismissed = get_option( 'ssp_categories_update_dismissed', 'false' );
 		if ( 'true' === $ssp_categories_update_dismissed ) {

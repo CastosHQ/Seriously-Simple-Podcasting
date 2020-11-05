@@ -472,7 +472,7 @@ class Settings_Handler {
 						'excerpt'       => __( 'Excerpt', 'seriously-simple-podcasting' ),
 						'excerpt_embed' => __( 'oEmbed Excerpt', 'seriously-simple-podcasting' ),
 					),
-					'default'     => array(),
+					'default'     => 'content',
 				),
 				array(
 					'id'          => 'player_content_location',
@@ -512,21 +512,42 @@ class Settings_Handler {
 						'standard' => __( 'Standard Compact Player', 'seriously-simple-podcasting' ),
 						'larger'   => __( 'HTML5 Player With Album Art', 'seriously-simple-podcasting' ),
 					),
-					'default'     => 'all',
-				),
-				array(
-					'id'          => 'player_mode',
-					'label'       => 'Player color mode',
-					'description' => __( 'Select light or dark mode for the HTML5 player.', 'seriously-simple-podcasting' ),
-					'type'        => 'radio',
-					'options'     => array(
-						'dark'  => __( 'Dark player', 'seriously-simple-podcasting' ),
-						'light' => __( 'Light player', 'seriously-simple-podcasting' ),
-					),
-					'default'     => 'dark',
+					'default'     => 'standard',
 				),
 			),
 		);
+
+		$ss_podcasting_player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+		if ( 'standard' !== $ss_podcasting_player_style ) {
+			$html_5_player_settings = array(
+				array(
+					'id'          => 'player_background_skin_colour',
+					'label'       => __( 'Background skin colour', 'seriously-simple-podcasting' ),
+					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
+					'type'        => 'colour-picker',
+					'default'     => '#222222',
+					'class'       => 'ssp-color-picker',
+				),
+				array(
+					'id'          => 'player_wave_form_colour',
+					'label'       => __( 'Player progress bar colour', 'seriously-simple-podcasting' ),
+					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
+					'type'        => 'colour-picker',
+					'default'     => '#fff',
+					'class'       => 'ssp-color-picker',
+				),
+				array(
+					'id'          => 'player_wave_form_progress_colour',
+					'label'       => __( 'Player progress bar progress colour', 'seriously-simple-podcasting' ),
+					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
+					'type'        => 'colour-picker',
+					'default'     => '#00d4f7',
+					'class'       => 'ssp-color-picker',
+				),
+			);
+
+			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $html_5_player_settings );
+		}
 
 		$settings['feed-details'] = array(
 			'title'       => __( 'Feed details', 'seriously-simple-podcasting' ),

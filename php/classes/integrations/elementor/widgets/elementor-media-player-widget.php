@@ -31,9 +31,12 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 		);
 
 		$episodes       = get_posts( $args );
-		$episode_options = [0 => 'Latest Epsiode'];
+		$episode_options = [
+			'-1' => 'Current Episode',
+			'0'   => 'Latest Episode',
+		];
 		foreach ( $episodes as $episode ) {
-			$episode_options[ $episode->ID ] = $episode->post_title;
+			$episode_options[ (string) $episode->ID ] = $episode->post_title;
 		}
 
 		return $episode_options;
@@ -56,7 +59,7 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 				'label' => __( 'Select Episode', 'seriously-simple-podcasting' ),
 				'type' => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episode_options,
-				'default' => '0'
+				'default' => '-1'
 			]
 		);
 
@@ -68,6 +71,9 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 		$players_controller = new Players_Controller( __FILE__, SSP_VERSION );
 		$settings           = $this->get_settings_for_display();
 		$episode_id         = $settings['show_elements'];
+		if ( '-1' === $episode_id ) {
+			$episode_id = get_post()->ID;
+		}
 		if ( empty( $episode_id ) ) {
 			$episode_id = $players_controller->get_latest_episode_id();
 		}

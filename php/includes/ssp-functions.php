@@ -949,12 +949,22 @@ if ( ! function_exists( 'ssp_check_if_podcast_has_player' ) ) {
 	 *
 	 * @return false
 	 */
-	function ssp_check_if_podcast_has_player( $podcast_id = 0 ) {
+	function ssp_check_if_podcast_has_elementor_player( $podcast_id = 0 ) {
 		if ( empty( $podcast_id ) ) {
 			return false;
 		}
-		//$document = \Elementor\Plugin::$instance->documents->get_doc_for_frontend( $podcast_id );
-		//$data = $document->get_elements_data();
+		$document            = \Elementor\Plugin::$instance->documents->get_doc_for_frontend( $podcast_id );
+		$content             = $document->get_content();
+		$media_player_string = '<audio class="wp-audio-shortcode" id="audio-' . $podcast_id;
+		if ( strstr( $content, $media_player_string ) ) {
+			return true;
+		}
+		$player_mode        = get_option( 'ss_podcasting_player_mode', 'dark' );
+		$html_player_string = '<div id="embed-app" class="' . $player_mode . '-mode castos-player" data-episode="' . $podcast_id . '">';
+		if ( strstr( $content, $html_player_string ) ) {
+			return true;
+		}
+
 		return false;
 	}
 }

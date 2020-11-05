@@ -273,6 +273,40 @@ class Frontend_Controller extends Controller {
 	}
 
 	/**
+	 * Runs checks to see if the player should be rendered or not
+	 *
+	 * @param $episode_id
+	 *
+	 * @return boolean
+	 */
+	public function validate_media_player( $episode_id ) {
+		$show_player = true;
+		/**
+		 * Check if the user is using the ss_player shortcode anywhere in this post
+		 */
+		if ( ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
+			$show_player = false;
+		}
+
+		if ( ! $show_player ) {
+			return false;
+		}
+
+		/**
+		 * @todo add a check for the block player
+		 */
+
+		/**
+		 * Check if the user is using an elementor widget version of the player.
+		 */
+		if ( ssp_is_elementor_ok() && ssp_check_if_podcast_has_elementor_player( $episode_id ) ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
 	 * Get episode meta data
 	 *
 	 * @param  integer $episode_id ID of episode post
@@ -298,32 +332,20 @@ class Frontend_Controller extends Controller {
 
 			// Hide audio player in `ss_podcast` shortcode by default
 			$show_player = true;
-			if( 'shortcode' == $context ) {
+			if ( 'shortcode' === $context ) {
 				$show_player = false;
 			}
-
-			// Allow media player to be dynamically hidden/displayed
-			$show_player = apply_filters( 'ssp_show_media_player', $show_player, $context );
 
 			// Show audio player if requested
 			$player_style = get_option( 'ss_podcasting_player_style' );
 
-			/**
-			 * Check if the user is using the ss_player shortcode anywhere in this post
-			 */
-			if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
-				$show_player = false;
-			}
+			$show_player = $this->validate_media_player( $episode_id );
 
-			/**
-			 * Check if the user is using another version of the player, like a block or widget, in this post.
-			 */
-			if ( ! ssp_check_if_podcast_has_player( $episode_id ) ) {
-				$show_player = false;
-			}
+			// Allow media player to be dynamically hidden/displayed
+			$show_player = apply_filters( 'ssp_show_media_player', $show_player, $context );
 
 			if ( $show_player ) {
-				$meta .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $player_style ) . '</div>';
+				$meta .= '<div class="podcast_player">' . $this->load_media_player( $file, $episode_id, $player_style ) . '</div>';
 				if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
 					$meta .= $this->episode_meta_details( $episode_id, $context );
 				}
@@ -365,21 +387,9 @@ class Frontend_Controller extends Controller {
 	 *
 	 * @return string
 	 */
-	public function media_player( $src_file = '', $episode_id = 0, $player_size = "large" ) {
+	public function media_player( $src_file = '', $episode_id = 0, $player_size = 'large' ) {
 		$media_player = '';
-		$show_player  = true;
-		/**
-		 * Check if the user is using the ss_player shortcode anywhere in this post
-		 */
-		if ( ! ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
-			$show_player = false;
-		}
-		/**
-		 * Check if the user is using another version of the player, like a block or widget, in this post.
-		 */
-		if ( ! ssp_check_if_podcast_has_player( $episode_id ) ) {
-			$show_player = false;
-		}
+		$show_player  = $this->validate_media_player( $episode_id );
 		if ( $show_player ) {
 			$media_player = $this->load_media_player( $src_file, $episode_id, $player_size );
 		}

@@ -87,7 +87,7 @@ class Options_Controller extends Controller {
 		if ( ! $verified ) {
 			return;
 		}
-		$this->options_handler->send_subscribe_links_to_browser_download();
+		$this->options_handler->send_old_subscribe_links_to_browser_download();
 		exit;
 
 	}
@@ -117,7 +117,7 @@ class Options_Controller extends Controller {
 			return;
 		}
 
-		$this->options_handler->store_existing_subscribe_links_to_a_file();
+		$this->options_handler->store_old_subscribe_links_to_a_file();
 
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
 

@@ -141,74 +141,32 @@ class Options_Handler {
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
 
 		$subscribe_array = array();
-		foreach ( $subscribe_options as $key => $label ) {
-			// get the main feed url
-			$url = get_option( 'ss_podcasting_' . $key, '' );
-			// if we're in a series, and the series has a url for this option
-			if ( is_array( $terms ) ) {
-				if ( isset( $terms[0] ) ) {
-					if ( false !== get_option( 'ss_podcasting_' . $key . '_' . $terms[0]->term_id ) ) {
-						$url = get_option( 'ss_podcasting_' . $key . '_' . $terms[0]->term_id, '' );
-					}
-				}
+		foreach ( $subscribe_options as $option_key ) {
+			if ( ! isset( $this->available_subscribe_options[ $option_key ] ) ) {
+				continue;
 			}
-
-			/**
-			 * extract icon name from $key
-			 */
-			$icon_name = \str_replace( array( '_url', '_' ), array( '', '-' ), $key );
-
-			$subscribe_array[ $key ] = array(
+			// get the main feed url
+			$url = get_option( 'ss_podcasting_' . $option_key . '_url', '' );
+			// if we're in a series, and the series has a url for this option
+			if ( is_array( $terms ) && isset( $terms[0] ) && false !== get_option( 'ss_podcasting_' . $option_key . '_url_' . $terms[0]->term_id ) ) {
+				$url = get_option( 'ss_podcasting_' . $option_key . '_url_' . $terms[0]->term_id, '' );
+			}
+			$subscribe_array[ $option_key ] = array(
 				'url'   => $url,
-				'label' => $label,
-				'icon'  => $icon_name . '.png',
+				'label' => $this->available_subscribe_options[ $option_key ],
+				'icon'  => $option_key . '.png',
 			);
 		}
 
 		return apply_filters( 'ssp_episode_subscribe_details', $subscribe_array, $episode_id, $context );
-
 	}
 
 	/**
-	 * Returns all subscribe urls regardless of episode or series
-	 *
-	 * @return array
-	 */
-	public function get_all_subscribe_urls() {
-		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
-		$all_series        = get_terms(
-			array(
-				'taxonomy'   => 'series',
-				'hide_empty' => false,
-			)
-		);
-		$subscribe_array   = array();
-		foreach ( $subscribe_options as $key => $label ) {
-			$url = get_option( 'ss_podcasting_' . $key, '' );
-			if ( is_array( $all_series ) ) {
-				foreach ( $all_series as $series ) {
-					if ( false !== get_option( 'ss_podcasting_' . $key . '_' . $series->term_id ) ) {
-						$url = get_option( 'ss_podcasting_' . $key . '_' . $series->term_id, '' );
-					}
-				}
-			}
-			$icon_name                     = \str_replace( array( '_url', '_' ), array( '', '-' ), $key );
-			$subscribe_array[ $icon_name ] = array(
-				'url'   => $url,
-				'label' => $label,
-				'icon'  => $icon_name . '.png',
-			);
-		}
-
-		return $subscribe_array;
-	}
-
-	/**
-	 * Gather the subscribe links for a CSV export
+	 * Gather the legacy subscribe links for a CSV export
 	 *
 	 * @return array $subscribe_links
 	 */
-	public function get_subscribe_url_data() {
+	public function get_old_subscribe_url_data() {
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
 
 		$headers = array( 'Feed name' );
@@ -253,8 +211,8 @@ class Options_Handler {
 	/**
 	 * Gather the existing subscribe data and send to the browser as a csv download
 	 */
-	public function send_subscribe_links_to_browser_download() {
-		$file_data = $this->store_existing_subscribe_links_to_a_file();
+	public function send_old_subscribe_links_to_browser_download() {
+		$file_data = $this->store_old_subscribe_links_to_a_file();
 		header( 'Pragma: no-cache' );
 		header( 'Expires: 0' );
 		header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
@@ -273,8 +231,8 @@ class Options_Handler {
 	 *
 	 * @return array $file_data
 	 */
-	public function store_existing_subscribe_links_to_a_file() {
-		$subscribe_links_data = $this->get_subscribe_url_data();
+	public function store_old_subscribe_links_to_a_file() {
+		$subscribe_links_data = $this->get_old_subscribe_url_data();
 		$upload_dir           = wp_upload_dir();
 		$export_file          = trailingslashit( $upload_dir['path'] ) . 'subscribe_options.csv';
 		$export_file_url      = trailingslashit( $upload_dir['url'] ) . 'subscribe_options.csv';

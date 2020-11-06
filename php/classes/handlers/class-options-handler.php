@@ -94,7 +94,7 @@ class Options_Handler {
 			'title'       => __( 'Distribution options', 'seriously-simple-podcasting' ),
 			'description' => sprintf(
 				/* translators: %s: URL to feed details */
-				__( 'Here you can change the available options which power the Distribution URLs that appear below the player on your website. The Distribution URLS are edited under <a href="%s">Settings -> Feed Details</a>', 'seriously-simple-podcasting' ),
+				__( 'Here you can change the available options which power the Distribution URLs that appear below the player on your website. The Distribution URLS are edited under <a href="%s">Settings -> Feed Details</a><p>Select which Distribution links you want to display to your site visitors:</p>', 'seriously-simple-podcasting' ),
 				$feed_details_url
 			),
 			'fields'      => $subscribe_options_array,
@@ -119,7 +119,7 @@ class Options_Handler {
 			// translators: %s: Service title eg iTunes
 			'label'       => __( 'Distribution options', 'seriously-simple-podcasting' ),
 			// translators: %s: Service title eg iTunes
-			'description' => __( 'Distribution options', 'seriously-simple-podcasting' ),
+			'description' => '',
 			'type'        => 'checkbox_multi',
 			'options'     => $this->available_subscribe_options,
 			'default'     => array(),

@@ -32,8 +32,6 @@ class Options_Controller extends Controller {
 
 	public function register_hooks_and_filters() {
 
-		add_action( 'init', array( $this, 'update_subscribe_options' ), 11 );
-
 		// load the options from the Options Handler
 		add_action( 'init', array( $this, 'load_options' ), 11 );
 
@@ -174,7 +172,7 @@ class Options_Controller extends Controller {
 					$old_option = 'ss_podcasting_google_play_url';
 					$new_option = 'ss_podcasting_google_podcasts_url';
 				} else {
-					$old_option = 'ss_podcasting_google_play_urll_' . $series_id;
+					$old_option = 'ss_podcasting_google_play_url_' . $series_id;
 					$new_option = 'ss_podcasting_google_podcasts_url_' . $series_id;
 				}
 				delete_option( $old_option );
@@ -185,8 +183,13 @@ class Options_Controller extends Controller {
 		}
 
 		ksort( $subscribe_options );
+		$new_subscribe_options = array();
+		foreach ( $subscribe_options as $key => $subscribe_option ) {
+			$key                     = str_replace( '_url', '', $key );
+			$new_subscribe_options[] = $key;
+		}
 
-		update_option( 'ss_podcasting_subscribe_options', $subscribe_options );
+		update_option( 'ss_podcasting_subscribe_options', $new_subscribe_options );
 		update_option( 'ss_podcasting_distribution_upgrade_disabled', 'true' );
 
 		add_action( 'admin_notices', array( $this, 'show_options_upgraded_notice' ) );

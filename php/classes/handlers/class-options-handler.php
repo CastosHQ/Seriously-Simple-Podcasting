@@ -79,27 +79,6 @@ class Options_Handler {
 	 * @return array Fields to be displayed on options page.
 	 */
 	public function options_fields() {
-		global $wp_post_types;
-
-		$post_type_options = array();
-
-		// Set options for post type selection.
-		foreach ( $wp_post_types as $post_type => $data ) {
-
-			$disallowed_post_types = array(
-				'page',
-				'attachment',
-				'revision',
-				'nav_menu_item',
-				'wooframework',
-				'podcast',
-			);
-			if ( in_array( $post_type, $disallowed_post_types, true ) ) {
-				continue;
-			}
-
-			$post_type_options[ $post_type ] = $data->labels->name;
-		}
 
 		$options = array();
 
@@ -136,47 +115,19 @@ class Options_Handler {
 	 */
 	public function get_subscribe_field_options() {
 		$subscribe_field_options = array();
-		$subscribe_options       = get_option( 'ss_podcasting_subscribe_options', array() );
 
-		foreach ( $this->available_subscribe_options as $key => $title ) {
-			$enabled = 'off';
-			if ( isset( $subscribe_options[ $key . '_url' ] ) ) {
-				$enabled = 'on';
-			}
-
-			$subscribe_field_options[] = array(
-				'id'          => 'subscribe_option_' . $key,
-				// translators: %s: Service title eg iTunes
-				'label'       => sprintf( __( '%s', 'seriously-simple-podcasting' ), $title ),
-				// translators: %s: Service title eg iTunes
-				'description' => sprintf( __( 'Enable %s distribution link', 'seriously-simple-podcasting' ), $title ),
-				'type'        => 'checkbox',
-				'default'     => $enabled,
-				'placeholder' => __( 'Subscribe button label', 'seriously-simple-podcasting' ),
-				'callback'    => 'wp_strip_all_tags',
-				'class'       => 'subscribe-option',
-			);
-		}
+		$subscribe_field_options[] = array(
+			'id'          => 'subscribe_options',
+			// translators: %s: Service title eg iTunes
+			'label'       => __( 'Distribution options', 'seriously-simple-podcasting' ),
+			// translators: %s: Service title eg iTunes
+			'description' => __( 'Distribution options', 'seriously-simple-podcasting' ),
+			'type'        => 'checkbox_multi',
+			'options'     => $this->available_subscribe_options,
+			'default'     => array(),
+		);
 
 		return apply_filters( 'ssp_subscribe_field_options', $subscribe_field_options );
-	}
-
-	/**
-	 * Update the ss_podcasting_subscribe_options array based on the individual ss_podcasting_subscribe_option_ options
-	 *
-	 * @return bool
-	 */
-	public function update_subscribe_options() {
-		foreach ( $this->available_subscribe_options as $key => $value ) {
-			$subscribe_option = get_option( 'ss_podcasting_subscribe_option_' . $key, 'off' );
-			if ( 'on' === $subscribe_option ) {
-				$subscribe_key                       = strtolower( $key . '_url' );
-				$subscribe_options[ $subscribe_key ] = $value;
-			}
-		}
-		update_option( 'ss_podcasting_subscribe_options', $subscribe_options );
-
-		return true;
 	}
 
 	/**

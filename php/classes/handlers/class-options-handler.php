@@ -2,8 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
-
 /**
  * SSP Options Handler
  *
@@ -11,7 +9,7 @@ use SeriouslySimplePodcasting\Helpers\Log_Helper;
  */
 class Options_Handler {
 
-	protected $available_subscribe_options = array(
+	public $available_subscribe_options = array(
 		'acast'            => 'Acast',
 		'amazon'           => 'Amazon',
 		'anchor'           => 'Anchor',

@@ -919,22 +919,6 @@ class Settings_Handler {
 			),
 		);
 
-		// @todo analytics integration
-		/*$settings['analytics'] = array(
-			'title'       => __( 'Analytics', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Connect your %s analytics application with your podcast site' ), '<a target="_blank" href=" ' . SSP_CASTOS_APP_URL . '">Seriously Simple Hosting</a>' ),
-			'fields'      => array(
-				array(
-					'id'          => 'ssp_analytics_token',
-					'label'       => __( 'Analytics Token', 'seriously-simple-podcasting' ),
-					'description' => '',
-					'type'        => 'text',
-					'callback'    => 'esc_url_raw',
-					'class'       => 'regular-text',
-				),
-			),
-		);*/
-
 		$settings['castos-hosting'] = array(
 			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
 			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
@@ -1060,22 +1044,43 @@ class Settings_Handler {
 	 */
 	public function get_subscribe_field_options() {
 		$subscribe_field_options = array();
-		$subscribe_links_options = get_option( 'ss_podcasting_subscribe_options', array() );
-		if ( empty( $subscribe_links_options ) ) {
+
+		$options_handler             = new Options_Handler();
+		$available_subscribe_options = $options_handler->available_subscribe_options;
+
+		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+		if ( empty( $subscribe_options ) ) {
 			return $subscribe_field_options;
 		}
 
-		foreach ( $subscribe_links_options as $key => $title ) {
+		if ( isset( $_GET['feed-series'] ) && 'default' !== $_GET['feed-series'] ) {
+			$feed_series_slug = sanitize_text_field( $_GET['feed-series'] );
+			$series           = get_term_by( 'slug', $feed_series_slug, 'series' );
+			$series_id        = $series->ID;
+		}
+
+		foreach ( $subscribe_options as $option_key ) {
+			if ( isset( $available_subscribe_options[ $option_key ] ) ) {
+				if ( isset( $series_id ) ) {
+					$field_id = $option_key . '_url_' . $series_id;
+					$value    = get_option( 'ss_podcasting_' . $field_id );
+				} else {
+					$field_id = $option_key . '_url';
+					$value    = get_option( 'ss_podcasting_' . $field_id );
+				}
+			} else {
+				continue;
+			}
 			$subscribe_field_options[] = array(
-				'id'          => $key,
+				'id'          => $field_id,
 				// translators: %s: Service title eg iTunes
-				'label'       => sprintf( __( '%s URL', 'seriously-simple-podcasting' ), $title ),
+				'label'       => sprintf( __( '%s URL', 'seriously-simple-podcasting' ), $available_subscribe_options[ $option_key ] ),
 				// translators: %s: Service title eg iTunes
-				'description' => sprintf( __( 'Your podcast\'s %s URL.', 'seriously-simple-podcasting' ), $title ),
+				'description' => sprintf( __( 'Your podcast\'s %s URL.', 'seriously-simple-podcasting' ), $available_subscribe_options[ $option_key ] ),
 				'type'        => 'text',
-				'default'     => '',
+				'default'     => $value,
 				// translators: %s: Service title eg iTunes
-				'placeholder' => sprintf( __( '%s URL', 'seriously-simple-podcasting' ), $title ),
+				'placeholder' => sprintf( __( '%s URL', 'seriously-simple-podcasting' ), $available_subscribe_options[ $option_key ] ),
 				'callback'    => 'esc_url_raw',
 				'class'       => 'regular-text',
 			);

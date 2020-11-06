@@ -3,7 +3,6 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
 
 class Options_Controller extends Controller {
 

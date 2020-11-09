@@ -116,6 +116,11 @@ class Options_Controller extends Controller {
 		if ( ! current_user_can( 'manage_podcast' ) ) {
 			return;
 		}
+		// only trigger if the user hasn't already disabled this notice, by performing the upgrade
+		$ss_podcasting_distribution_upgrade_disabled = get_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
+		if ( 'true' === $ss_podcasting_distribution_upgrade_disabled ) {
+			return;
+		}
 
 		$this->options_handler->store_old_subscribe_links_to_a_file();
 
@@ -190,6 +195,8 @@ class Options_Controller extends Controller {
 
 		update_option( 'ss_podcasting_subscribe_options', $new_subscribe_options );
 		update_option( 'ss_podcasting_distribution_upgrade_disabled', 'true' );
+
+
 
 		add_action( 'admin_notices', array( $this, 'show_options_upgraded_notice' ) );
 

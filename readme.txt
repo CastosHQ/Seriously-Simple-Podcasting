@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.5
+Tested up to: 5.5.3
 Requires PHP: 5.6
-Stable tag: 2.4-beta
+Stable tag: 2.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -159,11 +159,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 2.4-beta =
-* 2020-10-27
-* UPDATE SUMMARY: Adds support for the Elementor Page Builder, by adding Elementor specific podcasting widgets.
+= 2.4 =
+* 2020-11-09
+* UPDATE SUMMARY: Adds support for the Elementor Page Builder, by adding Elementor specific podcasting widgets. Changes how the Feed Subscribe links are managed in the Plugin Options, which requires a data upgrade
 * [NEW] Adds Podcast specific widgets for Elementor: Media Player, Castos Player, Subscribe Buttons, Recent Episodes and Episode List.
-* [NEW] Adds Podcast specific Elementor Templates: Podcast Landing page and Podcast Subscribe Page
+* [NEW] Adds Podcast specific Elementor Templates: Podcast Landing page, Podcast Subscribe Page and Podcast Single Episode Page
+* [UPDATE] Upgrades the Subscribe/Distribution links Options process
 * [UPDATE] Moves the HTML player settings to their own tab
 
 = 2.2.3 =

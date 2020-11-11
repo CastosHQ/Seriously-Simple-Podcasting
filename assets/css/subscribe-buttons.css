@@ -1,0 +1,31 @@
+.ssp-subscribe-buttons {
+	display: flex;
+	justify-content: center;
+	width: 100%;
+	flex-wrap: wrap;
+}
+
+.ssp-subscribe-buttons a {
+	background-color: rgba(0, 0, 0, 0.5);
+	border-radius: 50px;
+	color: #eeeeee;
+	padding: 10px 20px;
+	margin: 10px;
+	text-decoration: none !important;
+	font-weight: bold;
+}
+.ssp-subscribe-buttons a:hover {
+	background-color: rgba(0, 0, 0, 0.7);
+	color: #fff;
+}
+
+.ssp-subscribe-buttons a img {
+	width: 32px;
+	height: 32px;
+	display: inline-block;
+	vertical-align: middle;
+}
+
+.ssp-subscribe-buttons a span {
+	padding-left: 10px;
+}

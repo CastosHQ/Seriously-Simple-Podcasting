@@ -631,14 +631,12 @@ class Settings_Controller extends Controller {
 	 * @return void
 	 */
 	public function mark_feed_redirect_date( $option, $old_value, $new_value ) {
-
 		if ( 'ss_podcasting_redirect_feed' === $option ) {
 			if ( ( $new_value != $old_value ) && 'on' === $new_value ) {
 				$date = time();
 				update_option( 'ss_podcasting_redirect_feed_date', $date );
 			}
 		}
-
 	}
 
 	/**
@@ -660,14 +658,6 @@ class Settings_Controller extends Controller {
 		array_walk( $q_args, function ( &$entry ) {
 			$entry = sanitize_title( $entry );
 		} );
-
-		/* @todo Add Back For Stats Later On */
-		/*if( "analytics" === $q_args['view'] ){
-			ob_start();
-			include SSP_PLUGIN_PATH . 'includes/views/ssp-analytics.php';
-			echo ob_get_clean();
-			return;
-		}*/
 
 		// Build page HTML
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";

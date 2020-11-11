@@ -30,6 +30,14 @@ class Upgrade_Handler {
 			$this->clear_castos_api_credentials();
 		}
 
+		if ( version_compare( $previous_version, '2.2.4', '<' ) ) {
+			$this->enable_distribution_upgrade_notice();
+		}
+
+		if ( version_compare( $previous_version, '2.2.4', '<' ) ) {
+			$this->enable_elementor_template_notice();
+		}
+
 	}
 
 	/**
@@ -75,5 +83,30 @@ class Upgrade_Handler {
 			return;
 		}
 		update_option( 'ss_podcasting_podmotor_account_id', '2.0' );
+	}
+
+	/**
+	 * Update or create the ss_podcasting_elementor_templates_disabled option, to show the admin notice if it's off
+	 */
+	public function enable_elementor_template_notice() {
+		if ( ! ssp_is_elementor_ok() ) {
+			return;
+		}
+		$ss_podcasting_elementor_templates_disabled = get_option( 'ss_podcasting_elementor_templates_disabled', 'false' );
+		if ( 'true' === $ss_podcasting_elementor_templates_disabled ) {
+			return;
+		}
+		update_option( 'ss_podcasting_elementor_templates_disabled', 'false' );
+	}
+
+	/**
+	 * Update or create the ss_podcasting_distribution_upgrade_disabled option, to show the admin notice if it's off
+	 */
+	public function enable_distribution_upgrade_notice() {
+		$ss_podcasting_distribution_upgrade_disabled = get_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
+		if ( 'true' === $ss_podcasting_distribution_upgrade_disabled ) {
+			return;
+		}
+		update_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
 	}
 }

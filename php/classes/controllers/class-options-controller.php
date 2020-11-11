@@ -31,49 +31,20 @@ class Options_Controller extends Controller {
 
 	public function register_hooks_and_filters() {
 
-		add_action( 'init', array( $this, 'update_subscribe_options' ), 11 );
-
 		// load the options from the Options Handler
 		add_action( 'init', array( $this, 'load_options' ), 11 );
 
 		// Register podcast options.
 		add_action( 'admin_init', array( $this, 'register_options' ) );
 
-		// Enqueue scripts for this controller
-		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10, 1 );
+		// Download existing subscribe options.
+		add_action( 'admin_init', array( $this, 'download_existing_options' ) );
+
+		// Upgrade subscribe options.
+		add_action( 'admin_init', array( $this, 'upgrade_existing_options' ) );
 
 		// Add options page to menu.
 		add_action( 'admin_menu', array( $this, 'add_menu_item' ) );
-	}
-
-	/**
-	 * @param $hook
-	 */
-	public function enqueue_admin_scripts( $hook ) {
-		/**
-		 * Only load the options js when the options screen is loaded
-		 */
-		if ( 'podcast_page_podcast_options' !== $hook ) {
-			return;
-		}
-
-		wp_register_script(
-			'ssp-options',
-			esc_url( $this->assets_url . 'js/options' . $this->script_suffix . '.js' ),
-			array( 'jquery' ),
-			$this->version,
-			true
-		);
-		wp_enqueue_script( 'ssp-options' );
-
-		$options_nonce = wp_create_nonce( 'ssp_ajax_options_nonce' );
-		wp_localize_script(
-			'ssp-options',
-			'options_ajax_object',
-			array(
-				'nonce' => $options_nonce,
-			)
-		);
 	}
 
 	/**
@@ -81,6 +52,167 @@ class Options_Controller extends Controller {
 	 */
 	public function load_options() {
 		$this->options = $this->options_handler->options_fields();
+	}
+
+	/**
+	 * Send the current subscribe/distribution options to the browser as a file download
+	 */
+	public function download_existing_options() {
+		// Only trigger this if we're in the plugin Options area
+		if ( ! isset( $_GET['post_type'], $_GET['page'] ) ) {
+			return;
+		}
+		$post_type = ( isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : '' );
+		if ( 'podcast' !== $post_type ) {
+			return;
+		}
+		$page = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
+		if ( 'podcast_options' !== $page ) {
+			return;
+		}
+		// Only trigger this functionality if the export_options query var is set
+		if ( ! isset( $_GET['export_options'] ) ) {
+			return;
+		}
+		// Only show this message if the user has the capabilities to download the options
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return;
+		}
+		// Nonce verification check, the request came from the right place
+		$nonce = isset( $_GET['_wpnonce'] ) ? sanitize_text_field( $_GET['_wpnonce'] ) : '';
+		if ( empty( $nonce ) ) {
+			return;
+		}
+		$verified = wp_verify_nonce( $nonce, 'export_options' );
+		if ( ! $verified ) {
+			return;
+		}
+		$this->options_handler->send_old_subscribe_links_to_browser_download();
+		exit;
+
+	}
+
+	/**
+	 * Upgrade the subscribe/distribution links post 2.4 update
+	 */
+	public function upgrade_existing_options() {
+		// Only trigger this if we're in the plugin Options area
+		if ( ! isset( $_GET['post_type'], $_GET['page'] ) ) {
+			return;
+		}
+		$post_type = ( isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : '' );
+		if ( 'podcast' !== $post_type ) {
+			return;
+		}
+		$page = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
+		if ( 'podcast_options' !== $page ) {
+			return;
+		}
+		// Only trigger this functionality if the export_options query var is set
+		if ( ! isset( $_GET['upgrade_options'] ) ) {
+			return;
+		}
+		// Only show this message if the user has the capabilities to download the options
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return;
+		}
+		// only trigger if the user hasn't already disabled this notice, by performing the upgrade
+		$ss_podcasting_distribution_upgrade_disabled = get_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
+		if ( 'true' === $ss_podcasting_distribution_upgrade_disabled ) {
+			return;
+		}
+
+		$this->options_handler->store_old_subscribe_links_to_a_file();
+
+		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+
+		$all_series        = get_terms(
+			array(
+				'taxonomy'   => 'series',
+				'hide_empty' => false,
+			)
+		);
+
+		/**
+		 * These two steps are duplicates of each other, but this will only ever be run once.
+		 */
+		if ( isset( $subscribe_options['itunes_url'] ) ) {
+			$ss_podcasting_itunes_urls   = array();
+			$ss_podcasting_itunes_urls[] = get_option( 'ss_podcasting_itunes_url', '' );
+			if ( is_array( $all_series ) ) {
+				foreach ( $all_series as $series ) {
+					if ( false !== get_option( 'ss_podcasting_itunes_url_' . $series->term_id ) ) {
+						$ss_podcasting_itunes_urls[ $series->term_id ] = get_option( 'ss_podcasting_itunes_url_' . $series->term_id, '' );
+					}
+				}
+			}
+			foreach ( $ss_podcasting_itunes_urls as $series_id => $value ) {
+				if ( empty( $series_id ) ) {
+					$old_option = 'ss_podcasting_itunes_url';
+					$new_option = 'ss_podcasting_apple_podcasts_url';
+				} else {
+					$old_option = 'ss_podcasting_itunes_url_' . $series_id;
+					$new_option = 'ss_podcasting_apple_podcasts_url_' . $series_id;
+				}
+				delete_option( $old_option );
+				add_option( $new_option, $value );
+			}
+			unset( $subscribe_options['itunes_url'] );
+			$subscribe_options['apple_podcasts_url'] = 'Apple Podcasts';
+		}
+
+		if ( isset( $subscribe_options['google_play_url'] ) ) {
+			$ss_podcasting_itunes_urls   = array();
+			$ss_podcasting_itunes_urls[] = get_option( 'ss_podcasting_google_play_url', '' );
+			if ( is_array( $all_series ) ) {
+				foreach ( $all_series as $series ) {
+					if ( false !== get_option( 'ss_podcasting_google_play_url_' . $series->term_id ) ) {
+						$ss_podcasting_itunes_urls[ $series->term_id ] = get_option( 'ss_podcasting_google_play_url_' . $series->term_id, '' );
+					}
+				}
+			}
+			foreach ( $ss_podcasting_itunes_urls as $series_id => $value ) {
+				if ( empty( $series_id ) ) {
+					$old_option = 'ss_podcasting_google_play_url';
+					$new_option = 'ss_podcasting_google_podcasts_url';
+				} else {
+					$old_option = 'ss_podcasting_google_play_url_' . $series_id;
+					$new_option = 'ss_podcasting_google_podcasts_url_' . $series_id;
+				}
+				delete_option( $old_option );
+				add_option( $new_option, $value );
+			}
+			unset( $subscribe_options['google_play_url'] );
+			$subscribe_options['google_podcasts_url'] = 'Google Podcasts';
+		}
+
+		ksort( $subscribe_options );
+		$new_subscribe_options = array();
+		foreach ( $subscribe_options as $key => $subscribe_option ) {
+			$key                     = str_replace( '_url', '', $key );
+			$new_subscribe_options[] = $key;
+		}
+
+		update_option( 'ss_podcasting_subscribe_options', $new_subscribe_options );
+		update_option( 'ss_podcasting_distribution_upgrade_disabled', 'true' );
+
+
+
+		add_action( 'admin_notices', array( $this, 'show_options_upgraded_notice' ) );
+
+	}
+
+	/**
+	 * Show the subscribe/distribution links upgrade success message
+	 */
+	public function show_options_upgraded_notice() {
+		$message = '';
+		$message .= '<p>You have successfully upgraded your Subscribe/Distribution options</p>';
+		?>
+		<div class="notice notice-success is-dismissible">
+			<p><?php _e( $message, 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
 	}
 
 	/**
@@ -298,8 +430,6 @@ class Options_Controller extends Controller {
 		}
 		do_settings_sections( 'options_page' );
 		$html .= ob_get_clean();
-
-		$html .= $this->options_handler->get_extra_html_content();
 
 		// Submit button
 		$html .= '<p class="submit">' . "\n";

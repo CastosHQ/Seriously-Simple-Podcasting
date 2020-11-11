@@ -2,9 +2,34 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
+use Exception;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
 class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param array $data Widget data.
+	 * @param null $args Widget arguments.
+	 *
+	 * @throws Exception
+	 */
+	public function __construct( $data = array(), $args = null ) {
+		parent::__construct( $data, $args );
+		$this->register_scripts_and_styles();
+	}
+
+	/**
+	 * Register any scripts and styles for this widget
+	 */
+	public function register_scripts_and_styles() {
+		$assets_url = trailingslashit( SSP_PLUGIN_URL ) . 'assets/';
+		$version    = SSP_VERSION;
+		wp_register_style( 'ssp-subscribe-buttons', $assets_url . 'css/subscribe-buttons.css', array(), $version );
+		wp_enqueue_style( 'ssp-subscribe-buttons' );
+	}
+
 	public function get_name() {
 		return 'Subscribe Buttons';
 	}

@@ -5,7 +5,7 @@
 			<div class="ssp-recent-episodes-items">
 				<?php foreach ( $episodes as $episode ) { ?>
 					<div class="ssp-recent-episode-post">
-						<a href="<?php echo get_the_permalink( $episode->ID ); ?>" title="<?php echo $episode->post_title ?>>">
+						<a href="<?php echo get_the_permalink( $episode->ID ); ?>" title="<?php echo $episode->post_title ?>">
 							<img src="<?php echo esc_url( get_the_post_thumbnail_url( $episode->ID, 'medium' ) ); ?>" alt="<?php echo $episode->post_title ?>">
 						</a>
 						<h4>

@@ -4,6 +4,8 @@ namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use Exception;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use function tenup_podcasting\get_the_term;
 
 class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 
@@ -94,7 +96,7 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 		$this->add_control(
 			'show_elements',
 			[
-				'label'    => __( 'Select Podcast', 'plugin-domain' ),
+				'label'    => __( 'Select Podcast', 'seriously-simple-podcasting' ),
 				'type'     => \Elementor\Controls_Manager::SELECT2,
 				'options'  => $series_options,
 				'multiple' => false,
@@ -106,31 +108,28 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 	}
 
 	protected function render() {
-		$settings = $this->get_settings_for_display();
-
-		$player   = new Players_Controller( __FILE__, SSP_VERSION );
-		$series_id = $settings['show_elements'];
-
-		$episode = array();
-
-		$args = array(
-			'post_type' => 'podcast',
+		$settings    = $this->get_settings_for_display();
+		$series_id   = $settings['show_elements'];
+		$args        = array(
+			'post_type' => ssp_post_types( true ),
 			'tax_query' => array(
 				array(
 					'taxonomy' => 'series',
 					'field'    => 'term_id',
 					'terms'    => $series_id,
-				)
-			)
+				),
+			),
 		);
+		$episode_id  = 0;
+		$posts_query = new \WP_Query( $args );
+		$posts       = $posts_query->get_posts();
 
-		$posts = new \WP_Query( $args );
-
-		if ( ! empty( $posts->posts ) ) {
-			$episode['id'] = $posts->posts[0]->ID;
+		if ( ! empty( $posts ) ) {
+			$episode_id = $posts[0]->ID;
 		}
 
-		echo $player->render_subscribe_buttons( $episode );
+		$player = new Players_Controller( __FILE__, SSP_VERSION );
+		echo $player->render_subscribe_buttons( $episode_id );
 	}
 
 }

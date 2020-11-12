@@ -79,11 +79,16 @@ class Players_Controller extends Controller {
 	 * @return int
 	 */
 	public function get_latest_episode_id() {
+		if ( is_admin() ) {
+			$post_status = array( 'publish', 'draft', 'future' );
+		} else {
+			$post_status = array( 'publish' );
+		}
 		$args     = array(
 			'fields'         => array( 'post_title, id' ),
 			'posts_per_page' => 1,
 			'post_type'      => ssp_post_types( true ),
-			'post_status'    => array( 'publish', 'draft', 'future' ),
+			'post_status'    => $post_status,
 		);
 		$episodes = get_posts( $args );
 		if ( empty( $episodes ) ) {

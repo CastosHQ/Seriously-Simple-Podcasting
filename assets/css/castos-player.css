@@ -8,6 +8,7 @@
     position: relative;
     overflow: hidden;
 }
+
 .castos-player button {
     outline: none;
     border: none;
@@ -108,7 +109,7 @@
 .castos-player .close-btn:hover span:nth-child(1) {
     transform: rotate(135deg);
 }
-..castos-player close-btn:hover span:nth-child(2) {
+.castos-player close-btn:hover span:nth-child(2) {
     transform: rotate(45deg);
 }
 
@@ -704,146 +705,146 @@
 /* RWD */
 /* ///////////////////////////////////////////////////////////////////////// */
 @media (max-width: 768px) {
-    .player__main {
+	.castos-player .player__main {
         grid-template-columns: 60px 1fr;
         grid-gap: 0;
         height: 150px;
     }
-    .player__artwork img {
+	.castos-player .player__artwork img {
         width: 45px;
         height: 45px;
         margin: 12px;
         border-radius: 4px;
     }
-    .player__body {
+	.castos-player .player__body {
         padding: 12px 12px 4px 12px;
     }
-    .player-panels .player-panel {
+	.castos-player .player-panels .player-panel {
         left: 0;
         right: 0;
         top: 0;
         bottom: 0;
         border-radius: 0;
     }
-    .player-panel .row input {
+	.castos-player .player-panel .row input {
         font-size: 16px;
     }
-    .play-progress {
+	.castos-player .play-progress {
         grid-gap: 18px;
         margin-left: -60px;
         margin-top: 4px;
     }
-    .play-pause-controls {
+	.castos-player .play-pause-controls {
         width: 45px;
         height: 45px;
     }
-    .playback {
+	.castos-player .playback {
         align-items: center;
         padding: 5px 0 0 0;
     }
-    .panel__inner {
+	.castos-player .panel__inner {
         height: 140px;
         overflow-y: scroll;
     }
-    .close-btn {
+	.castos-player .close-btn {
         top: 0;
         right: 0;
         width: 26px;
         height: 26px;
         border-radius: 0 0 0 4px;
     }
-    .close-btn span {
+	.castos-player .close-btn span {
         width: 16px;
         height: 3px;
         left: 5px;
         top: 11px;
     }
-    .player-panels-nav button {
+	.castos-player .player-panels-nav button {
         padding: 5px 10px;
     }
-    .powered-by {
+	.castos-player .powered-by {
         bottom: 5px;
         left: 8px;
         right: auto;
     }
-    .player-btn__volume {
+	.castos-player .player-btn__volume {
         display: none;
     }
-    .player-btn__rwd {
+	.castos-player .player-btn__rwd {
         width: 22px;
         height: 22px;
         mask-size: cover;
         -webkit-mask-size: cover;
     }
-    .player-btn__speed {
+	.castos-player .player-btn__speed {
         width: 35px;
         padding: 3px 4px;
         mask-size: cover;
         -webkit-mask-size: cover;
         border-width: 1px;
     }
-    .player-btn__fwd {
+	.castos-player .player-btn__fwd {
         width: 22px;
         height: 22px;
         mask-size: cover;
         -webkit-mask-size: cover;
     }
-    .playback .playback__controls {
+	.castos-player .playback .playback__controls {
         grid-template-columns: repeat(3, auto);
         grid-gap: 15px;
         justify-content: flex-start;
     }
-    .player-panels-nav {
+	.castos-player .player-panels-nav {
         margin: 3px -8px 0 0;
         justify-self: flex-end;
     }
-    .subscribe-icons {
+	.castos-player .subscribe-icons {
         grid-template-columns: 1fr 1fr;
         grid-gap: 10px;
         margin: 5px 0 8px 0;
     }
-    .playback__timers {
+	.castos-player .playback__timers {
         margin-right: 2px;
     }
-    .episode-title {
+	.castos-player .episode-title {
         width: calc(100vw - 100px);
     }
-    .show {
+	.castos-player .show {
         width: calc(100vw - 100px);
     }
 }
 
-.podcast-meta-itunes,
-.podcast-meta-itunes:hover,
-.podcast-meta-itunes:visited {
+.castos-player .podcast-meta-itunes,
+.castos-player .podcast-meta-itunes:hover,
+.castos-player .podcast-meta-itunes:visited {
     text-decoration: none !important;
     color: #000000;
 }
 
-.podcast-meta-itunes:active,
-.podcast-meta-itunes:focus,
-.play-btn:active,
-.play-btn:focus,
-.pause-btn:focus,
-.pause-btn:focus,
-.player-btn__speed:active,
-.player-btn__speed:focus,
-.player-btn__volume:active,
-.player-btn__volume:focus,
-.share-btn:active,
-.share-btn:focus,
-.subscribe-btn:active,
-.subscribe-btn:focus,
-.share-icon:active,
-.share-icon:focus,
-.apple-podcasts:active,
-.apple-podcasts:focus,
-.sticher:active,
-.sticher:focus,
-.spotify:active,
-.spotify:focus,
-.google-play:active,
-.google-play:focus {
+.castos-player .podcast-meta-itunes:active,
+.castos-player .podcast-meta-itunes:focus,
+.castos-player .play-btn:active,
+.castos-player .play-btn:focus,
+.castos-player .pause-btn:focus,
+.castos-player .pause-btn:focus,
+.castos-player .player-btn__speed:active,
+.castos-player .player-btn__speed:focus,
+.castos-player .player-btn__volume:active,
+.castos-player .player-btn__volume:focus,
+.castos-player .share-btn:active,
+.castos-player .share-btn:focus,
+.castos-player .subscribe-btn:active,
+.castos-player .subscribe-btn:focus,
+.castos-player .share-icon:active,
+.castos-player .share-icon:focus,
+.castos-player .apple-podcasts:active,
+.castos-player .apple-podcasts:focus,
+.castos-player .sticher:active,
+.castos-player .sticher:focus,
+.castos-player .spotify:active,
+.castos-player .spotify:focus,
+.castos-player .google-play:active,
+.castos-player .google-play:focus {
     outline: 0;
     border: none;
     -moz-outline-style: none;

@@ -4,8 +4,6 @@ namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use Exception;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
-use function tenup_podcasting\get_the_term;
 
 class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 
@@ -74,8 +72,9 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 			]
 		);
 
-		$series = get_terms( array(
-				'taxonomy' => 'series'
+		$series = get_terms(
+			array(
+				'taxonomy' => 'series',
 			)
 		);
 

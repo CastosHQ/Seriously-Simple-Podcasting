@@ -447,7 +447,7 @@ class Admin_Notifications_Handler {
 		$distribution_backup = sprintf(
 			wp_kses(
 				// translators: Placeholder is the url to download the current options
-				__( 'Seriously Simple Podcasting has updated the process of managing your Subscribe/Distribution links, we recommend you download up your current subscribe links by using <a href="%s">this link</a>.', 'seriously-simple-podcasting' ),
+				__( 'Seriously Simple Podcasting has updated the process of managing your Subscribe/Distribution links, we recommend you download your current subscribe links by using <a href="%s">this link</a>.', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
 						'href'   => array(),

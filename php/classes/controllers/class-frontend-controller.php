@@ -277,10 +277,17 @@ class Frontend_Controller extends Controller {
 	 *
 	 * @param $episode_id
 	 *
+	 * @param bool $show_player default true
+	 *
 	 * @return boolean
 	 */
-	public function validate_media_player( $episode_id ) {
-		$show_player = true;
+	public function validate_media_player( $episode_id, $show_player = true ) {
+		/**
+		 * If the show_player variable was already set false (specifically for the ss_podcast shortcode)
+		 */
+		if ( false === $show_player ) {
+			return false;
+		}
 		/**
 		 * Check if the user is using the ss_player shortcode anywhere in this post
 		 */
@@ -291,11 +298,9 @@ class Frontend_Controller extends Controller {
 		if ( ! $show_player ) {
 			return false;
 		}
-
 		/**
 		 * @todo add a check for the block player
 		 */
-
 		/**
 		 * Check if the user is using an elementor widget version of the player.
 		 */
@@ -339,7 +344,7 @@ class Frontend_Controller extends Controller {
 			// Show audio player if requested
 			$player_style = get_option( 'ss_podcasting_player_style' );
 
-			$show_player = $this->validate_media_player( $episode_id );
+			$show_player = $this->validate_media_player( $episode_id, $show_player );
 
 			// Allow media player to be dynamically hidden/displayed
 			$show_player = apply_filters( 'ssp_show_media_player', $show_player, $context );
@@ -491,7 +496,7 @@ class Frontend_Controller extends Controller {
 										<div class="ssp-media-player">
 											<div class="ssp-custom-player-controls">
 												<div class="ssp-play-pause" id="ssp-play-pause">
-													<span class="ssp-icon ssp-icon-play_icon">&nbsp;</span>
+													<span class="ssp-icon ssp-icon-play_icon"><span class="screen-reader-text">Play/Pause Episode</span></span>
 												</div>
 												<div class="ssp-wave-form">
 													<div class="ssp-inner">
@@ -505,7 +510,7 @@ class Frontend_Controller extends Controller {
 													<div class="ssp-volume">
 														<div class="ssp-back-thirty-container">
 															<div class="ssp-back-thirty-control" id="ssp-back-thirty">
-																<i class="ssp-icon icon-replay">&nbsp;</i>
+																<i class="ssp-icon icon-replay"><span class="screen-reader-text">Rewind 30 Seconds</span></i>
 															</div>
 														</div>
 														<div class="ssp-playback-speed-label-container">
@@ -515,7 +520,7 @@ class Frontend_Controller extends Controller {
 														</div>
 														<div class="ssp-download-container">
 															<div class="ssp-download-control">
-																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download">&nbsp;</i></a>
+																<a class="ssp-episode-download" href="<?php echo $this->get_episode_download_link( $episode_id, 'download' ); ?>" target="_blank"><i class="ssp-icon icon-cloud-download"><span class="screen-reader-text">Download Episode</span></i></a>
 															</div>
 														</div>
 													</div>
@@ -1740,13 +1745,13 @@ class Frontend_Controller extends Controller {
 			?>
 			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
 				<h2>
-					<a class="entry-title-link" rel="bookmark" href="<?php echo $episode->guid ?>">
+					<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_permalink( $episode->ID ) ); ?>">
 						<?php echo $episode->post_title; ?>
 					</a>
 				</h2>
 				<div class="podcast-content">
 					<?php if ( isset( $attributes['featuredImage'] ) ) { ?>
-						<a class="podcast-image-link" href="<?php echo $episode->guid ?>" aria-hidden="true"
+						<a class="podcast-image-link" href="<?php echo esc_url( get_permalink( $episode->ID ) ) ?>" aria-hidden="true"
 						   tabindex="-1">
 							<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
 						</a>

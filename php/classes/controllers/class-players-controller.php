@@ -79,11 +79,16 @@ class Players_Controller extends Controller {
 	 * @return int
 	 */
 	public function get_latest_episode_id() {
+		if ( is_admin() ) {
+			$post_status = array( 'publish', 'draft', 'future' );
+		} else {
+			$post_status = array( 'publish' );
+		}
 		$args     = array(
 			'fields'         => array( 'post_title, id' ),
 			'posts_per_page' => 1,
 			'post_type'      => ssp_post_types( true ),
-			'post_status'    => array( 'publish', 'draft', 'future' ),
+			'post_status'    => $post_status,
 		);
 		$episodes = get_posts( $args );
 		if ( empty( $episodes ) ) {
@@ -99,37 +104,8 @@ class Players_Controller extends Controller {
 		$this->renderer           = new Renderer();
 		$this->episode_controller = new Episode_Controller( $file, $version );
 		$this->options_handler    = new Options_Handler();
-		$this->init();
 	}
 
-	public function init() {
-		/**
-		 * Only load player assets once the wp_enqueue_scripts hook is triggered
-		 * @todo ideally only when the player is loaded...
-		 */
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_player_assets' ) );
-
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_subscribe_buttons_assets' ) );
-
-	}
-
-	/**
-	 * Loads the HTML5 player CSS and JavaScript
-	 */
-	public function load_player_assets() {
-		wp_register_style( 'castos-player', $this->assets_url . 'css/castos-player.css', array(), $this->version );
-		wp_enqueue_style( 'castos-player' );
-		wp_register_script( 'castos-player', $this->assets_url . 'js/castos-player.js', array( 'jquery' ), $this->version, true );
-		wp_enqueue_script( 'castos-player' );
-	}
-
-	/**
-	 * Loads the Subscribe Buttons CSS
-	 */
-	public function load_subscribe_buttons_assets() {
-		wp_register_style( 'ssp-subscribe-buttons', $this->assets_url . 'css/subscribe-buttons.css', array(), $this->version );
-		wp_enqueue_style( 'ssp-subscribe-buttons' );
-	}
 
 	/**
 	 * Sets up the template data for the HTML5 player, based on the episode id passed.

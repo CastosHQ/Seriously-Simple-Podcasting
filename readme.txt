@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.5.3
 Requires PHP: 5.6
-Stable tag: 2.4
+Stable tag: 2.4.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.4.1 =
+* 2020-11-16
+* UPDATE SUMMARY: Bug fixes for the 2.4 release, as well as two previously submitted PRs
+* [FIX] Fixes a bug where the media player css affects normal subscribe links
+* [FIX] Fixes a PHP warning being reported relevant to the Elementor Templates on the iterations page
+* [FIX] Fixes a bug in the Elementor Subscribe Buttons widget, where selecting a series did not display the correct buttons
+* [FIX] Fixes a bug in the Elementor Media Player widgets, related to using the Latest Episode
+* [FIX] Fixes a bug where using the ss_podcast shortcode renders the media player incorrectly
+* [FIX] Changes the dynamic podcast list block to use get_permalink() instead of the episode guid. (props [mikelittle](https://profiles.wordpress.org/mikelittle))
+* [NEW] Added "Play/Pause", "Rewind 30 Seconds", and "Download Epsiode" anchor text for elements in the HTML5 player, for better accessibility with screen readers. (props [edequalsawesome](https://github.com/edequalsawesome))
 
 = 2.4 =
 * 2020-11-09

@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Rest;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
+use SeriouslySimplePodcasting\Handlers\Options_Handler;
 
 /**
  * Extending the WP REST API for Seriously Simple Podcasting
@@ -234,22 +235,24 @@ class Rest_Api_Controller {
 	}
 
 	public function get_episode_player_data() {
-		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_SANITIZE_STRING ) : '' );
-		$episode    = get_post( $podcast_id, ARRAY_A );
+		$options_handler = new Options_Handler();
+		$episode_id = ( isset( $_GET['ssp_episode_id'] ) ? filter_var( $_GET['ssp_episode_id'], FILTER_SANITIZE_STRING ) : '' );
+		$episode    = get_post( $episode_id, ARRAY_A );
 
+		$player_data = array(
+			'episode_id'       => $episode_id,
+			'episode_file_url' => $episode->get_permalink,
+			'episode_title'    => $episode->post_title,
+			'subscribe_urls'   => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
+			'rss_feed_url'     => ''
+		);
 		/**
-		 * Get the feed url
+		episodeFileUrl={episodeFileUrl}
+		episodeTitle={episodeTitle}
+		subscribeUrls={subscribeUrls}
+		rssFeedUrl={rssFeedUrl}
+		episodeEmbedCode={episodeEmbedCode}
 		 */
-		if ( get_option( 'permalink_structure' ) ) {
-			$feed_url = $this->home_url . 'feed/' . $feed_slug;
-		} else {
-			$feed_url = $this->home_url . '?feed=' . $feed_slug;
-		}
-
-		$custom_feed_url = get_option( 'ss_podcasting_feed_url' );
-		if ( $custom_feed_url ) {
-			$feed_url = $custom_feed_url;
-		}
 
 		/*subscribeUrls
 		rssFeedUrl

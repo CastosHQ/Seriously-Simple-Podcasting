@@ -28,6 +28,8 @@ class Players_Controller extends Controller {
 	 * Return feed url.
 	 * @return string
 	 * @todo we might need to take into account the series feed url here
+	 * @todo this is replicated in both the front end controller, in the rss_meta_tag method
+	 * @todo as well as in the rest api controller, in the get_episode_player_data method
 	 *
 	 */
 	protected function get_feed_url() {

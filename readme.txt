@@ -1,5 +1,5 @@
 === Seriously Simple Podcasting ===
-Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake, mikelittle
+Contributors: PodcastMotor, psykro, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
 Tested up to: 5.5.3
@@ -160,8 +160,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 2.4.1 =
-* 2020-11-13
-* [FIX] Bugfixes from the 2.4 release
+* 2020-11-16
+* UPDATE SUMMARY: Bug fixes for the 2.4 release, as well as two previously submitted PRs
+* [FIX] Fixes a bug where the media player css affects normal subscribe links
+* [FIX] Fixes a PHP warning being reported relevant to the Elementor Templates on the iterations page
+* [FIX] Fixes a bug in the Elementor Subscribe Buttons widget, where selecting a series did not display the correct buttons
+* [FIX] Fixes a bug in the Elementor Media Player widgets, related to using the Latest Episode
+* [FIX] Fixes a bug where using the ss_podcast shortcode renders the media player incorrectly
 * [FIX] Changes the dynamic podcast list block to use get_permalink() instead of the episode guid. (props [mikelittle](https://profiles.wordpress.org/mikelittle))
 * [NEW] Added "Play/Pause", "Rewind 30 Seconds", and "Download Epsiode" anchor text for elements in the HTML5 player, for better accessibility with screen readers. (props [edequalsawesome](https://github.com/edequalsawesome))
 

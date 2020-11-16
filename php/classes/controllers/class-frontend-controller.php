@@ -277,10 +277,17 @@ class Frontend_Controller extends Controller {
 	 *
 	 * @param $episode_id
 	 *
+	 * @param bool $show_player default true
+	 *
 	 * @return boolean
 	 */
-	public function validate_media_player( $episode_id ) {
-		$show_player = true;
+	public function validate_media_player( $episode_id, $show_player = true ) {
+		/**
+		 * If the show_player variable was already set false (specifically for the ss_podcast shortcode)
+		 */
+		if ( false === $show_player ) {
+			return false;
+		}
 		/**
 		 * Check if the user is using the ss_player shortcode anywhere in this post
 		 */
@@ -291,11 +298,9 @@ class Frontend_Controller extends Controller {
 		if ( ! $show_player ) {
 			return false;
 		}
-
 		/**
 		 * @todo add a check for the block player
 		 */
-
 		/**
 		 * Check if the user is using an elementor widget version of the player.
 		 */
@@ -339,7 +344,7 @@ class Frontend_Controller extends Controller {
 			// Show audio player if requested
 			$player_style = get_option( 'ss_podcasting_player_style' );
 
-			$show_player = $this->validate_media_player( $episode_id );
+			$show_player = $this->validate_media_player( $episode_id, $show_player );
 
 			// Allow media player to be dynamically hidden/displayed
 			$show_player = apply_filters( 'ssp_show_media_player', $show_player, $context );

@@ -5,6 +5,30 @@ namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
 class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
+
+	/**
+	 * Class constructor.
+	 *
+	 * @param array $data Widget data.
+	 * @param array $args Widget arguments.
+	 */
+	public function __construct( $data = array(), $args = null ) {
+		parent::__construct( $data, $args );
+		$this->register_scripts_and_styles();
+	}
+
+	/**
+	 * Register any scripts and styles for this widget
+	 */
+	public function register_scripts_and_styles() {
+		$assets_url = trailingslashit( SSP_PLUGIN_URL ) . 'assets/';
+		$version    = SSP_VERSION;
+		wp_register_style( 'castos-player', $assets_url . 'css/castos-player.css', array(), $version );
+		wp_enqueue_style( 'castos-player' );
+		wp_register_script( 'castos-player', $assets_url . 'js/castos-player.js', array( 'jquery' ), $version, true );
+		wp_enqueue_script( 'castos-player' );
+	}
+
 	public function get_name() {
 		return 'Castos Player';
 	}

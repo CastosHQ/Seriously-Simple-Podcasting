@@ -161,8 +161,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 2.4.1 =
 * 2020-11-13
-* [FIX] Changes the dynamic podcast list block to use get_permalink() instead of the episode guid. (props [mikelittle](https://profiles.wordpress.org/mikelittle))
 * [FIX] Bugfixes from the 2.4 release
+* [FIX] Changes the dynamic podcast list block to use get_permalink() instead of the episode guid. (props [mikelittle](https://profiles.wordpress.org/mikelittle))
 * [NEW] Added "Play/Pause", "Rewind 30 Seconds", and "Download Epsiode" anchor text for elements in the HTML5 player, for better accessibility with screen readers. (props [edequalsawesome](https://github.com/edequalsawesome))
 
 = 2.4 =

@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Rest;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 /**
  * Extending the WP REST API for Seriously Simple Podcasting
@@ -234,31 +235,26 @@ class Rest_Api_Controller {
 		);
 	}
 
+	/**
+	 * Player Data specific endpoint for new player block
+	 * All of this data is public, so the endpoint is public as well.
+	 *
+	 * @return array
+	 */
 	public function get_episode_player_data() {
-		$options_handler = new Options_Handler();
-		$episode_id = ( isset( $_GET['ssp_episode_id'] ) ? filter_var( $_GET['ssp_episode_id'], FILTER_SANITIZE_STRING ) : '' );
-		$episode    = get_post( $episode_id, ARRAY_A );
-
-		$player_data = array(
-			'episode_id'       => $episode_id,
-			'episode_file_url' => $episode->get_permalink,
-			'episode_title'    => $episode->post_title,
-			'subscribe_urls'   => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
-			'rss_feed_url'     => ''
+		$options_handler    = new Options_Handler();
+		$episode_repository = new Episode_Repository();
+		$episode_id         = ( isset( $_GET['ssp_episode_id'] ) ? sanitize_text_field( $_GET['ssp_episode_id'] ) : '' );
+		$player_data        = array(
+			'episode_id'         => $episode_id,
+			'episode_file_url'   => get_the_permalink( $episode_id ),
+			'episode_title'      => get_the_title( $episode_id ),
+			'subscribe_urls'     => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
+			'rss_feed_url'       => $episode_repository->get_feed_url( $episode_id ),
+			'episode_embed_code' => '', // @todo, do we need this?
 		);
-		/**
-		episodeFileUrl={episodeFileUrl}
-		episodeTitle={episodeTitle}
-		subscribeUrls={subscribeUrls}
-		rssFeedUrl={rssFeedUrl}
-		episodeEmbedCode={episodeEmbedCode}
-		 */
 
-		/*subscribeUrls
-		rssFeedUrl
-		episodeEmbedCode*/
-
-		return $episode;
+		return $player_data;
 	}
 
 	/**

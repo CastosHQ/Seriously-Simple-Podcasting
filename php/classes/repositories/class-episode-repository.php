@@ -43,9 +43,7 @@ class Episode_Repository {
 	 * @param $id
 	 *
 	 * @return string
-	 * @todo we might need to take into account the series feed url here
-	 * @todo this is replicated in both the front end controller, in the rss_meta_tag method
-	 * @todo as well as in the rest api controller, in the get_episode_player_data method
+	 *
 	 */
 	public function get_feed_url( $id ) {
 		$feed_series = 'default';

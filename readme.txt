@@ -159,6 +159,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.4.2 =
+* 2020-11-17
+* [FIX] Fixes a bug from the 2.4 release, where the ss_podcast shortcode doesnt render the meta data
+
 = 2.4.1 =
 * 2020-11-16
 * UPDATE SUMMARY: Bug fixes for the 2.4 release, as well as two previously submitted PRs

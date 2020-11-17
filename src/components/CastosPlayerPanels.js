@@ -1,10 +1,10 @@
 import {Component} from '@wordpress/element';
 
 class CastosPlayerPanels extends Component {
-	render() {
-		const {className, episodeId, episodeTitle, episodeFileUrl, subscribeUrls, rssFeedUrl, episodeEmbedCode} = this.props;
-		const {applePodcastsUrl, stitcherUrl, spotifyUrl, googlePlayUrl} = subscribeUrls;
 
+	render() {
+		const {className, episodeId, episodeTitle, episodeFileUrl, episodeData} = this.props;
+		const {rssFeedUrl, subscribeUrls, embedCode} = episodeData;
 		return (
 			<div className={'player-panels player-panels-' + episodeId}>
 				<div className={'subscribe player-panel subscribe-' + episodeId}>
@@ -15,23 +15,22 @@ class CastosPlayerPanels extends Component {
 					<div className="panel__inner">
 						<div className="subscribe-icons">
 
-							<a href={applePodcastsUrl} target="_blank" className="apple-podcasts" title="Subscribe on Apple Podcasts">
+							<a href={subscribeUrls.apple_podcasts.url} target="_blank" className="apple-podcasts" title="Subscribe on Apple Podcasts" rel="noopener noreferrer">
 								<span></span>
 								Apple Podcasts
 							</a>
 
-							<a href={stitcherUrl} target="_blank" className="sticher" title="Subscribe on Stitcher">
+							<a href={subscribeUrls.stitcher.url} target="_blank" className="sticher" title="Subscribe on Stitcher" rel="noopener noreferrer">
 								<span></span>
 								Stitcher
 							</a>
 
-							<a href={spotifyUrl} target="_blank" className="spotify" title="Subscribe on Spotify">
+							<a href={subscribeUrls.spotify.url} target="_blank" className="spotify" title="Subscribe on Spotify" rel="noopener noreferrer">
 								<span></span>
 								Spotify
 							</a>
 
-							<a href={googlePlayUrl} target="_blank" className="google-play"
-							   title="Subscribe on Google Play">
+							<a href={subscribeUrls.google_podcasts.url} target="_blank" className="google-play" title="Subscribe on Google Play" rel="noopener noreferrer">
 								<span></span>
 								Google Play
 							</a>
@@ -58,16 +57,13 @@ class CastosPlayerPanels extends Component {
 							Share
 						</div>
 						<div className="icons-holder">
-							<a href={'https://www.facebook.com/sharer/sharer.php?u=' + episodeFileUrl + '&t=' + episodeTitle}
-							   target="_blank" className="share-icon facebook" title="Share on Facebook">
+							<a href={'https://www.facebook.com/sharer/sharer.php?u=' + episodeFileUrl + '&t=' + episodeTitle} target="_blank" className="share-icon facebook" title="Share on Facebook" rel="noopener noreferrer">
 								<span></span>
 							</a>
-							<a href={'https://twitter.com/intent/tweet?text=' + episodeFileUrl + '&url=' + episodeTitle}
-							   target="_blank" className="share-icon twitter" title="Share on Twitter">
+							<a href={'https://twitter.com/intent/tweet?text=' + episodeFileUrl + '&url=' + episodeTitle} target="_blank" className="share-icon twitter" title="Share on Twitter" rel="noopener noreferrer">
 								<span></span>
 							</a>
-							<a href={episodeFileUrl} target="_blank" className="share-icon download" title="Download"
-							   download>
+							<a href={episodeFileUrl} target="_blank" className="share-icon download" title="Download" rel="noopener noreferrer">
 								<span></span>
 							</a>
 						</div>
@@ -86,7 +82,7 @@ class CastosPlayerPanels extends Component {
 							Embed
 						</div>
 						<div style={{height: '10px'}}>
-							<input readOnly value={episodeEmbedCode} className={'input-embed input-embed-' + episodeId}/>
+							<input readOnly value={embedCode} className={'input-embed input-embed-' + episodeId}/>
 						</div>
 						<button className={'copy-embed copy-embed-' + episodeId}></button>
 					</div>

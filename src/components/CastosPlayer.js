@@ -6,7 +6,7 @@ import CastosPlayerPanels from "./CastosPlayerPanels";
  */
 class CastosPlayer extends Component {
 	render() {
-		const {className, episodeId, episodeImage, episodeTitle, episodeFileUrl, episodeDuration, subscribeUrls, rssFeedUrl, episodeEmbedCode} = this.props
+		const {className, episodeId, episodeImage, episodeTitle, episodeFileUrl, episodeDuration, episodeData} = this.props
 		const playerClassNames = classnames(
 			className,
 			'castos-player',
@@ -20,7 +20,7 @@ class CastosPlayer extends Component {
 		const playerBackgroundClass = 'player__artwork player__artwork-'+episodeId;
 		const playButtonClass = 'play-btn play-btn-'+episodeId;
 		const pauseButtonClass = 'pause-btn pause-btn-'+episodeId+' hide';
-		const loaderSVG = "../assets/css/images/player/images/icon-loader.svg"; // @todo might need to sort out path
+		const loaderSVG = "/wp-content/plugins/seriously-simple-podcasting/assets/css/images/player/images/icon-loader.svg"; // @todo might need to sort out path
 		const loaderClass = 'loader loader-'+episodeId+' hide';
 		const audioElementClass = 'clip clip-'+episodeId;
 		const progressClass = 'progress progress-'+episodeId;
@@ -85,11 +85,9 @@ class CastosPlayer extends Component {
 				<CastosPlayerPanels
 					className={className}
 					episodeId={episodeId}
-					episodeFileUrl={episodeFileUrl}
 					episodeTitle={episodeTitle}
-					subscribeUrls={subscribeUrls}
-					rssFeedUrl={rssFeedUrl}
-					episodeEmbedCode={episodeEmbedCode}
+					episodeFileUrl={episodeFileUrl}
+					episodeData={episodeData}
 				/>
 			</div>
 		);

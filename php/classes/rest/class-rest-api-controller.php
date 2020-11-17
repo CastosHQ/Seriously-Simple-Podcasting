@@ -246,12 +246,10 @@ class Rest_Api_Controller {
 		$episode_repository = new Episode_Repository();
 		$episode_id         = ( isset( $_GET['ssp_episode_id'] ) ? sanitize_text_field( $_GET['ssp_episode_id'] ) : '' );
 		$player_data        = array(
-			'episode_id'         => $episode_id,
-			'episode_file_url'   => get_the_permalink( $episode_id ),
-			'episode_title'      => get_the_title( $episode_id ),
-			'subscribe_urls'     => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
-			'rss_feed_url'       => $episode_repository->get_feed_url( $episode_id ),
-			'episode_embed_code' => '', // @todo, do we need this?
+			'id'            => $episode_id,
+			'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
+			'rssFeedUrl'    => $episode_repository->get_feed_url( $episode_id ),
+			'embedCode'     => '', // @todo, add the embed code somehow
 		);
 
 		return $player_data;

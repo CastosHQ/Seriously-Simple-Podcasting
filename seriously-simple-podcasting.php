@@ -62,7 +62,7 @@ require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 global $ssp_admin, $ss_podcasting, $ssp_players;
 $ssp_admin     = new Admin_Controller( __FILE__, SSP_VERSION );
 $ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
-$ssp_players = new Players_Controller(__FILE__, SSP_VERSION);
+$ssp_players   = new Players_Controller(__FILE__, SSP_VERSION);
 /**
  * Only load the settings if we're in the admin dashboard
  */

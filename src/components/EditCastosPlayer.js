@@ -17,6 +17,7 @@ class EditCastosPlayer extends Component {
 			episodeTitle: attributes.title || "",
 			episodeDuration: attributes.duration || "",
 			episodeDownloadUrl: attributes.download || "",
+			episodeData: attributes.episode_data || "",
 		}
 		let editing = true;
 		if (attributes.title){
@@ -49,37 +50,40 @@ class EditCastosPlayer extends Component {
 	}
 
 	render() {
-
 		const {editing, episodes, episode, className, setAttributes} = this.state;
-
 		const switchToEditing = () => {
 			this.setState({editing: true});
 		};
 
 		const activateEpisode = () => {
 			const episodeId = this.episodeRef.current.value;
-			let fetchPost = 'ssp/v1/episodes?include='+episodeId;
+			let fetchPost = 'ssp/v1/episodes?include=' + episodeId;
 			apiFetch({path: fetchPost}).then(post => {
-				const episode = {
-					episodeId: episodeId,
-					episodeImage: post[0].episode_player_image,
-					episodeFileUrl: post[0].meta.audio_file,
-					episodeTitle: post[0].title.rendered,
-					episodeDuration: post[0].meta.duration,
-					episodeDownloadUrl: post[0].download_link,
-				}
-				this.setState({
-					key: episodeId,
-					episode: episode,
-					editing: false
-				});
-				setAttributes({
-					id: episodeId,
-					image: episode.episodeImage,
-					file: episode.episodeFileUrl,
-					title: episode.episodeTitle,
-					duration: episode.episodeDuration,
-					download: episode.episodeDownloadUrl
+				let fetchEpisodeData = 'ssp/v1/player_data?ssp_episode_id=' + episodeId;
+				apiFetch({path: fetchEpisodeData}).then(episode_data => {
+					const episode = {
+						episodeId: episodeId,
+						episodeImage: post[0].episode_player_image,
+						episodeFileUrl: post[0].meta.audio_file,
+						episodeTitle: post[0].title.rendered,
+						episodeDuration: post[0].meta.duration,
+						episodeDownloadUrl: post[0].download_link,
+						episodeData: episode_data,
+					}
+					this.setState({
+						key: episodeId,
+						episode: episode,
+						editing: false
+					});
+					setAttributes({
+						id: episodeId,
+						image: episode.episodeImage,
+						file: episode.episodeFileUrl,
+						title: episode.episodeTitle,
+						duration: episode.episodeDuration,
+						download: episode.episodeDownloadUrl,
+						episode_data: episode.episodeData
+					});
 				});
 			});
 		};
@@ -110,15 +114,14 @@ class EditCastosPlayer extends Component {
 			return [
 				controls, (
 					<CastosPlayer
+						key='castos-player'
 						className={this.state.className}
+						episodeId={episode.episodeId}
 						episodeImage={episode.episodeImage}
-						episodeFileUrl={episode.episodeFileUrl}
 						episodeTitle={episode.episodeTitle}
+						episodeFileUrl={episode.episodeFileUrl}
 						episodeDuration={episode.episodeDuration}
-						episodeDownloadUrl={episode.episodeDownloadUrl}
-						subscribeUrls={}
-						rssFeedUrl={}
-						episodeEmbedCode={}
+						episodeData={episode.episodeData}
 					/>
 				)];
 		}

@@ -522,35 +522,14 @@ class Settings_Handler {
 			$html_5_player_settings = array(
 				array(
 					'id'          => 'player_mode',
-					'label'       => __( 'Player progress bar progress colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#00d4f7',
-					'class'       => 'ssp-color-picker',
-				),
-				array(
-					'id'          => 'player_background_skin_colour',
-					'label'       => __( 'Background skin colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#222222',
-					'class'       => 'ssp-color-picker',
-				),
-				array(
-					'id'          => 'player_wave_form_colour',
-					'label'       => __( 'Player progress bar colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#fff',
-					'class'       => 'ssp-color-picker',
-				),
-				array(
-					'id'          => 'player_wave_form_progress_colour',
-					'label'       => __( 'Player progress bar progress colour', 'seriously-simple-podcasting' ),
-					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
-					'type'        => 'colour-picker',
-					'default'     => '#00d4f7',
-					'class'       => 'ssp-color-picker',
+					'label'       => __( 'Player mode', 'seriously-simple-podcasting' ),
+					'description' => __( 'Choose between Dark or Light mode, depending on your theme', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array(
+						'dark'  => __( 'Dark Mode', 'seriously-simple-podcasting' ),
+						'light' => __( 'Light Mode', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'dark',
 				),
 			);
 

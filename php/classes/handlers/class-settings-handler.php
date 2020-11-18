@@ -521,6 +521,14 @@ class Settings_Handler {
 		if ( 'standard' !== $ss_podcasting_player_style ) {
 			$html_5_player_settings = array(
 				array(
+					'id'          => 'player_mode',
+					'label'       => __( 'Player progress bar progress colour', 'seriously-simple-podcasting' ),
+					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),
+					'type'        => 'colour-picker',
+					'default'     => '#00d4f7',
+					'class'       => 'ssp-color-picker',
+				),
+				array(
 					'id'          => 'player_background_skin_colour',
 					'label'       => __( 'Background skin colour', 'seriously-simple-podcasting' ),
 					'description' => '<br>' . __( 'Only applicable if using the new HTML5 player', 'seriously-simple-podcasting' ),

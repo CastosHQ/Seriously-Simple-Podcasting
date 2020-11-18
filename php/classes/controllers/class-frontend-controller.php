@@ -347,7 +347,7 @@ class Frontend_Controller extends Controller {
 			$player = $players_controller->media_player( $episode_id );
 		} else {
 			$template_data = $players_controller->html_player( $episode_id );
-			$player = $renderer->render( $template_data, 'players/castos-player-v1' );
+			$player = $renderer->render( $template_data, 'players/castos-player' );
 		}
 
 		// Allow filtering so that alternative players can be used

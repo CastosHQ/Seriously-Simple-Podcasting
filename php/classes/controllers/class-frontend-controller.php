@@ -251,10 +251,12 @@ class Frontend_Controller extends Controller {
 
 			if ( $show_player ) {
 				$meta .= '<div class="podcast_player">' . $this->load_media_player( $file, $episode_id, $player_style ) . '</div>';
-				if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
-					$meta .= $this->episode_meta_details( $episode_id, $context );
-				}
 			}
+
+			if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
+				$meta .= $this->episode_meta_details( $episode_id, $context );
+			}
+
 		}
 
 		$meta = apply_filters( 'ssp_episode_meta', $meta, $episode_id, $context );

@@ -153,6 +153,7 @@ class Options_Handler {
 			}
 			$icon                           = str_replace( '_', '-', $option_key );
 			$subscribe_array[ $option_key ] = array(
+				'key'   => $option_key,
 				'url'   => $url,
 				'label' => $this->available_subscribe_options[ $option_key ],
 				'icon'  => $icon . '.png',

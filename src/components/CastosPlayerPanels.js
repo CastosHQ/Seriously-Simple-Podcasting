@@ -5,6 +5,23 @@ class CastosPlayerPanels extends Component {
 	render() {
 		const {className, episodeId, episodeTitle, episodeFileUrl, episodeData} = this.props;
 		const {rssFeedUrl, subscribeUrls, embedCode} = episodeData;
+		const subscribeButtons = [];
+		const subscribeKeys = Object.keys(subscribeUrls);
+		subscribeKeys.forEach((key, index) => {
+			const url = subscribeUrls[key].url;
+			if ("" !== url) {
+				const className = subscribeUrls[key].key;
+				const label = subscribeUrls[key].label;
+				const title = "Subscribe on " + subscribeUrls[key].label;
+				subscribeButtons.push(
+					<a key={key} href={url} target="_blank" className={className} title={title} rel="noopener noreferrer">
+						<span></span>
+						{label}
+					</a>
+				);
+			}
+		});
+
 		return (
 			<div className={'player-panels player-panels-' + episodeId}>
 				<div className={'subscribe player-panel subscribe-' + episodeId}>
@@ -14,27 +31,7 @@ class CastosPlayerPanels extends Component {
 					</div>
 					<div className="panel__inner">
 						<div className="subscribe-icons">
-
-							<a href={subscribeUrls.apple_podcasts.url} target="_blank" className="apple-podcasts" title="Subscribe on Apple Podcasts" rel="noopener noreferrer">
-								<span></span>
-								Apple Podcasts
-							</a>
-
-							<a href={subscribeUrls.stitcher.url} target="_blank" className="sticher" title="Subscribe on Stitcher" rel="noopener noreferrer">
-								<span></span>
-								Stitcher
-							</a>
-
-							<a href={subscribeUrls.spotify.url} target="_blank" className="spotify" title="Subscribe on Spotify" rel="noopener noreferrer">
-								<span></span>
-								Spotify
-							</a>
-
-							<a href={subscribeUrls.google_podcasts.url} target="_blank" className="google-play" title="Subscribe on Google Play" rel="noopener noreferrer">
-								<span></span>
-								Google Play
-							</a>
-
+							{subscribeButtons}
 						</div>
 						<div className="player-panel-row">
 							<div className="title">

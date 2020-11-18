@@ -249,7 +249,7 @@ class Rest_Api_Controller {
 			'id'            => $episode_id,
 			'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
 			'rssFeedUrl'    => $episode_repository->get_feed_url( $episode_id ),
-			'embedCode'     => '', // @todo, add the embed code somehow
+			'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
 		);
 
 		return $player_data;

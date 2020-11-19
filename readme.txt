@@ -159,6 +159,9 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.5.0 =
+* UPDATE SUMMARY: Replace all instances of the HTML5 player with the updated version
+
 = 2.4.1 =
 * 2020-11-16
 * UPDATE SUMMARY: Bug fixes for the 2.4 release, as well as two previously submitted PRs

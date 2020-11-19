@@ -1,13 +1,9 @@
 <?php
 
-/**
- * @todo
- * Get the number of episodes from the Reading Settings
- */
-
 namespace SeriouslySimplePodcasting\Blocks;
 
 use SeriouslySimplePodcasting\Controllers\Controller;
+use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Player\Media_Player;
 
 // Exit if accessed directly.
@@ -30,6 +26,8 @@ class Castos_Blocks extends Controller {
 	 */
 	protected $asset_file;
 
+	protected $admin_notices_handler;
+
 	/**
 	 * Castos_Blocks constructor.
 	 *
@@ -48,16 +46,25 @@ class Castos_Blocks extends Controller {
 	 *
 	 * @return string
 	 */
-	public function podcast_list_render_callback($attributes) {
+	public function podcast_list_render_callback( $attributes ) {
 		global $ss_podcasting;
-		return $ss_podcasting->render_podcast_list_dynamic_block($attributes);
+
+		return $ss_podcasting->render_podcast_list_dynamic_block( $attributes );
 	}
 
 	/**
 	 * Loads the asset file and the block registration
 	 */
 	protected function bootstrap() {
-		$this->asset_file = include SSP_PLUGIN_PATH . 'build/index.asset.php';
+		if ( ! file_exists( SSP_PLUGIN_PATH . 'build/index.asset.php' ) ) {
+			if ( is_admin() ) {
+				$this->admin_notices_handler = new Admin_Notifications_Handler( 'podcast' );
+				add_action( 'admin_notices', array( $this->admin_notices_handler, 'blocks_error_notice' ) );
+			}
+
+			return;
+		}
+		include SSP_PLUGIN_PATH . 'build/index.asset.php';
 		add_action( 'init', array( $this, 'register_castos_blocks' ) );
 	}
 
@@ -67,14 +74,6 @@ class Castos_Blocks extends Controller {
 	 * @return void
 	 */
 	public function register_castos_blocks() {
-
-		$script_asset_path = SSP_PLUGIN_PATH . 'build/index.asset.php';
-		if ( ! file_exists( $script_asset_path ) ) {
-			// @todo make this an admin notice and exit gracefully
-			throw new Error(
-				'An error has occurred in loading the block assets. Please report this to the plugin developer.'
-			);
-		}
 
 		wp_register_script(
 			'ssp-block-script',
@@ -91,21 +90,21 @@ class Castos_Blocks extends Controller {
 			$this->asset_file['version']
 		);
 
-		/*register_block_type( 'seriously-simple-podcasting/block-name',
-			array(
-				'editor_script' => '',
-				'editor_style'  => '',
-				'script'        => '',
-				'style'         => '',
-			)
-		);*/
+		wp_register_script(
+			'ssp-castos-player',
+			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player.js' ),
+			array(),
+			$this->asset_file['version'],
+			true
+		);
 
 		register_block_type(
 			'seriously-simple-podcasting/castos-player',
 			array(
 				'editor_script' => 'ssp-block-script',
 				'editor_style'  => 'ssp-castos-player',
-				'style'  => 'ssp-castos-player',
+				'script'         => 'ssp-castos-player',
+				'style'         => 'ssp-castos-player',
 			)
 		);
 
@@ -116,10 +115,14 @@ class Castos_Blocks extends Controller {
 			)
 		);
 
-		register_block_type( 'seriously-simple-podcasting/podcast-list',
+		register_block_type(
+			'seriously-simple-podcasting/podcast-list',
 			array(
 				'editor_script'   => 'ssp-block-script',
-				'render_callback' => array( $this, 'podcast_list_render_callback' )
+				'render_callback' => array(
+					$this,
+					'podcast_list_render_callback',
+				),
 			)
 		);
 	}

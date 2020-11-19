@@ -7,10 +7,11 @@ import CastosPlayerPanels from "./CastosPlayerPanels";
 class CastosPlayer extends Component {
 	render() {
 		const {className, episodeId, episodeImage, episodeTitle, episodeFileUrl, episodeDuration, episodeData} = this.props
+		const {playerMode} = episodeData;
 		const playerClassNames = classnames(
 			className,
 			'castos-player',
-			'dark-mode',
+			playerMode + '-mode',
 		);
 		const playerBackgroundStyle = {
 			background: 'url(' + episodeImage + ') center center no-repeat',

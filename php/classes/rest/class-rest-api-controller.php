@@ -247,6 +247,7 @@ class Rest_Api_Controller {
 		$episode_id         = ( isset( $_GET['ssp_episode_id'] ) ? sanitize_text_field( $_GET['ssp_episode_id'] ) : '' );
 		$player_data        = array(
 			'id'            => $episode_id,
+			'playerMode'    => get_option( 'ss_podcasting_player_mode', 'dark' ),
 			'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
 			'rssFeedUrl'    => $episode_repository->get_feed_url( $episode_id ),
 			'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),

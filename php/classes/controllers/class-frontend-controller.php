@@ -33,25 +33,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Frontend_Controller extends Controller {
 
+	/**
+	 * @var Episode_Controller
+	 */
 	public $episode_controller;
 
 	/**
 	 * Constructor
 	 *
-	 * @param    string $file Plugin base file
-	 * @param    string $version
+	 * @param string $file Plugin base file.
+	 * @param string $version Plugin version number
 	 */
 	public function __construct( $file, $version ) {
-
 		parent::__construct( $file, $version );
-
 		$this->episode_controller = new Episode_Controller( $file, $version );
-
 		$this->register_hooks_and_filters();
 	}
 
+	/**
+	 * Register all relevant front end hooks and filters
+	 */
 	public function register_hooks_and_filters() {
-
 		// Add meta data to start of podcast content
 		$locations = get_option( 'ss_podcasting_player_locations', array( 'content' ) );
 

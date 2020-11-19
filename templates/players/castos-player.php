@@ -58,13 +58,14 @@
 			</div>
 			<div class="panel__inner">
 				<div class="subscribe-icons">
-                    <?php foreach ($subscribe_links as $key => $subscribe_link) : ?>
-                    <a href="<?php echo $subscribe_link['url'] ?>"
-                       target="_blank" class="<?php echo explode('.', $subscribe_link['icon'], 2)[0]?>" title="Subscribe on " <?php echo $subscribe_link['label'] ?>>
-                        <span></span>
-	                    <?php echo $subscribe_link['label'] ?>
-                    </a>
-                    <?php endforeach ?>
+					<?php foreach ( $subscribe_links as $key => $subscribe_link ) : ?>
+						<?php if ( ! empty( $subscribe_link['url'] ) ) : ?>
+							<a href="<?php echo $subscribe_link['url'] ?>" target="_blank" class="<?php echo explode( '.', $subscribe_link['icon'], 2 )[0] ?>" title="Subscribe on " <?php echo $subscribe_link['label'] ?>>
+								<span></span>
+								<?php echo $subscribe_link['label'] ?>
+							</a>
+						<?php endif ?>
+					<?php endforeach ?>
 				</div>
 				<div class="player-panel-row">
 					<div class="title">

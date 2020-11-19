@@ -68,7 +68,6 @@ class Players_Controller extends Controller {
 	 * @return string
 	 */
 	public function html_player( $id ) {
-
 		/**
 		 * Get the episode (post) object
 		 * If the id passed is empty or 0, get_post will return the current post

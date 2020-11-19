@@ -160,7 +160,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 2.5.0 =
-* UPDATE SUMMARY: Replace all instances of the HTML5 player with the updated version
+* [UPDATE] Replace all regular instances of the HTML5 media player with the updated version
+* [UPDATE] Replaces the media player custom styling with options for either dark or light mode
 
 = 2.4.2 =
 * 2020-11-17

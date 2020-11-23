@@ -151,9 +151,7 @@ class Episodes_Controller extends WP_REST_Controller {
 
 		// Execute the query
 		$posts_query  = new WP_Query();
-		//print_r($query_args);
 		$query_result = $posts_query->query( $query_args );
-		//print_r($query_result);
 
 		// Handle query results
 		$posts = array();

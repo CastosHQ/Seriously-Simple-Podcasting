@@ -1,81 +1,95 @@
 import {Component} from '@wordpress/element';
+import classnames from "classnames";
+import CastosPlayerPanels from "./CastosPlayerPanels";
 /**
  * @todo clean up the inline styles better
  */
 class CastosPlayer extends Component {
 	render() {
-		const playerBackgroundStyle = {background: '#222222'};
-		const overflowStyle = {
-			overflow: 'hidden'
-		};
-		const imageStyle = {
-			background: "url(" + this.props.episodeImage + ")",
+		const {className, episodeId, episodeImage, episodeTitle, episodeFileUrl, episodeDuration, episodeData} = this.props
+		const {playerMode} = episodeData;
+		const playerClassNames = classnames(
+			className,
+			'castos-player',
+			playerMode + '-mode',
+		);
+		const playerBackgroundStyle = {
+			background: 'url(' + episodeImage + ') center center no-repeat',
 			WebkitBackgroundSize: 'cover',
 			backgroundSize: 'cover'
 		};
+		const playerBackgroundClass = 'player__artwork player__artwork-'+episodeId;
+		const playButtonClass = 'play-btn play-btn-'+episodeId;
+		const pauseButtonClass = 'pause-btn pause-btn-'+episodeId+' hide';
+		const loaderSVG = "/wp-content/plugins/seriously-simple-podcasting/assets/css/images/player/images/icon-loader.svg"; // @todo might need to sort out path
+		const loaderClass = 'loader loader-'+episodeId+' hide';
+		const audioElementClass = 'clip clip-'+episodeId;
+		const progressClass = 'progress progress-'+episodeId;
+		const playProgressClass = 'progress__filled progress__filled-'+episodeId;
+		const playbackClass = 'playback playback-'+episodeId;
+		const muteClass = 'player-btn__volume player-btn__volume-'+episodeId;
+		const speedClass = 'player-btn__speed player-btn__speed-'+episodeId;
+		const timerId = 'timer-'+episodeId;
+		const durationId = 'duration-'+episodeId;
+		const subscribeButtonId = 'subscribe-btn-'+episodeId;
+		const shareButtonId = 'share-btn-'+episodeId;
 		return (
-			<div className={this.props.className}>
-				<div className="ssp-player ssp-player-large"
-					 data-player-instance-number={"1"}
-					 data-player-waveform-colour="#fff" data-player-waveform-progress-colour="#00d4f7"
-					 data-source-file={this.props.episodeFileUrl}
-					 id="ssp_player_id_1" style={playerBackgroundStyle}>
-					<div className="ssp-album-art-container">
-						<div className="ssp-album-art" style={imageStyle}/>
-					</div>
-					<div style={overflowStyle}>
-						<div className="ssp-player-inner" style={overflowStyle}>
-							<div className="ssp-player-info">
-								<div style={{width: '80%', float: 'left'}}>
-									<h3 className="ssp-player-title episode-title">{this.props.episodeTitle}</h3>
+			<div className={playerClassNames} data-episode={episodeId}>
+				<div className="player">
+					<div className="player__main">
+						<div className={playerBackgroundClass} style={playerBackgroundStyle}></div>
+						<div className="player__body">
+							<div className="currently-playing">
+								<div className="show">
+									<strong>{episodeTitle}</strong>
 								</div>
-								<div className="ssp-download-episode" style={{overflow: 'hidden', textAlign: 'right'}}/>
-								<div>&nbsp;</div>
-								<div className="ssp-media-player">
-									<div className="ssp-custom-player-controls">
-										<div className="ssp-play-pause" id="ssp-play-pause">
-											<span className="ssp-icon ssp-icon-play_icon">&nbsp;</span>
+								<div className="episode-title">{episodeTitle}</div>
+							</div>
+							<div className="play-progress">
+								<div className="play-pause-controls">
+									<button title="Play" className={playButtonClass}></button>
+									<button alt="Pause" className={pauseButtonClass}></button>
+									<img src={loaderSVG} className={loaderClass}/>
+								</div>
+								<div>
+									<audio className={audioElementClass}>
+										<source loop preload="none" src={episodeFileUrl} />
+									</audio>
+									<div className={progressClass} title="Seek">
+										<span className={playProgressClass}></span>
+									</div>
+									<div className={playbackClass}>
+										<div className="playback__controls">
+											<button className={muteClass} title="Mute/Unmute"></button>
+											<button data-skip="-10" className="player-btn__rwd" title="Rewind 10 seconds"></button>
+											<button data-speed="1" className={speedClass} title="Playback Speed">1x</button>
+											<button data-skip="30" className="player-btn__fwd" title="Fast Forward 30 seconds"></button>
 										</div>
-										<div className="ssp-wave-form">
-											<div className="ssp-inner">
-												<div data-waveform-id="waveform_1" id="waveform1" className="ssp-wave"></div>
-											</div>
-										</div>
-										<div className="ssp-time-volume">
-											<div className="ssp-duration">
-												<span id="sspPlayedDuration">00:00</span> / <span
-												id="sspTotalDuration">{this.props.episodeDuration}</span>
-											</div>
-											<div className="ssp-volume">
-												<div className="ssp-back-thirty-container">
-													<div className="ssp-back-thirty-control" id="ssp-back-thirty">
-														<i className="ssp-icon icon-replay">&nbsp;</i>
-													</div>
-												</div>
-												<div className="ssp-playback-speed-label-container">
-													<div className="ssp-playback-speed-label-wrapper">
-														<span data-playback-speed-id="ssp_playback_speed_1"
-															  id="ssp_playback_speed1"
-															  data-ssp-playback-rate={1}>1X</span>
-													</div>
-												</div>
-												<div className="ssp-download-container">
-													<div className="ssp-download-control">
-														<a className="ssp-episode-download"
-														   href={this.props.episodeDownloadUrl} target="_blank"
-														   rel="noopener noreferrer">
-															<i className="ssp-icon icon-cloud-download">&nbsp;</i>
-														</a>
-													</div>
-												</div>
-											</div>
+										<div className="playback__timers">
+											<time id={timerId}>00:00</time>
+											<span>/</span>
+											<time id={durationId}>{episodeDuration}</time>
 										</div>
 									</div>
 								</div>
 							</div>
+							<nav className="player-panels-nav">
+								<button className="subscribe-btn" id={subscribeButtonId} title="Subscribe">Subscribe</button>
+								<button className="share-btn" id={shareButtonId} title="Share">Share</button>
+							</nav>
 						</div>
+						{/*<span className="powered-by">
+                            <a target="_blank" title="Broadcast by Castos" href="https://castos.com"></a>
+                        </span>*/}
 					</div>
 				</div>
+				<CastosPlayerPanels
+					className={className}
+					episodeId={episodeId}
+					episodeTitle={episodeTitle}
+					episodeFileUrl={episodeFileUrl}
+					episodeData={episodeData}
+				/>
 			</div>
 		);
 	}

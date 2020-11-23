@@ -58,6 +58,17 @@ class Admin_Notifications_Handler {
 	}
 
 	/**
+	 * Show an error if the block assets have failed
+	 */
+	public function blocks_error_notice() {
+		?>
+		<div class="notice notice-info">
+			<p><?php _e( 'An error has occurred loading the block editor assets. Please report this to the plugin developer.', 'seriousy-simple-podcasting' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Check if there are existing podcasts to be uploaded to Seriously Simple Hosting
 	 */
 	public function check_existing_podcasts() {
@@ -107,7 +118,7 @@ class Admin_Notifications_Handler {
 		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
 		?>
 		<div class="notice notice-info">
-			<p><?php _e( $message, 'ssp' ); ?></p>
+			<p><?php _e( $message, 'seriousy-simple-podcasting' ); ?></p>
 		</div>
 		<?php
 	}

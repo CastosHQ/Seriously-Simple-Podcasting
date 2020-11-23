@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -23,54 +24,14 @@ class Players_Controller extends Controller {
 	public $renderer = null;
 	public $episode_controller;
 	public $options_handler;
+	public $episode_repository;
 
-	/**
-	 * Return feed url.
-	 * @return string
-	 * @todo we might need to take into account the series feed url here
-	 *
-	 */
-	protected function get_feed_url() {
-		// Get feed slug
-		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-
-		if ( get_option( 'permalink_structure' ) ) {
-			$feed_url = $this->home_url . 'feed/' . $feed_slug;
-		} else {
-			$feed_url = $this->home_url . '?feed=' . $feed_slug;
-		}
-
-		$custom_feed_url = get_option( 'ss_podcasting_feed_url' );
-		if ( $custom_feed_url ) {
-			$feed_url = $custom_feed_url;
-		}
-
-		$feed_url = apply_filters( 'ssp_feed_url', $feed_url );
-
-		return $feed_url;
-	}
-
-	/**
-	 * Return a series id for an episode
-	 *
-	 * @param $episode_id
-	 *
-	 * @return int
-	 * @todo check if there is a global function for this, and use it.
-	 *
-	 */
-	protected function get_series_id( $episode_id ) {
-		$series_id = 0;
-		$series    = get_the_terms( $episode_id, 'series' );
-
-		/**
-		 * In some instances, this could return a WP_Error object
-		 */
-		if ( ! is_wp_error( $series ) && $series ) {
-			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : 0;
-		}
-
-		return $series_id;
+	public function __construct( $file, $version ) {
+		parent::__construct( $file, $version );
+		$this->renderer           = new Renderer();
+		$this->episode_controller = new Episode_Controller( $file, $version );
+		$this->options_handler    = new Options_Handler();
+		$this->episode_repository = new Episode_Repository();
 	}
 
 	/**
@@ -99,14 +60,6 @@ class Players_Controller extends Controller {
 		return $episode->ID;
 	}
 
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
-		$this->renderer           = new Renderer();
-		$this->episode_controller = new Episode_Controller( $file, $version );
-		$this->options_handler    = new Options_Handler();
-	}
-
-
 	/**
 	 * Sets up the template data for the HTML5 player, based on the episode id passed.
 	 *
@@ -125,7 +78,7 @@ class Players_Controller extends Controller {
 		$audio_file       = get_post_meta( $id, 'audio_file', true );
 		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
-		$feed_url         = $this->get_feed_url();
+		$feed_url         = $this->episode_repository->get_feed_url( $id );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
 		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
 		$subscribe_links  = $this->options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
@@ -152,13 +105,19 @@ class Players_Controller extends Controller {
 
 	/**
 	 * Renders the HTML5 player, based on the attributes sent to the method
-	 *
+	 * If the player assets are registered but not already enqueued, this will enqueue them
 	 *
 	 * @param $episode_id
 	 *
 	 * @return mixed|void
 	 */
 	public function render_html_player( $episode_id ) {
+		if ( wp_script_is( 'ssp-castos-player', 'registered' ) && ! wp_script_is( 'ssp-castos-player', 'enqueued' ) ) {
+			wp_enqueue_script( 'ssp-castos-player' );
+		}
+		if ( wp_style_is( 'ssp-castos-player', 'registered' ) && ! wp_style_is( 'ssp-castos-player', 'enqueued' ) ) {
+			wp_enqueue_style( 'ssp-castos-player' );
+		}
 		$template_data = $this->html_player( $episode_id );
 
 		return $this->renderer->render( $template_data, 'players/castos-player' );

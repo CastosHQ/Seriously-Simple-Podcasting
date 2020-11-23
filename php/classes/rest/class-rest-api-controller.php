@@ -3,6 +3,8 @@
 namespace SeriouslySimplePodcasting\Rest;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
+use SeriouslySimplePodcasting\Handlers\Options_Handler;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 /**
  * Extending the WP REST API for Seriously Simple Podcasting
@@ -81,6 +83,15 @@ class Rest_Api_Controller {
 
 	}
 
+	/**
+	 * Prepares the Post excerpt for any podcast post types in the REST API
+	 *
+	 * @param $response
+	 * @param $post
+	 * @param $request
+	 *
+	 * @return mixed
+	 */
 	public function rest_prepare_excerpt( $response, $post, $request ) {
 		if ( 'excerpt' === $response->data['excerpt']['rendered'] ) {
 			$response->data['excerpt']['rendered'] = get_the_excerpt();
@@ -134,6 +145,19 @@ class Rest_Api_Controller {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'get_episode_audio_player' ),
+				'permission_callback' => '__return_true',
+			)
+		);
+
+		/**
+		 * Setting up custom route for getting player specific data by episode
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/player_data',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_episode_player_data' ),
 				'permission_callback' => '__return_true',
 			)
 		);
@@ -209,6 +233,27 @@ class Rest_Api_Controller {
 			'file'         => $file,
 			'audio_player' => wp_audio_shortcode( $params )
 		);
+	}
+
+	/**
+	 * Player Data specific endpoint for new player block
+	 * All of this data is public, so the endpoint is public as well.
+	 *
+	 * @return array
+	 */
+	public function get_episode_player_data() {
+		$options_handler    = new Options_Handler();
+		$episode_repository = new Episode_Repository();
+		$episode_id         = ( isset( $_GET['ssp_episode_id'] ) ? sanitize_text_field( $_GET['ssp_episode_id'] ) : '' );
+		$player_data        = array(
+			'id'            => $episode_id,
+			'playerMode'    => get_option( 'ss_podcasting_player_mode', 'dark' ),
+			'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
+			'rssFeedUrl'    => $episode_repository->get_feed_url( $episode_id ),
+			'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
+		);
+
+		return $player_data;
 	}
 
 	/**

@@ -103,8 +103,6 @@ class Castos_Blocks extends Controller {
 			array(
 				'editor_script' => 'ssp-block-script',
 				'editor_style'  => 'ssp-castos-player',
-				'script'         => 'ssp-castos-player',
-				'style'         => 'ssp-castos-player',
 			)
 		);
 

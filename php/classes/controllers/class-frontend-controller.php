@@ -55,7 +55,7 @@ class Frontend_Controller extends Controller {
 	 */
 	public function register_hooks_and_filters() {
 
-		// Add HTML5 player scripts and styles
+		// Register HTML5 player scripts and styles
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_html5_player_assets' ) );
 
 		// Add meta data to start of podcast content
@@ -111,6 +111,7 @@ class Frontend_Controller extends Controller {
 	/**
 	 * Used to load the HTML5 player scripts and styles
 	 * Only load this if the HTML5 player is enabled in the plugin
+	 * Additionally, if we're rendering a post or page which includes a player block, enqueue the player assets
 	 */
 	public function register_html5_player_assets() {
 		wp_register_style(
@@ -127,6 +128,14 @@ class Frontend_Controller extends Controller {
 			$this->version,
 			true
 		);
+
+		/**
+		 * If we're rendering a SSP Block, which includes the HTML5 player, also enqueue the player scripts
+		 */
+		if ( has_block( 'seriously-simple-podcasting/castos-player' ) || has_block( 'seriously-simple-podcasting/podcast-list' ) ) {
+			wp_enqueue_script( 'ssp-castos-player' );
+			wp_enqueue_style( 'ssp-castos-player' );
+		}
 	}
 
 	/**
@@ -225,9 +234,18 @@ class Frontend_Controller extends Controller {
 		if ( ! $show_player ) {
 			return false;
 		}
+
 		/**
-		 * @todo add a check for the block player
+		 * Check if this post is using the HTML5 player block
 		 */
+		if ( has_block( 'seriously-simple-podcasting/castos-player' ) ) {
+			$show_player = false;
+		}
+
+		if ( ! $show_player ) {
+			return false;
+		}
+
 		/**
 		 * Check if the user is using an elementor widget version of the player.
 		 */
@@ -370,12 +388,9 @@ class Frontend_Controller extends Controller {
 		}
 
 		$players_controller = new Players_Controller( $this->file, $this->version );
-
 		if ( 'standard' === $player_size ) {
 			$player = $players_controller->render_media_player( $episode_id );
 		} else {
-			wp_enqueue_script( 'ssp-castos-player' );
-			wp_enqueue_style( 'ssp-castos-player' );
 			$player = $players_controller->render_html_player( $episode_id );
 		}
 

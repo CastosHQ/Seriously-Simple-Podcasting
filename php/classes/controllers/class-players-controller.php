@@ -105,13 +105,19 @@ class Players_Controller extends Controller {
 
 	/**
 	 * Renders the HTML5 player, based on the attributes sent to the method
-	 *
+	 * If the player assets are registered but not already enqueued, this will enqueue them
 	 *
 	 * @param $episode_id
 	 *
 	 * @return mixed|void
 	 */
 	public function render_html_player( $episode_id ) {
+		if ( wp_script_is( 'ssp-castos-player', 'registered' ) && ! wp_script_is( 'ssp-castos-player', 'enqueued' ) ) {
+			wp_enqueue_script( 'ssp-castos-player' );
+		}
+		if ( wp_style_is( 'ssp-castos-player', 'registered' ) && ! wp_style_is( 'ssp-castos-player', 'enqueued' ) ) {
+			wp_enqueue_style( 'ssp-castos-player' );
+		}
 		$template_data = $this->html_player( $episode_id );
 
 		return $this->renderer->render( $template_data, 'players/castos-player' );

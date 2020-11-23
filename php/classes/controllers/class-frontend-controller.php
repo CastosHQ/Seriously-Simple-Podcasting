@@ -54,6 +54,10 @@ class Frontend_Controller extends Controller {
 	 * Register all relevant front end hooks and filters
 	 */
 	public function register_hooks_and_filters() {
+
+		// Add HTML5 player scripts and styles
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_html5_player_assets' ) );
+
 		// Add meta data to start of podcast content
 		$locations = get_option( 'ss_podcasting_player_locations', array( 'content' ) );
 
@@ -102,6 +106,27 @@ class Frontend_Controller extends Controller {
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 
+	}
+
+	/**
+	 * Used to load the HTML5 player scripts and styles
+	 * Only load this if the HTML5 player is enabled in the plugin
+	 */
+	public function register_html5_player_assets() {
+		wp_register_style(
+			'ssp-castos-player',
+			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player.css' ),
+			array(),
+			$this->version
+		);
+
+		wp_register_script(
+			'ssp-castos-player',
+			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player.js' ),
+			array(),
+			$this->version,
+			true
+		);
 	}
 
 	/**
@@ -313,9 +338,6 @@ class Frontend_Controller extends Controller {
 	 * @return mixed|void
 	 */
 	public function load_media_player( $src_file, $episode_id, $player_size ) {
-		$players_controller = new Players_Controller( $this->file, $this->version );
-		$renderer           = new Renderer();
-
 		// Get episode type and default to audio
 		$type = $this->get_episode_type( $episode_id );
 		if ( ! $type ) {
@@ -347,11 +369,14 @@ class Frontend_Controller extends Controller {
 			$player_size = 'standard';
 		}
 
+		$players_controller = new Players_Controller( $this->file, $this->version );
+
 		if ( 'standard' === $player_size ) {
-			$player = $players_controller->media_player( $episode_id );
+			$player = $players_controller->render_media_player( $episode_id );
 		} else {
-			$template_data = $players_controller->html_player( $episode_id );
-			$player = $renderer->render( $template_data, 'players/castos-player' );
+			wp_enqueue_script( 'ssp-castos-player' );
+			wp_enqueue_style( 'ssp-castos-player' );
+			$player = $players_controller->render_html_player( $episode_id );
 		}
 
 		// Allow filtering so that alternative players can be used

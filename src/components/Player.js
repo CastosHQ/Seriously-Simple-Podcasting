@@ -22,7 +22,7 @@ class Player extends Component {
 					episodeTitle={post.title.rendered}
 					episodeDuration={post.meta.duration}
 					episodeDownloadUrl={post.download_link}
-					episodeData={post.episodeData}
+					episodeData={post.episode_data}
 				/>
 			);
 		}

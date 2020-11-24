@@ -56,8 +56,8 @@ class EditPodcastList extends Component {
 		}
 
 		const controls = (
-			<InspectorControls>
-				<PanelBody key='featured-image' title={__('Featured Image', 'seriously-simple-podcasting')}>
+			<InspectorControls key="inspector-controls">
+				<PanelBody key="panel-1" title={__('Featured Image', 'seriously-simple-podcasting')}>
 					<PanelRow>
 						<label htmlFor="featured-image-form-toggle">
 							{__('Show Featured Image', 'seriously-simple-podcasting')}
@@ -70,7 +70,7 @@ class EditPodcastList extends Component {
 						/>
 					</PanelRow>
 				</PanelBody>
-				<PanelBody key='podcast-player' title={__('Podcast Player', 'seriously-simple-podcasting')}>
+				<PanelBody key="panel-2" title={__('Podcast Player', 'seriously-simple-podcasting')}>
 					<PanelRow>
 						<label htmlFor="podcast-player-form-toggle">
 							{__('Show Podcast Player', 'seriously-simple-podcasting')}
@@ -83,7 +83,7 @@ class EditPodcastList extends Component {
 						/>
 					</PanelRow>
 				</PanelBody>
-				<PanelBody key='podcast-excerpt' title={__('Podcast Excerpt', 'seriously-simple-podcasting')}>
+				<PanelBody key="panel-3" title={__('Podcast Excerpt', 'seriously-simple-podcasting')}>
 					<PanelRow>
 						<label htmlFor="podcast-excerpt-form-toggle">
 							{__('Show Podcast Excerpt', 'seriously-simple-podcasting')}
@@ -99,15 +99,13 @@ class EditPodcastList extends Component {
 			</InspectorControls>
 		);
 
-		console.log({episodes});
-
 		const episodeItems = episodes.map((post) =>
-			<PodcastListItem key={post.id} className={className} post={post} attributes={attributes} />
+			<PodcastListItem key={"podcast-list-item-" + post.id} className={className} post={post} attributes={attributes} />
 		);
 
 		return [
 			controls, (
-				<div key='episode-items'>{episodeItems}</div>
+				<div key={"episode-items"}>{episodeItems}</div>
 			)];
 	}
 }

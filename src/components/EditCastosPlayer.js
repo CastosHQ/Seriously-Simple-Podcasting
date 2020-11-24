@@ -66,6 +66,7 @@ class EditCastosPlayer extends Component {
 					episodeTitle: post[0].title.rendered,
 					episodeDuration: post[0].meta.duration,
 					episodeDownloadUrl: post[0].download_link,
+					episodeData: post[0].episode_data,
 				}
 				this.setState({
 					key: episodeId,
@@ -79,6 +80,7 @@ class EditCastosPlayer extends Component {
 					title: episode.episodeTitle,
 					duration: episode.episodeDuration,
 					download: episode.episodeDownloadUrl,
+					episode_data: episode.episodeData,
 				});
 			});
 		};
@@ -116,6 +118,7 @@ class EditCastosPlayer extends Component {
 						episodeTitle={episode.episodeTitle}
 						episodeFileUrl={episode.episodeFileUrl}
 						episodeDuration={episode.episodeDuration}
+						episodeData={episode.episodeData}
 					/>
 				)];
 		}

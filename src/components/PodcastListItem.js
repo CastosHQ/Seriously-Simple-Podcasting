@@ -9,7 +9,7 @@ import PlayerMeta from "./PlayerMeta";
 /**
  * Podcast List Item
  */
-class EditPodcastListItem extends Component {
+class PodcastListItem extends Component {
 	render() {
 		const {className, post, attributes} = this.props;
 		const imageClassNames = classnames(
@@ -43,11 +43,11 @@ class EditPodcastListItem extends Component {
 						download={post.download_link}
 						duration={post.meta.duration}
 					/>
-					<p className={excerptClassNames}><Interweave content={post.excerpt.rendered}/></p>
+					<div className={excerptClassNames}><Interweave content={post.excerpt.rendered}/></div>
 				</div>
 			</article>
 		);
 	}
 }
 
-export default EditPodcastListItem;
+export default PodcastListItem;

@@ -84,8 +84,8 @@ class Castos_Blocks extends Controller {
 		);
 
 		wp_register_style(
-			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player.css' ),
+			'ssp-block-style',
+			esc_url( SSP_PLUGIN_URL . 'assets/css/block-editor-styles.css' ),
 			array(),
 			$this->asset_file['version']
 		);
@@ -96,6 +96,13 @@ class Castos_Blocks extends Controller {
 			array(),
 			$this->asset_file['version'],
 			true
+		);
+
+		wp_register_style(
+			'ssp-castos-player',
+			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player.css' ),
+			array(),
+			$this->asset_file['version']
 		);
 
 		register_block_type(
@@ -117,6 +124,7 @@ class Castos_Blocks extends Controller {
 			'seriously-simple-podcasting/podcast-list',
 			array(
 				'editor_script'   => 'ssp-block-script',
+				'editor_style'  => 'ssp-block-style',
 				'render_callback' => array(
 					$this,
 					'podcast_list_render_callback',

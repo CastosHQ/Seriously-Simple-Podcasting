@@ -1400,7 +1400,7 @@ class Frontend_Controller extends Controller {
 	 * @return string
 	 */
 	public function render_podcast_list_dynamic_block( $attributes ) {
-
+		$player_style             = (string) get_option( 'ss_podcasting_player_style', '' );
 		$paged                    = ( get_query_var( 'paged' ) ) ?: 1;
 		$podcast_post_types       = ssp_post_types( true );
 		$query_args               = array(
@@ -1408,7 +1408,7 @@ class Frontend_Controller extends Controller {
 			'post_type'           => $podcast_post_types,
 			'posts_per_page'      => get_option( 'posts_per_page', 10 ),
 			'ignore_sticky_posts' => true,
-			'paged'               => $paged
+			'paged'               => $paged,
 		);
 		$query_args['meta_query'] = array(
 			array(
@@ -1418,56 +1418,60 @@ class Frontend_Controller extends Controller {
 			),
 		);
 		$query_args               = apply_filters( 'podcast_list_dynamic_block_query_arguments', $query_args );
-		$episodes_query           = new WP_Query();
-		$query_result             = $episodes_query->query( $query_args );
-
-		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
+		$episodes_query           = new WP_Query( $query_args );
 
 		ob_start();
-		foreach ( $query_result as $episode ) {
-			$player = '';
-			if ( isset( $attributes['player'] ) ) {
-				$file = $this->get_enclosure( $episode->ID );
-				if ( get_option( 'permalink_structure' ) ) {
-					$file = $this->get_episode_download_link( $episode->ID );
-				}
-				$player = $this->load_media_player( $file, $episode->ID, $player_style );
-				$player .= $this->episode_meta_details( $episode->ID, 'content' );
-			}
-			?>
-			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
-				<h2>
-					<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_permalink( $episode->ID ) ); ?>">
-						<?php echo $episode->post_title; ?>
-					</a>
-				</h2>
-				<div class="podcast-content">
-					<?php if ( isset( $attributes['featuredImage'] ) ) { ?>
-						<a class="podcast-image-link" href="<?php echo esc_url( get_permalink( $episode->ID ) ) ?>" aria-hidden="true"
-						   tabindex="-1">
-							<?php echo get_the_post_thumbnail( $episode->ID, 'full' ); ?>
-						</a>
-					<?php } ?>
-					<?php if ( ! empty( $player ) ) { ?>
-						<p><?php echo $player; ?></p>
-					<?php } ?>
-					<?php if ( isset( $attributes['excerpt'] ) ) { ?>
-						<p><?php echo get_the_excerpt( $episode->ID ); ?></p>
-					<?php } ?>
-				</div>
-			</article>
-		<?php }
+		if ( $episodes_query->have_posts() ) {
+			while ( $episodes_query->have_posts() ) {
+				$episodes_query->the_post();
+				$episode = get_post();
 
-		$episodeItems = ob_get_clean();
+				$player = '';
+				if ( isset( $attributes['player'] ) ) {
+					$file = $this->get_enclosure( $episode->ID );
+					if ( get_option( 'permalink_structure' ) ) {
+						$file = $this->get_episode_download_link( $episode->ID );
+					}
+					$player = $this->load_media_player( $file, $episode->ID, $player_style );
+					$player .= $this->episode_meta_details( $episode->ID, 'content' );
+				}
+				?>
+				<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
+					<h2>
+						<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>">
+							<?php echo the_title(); ?>
+						</a>
+					</h2>
+					<div class="podcast-content">
+						<?php if ( isset( $attributes['featuredImage'] ) ) { ?>
+							<a class="podcast-image-link" href="<?php echo esc_url( get_permalink() ) ?>"
+							   aria-hidden="true" tabindex="-1">
+								<?php echo the_post_thumbnail( 'full' ); ?>
+							</a>
+						<?php } ?>
+						<?php if ( ! empty( $player ) ) { ?>
+							<p><?php echo $player; ?></p>
+						<?php } ?>
+						<?php if ( isset( $attributes['excerpt'] ) ) { ?>
+							<p><?php echo get_the_excerpt(); ?></p>
+						<?php } ?>
+					</div>
+				</article>
+				<?php
+			}
+		}
+		$episode_items = ob_get_clean();
 
 		$next_episodes_link     = get_next_posts_link( 'Older Episodes &raquo;', $episodes_query->max_num_pages );
 		$previous_episodes_link = get_previous_posts_link( '&laquo; Newer Episodes' );
 		if ( ! empty( $previous_episodes_link ) ) {
-			$episodeItems .= $previous_episodes_link . ' | ';
+			$episode_items .= $previous_episodes_link . ' | ';
 		}
-		$episodeItems .= $next_episodes_link;
+		$episode_items .= $next_episodes_link;
 
-		return apply_filters( 'podcast_list_dynamic_block_html_content', '<div>' . $episodeItems . '</div>' );
+		wp_reset_postdata();
+
+		return apply_filters( 'podcast_list_dynamic_block_html_content', '<div>' . $episode_items . '</div>' );
 	}
 
 }

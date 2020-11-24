@@ -12,8 +12,8 @@
 				</div>
 				<div class="play-progress">
 					<div class="play-pause-controls">
-						<button title="Play" class="play-btn play-btn-<?php echo $episode_id?>"></button>
-						<button alt="Pause" class="pause-btn pause-btn-<?php echo $episode_id?> hide"></button>
+						<button title="Play" class="play-btn play-btn-<?php echo $episode_id?>"><span class="screen-reader-text">Play Episode</span></button>
+						<button alt="Pause" class="pause-btn pause-btn-<?php echo $episode_id?> hide"><span class="screen-reader-text">Pause Episode</span></button>
 						<img src="<?php echo SSP_PLUGIN_URL ?>assets/css/images/player/images/icon-loader.svg" class="loader loader-<?php echo $episode_id ?> hide"/>
 					</div>
 					<div>
@@ -25,10 +25,10 @@
 						</div>
 						<div class="playback playback-<?php echo $episode_id ?>">
 							<div class="playback__controls">
-								<button class="player-btn__volume player-btn__volume-<?php echo $episode_id ?>" title="Mute/Unmute"></button>
-								<button data-skip="-10" class="player-btn__rwd" title="Rewind 10 seconds"></button>
+								<button class="player-btn__volume player-btn__volume-<?php echo $episode_id ?>" title="Mute/Unmute"><span class="screen-reader-text">Mute/Unmute Episode</span></button>
+								<button data-skip="-10" class="player-btn__rwd" title="Rewind 10 seconds"><span class="screen-reader-text">Rewind 10 Seconds</span></button>
 								<button data-speed="1" class="player-btn__speed player-btn__speed-<?php echo $episode_id ?>" title="Playback Speed">1x</button>
-								<button data-skip="30" class="player-btn__fwd" title="Fast Forward 30 seconds"></button>
+								<button data-skip="30" class="player-btn__fwd" title="Fast Forward 30 seconds"><span class="screen-reader-text">Fast Forward 30 seconds</span></button>
 							</div>
 							<div class="playback__timers">
 								<time id="timer-<?php echo $episode_id ?>">00:00</time>

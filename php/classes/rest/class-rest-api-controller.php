@@ -76,6 +76,8 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_audio_player' ) );
 
+		add_action( 'rest_api_init', array( $this, 'register_rest_episode_data' ) );
+
 		$post_types = ssp_post_types( true, false );
 		foreach ( $post_types as $post_type ) {
 			add_filter( 'rest_prepare_' . $post_type, array( $this, 'rest_prepare_excerpt' ), 10, 3 );
@@ -145,19 +147,6 @@ class Rest_Api_Controller {
 			array(
 				'methods'             => 'GET',
 				'callback'            => array( $this, 'get_episode_audio_player' ),
-				'permission_callback' => '__return_true',
-			)
-		);
-
-		/**
-		 * Setting up custom route for getting player specific data by episode
-		 */
-		register_rest_route(
-			'ssp/v1',
-			'/player_data',
-			array(
-				'methods'             => 'GET',
-				'callback'            => array( $this, 'get_episode_player_data' ),
 				'permission_callback' => '__return_true',
 			)
 		);
@@ -233,27 +222,6 @@ class Rest_Api_Controller {
 			'file'         => $file,
 			'audio_player' => wp_audio_shortcode( $params )
 		);
-	}
-
-	/**
-	 * Player Data specific endpoint for new player block
-	 * All of this data is public, so the endpoint is public as well.
-	 *
-	 * @return array
-	 */
-	public function get_episode_player_data() {
-		$options_handler    = new Options_Handler();
-		$episode_repository = new Episode_Repository();
-		$episode_id         = ( isset( $_GET['ssp_episode_id'] ) ? sanitize_text_field( $_GET['ssp_episode_id'] ) : '' );
-		$player_data        = array(
-			'id'            => $episode_id,
-			'playerMode'    => get_option( 'ss_podcasting_player_mode', 'dark' ),
-			'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
-			'rssFeedUrl'    => $episode_repository->get_feed_url( $episode_id ),
-			'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
-		);
-
-		return $player_data;
 	}
 
 	/**
@@ -355,6 +323,21 @@ class Rest_Api_Controller {
 	}
 
 	/**
+	 * Add the audio player code to all Podcast post types
+	 */
+	public function register_rest_episode_data() {
+		register_rest_field(
+			ssp_post_types(),
+			'episode_data',
+			array(
+				'get_callback'    => array( $this, 'get_episode_player_data' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+	/**
 	 * Get the featured image for valid Podcast post types
 	 * Call back for the register_rest_episode_images method
 	 *
@@ -440,6 +423,29 @@ class Rest_Api_Controller {
 			$file   = $ss_podcasting->episode_controller->get_enclosure( $object['id'] );
 			$params = array( 'src' => $file, 'preload' => 'none' );
 			return wp_audio_shortcode( $params );
+		}
+
+		return false;
+	}
+
+	/**
+	 * Adds the Episode player data to the episodes route for the Castos Player block
+	 *
+	 * @return array
+	 */
+	public function get_episode_player_data( $object, $field_name, $request ) {
+		if ( ! empty( $object['id'] ) ) {
+			$options_handler    = new Options_Handler();
+			$episode_repository = new Episode_Repository();
+			$episode_id         = $object['id'];
+			$player_data        = array(
+				'playerMode'    => get_option( 'ss_podcasting_player_mode', 'dark' ),
+				'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
+				'rssFeedUrl'    => $episode_repository->get_feed_url( $episode_id ),
+				'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
+			);
+
+			return $player_data;
 		}
 
 		return false;

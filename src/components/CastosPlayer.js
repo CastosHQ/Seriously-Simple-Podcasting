@@ -2,9 +2,6 @@ import {Component} from '@wordpress/element';
 import classnames from "classnames";
 import CastosPlayerPanels from "./CastosPlayerPanels";
 
-/**
- * @todo clean up the inline styles better
- */
 class CastosPlayer extends Component {
 	render() {
 		const {className, episodeId, episodeImage, episodeTitle, episodeFileUrl, episodeDuration, episodeData} = this.props;
@@ -48,8 +45,12 @@ class CastosPlayer extends Component {
 							</div>
 							<div className="play-progress">
 								<div className="play-pause-controls">
-									<button title="Play" className={playButtonClass}></button>
-									<button alt="Pause" className={pauseButtonClass}></button>
+									<button title="Play" className={playButtonClass}>
+										<span className="screen-reader-text">Play Episode</span>
+									</button>
+									<button alt="Pause" className={pauseButtonClass}>
+										<span className="screen-reader-text">Pause Episode</span>
+									</button>
 									<img src={loaderSVG} className={loaderClass}/>
 								</div>
 								<div>
@@ -61,13 +62,16 @@ class CastosPlayer extends Component {
 									</div>
 									<div className={playbackClass}>
 										<div className="playback__controls">
-											<button className={muteClass} title="Mute/Unmute"></button>
-											<button data-skip="-10" className="player-btn__rwd"
-													title="Rewind 10 seconds"></button>
-											<button data-speed="1" className={speedClass} title="Playback Speed">1x
+											<button className={muteClass} title="Mute/Unmute">
+												<span className="screen-reader-text">Mute/Unmute Episode</span>
 											</button>
-											<button data-skip="30" className="player-btn__fwd"
-													title="Fast Forward 30 seconds"></button>
+											<button data-skip="-10" className="player-btn__rwd" title="Rewind 10 seconds">
+												<span class="screen-reader-text">Rewind 10 Seconds</span>
+											</button>
+											<button data-speed="1" className={speedClass} title="Playback Speed">1x</button>
+											<button data-skip="30" className="player-btn__fwd" title="Fast Forward 30 seconds">
+												<span className="screen-reader-text">Fast Forward 30 seconds</span>
+											</button>
 										</div>
 										<div className="playback__timers">
 											<time id={timerId}>00:00</time>
@@ -83,9 +87,6 @@ class CastosPlayer extends Component {
 								<button className="share-btn" id={shareButtonId} title="Share">Share</button>
 							</nav>
 						</div>
-						{/*<span className="powered-by">
-                            <a target="_blank" title="Broadcast by Castos" href="https://castos.com"></a>
-                        </span>*/}
 					</div>
 				</div>
 				<CastosPlayerPanels

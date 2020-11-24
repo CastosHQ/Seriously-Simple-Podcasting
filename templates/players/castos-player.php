@@ -44,10 +44,6 @@
 					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
 				</nav>
 			</div>
-<!--			<span class="powered-by">-->
-<!--              <a target="_blank" title="Broadcast by Castos" href="https://castos.com">-->
-<!--              </a>-->
-<!--            </span>-->
 		</div>
 	</div>
 	<div class="player-panels player-panels-<?php echo $episode_id ?>">

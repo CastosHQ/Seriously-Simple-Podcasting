@@ -59,13 +59,20 @@ class Castos_Handler {
 
 	/**
 	 * Takes the raw content from the post object, and runs it through the the_content filters
-	 * Effectively replicates the the_content function, but for a specific post
+	 * Effectively replicates the the_content function, but for a specific podcast
 	 *
 	 * @param $post
 	 * @return string|string[]
 	 */
 	protected function get_rendered_post_content( $post ) {
-		remove_filter( 'the_content', array( Admin_Controller::class, 'content_meta_data' ) );
+		global $ss_podcasting;
+		/**
+		 * Remove the filter that adds our media player to the post_content
+		 */
+		remove_filter( 'the_content', array( $ss_podcasting, 'content_meta_data' ) );
+		/**
+		 * Get the post content and run it through the rest of the registered 'the_content' filters
+		 */
 		$post_content = get_the_content( null, false, $post );
 		$post_content = apply_filters( 'the_content', $post_content );
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );

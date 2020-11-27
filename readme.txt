@@ -162,6 +162,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 = 2.5.0 =
 * [UPDATE] Replace all regular instances of the HTML5 media player with the updated version
 * [UPDATE] Replaces the media player custom styling with options for either dark or light mode
+* [FIX] Fixes a bug in the Castos episode sync process where it would sync the raw post_content
 
 = 2.4.2 =
 * 2020-11-17

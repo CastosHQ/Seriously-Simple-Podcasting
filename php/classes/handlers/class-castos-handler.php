@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use SeriouslySimplePodcasting\Controllers\Admin_Controller;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 
 // Exit if accessed directly.

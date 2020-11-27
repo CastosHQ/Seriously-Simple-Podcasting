@@ -58,6 +58,28 @@ class Admin_Notifications_Handler {
 	}
 
 	/**
+	 * Admin notice if an episode sync is successful
+	 */
+	public function castos_api_episode_success() {
+		?>
+		<div class="notice notice-info">
+			<p><?php _e( 'Your episode was successfully synced to your Castos account', 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Admin notice if anything goes wrong with an episode sync
+	 */
+	public function castos_api_episode_error() {
+		?>
+		<div class="notice notice-error">
+			<p><?php _e( 'An error occurred syncing your episode to your Castos account. Please contact Castos support at hello@castos.com.', 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Show an error if the block assets have failed
 	 */
 	public function blocks_error_notice() {

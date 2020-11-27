@@ -1577,6 +1577,9 @@ HTML;
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
+			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_episode_success' ) );
+		} else {
+			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_error' ) );
 		}
 
 	}

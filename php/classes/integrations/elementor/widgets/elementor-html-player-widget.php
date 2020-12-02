@@ -21,12 +21,12 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	 * Register any scripts and styles for this widget
 	 */
 	public function register_scripts_and_styles() {
-		$assets_url = trailingslashit( SSP_PLUGIN_URL ) . 'assets/';
-		$version    = SSP_VERSION;
-		wp_register_style( 'castos-player', $assets_url . 'css/castos-player.css', array(), $version );
-		wp_enqueue_style( 'castos-player' );
-		wp_register_script( 'castos-player', $assets_url . 'js/castos-player.js', array( 'jquery' ), $version, true );
-		wp_enqueue_script( 'castos-player' );
+		if ( wp_script_is( 'ssp-castos-player', 'registered' ) && ! wp_script_is( 'ssp-castos-player', 'enqueued' ) ) {
+			wp_enqueue_script( 'ssp-castos-player' );
+		}
+		if ( wp_style_is( 'ssp-castos-player', 'registered' ) && ! wp_style_is( 'ssp-castos-player', 'enqueued' ) ) {
+			wp_enqueue_style( 'ssp-castos-player' );
+		}
 	}
 
 	public function get_name() {

@@ -109,10 +109,9 @@
 .castos-player .close-btn:hover span:nth-child(1) {
     transform: rotate(135deg);
 }
-.castos-player close-btn:hover span:nth-child(2) {
+.castos-player .close-btn:hover span:nth-child(2) {
     transform: rotate(45deg);
 }
-
 .castos-player .player-panel {
     padding: 12px 7px 10px 15px;
 }
@@ -773,8 +772,8 @@
 	.castos-player .player-btn__rwd {
         width: 22px;
         height: 22px;
-        mask-size: cover;
-        -webkit-mask-size: cover;
+        mask-size: contain;
+        -webkit-mask-size: contain;
     }
 	.castos-player .player-btn__speed {
         width: 35px;
@@ -786,12 +785,12 @@
 	.castos-player .player-btn__fwd {
         width: 22px;
         height: 22px;
-        mask-size: cover;
-        -webkit-mask-size: cover;
+        mask-size: contain;
+        -webkit-mask-size: contain;
     }
 	.castos-player .playback .playback__controls {
         grid-template-columns: repeat(3, auto);
-        grid-gap: 15px;
+        grid-gap: 8px;
         justify-content: flex-start;
     }
 	.castos-player .player-panels-nav {

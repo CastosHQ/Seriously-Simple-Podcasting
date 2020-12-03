@@ -439,6 +439,25 @@ class Admin_Notifications_Handler {
 		if ( 'true' === $ss_podcasting_distribution_upgrade_disabled ) {
 			return;
 		}
+		// Don't show this if the saved options are empty. This probably means a new install
+		$ss_podcasting_subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+		if ( empty( $ss_podcasting_subscribe_options ) ) {
+			update_option( 'ss_podcasting_distribution_upgrade_disabled', 'true' );
+
+			return;
+		}
+		// Don't show this if the saved options are the new defaults. This probably means a new install
+		$default_subscribe_options = array(
+			'apple_podcasts',
+			'stitcher',
+			'google_podcasts',
+			'spotify',
+		);
+		if ( $default_subscribe_options === $ss_podcasting_subscribe_options ) {
+			update_option( 'ss_podcasting_distribution_upgrade_disabled', 'true' );
+
+			return;
+		}
 		// Don't show this on the Podcast Options page
 		$page = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
 		if ( 'podcast_options' === $page ) {

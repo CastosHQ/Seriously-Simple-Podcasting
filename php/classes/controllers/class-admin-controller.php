@@ -752,7 +752,7 @@ HTML;
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>';
 
 						if ( ssp_is_connected_to_castos() ) {
-							$html .= '<div id="ssp_upload_notification">Your browser doesn\'t have HTML5 support.</div>';
+							$html .= '<div id="ssp_upload_notification">' . __( 'An error has occurred with the file upload functionality. Please check your site for any plugin or theme conflicts.', 'seriously-simple-podcasting' ) . '</div>';
 						}
 
 						$html .= '<input name="' . esc_attr( $k ) . '" type="text" id="upload_' . esc_attr( $k ) . '" value="' . esc_attr( $data ) . '" />

@@ -66,7 +66,7 @@ class CastosPlayer extends Component {
 												<span className="screen-reader-text">Mute/Unmute Episode</span>
 											</button>
 											<button data-skip="-10" className="player-btn__rwd" title="Rewind 10 seconds">
-												<span class="screen-reader-text">Rewind 10 Seconds</span>
+												<span className="screen-reader-text">Rewind 10 Seconds</span>
 											</button>
 											<button data-speed="1" className={speedClass} title="Playback Speed">1x</button>
 											<button data-skip="30" className="player-btn__fwd" title="Fast Forward 30 seconds">

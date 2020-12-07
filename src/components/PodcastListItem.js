@@ -9,9 +9,10 @@ import PlayerMeta from "./PlayerMeta";
 /**
  * Podcast List Item
  */
-class EditPodcastListItem extends Component {
+class PodcastListItem extends Component {
 	render() {
 		const {className, post, attributes} = this.props;
+		console.log(post);
 		const imageClassNames = classnames(
 			"podcast-image-link",
 			{ 'hide-featured-image': !attributes.featuredImage },
@@ -25,16 +26,17 @@ class EditPodcastListItem extends Component {
 			"podcast-excerpt",
 			{ 'hide-excerpt': !attributes.excerpt },
 		);
+		const episodeFeaturedImage = post.episode_featured_image ? <img src={post.episode_featured_image}/> : '';
 		return (
 			<article className={className}>
 				<h2>
 					<a className="entry-title-link" rel="bookmark" href={post.link}>
-						{post.title.rendered}
+						<Interweave content={post.title.rendered}/>
 					</a>
 				</h2>
 				<div className="podcast-content">
 					<a className={imageClassNames} href={post.link} aria-hidden="true" tabIndex="-1">
-						<img src={post.episode_featured_image}/>
+						{episodeFeaturedImage}
 					</a>
 					<Player className={playerClassNames} post={post}/>
 					<PlayerMeta
@@ -43,11 +45,11 @@ class EditPodcastListItem extends Component {
 						download={post.download_link}
 						duration={post.meta.duration}
 					/>
-					<p className={excerptClassNames}><Interweave content={post.excerpt.rendered}/></p>
+					<div className={excerptClassNames}><Interweave content={post.excerpt.rendered}/></div>
 				</div>
 			</article>
 		);
 	}
 }
 
-export default EditPodcastListItem;
+export default PodcastListItem;

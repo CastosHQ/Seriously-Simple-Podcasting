@@ -115,4 +115,5 @@ class Controller {
 		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 
 	}
+
 }

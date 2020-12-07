@@ -1,0 +1,6 @@
+.wp-block-seriously-simple-podcasting-podcast-list a.hide-featured-image,
+.wp-block-seriously-simple-podcasting-podcast-list div.hide-excerpt,
+.wp-block-seriously-simple-podcasting-podcast-list div.hide-player,
+.wp-block-seriously-simple-podcasting-podcast-list p.hide-player {
+	display: none;
+}

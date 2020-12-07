@@ -39,7 +39,7 @@ class Castos_Handler {
 	/**
 	 * Sets up the response array
 	 */
-	private function setup_response() {
+	protected function setup_response() {
 		$this->response = array(
 			'status'  => 'error',
 			'message' => 'An error occurred.',
@@ -52,8 +52,31 @@ class Castos_Handler {
 	 * @param $key
 	 * @param $value
 	 */
-	private function update_response( $key, $value ) {
+	protected function update_response( $key, $value ) {
 		$this->response[ $key ] = $value;
+	}
+
+	/**
+	 * Takes the raw content from the post object, and runs it through the the_content filters
+	 * Effectively replicates the the_content function, but for a specific podcast
+	 *
+	 * @param $post
+	 * @return string|string[]
+	 */
+	protected function get_rendered_post_content( $post ) {
+		global $ss_podcasting;
+		/**
+		 * Remove the filter that adds our media player to the post_content
+		 */
+		remove_filter( 'the_content', array( $ss_podcasting, 'content_meta_data' ) );
+		/**
+		 * Get the post content and run it through the rest of the registered 'the_content' filters
+		 */
+		$post_content = get_the_content( null, false, $post );
+		$post_content = apply_filters( 'the_content', $post_content );
+		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
+
+		return $post_content;
 	}
 
 	/**
@@ -269,7 +292,7 @@ class Castos_Handler {
 			'token'          => $this->api_token,
 			'post_id'        => $post->ID,
 			'post_title'     => $post->post_title,
-			'post_content'   => $post->post_content,
+			'post_content'   => $this->get_rendered_post_content( $post ),
 			'keywords'       => get_keywords_for_episode( $post->ID ),
 			'series_number'  => get_post_meta( $post->ID, 'itunes_season_number', true ),
 			'episode_number' => get_post_meta( $post->ID, 'itunes_episode_number', true ),
@@ -323,7 +346,7 @@ class Castos_Handler {
 
 		$this->logger->log( 'Upload Podcast Response', $response_object );
 
-		if ( ! $response_object->status ) {
+		if ( ! isset( $response_object->status ) || ! $response_object->status ) {
 			$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
 			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 

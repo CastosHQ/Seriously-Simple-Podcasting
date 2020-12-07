@@ -68,18 +68,23 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 		download: {
 			type: 'string',
 		},
+		episode_data: {
+			type: 'object',
+		},
 	},
 	edit: EditCastosPlayer,
 	save: (props, className) => {
-		const { id, image, file, title, duration, download } = props.attributes;
+		const { id, image, file, title, duration, download, episode_data } = props.attributes;
 		return (
 			<CastosPlayer
 				className={className}
+				episodeId={id}
 				episodeImage={image}
 				episodeFileUrl={file}
 				episodeTitle={title}
 				episodeDuration={duration}
 				episodeDownloadUrl={download}
+				episodeData={episode_data}
 			/>
 		);
 	},

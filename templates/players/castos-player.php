@@ -1,7 +1,8 @@
 <div class="castos-player <?php echo $player_mode ?>-mode" data-episode="<?php echo $episode_id?>">
 	<div class="player">
 		<div class="player__main">
-			<div class="player__artwork player__artwork-<?php echo $episode_id?>" style="background: url( <?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?> ) center center no-repeat; -webkit-background-size: cover;background-size: cover;">
+			<div class="player__artwork player__artwork-<?php echo $episode_id?>">
+				<img src="<?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?>" title="<?php echo $podcast_title ?>">
 			</div>
 			<div class="player__body">
 				<div class="currently-playing">
@@ -12,8 +13,8 @@
 				</div>
 				<div class="play-progress">
 					<div class="play-pause-controls">
-						<button title="Play" class="play-btn play-btn-<?php echo $episode_id?>"></button>
-						<button alt="Pause" class="pause-btn pause-btn-<?php echo $episode_id?> hide"></button>
+						<button title="Play" class="play-btn play-btn-<?php echo $episode_id?>"><span class="screen-reader-text">Play Episode</span></button>
+						<button alt="Pause" class="pause-btn pause-btn-<?php echo $episode_id?> hide"><span class="screen-reader-text">Pause Episode</span></button>
 						<img src="<?php echo SSP_PLUGIN_URL ?>assets/css/images/player/images/icon-loader.svg" class="loader loader-<?php echo $episode_id ?> hide"/>
 					</div>
 					<div>
@@ -25,10 +26,10 @@
 						</div>
 						<div class="playback playback-<?php echo $episode_id ?>">
 							<div class="playback__controls">
-								<button class="player-btn__volume player-btn__volume-<?php echo $episode_id ?>" title="Mute/Unmute"></button>
-								<button data-skip="-10" class="player-btn__rwd" title="Rewind 10 seconds"></button>
+								<button class="player-btn__volume player-btn__volume-<?php echo $episode_id ?>" title="Mute/Unmute"><span class="screen-reader-text">Mute/Unmute Episode</span></button>
+								<button data-skip="-10" class="player-btn__rwd" title="Rewind 10 seconds"><span class="screen-reader-text">Rewind 10 Seconds</span></button>
 								<button data-speed="1" class="player-btn__speed player-btn__speed-<?php echo $episode_id ?>" title="Playback Speed">1x</button>
-								<button data-skip="30" class="player-btn__fwd" title="Fast Forward 30 seconds"></button>
+								<button data-skip="30" class="player-btn__fwd" title="Fast Forward 30 seconds"><span class="screen-reader-text">Fast Forward 30 seconds</span></button>
 							</div>
 							<div class="playback__timers">
 								<time id="timer-<?php echo $episode_id ?>">00:00</time>
@@ -44,10 +45,6 @@
 					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
 				</nav>
 			</div>
-<!--			<span class="powered-by">-->
-<!--              <a target="_blank" title="Broadcast by Castos" href="https://castos.com">-->
-<!--              </a>-->
-<!--            </span>-->
 		</div>
 	</div>
 	<div class="player-panels player-panels-<?php echo $episode_id ?>">
@@ -58,13 +55,14 @@
 			</div>
 			<div class="panel__inner">
 				<div class="subscribe-icons">
-                    <?php foreach ($subscribe_links as $key => $subscribe_link) : ?>
-                    <a href="<?php echo $subscribe_link['url'] ?>"
-                       target="_blank" class="<?php echo explode('.', $subscribe_link['icon'], 2)[0]?>" title="Subscribe on " <?php echo $subscribe_link['label'] ?>>
-                        <span></span>
-	                    <?php echo $subscribe_link['label'] ?>
-                    </a>
-                    <?php endforeach ?>
+					<?php foreach ( $subscribe_links as $key => $subscribe_link ) : ?>
+						<?php if ( ! empty( $subscribe_link['url'] ) ) : ?>
+							<a href="<?php echo $subscribe_link['url'] ?>" target="_blank" class="<?php echo explode( '.', $subscribe_link['icon'], 2 )[0] ?>" title="Subscribe on " <?php echo $subscribe_link['label'] ?>>
+								<span></span>
+								<?php echo $subscribe_link['label'] ?>
+							</a>
+						<?php endif ?>
+					<?php endforeach ?>
 				</div>
 				<div class="player-panel-row">
 					<div class="title">

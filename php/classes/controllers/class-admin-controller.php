@@ -70,7 +70,7 @@ class Admin_Controller extends Controller {
 		$this->logger = new Log_Helper();
 
 		if ( is_admin() ) {
-			$this->admin_notices_handler = new Admin_Notifications_Handler($this->token);
+			$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
 		}
 
 		// Handle localisation.
@@ -752,7 +752,7 @@ HTML;
 									<label class="ssp-episode-details-label" for="' . esc_attr( $k ) . '">' . wp_kses_post( $v['name'] ) . '</label>';
 
 						if ( ssp_is_connected_to_castos() ) {
-							$html .= '<div id="ssp_upload_notification">Your browser doesn\'t have HTML5 support.</div>';
+							$html .= '<div id="ssp_upload_notification">' . __( 'An error has occurred with the file upload functionality. Please check your site for any plugin or theme conflicts.', 'seriously-simple-podcasting' ) . '</div>';
 						}
 
 						$html .= '<input name="' . esc_attr( $k ) . '" type="text" id="upload_' . esc_attr( $k ) . '" value="' . esc_attr( $data ) . '" />
@@ -1577,6 +1577,9 @@ HTML;
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
+			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_episode_success' ) );
+		} else {
+			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_error' ) );
 		}
 
 	}

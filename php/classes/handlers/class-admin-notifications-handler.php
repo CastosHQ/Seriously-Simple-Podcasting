@@ -58,6 +58,39 @@ class Admin_Notifications_Handler {
 	}
 
 	/**
+	 * Admin notice if an episode sync is successful
+	 */
+	public function castos_api_episode_success() {
+		?>
+		<div class="notice notice-info">
+			<p><?php _e( 'Your episode was successfully synced to your Castos account', 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Admin notice if anything goes wrong with an episode sync
+	 */
+	public function castos_api_episode_error() {
+		?>
+		<div class="notice notice-error">
+			<p><?php _e( 'An error occurred syncing your episode to your Castos account. Please contact Castos support at hello@castos.com.', 'seriously-simple-podcasting' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
+	 * Show an error if the block assets have failed
+	 */
+	public function blocks_error_notice() {
+		?>
+		<div class="notice notice-info">
+			<p><?php _e( 'An error has occurred loading the block editor assets. Please report this to the plugin developer.', 'seriousy-simple-podcasting' ); ?></p>
+		</div>
+		<?php
+	}
+
+	/**
 	 * Check if there are existing podcasts to be uploaded to Seriously Simple Hosting
 	 */
 	public function check_existing_podcasts() {
@@ -107,7 +140,7 @@ class Admin_Notifications_Handler {
 		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
 		?>
 		<div class="notice notice-info">
-			<p><?php _e( $message, 'ssp' ); ?></p>
+			<p><?php _e( $message, 'seriousy-simple-podcasting' ); ?></p>
 		</div>
 		<?php
 	}
@@ -404,6 +437,25 @@ class Admin_Notifications_Handler {
 		// only show if the user hasn't already disabled this notice, by performing the upgrade
 		$ss_podcasting_distribution_upgrade_disabled = get_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );
 		if ( 'true' === $ss_podcasting_distribution_upgrade_disabled ) {
+			return;
+		}
+		// Don't show this if the saved options are empty. This probably means a new install
+		$ss_podcasting_subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+		if ( empty( $ss_podcasting_subscribe_options ) ) {
+			update_option( 'ss_podcasting_distribution_upgrade_disabled', 'true' );
+
+			return;
+		}
+		// Don't show this if the saved options are the new defaults. This probably means a new install
+		$default_subscribe_options = array(
+			'apple_podcasts',
+			'stitcher',
+			'google_podcasts',
+			'spotify',
+		);
+		if ( $default_subscribe_options === $ss_podcasting_subscribe_options ) {
+			update_option( 'ss_podcasting_distribution_upgrade_disabled', 'true' );
+
 			return;
 		}
 		// Don't show this on the Podcast Options page

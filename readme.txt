@@ -160,9 +160,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 2.5.0 =
+* UPDATE SUMMARY: Implements version 2 of the HTML5 player, and various smaller bug fixes
 * [UPDATE] Replace all regular instances of the HTML5 media player with the updated version
 * [UPDATE] Replaces the media player custom styling with options for either dark or light mode
 * [FIX] Fixes a bug in the Castos episode sync process where it would sync the raw post_content
+* [FIX] Fixes a bug in the Podcast List block, where specifying a custom read more link wouldn't work as expected.
+* [FIX] Fixes a bug where the Podcast Distribution Upgrade message would show even on new installs
+* [TWEAK] Updates a message displayed to the user when the fileupload JavaScript can't be loaded, to be more explanatory
 
 = 2.4.2 =
 * 2020-11-17

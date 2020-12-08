@@ -1,6 +1,6 @@
-<div>
+<h3>
 	<?php echo $episode->post_title ?>
-</div>
+</h3>
 <div>
 	<?php echo $audio_player ?>
 </div>

@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.5.3
 Requires PHP: 5.6
-Stable tag: 2.5.0
+Stable tag: 2.5.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -159,10 +159,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 2.5.1-alpha =
+= 2.5.1 =
 * 2020-12-08
-* UPDATE SUMMARY: Bug fixes for the 2.5 release
-* [FIX] Fixes a bug where podcast_episode shortcode was broken
+* UPDATE SUMMARY: Podcast Episode bug fixes for the 2.5 release
+* [FIX] Fixes a bug where podcast_episode shortcode was broken and causing fatal errors
+* [FIX] Fixes a bug where the compact player added some unnecessary additional html tags
 
 = 2.5.0 =
 * UPDATE SUMMARY: Implements version 2 of the HTML5 player, and various smaller bug fixes

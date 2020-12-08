@@ -159,6 +159,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.5.1-alpha =
+* 2020-12-08
+* UPDATE SUMMARY: Bug fixes for the 2.5 release
+* [FIX] Fixes a bug where podcast_episode shortcode was broken
+
 = 2.5.0 =
 * UPDATE SUMMARY: Implements version 2 of the HTML5 player, and various smaller bug fixes
 * [UPDATE] Replace all regular instances of the HTML5 media player with the updated version

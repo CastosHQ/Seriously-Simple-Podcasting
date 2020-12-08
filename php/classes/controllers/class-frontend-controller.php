@@ -1393,6 +1393,121 @@ class Frontend_Controller extends Controller {
 	}
 
 	/**
+	 * Show single podcast episode with specified content items
+	 * This is used in the SeriouslySimplePodcasting\Widgets\Single_Episode widget
+	 * as well as the SeriouslySimplePodcasting\ShortCodes\Podcast_Episode shortcode
+	 *
+	 * @param  integer $episode_id    ID of episode post
+	 * @param  array   $content_items Ordered array of content items to display
+	 * @return string                 HTML of episode with specified content items
+	 */
+	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '', $style = 'mini' ) {
+		global $post, $episode_context;
+
+		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
+			return;
+		}
+
+		// Get episode object
+		$episode = get_post( $episode_id );
+
+		if ( ! $episode || is_wp_error( $episode ) ) {
+			return;
+		}
+
+		$html = '<div class="podcast-episode episode-' . esc_attr( $episode_id ) . '">' . "\n";
+
+		// Setup post data for episode post object
+		$post = $episode;
+		setup_postdata( $post );
+
+		$episode_context = $context;
+
+		if ( 'larger' == $style ) {
+
+			foreach ( $content_items as $item ) {
+
+				switch ( $item ) {
+
+					case 'title':
+						$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
+						break;
+
+					case 'excerpt':
+						$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
+						break;
+
+					case 'content':
+						$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
+						break;
+
+					case 'player':
+						$file = $this->get_enclosure( $episode_id );
+						if ( get_option( 'permalink_structure' ) ) {
+							$file = $this->get_episode_download_link( $episode_id );
+						}
+						$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, "large" ) . '</div>' . "\n";
+						break;
+
+					case 'details':
+						$html .= $this->episode_meta_details( $episode_id, $episode_context );
+						break;
+
+					case 'image':
+						$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
+						break;
+
+				}
+			}
+		}
+
+		if ( 'standard' === $style ) {
+			// Display specified content items in the order supplied
+			foreach ( $content_items as $item ) {
+
+				switch ( $item ) {
+
+					case 'title':
+						$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
+						break;
+
+					case 'excerpt':
+						$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
+						break;
+
+					case 'content':
+						$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
+						break;
+
+					case 'player':
+						$file = $this->get_enclosure( $episode_id );
+						if ( get_option( 'permalink_structure' ) ) {
+							$file = $this->get_episode_download_link( $episode_id );
+						}
+						$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $style ) . '</div>' . "\n";
+						break;
+
+					case 'details':
+						$html .= $this->episode_meta_details( $episode_id, $episode_context );
+						break;
+
+					case 'image':
+						$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
+						break;
+
+				}
+			}
+		}
+
+		// Reset post data after fetching episode details
+		wp_reset_postdata();
+
+		$html .= '</div>' . "\n";
+
+		return $html;
+	}
+
+	/**
 	 * Render the HTML content for the podcast list dynamic block
 	 *
 	 * @param $attributes block attributes

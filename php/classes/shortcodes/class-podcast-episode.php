@@ -26,11 +26,13 @@ class Podcast_Episode {
 
 		global $ss_podcasting;
 
+		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+
 		$atts = shortcode_atts(
 			array(
 				'episode' => 0,
 				'content' => 'title,player,details',
-				'style'   => 'mini',
+				'style'   => $player_style,
 			),
 			$params,
 			'podcast_episode'

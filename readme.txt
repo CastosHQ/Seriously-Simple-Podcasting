@@ -159,6 +159,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.5.2 =
+* 2020-12-09
+* UPDATE SUMMARY: Shortcode/widget bug fixes for the 2.5 release
+* [FIX] Fixes a bug where single episode widget widget was broken
+
 = 2.5.1 =
 * 2020-12-08
 * UPDATE SUMMARY: Podcast Episode bug fixes for the 2.5 release

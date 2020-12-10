@@ -28,7 +28,6 @@ class Episode_Controller extends Controller {
 
 	public function load_recent_episodes_assets() {
 		wp_register_style( 'ssp-recent-episodes', $this->assets_url . 'css/recent-episodes.css', array(), $this->version );
-		wp_enqueue_style( 'ssp-recent-episodes' );
 	}
 
 	/**
@@ -305,6 +304,9 @@ class Episode_Controller extends Controller {
 	 * @return mixed|void
 	 */
 	public function render_recent_episodes() {
+		if ( wp_style_is( 'ssp-recent-episodes', 'registered' ) && ! wp_style_is( 'ssp-recent-episodes', 'enqueued' ) ) {
+			wp_enqueue_style( 'ssp-recent-episodes' );
+		}
 		$template_data = $this->recent_episodes();
 
 		return $this->renderer->render( $template_data, 'episodes/recent-episodes' );

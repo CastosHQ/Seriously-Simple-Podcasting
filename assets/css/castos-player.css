@@ -1,703 +1,844 @@
 /* Fonts */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&family=Roboto:wght@400;500&display=swap');
+@font-face {
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('fonts/Poppins/Poppins-Regular.woff2') format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'Poppins';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('fonts/Poppins/Poppins-Medium.woff2') format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 400;
+	font-display: swap;
+	src: url('fonts/Roboto/Roboto-Regular.woff2') format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 500;
+	font-display: swap;
+	src: url('fonts/Roboto/Roboto-Medium.woff2') format('woff2');
+	unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
 
 /* Defaults */
 .castos-player {
-    font-family: 'Roboto', sans-serif;
-    line-height: 1;
-    position: relative;
-    overflow: hidden;
+	font-family: 'Roboto', sans-serif;
+	line-height: 1;
+	position: relative;
+	overflow: hidden;
 }
 
 .castos-player button {
-    outline: none;
-    border: none;
+	outline: none;
+	border: none;
 }
 
 /* Player */
 .castos-player .player {
-    width: 100%;
-    height: 150px;
-    background: linear-gradient(359.68deg, #24212c 1.03%, #383344 77.9%);
-    border-radius: 4px;
-    overflow: hidden;
+	width: 100%;
+	height: 150px;
+	background: linear-gradient(359.68deg, #24212c 1.03%, #383344 77.9%);
+	border-radius: 4px;
+	overflow: hidden;
 }
+
 .castos-player .player__main {
-    display: grid;
-    grid-template-columns: 150px 1fr;
-    grid-gap: 15px;
-    position: relative;
+	display: grid;
+	grid-template-columns: 150px 1fr;
+	grid-gap: 15px;
+	position: relative;
 }
+
 .castos-player .player__artwork {
-    line-height: 0;
-    z-index: 0;
+	line-height: 0;
+	z-index: 0;
 }
+
 .castos-player .player__artwork:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
+
 .castos-player .player__artwork img {
-    height: 150px;
-    width: 150px
+	height: 150px;
+	width: 150px
 }
+
 .castos-player .player__body {
-    display: grid;
-    grid-template-rows: auto auto 1fr;
-    padding: 13px 13px 10px 0;
+	display: grid;
+	grid-template-rows: auto auto 1fr;
+	padding: 13px 13px 10px 0;
 }
+
 .castos-player .powered-by {
-    position: absolute;
-    bottom: 15px;
-    right: 15px;
-    background-position: top left;
-    background-repeat: no-repeat;
-    opacity: 0.4;
-    background: url('images/player/images/castos-logo-light.svg');
+	position: absolute;
+	bottom: 15px;
+	right: 15px;
+	background-position: top left;
+	background-repeat: no-repeat;
+	opacity: 0.4;
+	background: url('images/player/images/castos-logo-light.svg');
 }
+
 .castos-player .powered-by a {
-    width: 59px;
-    display: block;
-    height: 20px;
+	width: 59px;
+	display: block;
+	height: 20px;
 }
 
 /* Panels */
 .castos-player .player-panels .player-panel {
-    position: absolute;
-    left: 12px;
-    right: 12px;
-    top: 12px;
-    bottom: 0%;
-    background: #2e2a37;
-    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
-    border-radius: 3px 3px 0px 0px;
-    z-index: 2;
-    transform: translateY(110%);
-    transition: all 250ms ease-in-out;
+	position: absolute;
+	left: 12px;
+	right: 12px;
+	top: 12px;
+	bottom: 0%;
+	background: #2e2a37;
+	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
+	border-radius: 3px 3px 0px 0px;
+	z-index: 2;
+	transform: translateY(110%);
+	transition: all 250ms ease-in-out;
 }
+
 .castos-player .player-panels .player-panel.open {
-    transform: translateY(0);
+	transform: translateY(0);
 }
+
 .castos-player .close-btn {
-    z-index: 3;
-    position: absolute;
-    top: -7px;
-    right: -7px;
-    background-color: #fff;
-    border-radius: 50%;
-    display: inline-block;
-    width: 21px;
-    height: 21px;
+	z-index: 3;
+	position: absolute;
+	top: -7px;
+	right: -7px;
+	background-color: #fff;
+	border-radius: 50%;
+	display: inline-block;
+	width: 21px;
+	height: 21px;
 }
+
 .castos-player .close-btn span {
-    display: inline-block;
-    width: 13px;
-    height: 2px;
-    background-color: #df4e4f;
-    position: absolute;
-    left: 4px;
-    top: 9px;
-    transition: all 100ms ease-in-out;
+	display: inline-block;
+	width: 13px;
+	height: 2px;
+	background-color: #df4e4f;
+	position: absolute;
+	left: 4px;
+	top: 9px;
+	transition: all 100ms ease-in-out;
 }
+
 .castos-player .close-btn span:nth-child(1) {
-    transform: rotate(45deg);
+	transform: rotate(45deg);
 }
+
 .castos-player .close-btn span:nth-child(2) {
-    transform: rotate(-45deg);
+	transform: rotate(-45deg);
 }
+
 .castos-player .close-btn:hover {
-    cursor: pointer;
+	cursor: pointer;
 }
+
 .castos-player .close-btn:hover span:nth-child(1) {
-    transform: rotate(135deg);
+	transform: rotate(135deg);
 }
+
 .castos-player .close-btn:hover span:nth-child(2) {
-    transform: rotate(45deg);
+	transform: rotate(45deg);
 }
+
 .castos-player .player-panel {
-    padding: 12px 7px 10px 15px;
+	padding: 12px 7px 10px 15px;
 }
+
 .castos-player .player-panel h3 {
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    color: #fff;
-    margin: 0 0 5px 0;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 500;
+	color: #fff;
+	margin: 0 0 5px 0;
 }
+
 .castos-player .player-panel .player-panel-row {
-    display: grid;
-    grid-template-columns: 70px 1fr 30px;
-    margin-bottom: 10px;
-    align-items: center;
+	display: grid;
+	grid-template-columns: 70px 1fr 30px;
+	margin-bottom: 10px;
+	align-items: center;
 }
+
 .castos-player .player-panel .player-panel-row .title {
-    color: #fff;
-    text-transform: uppercase;
-    font-family: 'Poppins', sans-serif;
-    font-weight: 500;
-    font-size: 14px;
+	color: #fff;
+	text-transform: uppercase;
+	font-family: 'Poppins', sans-serif;
+	font-weight: 500;
+	font-size: 14px;
 }
+
 .castos-player .player-panel .player-panel-row button {
-    justify-self: flex-end;
-    padding: 16px 13px 15px 14px;
-    border-radius: 0 4px 4px 0;
-    transition: all 200ms ease-in-out;
-    display: block;
-    mask-image: url('images/player/images/icon-copy.svg');
-    mask-repeat: no-repeat;
-    mask-position: center center;
-    -webkit-mask-image: url('images/player/images/icon-copy.svg');
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center center;
-    border: none;
-    background-color: #f8f6f6;
+	justify-self: flex-end;
+	padding: 16px 13px 15px 14px;
+	border-radius: 0 4px 4px 0;
+	transition: all 200ms ease-in-out;
+	display: block;
+	mask-image: url('images/player/images/icon-copy.svg');
+	mask-repeat: no-repeat;
+	mask-position: center center;
+	-webkit-mask-image: url('images/player/images/icon-copy.svg');
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center center;
+	border: none;
+	background-color: #f8f6f6;
 }
+
 .castos-player .player-panel .player-panel-row button:hover {
-    cursor: pointer;
-    background-color: #df4e4f !important;
+	cursor: pointer;
+	background-color: #df4e4f !important;
 }
+
 .castos-player .icons-holder {
-    display: grid;
-    grid-template-columns: auto auto 1fr;
+	display: grid;
+	grid-template-columns: auto auto 1fr;
 }
+
 .castos-player .share-icon {
-    width: 30px;
-    height: 30px;
-    display: grid;
-    align-items: center;
-    justify-content: center;
-    margin-right: 10px;
-    border-radius: 50%;
-    transition: all 200ms ease-in-out;
-    background-color: #423d4c;
+	width: 30px;
+	height: 30px;
+	display: grid;
+	align-items: center;
+	justify-content: center;
+	margin-right: 10px;
+	border-radius: 50%;
+	transition: all 200ms ease-in-out;
+	background-color: #423d4c;
 }
+
 .castos-player .share-icon span {
-    mask-repeat: no-repeat;
-    mask-position: center center;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: center center;
-    width: 14px;
-    height: 15px;
-    background-color: #fff;
+	mask-repeat: no-repeat;
+	mask-position: center center;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: center center;
+	width: 14px;
+	height: 15px;
+	background-color: #fff;
 }
+
 .castos-player .share-icon.facebook span {
-    mask-image: url('images/player/images/brands/icon-brand-facebook.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-facebook.svg');
+	mask-image: url('images/player/images/brands/icon-brand-facebook.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-facebook.svg');
 }
+
 .castos-player .share-icon.twitter span {
-    mask-image: url('images/player/images/brands/icon-brand-twitter.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-twitter.svg');
+	mask-image: url('images/player/images/brands/icon-brand-twitter.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-twitter.svg');
 }
+
 .castos-player .share-icon.download span {
-    mask-image: url('images/player/images/icon-download.svg');
-    -webkit-mask-image: url('images/player/images/icon-download.svg');
+	mask-image: url('images/player/images/icon-download.svg');
+	-webkit-mask-image: url('images/player/images/icon-download.svg');
 }
 
 .castos-player .share-icon:hover {
-    background-color: #df4e4f !important;
+	background-color: #df4e4f !important;
 }
+
 .castos-player .player-panel .player-panel-row input {
-    border: none;
-    padding: 7px;
-    margin: 0;
-    color: #d4c9c9;
-    background-color: #423d4c;
-    font-size: 14px;
-    width: calc(100% - 14px);
-    border-radius: 2px;
-    text-overflow: ellipsis;
+	border: none;
+	padding: 7px;
+	margin: 0;
+	color: #d4c9c9;
+	background-color: #423d4c;
+	font-size: 14px;
+	width: calc(100% - 14px);
+	border-radius: 2px;
+	text-overflow: ellipsis;
 }
+
 .castos-player .subscribe-icons {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-gap: 10px 15px;
-    align-items: center;
-    justify-content: start;
-    margin: 5px 0 15px 0;
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 10px 15px;
+	align-items: center;
+	justify-content: start;
+	margin: 5px 0 15px 0;
 }
+
 .castos-player .subscribe-icons a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 11px;
-    display: grid;
-    grid-template-columns: auto 1fr;
-    align-items: center;
-    grid-gap: 5px;
-    opacity: 0.8;
-    margin: 0;
-    float: none;
+	color: #fff;
+	text-decoration: none;
+	font-size: 11px;
+	display: grid;
+	grid-template-columns: auto 1fr;
+	align-items: center;
+	grid-gap: 5px;
+	opacity: 0.8;
+	margin: 0;
+	float: none;
 }
+
 .castos-player .subscribe-icons a:hover {
-    opacity: 1;
-    cursor: pointer;
-    color: #fff;
+	opacity: 1;
+	cursor: pointer;
+	color: #fff;
 }
+
 .castos-player .subscribe-icons span {
-    mask-repeat: no-repeat;
-    mask-position: left center;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: left center;
-    width: 20px;
-    height: 20px;
-    background-color: #fff;
+	mask-repeat: no-repeat;
+	mask-position: left center;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: left center;
+	width: 20px;
+	height: 20px;
+	background-color: #fff;
 }
+
 .castos-player .subscribe-icons .apple-podcasts span,
 .castos-player .subscribe-icons .itunes span {
-    mask-image: url('images/player/images/brands/icon-brand-apple-podcasts.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-apple-podcasts.svg');
+	mask-image: url('images/player/images/brands/icon-brand-apple-podcasts.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-apple-podcasts.svg');
 }
+
 .castos-player .subscribe-icons .sticher span,
 .castos-player .subscribe-icons .stitcher span {
-    mask-image: url('images/player/images/brands/icon-brand-sticher.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-sticher.svg');
+	mask-image: url('images/player/images/brands/icon-brand-sticher.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-sticher.svg');
 }
+
 .castos-player .subscribe-icons .overcast span {
-    mask-image: url('images/player/images/brands/icon-brand-overcast.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-overcast.svg');
+	mask-image: url('images/player/images/brands/icon-brand-overcast.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-overcast.svg');
 }
+
 .castos-player .subscribe-icons .pocketcasts span {
-    mask-image: url('images/player/images/brands/icon-brand-pocketcasts.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-pocketcasts.svg');
+	mask-image: url('images/player/images/brands/icon-brand-pocketcasts.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-pocketcasts.svg');
 }
+
 .castos-player .subscribe-icons .spotify span {
-    mask-image: url('images/player/images/brands/icon-brand-spotify.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-spotify.svg');
+	mask-image: url('images/player/images/brands/icon-brand-spotify.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-spotify.svg');
 }
+
 .castos-player .subscribe-icons .castro span {
-    mask-image: url('images/player/images/brands/icon-brand-castro.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-castro.svg');
+	mask-image: url('images/player/images/brands/icon-brand-castro.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-castro.svg');
 }
 
 .castos-player .subscribe-icons .google-play span {
-    mask-image: url('images/player/images/brands/icon-brand-google-play.svg');
-    -webkit-mask-image: url('images/player/images/brands/icon-brand-google-play.svg');
+	mask-image: url('images/player/images/brands/icon-brand-google-play.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-google-play.svg');
 }
 
 .castos-player .subscribe-icons .deezer span {
-    mask-image: url('images/player/images/brands/deezer.svg');
-    -webkit-mask-image: url('images/player/images/brands/deezer.svg');
+	mask-image: url('images/player/images/brands/deezer.svg');
+	-webkit-mask-image: url('images/player/images/brands/deezer.svg');
 }
 
 .castos-player .subscribe-icons .tunein span {
-    mask-image: url('images/player/images/brands/tunein.svg');
-    -webkit-mask-image: url('images/player/images/brands/tunein.svg');
+	mask-image: url('images/player/images/brands/tunein.svg');
+	-webkit-mask-image: url('images/player/images/brands/tunein.svg');
 }
 
 .castos-player .subscribe-icons .castbox span {
-    mask-image: url('images/player/images/brands/castbox.svg');
-    -webkit-mask-image: url('images/player/images/brands/castbox.svg');
+	mask-image: url('images/player/images/brands/castbox.svg');
+	-webkit-mask-image: url('images/player/images/brands/castbox.svg');
 }
+
 /* Currently Playing */
 .castos-player .currently-playing {
-    overflow: hidden;
-    width: 100%;
+	overflow: hidden;
+	width: 100%;
 }
+
 .castos-player .currently-playing .show {
-    color: #fff;
-    opacity: 0.6;
-    font-size: 14px;
-    line-height: 1.1;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
+	color: #fff;
+	opacity: 0.6;
+	font-size: 14px;
+	line-height: 1.1;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
 }
+
 .castos-player .currently-playing .show strong {
-    padding-right: 2px;
+	padding-right: 2px;
 }
+
 .castos-player .currently-playing .show span {
-    padding-left: 3px;
-    white-space: nowrap;
+	padding-left: 3px;
+	white-space: nowrap;
 }
+
 .castos-player .episode-title {
-    color: #fff;
-    font-family: 'Poppins', sans-serif;
-    font-size: 16px;
-    margin: 7px 0 4px 0;
-    line-height: 1.2;
-    height: 25px;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 100%;
+	color: #fff;
+	font-family: 'Poppins', sans-serif;
+	font-size: 16px;
+	margin: 7px 0 4px 0;
+	line-height: 1.2;
+	height: 25px;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	overflow: hidden;
+	width: 100%;
 }
+
 .castos-player .play-progress {
-    display: grid;
-    grid-template-columns: 45px 1fr;
-    grid-gap: 15px;
+	display: grid;
+	grid-template-columns: 45px 1fr;
+	grid-gap: 15px;
 }
+
 .castos-player .play-pause-controls {
-    background: #fff;
-    position: relative;
-    width: 44px;
-    height: 44px;
-    display: block;
-    border-radius: 50%;
+	background: #fff;
+	position: relative;
+	width: 44px;
+	height: 44px;
+	display: block;
+	border-radius: 50%;
 }
+
 .castos-player .play-pause-controls button {
-    position: absolute;
+	position: absolute;
 }
+
 .castos-player .play-pause-controls .play-btn {
-    background: url('images/player/images/icon-play.svg');
-    background-repeat: no-repeat;
-    background-position: 14px 11px;
-    border: none;
-    padding: 22px;
-    z-index: 2;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
+	background: url('images/player/images/icon-play.svg');
+	background-repeat: no-repeat;
+	background-position: 14px 11px;
+	border: none;
+	padding: 22px;
+	z-index: 2;
+	border-radius: 50%;
+	width: 44px;
+	height: 44px;
 }
+
 .castos-player .play-pause-controls .play-btn:hover {
-    cursor: pointer;
-    transform: scale(1.1);
+	cursor: pointer;
+	transform: scale(1.1);
 }
+
 .castos-player .play-pause-controls .pause-btn {
-    background: url('images/player/images/icon-pause.svg');
-    background-repeat: no-repeat;
-    background-position: 13px 13px;
-    border: none;
-    padding: 22px;
-    z-index: 2;
-    border-radius: 50%;
-    width: 44px;
-    height: 44px;
+	background: url('images/player/images/icon-pause.svg');
+	background-repeat: no-repeat;
+	background-position: 13px 13px;
+	border: none;
+	padding: 22px;
+	z-index: 2;
+	border-radius: 50%;
+	width: 44px;
+	height: 44px;
 }
+
 .castos-player .play-pause-controls .pause-btn:hover {
-    cursor: pointer;
-    transform: scale(1.1);
+	cursor: pointer;
+	transform: scale(1.1);
 }
+
 .castos-player .play-pause-controls .hide {
-    display: none;
+	display: none;
 }
+
 .castos-player .play-pause-controls .loader {
-    padding: 4px 3px 4px 3px;
-    animation-name: spin;
-    animation-duration: 3000ms;
-    animation-iteration-count: infinite;
-    animation-timing-function: linear;
-    z-index: 1;
+	padding: 4px 3px 4px 3px;
+	animation-name: spin;
+	animation-duration: 3000ms;
+	animation-iteration-count: infinite;
+	animation-timing-function: linear;
+	z-index: 1;
 }
+
 @keyframes spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+	from {
+		transform: rotate(0deg);
+	}
+	to {
+		transform: rotate(360deg);
+	}
 }
 
 .castos-player .progress {
-    flex: 10;
-    position: relative;
-    display: flex;
-    flex-basis: 100%;
-    width: 100%;
-    height: 8px;
-    border-radius: 10px;
-    margin: 4px 0;
-    cursor: ew-resize;
-    background-color: #4c4659;
+	flex: 10;
+	position: relative;
+	display: flex;
+	flex-basis: 100%;
+	width: 100%;
+	height: 8px;
+	border-radius: 10px;
+	margin: 4px 0;
+	cursor: ew-resize;
+	background-color: #4c4659;
 }
 
 .castos-player .progress__filled {
-    width: 0;
-    flex: 0;
-    flex-basis: 0;
-    border-radius: 10px;
-    background-color: #df4e4f;
+	width: 0;
+	flex: 0;
+	flex-basis: 0;
+	border-radius: 10px;
+	background-color: #df4e4f;
 }
 
 .castos-player .play-pause-controls .icon {
-    position: absolute;
-    top: 15px;
+	position: absolute;
+	top: 15px;
 }
 
 /* Audio Player */
 .castos-player .playback {
-    display: grid;
-    grid-template-columns: 1fr auto;
-    justify-items: flex-start;
-    padding: 5px 0;
+	display: grid;
+	grid-template-columns: 1fr auto;
+	justify-items: flex-start;
+	padding: 5px 0;
 }
+
 .castos-player .playback__controls {
-    display: grid;
-    grid-template-columns: repeat(4, auto);
-    justify-content: center;
-    align-items: center;
-    grid-gap: 10px;
+	display: grid;
+	grid-template-columns: repeat(4, auto);
+	justify-content: center;
+	align-items: center;
+	grid-gap: 10px;
 }
+
 .castos-player .playback__timers {
-    color: #fff;
-    opacity: 0.4;
-    font-size: 12px;
-    letter-spacing: normal;
-    transition: all 200ms ease-in-out;
+	color: #fff;
+	opacity: 0.4;
+	font-size: 12px;
+	letter-spacing: normal;
+	transition: all 200ms ease-in-out;
 }
+
 .castos-player .playback__timers span {
-    opacity: 0.6;
+	opacity: 0.6;
 }
+
 .castos-player .playback__controls button {
-    opacity: 0.4;
-    transition: all 200ms ease-in-out;
+	opacity: 0.4;
+	transition: all 200ms ease-in-out;
 }
+
 .castos-player .player:hover .playback__controls button,
 .castos-player .player:hover .playback__timers,
 .castos-player .player:hover .player-panels-nav button {
-    opacity: 0.65;
+	opacity: 0.65;
 }
+
 .castos-player .player:hover .playback__controls button:hover {
-    opacity: 1;
-    cursor: pointer;
+	opacity: 1;
+	cursor: pointer;
 }
+
 .castos-player .player-btn__volume,
 .castos-player .player-btn__rwd,
 .castos-player .player-btn__fwd {
-    mask-repeat: no-repeat;
-    mask-position: left center;
-    -webkit-mask-repeat: no-repeat;
-    -webkit-mask-position: left center;
+	mask-repeat: no-repeat;
+	mask-position: left center;
+	-webkit-mask-repeat: no-repeat;
+	-webkit-mask-position: left center;
 }
+
 .castos-player .player-btn__volume {
-    mask-image: url('images/player/images/icon-volume-on.svg');
-    -webkit-mask-image: url('images/player/images/icon-volume-on.svg');
-    border: none;
-    width: 20px;
-    height: 18px;
+	mask-image: url('images/player/images/icon-volume-on.svg');
+	-webkit-mask-image: url('images/player/images/icon-volume-on.svg');
+	border: none;
+	width: 20px;
+	height: 18px;
 }
+
 .castos-player .player-btn__volume.off {
-    mask-image: url('images/player/images/icon-volume-off.svg');
-    -webkit-mask-image: url('images/player/images/icon-volume-off.svg');
-    border: none;
-    width: 20px;
-    height: 18px;
-    background-color: #dd4142 !important;
+	mask-image: url('images/player/images/icon-volume-off.svg');
+	-webkit-mask-image: url('images/player/images/icon-volume-off.svg');
+	border: none;
+	width: 20px;
+	height: 18px;
+	background-color: #dd4142 !important;
 }
+
 .castos-player .player-btn__rwd {
-    mask-image: url('images/player/images/icon-rwd.svg');
-    -webkit-mask-image: url('images/player/images/icon-rwd.svg');
-    border: none;
-    width: 20px;
-    height: 20px;
-    background-color: #fff;
-    padding-right: 0;
+	mask-image: url('images/player/images/icon-rwd.svg');
+	-webkit-mask-image: url('images/player/images/icon-rwd.svg');
+	border: none;
+	width: 20px;
+	height: 20px;
+	background-color: #fff;
+	padding-right: 0;
 }
+
 .castos-player .player-btn__fwd {
-    mask-image: url('images/player/images/icon-fwd.svg');
-    -webkit-mask-image: url('images/player/images/icon-fwd.svg');
-    border: none;
-    width: 20px;
-    height: 20px;
-    background-color: #fff;
+	mask-image: url('images/player/images/icon-fwd.svg');
+	-webkit-mask-image: url('images/player/images/icon-fwd.svg');
+	border: none;
+	width: 20px;
+	height: 20px;
+	background-color: #fff;
 }
+
 .castos-player .player-btn__speed {
-    font-size: 12px;
-    border-radius: 4px;
-    background: none;
-    padding: 1px 4px;
-    width: 32px;
-    text-align: center;
-    color: #fff;
-    border: 1px solid #fff;
+	font-size: 12px;
+	border-radius: 4px;
+	background: none;
+	padding: 1px 4px;
+	width: 32px;
+	text-align: center;
+	color: #fff;
+	border: 1px solid #fff;
 }
+
 .castos-player .player-panels-nav {
-    margin-left: 52px;
-    align-self: flex-end;
-    line-height: normal;
+	margin-left: 52px;
+	align-self: flex-end;
+	line-height: normal;
 }
+
 .castos-player .player-panels-nav button {
-    border: none;
-    padding: 3px 10px;
-    font-size: 12px;
-    font-family: 'Poppins', sans-serif;
-    border-radius: 4px;
-    text-transform: uppercase;
-    opacity: 0.4;
-    transition: all 200ms ease-in-out;
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0);
+	border: none;
+	padding: 3px 10px;
+	font-size: 12px;
+	font-family: 'Poppins', sans-serif;
+	border-radius: 4px;
+	text-transform: uppercase;
+	opacity: 0.4;
+	transition: all 200ms ease-in-out;
+	color: #fff;
+	background-color: rgba(255, 255, 255, 0);
 }
+
 .castos-player .player:hover .player-panels-nav button:hover {
-    opacity: 1;
-    cursor: pointer;
-    background-color: rgba(255, 255, 255, 0.1);
+	opacity: 1;
+	cursor: pointer;
+	background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* ///////////////////////////////////////////////////////////////////////// */
 /* LIGHT MODE */
 /* ///////////////////////////////////////////////////////////////////////// */
 .castos-player.light-mode .player {
-    background: linear-gradient(359.68deg, #dddddd 1.03%, #f0f0f0 77.9%);
+	background: linear-gradient(359.68deg, #dddddd 1.03%, #f0f0f0 77.9%);
 }
+
 .castos-player.light-mode .powered-by {
-    background: url('images/player/images/castos-logo-dark.svg');
+	background: url('images/player/images/castos-logo-dark.svg');
 }
+
 .castos-player.light-mode .player-panels .player-panel {
-    background: #fff;
-    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
+	background: #fff;
+	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 }
+
 .castos-player.light-mode .close-btn {
-    background-color: #423d4c;
+	background-color: #423d4c;
 }
+
 .castos-player.light-mode .close-btn span {
-    background-color: #fff;
+	background-color: #fff;
 }
+
 .castos-player.light-mode .episode-title,
 .castos-player.light-mode .currently-playing .show,
 .castos-player.light-mode .subscribe-icons a,
 .castos-player.light-mode .player-panel h3,
 .castos-player.light-mode .player-panel .player-panel-row .title,
 .castos-player.light-mode .playback__timers {
-    color: #4b4659;
+	color: #4b4659;
 }
+
 .castos-player.light-mode .share-icon,
 .castos-player.light-mode .player-panel .player-panel-row input {
-    background-color: #f1f1f1;
+	background-color: #f1f1f1;
 }
+
 .castos-player.light-mode .player-panel .player-panel-row input {
-    color: #5f596e;
+	color: #5f596e;
 }
+
 .castos-player.light-mode .player-panels-nav button {
-    color: #2e2a37;
-    background-color: rgba(0, 0, 0, 0);
+	color: #2e2a37;
+	background-color: rgba(0, 0, 0, 0);
 }
+
 .castos-player.light-mode .player:hover .player-panels-nav button:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+	background-color: rgba(0, 0, 0, 0.05);
 }
+
 .castos-player.light-mode .player-btn__speed {
-    color: #4b4659;
-    border: 1px solid #4b4659;
+	color: #4b4659;
+	border: 1px solid #4b4659;
 }
+
 .castos-player.light-mode .progress {
-    background-color: #d3d3d3;
+	background-color: #d3d3d3;
 }
+
 .castos-player.light-mode .player-panel .player-panel-row button {
-    background-color: #5f596e;
+	background-color: #5f596e;
 }
+
 .castos-player.light-mode .subscribe-icons span,
 .castos-player.light-mode .share-icon span,
 .castos-player.light-mode .player-btn__volume,
 .castos-player.light-mode .player-btn__rwd,
 .castos-player.light-mode .player-btn__fwd {
-    background-color: #4c4659;
+	background-color: #4c4659;
 }
 
 /* ///////////////////////////////////////////////////////////////////////// */
 /* AUTO DETECT LIGHT MODE */
 /* ///////////////////////////////////////////////////////////////////////// */
 @media (prefers-color-scheme: light) {
-    .castos-player .player {
-        background: linear-gradient(359.68deg, #dddddd 1.03%, #f0f0f0 77.9%);
-    }
-    .castos-player .powered-by {
-        background: url('images/player/images/castos-logo-dark.svg');
-    }
-    .castos-player .player-panels .player-panel {
-        background: #fff;
-        box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
-    }
-    .castos-player .close-btn {
-        background-color: #423d4c;
-    }
-    .castos-player .close-btn span {
-        background-color: #fff;
-    }
-    .castos-player .episode-title,
-    .castos-player .currently-playing .show,
-    .castos-player .subscribe-icons a,
-    .castos-player .player-panel h3,
-    .castos-player .player-panel .player-panel-row .title,
-    .castos-player .playback__timers {
-        color: #4b4659;
-    }
-    .castos-player .share-icon,
-    .castos-player .player-panel .player-panel-row input {
-        background-color: #f1f1f1;
-    }
-    .castos-player .player-panel .player-panel-row input {
-        color: #5f596e;
-    }
-    .castos-player .player-panels-nav button {
-        color: #2e2a37;
-        background-color: rgba(0, 0, 0, 0);
-    }
-    .castos-player .player:hover .player-panels-nav button:hover {
-        background-color: rgba(0, 0, 0, 0.05);
-    }
-    .castos-player .player-btn__speed {
-        color: #4b4659;
-        border: 1px solid #4b4659;
-    }
-    .castos-player .progress {
-        background-color: #d3d3d3;
-    }
-    .castos-player .player-panel .player-panel-row button {
-        background-color: #5f596e;
-    }
-    .castos-player .subscribe-icons span,
-    .castos-player .share-icon span,
-    .castos-player .player-btn__volume,
-    .castos-player .player-btn__rwd,
-    .castos-player .player-btn__fwd {
-        background-color: #4c4659;
-    }
+	.castos-player .player {
+		background: linear-gradient(359.68deg, #dddddd 1.03%, #f0f0f0 77.9%);
+	}
+
+	.castos-player .powered-by {
+		background: url('images/player/images/castos-logo-dark.svg');
+	}
+
+	.castos-player .player-panels .player-panel {
+		background: #fff;
+		box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
+	}
+
+	.castos-player .close-btn {
+		background-color: #423d4c;
+	}
+
+	.castos-player .close-btn span {
+		background-color: #fff;
+	}
+
+	.castos-player .episode-title,
+	.castos-player .currently-playing .show,
+	.castos-player .subscribe-icons a,
+	.castos-player .player-panel h3,
+	.castos-player .player-panel .player-panel-row .title,
+	.castos-player .playback__timers {
+		color: #4b4659;
+	}
+
+	.castos-player .share-icon,
+	.castos-player .player-panel .player-panel-row input {
+		background-color: #f1f1f1;
+	}
+
+	.castos-player .player-panel .player-panel-row input {
+		color: #5f596e;
+	}
+
+	.castos-player .player-panels-nav button {
+		color: #2e2a37;
+		background-color: rgba(0, 0, 0, 0);
+	}
+
+	.castos-player .player:hover .player-panels-nav button:hover {
+		background-color: rgba(0, 0, 0, 0.05);
+	}
+
+	.castos-player .player-btn__speed {
+		color: #4b4659;
+		border: 1px solid #4b4659;
+	}
+
+	.castos-player .progress {
+		background-color: #d3d3d3;
+	}
+
+	.castos-player .player-panel .player-panel-row button {
+		background-color: #5f596e;
+	}
+
+	.castos-player .subscribe-icons span,
+	.castos-player .share-icon span,
+	.castos-player .player-btn__volume,
+	.castos-player .player-btn__rwd,
+	.castos-player .player-btn__fwd {
+		background-color: #4c4659;
+	}
 }
 
 /* ///////////////////////////////////////////////////////////////////////// */
 /* DARK MODE */
 /* ///////////////////////////////////////////////////////////////////////// */
 .castos-player.dark-mode .player {
-    background: linear-gradient(359.68deg, #24212c 1.03%, #383344 77.9%);
+	background: linear-gradient(359.68deg, #24212c 1.03%, #383344 77.9%);
 }
+
 .castos-player.dark-mode .powered-by {
-    background: url('images/player/images/castos-logo-light.svg');
+	background: url('images/player/images/castos-logo-light.svg');
 }
+
 .castos-player.dark-mode .player-panels .player-panel {
-    background: #2e2a37;
-    box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
+	background: #2e2a37;
+	box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 }
+
 .castos-player.dark-mode .close-btn {
-    background-color: #fff;
+	background-color: #fff;
 }
+
 .castos-player.dark-mode .close-btn span {
-    background-color: #df4e4f;
+	background-color: #df4e4f;
 }
+
 .castos-player.dark-mode .episode-title,
 .castos-player.dark-mode .currently-playing .show,
 .castos-player.dark-mode .subscribe-icons a,
 .castos-player.dark-mode .player-panel h3,
 .castos-player.dark-mode .player-panel .player-panel-row .title,
 .castos-player.dark-mode .playback__timers {
-    color: #fff;
+	color: #fff;
 }
+
 .castos-player.dark-mode .share-icon,
 .castos-player.dark-mode .player-panel .player-panel-row input {
-    color: #d4c9c9;
-    background-color: #423d4c;
+	color: #d4c9c9;
+	background-color: #423d4c;
 }
+
 .castos-player.dark-mode .player-panels-nav button {
-    color: #fff;
-    background-color: rgba(255, 255, 255, 0);
+	color: #fff;
+	background-color: rgba(255, 255, 255, 0);
 }
+
 .castos-player.dark-mode .player:hover .player-panels-nav button:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+	background-color: rgba(255, 255, 255, 0.1);
 }
+
 .castos-player.dark-mode .player-btn__speed {
-    color: #fff;
-    border: 1px solid #fff;
+	color: #fff;
+	border: 1px solid #fff;
 }
+
 .castos-player.dark-mode .progress {
-    background-color: #4c4659;
+	background-color: #4c4659;
 }
+
 .castos-player.dark-mode .player-panel .player-panel-row button {
-    background-color: #f8f6f6;
+	background-color: #f8f6f6;
 }
+
 .castos-player.dark-mode .subscribe-icons span,
 .castos-player.dark-mode .share-icon span {
-    background-color: #fff;
+	background-color: #fff;
 }
+
 .castos-player.dark-mode .subscribe-icons span,
 .castos-player.dark-mode .share-icon span,
 .castos-player.dark-mode .player-btn__volume,
 .castos-player.dark-mode .player-btn__rwd,
 .castos-player.dark-mode .player-btn__fwd {
-    background-color: #fff;
+	background-color: #fff;
 }
 
 /* ///////////////////////////////////////////////////////////////////////// */
@@ -705,119 +846,141 @@
 /* ///////////////////////////////////////////////////////////////////////// */
 @media (max-width: 768px) {
 	.castos-player .player__main {
-        grid-template-columns: 60px 1fr;
-        grid-gap: 0;
-        height: 150px;
-    }
+		grid-template-columns: 60px 1fr;
+		grid-gap: 0;
+		height: 150px;
+	}
+
 	.castos-player .player__artwork img {
-        width: 45px;
-        height: 45px;
-        margin: 12px;
-        border-radius: 4px;
-    }
+		width: 45px;
+		height: 45px;
+		margin: 12px;
+		border-radius: 4px;
+	}
+
 	.castos-player .player__body {
-        padding: 12px 12px 4px 12px;
-    }
+		padding: 12px 12px 4px 12px;
+	}
+
 	.castos-player .player-panels .player-panel {
-        left: 0;
-        right: 0;
-        top: 0;
-        bottom: 0;
-        border-radius: 0;
-    }
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+		border-radius: 0;
+	}
+
 	.castos-player .player-panel .row input {
-        font-size: 16px;
-    }
+		font-size: 16px;
+	}
+
 	.castos-player .play-progress {
-        grid-gap: 18px;
-        margin-left: -60px;
-        margin-top: 4px;
-    }
+		grid-gap: 18px;
+		margin-left: -60px;
+		margin-top: 4px;
+	}
+
 	.castos-player .play-pause-controls {
-        width: 45px;
-        height: 45px;
-    }
+		width: 45px;
+		height: 45px;
+	}
+
 	.castos-player .playback {
-        align-items: center;
-        padding: 5px 0 0 0;
-    }
+		align-items: center;
+		padding: 5px 0 0 0;
+	}
+
 	.castos-player .panel__inner {
-        height: 140px;
-        overflow-y: scroll;
-    }
+		height: 140px;
+		overflow-y: scroll;
+	}
+
 	.castos-player .close-btn {
-        top: 0;
-        right: 0;
-        width: 26px;
-        height: 26px;
-        border-radius: 0 0 0 4px;
-    }
+		top: 0;
+		right: 0;
+		width: 26px;
+		height: 26px;
+		border-radius: 0 0 0 4px;
+	}
+
 	.castos-player .close-btn span {
-        width: 16px;
-        height: 3px;
-        left: 5px;
-        top: 11px;
-    }
+		width: 16px;
+		height: 3px;
+		left: 5px;
+		top: 11px;
+	}
+
 	.castos-player .player-panels-nav button {
-        padding: 5px 10px;
-    }
+		padding: 5px 10px;
+	}
+
 	.castos-player .powered-by {
-        bottom: 5px;
-        left: 8px;
-        right: auto;
-    }
+		bottom: 5px;
+		left: 8px;
+		right: auto;
+	}
+
 	.castos-player .player-btn__volume {
-        display: none;
-    }
+		display: none;
+	}
+
 	.castos-player .player-btn__rwd {
-        width: 22px;
-        height: 22px;
-        mask-size: contain;
-        -webkit-mask-size: contain;
-    }
+		width: 22px;
+		height: 22px;
+		mask-size: contain;
+		-webkit-mask-size: contain;
+	}
+
 	.castos-player .player-btn__speed {
-        width: 35px;
-        padding: 3px 4px;
-        mask-size: cover;
-        -webkit-mask-size: cover;
-        border-width: 1px;
-    }
+		width: 35px;
+		padding: 3px 4px;
+		mask-size: cover;
+		-webkit-mask-size: cover;
+		border-width: 1px;
+	}
+
 	.castos-player .player-btn__fwd {
-        width: 22px;
-        height: 22px;
-        mask-size: contain;
-        -webkit-mask-size: contain;
-    }
+		width: 22px;
+		height: 22px;
+		mask-size: contain;
+		-webkit-mask-size: contain;
+	}
+
 	.castos-player .playback .playback__controls {
-        grid-template-columns: repeat(3, auto);
-        grid-gap: 8px;
-        justify-content: flex-start;
-    }
+		grid-template-columns: repeat(3, auto);
+		grid-gap: 8px;
+		justify-content: flex-start;
+	}
+
 	.castos-player .player-panels-nav {
-        margin: 3px -8px 0 0;
-        justify-self: flex-end;
-    }
+		margin: 3px -8px 0 0;
+		justify-self: flex-end;
+	}
+
 	.castos-player .subscribe-icons {
-        grid-template-columns: 1fr 1fr;
-        grid-gap: 10px;
-        margin: 5px 0 8px 0;
-    }
+		grid-template-columns: 1fr 1fr;
+		grid-gap: 10px;
+		margin: 5px 0 8px 0;
+	}
+
 	.castos-player .playback__timers {
-        margin-right: 2px;
-    }
+		margin-right: 2px;
+	}
+
 	.castos-player .episode-title {
-        width: calc(100vw - 100px);
-    }
+		width: calc(100vw - 100px);
+	}
+
 	.castos-player .show {
-        width: calc(100vw - 100px);
-    }
+		width: calc(100vw - 100px);
+	}
 }
 
 .castos-player .podcast-meta-itunes,
 .castos-player .podcast-meta-itunes:hover,
 .castos-player .podcast-meta-itunes:visited {
-    text-decoration: none !important;
-    color: #000000;
+	text-decoration: none !important;
+	color: #000000;
 }
 
 .castos-player .podcast-meta-itunes:active,
@@ -844,9 +1007,9 @@
 .castos-player .spotify:focus,
 .castos-player .google-play:active,
 .castos-player .google-play:focus {
-    outline: 0;
-    border: none;
-    -moz-outline-style: none;
+	outline: 0;
+	border: none;
+	-moz-outline-style: none;
 }
 
 /**

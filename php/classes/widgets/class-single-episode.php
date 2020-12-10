@@ -124,8 +124,7 @@ class Single_Episode extends WP_Widget {
 		}
 
 		// Get episode markup
-		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
-		$html         = $ss_podcasting->podcast_episode( $episode_id, $content_items, 'widget', $player_style );
+		$html = $ss_podcasting->podcast_episode( $episode_id, $content_items, 'widget', 'standard' );
 
 		if ( ! $html ) {
 			return;

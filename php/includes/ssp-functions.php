@@ -953,7 +953,7 @@ if ( ! function_exists( 'ssp_check_if_podcast_has_player' ) ) {
 		if ( empty( $episode_id ) ) {
 			return false;
 		}
-		$is_built_with_elementor = Plugin::$instance->db->is_built_with_elementor( $episode_id );
+		$is_built_with_elementor = \Elementor\Plugin::$instance->db->is_built_with_elementor( $episode_id );
 		if ( ! $is_built_with_elementor ) {
 			return false;
 		}

@@ -64,7 +64,7 @@ class Castos_Blocks extends Controller {
 
 			return;
 		}
-		include SSP_PLUGIN_PATH . 'build/index.asset.php';
+		$this->asset_file = include SSP_PLUGIN_PATH . 'build/index.asset.php';
 		add_action( 'init', array( $this, 'register_castos_blocks' ) );
 	}
 

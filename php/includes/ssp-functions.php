@@ -949,18 +949,23 @@ if ( ! function_exists( 'ssp_check_if_podcast_has_player' ) ) {
 	 *
 	 * @return false
 	 */
-	function ssp_check_if_podcast_has_elementor_player( $podcast_id = 0 ) {
-		if ( empty( $podcast_id ) ) {
+	function ssp_check_if_podcast_has_elementor_player( $episode_id = 0 ) {
+		if ( empty( $episode_id ) ) {
 			return false;
 		}
-		$document            = \Elementor\Plugin::$instance->documents->get_doc_for_frontend( $podcast_id );
+		$is_built_with_elementor = Plugin::$instance->db->is_built_with_elementor( $episode_id );
+		if ( ! $is_built_with_elementor ) {
+			return false;
+		}
+		$document = \Elementor\Plugin::$instance->documents->get_doc_for_frontend( $episode_id );
+		//$elements            = $document->get_config();
 		$content             = $document->get_content();
-		$media_player_string = '<audio class="wp-audio-shortcode" id="audio-' . $podcast_id;
+		$media_player_string = '<audio class="wp-audio-shortcode" id="audio-' . $episode_id;
 		if ( strstr( $content, $media_player_string ) ) {
 			return true;
 		}
 		$player_mode        = get_option( 'ss_podcasting_player_mode', 'dark' );
-		$html_player_string = '<div id="embed-app" class="' . $player_mode . '-mode castos-player" data-episode="' . $podcast_id . '">';
+		$html_player_string = '<div id="embed-app" class="' . $player_mode . '-mode castos-player" data-episode="' . $episode_id . '">';
 		if ( strstr( $content, $html_player_string ) ) {
 			return true;
 		}

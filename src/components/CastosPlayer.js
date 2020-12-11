@@ -5,7 +5,7 @@ import CastosPlayerPanels from "./CastosPlayerPanels";
 class CastosPlayer extends Component {
 	render() {
 		const {className, episodeId, episodeImage, episodeTitle, episodeFileUrl, episodeDuration, episodeData} = this.props;
-		const {playerMode} = episodeData;
+		const {podcastTitle, playerMode} = episodeData;
 		const playerClassNames = classnames(
 			className,
 			'castos-player',
@@ -39,7 +39,7 @@ class CastosPlayer extends Component {
 						<div className="player__body">
 							<div className="currently-playing">
 								<div className="show">
-									<strong>{episodeTitle}</strong>
+									<strong>{podcastTitle}</strong>
 								</div>
 								<div className="episode-title">{episodeTitle}</div>
 							</div>

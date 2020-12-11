@@ -4,7 +4,6 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
-use SeriouslySimplePodcasting\Repositories\episode_controller;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {

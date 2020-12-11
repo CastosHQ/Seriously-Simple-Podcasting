@@ -275,7 +275,7 @@ class Episode_Controller extends Controller {
 	 */
 	public function get_podcast_title( $id ) {
 		get_option( 'ss_podcasting_data_title' );
-		$series_id = $this->get_series_id();
+		$series_id = $this->get_series_id( $id );
 		if ( ! empty( $series_id ) ) {
 			$podcast_title = get_option( 'ss_podcasting_data_title_' . $series_id );
 			if ( ! empty( $podcast_title ) ) {

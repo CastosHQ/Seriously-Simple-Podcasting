@@ -2,9 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
-use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Controllers\Episodes_Controller;
-use WP_Query;
 
 class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 	public function get_name() {

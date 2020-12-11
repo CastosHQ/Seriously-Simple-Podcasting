@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
-use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Controllers\Episodes_Controller;
 
 class Elementor_Recent_Episodes_Widget extends \Elementor\Widget_Base {

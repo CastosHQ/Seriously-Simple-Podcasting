@@ -4,7 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
-use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Repositories\episode_controller;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -22,16 +22,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Players_Controller extends Controller {
 
 	public $renderer = null;
-	public $episode_controller;
-	public $options_handler;
-	public $episode_repository;
+	public $episode_controller = null;
+	public $options_handler = null;
 
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
-		$this->renderer           = new Renderer();
 		$this->episode_controller = new Episode_Controller( $file, $version );
 		$this->options_handler    = new Options_Handler();
-		$this->episode_repository = new Episode_Repository();
+		$this->renderer           = new Renderer();
 	}
 
 	/**
@@ -77,8 +75,8 @@ class Players_Controller extends Controller {
 		$episode_url      = get_post_permalink( $id );
 		$audio_file       = get_post_meta( $id, 'audio_file', true );
 		$album_art        = $this->episode_controller->get_album_art( $id );
-		$podcast_title    = get_option( 'ss_podcasting_data_title' );
-		$feed_url         = $this->episode_repository->get_feed_url( $id );
+		$podcast_title    = $this->episode_controller->get_podcast_title( $id );
+		$feed_url         = $this->episode_controller->get_feed_url( $id );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
 		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
 		$subscribe_links  = $this->options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );

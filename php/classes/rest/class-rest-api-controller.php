@@ -4,7 +4,6 @@ namespace SeriouslySimplePodcasting\Rest;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
-use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 /**
  * Extending the WP REST API for Seriously Simple Podcasting
@@ -431,21 +430,21 @@ class Rest_Api_Controller {
 	/**
 	 * Adds the Episode player data to the episodes route for the Castos Player block
 	 *
-	 * @return array
+	 * @return array|false
 	 */
 	public function get_episode_player_data( $object, $field_name, $request ) {
 		if ( ! empty( $object['id'] ) ) {
 			$options_handler    = new Options_Handler();
-			$episode_repository = new Episode_Repository();
+			$episode_controller = new Episode_Controller();
 			$episode_id         = $object['id'];
-			$player_data        = array(
+
+			return array(
 				'playerMode'    => get_option( 'ss_podcasting_player_mode', 'dark' ),
 				'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
-				'rssFeedUrl'    => $episode_repository->get_feed_url( $episode_id ),
+				'rssFeedUrl'    => $episode_controller->get_feed_url( $episode_id ),
+				'podcastTitle'  => $episode_controller->get_podcast_title( $episode_id ),
 				'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
 			);
-
-			return $player_data;
 		}
 
 		return false;

@@ -6,7 +6,10 @@ namespace SeriouslySimplePodcasting\Controllers;
  * SSP Episode Controller
  *
  * To be used when retreiving specific data for a single episode
- * ALL methods must at least have an episode_id argument and should only return data relevant to an episode
+ * ALL public methods must at least have an episode id argument and should only return data relevant to an episode
+ * ALL protected methods should only be helper methods to allow the public methods to function
+ *
+ * @todo consider moving this to an episode Repository or Model type class
  *
  * @package Seriously Simple Podcasting
  */
@@ -17,69 +20,11 @@ class Episode_Controller extends Controller {
 	}
 
 	/**
-	 * Get episode enclosure
-	 *
-	 * @param integer $episode_id ID of episode
-	 *
-	 * @return string              URL of enclosure
-	 */
-	public function get_enclosure( $episode_id = 0 ) {
-
-		if ( $episode_id ) {
-			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ), true ), $episode_id );
-		}
-
-		return '';
-	}
-
-	/**
-	 * Get download link for episode
-	 *
-	 * @param $episode_id
-	 * @param string $referrer
-	 *
-	 * @return string
-	 */
-
-	public function get_episode_download_link( $episode_id, $referrer = '' ) {
-
-		// Get file URL
-		$file = $this->get_enclosure( $episode_id );
-
-		if ( ! $file ) {
-			return '';
-		}
-
-		// Get download link based on permalink structure
-		if ( get_option( 'permalink_structure' ) ) {
-			$episode = get_post( $episode_id );
-			// Get file extension - default to MP3 to prevent empty extension strings
-			$ext = pathinfo( $file, PATHINFO_EXTENSION );
-			if ( ! $ext ) {
-				$ext = 'mp3';
-			}
-			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
-		} else {
-			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
-		}
-
-		// Allow for dyamic referrer
-		$referrer = apply_filters( 'ssp_download_referrer', $referrer, $episode_id );
-
-		// Add referrer flag if supplied
-		if ( $referrer ) {
-			$link = add_query_arg( array( 'ref' => $referrer ), $link );
-		}
-
-		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
-	}
-
-	/**
 	 * Returns the no album art image
 	 *
 	 * @return array
 	 */
-	private function get_no_album_art_image_array() {
+	protected function get_no_album_art_image_array() {
 		$src    = SSP_PLUGIN_URL . 'assets/images/no-album-art.png';
 		$width  = 300;
 		$height = 300;
@@ -96,7 +41,7 @@ class Episode_Controller extends Controller {
 	 * @todo check if there is a WordPress function for this
 	 *
 	 */
-	private function return_renamed_image_array_keys( $image_data_array ) {
+	protected function return_renamed_image_array_keys( $image_data_array ) {
 		$new_image_data_array = array();
 		if ( $image_data_array && ! empty( $image_data_array ) ) {
 			$new_image_data_array['src']    = isset( $image_data_array[0] ) ? $image_data_array[0] : '';
@@ -114,7 +59,7 @@ class Episode_Controller extends Controller {
 	 *
 	 * @return bool
 	 */
-	private function check_image_is_square( $image_data_array = array() ) {
+	protected function check_image_is_square( $image_data_array = array() ) {
 		if ( isset( $image_data_array['width'] ) && isset( $image_data_array['height'] ) ) {
 			if ( ( $image_data_array['width'] / $image_data_array['height'] ) === 1 ) {
 				return true;
@@ -125,30 +70,148 @@ class Episode_Controller extends Controller {
 	}
 
 	/**
+	 * Return a series id for an episode
+	 *
+	 * @param $id
+	 *
+	 * @return int
+	 * @todo check if there is a global function for this, and use it.
+	 */
+	public function get_series_id( $id ) {
+		$series_id = 0;
+		$series    = get_the_terms( $id, 'series' );
+
+		/**
+		 * In some instances, this could return a WP_Error object
+		 */
+		if ( ! is_wp_error( $series ) && $series ) {
+			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : 0;
+		}
+
+		return $series_id;
+	}
+
+	/**
+	 * Return feed url for a specific episode.
+	 *
+	 * @param $id
+	 *
+	 * @return string
+	 *
+	 */
+	public function get_feed_url( $id ) {
+		$feed_series = 'default';
+		$series_id   = $this->get_series_id( $id );
+		if ( ! empty( $series_id ) ) {
+			$series      = get_term_by( 'id', $series_id, 'series' );
+			$feed_series = $series->slug;
+		}
+
+		$permalink_structure = get_option( 'permalink_structure' );
+
+		if ( $permalink_structure ) {
+			$feed_slug = apply_filters( 'ssp_feed_slug', 'podcast' );
+			$feed_url  = trailingslashit( home_url() ) . 'feed/' . $feed_slug;
+		} else {
+			$feed_url = trailingslashit( home_url() ) . '?feed=' . $this->token;
+		}
+
+		if ( $feed_series && 'default' !== $feed_series ) {
+			if ( $permalink_structure ) {
+				$feed_url .= '/' . $feed_series;
+			} else {
+				$feed_url .= '&podcast_series=' . $feed_series;
+			}
+		}
+
+		$feed_url = apply_filters( 'ssp_feed_url', $feed_url );
+
+		return $feed_url;
+	}
+
+	/**
+	 * Get episode enclosure
+	 *
+	 * @param integer $id ID of episode
+	 *
+	 * @return string              URL of enclosure
+	 */
+	public function get_enclosure( $id = 0 ) {
+
+		if ( $id ) {
+			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $id, apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ), true ), $id );
+		}
+
+		return '';
+	}
+
+	/**
+	 * Get download link for episode
+	 *
+	 * @param $id
+	 * @param string $referrer
+	 *
+	 * @return string
+	 */
+
+	public function get_episode_download_link( $id, $referrer = '' ) {
+
+		// Get file URL
+		$file = $this->get_enclosure( $id );
+
+		if ( ! $file ) {
+			return '';
+		}
+
+		// Get download link based on permalink structure
+		if ( get_option( 'permalink_structure' ) ) {
+			$episode = get_post( $id );
+			// Get file extension - default to MP3 to prevent empty extension strings
+			$ext = pathinfo( $file, PATHINFO_EXTENSION );
+			if ( ! $ext ) {
+				$ext = 'mp3';
+			}
+			$link = $this->home_url . 'podcast-download/' . $id . '/' . $episode->post_name . '.' . $ext;
+		} else {
+			$link = add_query_arg( array( 'podcast_episode' => $id ), $this->home_url );
+		}
+
+		// Allow for dyamic referrer
+		$referrer = apply_filters( 'ssp_download_referrer', $referrer, $id );
+
+		// Add referrer flag if supplied
+		if ( $referrer ) {
+			$link = add_query_arg( array( 'ref' => $referrer ), $link );
+		}
+
+		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $id, $file );
+	}
+
+	/**
 	 * Get Album Art for Player
 	 *
 	 * Iteratively tries to find the correct album art based on whether the desired image is of square aspect ratio.
 	 * Falls back to default album art if it can not find the correct ones.
 	 *
-	 * @param $episode_id ID of the episode being loaded into the player
+	 * @param $id ID of the episode being loaded into the player
 	 *
 	 * @return array [ $src, $width, $height ]
 	 *
 	 * @since 1.19.4
 	 */
-	public function get_album_art( $episode_id = false ) {
+	public function get_album_art( $id = false ) {
 
 		/**
 		 * In case the episode id is not passed
 		 */
-		if ( ! $episode_id ) {
+		if ( ! $id ) {
 			return $this->get_no_album_art_image_array();
 		}
 
 		/**
 		 * Option 1 : if the episode has a featured image that is square, then use that
 		 */
-		$thumb_id = get_post_thumbnail_id( $episode_id );
+		$thumb_id = get_post_thumbnail_id( $id );
 		if ( ! empty( $thumb_id ) ) {
 			$image_data_array = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $thumb_id, 'medium' ) );
 			if ( $this->check_image_is_square( $image_data_array ) ) {
@@ -162,7 +225,7 @@ class Episode_Controller extends Controller {
 		$series_id    = false;
 		$series_image = '';
 
-		$series = get_the_terms( $episode_id, 'series' );
+		$series = get_the_terms( $id, 'series' );
 
 		/**
 		 * In some instances, this could return a WP_Error object
@@ -201,9 +264,26 @@ class Episode_Controller extends Controller {
 		return $this->get_no_album_art_image_array();
 	}
 
-	public function get_podcast_title($episode_id){
-		// check if this episode belongs to a series, and get the series feed title
-		// otherwise get the default feed title
+	/**
+	 * @param $id episode id
+	 *
+	 * Get the podcast title of an episode
+	 * Will check for a series, and return the series feed title first
+	 * Then will attempt to return either the default feed title, or the site name
+	 *
+	 * @return false|mixed|void
+	 */
+	public function get_podcast_title( $id ) {
+		get_option( 'ss_podcasting_data_title' );
+		$series_id = $this->get_series_id();
+		if ( ! empty( $series_id ) ) {
+			$podcast_title = get_option( 'ss_podcasting_data_title_' . $series_id );
+			if ( ! empty( $podcast_title ) ) {
+				return $podcast_title;
+			}
+		}
+
+		return get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
 	}
 
 }

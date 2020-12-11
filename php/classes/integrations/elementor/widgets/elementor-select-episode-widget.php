@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
+use SeriouslySimplePodcasting\Controllers\Episodes_Controller;
 
 class Elementor_Select_Episode_Widget extends \Elementor\Widget_Base {
 	public function get_name() {
@@ -71,8 +72,7 @@ class Elementor_Select_Episode_Widget extends \Elementor\Widget_Base {
 			$i ++;
 		}
 
-		$episode_controller = new Episode_Controller( __FILE__, SSP_VERSION );
-
-		echo $episode_controller->episode_list( $episode_ids );
+		$episodes_controller = new Episodes_Controller();
+		echo $episodes_controller->episode_list( $episode_ids );
 	}
 }

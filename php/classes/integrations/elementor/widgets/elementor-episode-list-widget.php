@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
+use SeriouslySimplePodcasting\Controllers\Episodes_Controller;
 use WP_Query;
 
 class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
@@ -78,13 +79,13 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 	}
 
 	protected function render() {
-		$settings          = $this->get_settings_for_display();
-		$render_settings         = array(
+		$settings            = $this->get_settings_for_display();
+		$render_settings     = array(
 			'show_featured_image'  => $settings['show_featured_image'],
 			'show_episode_player'  => $settings['show_episode_player'],
 			'show_episode_excerpt' => $settings['show_episode_excerpt'],
 		);
-		$episode_controller = new Episode_Controller( __FILE__, SSP_VERSION );
-		echo $episode_controller->render_episodes( $render_settings );
+		$episodes_controller = new Episodes_Controller();
+		echo $episodes_controller->render_episodes( $render_settings );
 	}
 }

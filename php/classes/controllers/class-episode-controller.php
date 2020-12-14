@@ -5,7 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 /**
  * SSP Episode Controller
  *
- * To be used when retreiving specific data for a single episode
+ * To be used when retrieving specific data for a single episode
  * ALL public methods must at least have an episode id argument and should only return data relevant to an episode
  * ALL protected methods should only be helper methods to allow the public methods to function
  *
@@ -13,11 +13,7 @@ namespace SeriouslySimplePodcasting\Controllers;
  *
  * @package Seriously Simple Podcasting
  */
-class Episode_Controller extends Controller {
-
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
-	}
+class Episode_Controller {
 
 	/**
 	 * Returns the no album art image
@@ -113,7 +109,7 @@ class Episode_Controller extends Controller {
 			$feed_slug = apply_filters( 'ssp_feed_slug', 'podcast' );
 			$feed_url  = trailingslashit( home_url() ) . 'feed/' . $feed_slug;
 		} else {
-			$feed_url = trailingslashit( home_url() ) . '?feed=' . $this->token;
+			$feed_url = trailingslashit( home_url() ) . '?feed=' . 'podcast';
 		}
 
 		if ( $feed_series && 'default' !== $feed_series ) {
@@ -163,6 +159,7 @@ class Episode_Controller extends Controller {
 			return '';
 		}
 
+		$home_url = trailingslashit( home_url() );
 		// Get download link based on permalink structure
 		if ( get_option( 'permalink_structure' ) ) {
 			$episode = get_post( $id );
@@ -171,9 +168,9 @@ class Episode_Controller extends Controller {
 			if ( ! $ext ) {
 				$ext = 'mp3';
 			}
-			$link = $this->home_url . 'podcast-download/' . $id . '/' . $episode->post_name . '.' . $ext;
+			$link = $home_url . 'podcast-download/' . $id . '/' . $episode->post_name . '.' . $ext;
 		} else {
-			$link = add_query_arg( array( 'podcast_episode' => $id ), $this->home_url );
+			$link = add_query_arg( array( 'podcast_episode' => $id ), $home_url );
 		}
 
 		// Allow for dyamic referrer

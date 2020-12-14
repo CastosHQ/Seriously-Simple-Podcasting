@@ -2,7 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use stdClass;
 use WP_Query;
 
@@ -38,6 +38,8 @@ class Frontend_Controller extends Controller {
 	 */
 	public $episode_controller;
 
+	protected $logger;
+
 	/**
 	 * Constructor
 	 *
@@ -47,6 +49,7 @@ class Frontend_Controller extends Controller {
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->episode_controller = new Episode_Controller( $file, $version );
+		$this->logger = new Log_Helper();
 		$this->register_hooks_and_filters();
 	}
 
@@ -57,6 +60,9 @@ class Frontend_Controller extends Controller {
 
 		// Register HTML5 player scripts and styles
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_html5_player_assets' ) );
+
+		// Register Elementor Recent Episodes widget styles
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_recent_episodes_assets' ) );
 
 		// Add meta data to start of podcast content
 		$locations = get_option( 'ss_podcasting_player_locations', array( 'content' ) );
@@ -116,14 +122,14 @@ class Frontend_Controller extends Controller {
 	public function register_html5_player_assets() {
 		wp_register_style(
 			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player.css' ),
+			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player' . $this->script_suffix . '.css' ),
 			array(),
 			$this->version
 		);
 
 		wp_register_script(
 			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player.js' ),
+			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player' . $this->script_suffix . '.js' ),
 			array(),
 			$this->version,
 			true
@@ -136,6 +142,20 @@ class Frontend_Controller extends Controller {
 			wp_enqueue_script( 'ssp-castos-player' );
 			wp_enqueue_style( 'ssp-castos-player' );
 		}
+	}
+
+	/**
+	 * Register the stylesheet specific to the Elementor Recent Episodes Widget
+	 * This will only be enqueued as needed when that widget is rendered
+	 */
+	public function register_recent_episodes_assets() {
+		wp_register_style(
+			'ssp-recent-episodes',
+			esc_url( SSP_PLUGIN_URL . 'assets/css/recent-episodes' . $this->script_suffix . '.css' ),
+			array(),
+			$this->version
+		);
+		wp_enqueue_style( 'ssp-recent-episodes' );
 	}
 
 	/**
@@ -387,7 +407,7 @@ class Frontend_Controller extends Controller {
 			$player_size = 'standard';
 		}
 
-		$players_controller = new Players_Controller( $this->file, $this->version );
+		$players_controller = new Players_Controller();
 		if ( 'standard' === $player_size ) {
 			$player = $players_controller->render_media_player( $episode_id );
 		} else {

@@ -18,15 +18,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.3
  */
-class Players_Controller extends Controller {
+class Players_Controller {
 
 	public $renderer = null;
 	public $episode_controller = null;
 	public $options_handler = null;
 
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
-		$this->episode_controller = new Episode_Controller( $file, $version );
+	public function __construct() {
+		$this->episode_controller = new Episode_Controller();
 		$this->options_handler    = new Options_Handler();
 		$this->renderer           = new Renderer();
 	}
@@ -85,11 +84,11 @@ class Players_Controller extends Controller {
 			'episode'         => $episode,
 			'episode_id'      => $episode->ID,
 			'duration'        => $episode_duration,
-			'episode_url'      => $episode_url,
-			'audio_file'       => $audio_file,
-			'album_art'        => $album_art,
-			'podcast_title'    => $podcast_title,
-			'feed_url'         => $feed_url,
+			'episode_url'     => $episode_url,
+			'audio_file'      => $audio_file,
+			'album_art'       => $album_art,
+			'podcast_title'   => $podcast_title,
+			'feed_url'        => $feed_url,
 			'subscribe_links' => $subscribe_links,
 			'embed_code'      => $embed_code,
 			'player_mode'     => $player_mode,

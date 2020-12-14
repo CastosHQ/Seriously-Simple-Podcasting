@@ -31,7 +31,7 @@ class Players_Controller_Test extends \Codeception\TestCase\WPTestCase
 	 * @group player-controller-html-player
 	 */
 	public function test_player_controller_html_player_method() {
-		$this->players_controller = new Players_Controller( __FILE__, '1.0.0' );
+		$this->players_controller = new Players_Controller();
 		$episode_id               = $this->factory->post->create(
 			array(
 				'title'       => 'My Custom Podcast',

@@ -127,7 +127,7 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 			$episode_id = $posts[0]->ID;
 		}
 
-		$player = new Players_Controller( __FILE__, SSP_VERSION );
+		$player = new Players_Controller();
 		echo $player->render_subscribe_buttons( $episode_id );
 	}
 

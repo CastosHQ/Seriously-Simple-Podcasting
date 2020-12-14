@@ -4,7 +4,7 @@
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
 foreach ( $episodes as $podcastEpisode ) {
-	$player = new Players_Controller($file, $version);
+	$player = new Players_Controller();
 	$episode = [];
 	$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
 	?>

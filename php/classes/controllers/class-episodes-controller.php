@@ -15,23 +15,16 @@ use WP_Query;
  *
  * @package Seriously Simple Podcasting
  */
-class Episodes_Controller extends Controller {
+class Episodes_Controller {
 
 	public $renderer = null;
 
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
+	public $logger = null;
+
+	public function __construct() {
 		$this->renderer = new Renderer();
-		$this->init();
 	}
 
-	public function init() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_recent_episodes_assets' ) );
-	}
-
-	public function load_recent_episodes_assets() {
-		wp_register_style( 'ssp-recent-episodes', $this->assets_url . 'css/recent-episodes.css', array(), $this->version );
-	}
 
 	/**
 	 * Get Episode List
@@ -77,7 +70,7 @@ class Episodes_Controller extends Controller {
 	 * @return mixed|void
 	 */
 	public function render_episodes($settings) {
-		$player       = new Players_Controller( __FILE__, SSP_VERSION );
+		$player       = new Players_Controller();
 		$args  = array(
 			'post_type'      => 'podcast',
 			'posts_per_page' => 10,

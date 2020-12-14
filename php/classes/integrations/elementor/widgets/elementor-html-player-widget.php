@@ -91,7 +91,7 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	}
 
 	protected function render() {
-		$players_controller = new Players_Controller( __FILE__, SSP_VERSION );
+		$players_controller = new Players_Controller();
 		$settings           = $this->get_settings_for_display();
 		$episode_id         = $settings['show_elements'];
 		if ( '-1' === $episode_id ) {

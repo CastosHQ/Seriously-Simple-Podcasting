@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.5.3
 Requires PHP: 5.6
-Stable tag: 2.5.1
+Stable tag: 2.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,9 +160,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 2.5.2 =
-* 2020-12-09
+* 2020-12-15
 * UPDATE SUMMARY: Shortcode/widget bug fixes for the 2.5 release
 * [FIX] Fixes a bug where single episode widget widget was broken
+* [FIX] Fixes a PHP notice when loading the block editor assets
+* [FIX] Fixes a bug where not having anything set in the Distribution Options causes an error in the HTML5 player
+* [UPDATE] Only enqueue the ssp-recent-episodes' CSS when the recent_episodes widget content is rendered
+* [UPDATE] Adds the correct podcast title to the player block and Elementor widget
 
 = 2.5.1 =
 * 2020-12-08

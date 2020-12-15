@@ -45,7 +45,7 @@ class Player {
 			$file = $ss_podcasting->get_episode_download_link( $episode_id );
 		}
 
-		$player_style = (string) get_option( 'ss_podcasting_player_style', '' );
+		$player_style = (string) get_option( 'ss_podcasting_player_style', 'standard' );
 
 		// Make sure we return and don't echo.
 		$args['echo'] = false;

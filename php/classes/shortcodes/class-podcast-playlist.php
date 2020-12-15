@@ -44,7 +44,7 @@ class Podcast_Playlist {
 				'include'      => '',
 				'exclude'      => '',
 				'style'        => 'light',
-				'player_style' => 'mini',
+				'player_style' => 'standard',
 				'tracklist'    => true,
 				'tracknumbers' => true,
 				'images'       => true,
@@ -181,7 +181,7 @@ class Podcast_Playlist {
 					$track['thumb'] = '';
 				}
 			}
-			
+
 			// Allow dynamic filtering of track data
 			$track = apply_filters( 'ssp_podcast_playlist_track_data', $track, $episode );
 
@@ -198,7 +198,7 @@ class Podcast_Playlist {
 
 		ob_start();
 
-		$player_style = 'mini';
+		$player_style = 'standard';
 
 		// @todo clean this mess up
 

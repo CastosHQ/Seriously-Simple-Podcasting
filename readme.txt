@@ -159,6 +159,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.5.2 =
+* 2020-12-15
+* UPDATE SUMMARY: Bug fixes for the 2.5 release
+* [FIX] Fixes a bug where specific widgets and shortcodes were not rendering the player
+* [FIX] Fixes a bug where leaving all Distribution Items unchecked causes a PHP error
+* [FIX] Fixes a bug where loading the blocks causes a PHP notice
+
 = 2.5.1 =
 * 2020-12-08
 * UPDATE SUMMARY: Podcast Episode bug fixes for the 2.5 release

@@ -117,7 +117,7 @@
 					<li>Automated Transcripts for all your episodes</li>
 					<li>Safe, secure file storage on a robust hosting platform</li>
 				</ul>
-				<p>Every account comes with a Free 14 day Trial</p>
+				<p>Every account comes with a Free 14-day Trial</p>
 				<br>
 				<div class="signup">
 					<a target="_blank" class='button' href="https://castos.com/ssp/?utm_source=plugin&utm_medium=welcome&utm_campaign=signup_link">Sign Up Today</a>

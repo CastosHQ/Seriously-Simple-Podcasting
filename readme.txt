@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.5.3
 Requires PHP: 5.6
-Stable tag: 2.5.1
+Stable tag: 2.5.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.5.2 =
+* 2020-12-17
+* UPDATE SUMMARY: Bug fixes for the 2.5 release
+* [FIX] Fixes a bug where specific widgets and shortcodes were not rendering the player
+* [FIX] Fixes a bug where leaving all Distribution Items unchecked causes a PHP error
+* [FIX] Fixes a bug where loading the Block Editor assets causes a PHP notice
+* [FIX] Fixes various spelling errors in the plugin (props [ihatehandles](https://profiles.wordpress.org/ihatehandles))
 
 = 2.5.1 =
 * 2020-12-08

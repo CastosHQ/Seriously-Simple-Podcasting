@@ -154,7 +154,7 @@ class Settings_Controller extends Controller {
 	 * Show the upgrade page
 	 */
 	public function show_upgrade_page() {
-		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );https://psykrotek.co.za/wp-admin/admin.php?page=jetpack#/dashboard
+		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
 		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
 		include( $this->template_path . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
 	}

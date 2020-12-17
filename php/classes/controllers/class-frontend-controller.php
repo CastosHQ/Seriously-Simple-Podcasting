@@ -1401,7 +1401,7 @@ class Frontend_Controller extends Controller {
 	 * @param  array   $content_items Ordered array of content items to display
 	 * @return string                 HTML of episode with specified content items
 	 */
-	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '', $style = 'mini' ) {
+	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '', $style = 'standard' ) {
 		global $post, $episode_context;
 
 		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {

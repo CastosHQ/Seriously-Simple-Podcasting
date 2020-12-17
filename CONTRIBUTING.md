@@ -19,7 +19,7 @@ GitHub is for *bug reports and contributions only* - if you have a support quest
 
 * Fork the repository on GitHub.
 * Clone the forked repository to your local development environment
-* Run `npm install`, which will install any npm and composer dependancies, as well as build any block editor assets
+* Run `npm install`, which will install any npm and composer dependencies, as well as build any block editor assets
 * Define the `SCRIPT_DEBUG` constant in your wp-config.php to use the development versions of any JavaScript and CSS assets
 * Make the changes to your forked repository.
   * **Ensure you stick to the [WordPress Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/) for all languages.**

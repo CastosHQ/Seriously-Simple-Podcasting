@@ -90,6 +90,25 @@ class Episode_Controller extends Controller {
 	}
 
 	/**
+	 * Get audio file for episode.
+	 *
+	 * @param int $episode_id
+	 *
+	 * @return string
+	 */
+	public function get_audio_file( $episode_id ) {
+		$file = $this->get_enclosure( $episode_id );
+		if ( get_option( 'permalink_structure' ) ) {
+			$file = $this->get_episode_download_link( $episode_id );
+		}
+
+		// Switch to podcast player URL
+		$file = str_replace( 'podcast-download', 'podcast-player', $file );
+
+		return $file;
+	}
+
+	/**
 	 * Returns the no album art image
 	 *
 	 * @return array

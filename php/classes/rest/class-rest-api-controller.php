@@ -214,7 +214,7 @@ class Rest_Api_Controller {
 	public function get_episode_audio_player() {
 		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_SANITIZE_STRING ) : '' );
 		global $ss_podcasting;
-		$file   = $ss_podcasting->episode_controller->get_enclosure( $podcast_id );
+		$file   = $ss_podcasting->episode_controller->get_audio_file( $podcast_id );
 		$params = array( 'src' => $file, 'preload' => 'none' );
 
 		return array(
@@ -420,7 +420,7 @@ class Rest_Api_Controller {
 				return;
 			}
 			global $ss_podcasting;
-			$file   = $ss_podcasting->episode_controller->get_enclosure( $object['id'] );
+			$file   = $ss_podcasting->episode_controller->get_audio_file( $object['id'] );
 			$params = array( 'src' => $file, 'preload' => 'none' );
 			return wp_audio_shortcode( $params );
 		}

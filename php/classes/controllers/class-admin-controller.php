@@ -494,7 +494,7 @@ HTML;
 				'type'         => 'string',
 				'description'  => isset( $data['meta_description'] ) ? $data['meta_description'] : "",
 				'single'       => true,
-				'show_in_rest' => isset( $data['show_in_rest'] ) ? $data['show_in_rest'] : true,
+				'show_in_rest' => true,
 			);
 
 			register_meta( 'post', $key, $args );
@@ -972,9 +972,6 @@ HTML;
 			'default'          => '',
 			'section'          => 'info',
 			'meta_description' => __( 'The full URL for the podcast episode media file.', 'seriously-simple-podcasting' ),
-			'show_in_rest'     => array(
-				'prepare_callback' => array( $this, 'prepare_audio_file' ),
-			),
 		);
 
 		//
@@ -1098,23 +1095,6 @@ HTML;
 		}
 
 		return apply_filters( 'ssp_episode_fields', $fields );
-	}
-
-	/**
-	 * Callback to modify meta audio file value for REST.
-	 *
-	 * @param $value
-	 *
-	 * @return string
-	 */
-	public function prepare_audio_file( $value ) {
-		global $post;
-
-		if ( ! is_a( $post, 'WP_Post' ) ) {
-			return $value;
-		}
-
-		return $this->episode_controller->get_audio_file( $post->ID );
 	}
 
 	/**

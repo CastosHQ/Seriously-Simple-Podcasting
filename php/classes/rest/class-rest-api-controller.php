@@ -74,6 +74,8 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_audio_download_link' ) );
 
+		add_action( 'rest_api_init', array( $this, 'register_rest_audio_player_link' ) );
+
 		add_action( 'rest_api_init', array( $this, 'register_rest_audio_player' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_episode_data' ) );
@@ -214,7 +216,7 @@ class Rest_Api_Controller {
 	public function get_episode_audio_player() {
 		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_SANITIZE_STRING ) : '' );
 		global $ss_podcasting;
-		$file   = $ss_podcasting->episode_controller->get_audio_file( $podcast_id );
+		$file   = $ss_podcasting->episode_controller->get_episode_player_link( $podcast_id );
 		$params = array( 'src' => $file, 'preload' => 'none' );
 
 		return array(
@@ -308,6 +310,21 @@ class Rest_Api_Controller {
 	}
 
 	/**
+	 * Add the audio file tracking url field to all Podcast post types
+	 */
+	public function register_rest_audio_player_link() {
+		register_rest_field(
+			ssp_post_types(),
+			'player_link',
+			array(
+				'get_callback'    => array( $this, 'get_rest_audio_player_link' ),
+				'update_callback' => null,
+				'schema'          => null,
+			)
+		);
+	}
+
+	/**
 	 * Add the audio player code to all Podcast post types
 	 */
 	public function register_rest_audio_player() {
@@ -387,7 +404,7 @@ class Rest_Api_Controller {
 	 * @param $field_name
 	 * @param $request
 	 *
-	 * @return bool
+	 * @return bool|string
 	 */
 	public function get_rest_audio_download_link( $object, $field_name, $request ) {
 		if ( ! empty( $object['meta']['audio_file'] ) ) {
@@ -395,6 +412,27 @@ class Rest_Api_Controller {
 			$download_link      = $ss_podcasting->episode_controller->get_episode_download_link( $object['id'] );
 
 			return $download_link;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get the audio_file for valid Podcast post types
+	 * Call back for the register_rest_episode_player_file method
+	 *
+	 * @param $object
+	 * @param $field_name
+	 * @param $request
+	 *
+	 * @return bool
+	 */
+	public function get_rest_audio_player_link( $object, $field_name, $request ) {
+		if ( ! empty( $object['meta']['audio_file'] ) ) {
+			global $ss_podcasting;
+			$player_link      = $ss_podcasting->episode_controller->get_episode_player_link( $object['id'] );
+
+			return $player_link;
 		}
 
 		return false;
@@ -420,7 +458,7 @@ class Rest_Api_Controller {
 				return;
 			}
 			global $ss_podcasting;
-			$file   = $ss_podcasting->episode_controller->get_audio_file( $object['id'] );
+			$file   = $ss_podcasting->episode_controller->get_episode_player_link( $object['id'] );
 			$params = array( 'src' => $file, 'preload' => 'none' );
 			return wp_audio_shortcode( $params );
 		}

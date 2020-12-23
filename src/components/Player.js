@@ -18,7 +18,7 @@ class Player extends Component {
 				<CastosPlayer
 					className={className}
 					episodeImage={post.episode_player_image}
-					episodeFileUrl={post.meta.audio_file}
+					episodeFileUrl={post.player_link}
 					episodeTitle={post.title.rendered}
 					episodeDuration={post.meta.duration}
 					episodeDownloadUrl={post.download_link}

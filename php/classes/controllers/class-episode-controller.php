@@ -90,13 +90,13 @@ class Episode_Controller extends Controller {
 	}
 
 	/**
-	 * Get audio file for episode.
+	 * Get player link for episode.
 	 *
 	 * @param int $episode_id
 	 *
 	 * @return string
 	 */
-	public function get_audio_file( $episode_id ) {
+	public function get_episode_player_link( $episode_id ) {
 		$file = $this->get_enclosure( $episode_id );
 		if ( get_option( 'permalink_structure' ) ) {
 			$file = $this->get_episode_download_link( $episode_id );

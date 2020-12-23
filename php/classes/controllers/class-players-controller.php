@@ -75,7 +75,7 @@ class Players_Controller extends Controller {
 		$episode          = get_post( $id );
 		$episode_duration = get_post_meta( $id, 'duration', true );
 		$episode_url      = get_post_permalink( $id );
-		$audio_file       = $this->episode_controller->get_audio_file( $id );
+		$audio_file       = $this->episode_controller->get_episode_player_link( $id );
 		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$feed_url         = $this->episode_repository->get_feed_url( $id );
@@ -155,7 +155,7 @@ class Players_Controller extends Controller {
 		 * If the id passed is empty or 0, get_post will return the current post
 		 */
 		$episode  = get_post( $id );
-		$src_file = $this->episode_controller->get_audio_file( $id );
+		$src_file = $this->episode_controller->get_episode_player_link( $id );
 		$params   = array(
 			'src'     => $src_file,
 			'preload' => 'none',

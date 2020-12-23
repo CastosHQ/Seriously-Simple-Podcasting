@@ -97,10 +97,7 @@ class Episode_Controller extends Controller {
 	 * @return string
 	 */
 	public function get_episode_player_link( $episode_id ) {
-		$file = $this->get_enclosure( $episode_id );
-		if ( get_option( 'permalink_structure' ) ) {
-			$file = $this->get_episode_download_link( $episode_id );
-		}
+		$file = $this->get_episode_download_link( $episode_id );
 
 		// Switch to podcast player URL
 		$file = str_replace( 'podcast-download', 'podcast-player', $file );

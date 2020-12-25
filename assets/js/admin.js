@@ -20,6 +20,9 @@ jQuery(document).ready(function($) {
 		  button: {
 		    text: jQuery( this ).data( 'uploader_button_text' ),
 		  },
+		  library : {
+		    type : 'image'
+		  },
 		  multiple: false
 		});
 
@@ -186,4 +189,17 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
+	jQuery('#cover_image_button').click(function() {
+		jQuery.fn.ssp_upload_media_file( jQuery(this), true );
+		file_frame.on( 'select', function() {
+		  var attachment = file_frame.state().get('selection').first().toJSON();
+
+		  jQuery("#cover_image_id").val(attachment.id);
+		});
+	});
+
+	jQuery('#cover_image_delete').click(function() {
+		jQuery( '#cover_image, #cover_image_id' ).val( '' );
+		jQuery( '#cover_image_preview' ).attr( 'src', '' );
+	});
 });

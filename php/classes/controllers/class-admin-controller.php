@@ -67,8 +67,6 @@ class Admin_Controller extends Controller {
 
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
 
-		$this->episode_controller = new Episode_Controller( $this->file, $this->version );
-
 		$this->logger = new Log_Helper();
 
 		if ( is_admin() ) {

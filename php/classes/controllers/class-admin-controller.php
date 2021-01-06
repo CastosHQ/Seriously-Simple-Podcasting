@@ -994,7 +994,7 @@ HTML;
 
 		$fields['cover_image'] = array(
 			'name'             => __( 'Cover Image:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'Your podcast cover image - must be square (recommended size of 300x300 px).', 'seriously-simple-podcasting' ),
+			'description'      => __( 'Your podcast cover image - must be square (minimum size of 300x300 px).', 'seriously-simple-podcasting' ),
 			'type'             => 'image',
 			'default'          => '',
 			'section'          => 'info',

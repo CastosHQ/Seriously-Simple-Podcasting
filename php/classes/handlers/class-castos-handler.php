@@ -346,7 +346,7 @@ class Castos_Handler {
 
 		$this->logger->log( 'Upload Podcast Response', $response_object );
 
-		if ( ! isset( $response_object->status ) || ! $response_object->status ) {
+		if ( ! isset( $response_object->success ) || ! $response_object->success ) {
 			$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
 			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 
@@ -376,7 +376,7 @@ class Castos_Handler {
 	/**
 	 * Delete a post from Castos when it's trashed in WordPress
 	 *
-	 * @param $post
+	 * @param \WP_Post $post
 	 *
 	 * @return bool
 	 */
@@ -409,6 +409,8 @@ class Castos_Handler {
 				'body'    => $post_body,
 			)
 		);
+
+		delete_post_meta( $post->ID, 'podmotor_episode_id' );
 
 		$this->logger->log( 'Delete Podcast api_response', $api_response );
 

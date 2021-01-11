@@ -109,6 +109,9 @@ class Admin_Controller extends Controller {
 			// process the import form submission
 			add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
+			// prevent copying some meta fields
+			add_action( 'admin_init', array( $this, 'prevent_copy_meta' ) );
+
 			// Episode meta box.
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
@@ -116,6 +119,7 @@ class Admin_Controller extends Controller {
 			// Update podcast details to Castos when a post is updated or saved
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
+			add_action( 'untrashed_post', array( $this, 'untrashed_post' ) );
 
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -1513,10 +1517,21 @@ HTML;
 	}
 
 	/**
+	 * Untrashed post actions
+	 *
+	 * @param int $id POST ID
+	 *
+	 * @return void
+	 */
+	public function untrashed_post( $id ) {
+		$this->update_podcast_details( $id, get_post( $id ) );
+	}
+
+	/**
 	 * Send the podcast details to Castos
 	 *
-	 * @param $id
-	 * @param $post
+	 * @param int $id
+	 * @param \WP_Post $post
 	 */
 	public function update_podcast_details( $id, $post ) {
 		/**
@@ -1798,6 +1813,31 @@ HTML;
 			return;
 		}
 		update_option( 'ss_podcasting_elementor_templates_disabled', 'true' );
+	}
+
+	/**
+	 * Prevents copying some podcast meta fields
+	 */
+	public function prevent_copy_meta() {
+		add_action( 'wp_insert_post', function ( $post_id, $post, $update ) {
+			if ( $update || $this->token != $post->post_type ) {
+				return;
+			}
+
+			// All the main copy plugins use redirection after creating the post and it's meta
+			add_filter( 'wp_redirect', function ( $location ) use ( $post_id ) {
+				$exclusions = [
+					'podmotor_file_id',
+					'podmotor_episode_id',
+				];
+
+				foreach ( $exclusions as $exclusion ) {
+					delete_post_meta( $post_id, $exclusion );
+				}
+
+				return $location;
+			} );
+		}, 10, 3 );
 	}
 
 }

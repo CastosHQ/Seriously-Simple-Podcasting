@@ -362,6 +362,13 @@ class Frontend_Controller extends Controller {
 			$type = 'audio';
 		}
 
+		// Switch to podcast player URL
+		$src_file = str_replace( 'podcast-download', 'podcast-player', $src_file );
+
+		// Set up parameters for media player
+		$params = array( 'src' => $src_file, 'preload' => 'none' );
+
+
 		/**
 		 * If the media file is of type video
 		 * @todo is this necessary in the case of the HTML5 player?

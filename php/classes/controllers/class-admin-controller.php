@@ -88,10 +88,10 @@ class Admin_Controller extends Controller {
 		add_action( 'init', array( $this, 'update' ), 11 );
 
 		// Dismiss the upgrade screen and redirect to the last screen the user was on
-		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
+		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) ); //todo: can we move it to 'admin_init'?
 
 		// Dismiss the categories update screen
-		add_action( 'init', array( $this, 'dismiss_categories_update' ) );
+		add_action( 'init', array( $this, 'dismiss_categories_update' ) ); //todo: can we move it to 'admin_init'?
 
 		// Dismiss the categories update screen
 		add_action( 'init', array( $this, 'disable_elementor_template_notice' ) );
@@ -1411,6 +1411,8 @@ HTML;
 
 	/**
 	 * Update 'enclosure' meta field to 'audio_file' meta field
+	 * Todo: I don't see any place where 'ssp_update_enclosures' query is generated. Is this function obsolete?
+	 *
 	 * @return void
 	 */
 	public function update_enclosures() {
@@ -1480,12 +1482,13 @@ HTML;
 			// Change the footer text
 			if ( ! get_option( 'ssp_admin_footer_text_rated' ) ) {
 				$footer_text = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
-				$footer_text .= "<script type='text/javascript'>
-					jQuery('a.ssp-rating-link').click(function() {
-						jQuery.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated' } );
-						jQuery(this).parent().text( jQuery(this).data( 'rated' ) );
-					});
-				</script>";
+				$footer_text .= sprintf("<script type='text/javascript'>
+					(function($){
+					  $('a.ssp-rating-link').click(function() {
+						$.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated', nonce: '%s' } );
+						$(this).parent().text( $(this).data( 'rated' ) );
+					})})(jQuery);
+				</script>", wp_create_nonce( 'ssp_rated' ) );
 			} else {
 				$footer_text = sprintf( __( '%1$sThank you for publishing with %2$sSeriously Simple Podcasting%3$s.%4$s', 'seriously-simple-podcasting' ), '<span id="footer-thankyou">', '<a href="http://www.seriouslysimplepodcasting.com/" target="_blank">', '</a>', '</span>' );
 			}
@@ -1615,7 +1618,7 @@ HTML;
 	 * Ignore podcast import
 	 */
 	public function ignore_importing_existing_podcasts() {
-		if ( isset( $_GET['podcast_import_action'] ) && 'ignore' == $_GET['podcast_import_action'] ) {
+		if ( 'ignore' === filter_input( INPUT_GET, 'podcast_import_action' ) && wp_verify_nonce( $_GET['nonce'], 'podcast_import_action' ) ) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		}
 	}
@@ -1665,9 +1668,7 @@ HTML;
 	 * Dismiss upgrade screen when user clicks 'Dismiss' link
 	 */
 	public function dismiss_upgrade_screen() {
-		// Check if the ssp_dismiss_upgrade variable exists
-		$ssp_dismiss_upgrade = ( isset( $_GET['ssp_dismiss_upgrade'] ) ? filter_var( $_GET['ssp_dismiss_upgrade'], FILTER_SANITIZE_STRING ) : '' );
-		if ( empty( $ssp_dismiss_upgrade ) ) {
+		if ( ! filter_input( INPUT_GET, 'ssp_dismiss_upgrade' ) || ! wp_verify_nonce( $_GET['nonce'], 'ssp_dismiss_upgrade' ) ) {
 			return;
 		}
 
@@ -1782,9 +1783,10 @@ HTML;
 	public function dismiss_categories_update() {
 		// Check if the ssp_dismiss_categories_update variable exists
 		$ssp_dismiss_categories_update = ( isset( $_GET['ssp_dismiss_categories_update'] ) ? sanitize_text_field( $_GET['ssp_dismiss_categories_update'] ) : '' );
-		if ( empty( $ssp_dismiss_categories_update ) ) {
+		if ( empty( $ssp_dismiss_categories_update ) || ! wp_verify_nonce( $_GET['nonce'], 'dismiss_categories_update' ) ) {
 			return;
 		}
+
 		update_option( 'ssp_categories_update_dismissed', 'true' );
 	}
 

@@ -76,7 +76,8 @@ class Settings_Controller extends Controller {
 	public function register_hooks_and_filters() {
 		add_action( 'init', array( $this, 'load_settings' ), 11 );
 
-		add_action( 'init', array( $this, 'maybe_feed_saved' ), 11 );
+		//Todo: Can we use pre_update_option_ss_podcasting_data_title action instead?
+		add_action( 'admin_init', array( $this, 'maybe_feed_saved' ), 11 );
 
 		// Register podcast settings.
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
@@ -155,7 +156,11 @@ class Settings_Controller extends Controller {
 	 */
 	public function show_upgrade_page() {
 		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
-		$ssp_dismiss_url = add_query_arg( array( 'ssp_dismiss_upgrade' => 'dismiss', 'ssp_redirect' => rawurlencode( $ssp_redirect ) ), admin_url( 'index.php' ) );
+		$ssp_dismiss_url = add_query_arg( array(
+				'ssp_dismiss_upgrade' => 'dismiss',
+				'ssp_redirect'        => rawurlencode( $ssp_redirect ),
+				'nonce'               => wp_create_nonce( 'ssp_dismiss_upgrade' ),
+			), admin_url( 'index.php' ) );
 		include( $this->template_path . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
 	}
 
@@ -785,7 +790,8 @@ class Settings_Controller extends Controller {
 			);
 			$html .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
 			$html .= '<input type="hidden" name="action" value="post_import_form" />';
-			$html .= wp_nonce_field( 'ss_podcasting_import' );
+			$html .= wp_nonce_field( 'ss_podcasting_import', '_wpnonce', true, false );
+			$html .= wp_nonce_field( 'ss_podcasting_import', 'podcast_settings_tab_nonce', false, false );
 		} else {
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 		}
@@ -801,6 +807,7 @@ class Settings_Controller extends Controller {
 		ob_start();
 		if ( isset( $tab ) && 'import' !== $tab ) {
 			settings_fields( 'ss_podcasting' );
+			wp_nonce_field( 'ss_podcasting_' . $tab, 'podcast_settings_tab_nonce', false );
 		}
 		do_settings_sections( 'ss_podcasting' );
 		$html .= ob_get_clean();

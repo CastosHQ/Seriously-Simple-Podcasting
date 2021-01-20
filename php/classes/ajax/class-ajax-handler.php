@@ -52,7 +52,9 @@ class Ajax_Handler {
 	 * @return void
 	 */
 	public function rated() {
-		update_option( 'ssp_admin_footer_text_rated', 1 );
+		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'ssp_rated' ) ) {
+			update_option( 'ssp_admin_footer_text_rated', 1 );
+		}
 		die();
 	}
 
@@ -106,67 +108,23 @@ class Ajax_Handler {
 	 * Validate the Seriously Simple Hosting api credentials
 	 */
 	public function validate_podmotor_api_credentials() {
-		// @todo add nonces
-		if ( ! current_user_can( 'manage_podcast' ) ) {
-			wp_send_json(
-				array(
-					'status'  => 'error',
-					'message' => 'Current user doesn\'t have correct permissions',
-				)
-			);
-		}
-
-		if ( ! isset( $_GET['api_token'] ) || ! isset( $_GET['email'] ) ) {
-			wp_send_json(
-				array(
-					'status'  => 'error',
-					'message' => 'Castos arguments not set',
-				)
-			);
-		}
-
-		$account_api_token = ( sanitize_text_field( $_GET['api_token'] ) );
-		$account_email     = ( sanitize_text_field( $_GET['email'] ) );
-
-		$castos_handler = new Castos_Handler();
-		$response       = $castos_handler->validate_api_credentials( $account_api_token, $account_email );
-		wp_send_json( $response );
-	}
-
-	/**
-	 * Store the file uploaded via plupload to the Castos account
-	 */
-	public function store_castos_file() {
-		// @todo add nonces
-		if ( ! isset( $_GET['podmotor_file_path'] ) ) {
-			wp_send_json(
-				array(
-					'status'  => 'error',
-					'message' => 'An error occurred storing your file to your Castos account, please contact hello@castos.com for assistance.',
-				)
-			);
-		}
-
-		$podmotor_file_path = filter_var( $_GET['podmotor_file_path'], FILTER_SANITIZE_STRING );
-
-		$response = array(
-			'status'  => 'error',
-			'message' => 'Error storing file to offsite storage account',
-		);
-
 		try {
-			$castos_handler  = new Castos_Handler();
-			$castos_response = $castos_handler->upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path );
-		} catch ( Exception $e ) {
-			$response['status']  = 'error';
-			$response['message'] = 'An unknown error occurred: ' . $e->getMessage();
-			wp_send_json( $response );
-		}
+			$this->nonce_check('ss_podcasting_castos-hosting');
+			$this->user_capability_check();
 
-		if ( $castos_response ) {
-			$response = $castos_response;
+			if ( ! isset( $_GET['api_token'] ) || ! isset( $_GET['email'] ) ) {
+				throw new \Exception( 'Castos arguments not set' );
+			}
+
+			$account_api_token = sanitize_text_field( $_GET['api_token'] );
+			$account_email     = sanitize_text_field( $_GET['email'] );
+
+			$castos_handler = new Castos_Handler();
+			$response       = $castos_handler->validate_api_credentials( $account_api_token, $account_email );
+			wp_send_json( $response );
+		} catch ( \Exception $e ) {
+			$this->send_json_error( $e->getMessage() );
 		}
-		wp_send_json( $response );
 	}
 
 	/**
@@ -174,7 +132,7 @@ class Ajax_Handler {
 	 * @return void
 	 */
 	public function update_episode_embed_code() {
-		// @todo add nonces
+		// @todo Investigate if this function is used
 		// Make sure we have a valid post ID
 		if ( empty( $_POST['post_id'] ) ) {
 			return;
@@ -198,19 +156,13 @@ class Ajax_Handler {
 	 * Import an external RSS feed via ajax
 	 */
 	public function import_external_rss_feed() {
-		// @todo add nonces, add user caps check, validate inputs
+		self::import_security_check();
 
 		update_option( 'ssp_rss_import', 0 );
 
 		$ssp_external_rss = get_option( 'ssp_external_rss', '' );
 		if ( empty( $ssp_external_rss ) ) {
-			$response = array(
-				'status'  => 'error',
-				'message' => 'No feed to process',
-			);
-			wp_send_json( $response );
-
-			return;
+			$this->send_json_error( 'No feed to process' );
 		}
 
 		$rss_importer = new Rss_Importer( $ssp_external_rss );
@@ -223,7 +175,7 @@ class Ajax_Handler {
 	 * Get the progress of an external RSS feed import
 	 */
 	public function get_external_rss_feed_progress() {
-		// @todo add nonces, add user caps check
+		self::import_security_check();
 		$progress = (int) get_option( 'ssp_rss_import', 0 );
 		wp_send_json( $progress );
 	}
@@ -232,10 +184,60 @@ class Ajax_Handler {
 	 * Reset external RSS feed import
 	 */
 	public function reset_external_rss_feed_progress() {
-		// @todo add nonces, add user caps check
+		self::import_security_check();
+
 		delete_option( 'ssp_external_rss' );
 		delete_option( 'ssp_rss_import' );
 		wp_send_json( 'success' );
+	}
+
+	/**
+	 * RSS feed import functions security check
+	 */
+	protected function import_security_check() {
+		try {
+			$this->user_capability_check();
+			$this->nonce_check( 'ss_podcasting_import' );
+		} catch ( \Exception $e ) {
+			$this->send_json_error( $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Throws exception if nonce is not valid
+	 *
+	 * @param string $action
+	 * @param string $nonce_key
+	 *
+	 * @throws \Exception
+	 */
+	protected function nonce_check( $action, $nonce_key = 'nonce' ) {
+		if ( ! wp_verify_nonce( $_REQUEST[ $nonce_key ], $action ) ) {
+			throw new \Exception( 'Security error!' );
+		}
+	}
+
+	/**
+	 * Throws exception if user cannot manage podcast
+	 *
+	 * @throws \Exception
+	 */
+	protected function user_capability_check() {
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			throw new \Exception( 'Current user doesn\'t have correct permissions' );
+		}
+	}
+
+	/**
+	 * @param string $message
+	 */
+	protected function send_json_error( $message ) {
+		wp_send_json(
+			[
+				'status'  => 'error',
+				'message' => $message,
+			]
+		);
 	}
 
 }

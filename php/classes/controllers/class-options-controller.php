@@ -6,10 +6,19 @@ use SeriouslySimplePodcasting\Handlers\Options_Handler;
 
 class Options_Controller extends Controller {
 
+	/**
+	 * @var Options_Handler
+	 */
 	protected $options_handler;
 
+	/**
+	 * @var string
+	 */
 	protected $options_base;
 
+	/**
+	 * @var array
+	 */
 	protected $options;
 
 	/**
@@ -217,6 +226,7 @@ class Options_Controller extends Controller {
 
 	/**
 	 * Update subscribe options after options saved
+	 * Todo: couldn't find any usage, and there is no $this->options_handler->update_subscribe_options() function. Remove?
 	 *
 	 * @return bool
 	 */

@@ -10,11 +10,6 @@ namespace SeriouslySimplePodcasting\Handlers;
 class Series_Handler {
 
 	public function maybe_save_series() {
-		// Only do this if this is a Castos Customer
-		if ( ! ssp_is_connected_to_castos() ) {
-			return false;
-		}
-
 		if ( ! isset( $_GET['page'] ) || 'podcast_settings' !== $_GET['page'] ) {
 			return false;
 		}
@@ -24,6 +19,12 @@ class Series_Handler {
 		if ( ! isset( $_GET['settings-updated'] ) || 'true' !== $_GET['settings-updated'] ) {
 			return false;
 		}
+
+		// Only do this if this is a Castos Customer
+		if ( ! ssp_is_connected_to_castos() ) {
+			return false;
+		}
+
 		if ( ! isset( $_GET['feed-series'] ) ) {
 			$feed_series_slug = 'default';
 		} else {

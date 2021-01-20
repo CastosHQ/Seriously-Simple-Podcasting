@@ -4,7 +4,9 @@ jQuery(document).ready(function ($) {
 	 * Setup the progressbar element
 	 * @type {*|jQuery|HTMLElement}
 	 */
-	var progressbar = $('#ssp-external-feed-progress');
+	var progressbar = $('#ssp-external-feed-progress'),
+		$nonce = $('#podcast_settings_tab_nonce'),
+		timer;
 
 	/**
 	 * If the progress bar appears on the page, trigger the import
@@ -82,17 +84,24 @@ jQuery(document).ready(function ($) {
 	 * Import the external RSS feed
 	 */
 	function ssp_import_external_feed() {
-		var timer = setInterval(update_external_feed_progress_bar, 250);
+		timer = setInterval(update_external_feed_progress_bar, 250);
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
-			data: {'action': 'import_external_rss_feed'},
+			data: {
+				'action': 'import_external_rss_feed',
+				'nonce': $nonce.val()
+			},
 		}).done(function (response) {
 			clearInterval(timer);
+			if ('error' === response['status']) {
+				alert_error();
+				return;
+			}
 			update_progress_log(response.episodes);
 			update_progress_bar(100, 'green');
 		}).fail(function (response) {
-			alert('An error occurred importing the RSS feed, please refresh this page to try again');
+			alert_error();
 		});
 	}
 
@@ -103,8 +112,15 @@ jQuery(document).ready(function ($) {
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
-			data: {'action': 'get_external_rss_feed_progress'},
+			data: {
+				'action': 'get_external_rss_feed_progress',
+				'nonce': $nonce.val()
+			},
 		}).done(function (response) {
+			if ('error' === response['status']) {
+				alert_error()
+				clearInterval(timer);
+			}
 			update_progress_bar(response, 'blue');
 		});
 	}
@@ -116,10 +132,25 @@ jQuery(document).ready(function ($) {
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
-			data: {'action': 'reset_external_rss_feed_progress'},
-		}).done(function () {
+			data: {
+				'action': 'reset_external_rss_feed_progress',
+				'nonce': $nonce.val()
+			},
+		}).done(function (response) {
+			if ('error' === response['status']) {
+				alert('Could not reset current feed import, please refresh this page to try again');
+				return;
+			}
+
 			$('.ssp-ssp-external-feed-message').html('Import cancelled !').css('color', 'red');
 			$('#ssp-external-feed-status').html('');
 		});
+	}
+
+	/**
+	 * Shows an error to user
+	 */
+	function alert_error() {
+		alert('An error occurred importing the RSS feed, please refresh this page to try again');
 	}
 });

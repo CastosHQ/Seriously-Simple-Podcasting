@@ -1685,7 +1685,7 @@ HTML;
 		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
 
 		update_option( 'ssp_upgrade_page_visited', 'true' );
-		wp_redirect( $ssp_redirect );
+		wp_safe_redirect( $ssp_redirect );
 		exit;
 	}
 

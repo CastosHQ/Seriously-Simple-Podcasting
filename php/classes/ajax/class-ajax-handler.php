@@ -52,7 +52,7 @@ class Ajax_Handler {
 	 * @return void
 	 */
 	public function rated() {
-		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'ssp_rated' ) ) {
+		if ( wp_verify_nonce( filter_input( INPUT_POST, 'nonce' ), 'ssp_rated' ) && current_user_can( 'manage_podcast' ) ) {
 			update_option( 'ssp_admin_footer_text_rated', 1 );
 		}
 		die();
@@ -134,7 +134,7 @@ class Ajax_Handler {
 	public function update_episode_embed_code() {
 		// @todo Investigate if this function is used
 		// Make sure we have a valid post ID
-		if ( empty( $_POST['post_id'] ) ) {
+		if ( empty( $_POST['post_id'] || ! current_user_can( 'manage_podcast' ) ) ) {
 			return;
 		}
 

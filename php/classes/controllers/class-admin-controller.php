@@ -1417,6 +1417,10 @@ HTML;
 	 */
 	public function update_enclosures() {
 
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return;
+		}
+
 		// Allow forced re-run of update if necessary
 		if ( isset( $_GET['ssp_update_enclosures'] ) ) {
 			delete_option( 'ssp_update_enclosures' );
@@ -1618,7 +1622,10 @@ HTML;
 	 * Ignore podcast import
 	 */
 	public function ignore_importing_existing_podcasts() {
-		if ( 'ignore' === filter_input( INPUT_GET, 'podcast_import_action' ) && wp_verify_nonce( $_GET['nonce'], 'podcast_import_action' ) ) {
+		if ( 'ignore' === filter_input( INPUT_GET, 'podcast_import_action' ) &&
+			 wp_verify_nonce( $_GET['nonce'], 'podcast_import_action' ) &&
+			 current_user_can( 'manage_podcast' )
+		) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		}
 	}
@@ -1668,7 +1675,10 @@ HTML;
 	 * Dismiss upgrade screen when user clicks 'Dismiss' link
 	 */
 	public function dismiss_upgrade_screen() {
-		if ( ! filter_input( INPUT_GET, 'ssp_dismiss_upgrade' ) || ! wp_verify_nonce( $_GET['nonce'], 'ssp_dismiss_upgrade' ) ) {
+		if ( ! filter_input( INPUT_GET, 'ssp_dismiss_upgrade' ) ||
+			 ! wp_verify_nonce( $_GET['nonce'], 'ssp_dismiss_upgrade' ) ||
+			 ! current_user_can( 'manage_podcast' )
+		) {
 			return;
 		}
 
@@ -1783,7 +1793,10 @@ HTML;
 	public function dismiss_categories_update() {
 		// Check if the ssp_dismiss_categories_update variable exists
 		$ssp_dismiss_categories_update = ( isset( $_GET['ssp_dismiss_categories_update'] ) ? sanitize_text_field( $_GET['ssp_dismiss_categories_update'] ) : '' );
-		if ( empty( $ssp_dismiss_categories_update ) || ! wp_verify_nonce( $_GET['nonce'], 'dismiss_categories_update' ) ) {
+		if ( ! $ssp_dismiss_categories_update ||
+			 ! wp_verify_nonce( $_GET['nonce'], 'dismiss_categories_update' ) ||
+			 ! current_user_can( 'manage_podcast' )
+		) {
 			return;
 		}
 

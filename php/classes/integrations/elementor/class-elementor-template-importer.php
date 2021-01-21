@@ -40,9 +40,6 @@ class Elementor_Template_Importer {
 	 * Attempt to trigger the SSP Elementor Template importer, if the right query vars are set
 	 */
 	public function process_template_import() {
-		if ( ! is_admin() ) {
-			return;
-		}
 		if ( ! isset( $_GET['elementor_import_templates'] ) ) {
 			return;
 		}
@@ -50,6 +47,9 @@ class Elementor_Template_Importer {
 			return;
 		}
 		if ( ! isset( $_GET['import_template_nonce'] ) || ! wp_verify_nonce( $_GET['import_template_nonce'], '' ) ) {
+			return;
+		}
+		if ( ! is_admin() || ! current_user_can( 'manage_podcast' ) ) {
 			return;
 		}
 		$elementor_template_files                   = glob( $this->template_path . '*.json', GLOB_NOSORT );

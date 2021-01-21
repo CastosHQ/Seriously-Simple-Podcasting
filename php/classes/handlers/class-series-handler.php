@@ -21,7 +21,7 @@ class Series_Handler {
 		}
 
 		// Only do this if this is a Castos Customer
-		if ( ! ssp_is_connected_to_castos() ) {
+		if ( ! current_user_can( 'manage_podcast' ) || ! ssp_is_connected_to_castos() ) {
 			return false;
 		}
 

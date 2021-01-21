@@ -237,6 +237,10 @@ class Options_Controller extends Controller {
 		if ( ! isset( $_GET['settings-updated'] ) || 'true' !== $_GET['settings-updated'] ) {  //phpcs:ignore WordPress.Security
 			return false;
 		}
+
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return false;
+		}
 		return $this->options_handler->update_subscribe_options();
 	}
 

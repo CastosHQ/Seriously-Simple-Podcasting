@@ -410,9 +410,22 @@ class Castos_Handler {
 			)
 		);
 
-		delete_post_meta( $post->ID, 'podmotor_episode_id' );
-
 		$this->logger->log( 'Delete Podcast api_response', $api_response );
+
+		if ( is_wp_error( $api_response ) ) {
+			$this->logger->log( 'An unknown error occurred deleting the episode from Castos: ' . $api_response->get_error_message() );
+
+			return false;
+		}
+
+		$response_object = json_decode( wp_remote_retrieve_body( $api_response ) );
+
+		if ( ! isset( $response_object->success ) || ! $response_object->success ) {
+			$this->logger->log( 'An error occurred deleting the episode from Castos', $response_object );
+
+			return false;
+		}
+
 
 		return true;
 	}

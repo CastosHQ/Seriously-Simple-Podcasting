@@ -119,7 +119,6 @@ class Admin_Controller extends Controller {
 			// Update podcast details to Castos when a post is updated or saved
 			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
-			add_action( 'untrashed_post', array( $this, 'untrashed_post' ) );
 
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -1517,17 +1516,6 @@ HTML;
 	}
 
 	/**
-	 * Untrashed post actions
-	 *
-	 * @param int $id POST ID
-	 *
-	 * @return void
-	 */
-	public function untrashed_post( $id ) {
-		$this->update_podcast_details( $id, get_post( $id ) );
-	}
-
-	/**
 	 * Send the podcast details to Castos
 	 *
 	 * @param int $id
@@ -1605,14 +1593,6 @@ HTML;
 	 * @param $post_id
 	 */
 	public function delete_post( $post_id ) {
-
-		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
-		 */
-		if ( ! ssp_is_connected_to_castos() ) {
-			return;
-		}
-
 		$post = get_post( $post_id );
 
 		/**
@@ -1622,7 +1602,18 @@ HTML;
 			return;
 		}
 
+		delete_post_meta( $post_id, 'podmotor_file_id' );
+		delete_post_meta( $post_id, 'podmotor_episode_id' );
+
+		/**
+		 * Don't trigger this if we're not connected to Podcast Motor
+		 */
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
 		$castos_handler = new Castos_Handler();
+
 		$castos_handler->delete_podcast( $post );
 	}
 

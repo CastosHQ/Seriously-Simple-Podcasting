@@ -65,9 +65,14 @@ class Players_Controller extends Controller {
 	 *
 	 * @param int $id
 	 *
-	 * @return string
+	 * @return array
 	 */
 	public function html_player( $id ) {
+		$audio_file = get_post_meta( $id, 'audio_file', true );
+		if ( empty( $audio_file ) ) {
+			return apply_filters( 'ssp_html_player_data', array() );
+		}
+
 		/**
 		 * Get the episode (post) object
 		 * If the id passed is empty or 0, get_post will return the current post
@@ -75,7 +80,6 @@ class Players_Controller extends Controller {
 		$episode          = get_post( $id );
 		$episode_duration = get_post_meta( $id, 'duration', true );
 		$episode_url      = get_post_permalink( $id );
-		$audio_file       = get_post_meta( $id, 'audio_file', true );
 		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$feed_url         = $this->episode_repository->get_feed_url( $id );
@@ -109,16 +113,20 @@ class Players_Controller extends Controller {
 	 *
 	 * @param $episode_id
 	 *
-	 * @return mixed|void
+	 * @return string
 	 */
 	public function render_html_player( $episode_id ) {
+		$template_data = $this->html_player( $episode_id );
+		if ( ! array_key_exists( 'audio_file', $template_data ) ) {
+			return '';
+		}
+
 		if ( wp_script_is( 'ssp-castos-player', 'registered' ) && ! wp_script_is( 'ssp-castos-player', 'enqueued' ) ) {
 			wp_enqueue_script( 'ssp-castos-player' );
 		}
 		if ( wp_style_is( 'ssp-castos-player', 'registered' ) && ! wp_style_is( 'ssp-castos-player', 'enqueued' ) ) {
 			wp_enqueue_style( 'ssp-castos-player' );
 		}
-		$template_data = $this->html_player( $episode_id );
 
 		return $this->renderer->render( $template_data, 'players/castos-player' );
 	}

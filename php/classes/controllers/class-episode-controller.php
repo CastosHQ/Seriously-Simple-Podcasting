@@ -274,7 +274,9 @@ class Episode_Controller extends Controller {
 
 		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
 		
-		wp_enqueue_style( 'ssp-recent-episodes' );
+		if ( wp_style_is( 'ssp-recent-episodes', 'registered' ) && ! wp_style_is( 'ssp-recent-episodes', 'enqueued' ) ) {
+			wp_enqueue_style( 'ssp-recent-episodes' );
+		}
 
 		return $this->renderer->render( $episodes_template_data, 'episodes/all-episodes-list' );
 	}

@@ -211,7 +211,7 @@ class Admin_Controller extends Controller {
 			'new_item'              => sprintf( __( 'New %s', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
 			'all_items'             => sprintf( __( 'All %s', 'seriously-simple-podcasting' ), __( 'Episodes', 'seriously-simple-podcasting' ) ),
 			'view_item'             => sprintf( __( 'View %s', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
-			'search_items'          => sprintf( __( 'Search %a', 'seriously-simple-podcasting' ), __( 'Episodes', 'seriously-simple-podcasting' ) ),
+			'search_items'          => sprintf( __( 'Search %s', 'seriously-simple-podcasting' ), __( 'Episodes', 'seriously-simple-podcasting' ) ),
 			'not_found'             => sprintf( __( 'No %s Found', 'seriously-simple-podcasting' ), __( 'Episodes', 'seriously-simple-podcasting' ) ),
 			'not_found_in_trash'    => sprintf( __( 'No %s Found In Trash', 'seriously-simple-podcasting' ), __( 'Episodes', 'seriously-simple-podcasting' ) ),
 			'parent_item_colon'     => '',
@@ -609,7 +609,7 @@ HTML;
 				$default_image    = esc_url( $this->assets_url . 'images/no-image.png' );
 				$media_id         = get_term_meta( $term_id, $series_settings, true );
 				$image_attributes = wp_get_attachment_image_src( $media_id );
-				$source           = ( ! is_null( $image_attributes[0] ) ) ? $image_attributes[0] : $default_image;
+				$source           = ( isset( $image_attributes[0] ) ) ? $image_attributes[0] : $default_image;
 				$column_data      = <<<HTML
 <img id="{$series->name}_image_preview" src="{$source}" width="auto" height="auto" style="max-width:50px;" />
 HTML;

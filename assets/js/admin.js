@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
 	// Uploading files
 	var file_frame, series_img_frame;
 
-	jQuery.fn.ssp_upload_media_file = function( button, preview_media ) {
+	jQuery.fn.ssp_upload_media_file = function( button, preview_media, validateImageSize = false ) {
 		var button_id = button.attr('id');
 		var field_id = button_id.replace( '_button', '' );
 		var preview_id = button_id.replace( '_button', '_preview' );
@@ -20,6 +20,9 @@ jQuery(document).ready(function($) {
 		  button: {
 		    text: jQuery( this ).data( 'uploader_button_text' ),
 		  },
+		  library : {
+		    type : 'image'
+		  },
 		  multiple: false
 		});
 
@@ -30,6 +33,10 @@ jQuery(document).ready(function($) {
 		  var attachment = file_frame.state().get('selection').first().toJSON();
 
 		  console.log(attachment);
+
+		  if ( typeof validateImageSize === 'function' && !validateImageSize( attachment ) ) {
+			return;
+		  }
 
 		  jQuery("#"+field_id).val(attachment.url);
 		  if ( preview_media ) {
@@ -186,4 +193,26 @@ jQuery(document).ready(function($) {
 		return false;
 	});
 
+	jQuery( '#cover_image_button' ).click(function() {
+		var validateImageSize = function( attachment ) {
+		  return attachment.width === attachment.height && attachment.width >= 300;
+		}
+		var description = jQuery( this ).siblings( '.description' );
+		jQuery.fn.ssp_upload_media_file( jQuery(this), true, validateImageSize );
+		description.css( 'color', '' );
+
+		file_frame.on( 'select', function() {
+		  var attachment = file_frame.state().get( 'selection' ).first().toJSON();
+		  if ( validateImageSize( attachment ) ) {
+			jQuery( '#cover_image_id' ).val( attachment.id );
+		  } else {
+			description.css( 'color', 'red' );
+		  }
+		});
+	});
+
+	jQuery('#cover_image_delete').click(function() {
+		jQuery( '#cover_image, #cover_image_id' ).val( '' );
+		jQuery( '#cover_image_preview' ).attr( 'src', '' );
+	});
 });

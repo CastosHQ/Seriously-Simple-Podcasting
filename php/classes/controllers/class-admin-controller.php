@@ -109,6 +109,9 @@ class Admin_Controller extends Controller {
 			// process the import form submission
 			add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
+			// prevent copying some meta fields
+			add_action( 'admin_init', array( $this, 'prevent_copy_meta' ) );
+
 			// Episode meta box.
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
@@ -1541,8 +1544,8 @@ HTML;
 	/**
 	 * Send the podcast details to Castos
 	 *
-	 * @param $id
-	 * @param $post
+	 * @param int $id
+	 * @param \WP_Post $post
 	 */
 	public function update_podcast_details( $id, $post ) {
 		/**
@@ -1616,14 +1619,6 @@ HTML;
 	 * @param $post_id
 	 */
 	public function delete_post( $post_id ) {
-
-		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
-		 */
-		if ( ! ssp_is_connected_to_castos() ) {
-			return;
-		}
-
 		$post = get_post( $post_id );
 
 		/**
@@ -1633,7 +1628,18 @@ HTML;
 			return;
 		}
 
+		delete_post_meta( $post_id, 'podmotor_file_id' );
+		delete_post_meta( $post_id, 'podmotor_episode_id' );
+
+		/**
+		 * Don't trigger this if we're not connected to Podcast Motor
+		 */
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
 		$castos_handler = new Castos_Handler();
+
 		$castos_handler->delete_podcast( $post );
 	}
 
@@ -1824,6 +1830,31 @@ HTML;
 			return;
 		}
 		update_option( 'ss_podcasting_elementor_templates_disabled', 'true' );
+	}
+
+	/**
+	 * Prevents copying some podcast meta fields
+	 */
+	public function prevent_copy_meta() {
+		add_action( 'wp_insert_post', function ( $post_id, $post, $update ) {
+			if ( $update || $this->token != $post->post_type ) {
+				return;
+			}
+
+			// All the main copy plugins use redirection after creating the post and it's meta
+			add_filter( 'wp_redirect', function ( $location ) use ( $post_id ) {
+				$exclusions = [
+					'podmotor_file_id',
+					'podmotor_episode_id',
+				];
+
+				foreach ( $exclusions as $exclusion ) {
+					delete_post_meta( $post_id, $exclusion );
+				}
+
+				return $location;
+			} );
+		}, 10, 3 );
 	}
 
 }

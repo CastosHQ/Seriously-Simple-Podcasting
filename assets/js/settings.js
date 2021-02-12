@@ -5,57 +5,65 @@
 
 jQuery(document).ready(function($) {
 
-	if ( $("#podmotor_account_email").length > 0 && $("#podmotor_account_api_token").length > 0 ){
+	var $podmotorAccountEmail = $("#podmotor_account_email"),
+		$podmotorAccountAPIToken = $("#podmotor_account_api_token"),
+		$parentCategories = $('.js-parent-category');
+
+	function disableSubmitButton(){
 		/**
 		 * If either API field is empty, disable the submit button
 		 */
-		if ( $("#podmotor_account_email").val() == '' || $("#podmotor_account_api_token").val() == ''  ){
+		if ( $podmotorAccountEmail.val() === '' || $podmotorAccountAPIToken.val() === ''  ){
 			$("#ssp-settings-submit").prop( "disabled", "disabled" );
 		}
 
 		/**
 		 * If the user changes the email, disable the submit button
 		 */
-		$("#podmotor_account_email").on("change paste keydown keyup", function() {
+		$podmotorAccountEmail.on("change paste keydown keyup", function() {
 			$("#ssp-settings-submit").prop( "disabled", "disabled" );
 		});
 
 		/**
 		 * If the user changes the account api key, disable the submit button
 		 */
-		$("#podmotor_account_api_token").on("change paste keydown keyup", function() {
+		$podmotorAccountAPIToken.on("change paste keydown keyup", function() {
 			$("#ssp-settings-submit").prop( "disabled", "disabled" );
 		});
+	}
 
-		/**
-		 * Validate the api credentials
-		 */
+	/**
+	 * Validate the api credentials
+	 */
+	function validateAPICredentials(){
 		$("#validate_api_credentials").on("click", function(){
 
 			$(".validate-api-credentials-message").html( "Validating API credentials..." );
 
-			var podmotor_account_email = $("#podmotor_account_email").val();
-			var podmotor_account_api_token = $("#podmotor_account_api_token").val();
+			var podmotor_account_email = $podmotorAccountEmail.val();
+			var podmotor_account_api_token = $podmotorAccountAPIToken.val();
 
 			$.ajax({
 				method: "GET",
 				url: ajaxurl,
 				data: { action: "validate_castos_credentials", api_token: podmotor_account_api_token, email: podmotor_account_email }
 			})
-			.done(function( response ) {
-				if ( response.status == 'success' ){
-					$(".validate-api-credentials-message").html( "Credentials Valid. Please click 'Save Settings' to save Credentials." );
-					$("#ssp-settings-submit").prop( "disabled", "" );
-				}else {
-					$(".validate-api-credentials-message").html( response.message );
-				}
-			});
+				.done(function( response ) {
+					if ( response.status === 'success' ){
+						$(".validate-api-credentials-message").html( "Credentials Valid. Please click 'Save Settings' to save Credentials." );
+						$("#ssp-settings-submit").prop( "disabled", "" );
+					}else {
+						$(".validate-api-credentials-message").html( response.message );
+					}
+				});
 
 		});
+	}
 
-		/**
-		 * Disconnect Castos checkbox on change, renders a confirmation message to the user.
-		 */
+	/**
+	 * Disconnect Castos checkbox on change, renders a confirmation message to the user.
+	 */
+	function disconnectCastos(){
 		$('#podmotor_disconnect').on('change', function (event) {
 			var $checkbox = $(this);
 
@@ -75,7 +83,37 @@ jQuery(document).ready(function($) {
 				event.stopPropagation();
 			}
 		});
-
 	}
 
+	/**
+	 * Show only options related to parent category
+	 */
+	function filterSubcategoryGroups() {
+		var $parent = $(this),
+			subcategoryID = $parent.data('subcategory'),
+			parentCategory = $parent.find('option:selected').text();
+
+		if (!subcategoryID || !parentCategory) return false;
+
+		var $subcategory = $('#' + subcategoryID);
+		$subcategory.find('optgroup').hide();
+		var $selectedOptgroup = $subcategory.find('optgroup[label="' + parentCategory + '"]');
+
+		if (!$selectedOptgroup.length || '-- None --' === parentCategory) {
+			$subcategory.val('');
+		} else {
+			$selectedOptgroup.show();
+		}
+	}
+
+	if ($podmotorAccountEmail.length > 0 && $podmotorAccountAPIToken.length > 0) {
+		disableSubmitButton();
+		validateAPICredentials();
+		disconnectCastos();
+	}
+
+	if ($parentCategories.length) {
+		$parentCategories.each(filterSubcategoryGroups);
+		$parentCategories.on('change', filterSubcategoryGroups);
+	}
 });

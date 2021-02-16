@@ -1628,9 +1628,6 @@ HTML;
 			return;
 		}
 
-		delete_post_meta( $post_id, 'podmotor_file_id' );
-		delete_post_meta( $post_id, 'podmotor_episode_id' );
-
 		/**
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
@@ -1641,6 +1638,9 @@ HTML;
 		$castos_handler = new Castos_Handler();
 
 		$castos_handler->delete_podcast( $post );
+
+		delete_post_meta( $post_id, 'podmotor_file_id' );
+		delete_post_meta( $post_id, 'podmotor_episode_id' );
 	}
 
 	/**

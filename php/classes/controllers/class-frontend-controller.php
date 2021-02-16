@@ -540,6 +540,9 @@ class Frontend_Controller extends Controller {
 							'title' => array(),
 							'target' => array(),
 						),
+						'span' => array(
+							'style' => array(),
+						),
 					);
 					$podcast_display .= wp_kses( $data, $allowed_tags );
 					break;

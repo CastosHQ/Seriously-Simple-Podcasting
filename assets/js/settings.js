@@ -40,13 +40,19 @@ jQuery(document).ready(function($) {
 
 			$(".validate-api-credentials-message").html( "Validating API credentials..." );
 
-			var podmotor_account_email = $podmotorAccountEmail.val();
-			var podmotor_account_api_token = $podmotorAccountAPIToken.val();
+			var podmotor_account_email = $("#podmotor_account_email").val(),
+				podmotor_account_api_token = $("#podmotor_account_api_token").val(),
+				nonce = $("#podcast_settings_tab_nonce").val();
 
 			$.ajax({
 				method: "GET",
 				url: ajaxurl,
-				data: { action: "validate_castos_credentials", api_token: podmotor_account_api_token, email: podmotor_account_email }
+				data: {
+					action: "validate_castos_credentials",
+					api_token: podmotor_account_api_token,
+					email: podmotor_account_email,
+					nonce: nonce
+				}
 			})
 				.done(function( response ) {
 					if ( response.status === 'success' ){

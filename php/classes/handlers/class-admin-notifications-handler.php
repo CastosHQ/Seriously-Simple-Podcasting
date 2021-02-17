@@ -133,7 +133,10 @@ class Admin_Notifications_Handler {
 			'page'      => 'podcast_settings',
 			'tab'       => 'import'
 		) );
-		$ignore_message_url = add_query_arg( array( 'podcast_import_action' => 'ignore' ) );
+		$ignore_message_url = add_query_arg( array(
+			'podcast_import_action' => 'ignore',
+			'nonce'                 => wp_create_nonce( 'podcast_import_action' ),
+		) );
 		$message            = '';
 		$message            .= '<p>You\'ve connected to your Castos account and you have existing podcasts that can be imported.</p>';
 		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Castos.</a></p>';
@@ -202,7 +205,7 @@ class Admin_Notifications_Handler {
 	 * Attempt to revalidate API credentials
 	 */
 	public function revalidate_api_credentials() {
-		if ( ! isset( $_GET['ssp_revalidate_api_credentials'] ) ) {
+		if ( ! isset( $_GET['ssp_revalidate_api_credentials'] ) || ! current_user_can( 'manage_podcast' ) ) {
 			return;
 		}
 		check_admin_referer( 'revalidate-api-credentials' );
@@ -250,9 +253,13 @@ class Admin_Notifications_Handler {
 
 	/**
 	 * Setup podcast import
+	 * Todo: couldn't find the place where podcast_import_action=start is generated. Does it work?
 	 */
 	public function start_importing_existing_podcasts() {
-		if ( isset( $_GET['podcast_import_action'] ) && 'start' == $_GET['podcast_import_action'] ) {
+		if ( isset( $_GET['podcast_import_action'] ) &&
+			 'start' == $_GET['podcast_import_action'] &&
+			 current_user_can( 'manage_podcast' )
+		) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
 			$castos_handler = new Castos_Handler();
 			$reponse          = $castos_handler->insert_podmotor_queue();
@@ -336,7 +343,10 @@ class Admin_Notifications_Handler {
 			admin_url( 'edit.php' )
 		);
 
-		$ignore_message_url = add_query_arg( array( 'ssp_dismiss_categories_update' => 'true' ) );
+		$ignore_message_url = add_query_arg( array(
+			'ssp_dismiss_categories_update' => 'true',
+			'nonce'                         => wp_create_nonce( 'dismiss_categories_update' ),
+		) );
 
 		$message            = __( 'Seriously Simple Podcasting\'s feed categories have been updated.', 'seriously-simple-podcasting' );
 		$feed_settings_link = sprintf(

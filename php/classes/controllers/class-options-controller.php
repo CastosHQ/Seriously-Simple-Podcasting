@@ -6,10 +6,19 @@ use SeriouslySimplePodcasting\Handlers\Options_Handler;
 
 class Options_Controller extends Controller {
 
+	/**
+	 * @var Options_Handler
+	 */
 	protected $options_handler;
 
+	/**
+	 * @var string
+	 */
 	protected $options_base;
 
+	/**
+	 * @var array
+	 */
 	protected $options;
 
 	/**
@@ -217,6 +226,7 @@ class Options_Controller extends Controller {
 
 	/**
 	 * Update subscribe options after options saved
+	 * Todo: couldn't find any usage, and there is no $this->options_handler->update_subscribe_options() function. Remove?
 	 *
 	 * @return bool
 	 */
@@ -225,6 +235,10 @@ class Options_Controller extends Controller {
 			return false;
 		}
 		if ( ! isset( $_GET['settings-updated'] ) || 'true' !== $_GET['settings-updated'] ) {  //phpcs:ignore WordPress.Security
+			return false;
+		}
+
+		if ( ! current_user_can( 'manage_podcast' ) ) {
 			return false;
 		}
 		return $this->options_handler->update_subscribe_options();

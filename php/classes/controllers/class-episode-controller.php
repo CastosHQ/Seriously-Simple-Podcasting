@@ -28,7 +28,6 @@ class Episode_Controller extends Controller {
 
 	public function load_recent_episodes_assets() {
 		wp_register_style( 'ssp-recent-episodes', $this->assets_url . 'css/recent-episodes.css', array(), $this->version );
-		wp_enqueue_style( 'ssp-recent-episodes' );
 	}
 
 	/**
@@ -87,6 +86,22 @@ class Episode_Controller extends Controller {
 		}
 
 		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
+	}
+
+	/**
+	 * Get player link for episode.
+	 *
+	 * @param int $episode_id
+	 *
+	 * @return string
+	 */
+	public function get_episode_player_link( $episode_id ) {
+		$file = $this->get_episode_download_link( $episode_id );
+
+		// Switch to podcast player URL
+		$file = str_replace( 'podcast-download', 'podcast-player', $file );
+
+		return $file;
 	}
 
 	/**
@@ -161,7 +176,18 @@ class Episode_Controller extends Controller {
 		}
 
 		/**
-		 * Option 1 : if the episode has a featured image that is square, then use that
+		 * Option 1: if the episode has a custom field image that is square, then use that
+		 */
+		$thumb_id = get_post_meta( $episode_id, 'cover_image_id', true );
+		if ( ! empty( $thumb_id ) ) {
+			$image_data_array = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $thumb_id, 'medium' ) );
+			if ( $this->check_image_is_square( $image_data_array ) ) {
+				return $image_data_array;
+			}
+		}
+
+		/**
+		 * Option 2: if the episode has a featured image that is square, then use that
 		 */
 		$thumb_id = get_post_thumbnail_id( $episode_id );
 		if ( ! empty( $thumb_id ) ) {
@@ -172,7 +198,7 @@ class Episode_Controller extends Controller {
 		}
 
 		/**
-		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
+		 * Option 3: if the episode belongs to a series, which has an image that is square, then use that
 		 */
 		$series_id    = false;
 		$series_image = '';
@@ -199,7 +225,7 @@ class Episode_Controller extends Controller {
 		}
 
 		/**
-		 * Option 3: if the feed settings have an image that is square, then use that
+		 * Option 4: if the feed settings have an image that is square, then use that
 		 */
 		$feed_image = get_option( 'ss_podcasting_data_image', false );
 		if ( $feed_image ) {
@@ -274,6 +300,10 @@ class Episode_Controller extends Controller {
 		);
 
 		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
+		
+		if ( wp_style_is( 'ssp-recent-episodes', 'registered' ) && ! wp_style_is( 'ssp-recent-episodes', 'enqueued' ) ) {
+			wp_enqueue_style( 'ssp-recent-episodes' );
+		}
 
 		return $this->renderer->render( $episodes_template_data, 'episodes/all-episodes-list' );
 	}

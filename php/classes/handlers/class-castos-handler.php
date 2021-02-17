@@ -12,6 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Castos_Handler {
 
 	/**
+	 * @const int
+	 */
+	const MIN_IMG_SIZE = 1400;
+
+	/**
+	 * @const int
+	 */
+	const MAX_IMG_SIZE = 3000;
+
+	/**
 	 * @var string
 	 */
 	protected $api_token;
@@ -243,9 +253,10 @@ class Castos_Handler {
 
 		$this->logger->log( 'API URL', $api_url );
 
-		$featured_image_url = $this->get_featured_image( $post );
-		if ( ! empty( $featured_image_url ) ) {
-			$post_body['featured_image_url'] = $featured_image_url;
+		$cover_image_url = $this->get_cover_image_url( $post );
+		if ( ! empty( $cover_image_url ) ) {
+			// Todo: change 'featured_image_url' to 'cover_image_url' after API update
+			$post_body['featured_image_url'] = $cover_image_url;
 		}
 
 		$this->logger->log( 'Parameter post_body Contents', $post_body );
@@ -297,15 +308,56 @@ class Castos_Handler {
 	}
 
 	/**
-	 * Gets the featured image url
+	 * Gets cover image url
 	 *
 	 * @param $post
-	 * @param $post_body
 	 *
-	 * @return mixed
+	 * @return string
 	 */
-	public function get_featured_image( $post ) {
-		return get_the_post_thumbnail_url( $post->ID, 'full' );
+	public function get_cover_image_url( $post ) {
+		$key    = 'cover_image';
+		$id_key = 'cover_image_id';
+
+		$podcast_image = filter_input( INPUT_POST, $key, FILTER_VALIDATE_URL );
+		$attachment_id = filter_input( INPUT_POST, $id_key );
+
+		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
+			$podcast_image = get_post_meta( $post->ID, $key );
+			$attachment_id = get_post_meta( $post->ID, $id_key );
+		}
+
+		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
+			$podcast_image = get_the_post_thumbnail_url( $post, 'full' );
+			$attachment_id = get_post_thumbnail_id( $post );
+		}
+
+		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
+			$podcast_image = '';
+		}
+
+		return $podcast_image;
+	}
+
+	/**
+	 * @param int $attachment_id
+	 *
+	 * @return bool
+	 */
+	public function is_valid_podcast_image( $attachment_id ) {
+		if ( empty( $attachment_id ) ) {
+			return false;
+		}
+
+		$image = wp_get_attachment_image_src( $attachment_id, 'full' );
+
+		if ( empty( $image[1] ) || empty( $image[2] ) ) {
+			return false;
+		}
+
+		$width  = $image[1];
+		$height = $image[2];
+
+		return ( $width === $height ) && $width >= self::MIN_IMG_SIZE && $width <= self::MAX_IMG_SIZE;
 	}
 
 	/**

@@ -475,31 +475,39 @@ class Settings_Controller extends Controller {
 			$parent_class = $field['parent_class'];
 		}
 
+		// Get data attributes if supplied
+		$data_attrs = '';
+		if ( ! empty( $field['data'] ) && is_array( $field['data'] ) ) {
+			foreach ( $field['data'] as $k => $v ) {
+				$data_attrs .= sprintf( ' data-%s="%s" ', $k, $v );
+			}
+		}
+
 		switch ( $field['type'] ) {
 			case 'text':
 			case 'password':
 			case 'number':
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"' . $data_attrs . '/>' . "\n";
 				break;
 			case 'colour-picker':
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"/>' . "\n";
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"' . $data_attrs . '/>' . "\n";
 				break;
 			case 'text_secret':
 				$placeholder = $field['placeholder'];
 				if ( $data ) {
 					$placeholder = __( 'Password stored securely', 'seriously-simple-podcasting' );
 				}
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" value="" class="' . $class . '"/>' . "\n";
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="text" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" value="" class="' . $class . '"' . $data_attrs . '/>' . "\n";
 				break;
 			case 'textarea':
-				$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" rows="5" cols="50" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" class="' . $class . '">' . $data . '</textarea><br/>' . "\n";
+				$html .= '<textarea id="' . esc_attr( $field['id'] ) . '" rows="5" cols="50" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" class="' . $class . '"' . $data_attrs . '>' . $data . '</textarea><br/>' . "\n";
 				break;
 			case 'checkbox':
 				$checked = '';
 				if ( $data && 'on' === $data ) {
 					$checked = 'checked="checked"';
 				}
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . ' class="' . $class . '"/>' . "\n";
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" ' . $checked . ' class="' . $class . '"' . $data_attrs . '/>' . "\n";
 				break;
 			case 'checkbox_multi':
 				foreach ( $field['options'] as $k => $v ) {
@@ -516,11 +524,11 @@ class Settings_Controller extends Controller {
 					if ( $k === $data ) {
 						$checked = true;
 					}
-					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</label><br/>';
+					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="radio" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '"' . $data_attrs . ' /> ' . $v . '</label><br/>';
 				}
 				break;
 			case 'select':
-				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
+				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '"' . $data_attrs . '>';
 				$prev_group = '';
 				foreach ( $field['options'] as $k => $v ) {
 
@@ -552,7 +560,7 @@ class Settings_Controller extends Controller {
 				$html .= '</select> ';
 				break;
 			case 'image':
-				$html .= '<img id="' . esc_attr( $default_option_name ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;" /><br/>' . "\n";
+				$html .= '<img id="' . esc_attr( $default_option_name ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;"' . $data_attrs . ' /><br/>' . "\n";
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '" type="hidden" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
@@ -587,7 +595,7 @@ class Settings_Controller extends Controller {
 				break;
 			case 'importing_podcasts':
 				$data = ssp_get_importing_podcasts_count();
-				$html .= '<input type="input" value="' . esc_attr( $data ) . '" class="' . $class . '" disabled/>' . "\n";
+				$html .= '<input type="input" value="' . esc_attr( $data ) . '" class="' . $class . '" disabled' . $data_attrs . '/>' . "\n";
 				break;
 		}
 

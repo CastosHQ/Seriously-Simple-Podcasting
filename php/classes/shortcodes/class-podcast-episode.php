@@ -26,17 +26,21 @@ class Podcast_Episode {
 
 		global $ss_podcasting;
 
+		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
+
 		$atts = shortcode_atts(
 			array(
 				'episode' => 0,
 				'content' => 'title,player,details',
-				'style'   => 'standard',
+				'style'   => $player_style,
 			),
 			$params,
 			'podcast_episode'
 		);
 
-		extract( $atts ); // @todo refactor this
+		$episode = $atts['episode'];
+		$content = $atts['content'];
+		$style   = $atts['style'];
 
 		// If no episode ID is specified then use the current post's ID
 		if ( ! $episode ) {
@@ -48,7 +52,7 @@ class Podcast_Episode {
 			}
 
 			if ( ! $episode ) {
-				return;
+				return '';
 			}
 		}
 

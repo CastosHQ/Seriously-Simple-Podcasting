@@ -362,6 +362,13 @@ class Frontend_Controller extends Controller {
 			$type = 'audio';
 		}
 
+		// Switch to podcast player URL
+		$src_file = str_replace( 'podcast-download', 'podcast-player', $src_file );
+
+		// Set up parameters for media player
+		$params = array( 'src' => $src_file, 'preload' => 'none' );
+
+
 		/**
 		 * If the media file is of type video
 		 * @todo is this necessary in the case of the HTML5 player?
@@ -1405,14 +1412,14 @@ class Frontend_Controller extends Controller {
 		global $post, $episode_context;
 
 		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
-			return;
+			return '';
 		}
 
 		// Get episode object
 		$episode = get_post( $episode_id );
 
 		if ( ! $episode || is_wp_error( $episode ) ) {
-			return;
+			return '';
 		}
 
 		$html = '<div class="podcast-episode episode-' . esc_attr( $episode_id ) . '">' . "\n";

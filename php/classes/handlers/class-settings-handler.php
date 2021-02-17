@@ -580,6 +580,10 @@ class Settings_Handler {
 				'type'        => 'select',
 				'options'     => $category_options,
 				'default'     => '',
+				'class'       => 'js-parent-category',
+				'data'        => array(
+					'subcategory' => 'data_subcategory',
+				),
 				'callback'    => 'wp_strip_all_tags',
 			),
 			array(
@@ -596,6 +600,10 @@ class Settings_Handler {
 				'label'       => __( 'Secondary Category', 'seriously-simple-podcasting' ),
 				'description' => __( 'Your podcast\'s secondary category.', 'seriously-simple-podcasting' ),
 				'type'        => 'select',
+				'class'       => 'js-parent-category',
+				'data'        => array(
+					'subcategory' => 'data_subcategory2',
+				),
 				'options'     => $category_options,
 				'default'     => '',
 				'callback'    => 'wp_strip_all_tags',
@@ -614,6 +622,10 @@ class Settings_Handler {
 				'label'       => __( 'Tertiary Category', 'seriously-simple-podcasting' ),
 				'description' => __( 'Your podcast\'s tertiary category.', 'seriously-simple-podcasting' ),
 				'type'        => 'select',
+				'class'       => 'js-parent-category',
+				'data'        => array(
+					'subcategory' => 'data_subcategory3',
+				),
 				'options'     => $category_options,
 				'default'     => '',
 				'callback'    => 'wp_strip_all_tags',

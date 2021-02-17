@@ -62,7 +62,7 @@ class EditCastosPlayer extends Component {
 				const episode = {
 					episodeId: episodeId,
 					episodeImage: post[0].episode_player_image,
-					episodeFileUrl: post[0].meta.audio_file,
+					episodeFileUrl: post[0].player_link,
 					episodeTitle: post[0].title.rendered,
 					episodeDuration: post[0].meta.duration,
 					episodeDownloadUrl: post[0].download_link,

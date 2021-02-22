@@ -161,12 +161,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 2.6.0 =
 * 2021-02-22
-* UPDATE SUMMARY: Bug fixes for the 2.5 release
-* [UPDATE] Improvements for the trash and copy podcast actions
-* [UPDATE] Add episode specific image in metabox
-* [UPDATE] Add image custom field for podcast enabled posts
-* [UPDATE] Code improvements
-
+* UPDATE SUMMARY: Improvements to the episode functionality
+* [UPDATE] Improvements for the trash and copy podcast actions, when using a Castos account
+* [UPDATE] Add episode specific image cover image to Episode Details fields
+* [UPDATE] Add episode specific image cover image to Episode Details fields for Podcast enabled Posts
+* [UPDATE] General code improvements and clean up
 
 = 2.5.3 =
 * 2021-02-09

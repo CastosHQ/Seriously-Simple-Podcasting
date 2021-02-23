@@ -113,7 +113,7 @@
 					Embed
 				</div>
 				<div style="height: 10px;">
-					<input type="text" value='<?php echo $embed_code ?>'
+					<input type="text" value='<?php echo esc_attr( $embed_code) ?>'
 					       class="input-embed input-embed-<?php echo $episode_id ?>"/>
 				</div>
 				<button class="copy-embed copy-embed-<?php echo $episode_id ?>"></button>

@@ -88,10 +88,10 @@ class Admin_Controller extends Controller {
 		add_action( 'init', array( $this, 'update' ), 11 );
 
 		// Dismiss the upgrade screen and redirect to the last screen the user was on
-		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) );
+		add_action( 'init', array( $this, 'dismiss_upgrade_screen' ) ); //todo: can we move it to 'admin_init'?
 
 		// Dismiss the categories update screen
-		add_action( 'init', array( $this, 'dismiss_categories_update' ) );
+		add_action( 'init', array( $this, 'dismiss_categories_update' ) ); //todo: can we move it to 'admin_init'?
 
 		// Dismiss the categories update screen
 		add_action( 'init', array( $this, 'disable_elementor_template_notice' ) );
@@ -108,6 +108,9 @@ class Admin_Controller extends Controller {
 
 			// process the import form submission
 			add_action( 'admin_init', array( $this, 'submit_import_form' ) );
+
+			// prevent copying some meta fields
+			add_action( 'admin_init', array( $this, 'prevent_copy_meta' ) );
 
 			// Episode meta box.
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
@@ -761,7 +764,17 @@ HTML;
 									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
 						break;
-
+					case 'image':
+						$html .= '<p>
+									<img id="' . esc_attr( $k ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;" />
+									<br/>
+									<input id="' . esc_attr( $k ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />
+									<input id="' . esc_attr( $k ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />
+									<input id="' . esc_attr( $k ) . '" type="hidden" name="' . esc_attr( $k ) . '" value="' . esc_attr( $data ) . '"/>
+									<br/>
+									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
+								<p/>' . "\n";
+						break;
 					case 'checkbox':
 						$html .= '<p><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on', $data, false ) . ' /> <label for="' . esc_attr( $k ) . '"><span>' . wp_kses_post( $v['description'] ) . '</span></label></p>' . "\n";
 						break;
@@ -981,6 +994,22 @@ HTML;
 				'meta_description' => __( 'Seriously Simple Hosting file id.', 'seriously-simple-podcasting' ),
 			);
 		}
+
+		$fields['cover_image'] = array(
+			'name'             => __( 'Cover Image:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'Your podcast cover image - must be square (minimum size of 300x300 px).', 'seriously-simple-podcasting' ),
+			'type'             => 'image',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'The full URL of image file used in HTML 5 player if available.', 'seriously-simple-podcasting' ),
+		);
+
+		$fields['cover_image_id'] = array(
+			'type'             => 'hidden',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Cover image id.', 'seriously-simple-podcasting' ),
+		);
 
 		$fields['duration'] = array(
 			'name'             => __( 'Duration:', 'seriously-simple-podcasting' ),
@@ -1411,9 +1440,15 @@ HTML;
 
 	/**
 	 * Update 'enclosure' meta field to 'audio_file' meta field
+	 * Todo: I don't see any place where 'ssp_update_enclosures' query is generated. Is this function obsolete?
+	 *
 	 * @return void
 	 */
 	public function update_enclosures() {
+
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return;
+		}
 
 		// Allow forced re-run of update if necessary
 		if ( isset( $_GET['ssp_update_enclosures'] ) ) {
@@ -1480,12 +1515,13 @@ HTML;
 			// Change the footer text
 			if ( ! get_option( 'ssp_admin_footer_text_rated' ) ) {
 				$footer_text = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
-				$footer_text .= "<script type='text/javascript'>
-					jQuery('a.ssp-rating-link').click(function() {
-						jQuery.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated' } );
-						jQuery(this).parent().text( jQuery(this).data( 'rated' ) );
-					});
-				</script>";
+				$footer_text .= sprintf("<script type='text/javascript'>
+					(function($){
+					  $('a.ssp-rating-link').click(function() {
+						$.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated', nonce: '%s' } );
+						$(this).parent().text( $(this).data( 'rated' ) );
+					})})(jQuery);
+				</script>", wp_create_nonce( 'ssp_rated' ) );
 			} else {
 				$footer_text = sprintf( __( '%1$sThank you for publishing with %2$sSeriously Simple Podcasting%3$s.%4$s', 'seriously-simple-podcasting' ), '<span id="footer-thankyou">', '<a href="http://www.seriouslysimplepodcasting.com/" target="_blank">', '</a>', '</span>' );
 			}
@@ -1515,8 +1551,8 @@ HTML;
 	/**
 	 * Send the podcast details to Castos
 	 *
-	 * @param $id
-	 * @param $post
+	 * @param int $id
+	 * @param \WP_Post $post
 	 */
 	public function update_podcast_details( $id, $post ) {
 		/**
@@ -1590,14 +1626,6 @@ HTML;
 	 * @param $post_id
 	 */
 	public function delete_post( $post_id ) {
-
-		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
-		 */
-		if ( ! ssp_is_connected_to_castos() ) {
-			return;
-		}
-
 		$post = get_post( $post_id );
 
 		/**
@@ -1607,15 +1635,29 @@ HTML;
 			return;
 		}
 
+		/**
+		 * Don't trigger this if we're not connected to Podcast Motor
+		 */
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
 		$castos_handler = new Castos_Handler();
+
 		$castos_handler->delete_podcast( $post );
+
+		delete_post_meta( $post_id, 'podmotor_file_id' );
+		delete_post_meta( $post_id, 'podmotor_episode_id' );
 	}
 
 	/**
 	 * Ignore podcast import
 	 */
 	public function ignore_importing_existing_podcasts() {
-		if ( isset( $_GET['podcast_import_action'] ) && 'ignore' == $_GET['podcast_import_action'] ) {
+		if ( 'ignore' === filter_input( INPUT_GET, 'podcast_import_action' ) &&
+			 wp_verify_nonce( $_GET['nonce'], 'podcast_import_action' ) &&
+			 current_user_can( 'manage_podcast' )
+		) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		}
 	}
@@ -1665,16 +1707,17 @@ HTML;
 	 * Dismiss upgrade screen when user clicks 'Dismiss' link
 	 */
 	public function dismiss_upgrade_screen() {
-		// Check if the ssp_dismiss_upgrade variable exists
-		$ssp_dismiss_upgrade = ( isset( $_GET['ssp_dismiss_upgrade'] ) ? filter_var( $_GET['ssp_dismiss_upgrade'], FILTER_SANITIZE_STRING ) : '' );
-		if ( empty( $ssp_dismiss_upgrade ) ) {
+		if ( ! filter_input( INPUT_GET, 'ssp_dismiss_upgrade' ) ||
+			 ! wp_verify_nonce( $_GET['nonce'], 'ssp_dismiss_upgrade' ) ||
+			 ! current_user_can( 'manage_podcast' )
+		) {
 			return;
 		}
 
 		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
 
 		update_option( 'ssp_upgrade_page_visited', 'true' );
-		wp_redirect( $ssp_redirect );
+		wp_safe_redirect( $ssp_redirect );
 		exit;
 	}
 
@@ -1782,9 +1825,13 @@ HTML;
 	public function dismiss_categories_update() {
 		// Check if the ssp_dismiss_categories_update variable exists
 		$ssp_dismiss_categories_update = ( isset( $_GET['ssp_dismiss_categories_update'] ) ? sanitize_text_field( $_GET['ssp_dismiss_categories_update'] ) : '' );
-		if ( empty( $ssp_dismiss_categories_update ) ) {
+		if ( ! $ssp_dismiss_categories_update ||
+			 ! wp_verify_nonce( $_GET['nonce'], 'dismiss_categories_update' ) ||
+			 ! current_user_can( 'manage_podcast' )
+		) {
 			return;
 		}
+
 		update_option( 'ssp_categories_update_dismissed', 'true' );
 	}
 
@@ -1798,6 +1845,31 @@ HTML;
 			return;
 		}
 		update_option( 'ss_podcasting_elementor_templates_disabled', 'true' );
+	}
+
+	/**
+	 * Prevents copying some podcast meta fields
+	 */
+	public function prevent_copy_meta() {
+		add_action( 'wp_insert_post', function ( $post_id, $post, $update ) {
+			if ( $update || $this->token != $post->post_type ) {
+				return;
+			}
+
+			// All the main copy plugins use redirection after creating the post and it's meta
+			add_filter( 'wp_redirect', function ( $location ) use ( $post_id ) {
+				$exclusions = [
+					'podmotor_file_id',
+					'podmotor_episode_id',
+				];
+
+				foreach ( $exclusions as $exclusion ) {
+					delete_post_meta( $post_id, $exclusion );
+				}
+
+				return $location;
+			} );
+		}, 10, 3 );
 	}
 
 }

@@ -12,6 +12,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Castos_Handler {
 
 	/**
+	 * @const int
+	 */
+	const MIN_IMG_SIZE = 1400;
+
+	/**
+	 * @const int
+	 */
+	const MAX_IMG_SIZE = 3000;
+
+	/**
 	 * @var string
 	 */
 	protected $api_token;
@@ -186,71 +196,6 @@ class Castos_Handler {
 	}
 
 	/**
-	 * Upload PodcastMotor file stored in offsite hosting to Castos database
-	 *
-	 * @param string $podmotor_file_path
-	 *
-	 * @return array|mixed|object
-	 */
-	public function upload_podmotor_storage_file_data_to_podmotor( $podmotor_file_path = '' ) {
-
-		$this->setup_response();
-		if ( empty( $podmotor_file_path ) ) {
-			$this->update_response( 'message', 'No file to upload' );
-
-			return $this->response;
-		}
-		$api_url = SSP_CASTOS_APP_URL . 'api/file';
-		$this->logger->log( $api_url );
-
-		$post_body = array(
-			'api_token'          => $this->api_token,
-			'podmotor_file_path' => $podmotor_file_path,
-		);
-		$this->logger->log( $post_body );
-
-		$app_response = wp_remote_post(
-			$api_url,
-			array(
-				'timeout' => 45,
-				'body'    => $post_body,
-			)
-		);
-		$this->logger->log( $app_response );
-
-		if ( is_wp_error( $app_response ) ) {
-			$this->update_response( 'message', $app_response->get_error_message() );
-
-			return $this->response;
-		}
-
-		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-		if ( empty( $response_object ) ) {
-			$this->update_response( 'message', 'An unknown error occurred uploading the file data to Castos.' );
-
-			return $this->response;
-		}
-
-		if ( 'success' !== $response_object->status ) {
-			if ( isset( $response_object->message ) ) {
-				$this->update_response( 'message', $response_object->message );
-			} else {
-				$this->update_response( 'message', 'An error occurred uploading the file data to Castos.' );
-			}
-
-			return $this->response;
-		}
-
-		$this->update_response( 'status', 'success' );
-		$this->update_response( 'message', 'File successfully uploaded.' );
-		$this->update_response( 'file_id', $response_object->file_id );
-		$this->update_response( 'file_path', $response_object->file_path );
-		$this->update_response( 'file_duration', $response_object->file_duration );
-
-		return $this->response;
-	}
-
-	/**
 	 * Upload Podcast episode data to Seriously Simple Hosting
 	 * Should only happen once the file has been uploaded to Seriously Simple Hosting Storage
 	 *
@@ -308,9 +253,10 @@ class Castos_Handler {
 
 		$this->logger->log( 'API URL', $api_url );
 
-		$featured_image_url = $this->get_featured_image( $post );
-		if ( ! empty( $featured_image_url ) ) {
-			$post_body['featured_image_url'] = $featured_image_url;
+		$cover_image_url = $this->get_cover_image_url( $post );
+		if ( ! empty( $cover_image_url ) ) {
+			// Todo: change 'featured_image_url' to 'cover_image_url' after API update
+			$post_body['featured_image_url'] = $cover_image_url;
 		}
 
 		$this->logger->log( 'Parameter post_body Contents', $post_body );
@@ -362,15 +308,56 @@ class Castos_Handler {
 	}
 
 	/**
-	 * Gets the featured image url
+	 * Gets cover image url
 	 *
 	 * @param $post
-	 * @param $post_body
 	 *
-	 * @return mixed
+	 * @return string
 	 */
-	public function get_featured_image( $post ) {
-		return get_the_post_thumbnail_url( $post->ID, 'full' );
+	public function get_cover_image_url( $post ) {
+		$key    = 'cover_image';
+		$id_key = 'cover_image_id';
+
+		$podcast_image = filter_input( INPUT_POST, $key, FILTER_VALIDATE_URL );
+		$attachment_id = filter_input( INPUT_POST, $id_key );
+
+		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
+			$podcast_image = get_post_meta( $post->ID, $key );
+			$attachment_id = get_post_meta( $post->ID, $id_key );
+		}
+
+		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
+			$podcast_image = get_the_post_thumbnail_url( $post, 'full' );
+			$attachment_id = get_post_thumbnail_id( $post );
+		}
+
+		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
+			$podcast_image = '';
+		}
+
+		return $podcast_image;
+	}
+
+	/**
+	 * @param int $attachment_id
+	 *
+	 * @return bool
+	 */
+	public function is_valid_podcast_image( $attachment_id ) {
+		if ( empty( $attachment_id ) ) {
+			return false;
+		}
+
+		$image = wp_get_attachment_image_src( $attachment_id, 'full' );
+
+		if ( empty( $image[1] ) || empty( $image[2] ) ) {
+			return false;
+		}
+
+		$width  = $image[1];
+		$height = $image[2];
+
+		return ( $width === $height ) && $width >= self::MIN_IMG_SIZE && $width <= self::MAX_IMG_SIZE;
 	}
 
 	/**

@@ -180,10 +180,31 @@ class Settings_Controller extends Controller {
 				continue;
 			}
 
+
 			$role = get_role( $the_role );
 			$caps = array(
 				'manage_podcast',
 			);
+
+			//todo: use the same array for registering podcast and adding capabilities
+			$post_capabilities = array(
+				'edit_post'              => 'edit_podcast',
+				'read_post'              => 'read_podcast',
+				'delete_post'            => 'delete_podcast',
+				'edit_posts'             => 'edit_podcasts',
+				'edit_others_posts'      => 'edit_others_podcasts',
+				'publish_posts'          => 'publish_podcasts',
+				'read_private_posts'     => 'read_private_podcasts',
+				'delete_posts'           => 'delete_podcasts',
+				'delete_private_posts'   => 'delete_private_podcasts',
+				'delete_published_posts' => 'delete_published_podcasts',
+				'delete_others_posts'    => 'delete_others_podcasts',
+				'edit_private_posts'     => 'edit_private_podcasts',
+				'edit_published_posts'   => 'edit_published_podcasts',
+				'create_posts'           => 'create_podcasts',
+			);
+
+			$caps = array_merge( $caps, $post_capabilities );
 
 			// Add the caps.
 			foreach ( $caps as $cap ) {

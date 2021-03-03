@@ -114,21 +114,6 @@ class Frontend_Controller extends Controller {
 	 * Additionally, if we're rendering a post or page which includes a player block, enqueue the player assets
 	 */
 	public function register_html5_player_assets() {
-		wp_register_style(
-			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player.css' ),
-			array(),
-			$this->version
-		);
-
-		wp_register_script(
-			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player.js' ),
-			array(),
-			$this->version,
-			true
-		);
-
 		/**
 		 * If we're rendering a SSP Block, which includes the HTML5 player, also enqueue the player scripts
 		 */
@@ -176,9 +161,6 @@ class Frontend_Controller extends Controller {
 		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );
 
 		switch ( $player_visibility ) {
-			case 'all':
-				$show_player = true;
-				break;
 			case 'membersonly':
 				$show_player = is_user_logged_in();
 				break;

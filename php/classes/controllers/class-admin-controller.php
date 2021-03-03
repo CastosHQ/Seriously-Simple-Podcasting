@@ -782,6 +782,7 @@ HTML;
 						break;
 					case 'image':
 						$html .= '<p>
+									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>
 									<img id="' . esc_attr( $k ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;" />
 									<br/>
 									<input id="' . esc_attr( $k ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />
@@ -1012,7 +1013,7 @@ HTML;
 		}
 
 		$fields['cover_image'] = array(
-			'name'             => __( 'Cover Image:', 'seriously-simple-podcasting' ),
+			'name'             => __( 'Episode Image:', 'seriously-simple-podcasting' ),
 			'description'      => __( 'Your podcast cover image - must be square (minimum size of 300x300 px).', 'seriously-simple-podcasting' ),
 			'type'             => 'image',
 			'default'          => '',

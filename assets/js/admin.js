@@ -20,19 +20,12 @@ jQuery(document).ready(function($) {
 		  button: {
 		    text: jQuery( this ).data( 'uploader_button_text' ),
 		  },
-		  library : {
-		    type : 'image'
-		  },
 		  multiple: false
 		});
-
-		console.log( file_frame );
 
 		// When an image is selected, run a callback.
 		file_frame.on( 'select', function() {
 		  var attachment = file_frame.state().get('selection').first().toJSON();
-
-		  console.log(attachment);
 
 		  if ( typeof validateImageSize === 'function' && !validateImageSize( attachment ) ) {
 			return;
@@ -56,7 +49,7 @@ jQuery(document).ready(function($) {
 		var button_id = button.attr('id');
 		var preview_id = button_id.replace( '_upload', '' ).replace( '_button', '_preview' );
 		var field_id = button_id.replace( '_upload', '' ).replace( '_button', '_id' );
-    
+
 		// If the media frame already exists, reopen it.
 		if ( series_img_frame ) {
 		  series_img_frame.open();
@@ -74,7 +67,7 @@ jQuery(document).ready(function($) {
     	},
 		  multiple: false
 		});
-		
+
 		series_img_frame.on( 'select', function() {
       // Get media attachment details from the frame state
       var attachment = series_img_frame.state().get('selection').first().toJSON();
@@ -85,11 +78,11 @@ jQuery(document).ready(function($) {
       // Send the attachment id to our hidden input
       $('#' + field_id).val(attachment.id);
 		});
-		
+
     // Finally, open the modal on click
     series_img_frame.open();
 	});
-	
+
 	/* Remove/clear Series Image */
 	jQuery('#series_remove_image_button').click(function( event ){
 		event.preventDefault();
@@ -97,14 +90,14 @@ jQuery(document).ready(function($) {
 		var button_id = button.attr('id');
 		var preview_id = button_id.replace( '_remove', '' ).replace( '_button', '_preview' );
 		var field_id = button_id.replace( '_remove', '' ).replace( '_button', '_id' );
-    
+
 		if ( confirm('Are you sure?') ) {
         var src = $('#' + preview_id).attr('data-src');
         $('#' + preview_id).attr('src', src);
         $('#' + field_id).val('');
     }
 	});
-	
+
 	/* ADD/EDIT EPISODE */
 
 	jQuery('#upload_audio_file_button').click(function( event ){

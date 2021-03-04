@@ -1,3 +1,5 @@
+<?php $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7) ?>
+
 <div class="castos-player <?php echo $player_mode ?>-mode" data-episode="<?php echo $episode_id?>">
 	<div class="player">
 		<div class="player__main">

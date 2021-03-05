@@ -783,7 +783,7 @@ HTML;
 					case 'image':
 						$html .= '<p>
 									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>
-									<img id="' . esc_attr( $k ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;" />
+									<img id="' . esc_attr( $k ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:200px;height:auto;margin:20px 0;" />
 									<br/>
 									<input id="' . esc_attr( $k ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />
 									<input id="' . esc_attr( $k ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />

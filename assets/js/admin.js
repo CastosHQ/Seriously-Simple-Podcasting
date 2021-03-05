@@ -3,44 +3,31 @@ jQuery(document).ready(function($) {
 	// Uploading files
 	var file_frame, series_img_frame;
 
-	jQuery.fn.ssp_upload_media_file = function( button, preview_media, validateImageSize = false ) {
+	$.fn.ssp_upload_media_file = function( button, preview_media, validateImageSize = false ) {
 		var button_id = button.attr('id');
 		var field_id = button_id.replace( '_button', '' );
 		var preview_id = button_id.replace( '_button', '_preview' );
 
-		// If the media frame already exists, reopen it.
-		if ( file_frame ) {
-		  file_frame.open();
-		  return;
-		}
-
 		// Create the media frame.
 		file_frame = wp.media.frames.file_frame = wp.media({
-		  title: jQuery( this ).data( 'uploader_title' ),
+		  title: $( this ).data( 'uploader_title' ),
 		  button: {
-		    text: jQuery( this ).data( 'uploader_button_text' ),
-		  },
-		  library : {
-		    type : 'image'
+		    text: $( this ).data( 'uploader_button_text' ),
 		  },
 		  multiple: false
 		});
-
-		console.log( file_frame );
 
 		// When an image is selected, run a callback.
 		file_frame.on( 'select', function() {
 		  var attachment = file_frame.state().get('selection').first().toJSON();
 
-		  console.log(attachment);
-
 		  if ( typeof validateImageSize === 'function' && !validateImageSize( attachment ) ) {
 			return;
 		  }
 
-		  jQuery("#"+field_id).val(attachment.url);
+		  $("#"+field_id).val(attachment.url);
 		  if ( preview_media ) {
-		  	jQuery("#"+preview_id).attr('src',attachment.url);
+		  	$("#"+preview_id).attr('src',attachment.url);
 		  }
 		});
 
@@ -49,14 +36,14 @@ jQuery(document).ready(function($) {
 	};
 
   /* Add/Edit Series Image */
-	jQuery('#series_upload_image_button').click(function( event ){
+	$('#series_upload_image_button').click(function( event ){
 		event.preventDefault();
 		var send_attachment_bkp = wp.media.editor.send.attachment;
     var button = $(this);
 		var button_id = button.attr('id');
 		var preview_id = button_id.replace( '_upload', '' ).replace( '_button', '_preview' );
 		var field_id = button_id.replace( '_upload', '' ).replace( '_button', '_id' );
-    
+
 		// If the media frame already exists, reopen it.
 		if ( series_img_frame ) {
 		  series_img_frame.open();
@@ -65,16 +52,16 @@ jQuery(document).ready(function($) {
 
 		// Create the media frame.
 		series_img_frame = wp.media({
-			title: jQuery( this ).data( 'uploader_title' ),
+			title: $( this ).data( 'uploader_title' ),
 		  button: {
-		    text: jQuery( this ).data( 'uploader_button_text' ),
+		    text: $( this ).data( 'uploader_button_text' ),
 		  },
 			library: {
 				type: [ 'image' ]
     	},
 		  multiple: false
 		});
-		
+
 		series_img_frame.on( 'select', function() {
       // Get media attachment details from the frame state
       var attachment = series_img_frame.state().get('selection').first().toJSON();
@@ -85,44 +72,44 @@ jQuery(document).ready(function($) {
       // Send the attachment id to our hidden input
       $('#' + field_id).val(attachment.id);
 		});
-		
+
     // Finally, open the modal on click
     series_img_frame.open();
 	});
-	
+
 	/* Remove/clear Series Image */
-	jQuery('#series_remove_image_button').click(function( event ){
+	$('#series_remove_image_button').click(function( event ){
 		event.preventDefault();
 		var button = $(this);
 		var button_id = button.attr('id');
 		var preview_id = button_id.replace( '_remove', '' ).replace( '_button', '_preview' );
 		var field_id = button_id.replace( '_remove', '' ).replace( '_button', '_id' );
-    
+
 		if ( confirm('Are you sure?') ) {
         var src = $('#' + preview_id).attr('data-src');
         $('#' + preview_id).attr('src', src);
         $('#' + field_id).val('');
     }
 	});
-	
+
 	/* ADD/EDIT EPISODE */
 
-	jQuery('#upload_audio_file_button').click(function( event ){
+	$('#upload_audio_file_button').click(function( event ){
 		event.preventDefault();
-		jQuery.fn.ssp_upload_media_file( jQuery(this), false );
+		$.fn.ssp_upload_media_file( $(this), false );
 	});
 
-	jQuery('#episode_embed_code').click(function() {
-		jQuery(this).select();
+	$('#episode_embed_code').click(function() {
+		$(this).select();
 	});
 
-	jQuery( '.episode_embed_code_size_option' ).change(function() {
+	$( '.episode_embed_code_size_option' ).change(function() {
 
-		var width = jQuery( '#episode_embed_code_width' ).val();
-		var height = jQuery( '#episode_embed_code_height' ).val();
-		var post_id = jQuery( '#post_ID' ).val();
+		var width = $( '#episode_embed_code_width' ).val();
+		var height = $( '#episode_embed_code_height' ).val();
+		var post_id = $( '#post_ID' ).val();
 
-		jQuery.post(
+		$.post(
 		    ajaxurl,
 		    {
 		        'action': 'update_episode_embed_code',
@@ -132,8 +119,8 @@ jQuery(document).ready(function($) {
 		    },
 		    function( response ){
 		        if( response ) {
-		        	jQuery( '#episode_embed_code' ).val( response );
-		        	jQuery( '#episode_embed_code' ).select();
+		        	$( '#episode_embed_code' ).val( response );
+		        	$( '#episode_embed_code' ).select();
 		        }
 		    }
 		);
@@ -141,7 +128,7 @@ jQuery(document).ready(function($) {
 
 	/* DATEPICKER */
 
-	jQuery('.ssp-datepicker').datepicker({
+	$('.ssp-datepicker').datepicker({
 		changeMonth: true,
       	changeYear: true,
       	showAnim: 'slideDown',
@@ -156,63 +143,63 @@ jQuery(document).ready(function($) {
 		}
 	});
 
-	jQuery('.ssp-datepicker').change( function () {
-		var value = jQuery( this ).val();
+	$('.ssp-datepicker').change( function () {
+		var value = $( this ).val();
 		if( !value ) {
-			var id = jQuery( this ).attr( 'id' );
+			var id = $( this ).attr( 'id' );
 			var save_field = id.replace( '_display', '' );
-			jQuery( '#' + save_field ).val( '' );
+			$( '#' + save_field ).val( '' );
 		}
 	});
 
 	/* SETTINGS PAGE */
 
-	jQuery('#feed-series-toggle').click(function(e) {
+	$('#feed-series-toggle').click(function(e) {
 
-		if ( jQuery(this).hasClass( 'series-open' ) ) {
-			jQuery('#feed-series-list').slideUp('fast');
-			jQuery(this).removeClass( 'series-open' );
-			jQuery(this).addClass( 'series-closed' );
+		if ( $(this).hasClass( 'series-open' ) ) {
+			$('#feed-series-list').slideUp('fast');
+			$(this).removeClass( 'series-open' );
+			$(this).addClass( 'series-closed' );
 
-		} else if ( jQuery(this).hasClass( 'series-closed' ) ) {
-			jQuery('#feed-series-list').slideDown('fast');
-			jQuery(this).removeClass( 'series-closed' );
-			jQuery(this).addClass( 'series-open' );
+		} else if ( $(this).hasClass( 'series-closed' ) ) {
+			$('#feed-series-list').slideDown('fast');
+			$(this).removeClass( 'series-closed' );
+			$(this).addClass( 'series-open' );
 
 		}
 
 	});
 
-	jQuery('#ss_podcasting_data_image_button').click(function() {
-		jQuery.fn.ssp_upload_media_file( jQuery(this), true );
+	$('#ss_podcasting_data_image_button').click(function() {
+		$.fn.ssp_upload_media_file( $(this), true );
 	});
 
-	jQuery('#ss_podcasting_data_image_delete').click(function() {
-		jQuery( '#ss_podcasting_data_image' ).val( '' );
-		jQuery( '#ss_podcasting_data_image_preview' ).remove();
+	$('#ss_podcasting_data_image_delete').click(function() {
+		$( '#ss_podcasting_data_image' ).val( '' );
+		$( '#ss_podcasting_data_image_preview' ).remove();
 		return false;
 	});
 
-	jQuery( '#cover_image_button' ).click(function() {
+	$( '#cover_image_button' ).click(function() {
 		var validateImageSize = function( attachment ) {
 		  return attachment.width === attachment.height && attachment.width >= 300;
 		}
-		var description = jQuery( this ).siblings( '.description' );
-		jQuery.fn.ssp_upload_media_file( jQuery(this), true, validateImageSize );
+		var description = $( this ).siblings( '.description' );
+		$.fn.ssp_upload_media_file( $(this), true, validateImageSize );
 		description.css( 'color', '' );
 
 		file_frame.on( 'select', function() {
 		  var attachment = file_frame.state().get( 'selection' ).first().toJSON();
 		  if ( validateImageSize( attachment ) ) {
-			jQuery( '#cover_image_id' ).val( attachment.id );
+			$( '#cover_image_id' ).val( attachment.id );
 		  } else {
 			description.css( 'color', 'red' );
 		  }
 		});
 	});
 
-	jQuery('#cover_image_delete').click(function() {
-		jQuery( '#cover_image, #cover_image_id' ).val( '' );
-		jQuery( '#cover_image_preview' ).attr( 'src', '' );
+	$('#cover_image_delete').click(function() {
+		$( '#cover_image, #cover_image_id' ).val( '' );
+		$( '#cover_image_preview' ).attr( 'src', '' );
 	});
 });

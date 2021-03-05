@@ -252,6 +252,22 @@ class Admin_Controller extends Controller {
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-microphone',
 			'show_in_rest'        => true,
+			'capabilities'        => array(
+				'edit_post'              => 'edit_podcast',
+				'read_post'              => 'read_podcast',
+				'delete_post'            => 'delete_podcast',
+				'edit_posts'             => 'edit_podcasts',
+				'edit_others_posts'      => 'edit_others_podcasts',
+				'publish_posts'          => 'publish_podcasts',
+				'read_private_posts'     => 'read_private_podcasts',
+				'delete_posts'           => 'delete_podcasts',
+				'delete_private_posts'   => 'delete_private_podcasts',
+				'delete_published_posts' => 'delete_published_podcasts',
+				'delete_others_posts'    => 'delete_others_podcasts',
+				'edit_private_posts'     => 'edit_private_podcasts',
+				'edit_published_posts'   => 'edit_published_podcasts',
+				'create_posts'           => 'create_podcasts',
+			),
 		);
 
 		$args = apply_filters( 'ssp_register_post_type_args', $args );
@@ -766,7 +782,8 @@ HTML;
 						break;
 					case 'image':
 						$html .= '<p>
-									<img id="' . esc_attr( $k ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;" />
+									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>
+									<img id="' . esc_attr( $k ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:200px;height:auto;margin:20px 0;" />
 									<br/>
 									<input id="' . esc_attr( $k ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />
 									<input id="' . esc_attr( $k ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />
@@ -996,7 +1013,7 @@ HTML;
 		}
 
 		$fields['cover_image'] = array(
-			'name'             => __( 'Cover Image:', 'seriously-simple-podcasting' ),
+			'name'             => __( 'Episode Image:', 'seriously-simple-podcasting' ),
 			'description'      => __( 'Your podcast cover image - must be square (minimum size of 300x300 px).', 'seriously-simple-podcasting' ),
 			'type'             => 'image',
 			'default'          => '',

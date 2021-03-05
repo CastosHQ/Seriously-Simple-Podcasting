@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.5.3
+Tested up to: 5.6.2
 Requires PHP: 5.6
-Stable tag: 2.6.0
+Stable tag: 2.6.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,18 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.6.1 =
+* 2021-03-05
+* UPDATE SUMMARY: Improvements, bug fixes for the 2.6 release
+* [UPDATE] Change right sidebar in settings
+* [UPDATE] Custom user role/podcast capabilities
+* [FIX] HTML player broken embed link
+* [FIX] Episode image missing title
+* [FIX] Player is not playing if the JS file is placed in the header
+* [FIX] Player is not playing if more then one player codes appear on the same page
+* [FIX] Audio files are not shown in the media library
+* [FIX] Uploaded cover image overwrites the audio file settings
 
 = 2.6.0 =
 * 2021-02-22

@@ -20,8 +20,15 @@
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
-	exit;
+
+	print_r($_ENV);
+
+	exit('111');
 }
+//phpinfo();
+//print_r($_COOKIE);
+//
+//exit('111');
 
 use SeriouslySimplePodcasting\Controllers\App_Controller;
 

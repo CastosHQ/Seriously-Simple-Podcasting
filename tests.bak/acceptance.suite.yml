@@ -1,0 +1,32 @@
+# Codeception Test Suite Configuration
+#
+# Suite for acceptance tests.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# If you need both WebDriver and PHPBrowser tests - create a separate suite.
+
+actor: AcceptanceTester
+modules:
+  enabled:
+    - WPBrowser
+#    - PhpBrowser:
+#        url: http://castos.loc
+    - \Helper\Acceptance
+  #        - WPWebDriver:
+  #            url: 'http://castos.loc'
+  #            browser: phantomjs
+  #            port: 4444
+  #            restart: true
+  #            wait: 2
+  #            adminUsername: admin
+  #            adminPassword: password
+  #            adminUrl: /wp-admin
+
+  config:
+    WPBrowser:
+      url: 'http://castos.loc'
+      adminUsername: 'zdev'
+      adminPassword: 'N%^!JtIjaSY$IJf5zd(j74Sk'
+      adminPath: 'http://castos.loc/wp-login.php'
+
+step_decorators: ~
+

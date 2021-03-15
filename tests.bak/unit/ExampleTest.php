@@ -1,12 +1,11 @@
-<?php
-
-class ExampleTest extends \Codeception\TestCase\WPTestCase
+<?php 
+class ExampleTest extends \Codeception\Test\Unit
 {
     /**
      * @var \UnitTester
      */
     protected $tester;
-
+    
     protected function _before()
     {
     }

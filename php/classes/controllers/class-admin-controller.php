@@ -1878,6 +1878,8 @@ HTML;
 				$exclusions = [
 					'podmotor_file_id',
 					'podmotor_episode_id',
+					'audio_file',
+					'enclosure'
 				];
 
 				foreach ( $exclusions as $exclusion ) {

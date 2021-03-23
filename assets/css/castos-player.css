@@ -698,6 +698,17 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
+.castos-player .player-btn__volume,
+.castos-player .player-btn__rwd,
+.castos-player .player-btn__fwd,
+.castos-player .player-btn__speed,
+.castos-player .play-pause-controls .play-btn,
+.castos-player .player-panels-nav button
+{
+	min-width: initial;
+	height: initial;
+}
+
 /* ///////////////////////////////////////////////////////////////////////// */
 /* LIGHT MODE */
 /* ///////////////////////////////////////////////////////////////////////// */

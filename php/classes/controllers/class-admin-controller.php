@@ -24,26 +24,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Controller extends Controller {
 
 	/**
-	 * @var object instance of Ajax_Handler
+	 * @var Ajax_Handler
 	 */
 	protected $ajax_handler;
 
 	/**
-	 * @var object instance of Upgrade_Handler
+	 * @var Upgrade_Handler
 	 */
 	protected $upgrade_handler;
 
 	/**
-	 * @var object instance of the Admin_Notices_Handler
+	 * @var Admin_Notifications_Handler
 	 */
 	protected $admin_notices_handler;
 
 	/**
-	 * @var object instance of Feed_Controller
+	 * @var Feed_Controller
 	 */
 	protected $feed_controller;
 
+	/**
+	 * @var Log_Helper
+	 * */
 	protected $logger;
+
+	/**
+	 * @var Cron_Controller
+	 */
+	protected $cron_controller;
 
 	/**
 	 * Admin_Controller constructor.
@@ -68,6 +76,8 @@ class Admin_Controller extends Controller {
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
 
 		$this->logger = new Log_Helper();
+
+		$this->cron_controller = new Cron_Controller();
 
 		if ( is_admin() ) {
 			$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
@@ -1632,6 +1642,7 @@ HTML;
 			}
 			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_episode_success' ) );
 		} else {
+			update_post_meta( $id, 'podmotor_schedule_upload', true );
 			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_error' ) );
 		}
 

@@ -18,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Cron_Controller {
 	public function __construct() {
 		add_action( 'ssp_cron_hook', array( $this, 'upload_scheduled_episodes' ) );
-		add_action( 'admin_init', [ self::class, 'schedule_events' ] );
+		add_action( 'admin_init', array( $this, 'schedule_events' ) );
 	}
 
 	public function schedule_events() {

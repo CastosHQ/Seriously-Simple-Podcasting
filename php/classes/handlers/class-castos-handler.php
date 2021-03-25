@@ -292,7 +292,7 @@ class Castos_Handler {
 
 		$this->logger->log( 'Upload Podcast Response', $response_object );
 
-		if ( ! isset( $response_object->status ) || ! $response_object->status ) {
+		if ( ! isset( $response_object->status ) || ! $response_object->status || empty( $response_object->success ) ) {
 			$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
 			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 

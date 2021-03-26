@@ -127,8 +127,7 @@ class Admin_Controller extends Controller {
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 
 			// Update podcast details to Castos when a post is updated or saved
-			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
-			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
+			add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
 
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -1619,23 +1618,10 @@ HTML;
 			return;
 		}
 
-		/**
-		 * Don't trigger this if we've just updated the post
-		 * This is because both actions we're hooking into get triggered in a post update
-		 * So this is to prevent this method from being called twice during a post update.
-		 */
-		$cache_key     = 'ssp_podcast_updated';
-		$podcast_saved = get_transient( $cache_key );
-		if ( false !== $podcast_saved ) {
-			delete_transient( $cache_key );
-			return;
-		}
-
 		$castos_handler = new Castos_Handler();
 		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
 
 		if ( 'success' === $response['status'] ) {
-			set_transient( $cache_key, true, 60 );
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );

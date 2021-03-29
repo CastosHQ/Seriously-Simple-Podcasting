@@ -120,7 +120,9 @@ if ( $stylesheet_url ) {
 			while ( $qry->have_posts() ) {
 				$qry->the_post();
 
-				include __DIR__ . '/feed/feed-item.php';
+				$feed_item_path = apply_filters('ssp_feed_item_path', __DIR__ . '/feed/feed-item.php');
+
+				include $feed_item_path;
 			}
 		} ?>
 	</channel>

@@ -902,24 +902,69 @@ class Frontend_Controller extends Controller {
 
 	/**
 	 * Get episode image
-	 * @param  integer $id   ID of episode
+	 * @param  integer $post_id   ID of episode
 	 * @param  string  $size Image size
 	 * @return string        Image HTML markup
 	 */
-	public function get_image( $id = 0, $size = 'full' ) {
+	public function get_image( $post_id = 0, $size = 'full' ) {
 		$image = '';
 
-		if ( has_post_thumbnail( $id ) ) {
+		if ( has_post_thumbnail( $post_id ) ) {
 			// If not a string or an array, and not an integer, default to 200x9999.
 			if ( is_int( $size ) || ( 0 < intval( $size ) ) ) {
 				$size = array( intval( $size ), intval( $size ) );
 			} elseif ( ! is_string( $size ) && ! is_array( $size ) ) {
 				$size = array( 200, 9999 );
 			}
-			$image = get_the_post_thumbnail( intval( $id ), $size );
+			$image = get_the_post_thumbnail( intval( $post_id ), $size );
 		}
 
-		return apply_filters( 'ssp_episode_image', $image, $id );
+		return apply_filters( 'ssp_episode_image', $image, $post_id );
+	}
+
+	/**
+	 * Get episode image
+	 *
+	 * @param integer $post_id ID of episode
+	 * @param string $size Image size
+	 *
+	 * @return string        Image url
+	 */
+	public function get_episode_image_url( $post_id = 0, $size = 'full' ) {
+		$image_url = '';
+		$image_id  = get_post_meta( $post_id, 'cover_image_id', true );
+		$is_valid  = $this->is_image_valid( $image_id, $size );
+
+		if ( ! $is_valid ) {
+			$image_id = get_post_thumbnail_id( $post_id );
+			$is_valid = $this->is_image_valid( $image_id, $size );
+		}
+
+		if ( $is_valid ) {
+			$image_att = wp_get_attachment_image_src( $image_id, $size );
+			$image_url = isset( $image_att[0] ) ? $image_att[0] : '';
+		}
+
+		return apply_filters( 'ssp_episode_image_url', $image_url, $post_id );
+	}
+
+	/**
+	 * @param int $image_id
+	 * @param string $size
+	 *
+	 * @return bool
+	 */
+	public function is_image_valid( $image_id, $size = 'full' ) {
+		$image_att = $image_id ? wp_get_attachment_image_src( $image_id, $size ) : null;
+		$min_size  = apply_filters( 'ssp_episode_min_image_size', 1400 );
+		$max_size  = apply_filters( 'ssp_episode_min_image_size', 3000 );
+		if ( empty( $image_att ) ) {
+			return false;
+		}
+		$width  = isset( $image_att[1] ) ? $image_att[1] : 0;
+		$height = isset( $image_att[2] ) ? $image_att[2] : 0;
+
+		return $width === $height && $width >= $min_size && $width <= $max_size;
 	}
 
 	/**

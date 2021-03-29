@@ -23,14 +23,8 @@ if ( ! isset( $enclosure ) || ! $enclosure ) {
 }
 
 // Get episode image from post featured image
-$episode_image = '';
-$image_id      = get_post_thumbnail_id( get_the_ID() );
-if ( $image_id ) {
-	$image_att = wp_get_attachment_image_src( $image_id, 'full' );
-	if ( $image_att ) {
-		$episode_image = $image_att[0];
-	}
-}
+global $ss_podcasting;
+$episode_image = $ss_podcasting->get_episode_image_url( get_the_ID() );
 $episode_image = apply_filters( 'ssp_feed_item_image', $episode_image, get_the_ID() );
 
 // Episode duration (default to 0:00 to ensure there is always a value for this)
@@ -183,9 +177,11 @@ if ( $is_itunes_fields_enabled && $is_itunes_fields_enabled == 'on' ) {
 if ( isset( $turbo_post_count ) ) {
 	$turbo_post_count ++;
 }
+
+$title = esc_html( get_the_title_rss() );
 ?>
 <item>
-	<title><?php echo esc_html( get_the_title_rss() ); ?></title>
+	<title><?php echo $title; ?></title>
 	<link><?php the_permalink_rss(); ?></link>
 	<pubDate><?php echo $pub_date; ?></pubDate>
 	<dc:creator><?php echo $author; ?></dc:creator>
@@ -216,6 +212,10 @@ if ( isset( $turbo_post_count ) ) {
 	<?php } ?>
 	<?php if ( $episode_image ) { ?>
 		<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
+		<image>
+			<url><?php echo esc_url( $episode_image ); ?></url>
+			<title><?php echo esc_attr( $title ); ?></title>
+		</image>
 	<?php } ?>
 	<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
 	<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>

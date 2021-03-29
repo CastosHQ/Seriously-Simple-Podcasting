@@ -61,7 +61,7 @@
                         border-top: 1px solid #E5E5E5;
                         padding: 20px;
                     }
-                    .episode-image img {
+                    .episode-image img, .channel-item img {
                         width: 100px;
                         height: auto;
                         margin: 0 30px 15px 0;
@@ -124,6 +124,16 @@
                                     <xsl:value-of select="title"/>
                                 </a>
                             </h2>
+							<xsl:if test="image">
+							<img>
+								<xsl:attribute name="src">
+									<xsl:value-of select="image/url"/>
+								</xsl:attribute>
+								<xsl:attribute name="title">
+									<xsl:value-of select="image/title"/>
+								</xsl:attribute>
+							</img>
+							</xsl:if>
                             <xsl:if test="description">
                                 <p>
                                     <xsl:value-of select="description" disable-output-escaping="yes"/>

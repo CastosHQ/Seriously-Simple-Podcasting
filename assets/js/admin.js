@@ -182,7 +182,7 @@ jQuery(document).ready(function($) {
 
 	$( '#cover_image_button' ).click(function() {
 		var validateImageSize = function( attachment ) {
-		  return attachment.width === attachment.height && attachment.width >= 300;
+		  return attachment.width === attachment.height && attachment.width >= 1400 && attachment.width <= 3000;
 		}
 		var description = $( this ).siblings( '.description' );
 		$.fn.ssp_upload_media_file( $(this), true, validateImageSize );

@@ -55,7 +55,21 @@ class Admin_Notifications_Handler {
 		// Trigger the Elementor Templates message
 		add_action( 'admin_init', array( $this, 'show_elementor_templates_available' ) );
 
+		// Trigger the Elementor Templates message
+		add_action( 'series_pre_add_form', array( $this, 'show_series_helper_text' ) );
 	}
+
+	/**
+	 * Admin notice for the add series page
+	 */
+	public function show_series_helper_text(){
+		$text = '
+		A new Series will create an entirely new Podcast Feed. <br>
+		Only do this if you want to have multiple shows within your WordPress site. <br>
+		If you just want to organize episodes within the same feed we suggest using Tags.';
+		echo sprintf('<div class="notice series-notice notice-warning"><p>%s</p></div>', $text);
+	}
+
 
 	/**
 	 * Admin notice if an episode sync is successful

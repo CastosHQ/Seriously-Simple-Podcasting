@@ -24,26 +24,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Controller extends Controller {
 
 	/**
-	 * @var object instance of Ajax_Handler
+	 * @var Ajax_Handler
 	 */
 	protected $ajax_handler;
 
 	/**
-	 * @var object instance of Upgrade_Handler
+	 * @var Upgrade_Handler
 	 */
 	protected $upgrade_handler;
 
 	/**
-	 * @var object instance of the Admin_Notices_Handler
+	 * @var Admin_Notifications_Handler
 	 */
 	protected $admin_notices_handler;
 
 	/**
-	 * @var object instance of Feed_Controller
+	 * @var Feed_Controller
 	 */
 	protected $feed_controller;
 
+	/**
+	 * @var Log_Helper
+	 * */
 	protected $logger;
+
+	/**
+	 * @var Cron_Controller
+	 */
+	protected $cron_controller;
 
 	/**
 	 * Admin_Controller constructor.
@@ -68,6 +76,8 @@ class Admin_Controller extends Controller {
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
 
 		$this->logger = new Log_Helper();
+
+		$this->cron_controller = new Cron_Controller();
 
 		if ( is_admin() ) {
 			$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
@@ -117,8 +127,7 @@ class Admin_Controller extends Controller {
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 
 			// Update podcast details to Castos when a post is updated or saved
-			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
-			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
+			add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
 
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -1609,29 +1618,21 @@ HTML;
 			return;
 		}
 
-		/**
-		 * Don't trigger this if we've just updated the post
-		 * This is because both actions we're hooking into get triggered in a post update
-		 * So this is to prevent this method from being called twice during a post update.
-		 */
-		$cache_key     = 'ssp_podcast_updated';
-		$podcast_saved = get_transient( $cache_key );
-		if ( false !== $podcast_saved ) {
-			delete_transient( $cache_key );
-			return;
-		}
-
 		$castos_handler = new Castos_Handler();
 		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
 
 		if ( 'success' === $response['status'] ) {
-			set_transient( $cache_key, true, 60 );
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
 			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_episode_success' ) );
+
+			// if uploading was scheduled before, lets unschedule it
+			delete_post_meta( $id, 'podmotor_schedule_upload' );
 		} else {
+			// schedule uploading with a cronjob
+			update_post_meta( $id, 'podmotor_schedule_upload', true );
 			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_error' ) );
 		}
 

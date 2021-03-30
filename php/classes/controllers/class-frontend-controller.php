@@ -923,7 +923,7 @@ class Frontend_Controller extends Controller {
 	}
 
 	/**
-	 * Get episode image
+	 * Get episode image url
 	 *
 	 * @param integer $post_id ID of episode
 	 * @param string $size Image size

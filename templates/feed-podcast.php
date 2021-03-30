@@ -4,6 +4,31 @@
  *
  * @package WordPress
  * @subpackage SeriouslySimplePodcasting
+ *
+ * Refactoring history:
+ * Moved the data preparation to the feed controller
+ * @see \SeriouslySimplePodcasting\Controllers\Feed_Controller::load_feed_template()
+ *
+ * @var $stylesheet_url
+ * @var $title
+ * @var $ss_podcasting
+ * @var $podcast_series
+ * @var $description
+ * @var $language
+ * @var $copyright
+ * @var $subtitle
+ * @var $author
+ * @var $itunes_type
+ * @var $podcast_description
+ * @var $owner_name
+ * @var $owner_email
+ * @var $itunes_explicit
+ * @var $complete
+ * @var $image
+ * @var $new_feed_url
+ * @var $turbo
+ * @var $googleplay_explicit
+ * @var $exclude_series
  */
 
 // Exit if accessed directly.

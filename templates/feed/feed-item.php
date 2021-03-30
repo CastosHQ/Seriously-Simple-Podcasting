@@ -1,7 +1,32 @@
 <?php
 /**
- * @todo: use Controller to render this part
- * */
+ * Refactoring history:
+ * 1st stage - created this file to move some code from the feed-podcast.php
+ * @todo: 2nd stage: move the data preparation somewhere else, leave only xml part here
+ *
+ * @var $stylesheet_url
+ * @var $title
+ * @var $ss_podcasting
+ * @var $podcast_series
+ * @var $description
+ * @var $language
+ * @var $copyright
+ * @var $subtitle
+ * @var $author
+ * @var $itunes_type
+ * @var $podcast_description
+ * @var $owner_name
+ * @var $owner_email
+ * @var $itunes_explicit
+ * @var $complete
+ * @var $image
+ * @var $new_feed_url
+ * @var $turbo
+ * @var $googleplay_explicit
+ * @var $exclude_series
+ * @var $episode_description_uses_excerpt
+ * @var WP_Query $qry
+ */
 
 // Audio file
 $audio_file = $ss_podcasting->get_enclosure( get_the_ID() );
@@ -98,7 +123,7 @@ $content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 $content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 
 // Description is set based on feed setting
-if ( $episode_description_uses_excerpt) {
+if ( $episode_description_uses_excerpt ) {
 	ob_start();
 	the_excerpt_rss();
 	$description = ob_get_clean();
@@ -112,7 +137,7 @@ if ( $episode_description_uses_excerpt) {
 $description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
 
 // Clean up after shortcodes in content and excerpts
-if( $post_id !== get_the_ID() ) {
+if ( $post_id !== get_the_ID() ) {
 	$qry->reset_postdata();
 }
 
@@ -206,7 +231,8 @@ $title = esc_html( get_the_title_rss() );
 	<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
 		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
 	<?php } ?>
-	<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
+	<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>"
+			   type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 	<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
 		<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
 	<?php } ?>

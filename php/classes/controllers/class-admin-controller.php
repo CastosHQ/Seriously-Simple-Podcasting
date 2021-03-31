@@ -80,7 +80,7 @@ class Admin_Controller extends Controller {
 		$this->cron_controller = new Cron_Controller();
 
 		if ( is_admin() ) {
-			$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
+			$this->admin_notices_handler = ( new Admin_Notifications_Handler( $this->token ) )->bootstrap();
 		}
 
 		// Handle localisation.
@@ -1626,16 +1626,19 @@ HTML;
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
-			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_episode_success' ) );
+			$this->admin_notices_handler->add_predefined_flash_notice(
+				Admin_Notifications_Handler::NOTICE_API_EPISODE_SUCCESS
+			);
 
 			// if uploading was scheduled before, lets unschedule it
 			delete_post_meta( $id, 'podmotor_schedule_upload' );
 		} else {
 			// schedule uploading with a cronjob
 			update_post_meta( $id, 'podmotor_schedule_upload', true );
-			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_error' ) );
+			$this->admin_notices_handler->add_predefined_flash_notice(
+				Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
+			);
 		}
-
 	}
 
 	/**

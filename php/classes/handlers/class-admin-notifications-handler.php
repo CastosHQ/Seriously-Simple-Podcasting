@@ -20,13 +20,34 @@ class Admin_Notifications_Handler {
 	public $token;
 
 	/**
+	 * Transient key to store flash notices
+	 * */
+	const NOTICES_KEY = 'castos_notices';
+
+	/**
+	 * Predefined notices
+	 * */
+	const NOTICE_API_EPISODE_ERROR = 'api_episode_error';
+	const NOTICE_API_EPISODE_SUCCESS = 'api_episode_success';
+
+	/**
+	 * Notice types
+	 * "info", "warning", "error" or "success"
+	 * */
+	const INFO = 'info';
+	const WARNING = 'warning';
+	const ERROR = 'error';
+	const SUCCESS = 'success';
+
+	/**
 	 * Admin_Notifications_Handler constructor.
 	 *
 	 * @param $token
 	 */
 	public function __construct( $token ) {
 		$this->token = $token;
-		$this->bootstrap();
+
+		return $this;
 	}
 
 	/**
@@ -55,8 +76,85 @@ class Admin_Notifications_Handler {
 		// Trigger the Elementor Templates message
 		add_action( 'admin_init', array( $this, 'show_elementor_templates_available' ) );
 
-		// Trigger the Elementor Templates message
+		// Trigger the series helper message
 		add_action( 'series_pre_add_form', array( $this, 'show_series_helper_text' ) );
+
+		// Print flash notices
+		add_action( 'admin_notices', array( $this, 'display_flash_notices' ), 12 );
+
+		return $this;
+	}
+
+	/**
+	 * Add a predefined flash notice
+	 * @see NOTICE_API_EPISODE_ERROR
+	 * @see NOTICE_API_EPISODE_SUCCESS
+	 *
+	 * @param string $notice Predefined notice
+	 *
+	 * @return bool If the notice is added or not
+	 */
+	public function add_predefined_flash_notice( $notice ) {
+		$messages = $this->get_predefined_notices();
+
+		if ( isset( $messages[ $notice ] ) ) {
+			$this->add_flash_notice(
+				$messages[ $notice ]['msg'],
+				$messages[ $notice ]['type']
+			);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Add a flash notice
+	 *
+	 * @param string $notice our notice message
+	 * @param string $type This can be "info", "warning", "error" or "success", "warning" as default
+	 * @param boolean $dismissible set this to TRUE to add is-dismissible functionality to your notice
+	 * @return void
+	 */
+	public function add_flash_notice( $notice = "", $type = "warning", $dismissible = true ) {
+		$notices = get_transient( self::NOTICES_KEY );
+		if ( ! $notices ) {
+			$notices = array();
+		}
+
+		$dismissible_text = ( $dismissible ) ? "is-dismissible" : "";
+
+		array_push( $notices, array(
+			"notice"      => $notice,
+			"type"        => $type,
+			"dismissible" => $dismissible_text
+		) );
+
+		set_transient( self::NOTICES_KEY, $notices, 10 );
+	}
+
+	/**
+	 * Prints flash notices
+	 */
+	public function display_flash_notices() {
+		$notices = get_transient( self::NOTICES_KEY );
+
+		if ( ! is_array( $notices ) ) {
+			return;
+		}
+
+		foreach ( $notices as $notice ) {
+			printf( '<div class="notice notice-%1$s %2$s"><p>%3$s</p></div>',
+				$notice['type'],
+				$notice['dismissible'],
+				$notice['notice']
+			);
+		}
+
+		if ( ! empty( $notices ) ) {
+			delete_transient( self::NOTICES_KEY );
+		}
 	}
 
 	/**
@@ -72,29 +170,8 @@ class Admin_Notifications_Handler {
 
 
 	/**
-	 * Admin notice if an episode sync is successful
-	 */
-	public function castos_api_episode_success() {
-		?>
-		<div class="notice notice-info">
-			<p><?php _e( 'Your episode was successfully synced to your Castos account', 'seriously-simple-podcasting' ); ?></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Admin notice if anything goes wrong with an episode sync
-	 */
-	public function castos_api_episode_error() {
-		?>
-		<div class="notice notice-error">
-			<p><?php _e( 'An error occurred syncing your episode to your Castos account. Please contact Castos support at hello@castos.com.', 'seriously-simple-podcasting' ); ?></p>
-		</div>
-		<?php
-	}
-
-	/**
 	 * Show an error if the block assets have failed
+	 * @todo: investigate if it works and maybe replace it with add_predefined_flash_notice();
 	 */
 	public function blocks_error_notice() {
 		?>
@@ -611,6 +688,25 @@ class Admin_Notifications_Handler {
 			<p><?php echo $ignore_message_link; ?></p>
 		</div>
 		<?php
+	}
+
+	/**
+	 * Get predefined notices
+	 * @return array
+	 * */
+	public function get_predefined_notices() {
+		$notices = array(
+			self::NOTICE_API_EPISODE_SUCCESS => array(
+				'msg'  => __( 'Your episode was successfully synced to your Castos account', 'seriously-simple-podcasting' ),
+				'type' => self::SUCCESS,
+			),
+			self::NOTICE_API_EPISODE_ERROR   => array(
+				'msg'  => __( 'An error occurred syncing your episode to your Castos account. Please contact Castos support at hello@castos.com.', 'seriously-simple-podcasting' ),
+				'type' => self::ERROR,
+			),
+		);
+
+		return apply_filters( 'castos_predefined_notices', $notices );
 	}
 
 }

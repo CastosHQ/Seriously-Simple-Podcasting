@@ -701,7 +701,9 @@ class Admin_Notifications_Handler {
 				'type' => self::SUCCESS,
 			),
 			self::NOTICE_API_EPISODE_ERROR   => array(
-				'msg'  => __( 'An error occurred syncing your episode to your Castos account. Please contact Castos support at hello@castos.com.', 'seriously-simple-podcasting' ),
+				'msg'  => __( "An error occurred in syncing this episode to your Castos account. <br>
+								We will keep attempting to sync your episode over the next 24 hours. <br>
+								If you don't see this episode in your Castos account at that time please contact our support team at hello@castos.com", 'seriously-simple-podcasting' ),
 				'type' => self::ERROR,
 			),
 		);

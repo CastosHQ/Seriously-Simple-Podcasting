@@ -22,8 +22,8 @@ class Feed_Controller extends Controller {
 	/**
 	 * Admin_Controller constructor.
 	 *
-	 * @param $file main plugin file
-	 * @param $version plugin version
+	 * @param string $file main plugin file
+	 * @param string $version plugin version
 	 */
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
@@ -40,6 +40,9 @@ class Feed_Controller extends Controller {
 
 		// Handle v1.x feed URL as well as feed URLs for default permalinks.
 		add_action( 'init', array( $this, 'redirect_old_feed' ), 11 );
+
+		// Sanitize the podcast image
+		add_filter( 'ssp_feed_image', array( $this, 'sanitize_image' ) );
 	}
 
 	/**
@@ -398,5 +401,26 @@ class Feed_Controller extends Controller {
 
 		// Any functions hooked in here must NOT output any data or else feed will break
 		do_action( 'ssp_after_feed' );
+	}
+
+	/**
+	 * Sanitizes the image, if it's not valid - change it to empty string
+	 *
+	 * @param string $image_url
+	 *
+	 * @return string
+	 *
+	 * @todo: Get rid of global, use dependency injection
+	 * @var Frontend_Controller $ss_podcasting
+	 */
+	public function sanitize_image( $image_url ) {
+		global $ss_podcasting;
+		$image_id = attachment_url_to_postid( $image_url );
+
+		if ( $image_id && ! $ss_podcasting->is_image_valid( $image_id ) ) {
+			$image_url = '';
+		}
+
+		return $image_url;
 	}
 }

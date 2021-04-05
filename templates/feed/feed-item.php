@@ -28,6 +28,8 @@
  * @var WP_Query $qry
  */
 
+use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
+
 // Audio file
 $audio_file = $ss_podcasting->get_enclosure( get_the_ID() );
 if ( get_option( 'permalink_structure' ) ) {
@@ -48,6 +50,7 @@ if ( ! isset( $enclosure ) || ! $enclosure ) {
 }
 
 // Get episode image from post featured image
+/** @var Frontend_Controller  $ss_podcasting */
 global $ss_podcasting;
 $episode_image = $ss_podcasting->get_episode_image_url( get_the_ID() );
 $episode_image = apply_filters( 'ssp_feed_item_image', $episode_image, get_the_ID() );

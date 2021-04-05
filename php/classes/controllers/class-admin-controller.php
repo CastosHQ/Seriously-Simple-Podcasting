@@ -1618,10 +1618,23 @@ HTML;
 			return;
 		}
 
+		/**
+		 * Don't trigger this if we've just updated the post
+		 * This is because both actions we're hooking into get triggered in a post update
+		 * So this is to prevent this method from being called twice during a post update.
+		 */
+		$cache_key     = 'ssp_podcast_updated';
+		$podcast_saved = get_transient( $cache_key );
+		if ( false !== $podcast_saved ) {
+			delete_transient( $cache_key );
+			return;
+		}
+
 		$castos_handler = new Castos_Handler();
 		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
 
 		if ( 'success' === $response['status'] ) {
+			set_transient( $cache_key, true, 30 );
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );

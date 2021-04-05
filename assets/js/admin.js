@@ -170,21 +170,17 @@ jQuery(document).ready(function($) {
 
 	});
 
-	$('#ss_podcasting_data_image_button').click(function() {
-		$.fn.ssp_upload_media_file( $(this), true );
-	});
-
 	$('#ss_podcasting_data_image_delete').click(function() {
 		$( '#ss_podcasting_data_image' ).val( '' );
 		$( '#ss_podcasting_data_image_preview' ).remove();
 		return false;
 	});
 
-	$( '#cover_image_button' ).click(function() {
+	$( '#cover_image_button, #ss_podcasting_data_image_button' ).click(function() {
 		var validateImageSize = function( attachment ) {
 		  return attachment.width === attachment.height && attachment.width >= 1400 && attachment.width <= 3000;
 		}
-		var description = $( this ).siblings( '.description' );
+		var description = $( this ).parent().find( '.description' );
 		$.fn.ssp_upload_media_file( $(this), true, validateImageSize );
 		description.css( 'color', '' );
 

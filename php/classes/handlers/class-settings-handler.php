@@ -652,7 +652,7 @@ class Settings_Handler {
 			array(
 				'id'          => 'data_image',
 				'label'       => __( 'Cover Image', 'seriously-simple-podcasting' ),
-				'description' => __( 'Your podcast cover image - must have a minimum size of 1400x1400 px.', 'seriously-simple-podcasting' ),
+				'description' => __( 'The podcast cover image should be between 1400x1400px and 3000x3000px in size and either .jpg or .png file format', 'seriously-simple-podcasting' ),
 				'type'        => 'image',
 				'default'     => '',
 				'placeholder' => '',

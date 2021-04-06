@@ -2,7 +2,7 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.6.2
+Tested up to: 5.7
 Requires PHP: 5.6
 Stable tag: 2.6.2
 License: GPLv2 or later

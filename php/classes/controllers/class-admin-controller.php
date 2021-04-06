@@ -24,26 +24,34 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Controller extends Controller {
 
 	/**
-	 * @var object instance of Ajax_Handler
+	 * @var Ajax_Handler
 	 */
 	protected $ajax_handler;
 
 	/**
-	 * @var object instance of Upgrade_Handler
+	 * @var Upgrade_Handler
 	 */
 	protected $upgrade_handler;
 
 	/**
-	 * @var object instance of the Admin_Notices_Handler
+	 * @var Admin_Notifications_Handler
 	 */
 	protected $admin_notices_handler;
 
 	/**
-	 * @var object instance of Feed_Controller
+	 * @var Feed_Controller
 	 */
 	protected $feed_controller;
 
+	/**
+	 * @var Log_Helper
+	 * */
 	protected $logger;
+
+	/**
+	 * @var Cron_Controller
+	 */
+	protected $cron_controller;
 
 	/**
 	 * Admin_Controller constructor.
@@ -69,8 +77,10 @@ class Admin_Controller extends Controller {
 
 		$this->logger = new Log_Helper();
 
+		$this->cron_controller = new Cron_Controller();
+
 		if ( is_admin() ) {
-			$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
+			$this->admin_notices_handler = ( new Admin_Notifications_Handler( $this->token ) )->bootstrap();
 		}
 
 		// Handle localisation.
@@ -117,8 +127,7 @@ class Admin_Controller extends Controller {
 			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
 
 			// Update podcast details to Castos when a post is updated or saved
-			add_action( 'post_updated', array( $this, 'update_podcast_details' ), 10, 2 );
-			add_action( 'save_post', array( $this, 'update_podcast_details' ), 10, 2 );
+			add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
 
 			// Episode edit screen.
 			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -1014,7 +1023,7 @@ HTML;
 
 		$fields['cover_image'] = array(
 			'name'             => __( 'Episode Image:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'Your podcast cover image - must be square (minimum size of 300x300 px).', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The podcast cover image should be between 1400x1400px and 3000x3000px in size and either .jpg or .png file format', 'seriously-simple-podcasting' ),
 			'type'             => 'image',
 			'default'          => '',
 			'section'          => 'info',
@@ -1625,16 +1634,24 @@ HTML;
 		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
 
 		if ( 'success' === $response['status'] ) {
-			set_transient( $cache_key, true, 60 );
+			set_transient( $cache_key, true, 30 );
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
 			}
-			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_episode_success' ) );
-		} else {
-			add_action( 'admin_notices', array( $this->admin_notices_handler, 'castos_api_error' ) );
-		}
+			$this->admin_notices_handler->add_predefined_flash_notice(
+				Admin_Notifications_Handler::NOTICE_API_EPISODE_SUCCESS
+			);
 
+			// if uploading was scheduled before, lets unschedule it
+			delete_post_meta( $id, 'podmotor_schedule_upload' );
+		} else {
+			// schedule uploading with a cronjob
+			update_post_meta( $id, 'podmotor_schedule_upload', true );
+			$this->admin_notices_handler->add_predefined_flash_notice(
+				Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
+			);
+		}
 	}
 
 	/**
@@ -1878,6 +1895,8 @@ HTML;
 				$exclusions = [
 					'podmotor_file_id',
 					'podmotor_episode_id',
+					'audio_file',
+					'enclosure'
 				];
 
 				foreach ( $exclusions as $exclusion ) {

@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.6.2
+Tested up to: 5.7
 Requires PHP: 5.6
-Stable tag: 2.6.1
+Stable tag: 2.6.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.6.2 =
+* 2021-04-06
+* UPDATE SUMMARY: Podcasts synchronization improvements, RSS images
+* [UPDATE] Delayed episode uploading to Castos
+* [UPDATE] Added helper text to Series area
+* [UPDATE] HTML player style improvements
+* [UPDATE] Check the Cover Image size dimensions upon upload
+* [UPDATE] Added episode specific image to RSS feed
+* [FIX] Showing notifications when the episode is added or updated (classic editor)
+* [FIX] When the post is duplicated it is not synchronized with Castos
 
 = 2.6.1 =
 * 2021-03-05

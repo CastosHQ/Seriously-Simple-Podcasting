@@ -81,3 +81,7 @@ textarea#episode_embed_code {
 #series_upload_image_button .dashicons {
     vertical-align: middle;
 }
+
+#col-container .series-notice {
+	display: none;
+}

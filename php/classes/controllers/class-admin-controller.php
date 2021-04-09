@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
+use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
@@ -54,6 +55,12 @@ class Admin_Controller extends Controller {
 	protected $cron_controller;
 
 	/**
+	 * @var Roles_Handler
+	 */
+	protected $roles_handler;
+
+
+	/**
 	 * Admin_Controller constructor.
 	 *
 	 * @param $file string main plugin file
@@ -74,6 +81,8 @@ class Admin_Controller extends Controller {
 		$this->upgrade_handler = new Upgrade_Handler();
 
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
+
+		$this->roles_handler = ( new Roles_Handler() )->init();
 
 		$this->logger = new Log_Helper();
 
@@ -261,22 +270,7 @@ class Admin_Controller extends Controller {
 			'menu_position'       => 5,
 			'menu_icon'           => 'dashicons-microphone',
 			'show_in_rest'        => true,
-			'capabilities'        => array(
-				'edit_post'              => 'edit_podcast',
-				'read_post'              => 'read_podcast',
-				'delete_post'            => 'delete_podcast',
-				'edit_posts'             => 'edit_podcasts',
-				'edit_others_posts'      => 'edit_others_podcasts',
-				'publish_posts'          => 'publish_podcasts',
-				'read_private_posts'     => 'read_private_podcasts',
-				'delete_posts'           => 'delete_podcasts',
-				'delete_private_posts'   => 'delete_private_podcasts',
-				'delete_published_posts' => 'delete_published_podcasts',
-				'delete_others_posts'    => 'delete_others_podcasts',
-				'edit_private_posts'     => 'edit_private_podcasts',
-				'edit_published_posts'   => 'edit_published_podcasts',
-				'create_posts'           => 'create_podcasts',
-			),
+			'capabilities'        => $this->roles_handler->get_podcast_capabilities(),
 		);
 
 		$args = apply_filters( 'ssp_register_post_type_args', $args );
@@ -1445,6 +1439,7 @@ HTML;
 	 */
 	public function deactivate() {
 		flush_rewrite_rules();
+		$this->roles_handler->remove_custom_roles();
 	}
 
 	/**

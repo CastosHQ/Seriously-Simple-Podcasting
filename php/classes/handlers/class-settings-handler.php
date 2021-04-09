@@ -1090,6 +1090,7 @@ class Settings_Handler {
 
 	/**
 	 * Checks if a user role exists, used in the SettingsController add_caps method
+	 * @deprecated Use Roles_Handler::role_exists() instead
 	 *
 	 * @param $role
 	 *

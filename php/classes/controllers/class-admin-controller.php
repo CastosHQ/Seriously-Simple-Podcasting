@@ -82,7 +82,7 @@ class Admin_Controller extends Controller {
 
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
 
-		$this->roles_handler = ( new Roles_Handler() )->init();
+		$this->roles_handler = new Roles_Handler();
 
 		$this->logger = new Log_Helper();
 

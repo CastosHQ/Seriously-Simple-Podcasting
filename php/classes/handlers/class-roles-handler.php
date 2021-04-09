@@ -15,12 +15,8 @@ class Roles_Handler {
 
 	const MANAGE_PODCAST = 'manage_podcast';
 
+
 	public function __construct() {
-		return $this;
-	}
-
-	public function init() {
-
 		add_action( 'admin_init', array( $this, 'manage_default_roles' ), 1 );
 
 		// Adds podcast roles
@@ -31,9 +27,8 @@ class Roles_Handler {
 		add_filter( 'option_page_capability_ss_podcasting', function () {
 			return self::MANAGE_PODCAST;
 		} );
-
-		return $this;
 	}
+
 
 	/**
 	 * Removes custom roles when the plugin is deactivated
@@ -64,7 +59,7 @@ class Roles_Handler {
 	 *
 	 * @param string $role
 	 * @param string $role_title
-	 * @param array $caps
+	 * @param array $additional_caps
 	 *
 	 * @return \WP_Role|null
 	 */
@@ -81,6 +76,7 @@ class Roles_Handler {
 
 		$podcast_caps = $this->get_podcast_capabilities();
 
+		// prepare capabilities to the array('capability' => true) structure
 		$podcast_caps = array_map( function () {
 			return true;
 		}, array_flip( $podcast_caps ) );
@@ -161,7 +157,7 @@ class Roles_Handler {
 	}
 
 	/**
-	 * Checks if a user role exists, used in the SettingsController add_caps method
+	 * Checks if a user role exists
 	 *
 	 * @param $role
 	 *

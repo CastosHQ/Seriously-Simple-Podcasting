@@ -214,12 +214,11 @@ class Episode_Controller extends Controller {
 		}
 
 		if ( $series_id ) {
-			$series_image = get_option( "ss_podcasting_data_image_{$series_id}", false );
+			$series_image_attachment_id = get_term_meta( $series_id, $this->token . '_series_image_settings', true );
 		}
 
-		if ( $series_image ) {
-			$series_image_attachment_id = ssp_get_image_id_from_url( $series_image );
-			$image_data_array           = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $series_image_attachment_id, 'medium' ) );
+		if ( ! empty( $series_image_attachment_id ) ) {
+			$image_data_array = $this->return_renamed_image_array_keys( wp_get_attachment_image_src( $series_image_attachment_id, 'medium' ) );
 			if ( $this->check_image_is_square( $image_data_array ) ) {
 				return $image_data_array;
 			}

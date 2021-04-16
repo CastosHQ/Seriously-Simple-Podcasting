@@ -1,6 +1,7 @@
 <?php
 
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\Images_Handler;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1159,5 +1160,53 @@ if ( ! function_exists( 'ssp_is_elementor_ok' ) ) {
 			return true;
 		}
 		return false;
+	}
+}
+
+/**
+ * Checks if the feed image is valid
+ */
+if ( ! function_exists( 'ssp_is_feed_image_valid' ) ) {
+	/**
+	 * @param int $image_id
+	 * @param string $size
+	 *
+	 * @return bool
+	 */
+	function ssp_is_feed_image_valid( $image_id, $size = 'full' ) {
+		global $images_handler; /** @var Images_Handler $images_handler */
+		return $images_handler->is_feed_image_valid( $image_id, $size );
+	}
+}
+
+/**
+ * Checks if the image is square
+ */
+if ( ! function_exists( 'ssp_is_image_square' ) ) {
+	/**
+	 * @param array $image_data_array Converted image data array with width and height keys
+	 *
+	 * @return bool
+	 * */
+	function ssp_is_image_square( $image_data_array = array() ) {
+		global $images_handler; /** @var Images_Handler $images_handler */
+		return $images_handler->is_image_square( $image_data_array );
+	}
+}
+
+
+/**
+ * Almost the same function as wp_get_attachment_image_src(), but returning the associative human readable array
+ */
+if ( ! function_exists( 'ssp_get_attachment_image_src' ) ) {
+	/**
+	 * @param int $attachment_id
+	 * @param string $size
+	 *
+	 * @return array
+	 */
+	function  ssp_get_attachment_image_src( $attachment_id, $size = "full" ) {
+		global $images_handler; /** @var Images_Handler $images_handler */
+		return $images_handler->get_attachment_image_src( $attachment_id, $size  );
 	}
 }

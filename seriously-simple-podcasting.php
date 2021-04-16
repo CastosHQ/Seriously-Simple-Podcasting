@@ -28,6 +28,7 @@ use SeriouslySimplePodcasting\Controllers\Admin_Controller;
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
+use SeriouslySimplePodcasting\Handlers\Images_Handler;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
@@ -43,6 +44,11 @@ if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
 	define( 'SSP_CASTOS_EPISODES_URL', 'https://episodes.castos.com/' );
 }
 
+require SSP_PLUGIN_PATH . 'vendor/autoload.php';
+
+global $images_handler;
+$images_handler = new Images_Handler();
+
 require_once SSP_PLUGIN_PATH . 'php/includes/ssp-functions.php';
 if ( ! ssp_is_php_version_ok() ) {
 	return;
@@ -52,7 +58,6 @@ if ( ! ssp_is_vendor_ok() ) {
 }
 
 ssp_beta_check();
-require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
 /**
  * @todo refactor these globals

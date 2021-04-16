@@ -67,7 +67,7 @@ class Players_Controller extends Controller {
 	 *
 	 * @return array
 	 */
-	public function html_player( $id ) {
+	public function get_html_player_data( $id ) {
 		$audio_file = get_post_meta( $id, 'audio_file', true );
 		if ( empty( $audio_file ) ) {
 			return apply_filters( 'ssp_html_player_data', array() );
@@ -117,7 +117,7 @@ class Players_Controller extends Controller {
 	 * @return string
 	 */
 	public function render_html_player( $episode_id ) {
-		$template_data = $this->html_player( $episode_id );
+		$template_data = $this->get_html_player_data( $episode_id );
 		if ( ! array_key_exists( 'audio_file', $template_data ) ) {
 			return '';
 		}

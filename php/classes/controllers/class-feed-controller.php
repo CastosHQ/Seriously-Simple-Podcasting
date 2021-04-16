@@ -336,14 +336,22 @@ class Feed_Controller extends Controller {
 			$complete = '';
 		}
 
-		// Podcast cover image
-		$image = get_option( 'ss_podcasting_data_image', '' );
-		if ( $podcast_series ) {
-			$series_image = get_option( 'ss_podcasting_data_image_' . $series_id, 'no-image' );
-			if ( 'no-image' !== $series_image ) {
-				$image = $series_image;
+		// If it's series feed, try first to show its own image
+		if ( $series_id ) {
+			$series_image_attachment_id = get_term_meta( $series_id, $this->token . '_series_image_settings', true );
+
+			$size = "full";
+			if ( $series_image_attachment_id && ssp_is_feed_image_valid( $series_image_attachment_id, $size ) ) {
+				$image = wp_get_attachment_image_url( $series_image_attachment_id, $size );
 			}
 		}
+
+		// If couldn't show the series image, or if it's global feed, lets show the the global cover image
+		if ( empty( $image ) ) {
+			$image = get_option( 'ss_podcasting_data_image', '' );
+		}
+
+		// Here we'll sanitize the image once again, if it's not valid - it will be just empty string
 		$image = apply_filters( 'ssp_feed_image', $image, $series_id );
 
 		// Podcast category and subcategory (all levels) - can be filtered with `ssp_feed_category_output`
@@ -409,15 +417,11 @@ class Feed_Controller extends Controller {
 	 * @param string $image_url
 	 *
 	 * @return string
-	 *
-	 * @todo: Get rid of global, use dependency injection
-	 * @var Frontend_Controller $ss_podcasting
 	 */
 	public function sanitize_image( $image_url ) {
-		global $ss_podcasting;
 		$image_id = attachment_url_to_postid( $image_url );
 
-		if ( $image_id && ! $ss_podcasting->is_image_valid( $image_id ) ) {
+		if ( $image_id && ! ssp_is_feed_image_valid( $image_id ) ) {
 			$image_url = '';
 		}
 

@@ -933,11 +933,11 @@ class Frontend_Controller extends Controller {
 	public function get_episode_image_url( $post_id = 0, $size = 'full' ) {
 		$image_url = '';
 		$image_id  = get_post_meta( $post_id, 'cover_image_id', true );
-		$is_valid  = $this->is_image_valid( $image_id, $size );
+		$is_valid  = ssp_is_feed_image_valid( $image_id, $size );
 
 		if ( ! $is_valid ) {
 			$image_id = get_post_thumbnail_id( $post_id );
-			$is_valid = $this->is_image_valid( $image_id, $size );
+			$is_valid = ssp_is_feed_image_valid( $image_id, $size );
 		}
 
 		if ( $is_valid ) {
@@ -948,24 +948,6 @@ class Frontend_Controller extends Controller {
 		return apply_filters( 'ssp_episode_image_url', $image_url, $post_id );
 	}
 
-	/**
-	 * @param int $image_id
-	 * @param string $size
-	 *
-	 * @return bool
-	 */
-	public function is_image_valid( $image_id, $size = 'full' ) {
-		$image_att = $image_id ? wp_get_attachment_image_src( $image_id, $size ) : null;
-		$min_size  = apply_filters( 'ssp_episode_min_image_size', 1400 );
-		$max_size  = apply_filters( 'ssp_episode_min_image_size', 3000 );
-		if ( empty( $image_att ) ) {
-			return false;
-		}
-		$width  = isset( $image_att[1] ) ? $image_att[1] : 0;
-		$height = isset( $image_att[2] ) ? $image_att[2] : 0;
-
-		return $width === $height && $width >= $min_size && $width <= $max_size;
-	}
 
 	/**
 	 * Get podcast

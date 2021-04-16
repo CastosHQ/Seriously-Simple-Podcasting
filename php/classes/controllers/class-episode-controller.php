@@ -222,7 +222,7 @@ class Episode_Controller extends Controller {
 		if ( ! empty( $episode_ids ) ) {
 			$args = array(
 				'include'        => array_values( $episode_ids ),
-				'post_type'      => 'podcast',
+				'post_type'      => SSP_CPT_PODCAST,
 				'numberposts'    => -1
 			);
 
@@ -249,7 +249,7 @@ class Episode_Controller extends Controller {
 	public function render_episodes($settings) {
 		$player       = new Players_Controller( $this->file, $this->version );
 		$args  = array(
-			'post_type'      => 'podcast',
+			'post_type'      => SSP_CPT_PODCAST,
 			'posts_per_page' => 10,
 		);
 

@@ -84,7 +84,7 @@ class Options_Handler {
 
 		$feed_details_url = add_query_arg(
 			array(
-				'post_type' => 'podcast',
+				'post_type' => SSP_CPT_PODCAST,
 				'page'      => 'podcast_settings',
 				'tab'       => 'feed-details',
 			)

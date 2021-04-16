@@ -44,15 +44,21 @@ if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
 	define( 'SSP_CASTOS_EPISODES_URL', 'https://episodes.castos.com/' );
 }
 
+if ( ! defined( 'SSP_CPT_PODCAST' ) ) {
+	define( 'SSP_CPT_PODCAST', 'podcast' );
+}
+
 require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
 global $images_handler;
 $images_handler = new Images_Handler();
 
 require_once SSP_PLUGIN_PATH . 'php/includes/ssp-functions.php';
+
 if ( ! ssp_is_php_version_ok() ) {
 	return;
 }
+
 if ( ! ssp_is_vendor_ok() ) {
 	return;
 }

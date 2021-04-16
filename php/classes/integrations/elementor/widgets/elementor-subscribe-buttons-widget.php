@@ -50,7 +50,7 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
 			'posts_per_page' => - 1,
-			'post_type'      => 'podcast'
+			'post_type'      => SSP_CPT_PODCAST
 		);
 
 		$episodes       = get_posts( $args );

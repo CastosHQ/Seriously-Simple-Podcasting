@@ -397,7 +397,7 @@ class Feed_Controller extends Controller {
 		}
 
 		// Set RSS content type and charset headers
-		header( 'Content-Type: ' . feed_content_type( 'podcast' ) . '; charset=' . get_option( 'blog_charset' ), true );
+		header( 'Content-Type: ' . feed_content_type( SSP_CPT_PODCAST ) . '; charset=' . get_option( 'blog_charset' ), true );
 
 
 		// Load user feed template if it exists, otherwise use plugin template

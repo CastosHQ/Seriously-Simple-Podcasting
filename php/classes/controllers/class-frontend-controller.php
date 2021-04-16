@@ -784,7 +784,7 @@ class Frontend_Controller extends Controller {
 		$include_in_main_query = get_option('ss_podcasting_include_in_main_query');
 		if ( $include_in_main_query && $include_in_main_query == 'on' ) {
 			if ( $query->is_home() && $query->is_main_query() ) {
-				$query->set( 'post_type', array( 'post', 'podcast' ) );
+				$query->set( 'post_type', array( 'post', SSP_CPT_PODCAST ) );
 			}
 		}
 	}
@@ -799,7 +799,7 @@ class Frontend_Controller extends Controller {
 			return;
 		}
 
-		if ( is_post_type_archive( 'podcast' ) || is_tax( 'series' ) ) {
+		if ( is_post_type_archive( SSP_CPT_PODCAST ) || is_tax( 'series' ) ) {
 
 			$podcast_post_types = ssp_post_types( false );
 
@@ -812,7 +812,7 @@ class Frontend_Controller extends Controller {
 
 				$query->set( 'post__in', $episode_ids );
 
-				$podcast_post_types[] = 'podcast';
+				$podcast_post_types[] = SSP_CPT_PODCAST;
 				$query->set( 'post_type', $podcast_post_types );
 
 			}
@@ -835,7 +835,7 @@ class Frontend_Controller extends Controller {
 			return;
 		}
 
-		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array('post', 'podcast') ) ;
+		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array('post', SSP_CPT_PODCAST) ) ;
 		$query->set( 'post_type', $tag_archive_post_types );
 
 	}
@@ -1400,7 +1400,7 @@ class Frontend_Controller extends Controller {
 	 */
 	public function feed_content_type ( $content_type = '', $type = '' ) {
 
-		if( 'podcast' == $type ) {
+		if( SSP_CPT_PODCAST == $type ) {
 			$content_type = 'text/xml';
 		}
 

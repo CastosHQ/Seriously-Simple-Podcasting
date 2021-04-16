@@ -104,16 +104,19 @@ class Roles_Handler {
 
 			$role = get_role( $the_role );
 
-			$caps = $this->get_podcast_capabilities();
-			$caps[] = self::MANAGE_PODCAST;
+			$caps     = $this->get_podcast_capabilities();
+			$tax_caps = $this->get_podcast_tax_capabilities();
+			$caps     = array_merge( $caps, $tax_caps );
 
+			// add the possibility to manage the podcast settings
+			$caps[ self::MANAGE_PODCAST ] = self::MANAGE_PODCAST;
+
+			$caps = array_unique( $caps );
 			$caps = apply_filters( 'ssp_podcast_manager_capabilities', $caps, $the_role );
 
 			foreach ( $caps as $cap ) {
 				$this->maybe_add_cap( $role, $cap );
 			}
-
-			$this->maybe_add_cap( $role, self::MANAGE_PODCAST );
 		}
 	}
 
@@ -155,6 +158,23 @@ class Roles_Handler {
 			'create_posts'           => 'create_podcasts',
 		);
 	}
+
+	/**
+	 * This function provides a podcast CPT capabilities
+	 *
+	 * @return array
+	 */
+	public function get_podcast_tax_capabilities() {
+		$caps = array(
+			'manage_terms'  => 'edit_podcast',
+			'edit_terms'    => 'edit_podcast',
+			'delete_terms'  => 'edit_podcast',
+			'assign_terms'  => 'edit_podcast'
+		);
+
+		return apply_filters( 'ssp_podcast_tax_capabilities', $caps );
+	}
+
 
 	/**
 	 * Checks if a user role exists

@@ -138,6 +138,7 @@ class CPT_Podcast_Handler {
 			'update_count_callback' => '_update_post_term_count',
 			'query_var'             => true,
 			'rewrite'               => array( 'slug' => 'podcast_tags' ),
+			'capabilities'          => $this->roles_handler->get_podcast_tax_capabilities(),
 		);
 
 		return apply_filters( 'ssp_register_taxonomy_args', $args, 'podcast_tags' );
@@ -173,7 +174,7 @@ class CPT_Podcast_Handler {
 			'labels'            => $series_labels,
 			'show_in_rest'      => true,
 			'show_admin_column' => true,
-			'capabilities'      => $this->roles_handler->get_podcast_tax_capabilities( 'series' ),
+			'capabilities'      => $this->roles_handler->get_podcast_tax_capabilities(),
 		);
 
 		return apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );

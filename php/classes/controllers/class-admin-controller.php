@@ -225,7 +225,7 @@ class Admin_Controller extends Controller {
 	}
 
 	/**
-	 * Register 'podcast' post type
+	 * Register SSP_CPT_PODCAST post type
 	 *
 	 * @return void
 	 */
@@ -1472,7 +1472,7 @@ HTML;
 				)
 			);
 			if ( ! empty( $external_rss ) ) {
-				$import_post_type = 'podcast';
+				$import_post_type = SSP_CPT_PODCAST;
 				if ( isset( $_POST['import_post_type'] ) ) {
 					$import_post_type = sanitize_text_field( $_POST['import_post_type'] );
 				}

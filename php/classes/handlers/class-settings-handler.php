@@ -29,7 +29,7 @@ class Settings_Handler {
 				'revision',
 				'nav_menu_item',
 				'wooframework',
-				'podcast',
+				SSP_CPT_PODCAST,
 			);
 			if ( in_array( $post_type, $disallowed_post_types, true ) ) {
 				continue;

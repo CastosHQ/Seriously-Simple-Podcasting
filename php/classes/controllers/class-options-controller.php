@@ -72,7 +72,7 @@ class Options_Controller extends Controller {
 			return;
 		}
 		$post_type = ( isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : '' );
-		if ( 'podcast' !== $post_type ) {
+		if ( SSP_CPT_PODCAST !== $post_type ) {
 			return;
 		}
 		$page = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
@@ -110,7 +110,7 @@ class Options_Controller extends Controller {
 			return;
 		}
 		$post_type = ( isset( $_GET['post_type'] ) ? sanitize_text_field( $_GET['post_type'] ) : '' );
-		if ( 'podcast' !== $post_type ) {
+		if ( SSP_CPT_PODCAST !== $post_type ) {
 			return;
 		}
 		$page = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
@@ -605,7 +605,7 @@ class Options_Controller extends Controller {
 				$html .= esc_url( $url ) . "\n";
 				break;
 			case 'podcast_url':
-				$slug        = apply_filters( 'ssp_archive_slug', _x( 'podcast', 'Podcast URL slug', 'seriously-simple-podcasting' ) );
+				$slug        = apply_filters( 'ssp_archive_slug', _x( SSP_CPT_PODCAST, 'Podcast URL slug', 'seriously-simple-podcasting' ) );
 				$podcast_url = $this->home_url . $slug;
 
 				$html .= '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';

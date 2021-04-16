@@ -22,7 +22,7 @@ class CPT_Podcast_Handler {
 	}
 
 	/**
-	 * Register 'podcast' post type
+	 * Register SSP_CPT_PODCAST post type
 	 *
 	 * @return void
 	 */
@@ -60,7 +60,7 @@ class CPT_Podcast_Handler {
 		$labels = array(
 			'name'                  => _x( 'Podcast', 'post type general name', 'seriously-simple-podcasting' ),
 			'singular_name'         => _x( 'Podcast', 'post type singular name', 'seriously-simple-podcasting' ),
-			'add_new'               => _x( 'Add New', 'podcast', 'seriously-simple-podcasting' ),
+			'add_new'               => _x( 'Add New', SSP_CPT_PODCAST, 'seriously-simple-podcasting' ),
 			'add_new_item'          => sprintf( __( 'Add New %s', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
 			'edit_item'             => sprintf( __( 'Edit %s', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
 			'new_item'              => sprintf( __( 'New %s', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
@@ -75,7 +75,7 @@ class CPT_Podcast_Handler {
 			'items_list_navigation' => sprintf( __( '%s list navigation', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
 			'items_list'            => sprintf( __( '%s list', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
 		);
-		$slug   = apply_filters( 'ssp_archive_slug', __( 'podcast', 'seriously-simple-podcasting' ) );
+		$slug   = apply_filters( 'ssp_archive_slug', __( SSP_CPT_PODCAST, 'seriously-simple-podcasting' ) );
 		$args   = array(
 			'labels'              => $labels,
 			'public'              => true,

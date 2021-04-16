@@ -242,7 +242,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 
 					setup_postdata( $post );
 
-					$class = 'podcast';
+					$class = SSP_CPT_PODCAST;
 
 					$title = get_the_title();
 					if ( 'true' === $args['link_title'] ) {
@@ -270,7 +270,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$template = $tpl;
 					$i ++;
 
-					$class = 'podcast';
+					$class = SSP_CPT_PODCAST;
 
 					$title = $series->title;
 					if ( 'true' === $args['link_title'] ) {
@@ -325,7 +325,7 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 
 		// Setup the default args
 		$args = array(
-			'post_type'      => array( 'podcast' ),
+			'post_type'      => array( SSP_CPT_PODCAST ),
 			'post_status'    => 'publish',
 			'posts_per_page' => - 1,
 			'fields'         => 'ids',
@@ -472,7 +472,7 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 
 		// Add `podcast` post type to array if required
 		if ( $include_podcast ) {
-			$podcast_post_types[] = 'podcast';
+			$podcast_post_types[] = SSP_CPT_PODCAST;
 		}
 
 		if ( $verify ) {

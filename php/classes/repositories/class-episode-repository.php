@@ -56,7 +56,7 @@ class Episode_Repository {
 		$permalink_structure = get_option( 'permalink_structure' );
 
 		if ( $permalink_structure ) {
-			$feed_slug = apply_filters( 'ssp_feed_slug', 'podcast' );
+			$feed_slug = apply_filters( 'ssp_feed_slug', SSP_CPT_PODCAST );
 			$feed_url  = trailingslashit( home_url() ) . 'feed/' . $feed_slug;
 		} else {
 			$feed_url = trailingslashit( home_url() ) . '?feed=' . $this->token;

@@ -555,7 +555,7 @@ class Settings_Controller extends Controller {
 				$html .= esc_url( $url ) . "\n";
 				break;
 			case 'podcast_url':
-				$slug        = apply_filters( 'ssp_archive_slug', _x( 'podcast', 'Podcast URL slug', 'seriously-simple-podcasting' ) );
+				$slug        = apply_filters( 'ssp_archive_slug', _x( SSP_CPT_PODCAST, 'Podcast URL slug', 'seriously-simple-podcasting' ) );
 				$podcast_url = $this->home_url . $slug;
 
 				$html .= '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';
@@ -757,7 +757,7 @@ class Settings_Controller extends Controller {
 		if ( isset( $tab ) && 'import' == $tab ) {
 			$current_admin_url = add_query_arg(
 				array(
-					'post_type' => 'podcast',
+					'post_type' => SSP_CPT_PODCAST,
 					'page'      => 'podcast_settings',
 					'tab'       => 'import',
 				),

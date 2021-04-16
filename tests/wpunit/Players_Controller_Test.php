@@ -36,7 +36,7 @@ class Players_Controller_Test extends \Codeception\TestCase\WPTestCase
 			array(
 				'title'       => 'My Custom Podcast',
 				'post_status' => 'publish',
-				'post_type'   => 'podcast',
+				'post_type'   => SSP_CPT_PODCAST,
 			)
 		);
 		$episode                  = get_post( $episode_id );

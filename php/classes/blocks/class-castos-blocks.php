@@ -58,7 +58,7 @@ class Castos_Blocks extends Controller {
 	protected function bootstrap() {
 		if ( ! file_exists( SSP_PLUGIN_PATH . 'build/index.asset.php' ) ) {
 			if ( is_admin() ) {
-				$this->admin_notices_handler = new Admin_Notifications_Handler( 'podcast' );
+				$this->admin_notices_handler = new Admin_Notifications_Handler( SSP_CPT_PODCAST );
 				add_action( 'admin_notices', array( $this->admin_notices_handler, 'blocks_error_notice' ) );
 			}
 

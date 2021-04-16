@@ -75,7 +75,7 @@ $ssp_admin     = new Admin_Controller( __FILE__, SSP_VERSION );
 $ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
 $ssp_players   = new Players_Controller( __FILE__, SSP_VERSION );
 
-/**git d
+/**
  * Only load the settings if we're in the admin dashboard
  */
 if ( is_admin() ) {

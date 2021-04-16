@@ -51,7 +51,11 @@ class Roles_Handler {
 	 */
 	public function add_podcast_manager_role() {
 		$role_title = __( 'Podcast Manager', 'seriously-simple-podcasting' );
-		$this->maybe_add_podcast_role( self::PODCAST_MANAGER, $role_title, array( self::MANAGE_PODCAST => true ) );
+		$additional_caps = array(
+			self::MANAGE_PODCAST => true,
+			'manage_podcast_tax' => true,
+		);
+		$this->maybe_add_podcast_role( self::PODCAST_MANAGER, $role_title, $additional_caps );
 	}
 
 	/**
@@ -166,10 +170,10 @@ class Roles_Handler {
 	 */
 	public function get_podcast_tax_capabilities() {
 		$caps = array(
-			'manage_terms'  => 'edit_podcast',
-			'edit_terms'    => 'edit_podcast',
-			'delete_terms'  => 'edit_podcast',
-			'assign_terms'  => 'edit_podcast'
+			'manage_terms'  => 'manage_podcast_tax',
+			'edit_terms'    => 'manage_podcast_tax',
+			'delete_terms'  => 'manage_podcast_tax',
+			'assign_terms'  => 'edit_podcast',
 		);
 
 		return apply_filters( 'ssp_podcast_tax_capabilities', $caps );

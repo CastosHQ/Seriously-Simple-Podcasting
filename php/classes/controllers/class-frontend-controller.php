@@ -784,7 +784,7 @@ class Frontend_Controller extends Controller {
 		$include_in_main_query = get_option('ss_podcasting_include_in_main_query');
 		if ( $include_in_main_query && $include_in_main_query == 'on' ) {
 			if ( $query->is_home() && $query->is_main_query() ) {
-				$query->set( 'post_type', array( 'post', 'podcast' ) );
+				$query->set( 'post_type', array( 'post', SSP_CPT_PODCAST ) );
 			}
 		}
 	}
@@ -799,7 +799,7 @@ class Frontend_Controller extends Controller {
 			return;
 		}
 
-		if ( is_post_type_archive( 'podcast' ) || is_tax( 'series' ) ) {
+		if ( is_post_type_archive( SSP_CPT_PODCAST ) || is_tax( 'series' ) ) {
 
 			$podcast_post_types = ssp_post_types( false );
 
@@ -812,7 +812,7 @@ class Frontend_Controller extends Controller {
 
 				$query->set( 'post__in', $episode_ids );
 
-				$podcast_post_types[] = 'podcast';
+				$podcast_post_types[] = SSP_CPT_PODCAST;
 				$query->set( 'post_type', $podcast_post_types );
 
 			}
@@ -835,7 +835,7 @@ class Frontend_Controller extends Controller {
 			return;
 		}
 
-		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array('post', 'podcast') ) ;
+		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array('post', SSP_CPT_PODCAST) ) ;
 		$query->set( 'post_type', $tag_archive_post_types );
 
 	}
@@ -933,11 +933,11 @@ class Frontend_Controller extends Controller {
 	public function get_episode_image_url( $post_id = 0, $size = 'full' ) {
 		$image_url = '';
 		$image_id  = get_post_meta( $post_id, 'cover_image_id', true );
-		$is_valid  = $this->is_image_valid( $image_id, $size );
+		$is_valid  = ssp_is_feed_image_valid( $image_id, $size );
 
 		if ( ! $is_valid ) {
 			$image_id = get_post_thumbnail_id( $post_id );
-			$is_valid = $this->is_image_valid( $image_id, $size );
+			$is_valid = ssp_is_feed_image_valid( $image_id, $size );
 		}
 
 		if ( $is_valid ) {
@@ -948,24 +948,6 @@ class Frontend_Controller extends Controller {
 		return apply_filters( 'ssp_episode_image_url', $image_url, $post_id );
 	}
 
-	/**
-	 * @param int $image_id
-	 * @param string $size
-	 *
-	 * @return bool
-	 */
-	public function is_image_valid( $image_id, $size = 'full' ) {
-		$image_att = $image_id ? wp_get_attachment_image_src( $image_id, $size ) : null;
-		$min_size  = apply_filters( 'ssp_episode_min_image_size', 1400 );
-		$max_size  = apply_filters( 'ssp_episode_min_image_size', 3000 );
-		if ( empty( $image_att ) ) {
-			return false;
-		}
-		$width  = isset( $image_att[1] ) ? $image_att[1] : 0;
-		$height = isset( $image_att[2] ) ? $image_att[2] : 0;
-
-		return $width === $height && $width >= $min_size && $width <= $max_size;
-	}
 
 	/**
 	 * Get podcast
@@ -1418,7 +1400,7 @@ class Frontend_Controller extends Controller {
 	 */
 	public function feed_content_type ( $content_type = '', $type = '' ) {
 
-		if( 'podcast' == $type ) {
+		if( SSP_CPT_PODCAST == $type ) {
 			$content_type = 'text/xml';
 		}
 

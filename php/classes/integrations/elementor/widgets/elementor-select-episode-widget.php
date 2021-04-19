@@ -25,7 +25,7 @@ class Elementor_Select_Episode_Widget extends \Elementor\Widget_Base {
 		$args = array(
 			'fields'          => array('post_title, id'),
 			'posts_per_page'  => get_option('posts_per_page', 10),
-			'post_type' => 'podcast'
+			'post_type' => SSP_CPT_PODCAST
 		);
 
 		$episodes = get_posts($args);

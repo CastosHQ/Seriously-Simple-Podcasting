@@ -29,7 +29,7 @@ class Settings_Handler {
 				'revision',
 				'nav_menu_item',
 				'wooframework',
-				'podcast',
+				SSP_CPT_PODCAST,
 			);
 			if ( in_array( $post_type, $disallowed_post_types, true ) ) {
 				continue;
@@ -1090,6 +1090,7 @@ class Settings_Handler {
 
 	/**
 	 * Checks if a user role exists, used in the SettingsController add_caps method
+	 * @deprecated Use Roles_Handler::role_exists() instead
 	 *
 	 * @param $role
 	 *

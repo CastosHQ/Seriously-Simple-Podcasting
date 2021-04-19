@@ -27,7 +27,7 @@ class Players_Controller_Test extends \Codeception\TestCase\WPTestCase
 
 	/**
 	 * Tests that the Players_Controller::html_player method returns the new html player code
-	 * @covers Players_Controller::html_player
+	 * @covers Players_Controller::render_html_player
 	 * @group player-controller-html-player
 	 */
 	public function test_player_controller_html_player_method() {
@@ -36,11 +36,11 @@ class Players_Controller_Test extends \Codeception\TestCase\WPTestCase
 			array(
 				'title'       => 'My Custom Podcast',
 				'post_status' => 'publish',
-				'post_type'   => 'podcast',
+				'post_type'   => SSP_CPT_PODCAST,
 			)
 		);
 		$episode                  = get_post( $episode_id );
-		$html_player_content      = $this->players_controller->html_player( $episode->ID );
+		$html_player_content      = $this->players_controller->render_html_player( $episode->ID );
 
 		$this->assertStringContainsString( '<div id="embed-app" class="dark-mode">', $html_player_content );
 		$this->assertStringContainsString('Your browser does not support the audio tag.', $html_player_content);

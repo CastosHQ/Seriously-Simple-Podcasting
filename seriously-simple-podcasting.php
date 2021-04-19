@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 2.6.2
+ * Version: 2.6.3
  * Plugin URI: https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
  * Author URI: https://castos.com/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Requires PHP: 5.6
  * Requires at least: 4.4
- * Tested up to: 5.5.3
+ * Tested up to: 5.7
  *
  * Text Domain: seriously-simple-podcasting
  *
@@ -28,11 +28,12 @@ use SeriouslySimplePodcasting\Controllers\Admin_Controller;
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
+use SeriouslySimplePodcasting\Handlers\Images_Handler;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
 
-define( 'SSP_VERSION', '2.6.2' );
+define( 'SSP_VERSION', '2.6.3' );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
@@ -43,16 +44,26 @@ if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
 	define( 'SSP_CASTOS_EPISODES_URL', 'https://episodes.castos.com/' );
 }
 
+if ( ! defined( 'SSP_CPT_PODCAST' ) ) {
+	define( 'SSP_CPT_PODCAST', 'podcast' );
+}
+
+require SSP_PLUGIN_PATH . 'vendor/autoload.php';
+
+global $images_handler;
+$images_handler = new Images_Handler();
+
 require_once SSP_PLUGIN_PATH . 'php/includes/ssp-functions.php';
+
 if ( ! ssp_is_php_version_ok() ) {
 	return;
 }
+
 if ( ! ssp_is_vendor_ok() ) {
 	return;
 }
 
 ssp_beta_check();
-require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
 /**
  * @todo refactor these globals

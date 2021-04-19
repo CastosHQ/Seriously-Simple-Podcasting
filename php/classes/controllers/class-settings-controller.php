@@ -4,7 +4,6 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
 
 /**
  * SSP Settings
@@ -44,11 +43,24 @@ class Settings_Controller extends Controller {
 	 */
 	protected $settings;
 
+	/**
+	 * @var Settings_Handler
+	 * */
 	protected $settings_handler;
 
+	/**
+	 * @var Series_Handler
+	 * */
 	protected $series_handler;
 
+	/**
+	 * @var Import_Controller
+	 * */
 	protected $import_controller;
+
+	/**
+	 * @var Extensions_Controller
+	 * */
 	protected $extensions_controller;
 
 	/**
@@ -74,6 +86,7 @@ class Settings_Controller extends Controller {
 	 * Set up all hooks and filters
 	 */
 	public function register_hooks_and_filters() {
+
 		add_action( 'init', array( $this, 'load_settings' ), 11 );
 
 		//Todo: Can we use pre_update_option_ss_podcasting_data_title action instead?
@@ -94,9 +107,6 @@ class Settings_Controller extends Controller {
 
 		// Mark date on which feed redirection was activated.
 		add_action( 'update_option', array( $this, 'mark_feed_redirect_date' ), 10, 3 );
-
-		// New caps for editors and above.
-		add_action( 'admin_init', array( $this, 'add_caps' ), 1 );
 
 		// Trigger the disconnect action
 		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array( $this, 'maybe_disconnect_from_castos' ), 10, 2 );
@@ -162,70 +172,6 @@ class Settings_Controller extends Controller {
 				'nonce'               => wp_create_nonce( 'ssp_dismiss_upgrade' ),
 			), admin_url( 'index.php' ) );
 		include( $this->template_path . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
-	}
-
-	/**
-	 * Add cabilities to edit podcast settings to admins, and editors.
-	 */
-	public function add_caps() {
-
-		// Roles you'd like to have administer the podcast settings page.
-		// Admin and Editor, as default.
-		$roles = apply_filters( 'ssp_manage_podcast', array( 'administrator', 'editor' ) );
-
-		// Loop through each role and assign capabilities.
-		foreach ( $roles as $the_role ) {
-
-			if ( ! $this->settings_handler->role_exists( $the_role ) ) {
-				continue;
-			}
-
-
-			$role = get_role( $the_role );
-			$caps = array(
-				'manage_podcast',
-			);
-
-			//todo: use the same array for registering podcast and adding capabilities
-			$post_capabilities = array(
-				'edit_post'              => 'edit_podcast',
-				'read_post'              => 'read_podcast',
-				'delete_post'            => 'delete_podcast',
-				'edit_posts'             => 'edit_podcasts',
-				'edit_others_posts'      => 'edit_others_podcasts',
-				'publish_posts'          => 'publish_podcasts',
-				'read_private_posts'     => 'read_private_podcasts',
-				'delete_posts'           => 'delete_podcasts',
-				'delete_private_posts'   => 'delete_private_podcasts',
-				'delete_published_posts' => 'delete_published_podcasts',
-				'delete_others_posts'    => 'delete_others_podcasts',
-				'edit_private_posts'     => 'edit_private_podcasts',
-				'edit_published_posts'   => 'edit_published_podcasts',
-				'create_posts'           => 'create_podcasts',
-			);
-
-			$caps = array_merge( $caps, $post_capabilities );
-
-			// Add the caps.
-			foreach ( $caps as $cap ) {
-				$this->maybe_add_cap( $role, $cap );
-			}
-		}
-	}
-
-	/**
-	 * Check to see if the given role has a cap, and add if it doesn't exist.
-	 *
-	 * @param  object $role User Cap object, part of WP_User.
-	 * @param  string $cap Cap to test against.
-	 *
-	 * @return void
-	 */
-	public function maybe_add_cap( $role, $cap ) {
-		// Update the roles, if needed.
-		if ( ! $role->has_cap( $cap ) ) {
-			$role->add_cap( $cap );
-		}
 	}
 
 	/**
@@ -609,7 +555,7 @@ class Settings_Controller extends Controller {
 				$html .= esc_url( $url ) . "\n";
 				break;
 			case 'podcast_url':
-				$slug        = apply_filters( 'ssp_archive_slug', _x( 'podcast', 'Podcast URL slug', 'seriously-simple-podcasting' ) );
+				$slug        = apply_filters( 'ssp_archive_slug', _x( SSP_CPT_PODCAST, 'Podcast URL slug', 'seriously-simple-podcasting' ) );
 				$podcast_url = $this->home_url . $slug;
 
 				$html .= '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';
@@ -811,7 +757,7 @@ class Settings_Controller extends Controller {
 		if ( isset( $tab ) && 'import' == $tab ) {
 			$current_admin_url = add_query_arg(
 				array(
-					'post_type' => 'podcast',
+					'post_type' => SSP_CPT_PODCAST,
 					'page'      => 'podcast_settings',
 					'tab'       => 'import',
 				),

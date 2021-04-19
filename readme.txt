@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.7
 Requires PHP: 5.6
-Stable tag: 2.6.2
+Stable tag: 2.6.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.6.3 =
+* 2021-04-19
+* UPDATE SUMMARY: Roles and capabilities improvements, no image issues fixes
+* [UPDATE] Added podcast capabilities
+* [UPDATE] Added series capabilities
+* [UPDATE] Added two roles for managing podcasts
+* [FIX] Users with manage_podcast capability couldn't change the plugin settings
+* [FIX] Series image not displaying in series feed
+* [FIX] Feed cover image not displaying in the player
 
 = 2.6.2 =
 * 2021-04-06

@@ -110,7 +110,7 @@ class Controller {
 		$this->template_url  = esc_url( trailingslashit( plugins_url( '/templates/', $file ) ) );
 		$this->home_url      = trailingslashit( home_url() );
 		$this->site_url      = trailingslashit( site_url() );
-		$this->token         = 'podcast';
+		$this->token         = SSP_CPT_PODCAST;
 		$this->plugin_slug   = 'seriously-simple-podcasting';
 		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
 

@@ -1,4 +1,20 @@
-<?php $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7) ?>
+<?php
+/**
+ * @var array $album_art
+ * @var string $player_mode
+ * @var WP_Post $episode
+ * @var string $audio_file
+ * @var string $duration
+ * @var array $subscribe_links
+ * @var string $episode_id
+ * @var string $feed_url
+ * @var string $episode_url
+ * @var string $embed_code
+ **/
+
+$episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
+
+?>
 
 <div class="castos-player <?php echo $player_mode ?>-mode" data-episode="<?php echo $episode_id?>">
 	<div class="player">

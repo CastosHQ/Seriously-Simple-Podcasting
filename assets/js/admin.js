@@ -172,25 +172,26 @@ jQuery(document).ready(function($) {
 
 	$('#ss_podcasting_data_image_delete').click(function() {
 		$( '#ss_podcasting_data_image' ).val( '' );
-		$( '#ss_podcasting_data_image_preview' ).remove();
+		$( '#ss_podcasting_data_image_preview' ).attr('src', '');
 		return false;
 	});
 
-	$( '#cover_image_button, #ss_podcasting_data_image_button' ).click(function() {
-		var validateImageSize = function( attachment ) {
-		  return attachment.width === attachment.height && attachment.width >= 1400 && attachment.width <= 3000;
-		}
-		var description = $( this ).parent().find( '.description' );
-		$.fn.ssp_upload_media_file( $(this), true, validateImageSize );
-		description.css( 'color', '' );
+	$('#cover_image_button, #ss_podcasting_data_image_button').click(function (e) {
+		var validateImageSize = function (attachment) {
+				return attachment.width === attachment.height && attachment.width >= 1400 && attachment.width <= 3000;
+			},
+			description = $(this).parent().find('.description'),
+			$img = 'cover_image_button' === $(e.target).prop('id') ? $('#cover_image_id') : $('#ss_podcasting_data_image_preview');
+		$.fn.ssp_upload_media_file($(this), true, validateImageSize);
+		description.css('color', '');
 
-		file_frame.on( 'select', function() {
-		  var attachment = file_frame.state().get( 'selection' ).first().toJSON();
-		  if ( validateImageSize( attachment ) ) {
-			$( '#cover_image_id' ).val( attachment.id );
-		  } else {
-			description.css( 'color', 'red' );
-		  }
+		file_frame.on('select', function () {
+			var attachment = file_frame.state().get('selection').first().toJSON();
+			if (validateImageSize(attachment)) {
+				$img.val(attachment.id);
+			} else {
+				description.css('color', 'red');
+			}
 		});
 	});
 

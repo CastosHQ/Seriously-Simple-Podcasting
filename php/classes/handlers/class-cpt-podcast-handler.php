@@ -256,7 +256,7 @@ class CPT_Podcast_Handler {
 
 		$fields['cover_image'] = array(
 			'name'             => __( 'Episode Image:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'The podcast cover image should be between 1400x1400px and 3000x3000px in size and either .jpg or .png file format', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The episode image should be square to display properly in podcasting apps and directories, and should be at least 300x300px in size.', 'seriously-simple-podcasting' ),
 			'type'             => 'image',
 			'default'          => '',
 			'section'          => 'info',

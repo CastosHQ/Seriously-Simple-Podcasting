@@ -177,12 +177,24 @@ jQuery(document).ready(function($) {
 	});
 
 	$('#cover_image_button, #ss_podcasting_data_image_button').click(function (e) {
-		var validateImageSize = function (attachment) {
-				return attachment.width === attachment.height && attachment.width >= 1400 && attachment.width <= 3000;
+		var coverImgValidator = function (attachment) {
+				return attachment.width === attachment.height && attachment.width >= 300;
 			},
+			feedImgValidator = function (attachment) {
+				var minWidth = 1400,
+					maxWidth = 3000;
+				return attachment.width >= minWidth &&
+					attachment.height >= minWidth &&
+					attachment.width <= maxWidth &&
+					attachment.height <= maxWidth;
+			},
+			validateImageSize = 'cover_image_button' === $(e.target).prop('id') ? coverImgValidator : feedImgValidator,
 			description = $(this).parent().find('.description'),
 			$img = 'cover_image_button' === $(e.target).prop('id') ? $('#cover_image_id') : $('#ss_podcasting_data_image_preview');
+
+
 		$.fn.ssp_upload_media_file($(this), true, validateImageSize);
+
 		description.css('color', '');
 
 		file_frame.on('select', function () {

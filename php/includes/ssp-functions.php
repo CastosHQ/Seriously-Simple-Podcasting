@@ -905,6 +905,7 @@ if ( ! function_exists( 'ssp_get_image_id_from_url' ) ) {
 	/**
 	 * Get image ID when only the URL of the image is known
 	 * @deprecated Do not use this function. Use attachment_url_to_postid() instead
+	 * @todo: remove it in the next versions
 	 *
 	 * @param $image_url
 	 *

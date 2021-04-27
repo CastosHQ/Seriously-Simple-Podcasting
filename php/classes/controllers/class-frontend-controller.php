@@ -933,14 +933,12 @@ class Frontend_Controller extends Controller {
 	public function get_episode_image_url( $post_id = 0, $size = 'full' ) {
 		$image_url = '';
 		$image_id  = get_post_meta( $post_id, 'cover_image_id', true );
-		$is_valid  = ssp_is_feed_image_valid( $image_id, $size );
 
-		if ( ! $is_valid ) {
+		if ( ! $image_id ) {
 			$image_id = get_post_thumbnail_id( $post_id );
-			$is_valid = ssp_is_feed_image_valid( $image_id, $size );
 		}
 
-		if ( $is_valid ) {
+		if ( $image_id ) {
 			$image_att = wp_get_attachment_image_src( $image_id, $size );
 			$image_url = isset( $image_att[0] ) ? $image_att[0] : '';
 		}

@@ -337,21 +337,19 @@ class Feed_Controller extends Controller {
 		}
 
 		// If it's series feed, try first to show its own image
-		$image = get_option( 'ss_podcasting_data_image', '' );
 		if ( $podcast_series ) {
 			$series_image = get_option( 'ss_podcasting_data_image_' . $series_id, 'no-image' );
 			if ( 'no-image' !== $series_image ) {
 				$image = $series_image;
 			}
 		}
-		$image = apply_filters( 'ssp_feed_image', $image, $series_id );
 
-		// If couldn't show the series image, or if it's global feed, lets show the the global cover image
-		if ( empty( $image ) ) {
+		// If couldn't show the series image, or if it's default feed, lets show the default cover image
+		if ( empty( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
 			$image = get_option( 'ss_podcasting_data_image', '' );
 		}
 
-		// Here we'll sanitize the image once again, if it's not valid - it will be just empty string
+		// Here we'll sanitize the image, if it's not valid - it will be just empty string
 		$image = apply_filters( 'ssp_feed_image', $image, $series_id );
 
 		// Podcast category and subcategory (all levels) - can be filtered with `ssp_feed_category_output`
@@ -419,9 +417,7 @@ class Feed_Controller extends Controller {
 	 * @return string
 	 */
 	public function sanitize_image( $image_url ) {
-		$image_id = attachment_url_to_postid( $image_url );
-
-		if ( $image_id && ! ssp_is_feed_image_valid( $image_id ) ) {
+		if ( ! ssp_is_feed_image_valid( $image_url ) ) {
 			$image_url = '';
 		}
 

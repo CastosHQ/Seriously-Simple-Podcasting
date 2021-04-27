@@ -10,16 +10,20 @@ namespace SeriouslySimplePodcasting\Handlers;
  */
 class Images_Handler {
 
+	const MIN_FEED_IMAGE_SIZE = 1400;
+	const MAX_FEED_IMAGE_SIZE = 3000;
+
 	/**
-	 * @param int $image_id
-	 * @param string $size
+	 * @param string $image_url
 	 *
 	 * @return bool
 	 */
-	public function is_feed_image_valid( $image_id, $size = 'full' ) {
-		$image_att = $image_id ? wp_get_attachment_image_src( $image_id, $size ) : null;
-		$min_size  = apply_filters( 'ssp_episode_min_image_size', 1400 );
-		$max_size  = apply_filters( 'ssp_episode_min_image_size', 3000 );
+	public function is_feed_image_valid( $image_url ) {
+		$image_id = attachment_url_to_postid( $image_url );
+
+		$image_att = $image_id ? wp_get_attachment_image_src( $image_id, 'full' ) : null;
+		$min_size  = apply_filters( 'ssp_episode_min_image_size', self::MIN_FEED_IMAGE_SIZE );
+		$max_size  = apply_filters( 'ssp_episode_min_image_size', self::MAX_FEED_IMAGE_SIZE );
 		if ( empty( $image_att ) ) {
 			return false;
 		}

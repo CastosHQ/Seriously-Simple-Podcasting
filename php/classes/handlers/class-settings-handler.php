@@ -509,16 +509,16 @@ class Settings_Handler {
 					'description' => __( 'Select the style of media player you wish to display on your site.', 'seriously-simple-podcasting' ),
 					'type'        => 'radio',
 					'options'     => array(
-						'standard' => __( 'Standard Compact Player', 'seriously-simple-podcasting' ),
 						'larger'   => __( 'HTML5 Player With Album Art', 'seriously-simple-podcasting' ),
+						'standard' => __( 'Standard Compact Player', 'seriously-simple-podcasting' ),
 					),
-					'default'     => 'standard',
+					'default'     => 'larger',
 				),
 			),
 		);
 
-		$ss_podcasting_player_style = get_option( 'ss_podcasting_player_style', 'standard' );
-		if ( 'standard' !== $ss_podcasting_player_style ) {
+		$ss_podcasting_player_style = get_option( 'ss_podcasting_player_style', 'larger' );
+		if ( 'larger' === $ss_podcasting_player_style ) {
 			$html_5_player_settings = array(
 				array(
 					'id'          => 'player_mode',

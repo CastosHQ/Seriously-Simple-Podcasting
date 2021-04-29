@@ -10,6 +10,7 @@
  * @var string $feed_url
  * @var string $episode_url
  * @var string $embed_code
+ * @var string $podcast_title
  **/
 
 $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
@@ -20,7 +21,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo $episode_id?>">
-				<img src="<?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?>" title="<?php echo $podcast_title ?>">
+				<img src="<?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?>" alt="<?php echo $podcast_title ?>" title="<?php echo $podcast_title ?>">
 			</div>
 			<div class="player__body">
 				<div class="currently-playing">

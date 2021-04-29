@@ -86,21 +86,25 @@ class Players_Controller extends Controller {
 		$feed_url         = $this->episode_repository->get_feed_url( $id );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
 		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
+		$show_subscribe_button  = 'on' === get_option( 'ss_podcasting_subscribe_button_enabled', 'on' );
+		$show_share_button      = 'on' === get_option( 'ss_podcasting_share_button_enabled', 'on' );
 		$subscribe_links  = $this->options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
 
 		// set any other info
 		$template_data = array(
-			'episode'         => $episode,
-			'episode_id'      => $episode->ID,
-			'duration'        => $episode_duration,
-			'episode_url'      => $episode_url,
-			'audio_file'       => $audio_file,
-			'album_art'        => $album_art,
-			'podcast_title'    => $podcast_title,
-			'feed_url'         => $feed_url,
-			'subscribe_links' => $subscribe_links,
-			'embed_code'      => $embed_code,
-			'player_mode'     => $player_mode,
+			'episode'               => $episode,
+			'episode_id'            => $episode->ID,
+			'duration'              => $episode_duration,
+			'episode_url'           => $episode_url,
+			'audio_file'            => $audio_file,
+			'album_art'             => $album_art,
+			'podcast_title'         => $podcast_title,
+			'feed_url'              => $feed_url,
+			'subscribe_links'       => $subscribe_links,
+			'embed_code'            => $embed_code,
+			'player_mode'           => $player_mode,
+			'show_subscribe_button' => $show_subscribe_button,
+			'show_share_button'     => $show_share_button,
 		);
 
 		$template_data = apply_filters( 'ssp_html_player_data', $template_data );

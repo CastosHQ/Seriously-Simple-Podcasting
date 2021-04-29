@@ -531,6 +531,20 @@ class Settings_Handler {
 					),
 					'default'     => 'dark',
 				),
+				array(
+					'id'          => 'subscribe_button_enabled',
+					'label'       => __( 'Show subscribe button', 'seriously-simple-podcasting' ),
+					'description' => __( 'Select whether to display the subscribe button or not', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'share_button_enabled',
+					'label'       => __( 'Show share button', 'seriously-simple-podcasting' ),
+					'description' => __( 'Select whether to display the share button or not', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
 			);
 
 			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $html_5_player_settings );

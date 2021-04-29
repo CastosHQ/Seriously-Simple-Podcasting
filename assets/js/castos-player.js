@@ -176,16 +176,22 @@ docReady(function() {
 		}
 
 		/* Hook up the event listeners */
-		subscribeBtn.addEventListener('click', function () {
-			return togglePanel(subscribePanel);
-		});
+		if (subscribeBtn) {
+			subscribeBtn.addEventListener('click', function () {
+				return togglePanel(subscribePanel);
+			});
+		}
+
 		subscribePanelClose.addEventListener('click', function () {
 			return togglePanel(subscribePanel);
 		});
 
-		shareBtn.addEventListener('click', function () {
-			return togglePanel(sharePanel);
-		});
+		if (shareBtn) {
+			shareBtn.addEventListener('click', function () {
+				return togglePanel(sharePanel);
+			});
+		}
+
 		sharePanelClose.addEventListener('click', function () {
 			return togglePanel(sharePanel);
 		});

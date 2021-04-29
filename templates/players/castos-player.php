@@ -1,5 +1,7 @@
 <?php
 /**
+ * @see \SeriouslySimplePodcasting\Controllers\Players_Controller::render_html_player();
+ *
  * @var array $album_art
  * @var string $player_mode
  * @var WP_Post $episode
@@ -11,6 +13,8 @@
  * @var string $episode_url
  * @var string $embed_code
  * @var string $podcast_title
+ * @var bool $show_subscribe_button
+ * @var bool $show_share_button
  **/
 
 $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
@@ -60,8 +64,12 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 					</div>
 				</div>
 				<nav class="player-panels-nav">
-					<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe"><?php _e( 'Subscribe', 'seriously-simple-podcasting' ) ?></button>
-					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share"><?php _e( 'Share', 'seriously-simple-podcasting' ) ?></button>
+					<?php if ( $show_subscribe_button ) : ?>
+						<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe"><?php _e( 'Subscribe', 'seriously-simple-podcasting' ) ?></button>
+					<?php endif; ?>
+					<?php if ( $show_share_button ) : ?>
+						<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share"><?php _e( 'Share', 'seriously-simple-podcasting' ) ?></button>
+					<?php endif; ?>
 				</nav>
 			</div>
 		</div>

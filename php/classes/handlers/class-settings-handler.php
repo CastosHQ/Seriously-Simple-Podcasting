@@ -498,8 +498,15 @@ class Settings_Handler {
 				),
 				array(
 					'id'          => 'player_meta_data_enabled',
-					'label'       => __( 'Enable Player meta data ', 'seriously-simple-podcasting' ),
+					'label'       => __( 'Enable Player meta data', 'seriously-simple-podcasting' ),
 					'description' => __( 'Turn this on to enable player meta data underneath the player. (download link, episode duration and date recorded).', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'player_subscribe_urls_enabled',
+					'label'       => __( 'Show subscribe urls', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display subscribe urls under the player', 'seriously-simple-podcasting' ),
 					'type'        => 'checkbox',
 					'default'     => 'on',
 				),
@@ -534,20 +541,56 @@ class Settings_Handler {
 				array(
 					'id'          => 'subscribe_button_enabled',
 					'label'       => __( 'Show subscribe button', 'seriously-simple-podcasting' ),
-					'description' => __( 'Select whether to display the subscribe button or not', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the subscribe button', 'seriously-simple-podcasting' ),
 					'type'        => 'checkbox',
 					'default'     => 'on',
 				),
 				array(
 					'id'          => 'share_button_enabled',
 					'label'       => __( 'Show share button', 'seriously-simple-podcasting' ),
-					'description' => __( 'Select whether to display the share button or not', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the share button', 'seriously-simple-podcasting' ),
 					'type'        => 'checkbox',
 					'default'     => 'on',
 				),
 			);
 
 			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $html_5_player_settings );
+		}
+
+		$meta_data_enabled = 'on' === get_option( 'ss_podcasting_player_meta_data_enabled', 'on' );
+		if ( $meta_data_enabled ) {
+			$meta_settings = array(
+				array(
+					'id'          => 'download_file_enabled',
+					'label'       => __( 'Show download file link', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the download file link', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'play_in_new_window_enabled',
+					'label'       => __( 'Show play in new window link', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the play in new window link', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'duration_enabled',
+					'label'       => __( 'Show duration', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the track duration information', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'date_recorded_enabled',
+					'label'       => __( 'Show recorded date', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the recorded date information', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+			);
+
+			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $meta_settings );
 		}
 
 		$settings['feed-details'] = array(

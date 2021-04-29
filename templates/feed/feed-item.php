@@ -113,7 +113,6 @@ if ( $ep_block && $ep_block == 'on' ) {
 }
 
 // Episode author
-$author = esc_html( get_the_author() );
 $author = apply_filters( 'ssp_feed_item_author', $author, get_the_ID() );
 
 // Cache the post in case it changes

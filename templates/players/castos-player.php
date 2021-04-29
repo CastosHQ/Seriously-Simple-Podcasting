@@ -84,7 +84,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 				<div class="subscribe-icons">
 					<?php foreach ( $subscribe_links as $key => $subscribe_link ) : ?>
 						<?php if ( ! empty( $subscribe_link['url'] ) ) : ?>
-							<a href="<?php echo $subscribe_link['url'] ?>" target="_blank" class="<?php echo explode( '.', $subscribe_link['icon'], 2 )[0] ?>" title="Subscribe on " <?php echo $subscribe_link['label'] ?>>
+							<a href="<?php echo $subscribe_link['url'] ?>" target="_blank" class="<?php echo esc_attr( $subscribe_link['class']) ?>" title="Subscribe on  <?php echo $subscribe_link['label'] ?>">
 								<span></span>
 								<?php echo $subscribe_link['label'] ?>
 							</a>

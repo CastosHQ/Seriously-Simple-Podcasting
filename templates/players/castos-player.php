@@ -59,8 +59,8 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 					</div>
 				</div>
 				<nav class="player-panels-nav">
-					<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe">Subscribe</button>
-					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
+					<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe"><?php _e( 'Subscribe', 'seriously-simple-podcasting' ) ?></button>
+					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share"><?php _e( 'Share', 'seriously-simple-podcasting' ) ?></button>
 				</nav>
 			</div>
 		</div>
@@ -84,7 +84,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 				</div>
 				<div class="player-panel-row">
 					<div class="title">
-						RSS Feed
+						<?php _e( 'RSS Feed', 'seriously-simple-podcasting' ) ?>
 					</div>
 					<div>
 						<input value="<?php echo $feed_url ?>" class="input-rss input-rss-<?php echo $episode_id ?>" />
@@ -100,26 +100,26 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 			</div>
 			<div class="player-panel-row">
 				<div class="title">
-					Share
+					<?php _e( 'Share', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div class="icons-holder">
 					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audio_file; ?>&t=<?php echo $episode->post_title; ?>"
-					   target="_blank" class="share-icon facebook" title="Share on Facebook">
+					   target="_blank" class="share-icon facebook" title="<?php _e( 'Share on Facebook', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 					</a>
 					<a href="https://twitter.com/intent/tweet?text=<?php echo $audio_file; ?>&url=<?php echo $episode->post_title; ?>"
-					   target="_blank" class="share-icon twitter" title="Share on Twitter">
+					   target="_blank" class="share-icon twitter" title="<?php _e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 					</a>
 					<a href="<?php echo $audio_file ?>"
-					   target="_blank" class="share-icon download" title="Download" download>
+					   target="_blank" class="share-icon download" title="<?php _e( 'Download', 'seriously-simple-podcasting' ) ?>" download>
 						<span></span>
 					</a>
 				</div>
 			</div>
 			<div class="player-panel-row">
 				<div class="title">
-					Link
+					<?php _e( 'Link', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div>
 					<input value="<?php echo $episode_url ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
@@ -128,7 +128,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 			</div>
 			<div class="player-panel-row">
 				<div class="title">
-					Embed
+					<?php _e( 'Embed', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div style="height: 10px;">
 					<input type="text" value='<?php echo esc_attr( $embed_code) ?>'

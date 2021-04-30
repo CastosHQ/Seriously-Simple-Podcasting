@@ -57,7 +57,7 @@ if ( $stylesheet_url ) {
 	<?php do_action( 'rss2_ns' ); ?>>
 	<channel>
 		<title><?php echo esc_html( $title ); ?></title>
-		<atom:link href="<?php esc_url( self_link() ); ?>" rel="self" type="application/rss+xml"/>
+		<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml"/>
 		<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $ss_podcasting->home_url, $podcast_series ) ) ?></link>
 		<description><?php echo esc_html( $description ); ?></description>
 		<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>

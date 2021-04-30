@@ -190,7 +190,7 @@ class Episode_Controller extends Controller {
 		 */
 		$feed_image = get_option( 'ss_podcasting_data_image', false );
 		if ( $feed_image ) {
-			$feed_image_attachment_id = ssp_get_image_id_from_url( $feed_image );
+			$feed_image_attachment_id = attachment_url_to_postid( $feed_image );
 			$image_data_array         = ssp_get_attachment_image_src( $feed_image_attachment_id );
 			if ( ssp_is_image_square( $image_data_array ) ) {
 				return $image_data_array;

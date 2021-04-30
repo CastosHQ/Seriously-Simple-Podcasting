@@ -14,12 +14,7 @@ class Castos_Handler {
 	/**
 	 * @const int
 	 */
-	const MIN_IMG_SIZE = 1400;
-
-	/**
-	 * @const int
-	 */
-	const MAX_IMG_SIZE = 3000;
+	const MIN_IMG_SIZE = 300;
 
 	/**
 	 * @var string
@@ -253,10 +248,10 @@ class Castos_Handler {
 
 		$this->logger->log( 'API URL', $api_url );
 
-		$cover_image_url = $this->get_cover_image_url( $post );
-		if ( ! empty( $cover_image_url ) ) {
+		$episode_image_url = $this->get_episode_image_url( $post );
+		if ( ! empty( $episode_image_url ) ) {
 			// Todo: change 'featured_image_url' to 'cover_image_url' after API update
-			$post_body['featured_image_url'] = $cover_image_url;
+			$post_body['featured_image_url'] = $episode_image_url;
 		}
 
 		$this->logger->log( 'Parameter post_body Contents', $post_body );
@@ -314,28 +309,28 @@ class Castos_Handler {
 	 *
 	 * @return string
 	 */
-	public function get_cover_image_url( $post ) {
+	public function get_episode_image_url( $post ) {
 		$key    = 'cover_image';
 		$id_key = 'cover_image_id';
 
-		$podcast_image = filter_input( INPUT_POST, $key, FILTER_VALIDATE_URL );
+		$episode_image = filter_input( INPUT_POST, $key, FILTER_VALIDATE_URL );
 		$attachment_id = filter_input( INPUT_POST, $id_key );
 
-		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
-			$podcast_image = get_post_meta( $post->ID, $key );
+		if ( ! $episode_image || ! $this->is_valid_episode_image( $attachment_id ) ) {
+			$episode_image = get_post_meta( $post->ID, $key );
 			$attachment_id = get_post_meta( $post->ID, $id_key );
 		}
 
-		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
-			$podcast_image = get_the_post_thumbnail_url( $post, 'full' );
+		if ( ! $episode_image || ! $this->is_valid_episode_image( $attachment_id ) ) {
+			$episode_image = get_the_post_thumbnail_url( $post, 'full' );
 			$attachment_id = get_post_thumbnail_id( $post );
 		}
 
-		if ( ! $podcast_image || ! $this->is_valid_podcast_image( $attachment_id ) ) {
-			$podcast_image = '';
+		if ( ! $episode_image || ! $this->is_valid_episode_image( $attachment_id ) ) {
+			$episode_image = '';
 		}
 
-		return $podcast_image;
+		return $episode_image;
 	}
 
 	/**
@@ -343,7 +338,7 @@ class Castos_Handler {
 	 *
 	 * @return bool
 	 */
-	public function is_valid_podcast_image( $attachment_id ) {
+	public function is_valid_episode_image( $attachment_id ) {
 		if ( empty( $attachment_id ) ) {
 			return false;
 		}
@@ -357,8 +352,9 @@ class Castos_Handler {
 		$width  = $image[1];
 		$height = $image[2];
 
-		return ( $width === $height ) && $width >= self::MIN_IMG_SIZE && $width <= self::MAX_IMG_SIZE;
+		return ( $width === $height ) && $width >= self::MIN_IMG_SIZE;
 	}
+
 
 	/**
 	 * Delete a post from Castos when it's trashed in WordPress

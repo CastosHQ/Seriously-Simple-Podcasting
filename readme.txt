@@ -171,8 +171,6 @@ You can find complete user and developer documentation (along with the FAQs) on 
 * [FIX] Show series feed image in the feed
 * [FIX] Settings UI: cover image is not being shown after image upload
 * [FIX] Excerpt for content:encoded tag
-* [FIX] Excerpt for content:encoded tag
-* [FIX] Value for <itunes:author> should be author from feed details
 * [FIX] Value for <itunes:author> should be author from feed details
 * [FIX] Player subscribe icons
 

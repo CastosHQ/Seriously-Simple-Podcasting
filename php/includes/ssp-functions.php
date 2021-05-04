@@ -904,6 +904,8 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 if ( ! function_exists( 'ssp_get_image_id_from_url' ) ) {
 	/**
 	 * Get image ID when only the URL of the image is known
+	 * @deprecated Do not use this function. Use attachment_url_to_postid() instead
+	 * @todo: remove it in the next versions
 	 *
 	 * @param $image_url
 	 *
@@ -1168,14 +1170,13 @@ if ( ! function_exists( 'ssp_is_elementor_ok' ) ) {
  */
 if ( ! function_exists( 'ssp_is_feed_image_valid' ) ) {
 	/**
-	 * @param int $image_id
-	 * @param string $size
+	 * @param string $image_url
 	 *
 	 * @return bool
 	 */
-	function ssp_is_feed_image_valid( $image_id, $size = 'full' ) {
+	function ssp_is_feed_image_valid( $image_url ) {
 		global $images_handler; /** @var Images_Handler $images_handler */
-		return $images_handler->is_feed_image_valid( $image_id, $size );
+		return $images_handler->is_feed_image_valid( $image_url );
 	}
 }
 

@@ -1,5 +1,7 @@
 <?php
 /**
+ * @see \SeriouslySimplePodcasting\Controllers\Players_Controller::render_html_player();
+ *
  * @var array $album_art
  * @var string $player_mode
  * @var WP_Post $episode
@@ -10,6 +12,9 @@
  * @var string $feed_url
  * @var string $episode_url
  * @var string $embed_code
+ * @var string $podcast_title
+ * @var bool $show_subscribe_button
+ * @var bool $show_share_button
  **/
 
 $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
@@ -20,7 +25,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo $episode_id?>">
-				<img src="<?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?>" title="<?php echo $podcast_title ?>">
+				<img src="<?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?>" alt="<?php echo $podcast_title ?>" title="<?php echo $podcast_title ?>">
 			</div>
 			<div class="player__body">
 				<div class="currently-playing">
@@ -59,8 +64,12 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 					</div>
 				</div>
 				<nav class="player-panels-nav">
-					<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe">Subscribe</button>
-					<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share">Share</button>
+					<?php if ( $show_subscribe_button ) : ?>
+						<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe"><?php _e( 'Subscribe', 'seriously-simple-podcasting' ) ?></button>
+					<?php endif; ?>
+					<?php if ( $show_share_button ) : ?>
+						<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share"><?php _e( 'Share', 'seriously-simple-podcasting' ) ?></button>
+					<?php endif; ?>
 				</nav>
 			</div>
 		</div>
@@ -75,7 +84,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 				<div class="subscribe-icons">
 					<?php foreach ( $subscribe_links as $key => $subscribe_link ) : ?>
 						<?php if ( ! empty( $subscribe_link['url'] ) ) : ?>
-							<a href="<?php echo $subscribe_link['url'] ?>" target="_blank" class="<?php echo explode( '.', $subscribe_link['icon'], 2 )[0] ?>" title="Subscribe on " <?php echo $subscribe_link['label'] ?>>
+							<a href="<?php echo $subscribe_link['url'] ?>" target="_blank" class="<?php echo esc_attr( $subscribe_link['class']) ?>" title="Subscribe on  <?php echo $subscribe_link['label'] ?>">
 								<span></span>
 								<?php echo $subscribe_link['label'] ?>
 							</a>
@@ -84,7 +93,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 				</div>
 				<div class="player-panel-row">
 					<div class="title">
-						RSS Feed
+						<?php _e( 'RSS Feed', 'seriously-simple-podcasting' ) ?>
 					</div>
 					<div>
 						<input value="<?php echo $feed_url ?>" class="input-rss input-rss-<?php echo $episode_id ?>" />
@@ -100,26 +109,26 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 			</div>
 			<div class="player-panel-row">
 				<div class="title">
-					Share
+					<?php _e( 'Share', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div class="icons-holder">
 					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audio_file; ?>&t=<?php echo $episode->post_title; ?>"
-					   target="_blank" class="share-icon facebook" title="Share on Facebook">
+					   target="_blank" class="share-icon facebook" title="<?php _e( 'Share on Facebook', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 					</a>
 					<a href="https://twitter.com/intent/tweet?text=<?php echo $audio_file; ?>&url=<?php echo $episode->post_title; ?>"
-					   target="_blank" class="share-icon twitter" title="Share on Twitter">
+					   target="_blank" class="share-icon twitter" title="<?php _e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 					</a>
 					<a href="<?php echo $audio_file ?>"
-					   target="_blank" class="share-icon download" title="Download" download>
+					   target="_blank" class="share-icon download" title="<?php _e( 'Download', 'seriously-simple-podcasting' ) ?>" download>
 						<span></span>
 					</a>
 				</div>
 			</div>
 			<div class="player-panel-row">
 				<div class="title">
-					Link
+					<?php _e( 'Link', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div>
 					<input value="<?php echo $episode_url ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
@@ -128,7 +137,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 			</div>
 			<div class="player-panel-row">
 				<div class="title">
-					Embed
+					<?php _e( 'Embed', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div style="height: 10px;">
 					<input type="text" value='<?php echo esc_attr( $embed_code) ?>'

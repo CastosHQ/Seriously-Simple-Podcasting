@@ -113,7 +113,6 @@ if ( $ep_block && $ep_block == 'on' ) {
 }
 
 // Episode author
-$author = esc_html( get_the_author() );
 $author = apply_filters( 'ssp_feed_item_author', $author, get_the_ID() );
 
 // Cache the post in case it changes
@@ -232,7 +231,7 @@ $title = esc_html( get_the_title_rss() );
 		<itunes:season><?php echo $itunes_season_number; ?></itunes:season>
 	<?php endif; ?>
 	<?php if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) { ?>
-		<content:encoded><![CDATA[<?php echo $content; ?>]]></content:encoded>
+		<content:encoded><![CDATA[<?php echo $description; ?>]]></content:encoded>
 	<?php } ?>
 	<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>"
 			   type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>

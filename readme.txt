@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.7
 Requires PHP: 5.6
-Stable tag: 2.6.3
+Stable tag: 2.6.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -158,6 +158,21 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.6.4 =
+* 2021-05-04
+* UPDATE SUMMARY: HTML player improvements and fixes, feed images fixes
+* [UPDATE] Changed images validation settings
+* [UPDATE] Options to disable the subscribe and share button in the player
+* [UPDATE] Options for displaying the player meta data
+* [UPDATE] Make player translatable
+* [UPDATE] Include alt attribute in web player
+* [UPDATE] Make HTML5 player to be the default one
+* [FIX] Show series feed image in the feed
+* [FIX] Settings UI: cover image is not being shown after image upload
+* [FIX] Excerpt for content:encoded tag
+* [FIX] Value for <itunes:author> should be author from feed details
+* [FIX] Player subscribe icons
 
 = 2.6.3 =
 * 2021-04-19

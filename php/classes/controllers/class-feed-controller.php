@@ -39,7 +39,7 @@ class Feed_Controller extends Controller {
 		add_action( 'init', array( $this, 'add_feed' ), 11 );
 
 		// Handle v1.x feed URL as well as feed URLs for default permalinks.
-		add_action( 'init', array( $this, 'redirect_old_feed' ), 11 );
+		add_action( 'init', array( $this, 'redirect_old_feed' ), 12 );
 
 		// Sanitize the podcast image
 		add_filter( 'ssp_feed_image', array( $this, 'sanitize_image' ) );

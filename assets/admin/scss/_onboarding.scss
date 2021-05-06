@@ -1,0 +1,187 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap');
+
+.ssp-onboarding {
+
+	span, h1, h2, h3, label, button, input {
+		font-family: 'Inter', sans-serif;
+		font-style: normal;
+		font-weight: 500;
+	}
+
+	h1 {
+		font-size: 25px;
+		font-weight: 600;
+	}
+
+	h2 {
+		font-size: 16px;
+		margin-bottom: 5px;
+	}
+
+	label {
+		font-size: 12px;
+		font-weight: 400;
+		color: #9CA3AF;
+	}
+
+	padding: 10px;
+	width: 700px;
+	margin: 0 auto;
+
+	&__logo {
+		text-align: center;
+		width: 360px;
+		margin: 0 auto;
+		display: flex;
+
+		img {
+			width: 69px;
+			height: 69px;
+		}
+	}
+
+	&__logo-text {
+		padding: 13px 0 0 11px;
+		text-align: left;
+	}
+
+	&__logo-title {
+		font-size: 20px;
+		line-height: 24px;
+		margin-top: 10px;
+	}
+
+	&__logo-label {
+		background: #383344;
+		font-size: 11px;
+		line-height: 13px;
+		text-transform: uppercase;
+		color: #fff;
+		padding: 2px 5px;
+	}
+
+	&__steps {
+		display: flex;
+		justify-content: space-between;
+		padding: 32px 10px 14px;
+		margin-bottom: 38px;
+		position: relative;
+		&:after {
+			content: '';
+			position: absolute;
+			width: 645px;
+			height: 4px;
+			background: #D1D5DB;
+			bottom: 0;
+			left: 30px;
+			right: 0;
+		}
+	}
+
+	&__step {
+		position: relative;
+		&:after {
+			content: '';
+			position: absolute;
+			width: 20px;
+			height: 20px;
+			background: url(../img/step.svg) no-repeat;
+			bottom: -28px;
+			left: 50%;
+			margin-left: -10px;
+			z-index: 2;
+		}
+
+		&.active {
+			&:after {
+				background: url(../img/step-active.svg) no-repeat;
+			}
+		}
+	}
+
+	&__settings {
+		background: #fff;
+		border-radius: 8px;
+		box-shadow: 0 2px 20px -10px rgba(51, 65, 85, 0.38);
+		min-height: 400px;
+	}
+
+	&__settings-header {
+		height: 80px;
+		border-bottom: 2px solid #F3F4F6;
+
+		h1 {
+			text-align: center;
+			line-height: 80px;
+		}
+	}
+
+	&__settings-body {
+		padding: 25px;
+
+		input[type=text], textarea {
+			display: block;
+			width: 100%;
+			margin: 10px 0 25px;
+			padding: 10px;
+			font-size: 16px;
+			border: 1px solid #E5E7EB;
+			border-radius: 4px;
+			background: #F9FAFB;
+		}
+
+		input[type=text] {
+			height: 40px;
+		}
+	}
+
+	&__submit {
+		text-align: right;
+
+		button {
+			position: relative;
+			height: 50px;
+			margin-top: 25px;
+			background: #9CA3AF;
+			border-radius: 6px;
+			border: 0;
+			color: #D1D5DB;
+			font-size: 18px;
+			padding: 0 55px 0 33px;
+			transition: .5s;
+
+			&:after {
+				content: '';
+				display: block;
+				position: absolute;
+				width: 24px;
+				height: 24px;
+				background: url(../img/arrow.svg) no-repeat;
+				filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
+				right: 18px;
+				top: 14px;
+				transition: .5s;
+			}
+
+			&:hover {
+				color: #FFFFFF;
+				background: #DF4E4F;
+				&:after {
+					filter: invert(98%) sepia(93%) saturate(30%) hue-rotate(119deg) brightness(107%) contrast(100%);
+				}
+			}
+		}
+	}
+}
+
+/* Hide the WP bars */
+.admin_page_ssp-onboarding-1, .admin_page_ssp-onboarding-2  {
+	#adminmenumain, #wpadminbar, #wpfooter {
+		display: none;
+	}
+
+	#wpcontent {
+		margin-left: 0;
+		padding-left: 0;
+	}
+}

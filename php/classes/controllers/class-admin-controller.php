@@ -46,6 +46,11 @@ class Admin_Controller extends Controller {
 	protected $feed_controller;
 
 	/**
+	 * @var Onboarding_Controller
+	 */
+	protected $onboarding_controller;
+
+	/**
 	 * @var Log_Helper
 	 * */
 	protected $logger;
@@ -87,6 +92,8 @@ class Admin_Controller extends Controller {
 		$this->upgrade_handler = new Upgrade_Handler();
 
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
+
+		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version );
 
 		$this->roles_handler = new Roles_Handler();
 
@@ -962,7 +969,7 @@ HTML;
 	 */
 	public function enqueue_admin_styles( $hook ) {
 
-		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), $this->version );
+		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . '/admin/css/admin.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
 
 		// Datepicker

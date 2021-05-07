@@ -211,7 +211,7 @@ $title = esc_html( get_the_title_rss() );
 	<title><?php echo $title; ?></title>
 	<link><?php the_permalink_rss(); ?></link>
 	<pubDate><?php echo $pub_date; ?></pubDate>
-	<dc:creator><?php echo $author; ?></dc:creator>
+	<dc:creator><![CDATA[<?php echo $author; ?>]]></dc:creator>
 	<guid isPermaLink="false"><?php the_guid(); ?></guid>
 	<description><![CDATA[<?php echo $description; ?>]]></description>
 	<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
@@ -248,7 +248,7 @@ $title = esc_html( get_the_title_rss() );
 	<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
 	<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
 	<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
-	<itunes:author><?php echo $author; ?></itunes:author>
+	<itunes:author><![CDATA[<?php echo esc_html( $author ); ?>]]></itunes:author>
 	<?php if ( 'off' === $turbo ) { ?>
 		<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
 		<?php if ( $episode_image ) { ?>

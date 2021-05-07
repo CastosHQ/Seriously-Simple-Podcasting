@@ -64,7 +64,7 @@ if ( $stylesheet_url ) {
 		<language><?php echo esc_html( $language ); ?></language>
 		<copyright><?php echo esc_html( $copyright ); ?></copyright>
 		<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>
-		<itunes:author><?php echo esc_html( $author ); ?></itunes:author>
+		<itunes:author><![CDATA[<?php echo esc_html( $author ); ?>]]></itunes:author>
 		<?php
 		if ( $itunes_type ) {
 			?>
@@ -114,7 +114,7 @@ if ( $stylesheet_url ) {
 			<itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
 		<?php } ?>
 		<?php if ( 'off' === $turbo ) { ?>
-			<googleplay:author><?php echo esc_html( $author ); ?></googleplay:author>
+			<googleplay:author><![CDATA[<?php echo esc_html( $author ); ?>]]></googleplay:author>
 			<googleplay:email><?php echo esc_html( $owner_email ); ?></googleplay:email>
 			<googleplay:description><?php echo esc_html( $podcast_description ); ?></googleplay:description>
 			<googleplay:explicit><?php echo esc_html( $googleplay_explicit ); ?></googleplay:explicit>

@@ -32,7 +32,14 @@ class Onboarding_Controller extends Controller {
 		$this->renderer = new Renderer();
 		$this->settings_handler = new Settings_Handler();
 
-		add_action( 'admin_menu', [ $this, 'register_pages' ] );
+		add_action( 'admin_menu', array( $this, 'register_pages' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+	}
+
+	public function enqueue_scripts() {
+		wp_enqueue_script( 'ssp-onboarding', esc_url( $this->assets_url . 'admin/js/onboarding' . $this->script_suffix . '.js' ), array(
+			'jquery',
+		), $this->version );
 	}
 
 	public function register_pages() {
@@ -53,21 +60,32 @@ class Onboarding_Controller extends Controller {
 		$description = $this->get_field( 'data_description' );
 
 		$next_step = admin_url( 'admin.php?page=' . $this->get_page_slug( 2 ) );
+		$step_number = 1;
 
-		$this->render( compact( 'title', 'description', 'next_step' ), 'onboarding/step-1' );
+		$this->render( compact( 'title', 'description', 'next_step', 'step_number' ), 'onboarding/step-1' );
 	}
 
 	public function step_2() {
-		foreach ( array( 'data_title', 'data_description' ) as $field_id ) {
+		$this->save_fields( array( 'data_title', 'data_description' ) );
+
+		$next_step = admin_url( 'admin.php?page=' . $this->get_page_slug( 3 ) );
+		$img_url = $this->get_field('data_image');
+		$step_number = 2;
+
+		$this->render( compact( 'next_step', 'step_number', 'img_url' ), 'onboarding/step-2' );
+	}
+
+	public function step_3() {
+		$this->save_fields( array( 'data_image' ) );
+	}
+
+	protected function save_fields( array $fields ) {
+		foreach ( $fields as $field_id ) {
 			$val = filter_input( INPUT_POST, $field_id );
 			if ( $val ) {
 				$this->set_field( $field_id, $val );
 			}
 		}
-
-		$next_step = admin_url( 'admin.php?page=' . $this->get_page_slug( 3 ) );
-
-		$this->render( compact( 'next_step' ), 'onboarding/step-2' );
 	}
 
 	protected function get_page_slug( $page_number ) {

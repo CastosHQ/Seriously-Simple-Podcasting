@@ -1,34 +1,31 @@
+<?php
+/**
+ * @var string $next_step
+ * @var string $img_url
+ * */
+?>
+
 <div class="ssp-onboarding">
-	<div class="ssp-onboarding__logo">
-		<img alt="Seriously Simple Podcasting" src="<?php echo SSP_PLUGIN_URL . '/assets/admin/img/logo.png'; ?>">
-		<div class="ssp-onboarding__logo-text">
-			<span class="ssp-onboarding__logo-title">Seriously Simple Podcasting</span>
-			<span class="ssp-onboarding__logo-label">By Castos</span>
-		</div>
-	</div>
-	<ul class="ssp-onboarding__steps">
-		<li class="ssp-onboarding__step ssp-onboarding__step-1">Welcome</li>
-		<li class="ssp-onboarding__step ssp-onboarding__step-2 active">Cover</li>
-		<li class="ssp-onboarding__step ssp-onboarding__step-3">Categories</li>
-		<li class="ssp-onboarding__step ssp-onboarding__step-4">Hosting</li>
-		<li class="ssp-onboarding__step ssp-onboarding__step-5">Done!</li>
-	</ul>
+	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
-			<h1>Let's get your podcast started</h1>
+			<h1>Podcast Cover Image</h1>
 		</div>
-		<form class="ssp-onboarding__settings-body" action="<?php echo $next_step ?>">
+		<form class="ssp-onboarding__settings-body" action="<?php echo $next_step ?>" method="post">
 			<div class="ssp-onboarding__settings-item">
-				<h2>What’s the name of your show?</h2>
-				<label for="show_name">This will be the “Title” field in the feed details area.</label>
-				<input id="show_name" type="text" name="show_name">
+				<h2>Do you have a cover image ready?</h2>
+				<label for="ss_podcasting_data_image_button" class="description">This image should be JPG or PNG format and between 1400x1400px and 3000x3000px in size.</label>
+				<input id="ss_podcasting_data_image_button" type="button" class="button" value="Upload new image">
 			</div>
-			<div class="ssp-onboarding__settings-item">
-				<h2>What’s your show about?</h2>
-				<label for="show_description">Just a couple of sentences to let listeners know what to expect.</label>
-				<textarea id="show_description" name="show_description" rows="7"></textarea>
-			</div>
+
 			<div class="ssp-onboarding__submit">
+				<span class="ssp-onboarding__image-info js-onboarding-img-info">
+					<img id="ss_podcasting_data_image_preview" class="js-onboarding-img" src="<?php echo $img_url ?>">
+					<span class="js-onboarding-img-name ssp-onboarding__image-name">My Cover.jpg</span>
+					<span class="js-onboarding-delete-img-info ssp-onboarding__delete-image"></span>
+					<input id="ss_podcasting_data_image" name="data_image"" class="js-onboarding-img-val" type="hidden" value="<?php echo $img_url ?>">
+				</span>
+				<a href="<?php echo $next_step ?>" class="button"><span>Skip</span></a>
 				<button type="submit">Proceed</button>
 			</div>
 		</form>

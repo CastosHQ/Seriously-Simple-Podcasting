@@ -144,7 +144,7 @@ textarea#episode_embed_code {
   margin-bottom: 38px;
   position: relative;
 }
-.ssp-onboarding__steps:after {
+.ssp-onboarding__steps:before {
   content: '';
   position: absolute;
   width: 645px;
@@ -153,6 +153,18 @@ textarea#episode_embed_code {
   bottom: 0;
   left: 30px;
   right: 0;
+}
+.ssp-onboarding__steps.step-2:after {
+  content: '';
+  position: absolute;
+  height: 4px;
+  background: #DF4E4F;
+  bottom: 0;
+  left: 30px;
+  right: 510px;
+}
+.ssp-onboarding__steps.step-2 + .ssp-onboarding__settings input.button {
+  margin: 20px 0 50px;
 }
 .ssp-onboarding__step {
   position: relative;
@@ -170,6 +182,9 @@ textarea#episode_embed_code {
 }
 .ssp-onboarding__step.active:after {
   background: url(../img/step-active.svg) no-repeat;
+}
+.ssp-onboarding__step.completed:after {
+  background: url(../img/step-completed.svg) no-repeat;
 }
 .ssp-onboarding__settings {
   background: #fff;
@@ -203,20 +218,22 @@ textarea#episode_embed_code {
 }
 .ssp-onboarding__submit {
   text-align: right;
+  margin-top: 25px;
+  position: relative;
 }
-.ssp-onboarding__submit button {
+.ssp-onboarding__submit button[type=submit], .ssp-onboarding__submit .button {
   position: relative;
   height: 50px;
-  margin-top: 25px;
   background: #9CA3AF;
   border-radius: 6px;
   border: 0;
   color: #D1D5DB;
   font-size: 18px;
   padding: 0 55px 0 33px;
-  transition: .5s;
+  transition: .3s;
+  cursor: pointer;
 }
-.ssp-onboarding__submit button:after {
+.ssp-onboarding__submit button[type=submit]:after, .ssp-onboarding__submit .button:after {
   content: '';
   display: block;
   position: absolute;
@@ -226,14 +243,74 @@ textarea#episode_embed_code {
   filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
   right: 18px;
   top: 14px;
-  transition: .5s;
+  transition: .3s;
 }
-.ssp-onboarding__submit button:hover {
+.ssp-onboarding__submit button[type=submit]:hover, .ssp-onboarding__submit .button:hover {
   color: #FFFFFF;
   background: #DF4E4F;
 }
-.ssp-onboarding__submit button:hover:after {
+.ssp-onboarding__submit button[type=submit]:hover:after, .ssp-onboarding__submit .button:hover:after {
   filter: invert(98%) sepia(93%) saturate(30%) hue-rotate(119deg) brightness(107%) contrast(100%);
+}
+.ssp-onboarding__submit .button {
+  color: #6B7280;
+  background: #E5E7EB;
+  margin-right: 20px;
+}
+.ssp-onboarding__submit .button:after {
+  filter: invert(46%) sepia(4%) saturate(1281%) hue-rotate(182deg) brightness(94%) contrast(84%);
+}
+.ssp-onboarding__submit .button:hover {
+  color: #FFFFFF;
+}
+.ssp-onboarding__submit .button span {
+  position: relative;
+  top: 5px;
+}
+.ssp-onboarding__image-info {
+  position: absolute;
+  display: flex;
+  left: 0;
+  bottom: -4px;
+  height: 60px;
+}
+.ssp-onboarding__image-info img {
+  width: 60px;
+  height: 60px;
+}
+.ssp-onboarding__image-name {
+  font-size: 16px;
+  line-height: 60px;
+  margin: 0 16px 0 20px;
+}
+.ssp-onboarding__delete-image {
+  background: #F8E3E3;
+  border-radius: 50%;
+  height: 28px;
+  width: 28px;
+  position: relative;
+  top: 16px;
+  cursor: pointer;
+}
+.ssp-onboarding__delete-image:before, .ssp-onboarding__delete-image:after {
+  content: '';
+  display: block;
+  height: 1.5px;
+  width: 14px;
+  background: #DF4E4F;
+  position: absolute;
+  left: 7px;
+  top: 46%;
+  transition: .3s;
+}
+.ssp-onboarding__delete-image:before {
+  transform: rotate(45deg);
+}
+.ssp-onboarding__delete-image:after {
+  transform: rotate(-45deg);
+}
+.ssp-onboarding__delete-image:hover:before, .ssp-onboarding__delete-image:hover:after {
+  background: #fff;
 }
 
 /* Hide the WP bars */

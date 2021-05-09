@@ -7,20 +7,7 @@
 ?>
 
 <div class="ssp-onboarding">
-	<div class="ssp-onboarding__logo">
-		<img alt="Seriously Simple Podcasting" src="<?php echo SSP_PLUGIN_URL . '/assets/admin/img/logo.png'; ?>">
-		<div class="ssp-onboarding__logo-text">
-			<span class="ssp-onboarding__logo-title">Seriously Simple Podcasting</span>
-			<span class="ssp-onboarding__logo-label">By Castos</span>
-		</div>
-	</div>
-	<ul class="ssp-onboarding__steps">
-		<li class="ssp-onboarding__step ssp-onboarding__step-1 active">Welcome</li>
-		<li class="ssp-onboarding__step ssp-onboarding__step-2">Cover</li>
-		<li class="ssp-onboarding__step ssp-onboarding__step-3">Categories</li>
-		<li class="ssp-onboarding__step ssp-onboarding__step-4">Hosting</li>
-		<li class="ssp-onboarding__step ssp-onboarding__step-5">Done!</li>
-	</ul>
+	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
 			<h1>Let's get your podcast started</h1>

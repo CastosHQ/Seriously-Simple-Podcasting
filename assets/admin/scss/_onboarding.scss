@@ -66,7 +66,7 @@
 		padding: 32px 10px 14px;
 		margin-bottom: 38px;
 		position: relative;
-		&:before {
+		&:before, &:after {
 			content: '';
 			position: absolute;
 			width: 645px;
@@ -75,22 +75,6 @@
 			bottom: 0;
 			left: 30px;
 			right: 0;
-		}
-
-		&.step-2 {
-			&:after {
-				content: '';
-				position: absolute;
-				height: 4px;
-				background: #DF4E4F;
-				bottom: 0;
-				left: 30px;
-				right: 510px;
-			}
-
-			+.ssp-onboarding__settings input.button {
-				margin: 20px 0 50px;
-			}
 		}
 	}
 
@@ -118,6 +102,60 @@
 			&:after {
 				background: url(../img/step-completed.svg) no-repeat;
 			}
+		}
+	}
+
+	&__step-2, &__step-3, &__step-4, &__step-5 {
+		.ssp-onboarding__steps::after {
+			background: #DF4E4F;
+			width: initial;
+		}
+	}
+
+	&__step-2 {
+		.ssp-onboarding__steps::after {
+			right: 510px;
+		}
+
+		.ssp-onboarding__settings input.button {
+			margin: 20px 0 50px;
+		}
+	}
+
+	&__step-3 {
+		.ssp-onboarding__steps::after {
+			right: 350px;
+		}
+	}
+
+	&__select {
+		position: relative;
+
+		&:before, &:after {
+			content: '';
+			display: block;
+			height: 2px;
+			width: 10px;
+			background: #64748B;
+			position: absolute;
+			right: 22px;
+			top: 29px;
+			transform: rotate(45deg);
+		}
+		&:after {
+			transform: rotate(-45deg);
+			right: 16px;
+		}
+
+		select {
+			display: inline-block;
+			width: 100%;
+			max-width: 100%;
+			height: 40px;
+			background: #F9FAFB;
+			border-radius: 4px;
+			border: 1px solid #E5E7EB;
+			margin: 10px 0 20px;
 		}
 	}
 
@@ -268,7 +306,7 @@
 }
 
 /* Hide the WP bars */
-.admin_page_ssp-onboarding-1, .admin_page_ssp-onboarding-2  {
+.admin_page_ssp-onboarding-1, .admin_page_ssp-onboarding-2, .admin_page_ssp-onboarding-3  {
 	#adminmenumain, #wpadminbar, #wpfooter {
 		display: none;
 	}

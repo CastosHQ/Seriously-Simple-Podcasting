@@ -18,7 +18,7 @@ $steps = array(
 		<span class="ssp-onboarding__logo-label">By Castos</span>
 	</div>
 </div>
-<ul class="ssp-onboarding__steps step-<?php echo $step_number ?>">
+<ul class="ssp-onboarding__steps">
 	<?php foreach ( $steps as $k => $name ) : ?>
 		<?php $class = ( $k < $step_number ) ? 'completed' : ( $k === $step_number ? 'active' : '' ); ?>
 		<li class="ssp-onboarding__step<?php echo ' ' . $class ?>"><?php echo $name ?></li>

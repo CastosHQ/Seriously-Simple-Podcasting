@@ -79,26 +79,34 @@
 	}
 
 	&__step {
-		position: relative;
-		&:after {
-			content: '';
-			position: absolute;
-			width: 20px;
-			height: 20px;
-			background: url(../img/step.svg) no-repeat;
-			bottom: -28px;
-			left: 50%;
-			margin-left: -10px;
-			z-index: 2;
+		a {
+			color: #3c434a;
+			text-decoration: none;
 		}
 
-		&.active {
+		span {
+			position: relative;
+
+			&:after {
+				content: '';
+				position: absolute;
+				width: 20px;
+				height: 20px;
+				background: url(../img/step.svg) no-repeat;
+				bottom: -28px;
+				left: 50%;
+				margin-left: -10px;
+				z-index: 2;
+			}
+		}
+
+		&.active span {
 			&:after {
 				background: url(../img/step-active.svg) no-repeat;
 			}
 		}
 
-		&.completed {
+		&.completed span {
 			&:after {
 				background: url(../img/step-completed.svg) no-repeat;
 			}
@@ -125,6 +133,16 @@
 	&__step-3 {
 		.ssp-onboarding__steps::after {
 			right: 350px;
+		}
+	}
+
+	&__step-4 {
+		.ssp-onboarding__steps::after {
+			right: 180px;
+		}
+
+		.button {
+			float: left;
 		}
 	}
 
@@ -203,14 +221,19 @@
 		button[type=submit], .button {
 			position: relative;
 			height: 50px;
-			background: #9CA3AF;
 			border-radius: 6px;
 			border: 0;
-			color: #D1D5DB;
+			color: #FFFFFF;
+			background: #DF4E4F;
 			font-size: 18px;
 			padding: 0 55px 0 33px;
 			transition: .3s;
 			cursor: pointer;
+
+			&:hover, &:active, &:focus {
+				background: #DE7373;
+				color: #FFFFFF;
+			}
 
 			&:after {
 				content: '';
@@ -219,35 +242,36 @@
 				width: 24px;
 				height: 24px;
 				background: url(../img/arrow.svg) no-repeat;
-				filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
+				filter: invert(98%) sepia(93%) saturate(30%) hue-rotate(119deg) brightness(107%) contrast(100%);
 				right: 18px;
 				top: 14px;
 				transition: .3s;
 			}
 
-			&:hover {
-				color: #FFFFFF;
-				background: #DF4E4F;
+			&:disabled {
+				background: #9CA3AF;
+				color: #D1D5DB;
 				&:after {
-					filter: invert(98%) sepia(93%) saturate(30%) hue-rotate(119deg) brightness(107%) contrast(100%);
+					filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
 				}
 			}
-		}
 
-		.button {
-			color: #6B7280;
-			background: #E5E7EB;
-			&:after {
-				filter: invert(46%) sepia(4%) saturate(1281%) hue-rotate(182deg) brightness(94%) contrast(84%);
-			}
-			&:hover {
-				color: #FFFFFF;
-			}
-			margin-right: 20px;
+			&.skip {
+				color: #6B7280;
+				background: #eaecf1;
+				&:after {
+					filter: invert(46%) sepia(4%) saturate(1281%) hue-rotate(182deg) brightness(94%) contrast(84%);
+				}
+				&:hover {
+					color: #6B7280;
+					background: #f0f0f1;
+				}
+				margin-right: 20px;
 
-			span {
-				position: relative;
-				top: 5px;
+				span {
+					position: relative;
+					top: 5px;
+				}
 			}
 		}
 	}
@@ -303,10 +327,14 @@
 			}
 		}
 	}
+
+	.validate-api-credentials-message {
+		display: none;
+	}
 }
 
 /* Hide the WP bars */
-.admin_page_ssp-onboarding-1, .admin_page_ssp-onboarding-2, .admin_page_ssp-onboarding-3  {
+.admin_page_ssp-onboarding-1, .admin_page_ssp-onboarding-2, .admin_page_ssp-onboarding-3, .admin_page_ssp-onboarding-4, .admin_page_ssp-onboarding-5  {
 	#adminmenumain, #wpadminbar, #wpfooter {
 		display: none;
 	}

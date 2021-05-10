@@ -1,6 +1,7 @@
 <?php
 /**
- * @var $step_number
+ * @var int $step_number
+ * @var array $step_urls
  * */
 
 $steps = array(
@@ -21,6 +22,12 @@ $steps = array(
 <ul class="ssp-onboarding__steps">
 	<?php foreach ( $steps as $k => $name ) : ?>
 		<?php $class = ( $k < $step_number ) ? 'completed' : ( $k === $step_number ? 'active' : '' ); ?>
-		<li class="ssp-onboarding__step<?php echo ' ' . $class ?>"><?php echo $name ?></li>
+		<li class="ssp-onboarding__step<?php echo ' ' . $class ?>">
+			<?php if ( $k < $step_number ) : ?>
+				<a href="<?php echo $step_urls[ $k ] ?>"><span><?php echo $name ?></span></a>
+			<?php else: ?>
+				<span><?php echo $name ?></span>
+			<?php endif ?>
+		</li>
 	<?php endforeach; ?>
 </ul>

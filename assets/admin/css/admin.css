@@ -154,10 +154,14 @@ textarea#episode_embed_code {
   left: 30px;
   right: 0;
 }
-.ssp-onboarding__step {
+.ssp-onboarding__step a {
+  color: #3c434a;
+  text-decoration: none;
+}
+.ssp-onboarding__step span {
   position: relative;
 }
-.ssp-onboarding__step:after {
+.ssp-onboarding__step span:after {
   content: '';
   position: absolute;
   width: 20px;
@@ -168,10 +172,10 @@ textarea#episode_embed_code {
   margin-left: -10px;
   z-index: 2;
 }
-.ssp-onboarding__step.active:after {
+.ssp-onboarding__step.active span:after {
   background: url(../img/step-active.svg) no-repeat;
 }
-.ssp-onboarding__step.completed:after {
+.ssp-onboarding__step.completed span:after {
   background: url(../img/step-completed.svg) no-repeat;
 }
 .ssp-onboarding__step-2 .ssp-onboarding__steps::after, .ssp-onboarding__step-3 .ssp-onboarding__steps::after, .ssp-onboarding__step-4 .ssp-onboarding__steps::after, .ssp-onboarding__step-5 .ssp-onboarding__steps::after {
@@ -186,6 +190,12 @@ textarea#episode_embed_code {
 }
 .ssp-onboarding__step-3 .ssp-onboarding__steps::after {
   right: 350px;
+}
+.ssp-onboarding__step-4 .ssp-onboarding__steps::after {
+  right: 180px;
+}
+.ssp-onboarding__step-4 .button {
+  float: left;
 }
 .ssp-onboarding__select {
   position: relative;
@@ -253,14 +263,18 @@ textarea#episode_embed_code {
 .ssp-onboarding__submit button[type=submit], .ssp-onboarding__submit .button {
   position: relative;
   height: 50px;
-  background: #9CA3AF;
   border-radius: 6px;
   border: 0;
-  color: #D1D5DB;
+  color: #FFFFFF;
+  background: #DF4E4F;
   font-size: 18px;
   padding: 0 55px 0 33px;
   transition: .3s;
   cursor: pointer;
+}
+.ssp-onboarding__submit button[type=submit]:hover, .ssp-onboarding__submit button[type=submit]:active, .ssp-onboarding__submit button[type=submit]:focus, .ssp-onboarding__submit .button:hover, .ssp-onboarding__submit .button:active, .ssp-onboarding__submit .button:focus {
+  background: #DE7373;
+  color: #FFFFFF;
 }
 .ssp-onboarding__submit button[type=submit]:after, .ssp-onboarding__submit .button:after {
   content: '';
@@ -269,30 +283,31 @@ textarea#episode_embed_code {
   width: 24px;
   height: 24px;
   background: url(../img/arrow.svg) no-repeat;
-  filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
+  filter: invert(98%) sepia(93%) saturate(30%) hue-rotate(119deg) brightness(107%) contrast(100%);
   right: 18px;
   top: 14px;
   transition: .3s;
 }
-.ssp-onboarding__submit button[type=submit]:hover, .ssp-onboarding__submit .button:hover {
-  color: #FFFFFF;
-  background: #DF4E4F;
+.ssp-onboarding__submit button[type=submit]:disabled, .ssp-onboarding__submit .button:disabled {
+  background: #9CA3AF;
+  color: #D1D5DB;
 }
-.ssp-onboarding__submit button[type=submit]:hover:after, .ssp-onboarding__submit .button:hover:after {
-  filter: invert(98%) sepia(93%) saturate(30%) hue-rotate(119deg) brightness(107%) contrast(100%);
+.ssp-onboarding__submit button[type=submit]:disabled:after, .ssp-onboarding__submit .button:disabled:after {
+  filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
 }
-.ssp-onboarding__submit .button {
+.ssp-onboarding__submit button[type=submit].skip, .ssp-onboarding__submit .button.skip {
   color: #6B7280;
-  background: #E5E7EB;
+  background: #eaecf1;
   margin-right: 20px;
 }
-.ssp-onboarding__submit .button:after {
+.ssp-onboarding__submit button[type=submit].skip:after, .ssp-onboarding__submit .button.skip:after {
   filter: invert(46%) sepia(4%) saturate(1281%) hue-rotate(182deg) brightness(94%) contrast(84%);
 }
-.ssp-onboarding__submit .button:hover {
-  color: #FFFFFF;
+.ssp-onboarding__submit button[type=submit].skip:hover, .ssp-onboarding__submit .button.skip:hover {
+  color: #6B7280;
+  background: #f0f0f1;
 }
-.ssp-onboarding__submit .button span {
+.ssp-onboarding__submit button[type=submit].skip span, .ssp-onboarding__submit .button.skip span {
   position: relative;
   top: 5px;
 }
@@ -341,12 +356,15 @@ textarea#episode_embed_code {
 .ssp-onboarding__delete-image:hover:before, .ssp-onboarding__delete-image:hover:after {
   background: #fff;
 }
-
-/* Hide the WP bars */
-.admin_page_ssp-onboarding-1 #adminmenumain, .admin_page_ssp-onboarding-1 #wpadminbar, .admin_page_ssp-onboarding-1 #wpfooter, .admin_page_ssp-onboarding-2 #adminmenumain, .admin_page_ssp-onboarding-2 #wpadminbar, .admin_page_ssp-onboarding-2 #wpfooter, .admin_page_ssp-onboarding-3 #adminmenumain, .admin_page_ssp-onboarding-3 #wpadminbar, .admin_page_ssp-onboarding-3 #wpfooter {
+.ssp-onboarding .validate-api-credentials-message {
   display: none;
 }
-.admin_page_ssp-onboarding-1 #wpcontent, .admin_page_ssp-onboarding-2 #wpcontent, .admin_page_ssp-onboarding-3 #wpcontent {
+
+/* Hide the WP bars */
+.admin_page_ssp-onboarding-1 #adminmenumain, .admin_page_ssp-onboarding-1 #wpadminbar, .admin_page_ssp-onboarding-1 #wpfooter, .admin_page_ssp-onboarding-2 #adminmenumain, .admin_page_ssp-onboarding-2 #wpadminbar, .admin_page_ssp-onboarding-2 #wpfooter, .admin_page_ssp-onboarding-3 #adminmenumain, .admin_page_ssp-onboarding-3 #wpadminbar, .admin_page_ssp-onboarding-3 #wpfooter, .admin_page_ssp-onboarding-4 #adminmenumain, .admin_page_ssp-onboarding-4 #wpadminbar, .admin_page_ssp-onboarding-4 #wpfooter, .admin_page_ssp-onboarding-5 #adminmenumain, .admin_page_ssp-onboarding-5 #wpadminbar, .admin_page_ssp-onboarding-5 #wpfooter {
+  display: none;
+}
+.admin_page_ssp-onboarding-1 #wpcontent, .admin_page_ssp-onboarding-2 #wpcontent, .admin_page_ssp-onboarding-3 #wpcontent, .admin_page_ssp-onboarding-4 #wpcontent, .admin_page_ssp-onboarding-5 #wpcontent {
   margin-left: 0;
   padding-left: 0;
 }

@@ -34,7 +34,7 @@
 				<input id="validate_api_credentials" type="button" class="button" value="Validate Credentials">
 				<?php wp_nonce_field( 'ss_podcasting_castos-hosting', 'podcast_settings_tab_nonce', false ); ?>
 				<span class="validate-api-credentials-message"></span>
-				<button type="submit" disabled="disabled">Proceed</button>
+				<button type="submit">Proceed</button>
 			</div>
 		</form>
 	</div>

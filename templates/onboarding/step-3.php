@@ -1,5 +1,7 @@
 <?php
 /**
+ * @var int $step_number
+ * @var array $step_urls
  * @var string $next_step
  * */
 ?>
@@ -10,7 +12,7 @@
 		<div class="ssp-onboarding__settings-header">
 			<h1>Podcast Category</h1>
 		</div>
-		<form class="ssp-onboarding__settings-body" action="<?php echo $next_step ?>" method="post">
+		<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
 			<div class="ssp-onboarding__settings-item">
 				<h2>Primary Category</h2>
 				<label for="data_category" class="description">
@@ -32,8 +34,8 @@
 			</div>
 
 			<div class="ssp-onboarding__submit">
-				<a href="<?php echo $next_step ?>" class="button"><span>Skip</span></a>
-				<button type="submit">Proceed</button>
+				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="button skip"><span>Skip</span></a>
+				<button type="submit" class="js-onboarding-btn">Proceed</button>
 			</div>
 		</form>
 	</div>

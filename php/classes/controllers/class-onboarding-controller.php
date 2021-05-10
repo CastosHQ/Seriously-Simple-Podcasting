@@ -21,10 +21,18 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Onboarding_Controller extends Controller {
 
+	const STEPS_NUMBER = 5;
+
 	protected $renderer;
 
 	protected $settings_handler;
 
+	/**
+	 * Onboarding_Controller constructor.
+	 *
+	 * @param $file
+	 * @param $version
+	 */
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 
@@ -43,7 +51,7 @@ class Onboarding_Controller extends Controller {
 	}
 
 	public function register_pages() {
-		foreach ( [ 1, 2, 3, 4, 5 ] as $page_number ) {
+		for ( $page_number = 1; $page_number <= self::STEPS_NUMBER; $page_number ++ ) {
 			$this->register_page( 'Onboarding wizzard', $this->get_page_slug( $page_number ), array(
 				$this,
 				sprintf( 'step_%s', $page_number )
@@ -51,52 +59,102 @@ class Onboarding_Controller extends Controller {
 		}
 	}
 
+	/**
+	 * @param $title
+	 * @param $slug
+	 * @param $callable
+	 */
 	protected function register_page( $title, $slug, $callable ) {
 		add_submenu_page( '', __( $title, SSP_DOMAIN ), __( $title, SSP_DOMAIN ), Roles_Handler::MANAGE_PODCAST, $slug, $callable );
 	}
 
 	public function step_1() {
-		$title       = $this->get_field( 'data_title' );
-		$description = $this->get_field( 'data_description' );
-		$steps_data  = $this->get_steps_data( 1 );
-
-		$this->render( array_merge( $steps_data, compact( 'title', 'description' ) ), 'onboarding/step-1' );
+		$this->render( $this->get_step_data( 1 ), 'onboarding/step-1' );
 	}
 
 	public function step_2() {
-		$this->maybe_save_fields( array( 'data_title', 'data_description' ) );
-
-		$steps_data = $this->get_steps_data( 2 );
-
-		$img_url = $this->get_field( 'data_image' );
-
-		$this->render( array_merge( $steps_data, compact( 'img_url' ) ), 'onboarding/step-2' );
+		$this->save_step( 1 );
+		$this->render( $this->get_step_data( 2 ), 'onboarding/step-2' );
 	}
 
 	public function step_3() {
-		$this->maybe_save_fields( array( 'data_image' ) );
-
-		$steps_data = $this->get_steps_data( 3 );
-
-		$this->render( $steps_data, 'onboarding/step-3' );
+		$this->save_step( 2 );
+		$this->render( $this->get_step_data( 3 ), 'onboarding/step-3' );
 	}
 
 	public function step_4() {
-		$this->maybe_save_fields( array( 'data_category', 'data_subcategory' ) );
-
-		$steps_data = $this->get_steps_data( 4 );
-
-		$this->render( $steps_data, 'onboarding/step-4' );
+		$this->save_step( 3 );
+		$this->render( $this->get_step_data( 4 ), 'onboarding/step-4' );
 	}
 
-	protected function get_steps_data( $step_number ) {
-		$next_step = admin_url( 'admin.php?page=' . $this->get_page_slug( $step_number + 1 ) );
-
-		return compact( 'step_number', 'next_step' );
+	public function step_5() {
+		$this->save_step( 4 );
+		$this->render( $this->get_step_data( 5 ), 'onboarding/step-5' );
 	}
 
-	protected function maybe_save_fields( array $fields ) {
-		foreach ( $fields as $field_id ) {
+	/**
+	 * @param $step_number
+	 *
+	 * @return array
+	 */
+	protected function get_step_data( $step_number ) {
+
+		$data = array(
+			'step_number' => $step_number,
+		);
+
+		$step_urls = array();
+		for ( $page_number = 1; $page_number <= self::STEPS_NUMBER; $page_number ++ ) {
+			$step_urls[ $page_number ] = $this->get_step_url( $page_number );
+		}
+		$data['step_urls'] = $step_urls;
+
+		foreach ( $this->get_step_fields( $step_number ) as $field_name ) {
+			$data[ $field_name ] = $this->get_field( $field_name );
+		}
+
+		return $data;
+	}
+
+
+	/**
+	 * @param int $step_number
+	 *
+	 * @return string
+	 */
+	protected function get_step_url( $step_number ) {
+		return admin_url( 'admin.php?page=' . $this->get_page_slug( $step_number ) );
+	}
+
+	/**
+	 * @param $step_number
+	 *
+	 * @return string[]
+	 */
+	protected function get_step_fields( $step_number ) {
+		$map = $this->get_step_fields_map();
+
+		return $map[ $step_number ];
+	}
+
+	/**
+	 * @return \string[][]
+	 */
+	protected function get_step_fields_map() {
+		return array(
+			1 => array( 'data_title', 'data_description' ),
+			2 => array( 'data_image' ),
+			3 => array( 'data_category', 'data_subcategory' ),
+			4 => array( 'podmotor_account_email', 'podmotor_account_api_token' ),
+			5 => array(),
+		);
+	}
+
+	/**
+	 * @param int $step_number
+	 */
+	protected function save_step( $step_number ) {
+		foreach ( $this->get_step_fields( $step_number ) as $field_id ) {
 			$val = filter_input( INPUT_POST, $field_id );
 			if ( $val ) {
 				$this->set_field( $field_id, $val );
@@ -104,18 +162,38 @@ class Onboarding_Controller extends Controller {
 		}
 	}
 
+	/**
+	 * @param int $page_number
+	 *
+	 * @return string
+	 */
 	protected function get_page_slug( $page_number ) {
 		return sprintf( 'ssp-onboarding-%d', $page_number );
 	}
 
+	/**
+	 * @param $field_id
+	 *
+	 * @return false|mixed|void
+	 */
 	protected function get_field( $field_id ) {
 		return $this->settings_handler->get_field( $field_id );
 	}
 
+	/**
+	 * @param $field_id
+	 * @param $value
+	 *
+	 * @return bool
+	 */
 	protected function set_field( $field_id, $value ) {
 		return $this->settings_handler->set_field( $field_id, $value );
 	}
 
+	/**
+	 * @param $data
+	 * @param $template
+	 */
 	protected function render( $data, $template ) {
 		echo $this->renderer->render( $data, $template );
 	}

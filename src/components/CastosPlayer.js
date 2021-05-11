@@ -54,7 +54,7 @@ class CastosPlayer extends Component {
 									<img src={loaderSVG} className={loaderClass}/>
 								</div>
 								<div>
-									<audio className={audioElementClass}>
+									<audio preload="none" className={audioElementClass}>
 										<source loop preload="none" src={episodeFileUrl}/>
 									</audio>
 									<div className={progressClass} title="Seek">

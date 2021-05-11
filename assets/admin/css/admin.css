@@ -197,6 +197,9 @@ textarea#episode_embed_code {
 .ssp-onboarding__step-4 .button {
   float: left;
 }
+.ssp-onboarding__step-5 .ssp-onboarding__steps::after {
+  right: 25px;
+}
 .ssp-onboarding__select {
   position: relative;
 }
@@ -311,6 +314,46 @@ textarea#episode_embed_code {
   position: relative;
   top: 5px;
 }
+.ssp-onboarding__submit .validate-token {
+  position: relative;
+  padding: 0 20px 0 45px;
+}
+.ssp-onboarding__submit .validate-token:after {
+  content: '';
+  display: block;
+  position: absolute;
+  background: url(../img/validate.svg) no-repeat;
+  background-size: cover;
+  left: 19px;
+  top: 17px;
+  width: 14px;
+  height: 18px;
+  filter: none;
+}
+.ssp-onboarding__submit .validate-token.validating {
+  background: #374151;
+}
+.ssp-onboarding__submit .validate-token.validating:hover, .ssp-onboarding__submit .validate-token.validating:active, .ssp-onboarding__submit .validate-token.validating:focus {
+  background: #374151;
+}
+.ssp-onboarding__submit .validate-token.validating:after {
+  width: 17px;
+  height: 18px;
+  background-image: url(../img/validating.svg);
+}
+.ssp-onboarding__submit .validate-token.valid {
+  background: #10B981;
+  padding: 0 16px 0 45px;
+}
+.ssp-onboarding__submit .validate-token.valid:hover, .ssp-onboarding__submit .validate-token.valid:active, .ssp-onboarding__submit .validate-token.valid:focus {
+  background: #10B981;
+}
+.ssp-onboarding__submit .validate-token.valid:after {
+  width: 16px;
+  height: 12px;
+  top: 19px;
+  background-image: url(../img/checkbox.svg);
+}
 .ssp-onboarding__image-info {
   position: absolute;
   display: flex;
@@ -357,7 +400,9 @@ textarea#episode_embed_code {
   background: #fff;
 }
 .ssp-onboarding .validate-api-credentials-message {
-  display: none;
+  position: absolute;
+  left: 0;
+  bottom: -18px;
 }
 
 /* Hide the WP bars */

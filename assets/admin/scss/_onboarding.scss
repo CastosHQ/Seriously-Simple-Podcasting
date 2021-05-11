@@ -146,6 +146,12 @@
 		}
 	}
 
+	&__step-5 {
+		.ssp-onboarding__steps::after {
+			right: 25px;
+		}
+	}
+
 	&__select {
 		position: relative;
 
@@ -274,6 +280,54 @@
 				}
 			}
 		}
+
+		.validate-token {
+			position: relative;
+			padding: 0 20px 0 45px;
+
+			&:after {
+				content: '';
+				display: block;
+				position: absolute;
+				background: url(../img/validate.svg) no-repeat;
+				background-size: cover;
+				left: 19px;
+				top: 17px;
+				width: 14px;
+				height: 18px;
+				filter: none;
+			}
+
+			&.validating {
+				background: #374151;
+
+				&:hover, &:active, &:focus {
+					background: #374151;
+				}
+
+				&:after {
+					width: 17px;
+					height: 18px;
+					background-image: url(../img/validating.svg);
+				}
+			}
+
+			&.valid {
+				background: #10B981;
+				padding: 0 16px 0 45px;
+
+				&:hover, &:active, &:focus {
+					background: #10B981;
+				}
+
+				&:after {
+					width: 16px;
+					height: 12px;
+					top: 19px;
+					background-image: url(../img/checkbox.svg);
+				}
+			}
+		}
 	}
 
 	&__image-info {
@@ -329,7 +383,9 @@
 	}
 
 	.validate-api-credentials-message {
-		display: none;
+		position: absolute;
+		left: 0;
+		bottom: -18px;
 	}
 }
 

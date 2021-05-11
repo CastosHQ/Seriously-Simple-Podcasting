@@ -7,35 +7,29 @@
  * */
 ?>
 
-<div class="ssp-onboarding ssp-onboarding__step-4">
+<div class="ssp-onboarding ssp-onboarding__step-5">
 	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
-			<h1>Connect to Castos Hosting & Analytics</h1>
+			<h1>You’re all set - See what’s next...</h1>
 		</div>
-		<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
+
+		<div class="ssp-onboarding__settings-body" >
 			<div class="ssp-onboarding__settings-item">
-				<h2>Your Email</h2>
-				<label for="podmotor_account_email" class="description">
-					The email address you used to register your Castos account.
-				</label>
-				<input id="podmotor_account_email" type="text" name="podmotor_account_email" value="<?php echo $podmotor_account_email ?>">
+				<iframe width="560" height="315" src="https://www.youtube.com/embed/Se3H1IDAYtw?rel=0&amp;showinfo=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
 			</div>
 
 			<div class="ssp-onboarding__settings-item">
-				<h2>Castos API Token</h2>
-				<label for="podmotor_account_api_token" class="description">
-					Available from your Castos account dashboard.
-				</label>
-				<input id="podmotor_account_api_token" type="text" name="podmotor_account_api_token" value="<?php echo $podmotor_account_api_token ?>">
+				<h2>Join the Castos Academy</h2>
+				<p>Your toolkit for for everything from starting out smart to taking your podcast to the next level.</p>
+				<a href="#" class="button skip"><span>Join Now</span></a>
 			</div>
 
-			<div class="ssp-onboarding__submit">
-				<input id="validate_api_credentials" type="button" class="button" value="Validate Credentials">
-				<?php wp_nonce_field( 'ss_podcasting_castos-hosting', 'podcast_settings_tab_nonce', false ); ?>
-				<span class="validate-api-credentials-message"></span>
-				<button type="submit">Proceed</button>
+			<div class="ssp-onboarding__settings-item">
+				<h2>Creating your first episode</h2>
+				<p>Get started by creating your first episode with Seriously Simple Podcasting.</p>
+				<a href="#" class="button skip"><span>Let’s Start</span></a>
 			</div>
-		</form>
+		</div>
 	</div>
 </div>

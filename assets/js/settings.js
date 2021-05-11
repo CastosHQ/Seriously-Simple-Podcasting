@@ -63,10 +63,13 @@ jQuery(document).ready(function($) {
 					if (response.status === 'success') {
 						$(".validate-api-credentials-message").html("Credentials Valid. Please click 'Save Settings' to save Credentials.");
 						$("#ssp-settings-submit").prop("disabled", "");
-						$validateBtn.val('Valid Credentials').addClass('valid');
+						$validateBtn.val('Valid Credentials');
+						$validateBtn.addClass('valid');
 					} else {
+						$validateBtn.addClass('invalid');
 						$(".validate-api-credentials-message").html(response.message);
 					}
+					$validateBtn.trigger('validated');
 				});
 
 		});

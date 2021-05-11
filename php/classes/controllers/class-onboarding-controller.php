@@ -25,6 +25,9 @@ class Onboarding_Controller extends Controller {
 
 	protected $renderer;
 
+	/**
+	 * @var Settings_Handler
+	 * */
 	protected $settings_handler;
 
 	/**
@@ -79,7 +82,13 @@ class Onboarding_Controller extends Controller {
 
 	public function step_3() {
 		$this->save_step( 2 );
-		$this->render( $this->get_step_data( 3 ), 'onboarding/step-3' );
+
+		$categories    = $this->get_feed_settings( 'data_category' );
+		$subcategories = $this->get_feed_settings( 'data_subcategory' );
+
+		$data = compact( 'categories', 'subcategories' );
+
+		$this->render( array_merge( $data, $this->get_step_data( 3 ) ), 'onboarding/step-3' );
 	}
 
 	public function step_4() {
@@ -90,6 +99,24 @@ class Onboarding_Controller extends Controller {
 	public function step_5() {
 		$this->save_step( 4 );
 		$this->render( $this->get_step_data( 5 ), 'onboarding/step-5' );
+	}
+
+	/**
+	 * @param string $settings_id
+	 *
+	 * @return array
+	 */
+	protected function get_feed_settings( $settings_id ) {
+		$settings = $this->settings_handler->settings_fields();
+		$fields   = $settings['feed-details']['fields'];
+
+		foreach ( $fields as $field ) {
+			if ( $settings_id == $field['id'] ) {
+				return $field;
+			}
+		}
+
+		return [];
 	}
 
 	/**

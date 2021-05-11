@@ -289,6 +289,10 @@ class Settings_Handler {
 				'label' => __( 'Spirituality', 'seriously-simple-podcasting' ),
 				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
 			),
+			'Religion'       => array(
+				'label' => __( 'Religion', 'seriously-simple-podcasting' ),
+				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
+			),
 			'Astronomy'          => array(
 				'label' => __( 'Astronomy', 'seriously-simple-podcasting' ),
 				'group' => __( 'Science', 'seriously-simple-podcasting' ),

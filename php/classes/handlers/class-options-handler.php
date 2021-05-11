@@ -155,12 +155,14 @@ class Options_Handler {
 			if ( is_array( $terms ) && isset( $terms[0] ) && false !== get_option( 'ss_podcasting_' . $option_key . '_url_' . $terms[0]->term_id ) ) {
 				$url = get_option( 'ss_podcasting_' . $option_key . '_url_' . $terms[0]->term_id, '' );
 			}
+			$icon                           = str_replace( '_', '-', $option_key );
 
 			$subscribe_array[ $option_key ] = array(
 				'key'   => $option_key,
 				'url'   => $url,
 				'label' => $this->available_subscribe_options[ $option_key ],
 				'class' => $option_key,
+				'icon'  => $icon . '.png',
 			);
 		}
 

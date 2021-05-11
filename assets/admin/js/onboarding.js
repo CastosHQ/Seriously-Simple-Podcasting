@@ -1,11 +1,23 @@
 jQuery(document).ready(function($) {
-	$('.js-onboarding-delete-img-info').click(function(){
-		$('.js-onboarding-img-val').val('');
-		$('.js-onboarding-img-info').hide();
+	var $imgInfo = $('.js-onboarding-img-info'),
+		$preview = $imgInfo.find('.js-onboarding-img'),
+		$imgInput = $imgInfo.find('.js-onboarding-img-val');
+
+	$imgInfo.find('.js-onboarding-delete-img-info').click(function(){
+		$imgInput.val('');
+		$imgInfo.hide();
+		validateOnboarding();
 	});
 
-	$('#ss_podcasting_data_image').change(function(){
-		$('.js-onboarding-img-info').show();
+	if( $imgInput.val() ){
+		$imgInfo.show();
+	}
+
+	$preview.on('load', function(){
+		validateOnboarding();
+		if( $imgInput.val() ){
+			$imgInfo.show();
+		}
 	});
 
 	var $fields = $('.js-onboarding-field'),

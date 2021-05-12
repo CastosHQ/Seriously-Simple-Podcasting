@@ -15,21 +15,26 @@
 		</div>
 
 		<div class="ssp-onboarding__settings-body" >
-			<div class="ssp-onboarding__settings-item">
-				<iframe width="560" height="315" src="https://www.youtube.com/embed/Se3H1IDAYtw?rel=0&amp;showinfo=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
-			</div>
-
-			<div class="ssp-onboarding__settings-item">
-				<h2>Join the Castos Academy</h2>
-				<p>Your toolkit for for everything from starting out smart to taking your podcast to the next level.</p>
-				<a href="#" class="button skip"><span>Join Now</span></a>
-			</div>
-
-			<div class="ssp-onboarding__settings-item">
-				<h2>Creating your first episode</h2>
-				<p>Get started by creating your first episode with Seriously Simple Podcasting.</p>
-				<a href="#" class="button skip"><span>Let’s Start</span></a>
+			<div class="ssp-onboarding__settings-item iframe-wrapper">
+				<iframe width="650" height="370" src="https://www.youtube.com/embed/Se3H1IDAYtw?rel=0&amp;showinfo=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
 			</div>
 		</div>
+
+		<div class="ssp-onboarding__submit ssp-onboarding__links">
+			<div class="ssp-onboarding__links-item">
+				<h2>Join the Castos Academy</h2>
+				<p>Your toolkit for for everything from starting out smart to taking your podcast to the next level.</p>
+				<a href="#" class="button grey"><span>Join Now</span></a>
+			</div>
+
+			<div class="ssp-onboarding__links-item">
+				<h2>Creating your first episode</h2>
+				<p>Get started by creating your first episode with Seriously Simple Podcasting.</p>
+				<a href="<?php echo admin_url('post-new.php?post_type=podcast') ?>" class="button"><span>Let’s Start</span></a>
+			</div>
+		</div>
+	</div>
+	<div class="ssp-onboarding__skip">
+		<a class="ssp-onboarding__skip-button" href="<?php echo admin_url() ?>">Go to Dashboard</a>
 	</div>
 </div>

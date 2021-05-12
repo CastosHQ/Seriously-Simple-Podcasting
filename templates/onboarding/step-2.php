@@ -33,4 +33,7 @@ $img_name = $data_image ? pathinfo( $data_image, PATHINFO_FILENAME ) : '';
 			</div>
 		</form>
 	</div>
+	<div class="ssp-onboarding__skip">
+		<a href="<?php echo admin_url() ?>">Skip Setup</a>
+	</div>
 </div>

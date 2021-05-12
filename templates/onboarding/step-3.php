@@ -37,7 +37,7 @@
 					Your podcast sub-category based on the primary category selected above.
 				</label>
 				<div class="ssp-onboarding__select">
-					<select name="<?php echo $subcategories['id'] ?>" class="js-onboarding-field id="<?php echo $subcategories['id'] ?>">
+					<select id="<?php echo $subcategories['id'] ?>" name="<?php echo $subcategories['id'] ?>" class="js-onboarding-field">
 						<?php $prev_group = ''; ?>
 						<?php foreach ( $subcategories['options'] as $k => $v ) : ?>
 							<?php
@@ -69,5 +69,8 @@
 				<button type="submit" class="js-onboarding-btn">Proceed</button>
 			</div>
 		</form>
+	</div>
+	<div class="ssp-onboarding__skip">
+		<a href="<?php echo admin_url() ?>">Skip Setup</a>
 	</div>
 </div>

@@ -92,7 +92,7 @@ textarea#episode_embed_code {
   width: 700px;
   margin: 0 auto;
 }
-.ssp-onboarding span, .ssp-onboarding h1, .ssp-onboarding h2, .ssp-onboarding h3, .ssp-onboarding label, .ssp-onboarding button, .ssp-onboarding input {
+.ssp-onboarding span, .ssp-onboarding h1, .ssp-onboarding h2, .ssp-onboarding h3, .ssp-onboarding label, .ssp-onboarding button, .ssp-onboarding input, .ssp-onboarding p {
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;
@@ -200,6 +200,12 @@ textarea#episode_embed_code {
 .ssp-onboarding__step-5 .ssp-onboarding__steps::after {
   right: 25px;
 }
+.ssp-onboarding__step-5 .ssp-onboarding__settings-body {
+  border-bottom: 2px solid #F3F4F6;
+}
+.ssp-onboarding__step-5 h2 {
+  font-size: 20px;
+}
 .ssp-onboarding__select {
   position: relative;
 }
@@ -298,21 +304,26 @@ textarea#episode_embed_code {
 .ssp-onboarding__submit button[type=submit]:disabled:after, .ssp-onboarding__submit .button:disabled:after {
   filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
 }
-.ssp-onboarding__submit button[type=submit].skip, .ssp-onboarding__submit .button.skip {
+.ssp-onboarding__submit .button.skip {
   color: #6B7280;
   background: #eaecf1;
   margin-right: 20px;
 }
-.ssp-onboarding__submit button[type=submit].skip:after, .ssp-onboarding__submit .button.skip:after {
+.ssp-onboarding__submit .button.skip:after {
   filter: invert(46%) sepia(4%) saturate(1281%) hue-rotate(182deg) brightness(94%) contrast(84%);
 }
-.ssp-onboarding__submit button[type=submit].skip:hover, .ssp-onboarding__submit .button.skip:hover {
+.ssp-onboarding__submit .button.skip:hover {
   color: #6B7280;
   background: #f0f0f1;
 }
-.ssp-onboarding__submit button[type=submit].skip span, .ssp-onboarding__submit .button.skip span {
-  position: relative;
-  top: 5px;
+.ssp-onboarding__submit .button.grey {
+  background: #3d4b5f;
+}
+.ssp-onboarding__submit .button.grey:hover {
+  background: #516178;
+}
+.ssp-onboarding__submit .button span {
+  line-height: 50px;
 }
 .ssp-onboarding__submit .validate-token {
   position: relative;
@@ -404,6 +415,42 @@ textarea#episode_embed_code {
   left: 0;
   bottom: -18px;
 }
+.ssp-onboarding__links {
+  display: flex;
+  text-align: left;
+}
+.ssp-onboarding__links p {
+  font-size: 16px;
+  color: #4B5563;
+  line-height: 19px;
+  font-weight: 400;
+}
+.ssp-onboarding__links-item {
+  flex-basis: 50%;
+  padding: 5px 25px 25px;
+}
+.ssp-onboarding__links-item:first-child {
+  border-right: 1px solid #F3F4F6;
+}
+.ssp-onboarding__skip {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+.ssp-onboarding__skip a {
+  color: #9CA3AF;
+  text-decoration: none;
+  font-size: 16px;
+}
+.ssp-onboarding__skip-button {
+  display: inline-block;
+  background: #E2E8F0;
+  color: #6B7280;
+  font-size: 18px;
+  border-radius: 6px;
+  padding: 15px;
+  margin-top: 20px;
+}
 
 /* Hide the WP bars */
 .admin_page_ssp-onboarding-1 #adminmenumain, .admin_page_ssp-onboarding-1 #wpadminbar, .admin_page_ssp-onboarding-1 #wpfooter, .admin_page_ssp-onboarding-2 #adminmenumain, .admin_page_ssp-onboarding-2 #wpadminbar, .admin_page_ssp-onboarding-2 #wpfooter, .admin_page_ssp-onboarding-3 #adminmenumain, .admin_page_ssp-onboarding-3 #wpadminbar, .admin_page_ssp-onboarding-3 #wpfooter, .admin_page_ssp-onboarding-4 #adminmenumain, .admin_page_ssp-onboarding-4 #wpadminbar, .admin_page_ssp-onboarding-4 #wpfooter, .admin_page_ssp-onboarding-5 #adminmenumain, .admin_page_ssp-onboarding-5 #wpadminbar, .admin_page_ssp-onboarding-5 #wpfooter {
@@ -412,6 +459,9 @@ textarea#episode_embed_code {
 .admin_page_ssp-onboarding-1 #wpcontent, .admin_page_ssp-onboarding-2 #wpcontent, .admin_page_ssp-onboarding-3 #wpcontent, .admin_page_ssp-onboarding-4 #wpcontent, .admin_page_ssp-onboarding-5 #wpcontent {
   margin-left: 0;
   padding-left: 0;
+}
+.admin_page_ssp-onboarding-1 #wpbody-content, .admin_page_ssp-onboarding-2 #wpbody-content, .admin_page_ssp-onboarding-3 #wpbody-content, .admin_page_ssp-onboarding-4 #wpbody-content, .admin_page_ssp-onboarding-5 #wpbody-content {
+  padding-bottom: 30px;
 }
 
 /*# sourceMappingURL=admin.css.map */

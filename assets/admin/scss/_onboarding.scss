@@ -2,7 +2,7 @@
 
 .ssp-onboarding {
 
-	span, h1, h2, h3, label, button, input {
+	span, h1, h2, h3, label, button, input, p {
 		font-family: 'Inter', sans-serif;
 		font-style: normal;
 		font-weight: 500;
@@ -150,6 +150,14 @@
 		.ssp-onboarding__steps::after {
 			right: 25px;
 		}
+
+		.ssp-onboarding__settings-body {
+			border-bottom: 2px solid #F3F4F6;
+		}
+
+		h2 {
+			font-size: 20px;
+		}
 	}
 
 	&__select {
@@ -261,7 +269,9 @@
 					filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
 				}
 			}
+		}
 
+		.button {
 			&.skip {
 				color: #6B7280;
 				background: #eaecf1;
@@ -273,11 +283,17 @@
 					background: #f0f0f1;
 				}
 				margin-right: 20px;
+			}
 
-				span {
-					position: relative;
-					top: 5px;
+			&.grey {
+				background: #3d4b5f;
+				&:hover {
+					background: #516178;
 				}
+			}
+
+			span {
+				line-height: 50px;
 			}
 		}
 
@@ -387,6 +403,48 @@
 		left: 0;
 		bottom: -18px;
 	}
+
+	&__links {
+		display: flex;
+		text-align: left;
+
+		p {
+			font-size: 16px;
+			color: #4B5563;
+			line-height: 19px;
+			font-weight: 400;
+		}
+	}
+
+	&__links-item {
+		flex-basis: 50%;
+		padding: 5px 25px 25px;
+
+		&:first-child {
+			border-right: 1px solid #F3F4F6;
+		}
+	}
+
+	&__skip {
+		width: 100%;
+		text-align: center;
+		margin-top: 20px;
+		a {
+			color: #9CA3AF;
+			text-decoration: none;
+			font-size: 16px;
+		}
+	}
+
+	&__skip-button {
+		display: inline-block;
+		background: #E2E8F0;
+		color: #6B7280;
+		font-size: 18px;
+		border-radius: 6px;
+		padding: 15px;
+		margin-top: 20px;
+	}
 }
 
 /* Hide the WP bars */
@@ -398,5 +456,9 @@
 	#wpcontent {
 		margin-left: 0;
 		padding-left: 0;
+	}
+
+	#wpbody-content {
+		padding-bottom: 30px;
 	}
 }

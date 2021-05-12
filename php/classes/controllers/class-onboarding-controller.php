@@ -45,6 +45,23 @@ class Onboarding_Controller extends Controller {
 
 		add_action( 'admin_menu', array( $this, 'register_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'activate_' . plugin_basename( $this->file ),  array( $this, 'activate' ), 20 );
+
+		function cyb_activation_redirect( $plugin ) {
+
+		}
+		add_action( 'activated_plugin', array( $this, 'maybe_start_onboarding' ) );
+	}
+
+	public function maybe_start_onboarding($plugin) {
+		if( $plugin !== plugin_basename( $this->file ) ) {
+			return;
+		}
+		$title = $this->get_field( 'data_title' );
+		if ( ! $title ) {
+			wp_redirect( admin_url( 'admin.php?page=ssp-onboarding-1' ) );
+			exit();
+		}
 	}
 
 	public function enqueue_scripts() {

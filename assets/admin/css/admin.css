@@ -463,5 +463,8 @@ textarea#episode_embed_code {
 .admin_page_ssp-onboarding-1 #wpbody-content, .admin_page_ssp-onboarding-2 #wpbody-content, .admin_page_ssp-onboarding-3 #wpbody-content, .admin_page_ssp-onboarding-4 #wpbody-content, .admin_page_ssp-onboarding-5 #wpbody-content {
   padding-bottom: 30px;
 }
+.admin_page_ssp-onboarding-1 .notice, .admin_page_ssp-onboarding-2 .notice, .admin_page_ssp-onboarding-3 .notice, .admin_page_ssp-onboarding-4 .notice, .admin_page_ssp-onboarding-5 .notice {
+  display: none;
+}
 
 /*# sourceMappingURL=admin.css.map */

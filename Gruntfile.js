@@ -39,6 +39,25 @@ module.exports = function (a) {
 				}]
 			}
 		},
+		sass: {
+			dist: {
+				options: {
+					sourcemap: false,
+					compress: false,
+					yuicompress: false,
+					style: 'expanded',
+				},
+				files: {
+					'assets/admin/css/admin.css' : 'assets/admin/scss/all.scss'
+				}
+			},
+		},
+		watch: {
+			css: {
+				files: '**/*.scss',
+				tasks: ['sass']
+			}
+		},
 		cssmin: {
 			target: {
 				files: [{
@@ -53,6 +72,9 @@ module.exports = function (a) {
 	});
 	a.loadNpmTasks('grunt-contrib-cssmin');
 	a.loadNpmTasks('grunt-contrib-uglify');
+	a.loadNpmTasks('grunt-contrib-sass');
+	a.loadNpmTasks('grunt-contrib-watch');
+	a.registerTask('default',['watch']);
 /*
 	a.loadNpmTasks("grunt-wp-i18n");
 	a.loadNpmTasks("grunt-wp-readme-to-markdown");

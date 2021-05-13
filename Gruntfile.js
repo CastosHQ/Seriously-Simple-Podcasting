@@ -26,7 +26,7 @@ module.exports = function (a) {
 			dev: {
 				files: [{
 					expand: true,
-					src: ['assets/js/*.js', '!assets/js/*.min.js'],
+					src: ['assets/js/*.js', '!assets/js/*.min.js', 'assets/admin/js/*.js', '!assets/admin/js/*.min.js'],
 					dest: 'assets/js',
 					cwd: '.',
 					rename: function (dst, src) {
@@ -60,13 +60,22 @@ module.exports = function (a) {
 		},
 		cssmin: {
 			target: {
-				files: [{
-					expand: true,
-					cwd: 'assets/css',
-					src: ['*.css', '!*.min.css'],
-					dest: 'assets/css',
-					ext: '.min.css'
-				}]
+				files: [
+					{
+						expand: true,
+						cwd: 'assets/css',
+						src: ['*.css', '!*.min.css'],
+						dest: 'assets/css',
+						ext: '.min.css'
+					},
+					{
+						expand: true,
+						cwd: 'assets/admin/css',
+						src: ['*.css', '!*.min.css'],
+						dest: 'assets/admin/css',
+						ext: '.min.css'
+					},
+				]
 			}
 		},
 	});

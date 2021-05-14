@@ -26,7 +26,7 @@ module.exports = function (a) {
 			dev: {
 				files: [{
 					expand: true,
-					src: ['assets/js/*.js', '!assets/js/*.min.js'],
+					src: ['assets/js/*.js', '!assets/js/*.min.js', 'assets/admin/js/*.js', '!assets/admin/js/*.min.js'],
 					dest: 'assets/js',
 					cwd: '.',
 					rename: function (dst, src) {
@@ -39,20 +39,51 @@ module.exports = function (a) {
 				}]
 			}
 		},
+		sass: {
+			dist: {
+				options: {
+					sourcemap: false,
+					compress: false,
+					yuicompress: false,
+					style: 'expanded',
+				},
+				files: {
+					'assets/admin/css/admin.css' : 'assets/admin/scss/all.scss'
+				}
+			},
+		},
+		watch: {
+			css: {
+				files: '**/*.scss',
+				tasks: ['sass']
+			}
+		},
 		cssmin: {
 			target: {
-				files: [{
-					expand: true,
-					cwd: 'assets/css',
-					src: ['*.css', '!*.min.css'],
-					dest: 'assets/css',
-					ext: '.min.css'
-				}]
+				files: [
+					{
+						expand: true,
+						cwd: 'assets/css',
+						src: ['*.css', '!*.min.css'],
+						dest: 'assets/css',
+						ext: '.min.css'
+					},
+					{
+						expand: true,
+						cwd: 'assets/admin/css',
+						src: ['*.css', '!*.min.css'],
+						dest: 'assets/admin/css',
+						ext: '.min.css'
+					},
+				]
 			}
 		},
 	});
 	a.loadNpmTasks('grunt-contrib-cssmin');
 	a.loadNpmTasks('grunt-contrib-uglify');
+	a.loadNpmTasks('grunt-contrib-sass');
+	a.loadNpmTasks('grunt-contrib-watch');
+	a.registerTask('default',['watch']);
 /*
 	a.loadNpmTasks("grunt-wp-i18n");
 	a.loadNpmTasks("grunt-wp-readme-to-markdown");

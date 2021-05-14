@@ -1,13 +1,15 @@
 /**
  * SSP settings functions
  * Created by Jonathan Bossenger on 2017/01/20.
+ * Updated by Sergey Zakharchenko from 2021
  */
 
 jQuery(document).ready(function($) {
 
 	var $podmotorAccountEmail = $("#podmotor_account_email"),
 		$podmotorAccountAPIToken = $("#podmotor_account_api_token"),
-		$parentCategories = $('.js-parent-category');
+		$parentCategories = $('.js-parent-category'),
+		$validateBtn = $("#validate_api_credentials");
 
 	function disableSubmitButton(){
 		/**
@@ -36,13 +38,15 @@ jQuery(document).ready(function($) {
 	 * Validate the api credentials
 	 */
 	function validateAPICredentials(){
-		$("#validate_api_credentials").on("click", function(){
+		$validateBtn.on("click", function(){
 
 			$(".validate-api-credentials-message").html( "Validating API credentials..." );
 
 			var podmotor_account_email = $("#podmotor_account_email").val(),
 				podmotor_account_api_token = $("#podmotor_account_api_token").val(),
 				nonce = $("#podcast_settings_tab_nonce").val();
+
+			$validateBtn.addClass('loader');
 
 			$.ajax({
 				method: "GET",
@@ -55,12 +59,17 @@ jQuery(document).ready(function($) {
 				}
 			})
 				.done(function( response ) {
-					if ( response.status === 'success' ){
-						$(".validate-api-credentials-message").html( "Credentials Valid. Please click 'Save Settings' to save Credentials." );
-						$("#ssp-settings-submit").prop( "disabled", "" );
-					}else {
-						$(".validate-api-credentials-message").html( response.message );
+					$validateBtn.removeClass('loader');
+					if (response.status === 'success') {
+						$(".validate-api-credentials-message").html("Credentials Valid. Please click 'Save Settings' to save Credentials.");
+						$("#ssp-settings-submit").prop("disabled", "");
+						$validateBtn.val('Valid Credentials');
+						$validateBtn.addClass('valid');
+					} else {
+						$validateBtn.addClass('invalid');
+						$(".validate-api-credentials-message").html(response.message);
 					}
+					$validateBtn.trigger('validated');
 				});
 
 		});

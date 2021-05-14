@@ -1,5 +1,7 @@
 assets/css/*.min.css
 assets/js/*.min.js
+assets/admin/css/*.min.css
+assets/admin/js/*.min.js
 node_modules/
 vendor/
 build/

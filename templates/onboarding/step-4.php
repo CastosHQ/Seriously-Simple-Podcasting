@@ -13,6 +13,25 @@
 		<div class="ssp-onboarding__settings-header">
 			<h1>Connect to Castos Hosting & Analytics</h1>
 		</div>
+		<div class="ssp-onboarding__hosting-steps">
+			<div class="ssp-onboarding__hosting-step">
+				<a href="https://app.castos.com/register" target="_blank">
+					<span class="ssp-onboarding__hosting-step--header">Sign-up</span>
+					<span class="ssp-onboarding__hosting-step--info">
+						Create your account at <span>app.castos.com</span>
+					</span>
+				</a>
+			</div>
+
+			<div class="ssp-onboarding__hosting-step">
+				<a href="https://app.castos.com/api-details" target="_blank">
+					<span class="ssp-onboarding__hosting-step--header">Complete details below</span>
+					<span class="ssp-onboarding__hosting-step--info">
+						Get your API key from <span>app.castos.com/api-details</span>
+					</span>
+				</a>
+			</div>
+		</div>
 		<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
 			<div class="ssp-onboarding__settings-item">
 				<h2>Your Email</h2>

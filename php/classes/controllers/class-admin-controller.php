@@ -969,7 +969,7 @@ HTML;
 	 */
 	public function enqueue_admin_styles( $hook ) {
 
-		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . '/admin/css/admin.css' ), array(), $this->version );
+		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'admin/css/admin.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
 
 		// Datepicker

@@ -92,7 +92,7 @@ textarea#episode_embed_code {
   width: 700px;
   margin: 0 auto;
 }
-.ssp-onboarding span, .ssp-onboarding h1, .ssp-onboarding h2, .ssp-onboarding h3, .ssp-onboarding label, .ssp-onboarding button, .ssp-onboarding input, .ssp-onboarding p {
+.ssp-onboarding span, .ssp-onboarding h1, .ssp-onboarding h2, .ssp-onboarding h3, .ssp-onboarding label, .ssp-onboarding button, .ssp-onboarding input, .ssp-onboarding p, .ssp-onboarding li, .ssp-onboarding a {
   font-family: 'Inter', sans-serif;
   font-style: normal;
   font-weight: 500;
@@ -136,27 +136,30 @@ textarea#episode_embed_code {
   text-transform: uppercase;
   color: #fff;
   padding: 2px 5px;
+  display: inline-block;
+  margin: 3px 0 0 2px;
 }
 .ssp-onboarding__steps {
   display: flex;
   justify-content: space-between;
-  padding: 32px 10px 14px;
+  padding: 26px 21px 21px 6px;
   margin-bottom: 38px;
   position: relative;
 }
 .ssp-onboarding__steps:before, .ssp-onboarding__steps:after {
   content: '';
   position: absolute;
-  width: 645px;
+  width: 620px;
   height: 4px;
   background: #D1D5DB;
   bottom: 0;
-  left: 30px;
+  left: 40px;
   right: 0;
 }
-.ssp-onboarding__step a {
-  color: #3c434a;
+.ssp-onboarding__step a, .ssp-onboarding__step span {
+  color: #6B7280;
   text-decoration: none;
+  font-size: 16px;
 }
 .ssp-onboarding__step span {
   position: relative;
@@ -167,7 +170,7 @@ textarea#episode_embed_code {
   width: 20px;
   height: 20px;
   background: url(../img/step.svg) no-repeat;
-  bottom: -28px;
+  bottom: -34px;
   left: 50%;
   margin-left: -10px;
   z-index: 2;
@@ -178,32 +181,134 @@ textarea#episode_embed_code {
 .ssp-onboarding__step.completed span:after {
   background: url(../img/step-completed.svg) no-repeat;
 }
-.ssp-onboarding__step-2 .ssp-onboarding__steps::after, .ssp-onboarding__step-3 .ssp-onboarding__steps::after, .ssp-onboarding__step-4 .ssp-onboarding__steps::after, .ssp-onboarding__step-5 .ssp-onboarding__steps::after {
+.ssp-onboarding-step-2 .ssp-onboarding__steps::after, .ssp-onboarding-step-3 .ssp-onboarding__steps::after, .ssp-onboarding-step-4 .ssp-onboarding__steps::after, .ssp-onboarding-step-5 .ssp-onboarding__steps::after {
   background: #DF4E4F;
   width: initial;
 }
-.ssp-onboarding__step-2 .ssp-onboarding__steps::after {
+.ssp-onboarding-step-2 .ssp-onboarding__steps::after {
   right: 510px;
 }
-.ssp-onboarding__step-2 .ssp-onboarding__settings input.button {
+.ssp-onboarding-step-2 .ssp-onboarding__settings input.button {
   margin: 20px 0 50px;
 }
-.ssp-onboarding__step-3 .ssp-onboarding__steps::after {
+.ssp-onboarding-step-3 .ssp-onboarding__steps::after {
   right: 350px;
 }
-.ssp-onboarding__step-4 .ssp-onboarding__steps::after {
+.ssp-onboarding-step-4 .ssp-onboarding__steps::after {
   right: 180px;
 }
-.ssp-onboarding__step-4 .button {
-  float: left;
+.ssp-onboarding-step-4-info {
+  display: flex;
+  padding: 20px 25px 8px;
 }
-.ssp-onboarding__step-5 .ssp-onboarding__steps::after {
-  right: 25px;
+.ssp-onboarding-step-4-info h2 {
+  font-size: 22px;
+  line-height: 27px;
+  margin: 0 30px 23px 0;
 }
-.ssp-onboarding__step-5 .ssp-onboarding__settings-body {
+.ssp-onboarding-step-4-info h4 {
+  font-size: 9px;
+  color: #64748B;
+  line-height: 42px;
+  font-weight: 400;
+  text-transform: uppercase;
+  margin: 0;
+  white-space: nowrap;
+}
+.ssp-onboarding-step-4-info__left {
+  margin-right: 20px;
+}
+.ssp-onboarding-step-4-info__right {
+  padding: 5px 3px 0 0;
+}
+.ssp-onboarding-step-4-info__usps {
+  margin: 24px 0 0;
+}
+.ssp-onboarding-step-4-info__usps li {
+  font-size: 13px;
+  font-weight: 400;
+  padding-left: 27px;
+  position: relative;
+  margin: 20px 0;
+}
+.ssp-onboarding-step-4-info__usps li:before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 5px;
+  display: block;
+  width: 14px;
+  height: 10px;
+  background: url(../img/checkbox-red.svg) no-repeat;
+}
+.ssp-onboarding-step-4-info-button {
+  display: block;
+  background: #f4f7fa;
+  padding: 22px 50px 20px 20px;
+  margin-bottom: 15px;
+  border-radius: 6px;
+  text-decoration: none;
+  position: relative;
+  width: 298px;
+  height: 86px;
+  box-sizing: border-box;
+  transition: .3s;
+}
+.ssp-onboarding-step-4-info-button:hover {
+  background: #e7ecf1;
+}
+.ssp-onboarding-step-4-info-button:after {
+  display: block;
+  position: absolute;
+  content: '';
+  width: 20px;
+  height: 16px;
+  background: url(../img/hosting-arrow.svg) no-repeat;
+  right: 17px;
+  top: 35px;
+}
+.ssp-onboarding-step-4-info-button__title {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: #475569;
+  margin-bottom: 10px;
+}
+.ssp-onboarding-step-4-info-button__description {
+  display: block;
+  font-size: 10px;
+  font-weight: 400;
+  color: #4B5563;
+}
+.ssp-onboarding-step-4-info-button .button-title {
+  font-weight: 600;
+}
+.ssp-onboarding-step-4-info__links {
+  display: flex;
+  background: #E2E8F0;
+  margin-left: -25px;
+  padding-left: 25px;
+  width: 346px;
+  height: 40px;
+  border-radius: 0 20px 20px 0;
+  box-sizing: border-box;
+}
+.ssp-onboarding-step-4-info__links ul {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0 17px 0 24px;
+}
+.ssp-onboarding-step-4-info__links li:hover svg path, .ssp-onboarding-step-4-info__links li:hover svg rect {
+  fill: #DF4E4F;
+}
+.ssp-onboarding-step-5 .ssp-onboarding__steps::after {
+  right: 40px;
+}
+.ssp-onboarding-step-5 .ssp-onboarding__settings-body {
   border-bottom: 2px solid #F3F4F6;
 }
-.ssp-onboarding__step-5 h2 {
+.ssp-onboarding-step-5 h2 {
   font-size: 20px;
 }
 .ssp-onboarding__select {
@@ -326,6 +431,7 @@ textarea#episode_embed_code {
   line-height: 50px;
 }
 .ssp-onboarding__submit .validate-token {
+  float: left;
   position: relative;
   padding: 0 20px 0 45px;
 }
@@ -435,7 +541,7 @@ textarea#episode_embed_code {
 .ssp-onboarding__skip {
   width: 100%;
   text-align: center;
-  margin-top: 20px;
+  margin-top: 40px;
 }
 .ssp-onboarding__skip a {
   color: #9CA3AF;

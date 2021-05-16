@@ -8,7 +8,7 @@
  * */
 ?>
 
-<div class="ssp-onboarding ssp-onboarding__step-1">
+<div class="ssp-onboarding ssp-onboarding-step-1">
 	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">

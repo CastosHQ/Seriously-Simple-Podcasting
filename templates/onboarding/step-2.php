@@ -8,7 +8,7 @@
 $img_name = $data_image ? pathinfo( $data_image, PATHINFO_FILENAME ) : '';
 ?>
 
-<div class="ssp-onboarding ssp-onboarding__step-2">
+<div class="ssp-onboarding ssp-onboarding-step-2">
 	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">

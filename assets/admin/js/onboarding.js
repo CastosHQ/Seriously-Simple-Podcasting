@@ -5,6 +5,9 @@ jQuery(document).ready(function($) {
 		$fields = $('.js-onboarding-field'),
 		$btn = $('.js-onboarding-btn'),
 		$validateTokenBtn = $('.js-onboarding-validate-token'),
+		$hostingStep1 = $('.js-hosting-step-1'),
+		$hostingStep2 = $('.js-hosting-step-2'),
+		$hostingRegistration = $('.js-hosting-registration'),
 		validateOnboarding = function () {
 			var valid = true;
 			$fields.each(function () {
@@ -19,7 +22,31 @@ jQuery(document).ready(function($) {
 			} else {
 				$btn.attr('disabled', 'disabled');
 			}
-		};
+		},
+		hostingConnectionSwitcher = function(){
+			switch(window.location.hash) {
+				case '#have-account':
+					$hostingStep1.hide();
+					$hostingStep2.show();
+					$hostingRegistration.hide();
+					break;
+
+				case '#start-free-trial':
+					$hostingStep1.hide();
+					$hostingStep2.show();
+					$hostingRegistration.show();
+					break;
+
+				default:
+					$hostingStep2.hide();
+					$hostingStep1.show();
+			}
+		},
+		listenChangeUrl = function(){
+			$(window).on('hashchange', function(e){
+				hostingConnectionSwitcher();
+			});
+		}
 
 	$imgInfo.find('.js-onboarding-delete-img-info').click(function(){
 		$imgInput.val('');
@@ -66,4 +93,6 @@ jQuery(document).ready(function($) {
 
 	$fields.on('change paste keyup', validateOnboarding);
 	validateOnboarding();
+	listenChangeUrl();
+	hostingConnectionSwitcher();
 });

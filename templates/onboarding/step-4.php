@@ -14,7 +14,7 @@
 		<div class="ssp-onboarding__settings-header">
 			<h1>Connect to Castos Hosting & Analytics</h1>
 		</div>
-		<div class="ssp-onboarding-step-4-info js-onboarding-4-1">
+		<div class="ssp-onboarding-step-4-info js-hosting-step-1">
 			<div class="ssp-onboarding-step-4-info__left">
 				<h2>Castos gives you the tools to grow your audience.</h2>
 
@@ -99,8 +99,8 @@
 				</a>
 			</div>
 		</div>
-		<div class="js-onboarding-4-2" style="display: none">
-			<div class="ssp-onboarding__hosting-steps">
+		<div class="js-hosting-step-2" style="display: none">
+			<div class="ssp-onboarding__hosting-steps js-hosting-registration">
 				<div class="ssp-onboarding__hosting-step">
 					<a href="https://app.castos.com/register" target="_blank">
 						<span class="ssp-onboarding__hosting-step--header">Sign-up</span>

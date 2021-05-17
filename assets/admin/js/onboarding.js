@@ -8,6 +8,8 @@ jQuery(document).ready(function($) {
 		$hostingStep1 = $('.js-hosting-step-1'),
 		$hostingStep2 = $('.js-hosting-step-2'),
 		$hostingRegistration = $('.js-hosting-registration'),
+		$dragable = $('.js-onboarding-dragable'),
+		$uploadImageBtn = $('#ss_podcasting_data_image_button'),
 		validateOnboarding = function () {
 			var valid = true;
 			$fields.each(function () {
@@ -23,7 +25,7 @@ jQuery(document).ready(function($) {
 				$btn.attr('disabled', 'disabled');
 			}
 		},
-		hostingConnectionSwitcher = function(){
+		hostingConnectionSteps = function(){
 			switch(window.location.hash) {
 				case '#have-account':
 					$hostingStep1.hide();
@@ -42,57 +44,90 @@ jQuery(document).ready(function($) {
 					$hostingStep1.show();
 			}
 		},
-		listenChangeUrl = function(){
-			$(window).on('hashchange', function(e){
-				hostingConnectionSwitcher();
+		initDeleteImgInfo = function(){
+			$imgInfo.find('.js-onboarding-delete-img-info').click(function(){
+				$imgInput.val('');
+				$imgInfo.hide();
+				validateOnboarding();
 			});
+		},
+		initImgPreview = function(){
+			if( $imgInput.val() ){
+				$imgInfo.show();
+			}
+			$preview.on('load', function(){
+				validateOnboarding();
+				if( $imgInput.val() ){
+					$imgInfo.show();
+				}
+			});
+		},
+		initTokenValidation = function(){
+			$validateTokenBtn.on('validated', function () {
+				//don't use $btn since it has custom validation
+				var $form = $validateTokenBtn.closest('form'),
+					$nextButton = $form.find('button[type=submit]');
+				$(this).removeClass('validating');
+				if ($validateTokenBtn.hasClass('valid')) {
+					$nextButton.removeAttr('disabled');
+					$form.find('.validate-api-credentials-message').html('');
+					$(this).html($(this).data('valid-txt'));
+				} else {
+					$(this).html($(this).data('initial-txt'));
+					$nextButton.attr('disabled', 'disabled');
+				}
+			});
+
+			$validateTokenBtn.on('click', function(){
+				$(this).addClass('validating').html($(this).data('validating-txt'));
+			});
+
+			$('.js-onboarding-validate-token-field').on('change paste keyup', function(){
+				var $nextButton = $validateTokenBtn.closest('form').find('button[type=submit]');
+				$validateTokenBtn.html($validateTokenBtn.data('initial-txt'));
+				$validateTokenBtn.removeClass('valid');
+				$nextButton.attr('disabled', 'disabled');
+			});
+		},
+		initOnboardingValidation = function(){
+			$fields.on('change paste keyup', validateOnboarding);
+			validateOnboarding();
+		},
+		initHostingConnectionSteps = function(){
+			hostingConnectionSteps();
+			$(window).on('hashchange', function(e){
+				hostingConnectionSteps();
+			});
+		},
+		initDragableImage = function () {
+			$dragable.on('dragover', function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					$uploadImageBtn.trigger('click');
+			});
+			$dragable.on('dragenter', function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					$uploadImageBtn.trigger('click');
+			});
+			$dragable.on('drop', function (e) {
+					e.preventDefault();
+					e.stopPropagation();
+					$uploadImageBtn.trigger('click');
+			});
+			$dragable.click(function(){
+				$uploadImageBtn.trigger('click');
+			});
+		},
+		init = function(){
+			initDeleteImgInfo();
+			initImgPreview();
+			initTokenValidation();
+			initOnboardingValidation();
+			initHostingConnectionSteps();
+			initDragableImage();
 		}
 
-	$imgInfo.find('.js-onboarding-delete-img-info').click(function(){
-		$imgInput.val('');
-		$imgInfo.hide();
-		validateOnboarding();
-	});
 
-	if( $imgInput.val() ){
-		$imgInfo.show();
-	}
-
-	$preview.on('load', function(){
-		validateOnboarding();
-		if( $imgInput.val() ){
-			$imgInfo.show();
-		}
-	});
-
-	$validateTokenBtn.on('validated', function () {
-		//don't use $btn since it has custom validation
-		var $form = $validateTokenBtn.closest('form'),
-			$nextButton = $form.find('button[type=submit]');
-		$(this).removeClass('validating');
-		if ($validateTokenBtn.hasClass('valid')) {
-			$nextButton.removeAttr('disabled');
-			$form.find('.validate-api-credentials-message').html('');
-			$(this).html($(this).data('valid-txt'));
-		} else {
-			$(this).html($(this).data('initial-txt'));
-			$nextButton.attr('disabled', 'disabled');
-		}
-	});
-
-	$validateTokenBtn.on('click', function(){
-		$(this).addClass('validating').html($(this).data('validating-txt'));
-	});
-
-	$('.js-onboarding-validate-token-field').on('change paste keyup', function(){
-		var $nextButton = $validateTokenBtn.closest('form').find('button[type=submit]');
-		$validateTokenBtn.html($validateTokenBtn.data('initial-txt'));
-		$validateTokenBtn.removeClass('valid');
-		$nextButton.attr('disabled', 'disabled');
-	});
-
-	$fields.on('change paste keyup', validateOnboarding);
-	validateOnboarding();
-	listenChangeUrl();
-	hostingConnectionSwitcher();
+	init();
 });

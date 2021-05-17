@@ -131,6 +131,15 @@
 		.ssp-onboarding__settings input.button {
 			margin: 20px 0 50px;
 		}
+
+		h2 {
+			margin-top: 0;
+		}
+
+		.description {
+			display: inline-block;
+			margin-bottom: 7px;
+		}
 	}
 
 	&-step-3 {
@@ -633,6 +642,35 @@
 
 			span {
 				text-decoration: underline;
+			}
+		}
+	}
+
+	&__dragable {
+		width: 100%;
+		height: 146px;
+		background: #F9FAFB;
+		border: 2px dashed #E5E7EB;
+		text-align: center;
+		cursor: pointer;
+
+		span {
+			color: #9CA3AF;
+			font-size: 12px;
+			font-weight: 400;
+			position: relative;
+			top: 84px;
+
+			&:before {
+				display: block;
+				content: '';
+				position: absolute;
+				width: 33px;
+				height: 33px;
+				background: url(../img/upload.svg) no-repeat;
+				bottom: 23px;
+				left: 50%;
+				margin-left: -16px;
 			}
 		}
 	}

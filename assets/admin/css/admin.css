@@ -191,6 +191,13 @@ textarea#episode_embed_code {
 .ssp-onboarding-step-2 .ssp-onboarding__settings input.button {
   margin: 20px 0 50px;
 }
+.ssp-onboarding-step-2 h2 {
+  margin-top: 0;
+}
+.ssp-onboarding-step-2 .description {
+  display: inline-block;
+  margin-bottom: 7px;
+}
 .ssp-onboarding-step-3 .ssp-onboarding__steps::after {
   right: 350px;
 }
@@ -614,6 +621,32 @@ textarea#episode_embed_code {
 }
 .ssp-onboarding__hosting-step--info span {
   text-decoration: underline;
+}
+.ssp-onboarding__dragable {
+  width: 100%;
+  height: 146px;
+  background: #F9FAFB;
+  border: 2px dashed #E5E7EB;
+  text-align: center;
+  cursor: pointer;
+}
+.ssp-onboarding__dragable span {
+  color: #9CA3AF;
+  font-size: 12px;
+  font-weight: 400;
+  position: relative;
+  top: 84px;
+}
+.ssp-onboarding__dragable span:before {
+  display: block;
+  content: '';
+  position: absolute;
+  width: 33px;
+  height: 33px;
+  background: url(../img/upload.svg) no-repeat;
+  bottom: 23px;
+  left: 50%;
+  margin-left: -16px;
 }
 
 /* Hide the WP bars */

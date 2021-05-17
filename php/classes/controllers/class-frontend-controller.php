@@ -555,7 +555,7 @@ class Frontend_Controller extends Controller {
 					break;
 
 				case 'new_window':
-					if ( 'on' === get_option( 'ss_podcasting_play_in_new_window_enabled', 'on' ) ) {
+					if ( isset( $meta['link'] ) && 'on' === get_option( 'ss_podcasting_play_in_new_window_enabled', 'on' ) ) {
 						$play_link       = add_query_arg( 'ref', 'new_window', $meta['link'] );
 						$podcast_display .= $sep . '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window', 'seriously-simple-podcasting' ) . '</a>';
 					}

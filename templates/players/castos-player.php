@@ -44,7 +44,7 @@ $episode_id = $episode_id . '-' . substr(md5(microtime()), 0, 7)
 						<audio preload="none" class="clip clip-<?php echo $episode_id?>">
 							<source loop preload="none" src="<?php echo $audio_file ?>">
 						</audio>
-						<div class="progress progress-<?php echo $episode_id ?>" title="Seek">
+						<div class="ssp-progress progress-<?php echo $episode_id ?>" title="Seek">
 							<span class="progress__filled progress__filled-<?php echo $episode_id ?>"></span>
 						</div>
 						<div class="playback playback-<?php echo $episode_id ?>">

@@ -9,8 +9,6 @@ class CastosPlayer extends Component {
 			//throw new Error('I crashed!');
 			const {className, episodeId, episodeImage, episodeTitle, episodeFileUrl, episodeDuration, episodeData} = this.props;
 
-			console.log('Props', this.props);
-
 			const {playerMode} = episodeData ;
 
 			const playerClassNames = classnames(
@@ -29,7 +27,7 @@ class CastosPlayer extends Component {
 			const loaderSVG = "/wp-content/plugins/seriously-simple-podcasting/assets/css/images/player/images/icon-loader.svg"; // @todo might need to sort out path
 			const loaderClass = 'loader loader-' + episodeId + ' hide';
 			const audioElementClass = 'clip clip-' + episodeId;
-			const progressClass = 'progress progress-' + episodeId;
+			const progressClass = 'ssp-progress progress-' + episodeId;
 			const playProgressClass = 'progress__filled progress__filled-' + episodeId;
 			const playbackClass = 'playback playback-' + episodeId;
 			const muteClass = 'player-btn__volume player-btn__volume-' + episodeId;

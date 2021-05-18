@@ -496,7 +496,7 @@ class Castos_Handler {
 		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 		$this->logger->log( 'Response Object', $response_object );
 
-		if ( ! $response_object->status ) {
+		if ( empty( $response_object->status ) ) {
 			$this->logger->log( 'An error occurred uploading the series data to Castos', $response_object );
 			$this->update_response( 'message', 'An error occurred uploading the series data to Castos' );
 

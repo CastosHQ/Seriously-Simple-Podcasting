@@ -23,6 +23,8 @@ class Onboarding_Controller extends Controller {
 
 	const STEPS_NUMBER = 5;
 
+	const ONBOARDING_BASE_SLUG = 'ssp-onboarding';
+
 	protected $renderer;
 
 	/**
@@ -47,9 +49,6 @@ class Onboarding_Controller extends Controller {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'activate_' . plugin_basename( $this->file ),  array( $this, 'activate' ), 20 );
 
-		function cyb_activation_redirect( $plugin ) {
-
-		}
 		add_action( 'activated_plugin', array( $this, 'maybe_start_onboarding' ) );
 	}
 
@@ -59,15 +58,19 @@ class Onboarding_Controller extends Controller {
 		}
 		$title = $this->get_field( 'data_title' );
 		if ( ! $title ) {
-			wp_redirect( admin_url( 'admin.php?page=ssp-onboarding-1' ) );
+			wp_redirect( admin_url( sprintf('admin.php?page=%s-1'), self::ONBOARDING_BASE_SLUG ) );
 			exit();
 		}
 	}
 
 	public function enqueue_scripts() {
-		wp_enqueue_script( 'ssp-onboarding', esc_url( $this->assets_url . 'admin/js/onboarding' . $this->script_suffix . '.js' ), array(
-			'jquery',
-		), $this->version );
+		$screen = get_current_screen();
+		if ( false !== strpos( $screen->base, self::ONBOARDING_BASE_SLUG ) ) {
+			wp_enqueue_media();
+			wp_enqueue_script( 'ssp-onboarding', esc_url( $this->assets_url . 'admin/js/onboarding' . $this->script_suffix . '.js' ), array(
+				'jquery'
+			), $this->version );
+		}
 	}
 
 	public function register_pages() {
@@ -212,7 +215,7 @@ class Onboarding_Controller extends Controller {
 	 * @return string
 	 */
 	protected function get_page_slug( $page_number ) {
-		return sprintf( 'ssp-onboarding-%d', $page_number );
+		return sprintf( '%s-%d', self::ONBOARDING_BASE_SLUG, $page_number );
 	}
 
 	/**

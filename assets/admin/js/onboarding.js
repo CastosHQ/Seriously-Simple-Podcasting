@@ -54,8 +54,8 @@ jQuery(document).ready(function($) {
 		},
 		baseName = function (str) {
 			var base = String(str).substring(str.lastIndexOf('/') + 1);
-			if (base.lastIndexOf(".") !== -1) {
-				base = base.substring(0, base.lastIndexOf("."));
+			if( base.length > 20 ){
+				base = '..' + base.substring(base.length - 20, base.length);
 			}
 			return base;
 		},

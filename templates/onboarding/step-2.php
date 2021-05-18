@@ -12,17 +12,17 @@ $img_name = $data_image ? pathinfo( $data_image, PATHINFO_FILENAME ) : '';
 	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
-			<h1>Podcast Cover Image</h1>
+			<h1>Artwork</h1>
 		</div>
 		<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
 			<div class="ssp-onboarding__settings-item">
-				<h2>Do you have a cover image ready?</h2>
+				<h2>Upload your podcast's cover image</h2>
 
-				<label for="ss_podcasting_data_image_button" class="description">This image should be JPG or PNG format and between 1400x1400px and 3000x3000px in size.</label>
+				<label for="ss_podcasting_data_image_button" class="description">Image must be JPG or PNG format and between 1400 x 1400px and 3000 x 3000px.</label>
 				<input id="ss_podcasting_data_image_button" type="hidden" class="button" value="Upload new image">
 
 				<div class="ssp-onboarding__dragable js-onboarding-dragable">
-					<span>Drop image here to upload...</span>
+					<span>Upload image...</span>
 				</div>
 			</div>
 

@@ -2,6 +2,7 @@ jQuery(document).ready(function($) {
 	var $imgInfo = $('.js-onboarding-img-info'),
 		$preview = $imgInfo.find('.js-onboarding-img'),
 		$imgInput = $imgInfo.find('.js-onboarding-img-val'),
+		$imgName = $imgInfo.find('.js-onboarding-img-name'),
 		$fields = $('.js-onboarding-field'),
 		$btn = $('.js-onboarding-btn'),
 		$validateTokenBtn = $('.js-onboarding-validate-token'),
@@ -51,15 +52,25 @@ jQuery(document).ready(function($) {
 				validateOnboarding();
 			});
 		},
-		initImgPreview = function(){
-			if( $imgInput.val() ){
+		baseName = function (str) {
+			var base = String(str).substring(str.lastIndexOf('/') + 1);
+			if (base.lastIndexOf(".") !== -1) {
+				base = base.substring(0, base.lastIndexOf("."));
+			}
+			return base;
+		},
+		updateImageName = function(){
+			var imageUrl = $imgInput.val();
+			if( imageUrl ){
+				$imgName.html(baseName(imageUrl));
 				$imgInfo.show();
 			}
+		},
+		initImgPreview = function(){
+			updateImageName();
 			$preview.on('load', function(){
 				validateOnboarding();
-				if( $imgInput.val() ){
-					$imgInfo.show();
-				}
+				updateImageName();
 			});
 		},
 		initTokenValidation = function(){

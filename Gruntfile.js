@@ -83,7 +83,7 @@ module.exports = function (a) {
 	a.loadNpmTasks('grunt-contrib-uglify');
 	a.loadNpmTasks('grunt-contrib-sass');
 	a.loadNpmTasks('grunt-contrib-watch');
-	a.registerTask('default',['watch']);
+	a.registerTask('default',['sass', 'watch']);
 /*
 	a.loadNpmTasks("grunt-wp-i18n");
 	a.loadNpmTasks("grunt-wp-readme-to-markdown");

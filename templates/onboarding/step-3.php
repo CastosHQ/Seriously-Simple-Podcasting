@@ -10,7 +10,7 @@
  * */
 ?>
 
-<div class="ssp-onboarding ssp-onboarding__step-3">
+<div class="ssp-onboarding ssp-onboarding-step-3">
 	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
@@ -70,7 +70,5 @@
 			</div>
 		</form>
 	</div>
-	<div class="ssp-onboarding__skip">
-		<a href="<?php echo admin_url() ?>">Skip Setup</a>
-	</div>
+	<?php include __DIR__ . '/steps-footer.php'; ?>
 </div>

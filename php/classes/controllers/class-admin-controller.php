@@ -5,10 +5,12 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
+use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use SeriouslySimplePodcasting\Renderers\Renderer;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -93,7 +95,8 @@ class Admin_Controller extends Controller {
 
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
 
-		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version );
+		// Todo: dependency injection for other controllers as well
+		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version, new Renderer(), new Settings_Handler() );
 
 		$this->roles_handler = new Roles_Handler();
 

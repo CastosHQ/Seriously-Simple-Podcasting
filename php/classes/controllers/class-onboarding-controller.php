@@ -37,28 +37,27 @@ class Onboarding_Controller extends Controller {
 	 *
 	 * @param $file
 	 * @param $version
+	 * @param Renderer $renderer
+	 * @param Settings_Handler $settings_handler
 	 */
-	public function __construct( $file, $version ) {
+	public function __construct( $file, $version, $renderer, $settings_handler ) {
 		parent::__construct( $file, $version );
 
-		//todo: dependency injection or facade
-		$this->renderer         = new Renderer();
-		$this->settings_handler = new Settings_Handler();
+		$this->renderer         = $renderer;
+		$this->settings_handler = $settings_handler;
 
 		add_action( 'admin_menu', array( $this, 'register_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-		add_action( 'activate_' . plugin_basename( $this->file ),  array( $this, 'activate' ), 20 );
-
 		add_action( 'activated_plugin', array( $this, 'maybe_start_onboarding' ) );
 	}
 
-	public function maybe_start_onboarding($plugin) {
-		if( $plugin !== plugin_basename( $this->file ) ) {
+	public function maybe_start_onboarding( $plugin ) {
+		if ( $plugin !== plugin_basename( $this->file ) ) {
 			return;
 		}
 		$title = $this->get_field( 'data_title' );
 		if ( ! $title ) {
-			wp_redirect( admin_url( sprintf('admin.php?page=%s-1'), self::ONBOARDING_BASE_SLUG ) );
+			wp_redirect( admin_url( sprintf( 'admin.php?page=%s-1', self::ONBOARDING_BASE_SLUG ) ) );
 			exit();
 		}
 	}
@@ -83,9 +82,9 @@ class Onboarding_Controller extends Controller {
 	}
 
 	/**
-	 * @param $title
-	 * @param $slug
-	 * @param $callable
+	 * @param string $title
+	 * @param string $slug
+	 * @param callable $callable
 	 */
 	protected function register_page( $title, $slug, $callable ) {
 		add_submenu_page( '', __( $title, SSP_DOMAIN ), __( $title, SSP_DOMAIN ), Roles_Handler::MANAGE_PODCAST, $slug, $callable );

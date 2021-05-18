@@ -24,7 +24,7 @@
 			<div class="ssp-onboarding__links-item">
 				<h2>Join the Castos Academy</h2>
 				<p>Your toolkit for for everything from starting out smart to taking your podcast to the next level.</p>
-				<a href="#" class="button grey"><span>Join Now</span></a>
+				<a target="_blank" href="https://academy.castos.com/?utm_source=WordPress&utm_medium=SSP&utm_campaign=wizard" class="button grey"><span>Join Now</span></a>
 			</div>
 
 			<div class="ssp-onboarding__links-item">

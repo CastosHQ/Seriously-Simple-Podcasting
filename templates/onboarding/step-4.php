@@ -147,9 +147,5 @@
 			</form>
 		</div>
 	</div>
-
-
-	<div class="ssp-onboarding__skip">
-		<a href="<?php echo admin_url() ?>">Skip Setup</a>
-	</div>
+	<?php include __DIR__ . '/steps-footer.php'; ?>
 </div>

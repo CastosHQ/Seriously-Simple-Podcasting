@@ -5,7 +5,7 @@
  * @var string $data_image
  * */
 
-$img_name = $data_image ? pathinfo( $data_image, PATHINFO_FILENAME ) : '';
+$img_name = $data_image ? pathinfo( $data_image, PATHINFO_BASENAME ) : '';
 ?>
 
 <div class="ssp-onboarding ssp-onboarding-step-2">
@@ -38,7 +38,5 @@ $img_name = $data_image ? pathinfo( $data_image, PATHINFO_FILENAME ) : '';
 			</div>
 		</form>
 	</div>
-	<div class="ssp-onboarding__skip">
-		<a href="<?php echo admin_url() ?>">Skip Setup</a>
-	</div>
+	<?php include __DIR__ . '/steps-footer.php'; ?>
 </div>

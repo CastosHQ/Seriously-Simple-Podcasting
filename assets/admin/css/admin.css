@@ -588,11 +588,14 @@ textarea#episode_embed_code {
   font-size: 20px;
   font-weight: 600;
   border-radius: 50%;
-  left: 0;
+  left: -2px;
   text-align: center;
   line-height: 28px;
 }
 .ssp-onboarding__hosting-step a:nth-child(2):before {
+  content: '2';
+}
+.ssp-onboarding__hosting-step:nth-child(2) a:before {
   content: '2';
 }
 .ssp-onboarding__hosting-step--header {

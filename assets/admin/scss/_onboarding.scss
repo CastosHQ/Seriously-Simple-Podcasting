@@ -614,6 +614,10 @@
 			}
 		}
 
+		&:nth-child(2) a:before {
+			content: '2';
+		}
+
 		&--header {
 			display: block;
 			color: #FFF;

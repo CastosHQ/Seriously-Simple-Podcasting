@@ -745,7 +745,7 @@
     }
 }
 
-.castos-player .progress {
+.castos-player .progress, .castos-player .ssp-progress {
     flex: 10;
     position: relative;
     display: flex;
@@ -926,7 +926,7 @@
     color: #4b4659;
     border: 1px solid #4b4659;
 }
-.castos-player.light-mode .progress {
+.castos-player.light-mode .ssp-progress {
     background-color: #d3d3d3;
 }
 .castos-player.light-mode .player-panel .player-panel-row button {
@@ -986,7 +986,7 @@
         color: #4b4659;
         border: 1px solid #4b4659;
     }
-    .castos-player .progress {
+	.castos-player .progress, .castos-player .ssp-progress {
         background-color: #d3d3d3;
     }
     .castos-player .player-panel .player-panel-row button {
@@ -1044,7 +1044,7 @@
     color: #fff;
     border: 1px solid #fff;
 }
-.castos-player.dark-mode .progress {
+.castos-player.dark-mode .progress, .castos-player.dark-mode .ssp-progress {
     background-color: #4c4659;
 }
 .castos-player.dark-mode .player-panel .player-panel-row button {

@@ -5,10 +5,12 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
+use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use SeriouslySimplePodcasting\Renderers\Renderer;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -44,6 +46,11 @@ class Admin_Controller extends Controller {
 	 * @var Feed_Controller
 	 */
 	protected $feed_controller;
+
+	/**
+	 * @var Onboarding_Controller
+	 */
+	protected $onboarding_controller;
 
 	/**
 	 * @var Log_Helper
@@ -87,6 +94,9 @@ class Admin_Controller extends Controller {
 		$this->upgrade_handler = new Upgrade_Handler();
 
 		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
+
+		// Todo: dependency injection for other controllers as well
+		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version, new Renderer(), new Settings_Handler() );
 
 		$this->roles_handler = new Roles_Handler();
 
@@ -962,7 +972,7 @@ HTML;
 	 */
 	public function enqueue_admin_styles( $hook ) {
 
-		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'css/admin.css' ), array(), $this->version );
+		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'admin/css/admin.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
 
 		// Datepicker

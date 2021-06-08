@@ -16,7 +16,7 @@
 
 		<div class="ssp-onboarding__settings-body" >
 			<div class="ssp-onboarding__settings-item iframe-wrapper">
-				<iframe width="650" height="370" src="https://www.youtube.com/embed/Se3H1IDAYtw?rel=0&amp;showinfo=0" frameborder="0" gesture="media" allow="encrypted-media" allowfullscreen></iframe>
+				<iframe width="650" height="370" src="https://www.youtube.com/embed/4tljtfVhR_M?rel=0&amp;showinfo=0" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 			</div>
 		</div>
 

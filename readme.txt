@@ -13,6 +13,8 @@ Podcasting the way it's meant to be. No mess, no fuss - just you and your conten
 == Description ==
 Seriously Simple Podcasting is a top-rated podcasting plugin for WordPress for beginners and power-users built by [Castos](http://castos.com/podcast-hosting-wordpress). Using our straight-forward set up instructions, advanced features, and plenty of customization options, Seriously Simple Podcasting powers over 20K+ podcasts.
 
+https://vimeo.com/560129506
+
 The plugin will *always* remain free to use. The only costs associated with using Seriously Simple Podcasting is if you choose to host your audio files with a dedicated podcast hosting provider. Similar to using a website hosting provider to keep your WordPress site fast and running smoothly, we recommend hosting podcast files with a dedicated provider. But remember, this isn't required!
 
 Every plugin feature is fully functional no matter who you choose as your podcast hosting provider. Seriously Simple Podcasting gives you more control over your content so you can start podcasting without limits.

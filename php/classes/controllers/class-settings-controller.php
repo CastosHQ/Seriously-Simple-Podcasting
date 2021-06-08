@@ -154,24 +154,6 @@ class Settings_Controller extends Controller {
 			 $this,
 			 'settings_page',
 		 ) );*/
-
-		add_submenu_page( null, __( 'Upgrade', 'seriously-simple-podcasting' ), __( 'Upgrade', 'seriously-simple-podcasting' ), 'manage_podcast', 'upgrade', array(
-			$this,
-			'show_upgrade_page',
-		) );
-	}
-
-	/**
-	 * Show the upgrade page
-	 */
-	public function show_upgrade_page() {
-		$ssp_redirect = ( isset( $_GET['ssp_redirect'] ) ? filter_var( $_GET['ssp_redirect'], FILTER_SANITIZE_STRING ) : '' );
-		$ssp_dismiss_url = add_query_arg( array(
-				'ssp_dismiss_upgrade' => 'dismiss',
-				'ssp_redirect'        => rawurlencode( $ssp_redirect ),
-				'nonce'               => wp_create_nonce( 'ssp_dismiss_upgrade' ),
-			), admin_url( 'index.php' ) );
-		include( $this->template_path . DIRECTORY_SEPARATOR . 'settings-upgrade-page.php' );
 	}
 
 	/**

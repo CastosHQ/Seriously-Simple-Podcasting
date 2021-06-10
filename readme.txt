@@ -163,10 +163,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 2.7.1 =
 * 2021-06-10
-* UPDATE SUMMARY: Updated the onboarding wizard video
+* UPDATE SUMMARY: Updated the onboarding wizard video, UX improvement
 * [UPDATE] Updated the onboarding wizard video
 * [UPDATE] Added the video to the plugin description
 * [UPDATE] Removed the old welcome page
+* [FIX] When creating a new Series, select "Exclude series from default feed" by default
 
 = 2.7.0 =
 * 2021-05-20

@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.7
 Requires PHP: 5.6
-Stable tag: 2.7.1
+Stable tag: 2.7.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.7.2 =
+* 2021-06-10
+* UPDATE SUMMARY: Hotfix for the "Exclude series from default feed" by default option
+* [FIX] Reverted "Exclude series from default feed" to the previous state
+* [FIX] Select "Exclude series from default feed" by default ONLY for the new series
+
 
 = 2.7.1 =
 * 2021-06-10

@@ -206,7 +206,7 @@ class Feed_Controller extends Controller {
 			);
 			foreach ( $series as $feed ) {
 				$option_name         = 'ss_podcasting_exclude_feed_' . $feed->term_id;
-				$exclude_feed_option = get_option( $option_name, 'on' );
+				$exclude_feed_option = get_option( $option_name, 'off' );
 				if ( 'on' === $exclude_feed_option ) {
 					$exclude_series[] = $feed->slug;
 				}

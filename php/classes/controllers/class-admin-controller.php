@@ -63,6 +63,11 @@ class Admin_Controller extends Controller {
 	protected $cron_controller;
 
 	/**
+	 * @var Schema_Controller
+	 */
+	protected $schema_controller;
+
+	/**
 	 * @var CPT_Podcast_Handler
 	 */
 	protected $cpt_podcast_handler;
@@ -71,6 +76,7 @@ class Admin_Controller extends Controller {
 	 * @var Roles_Handler
 	 */
 	protected $roles_handler;
+
 
 
 	/**
@@ -105,6 +111,8 @@ class Admin_Controller extends Controller {
 		$this->logger = new Log_Helper();
 
 		$this->cron_controller = new Cron_Controller();
+
+		$this->schema_controller = new Schema_Controller( $this->file, $this->version );
 
 		if ( is_admin() ) {
 			$this->admin_notices_handler = ( new Admin_Notifications_Handler( $this->token ) )->bootstrap();

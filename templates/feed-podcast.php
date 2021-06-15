@@ -11,7 +11,7 @@
  *
  * @var $stylesheet_url
  * @var $title
- * @var $ss_podcasting
+ * @var \SeriouslySimplePodcasting\Controllers\Frontend_Controller $ss_podcasting
  * @var $podcast_series
  * @var $description
  * @var $language

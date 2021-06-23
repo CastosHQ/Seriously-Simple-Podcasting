@@ -7,12 +7,12 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Yoast\Schema;
 
-use Yoast\WP\SEO\Config\Schema_IDs;
-
 use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
 
 /**
  * Returns schema PodcastEpisode data.
+ *
+ * @since 2.7.3
  */
 class PodcastEpisode extends Abstract_Schema_Piece {
 

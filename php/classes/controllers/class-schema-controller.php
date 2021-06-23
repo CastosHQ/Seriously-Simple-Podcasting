@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 
 use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastEpisode;
+use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastSeries;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -12,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 
 /**
- * Main plugin class
+ * Schema controller
  *
  * @author      Sergey Zakharchenko
  * @package     SeriouslySimplePodcasting/Controllers
@@ -28,6 +29,7 @@ class Schema_Controller extends Controller {
 
     public static function add_graph_pieces( $data ) {
 		$data[] = new PodcastEpisode();
+		$data[] = new PodcastSeries();
 
         return $data;
     }

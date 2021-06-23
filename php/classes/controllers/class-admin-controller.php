@@ -262,25 +262,55 @@ class Admin_Controller extends Controller {
 	}
 
 	/**
+	 * @since 2.7.3
+	 *
+	 * @param \WP_Term $term
+	 *
+	 * @return int|null
+	 */
+	public function get_series_image_id( $term = null ) {
+		if ( empty( $term ) ) {
+			return null;
+		}
+
+		return get_term_meta( $term->term_id, $this->token . '_series_image_settings', true );
+	}
+
+	/**
+	 * @since 2.7.3
+	 *
+	 * @param \WP_Term $term
+	 *
+	 * @return int|null
+	 */
+	public function get_series_image_src( $term ) {
+		$media_id = $this->get_series_image_id( $term );
+
+		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
+
+		if ( empty( $media_id ) ) {
+			return $default_image;
+		}
+
+		$image_width  = "auto";
+		$image_height = "auto";
+
+		$src = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
+
+		return ! empty( $src[0] ) ? $src[0] : $default_image;
+	}
+
+	/**
 	 * Series Image Uploader metabox for add/edit.
 	 */
 	public function series_image_uploader( $taxonomy, $mode = 'CREATE', $term = null ) {
 		$series_settings = $this->token . '_series_image_settings';
-		// Define a default image.
-		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
-		if ( $term !== null ) {
-			$media_id = get_term_meta( $term->term_id, $series_settings, true );
-		}
-		$image_width  = "auto";
-		$image_height = "auto";
 
-		if ( $mode == 'UPDATE' && ! empty( $media_id ) ) {
-			$image_attributes = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
-			$src              = $image_attributes[0];
-		} else {
-			$src      = $default_image;
-			$media_id = '';
-		}
+		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
+		$media_id      = $this->get_series_image_id( $term ) ?: '';
+		$src           = $this->get_series_image_src( $term );
+		$image_width   = "auto";
+		$image_height  = "auto";
 
 		$series_img_title = __( 'Series Image', 'seriously-simple-podcasting' );
 		$upload_btn_text  = __( 'Choose series image', 'seriously-simple-podcasting' );
@@ -458,31 +488,14 @@ HTML;
 
 		switch ( $column_name ) {
 			case 'series_feed_url':
-				$series      = get_term( $term_id, 'series' );
-				$series_slug = $series->slug;
-
-				if ( get_option( 'permalink_structure' ) ) {
-					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-					$feed_url  = $this->home_url . 'feed/' . $feed_slug . '/' . $series_slug;
-				} else {
-					$feed_url = add_query_arg(
-						array(
-							'feed'           => $this->token,
-							'podcast_series' => $series_slug,
-						),
-						$this->home_url
-					);
-				}
+				$series   = get_term( $term_id, 'series' );
+				$feed_url = $this->get_series_feed_url( $series );
 
 				$column_data = '<a href="' . esc_attr( $feed_url ) . '" target="_blank">' . esc_html( $feed_url ) . '</a>';
 				break;
 			case 'series_image':
-				$series           = get_term( $term_id, 'series' );
-				$series_settings  = $this->token . '_series_image_settings';
-				$default_image    = esc_url( $this->assets_url . 'images/no-image.png' );
-				$media_id         = get_term_meta( $term_id, $series_settings, true );
-				$image_attributes = wp_get_attachment_image_src( $media_id );
-				$source           = ( isset( $image_attributes[0] ) ) ? $image_attributes[0] : $default_image;
+				$series = get_term( $term_id, 'series' );
+				$source = $this->get_series_image_src( $series );
 				$column_data      = <<<HTML
 <img id="{$series->name}_image_preview" src="{$source}" width="auto" height="auto" style="max-width:50px;" />
 HTML;
@@ -490,6 +503,32 @@ HTML;
 		}
 
 		return $column_data;
+	}
+
+	/**
+	 * @since 2.7.3
+	 *
+	 * @param \WP_Term $term
+	 *
+	 * @return string
+	 */
+	public function get_series_feed_url( $term ){
+		$series_slug = $term->slug;
+
+		if ( get_option( 'permalink_structure' ) ) {
+			$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
+			$feed_url  = $this->home_url . 'feed/' . $feed_slug . '/' . $series_slug;
+		} else {
+			$feed_url = add_query_arg(
+				array(
+					'feed'           => $this->token,
+					'podcast_series' => $series_slug,
+				),
+				$this->home_url
+			);
+		}
+
+		return $feed_url;
 	}
 
 	/**

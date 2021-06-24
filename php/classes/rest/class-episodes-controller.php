@@ -70,9 +70,9 @@ class Episodes_Controller extends WP_REST_Controller {
 	/**
 	 * Get a collection of items
 	 *
-	 * @param WP_REST_Request $request Full data about the request.
+	 * @param \WP_REST_Request $request Full data about the request.
 	 *
-	 * @return WP_Error|WP_REST_Response
+	 * @return \WP_Error|\WP_REST_Response
 	 */
 	public function get_items( $request ) {
 		$args                        = array();
@@ -125,9 +125,7 @@ class Episodes_Controller extends WP_REST_Controller {
 		 * @see https://developer.wordpress.org/reference/classes/wp_user_query/
 		 *
 		 * @param array $args Key value array of query var to query value.
-		 * @param WP_REST_Request $request The request used.
-		 *
-		 * @var Function
+		 * @param \WP_REST_Request $request The request used.
 		 */
 		$args       = apply_filters( "rest_episode_query", $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
@@ -222,7 +220,7 @@ class Episodes_Controller extends WP_REST_Controller {
 	 * for WP_Query.
 	 *
 	 * @param  array $prepared_args
-	 * @param  WP_REST_Request $request
+	 * @param  \WP_REST_Request $request
 	 *
 	 * @return array            $query_args
 	 */
@@ -278,8 +276,6 @@ class Episodes_Controller extends WP_REST_Controller {
 		 * Allows adjusting of the default query vars that are made public.
 		 *
 		 * @param array  Array  of allowed WP_Query query vars.
-		 *
-		 * @var Function
 		 */
 		$valid_vars = apply_filters( 'query_vars', $wp->public_query_vars );
 
@@ -480,12 +476,10 @@ class Episodes_Controller extends WP_REST_Controller {
 	 * Validate whether the user can query private statuses
 	 *
 	 * @param  mixed $value
-	 * @param  WP_REST_Request $request
-	 * @param  string $parameter
 	 *
-	 * @return WP_Error|boolean
+	 * @return \WP_Error|boolean
 	 */
-	public function validate_user_can_query_private_statuses( $value, $request, $parameter ) {
+	public function validate_user_can_query_private_statuses( $value ) {
 		if ( 'publish' === $value ) {
 			return true;
 		}
@@ -493,7 +487,7 @@ class Episodes_Controller extends WP_REST_Controller {
 		foreach ( $this->post_types as $post_type ) {
 			$post_type_obj = get_post_type_object( $post_type );
 			if ( ! current_user_can( $post_type_obj->cap->edit_posts ) ) {
-				return new WP_Error( 'rest_forbidden_status', __( 'Status is forbidden' ), array(
+				return new \WP_Error( 'rest_forbidden_status', __( 'Status is forbidden' ), array(
 					'status'    => rest_authorization_required_code(),
 					'post_type' => $post_type_obj->name,
 				) );

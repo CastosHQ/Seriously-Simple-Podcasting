@@ -236,8 +236,8 @@ class CPT_Podcast_Handler {
 
 		// In v1.14+ the `audio_file` field can actually be either audio or video, but we're keeping the field name here for backwards compatibility
 		$fields['audio_file'] = array(
-			'name'             => __( 'Podcast file:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'Upload the primary podcast file or paste the file URL here.', 'seriously-simple-podcasting' ),
+			'name'             => __( 'Episode file:', 'seriously-simple-podcasting' ),
+			'description'      => __( 'Upload audio episode files as MP3 or M4A, video episodes as MP4, or paste the file URL.', 'seriously-simple-podcasting' ),
 			'type'             => 'file',
 			'default'          => '',
 			'section'          => 'info',

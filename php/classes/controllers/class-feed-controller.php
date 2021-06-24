@@ -379,14 +379,15 @@ class Feed_Controller extends Controller {
 		}
 
 		// Get episode description setting
-		$episode_description              = get_option( 'ss_podcasting_episode_description', 'excerpt' );
-		$episode_description_uses_excerpt = 'excerpt' === $episode_description;
+		$episode_description_mode = get_option( 'ss_podcasting_episode_description', 'excerpt' );
 		if ( $series_id && $series_id > 0 ) {
+			$episode_description_mode = get_option( 'ss_podcasting_episode_description_' . $series_id, 'excerpt' );
 			$series_episode_description = get_option( 'episode_description_' . $series_id );
 			if ( false !== $series_episode_description ) {
 				$episode_description = $series_episode_description;
 			}
 		}
+		$episode_description_uses_excerpt = 'excerpt' === $episode_description_mode;
 
 		// Get stylehseet URL (filterable to allow disabling or custom RSS stylesheets)
 		$apply_stylesheet_url = apply_filters( 'ssp_enable_rss_stylesheet', true );

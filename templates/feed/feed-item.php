@@ -118,11 +118,6 @@ $author = apply_filters( 'ssp_feed_item_author', $author, get_the_ID() );
 // Cache the post in case it changes
 $post_id = get_the_ID();
 
-// Episode content (with shortcodes and iframes removed)
-$content = get_the_content_feed( 'rss2' );
-$content = strip_shortcodes( $content );
-$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
-$content = apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 
 // Description is set based on feed setting
 if ( $episode_description_uses_excerpt ) {
@@ -130,12 +125,13 @@ if ( $episode_description_uses_excerpt ) {
 	the_excerpt_rss();
 	$description = ob_get_clean();
 } else {
-	$description = $content;
+	$description = ssp_get_the_feed_item_content();
 	if ( isset( $turbo_post_count ) && $turbo_post_count > 10 ) {
 		// If turbo is on, limit the full html description to 4000 chars
 		$description = mb_substr( $description, 0, 3999 );
 	}
 }
+
 $description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
 
 // Clean up after shortcodes in content and excerpts

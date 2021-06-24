@@ -656,7 +656,7 @@ HTML;
 						$upload_button = '<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File', 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />';
 						if ( ssp_is_connected_to_castos() ) {
 							$upload_button = '<div id="ssp_upload_container" style="display: inline;">';
-							$upload_button .= '  <button id="ssp_select_file" href="javascript:">Select podcast file</button>';
+							$upload_button .= '  <button id="ssp_select_file" href="javascript:">Select file</button>';
 							$upload_button .= '</div>';
 						}
 

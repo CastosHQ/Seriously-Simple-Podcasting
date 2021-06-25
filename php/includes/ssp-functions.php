@@ -1215,8 +1215,7 @@ if ( ! function_exists( 'ssp_get_attachment_image_src' ) ) {
 
 /**
  * Get the episode content for showing in the feed. Now Apple supports only p tags.
- * This function removes iframes and shortcodes from the content,
- * strips all tags except <p> and converts <a> tags to such template: anchor ("http://yoursite.com")
+ * This function removes iframes and shortcodes from the content and strips all tags except <p> and <a>
  */
 if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 	/**
@@ -1238,23 +1237,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 
 		$content = strip_shortcodes( $content );
 		$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
-
-		//
 		$content = strip_tags( $content, '<p>,<a>' );
-		preg_match_all( '#<a .*?href="(.*?)".*?>(.*?)</a>#', $content, $matches );
-
-		if ( is_array( $matches ) && 3 === count( $matches ) ) {
-			$links   = $matches[0];
-			$hrefs   = $matches[1];
-			$anchors = $matches[2];
-
-			foreach ( $links as $k => $link ) {
-				$content = str_replace( $link, sprintf( '%s (%s)', $anchors[ $k ], $hrefs[ $k ] ), $content );
-			}
-		}
-
-		// Just to be sure lets strip <a> tags in the case of any bug happened
-		$content = strip_tags( $content, '<p>' );
 
 		// Remove empty paragraphs as well.
 		$content = trim( str_replace( '<p></p>', '', $content ) );

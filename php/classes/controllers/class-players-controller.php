@@ -82,7 +82,10 @@ class Players_Controller extends Controller {
 		$episode_url      = get_post_permalink( $id );
 		$audio_file       = $this->episode_controller->get_episode_player_link( $id );
 		$album_art        = $this->episode_controller->get_album_art( $id );
-		$podcast_title    = get_option( 'ss_podcasting_data_title' );
+		$series           = get_the_terms( $episode, 'series' );
+		$title_option     = empty( $series[0] ) ? 'ss_podcasting_data_title' : 'ss_podcasting_data_title_' . $series[0]->term_id;
+		$podcast_title    = get_option( $title_option );
+
 		$feed_url         = $this->episode_repository->get_feed_url( $id );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
 		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );

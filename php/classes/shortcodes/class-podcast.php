@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    SeriouslySimplePodcasting/Shortcodes
  * @since        1.15.0
  */
-class Podcast {
+class Podcast implements Shortcode {
 
 	/**
 	 * Load ss_podcast shortcode

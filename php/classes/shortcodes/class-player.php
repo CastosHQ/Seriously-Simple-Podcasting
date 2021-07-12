@@ -15,13 +15,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category   SeriouslySimplePodcasting/Shortcodes
  * @since      1.19.6
  */
-class Player {
+class Player implements Shortcode {
 
 	/**
 	 * Load ss_player shortcode
 	 * @return string          HTML output
 	 */
-	public function shortcode() {
+	public function shortcode( $params ) {
 
 		/**
 		 * If we're in an RSS feed, don't render this shortcode

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    SeriouslySimplePodcasting/Shortcodes
  * @since        1.15.0
  */
-class Podcast_Episode {
+class Podcast_Episode implements Shortcode {
 
 	/**
 	 * Shortcode function to display single podcast episode

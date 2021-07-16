@@ -43,15 +43,11 @@ class PodcastSeries extends Abstract_Schema_Piece {
 		$author = $this->get_series_author( $series );
 
 		$schema = array(
-		   "@type" => "PodcastSeries",
-		   "image" => $ssp_admin->get_series_image_src( $series ),
-		   "url" => $this->context->canonical,
-		   "name" => $this->context->title,
-		   "webFeed" => $ssp_admin->get_series_feed_url( $series ),
-		   "author" => [
-			   "@type" => "Person",
-			   "name" => "Myke Hurley",
-		   ],
+			"@type"   => "PodcastSeries",
+			"image"   => $ssp_admin->get_series_image_src( $series ),
+			"url"     => $this->context->canonical,
+			"name"    => $this->context->title,
+			"webFeed" => $ssp_admin->get_series_feed_url( $series ),
 		);
 
 		if ( $description ) {

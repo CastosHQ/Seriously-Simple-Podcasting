@@ -1237,6 +1237,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 
 		$content = strip_shortcodes( $content );
 		$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
+		$content = str_replace( '<br>', PHP_EOL, $content );
 		$content = strip_tags( $content, '<p>,<a>' );
 
 		// Remove empty paragraphs as well.

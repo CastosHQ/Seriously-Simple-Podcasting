@@ -1226,8 +1226,12 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 		$blocks  = parse_blocks( $content );
 		if ( $blocks and is_array( $blocks ) ) {
 			$content = '';
+			$allowed_blocks = [
+				'core/paragraph',
+				'core/list',
+			];
 			foreach ( $blocks as $block ) {
-				if ( 'core/paragraph' === $block['blockName'] ) {
+				if ( in_array( $block['blockName'], $allowed_blocks ) ) {
 					$content .= $block['innerHTML'];
 				}
 			}
@@ -1238,7 +1242,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 		$content = strip_shortcodes( $content );
 		$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 		$content = str_replace( '<br>', PHP_EOL, $content );
-		$content = strip_tags( $content, '<p>,<a>' );
+		$content = strip_tags( $content, '<p>,<a>,<ul>,<ol>,<li>' );
 
 		// Remove empty paragraphs as well.
 		$content = trim( str_replace( '<p></p>', '', $content ) );

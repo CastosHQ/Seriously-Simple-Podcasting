@@ -588,7 +588,7 @@ textarea#episode_embed_code {
   font-size: 20px;
   font-weight: 600;
   border-radius: 50%;
-  left: -2px;
+  left: 0;
   text-align: center;
   line-height: 28px;
 }

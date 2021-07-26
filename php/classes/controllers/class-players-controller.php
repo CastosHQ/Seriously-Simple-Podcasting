@@ -18,6 +18,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.3
+ *
+ * @todo Do not use multiple instances, use only one from the Frontend Controller
  */
 class Players_Controller extends Controller {
 
@@ -67,7 +69,7 @@ class Players_Controller extends Controller {
 	 *
 	 * @return array
 	 */
-	public function get_html_player_data( $id ) {
+	public function get_player_data( $id ) {
 		$audio_file = get_post_meta( $id, 'audio_file', true );
 		if ( empty( $audio_file ) ) {
 			return apply_filters( 'ssp_html_player_data', array() );
@@ -94,6 +96,7 @@ class Players_Controller extends Controller {
 		$template_data = array(
 			'episode'               => $episode,
 			'episode_id'            => $episode->ID,
+			'date'                  => $this->format_post_date( $episode->post_date ),
 			'duration'              => $episode_duration,
 			'episode_url'           => $episode_url,
 			'audio_file'            => $audio_file,
@@ -112,6 +115,12 @@ class Players_Controller extends Controller {
 		return $template_data;
 	}
 
+	protected function format_post_date( $post_date, $format = 'M j, Y' ) {
+		$timestamp = strtotime( $post_date );
+
+		return date( $format, $timestamp );
+	}
+
 	/**
 	 * Renders the HTML5 player, based on the attributes sent to the method
 	 * If the player assets are registered but not already enqueued, this will enqueue them
@@ -121,20 +130,51 @@ class Players_Controller extends Controller {
 	 * @return string
 	 */
 	public function render_html_player( $episode_id ) {
-		$template_data = $this->get_html_player_data( $episode_id );
+		$template_data = $this->get_player_data( $episode_id );
 		if ( ! array_key_exists( 'audio_file', $template_data ) ) {
 			return '';
 		}
 
+		$this->enqueue_player_assets();
+
+		return $this->renderer->render( $template_data, 'players/castos-player' );
+	}
+
+
+	/**
+	 * Renders the Playlist player, based on the attributes sent to the method
+	 * If the player assets are registered but not already enqueued, this will enqueue them
+	 *
+	 * @param $episodes
+	 * @param $atts
+	 *
+	 * @return string
+	 */
+	public function render_playlist_player( $episodes, $atts ) {
+		if ( empty( $episodes ) ) {
+			return '';
+		}
+
+		$this->enqueue_player_assets();
+
+		$template_data = $this->get_player_data( $episodes[0]->ID );
+
+		foreach ( $episodes as $episode ) {
+			$template_data['playlist'][] = $this->get_player_data( $episode->ID );
+		}
+
+		return $this->renderer->render( $template_data, 'players/castos-player' );
+	}
+
+	public function enqueue_player_assets(){
 		if ( wp_script_is( 'ssp-castos-player', 'registered' ) && ! wp_script_is( 'ssp-castos-player', 'enqueued' ) ) {
 			wp_enqueue_script( 'ssp-castos-player' );
 		}
 		if ( wp_style_is( 'ssp-castos-player', 'registered' ) && ! wp_style_is( 'ssp-castos-player', 'enqueued' ) ) {
 			wp_enqueue_style( 'ssp-castos-player' );
 		}
-
-		return $this->renderer->render( $template_data, 'players/castos-player' );
 	}
+
 
 	/**
 	 * Renders the Subscribe Buttons, based on the attributes sent to the method

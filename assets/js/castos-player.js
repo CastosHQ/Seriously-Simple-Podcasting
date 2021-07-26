@@ -11,23 +11,24 @@ function docReady(fn) {
 
 docReady(function() {
 	/* Get Our Elements */
-	var players = document.querySelectorAll('.castos-player');
+	let players = document.querySelectorAll('.castos-player');
 
 	players.forEach(function (player) {
-		var episodeId = player.dataset.episode,
-			playback = document.querySelector('.playback-' + episodeId),
-			audio = document.querySelector('.clip-' + episodeId),
-			playBtn = document.querySelector('.play-btn-' + episodeId),
-			pauseBtn = document.querySelector('.pause-btn-' + episodeId),
-			cover = document.querySelector('.player__artwork-' + episodeId),
-			duration = document.querySelector('#duration-' + episodeId),
-			timer = document.querySelector('#timer-' + episodeId),
-			progress = document.querySelector('.progress-' + episodeId),
-			progressBar = document.querySelector('.progress__filled-' + episodeId),
+		let episodeId = player.dataset.episode,
+			playback = player.querySelector('.ssp-playback'),
+			audio,
+			playBtn = player.querySelector('.play-btn'),
+			pauseBtn = player.querySelector('.pause-btn'),
+			cover = player.querySelector('.player__artwork'),
+			duration = player.querySelector('.ssp-duration'),
+			timer = player.querySelector('.ssp-timer'),
+			progress = player.querySelector('.ssp-progress'),
+			progressBar = player.querySelector('.progress__filled'),
 			skipButtons = playback.querySelectorAll('[data-skip]'),
-			volumeBtn = document.querySelector('.player-btn__volume-' + episodeId),
-			speedBtn = document.querySelector('.player-btn__speed-' + episodeId),
-			loader = document.querySelector('.loader-' + episodeId);
+			volumeBtn = player.querySelector('.player-btn__volume'),
+			speedBtn = player.querySelector('.player-btn__speed'),
+			loader = player.querySelector('.ssp-loader'),
+			playlistItems = player.querySelectorAll('.playlist__item');
 
 		/* Helper functions */
 		function padNum(num) {
@@ -35,11 +36,11 @@ docReady(function() {
 		}
 
 		function formatTime(totalSeconds) {
-			var hours = Math.floor(totalSeconds / 3600);
+			let hours = Math.floor(totalSeconds / 3600);
 			totalSeconds %= 3600;
-			var minutes = Math.floor(totalSeconds / 60);
-			var seconds = Math.floor(totalSeconds % 60);
-			var output = void 0;
+			let minutes = Math.floor(totalSeconds / 60),
+				seconds = Math.floor(totalSeconds % 60),
+			 	output = 0;
 			hours > 0 ? output = padNum(hours) + ' : ' + padNum(minutes) + ' : ' + padNum(seconds) : output = padNum(minutes) + ':' + padNum(seconds);
 			return output;
 		}
@@ -47,14 +48,20 @@ docReady(function() {
 		/* Build out functions */
 		function togglePlayback() {
 			if (audio.paused) {
-				audio.play();
-				pauseBtn.classList.remove('hide');
-				playBtn.classList.add('hide');
+				playAudio();
 			} else {
-				audio.pause();
-				pauseBtn.classList.add('hide');
-				playBtn.classList.remove('hide');
+				pauseAudio();
 			}
+		}
+
+		function playAudio(){
+			audio.play();
+			syncPlayButton();
+		}
+
+		function pauseAudio(){
+			audio.pause();
+			syncPlayButton();
 		}
 
 		function syncPlayButton() {
@@ -71,23 +78,13 @@ docReady(function() {
 			duration.innerHTML = formatTime(audio.duration);
 		}
 
-		audio.ontimeupdate = function () {
-			timer.innerHTML = formatTime(audio.currentTime);
-		};
-
-		audio.onended = function () {
-			pauseBtn.classList.add('hide');
-			playBtn.classList.remove('hide');
-		};
-
 		function handleProgress() {
-			var percent = audio.currentTime / audio.duration * 100;
+			let percent = audio.currentTime / audio.duration * 100;
 			progressBar.style.flexBasis = percent + '%';
 		}
 
 		function scrub(e) {
-			var scrubTime = e.offsetX / progress.offsetWidth * audio.duration;
-			audio.currentTime = scrubTime;
+			audio.currentTime = e.offsetX / progress.offsetWidth * audio.duration;
 		}
 
 		function skip() {
@@ -105,7 +102,7 @@ docReady(function() {
 		}
 
 		function handleSpeedChange() {
-			var newSpeed = this.dataset.speed < 2 ? (parseFloat(this.dataset.speed) + 0.2).toFixed(1) : 1;
+			let newSpeed = this.dataset.speed < 2 ? (parseFloat(this.dataset.speed) + 0.2).toFixed(1) : 1;
 			speedBtn.setAttribute('data-speed', newSpeed);
 			speedBtn.innerHTML = newSpeed + 'x';
 			audio.playbackRate = newSpeed;
@@ -119,24 +116,40 @@ docReady(function() {
 			loader.classList.add('hide');
 		}
 
+		function initAudio(){
+			handleCanPlay();
+			audio = player.querySelector('.clip-' + episodeId );
+			audio.addEventListener('play', syncPlayButton);
+			audio.addEventListener('pause', syncPlayButton);
+			audio.addEventListener('playing', syncPlayButton);
+			audio.addEventListener('playing', updateDuration);
+			audio.addEventListener('timeupdate', handleProgress);
+
+			audio.ontimeupdate = function () {
+				timer.innerHTML = formatTime(audio.currentTime);
+			};
+
+			audio.onended = function () {
+				pauseBtn.classList.add('hide');
+				playBtn.classList.remove('hide');
+			};
+
+			audio.addEventListener('waiting', handleWaiting);
+			audio.addEventListener('canplay', handleCanPlay);
+		}
+
 		/* Hook up the event listeners */
 		playBtn.addEventListener('click', togglePlayback);
 		pauseBtn.addEventListener('click', togglePlayback);
 		cover.addEventListener('click', togglePlayback);
 		speedBtn.addEventListener('click', handleSpeedChange);
-		audio.addEventListener('play', syncPlayButton);
-		audio.addEventListener('pause', syncPlayButton);
-		audio.addEventListener('playing', syncPlayButton);
-		audio.addEventListener('playing', updateDuration);
-		audio.addEventListener('timeupdate', handleProgress);
 		skipButtons.forEach(function (button) {
 			return button.addEventListener('click', skip);
 		});
 		volumeBtn.addEventListener('click', toggleMute);
-		audio.addEventListener('waiting', handleWaiting);
-		audio.addEventListener('canplay', handleCanPlay);
 
-		var mousedown = false;
+
+		let mousedown = false;
 		progress.addEventListener('click', scrub);
 		progress.addEventListener('mousemove', function (e) {
 			return mousedown && scrub(e);
@@ -152,18 +165,18 @@ docReady(function() {
 		// PANELS
 		//
 		/* Get Our Elements */
-		var subscribeBtn = document.querySelector('#subscribe-btn-' + episodeId),
-			subscribePanel = document.querySelector('.player-panels-' + episodeId + ' .subscribe-' + episodeId),
-			subscribePanelClose = document.querySelector('.player-panels-' + episodeId + ' .subscribe-' + episodeId + ' .close-btn-' + episodeId),
-			shareBtn = document.querySelector('#share-btn-' + episodeId),
-			sharePanel = document.querySelector('.player-panels-' + episodeId + ' .share-' + episodeId),
-			sharePanelClose = document.querySelector('.player-panels-' + episodeId + ' .share-' + episodeId + ' .close-btn-' + episodeId),
-			linkCopyElm = document.querySelector('.input-link-' + episodeId),
-			linkCopyBtn = document.querySelector('.copy-link-' + episodeId),
-			embedCopyElm = document.querySelector('.input-embed-' + episodeId),
-			embedCopyBtn = document.querySelector('.copy-embed-' + episodeId),
-			rssCopyElm = document.querySelector('.input-rss-' + episodeId),
-			rssCopyBtn = document.querySelector('.copy-rss-' + episodeId);
+		let subscribeBtn = player.querySelector('#subscribe-btn'),
+			subscribePanel = player.querySelector('.player-panels .subscribe'),
+			subscribePanelClose = player.querySelector('.player-panels .subscribe .close-btn'),
+			shareBtn = player.querySelector('.share-btn'),
+			sharePanel = player.querySelector('.player-panels .share'),
+			sharePanelClose = player.querySelector('.player-panels .share .close-btn'),
+			linkCopyElm = player.querySelector('.input-link'),
+			linkCopyBtn = player.querySelector('.copy-link'),
+			embedCopyElm = player.querySelector('.input-embed'),
+			embedCopyBtn = player.querySelector('.copy-embed'),
+			rssCopyElm = player.querySelector('.input-rss'),
+			rssCopyBtn = player.querySelector('.copy-rss');
 
 		/* Build out functions */
 		function togglePanel(panel) {
@@ -175,35 +188,73 @@ docReady(function() {
 			document.execCommand('Copy');
 		}
 
-		/* Hook up the event listeners */
-		if (subscribeBtn) {
-			subscribeBtn.addEventListener('click', function () {
+ 		function handleChangePlaylistItem() {
+			if( this.dataset.episode === episodeId ){
+
+			}
+
+
+			playlistItems.forEach(function (item) {
+				item.classList.remove('active')
+			});
+			this.classList.add('active');
+			console.log('Item:', this);
+
+			pauseAudio();
+
+			episodeId = this.dataset.episode;
+
+			initAudio();
+
+			setTimeout(function () {
+				togglePlayback();
+			}, 500);
+		}
+
+		function initEventListeners(){
+			/* Hook up the event listeners */
+			if (subscribeBtn) {
+				subscribeBtn.addEventListener('click', function () {
+					return togglePanel(subscribePanel);
+				});
+			}
+
+			subscribePanelClose.addEventListener('click', function () {
 				return togglePanel(subscribePanel);
 			});
-		}
 
-		subscribePanelClose.addEventListener('click', function () {
-			return togglePanel(subscribePanel);
-		});
+			if (shareBtn) {
+				shareBtn.addEventListener('click', function () {
+					return togglePanel(sharePanel);
+				});
+			}
 
-		if (shareBtn) {
-			shareBtn.addEventListener('click', function () {
+			sharePanelClose.addEventListener('click', function () {
 				return togglePanel(sharePanel);
+			});
+
+			linkCopyBtn.addEventListener('click', function () {
+				return copyLink(linkCopyElm);
+			});
+
+			embedCopyBtn.addEventListener('click', function () {
+				return copyLink(embedCopyElm);
+			});
+
+			rssCopyBtn.addEventListener('click', function () {
+				return copyLink(rssCopyElm);
+			});
+
+			playlistItems.forEach(function (item) {
+				item.addEventListener('click', handleChangePlaylistItem)
 			});
 		}
 
-		sharePanelClose.addEventListener('click', function () {
-			return togglePanel(sharePanel);
-		});
+		function init(){
+			initEventListeners();
+			initAudio();
+		}
 
-		linkCopyBtn.addEventListener('click', function () {
-			return copyLink(linkCopyElm);
-		});
-		embedCopyBtn.addEventListener('click', function () {
-			return copyLink(embedCopyElm);
-		});
-		rssCopyBtn.addEventListener('click', function () {
-			return copyLink(rssCopyElm);
-		});
+		init();
 	});
 });

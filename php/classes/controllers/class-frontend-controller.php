@@ -38,6 +38,12 @@ class Frontend_Controller extends Controller {
 	 */
 	public $episode_controller;
 
+
+	/**
+	 * @var Players_Controller
+	 * */
+	public $players_controller;
+
 	/**
 	 * Constructor
 	 *
@@ -47,6 +53,7 @@ class Frontend_Controller extends Controller {
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->episode_controller = new Episode_Controller( $file, $version );
+		$this->players_controller = new Players_Controller( $file, $version );
 		$this->register_hooks_and_filters();
 	}
 
@@ -376,11 +383,11 @@ class Frontend_Controller extends Controller {
 			$player_size = 'standard';
 		}
 
-		$players_controller = new Players_Controller( $this->file, $this->version );
+
 		if ( 'standard' === $player_size ) {
-			$player = $players_controller->render_media_player( $episode_id );
+			$player = $this->players_controller->render_media_player( $episode_id );
 		} else {
-			$player = $players_controller->render_html_player( $episode_id );
+			$player = $this->players_controller->render_html_player( $episode_id );
 		}
 
 		// Allow filtering so that alternative players can be used

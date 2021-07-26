@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.7
 Requires PHP: 5.6
-Stable tag: 2.7.2
+Stable tag: 2.7.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -161,8 +161,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.7.3 =
+* 2021-07-26
+* UPDATE SUMMARY: Strip all feed tags except allowed if it displays the episode post content, minor fixes
+* [UPDATE] Strip all feed tags except allowed (<p>, <a>, <ul>, <ol>, <li>) if it displays the episode post content, convert <br> tags into the new lines
+* [UPDATE] Revise text when uploading an episode file
+* [FIX] Series feed "Episode description" option not working fix
+* [FIX] Fixed episodes controller fatal error for the REST API episodes endpoint
+
 = 2.7.2 =
-* 2021-06-10
+* 2021-06-11
 * UPDATE SUMMARY: Hotfix for the "Exclude series from default feed" by default option
 * [FIX] Reverted "Exclude series from default feed" to the previous state
 * [FIX] Select "Exclude series from default feed" by default ONLY for the new series

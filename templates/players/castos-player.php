@@ -27,10 +27,10 @@
 			</div>
 			<div class="player__body">
 				<div class="currently-playing">
-					<div class="show">
-						<strong><?php echo $podcast_title ?></strong>
+					<div class="show player__podcast-title">
+						<?php echo $podcast_title ?>
 					</div>
-					<div class="episode-title"><?php echo $episode->post_title ?></div>
+					<div class="episode-title player__episode-title"><?php echo $episode->post_title ?></div>
 				</div>
 				<div class="play-progress">
 					<div class="play-pause-controls">
@@ -153,8 +153,8 @@
 					<li class="playlist__item<?php if ( 0 === $k ): ?> active<?php endif ?>"
 						data-episode="<?php echo $item['episode_id']; ?>">
 						<div class="playlist__item__details">
-							<h2><?php echo $item['podcast_title']; ?></h2>
-							<p><?php echo $item['episode']->post_title; ?></p>
+							<h2 class="playlist__podcast-title"><?php echo $item['podcast_title']; ?></h2>
+							<p class="playlist__episode-title"><?php echo $item['episode']->post_title; ?></p>
 						</div>
 						<div class="playlist__item_meta">
 							<span><?php echo $item['date']; ?></span>

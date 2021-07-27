@@ -28,7 +28,9 @@ docReady(function() {
 			volumeBtn = player.querySelector('.player-btn__volume'),
 			speedBtn = player.querySelector('.player-btn__speed'),
 			loader = player.querySelector('.ssp-loader'),
-			playlistItems = player.querySelectorAll('.playlist__item');
+			playlistItems = player.querySelectorAll('.playlist__item'),
+			podcastTitle = player.querySelector('.player__podcast-title'),
+			episodeTitle = player.querySelector('.player__episode-title');
 
 		/* Helper functions */
 		function padNum(num) {
@@ -190,15 +192,17 @@ docReady(function() {
 
  		function handleChangePlaylistItem() {
 			if( this.dataset.episode === episodeId ){
-
+				return;
 			}
-
 
 			playlistItems.forEach(function (item) {
 				item.classList.remove('active')
 			});
+
 			this.classList.add('active');
-			console.log('Item:', this);
+
+			podcastTitle.textContent = this.querySelector('.playlist__podcast-title').textContent;
+			episodeTitle.textContent = this.querySelector('.playlist__episode-title').textContent;
 
 			pauseAudio();
 

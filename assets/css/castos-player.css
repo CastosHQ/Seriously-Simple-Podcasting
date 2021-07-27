@@ -201,6 +201,11 @@
     border-radius: 4px;
     overflow: hidden;
 }
+
+.castos-player .player__podcast-title {
+	font-weight: 700;
+}
+
 .castos-player .player__main {
     display: grid;
     grid-template-columns: 150px 1fr;

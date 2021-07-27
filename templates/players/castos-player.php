@@ -10,7 +10,7 @@
  * @var array $subscribe_links
  * @var string $episode_id
  * @var string $feed_url
- * @var string $episode_url
+ * @var string $current_url
  * @var string $embed_code
  * @var string $podcast_title
  * @var bool $show_subscribe_button
@@ -129,7 +129,7 @@
 					<?php _e( 'Link', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div>
-					<input value="<?php echo $episode_url ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
+					<input value="<?php echo $current_url ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
 				</div>
 				<button class="copy-link copy-link-<?php echo $episode_id ?>"></button>
 			</div>

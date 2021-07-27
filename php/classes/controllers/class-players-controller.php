@@ -65,11 +65,12 @@ class Players_Controller extends Controller {
 	/**
 	 * Sets up the template data for the HTML5 player, based on the episode id passed.
 	 *
-	 * @param int $id
+	 * @param int $id Episode id
+	 * @param \WP_Post $current_post Current post
 	 *
 	 * @return array
 	 */
-	public function get_player_data( $id ) {
+	public function get_player_data( $id, $current_post = null ) {
 		$audio_file = get_post_meta( $id, 'audio_file', true );
 		if ( empty( $audio_file ) ) {
 			return apply_filters( 'ssp_html_player_data', array() );
@@ -80,13 +81,14 @@ class Players_Controller extends Controller {
 		 * If the id passed is empty or 0, get_post will return the current post
 		 */
 		$episode          = get_post( $id );
+		$current_post     = $current_post ?: $episode;
 		$episode_duration = get_post_meta( $id, 'duration', true );
-		$episode_url      = get_post_permalink( $id );
+		$current_url      = get_post_permalink( $current_post->ID );
 		$audio_file       = $this->episode_controller->get_episode_player_link( $id );
 		$album_art        = $this->episode_controller->get_album_art( $id );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$feed_url         = $this->episode_repository->get_feed_url( $id );
-		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode ) );
+		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );
 		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
 		$show_subscribe_button  = 'on' === get_option( 'ss_podcasting_subscribe_button_enabled', 'on' );
 		$show_share_button      = 'on' === get_option( 'ss_podcasting_share_button_enabled', 'on' );
@@ -98,7 +100,7 @@ class Players_Controller extends Controller {
 			'episode_id'            => $episode->ID,
 			'date'                  => $this->format_post_date( $episode->post_date ),
 			'duration'              => $episode_duration,
-			'episode_url'           => $episode_url,
+			'current_url'           => $current_url,
 			'audio_file'            => $audio_file,
 			'album_art'             => $album_art,
 			'podcast_title'         => $podcast_title,
@@ -157,7 +159,9 @@ class Players_Controller extends Controller {
 
 		$this->enqueue_player_assets();
 
-		$template_data = $this->get_player_data( $episodes[0]->ID );
+		global $post;
+
+		$template_data = $this->get_player_data( $episodes[0]->ID, $post );
 
 		foreach ( $episodes as $episode ) {
 			$template_data['playlist'][] = $this->get_player_data( $episode->ID );

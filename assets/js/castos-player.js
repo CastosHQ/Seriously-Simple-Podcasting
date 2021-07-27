@@ -165,7 +165,7 @@ docReady(function() {
 		// PANELS
 		//
 		/* Get Our Elements */
-		let subscribeBtn = player.querySelector('#subscribe-btn'),
+		let subscribeBtn = player.querySelector('.subscribe-btn'),
 			subscribePanel = player.querySelector('.player-panels .subscribe'),
 			subscribePanelClose = player.querySelector('.player-panels .subscribe .close-btn'),
 			shareBtn = player.querySelector('.share-btn'),

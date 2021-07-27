@@ -152,8 +152,12 @@ class Options_Handler {
 			// get the main feed url
 			$url = get_option( 'ss_podcasting_' . $option_key . '_url', '' );
 			// if we're in a series, and the series has a url for this option
-			if ( is_array( $terms ) && isset( $terms[0] ) && false !== get_option( 'ss_podcasting_' . $option_key . '_url_' . $terms[0]->term_id ) ) {
-				$url = get_option( 'ss_podcasting_' . $option_key . '_url_' . $terms[0]->term_id, '' );
+			if ( is_array( $terms ) && isset( $terms[0] ) ) {
+				$series_url = get_option( 'ss_podcasting_' . $option_key . '_url_' . $terms[0]->term_id, '' );
+
+				if ( $series_url ) {
+					$url = $series_url;
+				}
 			}
 			$icon                           = str_replace( '_', '-', $option_key );
 

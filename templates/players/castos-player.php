@@ -1,6 +1,9 @@
 <?php
 /**
+ * Is used for rendering both HTML player and Playlist player
+ *
  * @see \SeriouslySimplePodcasting\Controllers\Players_Controller::render_html_player();
+ * @see \SeriouslySimplePodcasting\Controllers\Players_Controller::render_playlist_player();
  *
  * @var array $album_art
  * @var string $player_mode

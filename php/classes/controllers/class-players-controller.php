@@ -163,12 +163,57 @@ class Players_Controller extends Controller {
 
 		$template_data = $this->get_player_data( $episodes[0]->ID, $post );
 
+		$template_data['player_mode'] = $atts['style'];
+
 		foreach ( $episodes as $episode ) {
 			$template_data['playlist'][] = $this->get_player_data( $episode->ID );
 		}
 
 		return $this->renderer->render( $template_data, 'players/castos-player' );
 	}
+
+	/**
+	 * Renders the Playlist player, based on the attributes sent to the method
+	 * If the player assets are registered but not already enqueued, this will enqueue them
+	 *
+	 * @param array $tracks
+	 * @param array $atts
+	 *
+	 * @return string
+	 */
+	public function render_playlist_compact_player( $tracks, $atts ) {
+
+		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
+			return '';
+		}
+
+		$data = array(
+			'type'         => $atts['type'],
+			// don't pass strings to JSON, will be truthy in JS
+			'tracklist'    => wp_validate_boolean( $atts['tracklist'] ),
+			'tracknumbers' => wp_validate_boolean( $atts['tracknumbers'] ),
+			'images'       => wp_validate_boolean( $atts['images'] ),
+			'artists'      => false,
+			'tracks'       => $tracks,
+		);
+
+		$safe_type  = esc_attr( $atts['type'] );
+		$safe_style = esc_attr( $atts['style'] );
+
+		static $instance = 0;
+		$instance ++;
+
+		if ( 1 === $instance ) {
+			/* This hook is defined in wp-includes/media.php */
+			do_action( 'wp_playlist_scripts', $atts['type'], $atts['style'] );
+		}
+
+		return $this->renderer->render(
+			compact('safe_style', 'safe_type', 'data'),
+			'players/playlist-compact-player'
+		);
+	}
+
 
 	public function enqueue_player_assets(){
 		if ( wp_script_is( 'ssp-castos-player', 'registered' ) && ! wp_script_is( 'ssp-castos-player', 'enqueued' ) ) {

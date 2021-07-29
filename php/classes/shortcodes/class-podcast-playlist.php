@@ -45,8 +45,7 @@ class Podcast_Playlist implements Shortcode {
 	 *
 	 * @return string         HTML output
 	 */
-	public function shortcode( $params ) {
-		$this->prepare_properties();
+	public function shortcode( $params ) {$this->prepare_properties();
 		$atts     = $this->prepare_atts( $params );
 		$episodes = $this->get_episodes( $atts );
 
@@ -54,13 +53,10 @@ class Podcast_Playlist implements Shortcode {
 			return '';
 		}
 
-		$player_style = 'compact';
-		$player_style = 'default';
-
-		if ( 'default' === $player_style ) {
-			return $this->render_default_player( $episodes, $atts );
-		} else {
+		if ( 'compact' === $atts['player_style'] ) {
 			return $this->render_compact_player( $episodes, $atts );
+		} else {
+			return $this->render_default_player( $episodes, $atts );
 		}
 	}
 
@@ -70,8 +66,6 @@ class Podcast_Playlist implements Shortcode {
 
 
 	/**
-	 * @todo: move it to Players_Controller
-	 *
 	 * @param array $episodes
 	 * @param array $atts
 	 *
@@ -80,65 +74,7 @@ class Podcast_Playlist implements Shortcode {
 	protected function render_compact_player( $episodes, $atts ) {
 		$tracks = $this->get_tracks( $episodes, $atts );
 
-		$data = array(
-			'type'         => $atts['type'],
-			// don't pass strings to JSON, will be truthy in JS
-			'tracklist'    => wp_validate_boolean( $atts['tracklist'] ),
-			'tracknumbers' => wp_validate_boolean( $atts['tracknumbers'] ),
-			'images'       => wp_validate_boolean( $atts['images'] ),
-			'artists'      => false,
-			'tracks'       => $tracks,
-		);
-
-		$safe_type  = esc_attr( $atts['type'] );
-		$safe_style = esc_attr( $atts['style'] );
-
-		static $instance = 0;
-		$instance ++;
-
-		if ( 1 === $instance ) {
-			/* This hook is defined in wp-includes/media.php */
-			do_action( 'wp_playlist_scripts', $atts['type'], $atts['style'] );
-		}
-
-		ob_start();
-		?>
-		<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?>">
-			<<?php echo $safe_type ?> controls="controls" preload="none" width="<?php
-			echo (int) $this->theme_width;
-			?>"<?php if ( 'video' === $safe_type ):
-				echo ' height="', (int) $this->theme_height, '"';
-			endif; ?>>
-		</<?php echo $safe_type ?>>
-
-
-		<?php	if ( 'audio' === $atts['type'] ) : ?>
-			<div class="wp-playlist-current-item"></div>
-		<?php endif ?>
-
-		<div class="wp-playlist-next"></div>
-		<div class="wp-playlist-prev"></div>
-
-		<noscript>
-			<ol>
-				<?php
-				foreach ( $data['tracks'] as $track ) {
-					$episode_id = $track['id'];
-					$url        = $this->ss_podcasting->get_enclosure( $episode_id );
-					if ( get_option( 'permalink_structure' ) ) {
-						$url = $this->ss_podcasting->get_episode_download_link( $episode_id );
-						$url = str_replace( 'podcast-download', 'podcast-player', $url );
-					}
-					printf( '<li>%s</li>', $url );
-				}
-				?>
-			</ol>
-		</noscript>
-		<script type="application/json" class="wp-playlist-script"><?php echo wp_json_encode( $data ) ?></script>
-
-		</div><!-- Closing div -->
-		<?php
-		return ob_get_clean();
+		return $this->ss_podcasting->players_controller->render_playlist_compact_player( $tracks, $atts );
 	}
 
 	protected function prepare_properties(){
@@ -204,12 +140,14 @@ class Podcast_Playlist implements Shortcode {
 	 */
 	protected function get_tracks( $episodes, $atts ) {
 		$tracks = array();
+		$is_permalink_structure = get_option( 'permalink_structure' );
 		foreach ( $episodes as $episode ) {
 
-			$url = $this->ss_podcasting->get_enclosure( $episode->ID );
-			if ( get_option( 'permalink_structure' ) ) {
+			if ( $is_permalink_structure ) {
 				$url = $this->ss_podcasting->get_episode_download_link( $episode->ID );
 				$url = str_replace( 'podcast-download', 'podcast-player', $url );
+			} else {
+				$url = $this->ss_podcasting->get_enclosure( $episode->ID );
 			}
 
 			// Get episode file type

@@ -241,15 +241,19 @@ class Podcast_Playlist implements Shortcode {
 
 		// Limit query to episodes in defined series only
 		if ( $atts['series'] ) {
+			$series_arr = strpos($atts['series'], ',') ? explode(',', $atts['series']) : (array)$atts['series'];
 
-			$query_args['tax_query'] = array(
-				array(
+			foreach ( $series_arr as $series ) {
+				$query_args['tax_query'][] = array(
 					'taxonomy' => 'series',
 					'field'    => 'slug',
-					'terms'    => $atts['series'],
-				),
-			);
+					'terms'    => $series,
+				);
+			}
 
+			if ( count( $series_arr ) > 1 ) {
+				$query_args['tax_query']['relation'] = 'OR';
+			}
 		}
 
 		// Allow dynamic filtering of query args

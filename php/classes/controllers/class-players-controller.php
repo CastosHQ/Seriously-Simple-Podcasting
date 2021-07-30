@@ -181,11 +181,13 @@ class Players_Controller extends Controller {
 	 *
 	 * @return string
 	 */
-	public function render_playlist_compact_player( $tracks, $atts ) {
+	public function render_playlist_compact_player( $tracks, $atts, $width, $height ) {
 
 		if ( defined( 'REST_REQUEST' ) && REST_REQUEST ) {
 			return '';
 		}
+
+		$this->enqueue_player_assets();
 
 		$data = array(
 			'type'         => $atts['type'],
@@ -209,7 +211,7 @@ class Players_Controller extends Controller {
 		}
 
 		return $this->renderer->render(
-			compact('safe_style', 'safe_type', 'data'),
+			compact('safe_style', 'safe_type', 'data', 'width', 'height'),
 			'players/playlist-compact-player'
 		);
 	}

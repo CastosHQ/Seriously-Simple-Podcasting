@@ -17,6 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package   SeriouslySimplePodcasting
  * @category  SeriouslySimplePodcasting/Widgets
  * @since     1.9.0
+ * @todo: Refactoring: use abstract Castos_Widget class
  */
 class Series extends WP_Widget {
 	protected $widget_cssclass;

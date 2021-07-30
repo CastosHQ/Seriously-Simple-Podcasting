@@ -74,7 +74,7 @@ class Podcast_Playlist implements Shortcode {
 	protected function render_compact_player( $episodes, $atts ) {
 		$tracks = $this->get_tracks( $episodes, $atts );
 
-		return $this->ss_podcasting->players_controller->render_playlist_compact_player( $tracks, $atts );
+		return $this->ss_podcasting->players_controller->render_playlist_compact_player( $tracks, $atts, $this->theme_width, $this->theme_height );
 	}
 
 	protected function prepare_properties(){

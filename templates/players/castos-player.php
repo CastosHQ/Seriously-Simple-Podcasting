@@ -163,7 +163,7 @@
 							<span><?php echo $item['date']; ?></span>
 							<span><?php echo $item['duration']; ?></span>
 						</div>
-						<audio loop preload="none" class="clip clip-<?php echo $item['episode_id'] ?>">
+						<audio preload="none" class="clip clip-<?php echo $item['episode_id'] ?>">
 							<source src="<?php echo $item['audio_file'] ?>">
 						</audio>
 					</li>

@@ -132,12 +132,29 @@ docReady(function() {
 			};
 
 			audio.onended = function () {
-				pauseBtn.classList.add('hide');
-				playBtn.classList.remove('hide');
+				hideElement(pauseBtn);
+				showElement(playBtn);
+				let currentActiveItem = player.querySelector('.playlist__item.active'),
+					nextItem = currentActiveItem.nextElementSibling;
+
+				currentActiveItem.classList.remove('active');
+				if (nextItem) {
+					let event = document.createEvent('HTMLEvents');
+					event.initEvent('click', true, false);
+					nextItem.dispatchEvent(event);
+				}
 			};
 
 			audio.addEventListener('waiting', handleWaiting);
 			audio.addEventListener('canplay', handleCanPlay);
+		}
+
+		function hideElement(element) {
+			element.classList.add('hide');
+		}
+
+		function showElement(element) {
+			element.classList.remove('hide');
 		}
 
 		/* Hook up the event listeners */

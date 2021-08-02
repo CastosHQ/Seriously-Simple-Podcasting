@@ -1250,3 +1250,25 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 		return apply_filters( 'ssp_feed_item_content', $content, get_the_ID() );
 	}
 }
+
+/**
+ * Get the episode content for showing in the feed. Now Apple supports only p tags.
+ * This function removes iframes and shortcodes from the content and strips all tags except <p> and <a>
+ */
+if ( ! function_exists( 'ssp_get_episode_excerpt' ) ) {
+	/**
+	 * @param int|WP_Post $episode
+	 *
+	 * @return string
+	 */
+	function ssp_get_episode_excerpt( $episode ) {
+		$episode = get_post( $episode );
+		$excerpt = get_the_excerpt( $episode );
+
+		$num_words = apply_filters( 'ssp_episode_excerpt_num_words', 50 );
+
+		$excerpt = wp_trim_words( $excerpt, $num_words );
+
+		return apply_filters( 'ssp_get_episode_excerpt', $excerpt, $episode );
+	}
+}

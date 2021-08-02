@@ -159,9 +159,10 @@ class Players_Controller extends Controller {
 
 		$this->enqueue_player_assets();
 
-		global $post;
+		$template_data = $this->get_player_data( $episodes[0]->ID, get_post() );
 
-		$template_data = $this->get_player_data( $episodes[0]->ID, $post );
+		global $wp;
+		$template_data['current_url'] = home_url( $wp->request );
 
 		$template_data['player_mode'] = $atts['style'];
 

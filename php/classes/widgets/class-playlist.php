@@ -47,6 +47,7 @@ class Playlist extends Castos_Widget {
 			'style'        => 'color_style',
 			'order'        => 'order',
 			'orderby'      => 'orderby',
+			'limit'        => 'limit'
 		);
 
 		foreach ( $allowed_atts as $k => $v ) {
@@ -98,10 +99,16 @@ class Playlist extends Castos_Widget {
 				'placeholder' => __( 'Do not exclude episodes', 'seriously-simple-podcasting' ),
 			),
 			array(
+				'type'        => 'number',
+				'id'          => 'limit',
+				'label'       => __( 'Maximum number of episodes in list', 'seriously-simple-podcasting' ),
+				'placeholder' => __( 'Do not limit number of episodes', 'seriously-simple-podcasting' ),
+			),
+			array(
 				'type'        => 'select',
 				'id'          => 'series_slug',
 				'label'       => __( 'Series:', 'seriously-simple-podcasting' ),
-				'placeholder' => __( 'Use episodes specified above', 'seriously-simple-podcasting' ),
+				'placeholder' => __( 'Default', 'seriously-simple-podcasting' ),
 				'items'       => $this->get_series(),
 			),
 			array(

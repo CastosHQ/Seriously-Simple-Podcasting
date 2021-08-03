@@ -890,9 +890,9 @@ class Frontend_Controller extends Controller {
 			return;
 		}
 
-		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array('post', SSP_CPT_PODCAST) ) ;
-		$query->set( 'post_type', $tag_archive_post_types );
-
+		$post_types             = $query->get( 'post_type' );
+		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array( 'post', SSP_CPT_PODCAST ) );
+		$query->set( 'post_type', array_merge( $post_types, $tag_archive_post_types ) );
 	}
 
 	/**

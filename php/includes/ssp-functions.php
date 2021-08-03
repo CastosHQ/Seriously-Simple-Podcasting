@@ -1229,10 +1229,11 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 			$allowed_blocks = [
 				'core/paragraph',
 				'core/list',
+				'core/block',
 			];
 			foreach ( $blocks as $block ) {
 				if ( in_array( $block['blockName'], $allowed_blocks ) ) {
-					$content .= $block['innerHTML'];
+					$content .= render_block( $block );
 				}
 			}
 		} else {

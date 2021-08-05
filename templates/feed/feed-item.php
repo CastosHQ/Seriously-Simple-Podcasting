@@ -244,7 +244,7 @@ $title = esc_html( get_the_title_rss() );
 	<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
 	<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
 	<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
-	<itunes:author><![CDATA[<?php echo esc_html( $author ); ?>]]></itunes:author>
+	<itunes:author><![CDATA[<?php echo $author; ?>]]></itunes:author>
 	<?php if ( 'off' === $turbo ) { ?>
 		<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
 		<?php if ( $episode_image ) { ?>

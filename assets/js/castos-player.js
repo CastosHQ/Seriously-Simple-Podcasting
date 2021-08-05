@@ -240,9 +240,11 @@ docReady(function() {
 				});
 			}
 
-			subscribePanelClose.addEventListener('click', function () {
-				return togglePanel(subscribePanel);
-			});
+			if (subscribePanelClose) {
+				subscribePanelClose.addEventListener('click', function () {
+					return togglePanel(subscribePanel);
+				});
+			}
 
 			if (shareBtn) {
 				shareBtn.addEventListener('click', function () {
@@ -250,25 +252,35 @@ docReady(function() {
 				});
 			}
 
-			sharePanelClose.addEventListener('click', function () {
-				return togglePanel(sharePanel);
-			});
+			if (sharePanelClose) {
+				sharePanelClose.addEventListener('click', function () {
+					return togglePanel(sharePanel);
+				});
+			}
 
-			linkCopyBtn.addEventListener('click', function () {
-				return copyLink(linkCopyElm);
-			});
+			if (linkCopyBtn) {
+				linkCopyBtn.addEventListener('click', function () {
+					return copyLink(linkCopyElm);
+				});
+			}
 
-			embedCopyBtn.addEventListener('click', function () {
-				return copyLink(embedCopyElm);
-			});
+			if (embedCopyBtn) {
+				embedCopyBtn.addEventListener('click', function () {
+					return copyLink(embedCopyElm);
+				});
+			}
 
-			rssCopyBtn.addEventListener('click', function () {
-				return copyLink(rssCopyElm);
-			});
+			if (rssCopyBtn) {
+				rssCopyBtn.addEventListener('click', function () {
+					return copyLink(rssCopyElm);
+				});
+			}
 
-			playlistItems.forEach(function (item) {
-				item.addEventListener('click', handleChangePlaylistItem)
-			});
+			if (playlistItems) {
+				playlistItems.forEach(function (item) {
+					item.addEventListener('click', handleChangePlaylistItem)
+				});
+			}
 		}
 
 		function init(){

@@ -218,8 +218,10 @@ docReady(function() {
 
 			this.classList.add('active');
 
-			podcastTitle.textContent = this.querySelector('.playlist__podcast-title').textContent;
-			episodeTitle.textContent = this.querySelector('.playlist__episode-title').textContent;
+			let playlistEpisodeTitle = this.querySelector('.playlist__episode-title');
+
+			podcastTitle.textContent = playlistEpisodeTitle.dataset.podcast;
+			episodeTitle.textContent = playlistEpisodeTitle.textContent;
 
 			pauseAudio();
 

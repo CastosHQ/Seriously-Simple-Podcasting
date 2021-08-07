@@ -218,10 +218,13 @@ docReady(function() {
 
 			this.classList.add('active');
 
-			let playlistEpisodeTitle = this.querySelector('.playlist__episode-title');
+			let playlistEpisodeTitle = this.querySelector('.playlist__episode-title'),
+				episodeCover = this.querySelector('.playlist__item__cover img');
 
 			podcastTitle.textContent = playlistEpisodeTitle.dataset.podcast;
 			episodeTitle.textContent = playlistEpisodeTitle.textContent;
+			console.log("Herere!", cover, episodeCover);
+			cover.querySelector('img').src = episodeCover.src;
 
 			pauseAudio();
 

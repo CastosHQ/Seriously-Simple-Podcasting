@@ -1021,10 +1021,14 @@
 }
 .castos-player .playlist__item {
 	display: grid;
-	grid-template-columns: 1fr 90px;
+	grid-template-columns: 75px 1fr;
 	background-color: #393445;
 	margin: 10px;
 	border-radius: 4px;
+	overflow: hidden;
+}
+.playlist__item img {
+	max-width: 100%;
 }
 .castos-player .playlist__item:hover {
 	cursor: pointer;
@@ -1035,13 +1039,15 @@
 .castos-player .playlist__item:hover .playlist__item_meta {
 	opacity: 1;
 }
+.playlist__item__cover {
+	line-height: 0;
+}
 .castos-player .playlist__item__details {
-	padding: 10px 10px 10px 5px;
+	padding: 10px;
 	overflow: hidden;
 }
 .castos-player .playlist__item__details h2 {
 	margin: 0;
-	padding: 0 10px 0 10px;
 	font-size: 16px;
 	font-family: 'Poppins', sans-serif;
 	font-weight: 400;
@@ -1054,17 +1060,21 @@
 	opacity: 0.9;
 }
 .castos-player .playlist__item.active h2 {
+	padding-left: 16px;
 	color: #e85555;
 }
 .castos-player .playlist__item.active h2:before {
 	content: '';
-	background-image: url('img/active-indicator.svg');
+	background-image: url('images/player/images/active-indicator.svg');
 	background-repeat: no-repeat;
 	position: absolute;
-	left: 0;
-	top: 4px;
-	width: 6px;
-	height: 7px;
+	left: 0px;
+	top: 2px;
+	width: 12px;
+	height: 12px;
+}
+.playlist__wrapper .playlist__item.active .playlist__item__details {
+	background-color: #4b4657;
 }
 .castos-player .playlist__item__details p {
 	font-size: 11px;

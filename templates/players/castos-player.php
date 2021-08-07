@@ -163,13 +163,13 @@
 				<?php foreach ( $playlist as $k => $item ) : ?>
 					<li class="playlist__item<?php if ( 0 === $k ): ?> active<?php endif ?>"
 						data-episode="<?php echo $item['episode_id']; ?>">
+						<div class="playlist__item__cover">
+							<img src="<?php echo $item['album_art']['src'] ?>" title="<?php echo $item['episode']->post_title; ?>" alt="<?php echo $item['episode']->post_title; ?>" />
+						</div>
 						<div class="playlist__item__details">
 							<h2 class="playlist__episode-title" data-podcast="<?php echo $item['podcast_title']; ?>"><?php echo $item['episode']->post_title; ?></h2>
+							<p><?php echo $item['date'] . ' • ' . $item['duration']; ?></p>
 							<p class="playlist__episode-description"><?php echo ssp_get_episode_excerpt( $item['episode']->ID ) ?></p>
-						</div>
-						<div class="playlist__item_meta">
-							<span><?php echo $item['date']; ?></span>
-							<span><?php echo $item['duration']; ?></span>
 						</div>
 						<audio preload="none" class="clip clip-<?php echo $item['episode_id'] ?>">
 							<source src="<?php echo $item['audio_file'] ?>">

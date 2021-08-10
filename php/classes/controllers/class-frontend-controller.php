@@ -55,6 +55,7 @@ class Frontend_Controller extends Controller {
 		$this->episode_controller = new Episode_Controller( $file, $version );
 		$this->players_controller = new Players_Controller( $file, $version );
 		$this->register_hooks_and_filters();
+		$this->register_ajax_actions();
 	}
 
 	/**
@@ -112,7 +113,16 @@ class Frontend_Controller extends Controller {
 
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
+	}
 
+	public function register_ajax_actions() {
+		add_action( 'wp_ajax_get_playlist_items', array( $this, 'get_ajax_playlist_items' ) );
+		add_action( 'wp_ajax_nopriv_get_playlist_items', array( $this, 'get_ajax_playlist_items' ) );
+	}
+
+	public function get_ajax_playlist_items() {
+		$items = $this->players_controller->get_ajax_playlist_items();
+		wp_send_json_success( $items );
 	}
 
 	/**

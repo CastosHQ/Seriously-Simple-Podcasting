@@ -247,7 +247,9 @@ class Episode_Controller extends Controller {
 	 * @return mixed|void
 	 */
 	public function render_episodes($settings) {
-		$player       = new Players_Controller( $this->file, $this->version );
+		global $ss_podcasting;
+		$player = $ss_podcasting->players_controller;
+		
 		$args  = array(
 			'post_type'      => SSP_CPT_PODCAST,
 			'posts_per_page' => 10,

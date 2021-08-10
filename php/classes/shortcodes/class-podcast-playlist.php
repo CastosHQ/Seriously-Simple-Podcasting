@@ -45,9 +45,11 @@ class Podcast_Playlist implements Shortcode {
 	 *
 	 * @return string         HTML output
 	 */
-	public function shortcode( $params ) {$this->prepare_properties();
+	public function shortcode( $params ) {
+		$this->prepare_properties();
+
 		$atts     = $this->prepare_atts( $params );
-		$episodes = $this->get_episodes( $atts );
+		$episodes = $this->ss_podcasting->players_controller->get_playlist_episodes( $atts );
 
 		if ( empty ( $episodes ) ) {
 			return '';
@@ -114,7 +116,8 @@ class Podcast_Playlist implements Shortcode {
 				'tracklist'    => true,
 				'tracknumbers' => true,
 				'images'       => true,
-				'limit'        => - 1,
+				'limit'        => 10,
+				'page'         => 1,
 			),
 			$params,
 			'podcast_playlist'
@@ -207,60 +210,6 @@ class Podcast_Playlist implements Shortcode {
 		}
 
 		return $tracks;
-	}
-
-	/**
-	 * @param array $atts
-	 *
-	 * @return int[]|\WP_Post[]
-	 */
-	protected function get_episodes( $atts ) {
-		// Get all podcast post types
-		$podcast_post_types = ssp_post_types( true );
-
-		// Set up query arguments for fetching podcast episodes
-		$query_args = array(
-			'post_status'         => 'publish',
-			'post_type'           => $podcast_post_types,
-			'posts_per_page'      => (int) $atts['limit'] > 0 ? $atts['limit'] : - 1,
-			'order'               => $atts['order'],
-			'orderby'             => $atts['orderby'],
-			'ignore_sticky_posts' => true,
-			'post__in'            => $atts['include'],
-			'post__not_in'        => $atts['exclude'],
-		);
-
-		// Make sure to only fetch episodes that have a media file
-		$query_args['meta_query'] = array(
-			array(
-				'key'     => 'audio_file',
-				'compare' => '!=',
-				'value'   => '',
-			),
-		);
-
-		// Limit query to episodes in defined series only
-		if ( $atts['series'] ) {
-			$series_arr = strpos($atts['series'], ',') ? explode(',', $atts['series']) : (array)$atts['series'];
-
-			foreach ( $series_arr as $series ) {
-				$query_args['tax_query'][] = array(
-					'taxonomy' => 'series',
-					'field'    => 'slug',
-					'terms'    => $series,
-				);
-			}
-
-			if ( count( $series_arr ) > 1 ) {
-				$query_args['tax_query']['relation'] = 'OR';
-			}
-		}
-
-		// Allow dynamic filtering of query args
-		$query_args = apply_filters( 'ssp_podcast_playlist_query_args', $query_args );
-
-		// Fetch all episodes for display
-		return get_posts( $query_args );
 	}
 }
 

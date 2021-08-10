@@ -14,7 +14,9 @@ docReady(function() {
 	let players = document.querySelectorAll('.castos-player');
 
 	players.forEach(function (player) {
-		let episodeId = player.dataset.episode,
+		let playerId = player.dataset.player_id,
+			playerData = window['ssp_castos_player_' + playerId],
+			episodeId = player.dataset.episode,
 			playback = player.querySelector('.ssp-playback'),
 			audio,
 			playBtn = player.querySelector('.play-btn'),
@@ -28,9 +30,11 @@ docReady(function() {
 			volumeBtn = player.querySelector('.player-btn__volume'),
 			speedBtn = player.querySelector('.player-btn__speed'),
 			loader = player.querySelector('.ssp-loader'),
-			playlistItems = player.querySelectorAll('.playlist__item'),
+			playlistItems = player.querySelector('.playlist__items'),
 			podcastTitle = player.querySelector('.player__podcast-title'),
-			episodeTitle = player.querySelector('.player__episode-title');
+			episodeTitle = player.querySelector('.player__episode-title'),
+			playlistScroll = player.querySelector('.playlist__wrapper'),
+			playlistLoader = playlistScroll.querySelector('.loader');
 
 		/* Helper functions */
 		function padNum(num) {
@@ -212,7 +216,7 @@ docReady(function() {
 				return;
 			}
 
-			playlistItems.forEach(function (item) {
+			playlistItems.querySelectorAll('.playlist__item').forEach(function (item) {
 				item.classList.remove('active')
 			});
 
@@ -223,7 +227,6 @@ docReady(function() {
 
 			podcastTitle.textContent = playlistEpisodeTitle.dataset.podcast;
 			episodeTitle.textContent = playlistEpisodeTitle.textContent;
-			console.log("Herere!", cover, episodeCover);
 			cover.querySelector('img').src = episodeCover.src;
 
 			pauseAudio();
@@ -235,6 +238,82 @@ docReady(function() {
 			setTimeout(function () {
 				togglePlayback();
 			}, 500);
+		}
+
+		function handleInfiniteScroll() {
+			let startLoading = function () {
+					playlistLoader.style.display = 'block';
+					playlistScroll.dataset.processing = '1';
+				},
+				stopLoading = function () {
+					playlistLoader.style.display = 'none';
+					playlistScroll.dataset.processing = '';
+				},
+				createListItem = function (item) {
+					let div = document.createElement('div');
+
+					div.innerHTML =
+						'<li class="playlist__item" data-episode="' + item.episode_id + '">' +
+						'<div class="playlist__item__cover">' +
+						'<img src="' + item.album_art.src + '" title="' + item.title + '" alt="' + item.title + '" />' +
+						'</div>' +
+						'<div class="playlist__item__details">' +
+						'<h2 class="playlist__episode-title" data-podcast="' + item.podcast_title + '">' + item.title + '</h2>' +
+						'<p>' + item.date + ' • ' + item.duration + '</p>' +
+						'<p class="playlist__episode-description">' + item.excerpt + '</p>' +
+						'</div>' +
+						'<audio preload="none" class="clip clip-' + item.episode_id + '">' +
+						'<source src="' + item.audio_file + '">' +
+						'</audio>' +
+						'</li>';
+
+					return div.firstChild;
+				},
+				sendRequest = function () {
+					startLoading();
+					let request = new XMLHttpRequest();
+					let url = new URL(playerData.ajax_url);
+					let data = {
+						action: 'get_playlist_items',
+						atts: JSON.stringify(playerData.atts),
+						page: ++playlistScroll.dataset.page,
+						player_id: playerId,
+						nonce: playerData.nonce
+					};
+					Object.keys(data).forEach(function (key) {
+						url.searchParams.set(key, data[key]);
+					});
+
+					request.open('GET', url.toString(), true);
+					request.onload = function () {
+						if (200 === this.status) {
+							let response = JSON.parse(this.response);
+							if (response.data.length > 0) {
+								response.data.forEach(function (e) {
+										let item = createListItem(e);
+										playlistItems.appendChild(item);
+										item.addEventListener('click', handleChangePlaylistItem)
+									}
+								);
+							} else {
+								playlistScroll.removeEventListener('scroll', handleInfiniteScroll);
+							}
+
+						}
+						stopLoading();
+					};
+					request.onerror = function () {
+						stopLoading();
+					};
+					request.send();
+				}
+
+
+			if (!playlistScroll.dataset.processing &&
+				playlistLoader.scrollHeight - playlistLoader.scrollTop === playlistLoader.clientHeight
+			) {
+				sendRequest();
+			}
 		}
 
 		function initEventListeners(){
@@ -281,10 +360,16 @@ docReady(function() {
 				});
 			}
 
-			if (playlistItems) {
-				playlistItems.forEach(function (item) {
+			let items = playlistItems.querySelectorAll('.playlist__item');
+
+			if (items) {
+				items.forEach(function (item) {
 					item.addEventListener('click', handleChangePlaylistItem)
 				});
+			}
+
+			if (playlistScroll) {
+				playlistScroll.addEventListener('scroll', handleInfiniteScroll);
 			}
 		}
 

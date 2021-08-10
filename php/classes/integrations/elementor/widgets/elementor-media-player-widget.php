@@ -68,7 +68,8 @@ class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
 	}
 
 	protected function render() {
-		$players_controller = new Players_Controller( __FILE__, SSP_VERSION );
+		global $ss_podcasting;
+		$players_controller = $ss_podcasting->players_controller;
 		$settings           = $this->get_settings_for_display();
 		$episode_id         = $settings['show_elements'];
 		if ( '-1' === $episode_id ) {

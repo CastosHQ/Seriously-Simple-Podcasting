@@ -18,11 +18,12 @@
  * @var string $podcast_title
  * @var bool $show_subscribe_button
  * @var bool $show_share_button
+ * @var int $player_id
  **/
 
 ?>
 
-<div class="castos-player <?php echo $player_mode ?>-mode" data-episode="<?php echo $episode_id ?>">
+<div class="castos-player <?php echo $player_mode ?>-mode" data-episode="<?php echo $episode_id ?>" data-player_id="<?php echo $player_id; ?>">
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo $episode_id?>">
@@ -158,18 +159,19 @@
 	<?php endif; ?>
 
 	<?php if ( ! empty( $playlist ) ) : ?>
-		<div class="playlist__wrapper">
-			<ul>
+		<div class="playlist__wrapper" data-page="1">
+			<div class="loader"></div>
+			<ul class="playlist__items">
 				<?php foreach ( $playlist as $k => $item ) : ?>
 					<li class="playlist__item<?php if ( 0 === $k ): ?> active<?php endif ?>"
 						data-episode="<?php echo $item['episode_id']; ?>">
 						<div class="playlist__item__cover">
-							<img src="<?php echo $item['album_art']['src'] ?>" title="<?php echo $item['episode']->post_title; ?>" alt="<?php echo $item['episode']->post_title; ?>" />
+							<img src="<?php echo $item['album_art']['src'] ?>" title="<?php echo $item['title']; ?>" alt="<?php echo $item['title'] ?>" />
 						</div>
 						<div class="playlist__item__details">
-							<h2 class="playlist__episode-title" data-podcast="<?php echo $item['podcast_title']; ?>"><?php echo $item['episode']->post_title; ?></h2>
+							<h2 class="playlist__episode-title" data-podcast="<?php echo $item['podcast_title']; ?>"><?php echo $item['title'] ?></h2>
 							<p><?php echo $item['date'] . ' • ' . $item['duration']; ?></p>
-							<p class="playlist__episode-description"><?php echo ssp_get_episode_excerpt( $item['episode']->ID ) ?></p>
+							<p class="playlist__episode-description"><?php echo $item['excerpt']; ?></p>
 						</div>
 						<audio preload="none" class="clip clip-<?php echo $item['episode_id'] ?>">
 							<source src="<?php echo $item['audio_file'] ?>">

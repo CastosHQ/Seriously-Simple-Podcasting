@@ -130,7 +130,7 @@ class Episode_Controller extends Controller {
 	 *
 	 * @since 1.19.4
 	 */
-	public function get_album_art( $episode_id = false ) {
+	public function get_album_art( $episode_id = false, $size = 'full' ) {
 
 		/**
 		 * In case the episode id is not passed
@@ -144,25 +144,14 @@ class Episode_Controller extends Controller {
 		 */
 		$thumb_id = get_post_meta( $episode_id, 'cover_image_id', true );
 		if ( ! empty( $thumb_id ) ) {
-			$image_data_array = ssp_get_attachment_image_src( $thumb_id );
+			$image_data_array = ssp_get_attachment_image_src( $thumb_id, $size );
 			if ( ssp_is_image_square( $image_data_array ) ) {
 				return $image_data_array;
 			}
 		}
 
 		/**
-		 * Option 2: if the episode has a featured image that is square, then use that
-		 */
-		$thumb_id = get_post_thumbnail_id( $episode_id );
-		if ( ! empty( $thumb_id ) ) {
-			$image_data_array = ssp_get_attachment_image_src( $thumb_id );
-			if ( ssp_is_image_square( $image_data_array ) ) {
-				return $image_data_array;
-			}
-		}
-
-		/**
-		 * Option 3: if the episode belongs to a series, which has an image that is square, then use that
+		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
 		 */
 		$series_id    = false;
 		$series = get_the_terms( $episode_id, 'series' );
@@ -179,26 +168,41 @@ class Episode_Controller extends Controller {
 		}
 
 		if ( ! empty( $series_image_attachment_id ) ) {
-			$image_data_array = ssp_get_attachment_image_src( $series_image_attachment_id );
+			$image_data_array = ssp_get_attachment_image_src( $series_image_attachment_id, $size );
 			if ( ssp_is_image_square( $image_data_array ) ) {
 				return $image_data_array;
 			}
 		}
 
 		/**
-		 * Option 4: if the feed settings have an image that is square, then use that
+		 * Option 3: if the series feed settings have an image that is square, then use that
+		 */
+		if ( $series_id ) {
+			$feed_image = get_option( 'ss_podcasting_data_image_' . $series_id, false );
+		}
+
+		if ( ! empty( $feed_image ) ) {
+			$feed_image_attachment_id = attachment_url_to_postid( $feed_image );
+			$image_data_array         = ssp_get_attachment_image_src( $feed_image_attachment_id, $size );
+			if ( ssp_is_image_square( $image_data_array ) ) {
+				return $image_data_array;
+			}
+		}
+
+		/**
+		 * Option 4: if the default feed settings have an image that is square, then use that
 		 */
 		$feed_image = get_option( 'ss_podcasting_data_image', false );
 		if ( $feed_image ) {
 			$feed_image_attachment_id = attachment_url_to_postid( $feed_image );
-			$image_data_array         = ssp_get_attachment_image_src( $feed_image_attachment_id );
+			$image_data_array         = ssp_get_attachment_image_src( $feed_image_attachment_id, $size );
 			if ( ssp_is_image_square( $image_data_array ) ) {
 				return $image_data_array;
 			}
 		}
 
 		/**
-		 * None of the above passed, return the no-album-art image
+		 * Option 5: None of the above passed, return the no-album-art image
 		 */
 		return $this->get_no_album_art_image_array();
 	}
@@ -249,7 +253,7 @@ class Episode_Controller extends Controller {
 	public function render_episodes($settings) {
 		global $ss_podcasting;
 		$player = $ss_podcasting->players_controller;
-		
+
 		$args  = array(
 			'post_type'      => SSP_CPT_PODCAST,
 			'posts_per_page' => 10,

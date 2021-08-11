@@ -95,7 +95,7 @@ class Players_Controller extends Controller {
 		$episode_duration = get_post_meta( $id, 'duration', true );
 		$current_url      = get_post_permalink( $current_post->ID );
 		$audio_file       = $this->episode_controller->get_episode_player_link( $id );
-		$album_art        = $this->episode_controller->get_album_art( $id );
+		$album_art        = $this->episode_controller->get_album_art( $id, 'thumbnail' );
 		$podcast_title    = get_option( 'ss_podcasting_data_title' );
 		$feed_url         = $this->episode_repository->get_feed_url( $id );
 		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );

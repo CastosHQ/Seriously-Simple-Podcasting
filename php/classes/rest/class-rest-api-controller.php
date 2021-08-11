@@ -362,13 +362,13 @@ class Rest_Api_Controller {
 	 * @param $field_name
 	 * @param $request
 	 *
-	 * @return bool
+	 * @return string|false
 	 */
 	public function get_rest_featured_image( $object, $field_name, $request ) {
 		if ( ! empty( $object['featured_media'] ) ) {
 			$img = wp_get_attachment_image_src( $object['featured_media'], 'app-thumb' );
 
-			return $img[0];
+			return ! empty( $img[0] ) ? $img[0] : false;
 		}
 
 		return false;

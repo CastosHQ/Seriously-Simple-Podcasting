@@ -1224,13 +1224,31 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 	function ssp_get_the_feed_item_content() {
 		$content = get_the_content();
 		$blocks  = parse_blocks( $content );
+
+		/**
+		 * The same as in @see excerpt_remove_blocks() plus 'core/block',
+		 * */
 		if ( $blocks and is_array( $blocks ) ) {
 			$content = '';
 			$allowed_blocks = [
-				'core/paragraph',
+				null,
+				'core/freeform',
+				'core/heading',
+				'core/html',
 				'core/list',
+				'core/media-text',
+				'core/paragraph',
+				'core/preformatted',
+				'core/pullquote',
+				'core/quote',
+				'core/table',
+				'core/verse',
+				'core/columns',
 				'core/block',
 			];
+
+			$allowed_blocks = apply_filters( 'ssp_feed_item_content_allowed_blocks', $allowed_blocks );
+
 			foreach ( $blocks as $block ) {
 				if ( in_array( $block['blockName'], $allowed_blocks ) ) {
 					$content .= render_block( $block );

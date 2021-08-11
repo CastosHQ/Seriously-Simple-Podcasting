@@ -90,19 +90,19 @@ class Players_Controller extends Controller {
 		 * Get the episode (post) object
 		 * If the id passed is empty or 0, get_post will return the current post
 		 */
-		$episode          = get_post( $id );
-		$current_post     = $current_post ?: $episode;
-		$episode_duration = get_post_meta( $id, 'duration', true );
-		$current_url      = get_post_permalink( $current_post->ID );
-		$audio_file       = $this->episode_controller->get_episode_player_link( $id );
-		$album_art        = $this->episode_controller->get_album_art( $id, 'thumbnail' );
-		$podcast_title    = get_option( 'ss_podcasting_data_title' );
-		$feed_url         = $this->episode_repository->get_feed_url( $id );
-		$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );
-		$player_mode      = get_option( 'ss_podcasting_player_mode', 'dark' );
-		$show_subscribe_button  = 'on' === get_option( 'ss_podcasting_subscribe_button_enabled', 'on' );
-		$show_share_button      = 'on' === get_option( 'ss_podcasting_share_button_enabled', 'on' );
-		$subscribe_links  = $this->options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
+		$episode               = get_post( $id );
+		$current_post          = $current_post ?: $episode;
+		$episode_duration      = get_post_meta( $id, 'duration', true );
+		$current_url           = get_post_permalink( $current_post->ID );
+		$audio_file            = $this->episode_controller->get_episode_player_link( $id );
+		$album_art             = $this->episode_controller->get_album_art( $id, 'thumbnail' );
+		$podcast_title         = $this->episode_repository->get_podcast_title( $id );
+		$feed_url              = $this->episode_repository->get_feed_url( $id );
+		$embed_code            = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );
+		$player_mode           = get_option( 'ss_podcasting_player_mode', 'dark' );
+		$show_subscribe_button = 'on' === get_option( 'ss_podcasting_subscribe_button_enabled', 'on' );
+		$show_share_button     = 'on' === get_option( 'ss_podcasting_share_button_enabled', 'on' );
+		$subscribe_links       = $this->options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
 
 		// set any other info
 		$template_data = array(

@@ -3,7 +3,7 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Renderers\Renderer;
-use SeriouslySimplePodcasting\Controllers\Players_Controller;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use WP_Query;
 
 /**
@@ -13,12 +13,20 @@ use WP_Query;
  */
 class Episode_Controller extends Controller {
 
-
+	/**
+	 * @var Renderer
+	 * */
 	public $renderer = null;
+
+	/**
+	 * @var Episode_Repository
+	 * */
+	public $episode_repository = null;
 
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->renderer = new Renderer();
+		$this->episode_repository = new Episode_Repository(); //Todo: use DI or Facade here
 		$this->init();
 	}
 
@@ -95,6 +103,8 @@ class Episode_Controller extends Controller {
 	 * @param int $episode_id
 	 *
 	 * @return string
+	 *
+	 * Todo: move it to Episode_Repository
 	 */
 	public function get_episode_player_link( $episode_id ) {
 		$file = $this->get_episode_download_link( $episode_id );
@@ -129,6 +139,8 @@ class Episode_Controller extends Controller {
 	 * @return array [ $src, $width, $height ]
 	 *
 	 * @since 1.19.4
+	 *
+	 * Todo: move it to Episode_Repository
 	 */
 	public function get_album_art( $episode_id = false, $size = 'full' ) {
 
@@ -153,15 +165,7 @@ class Episode_Controller extends Controller {
 		/**
 		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
 		 */
-		$series_id    = false;
-		$series = get_the_terms( $episode_id, 'series' );
-
-		/**
-		 * In some instances, this could return a WP_Error object
-		 */
-		if ( ! is_wp_error( $series ) && $series ) {
-			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : false;
-		}
+		$series_id  = $this->episode_repository->get_episode_series_id( $episode_id );
 
 		if ( $series_id ) {
 			$series_image_attachment_id = get_term_meta( $series_id, $this->token . '_series_image_settings', true );

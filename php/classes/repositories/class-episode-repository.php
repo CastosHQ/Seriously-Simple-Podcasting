@@ -75,6 +75,26 @@ class Episode_Repository {
 		return $feed_url;
 	}
 
+
+	/**
+	 * @param $episode_id
+	 *
+	 * @return int|null
+	 */
+	public function get_episode_series_id( $episode_id ) {
+		$series_id = null;
+		$series    = get_the_terms( $episode_id, 'series' );
+
+		/**
+		 * In some instances, this could return a WP_Error object
+		 */
+		if ( ! is_wp_error( $series ) && $series ) {
+			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : null;
+		}
+
+		return $series_id;
+	}
+
 	/**
 	 * @param array $atts
 	 *
@@ -128,6 +148,25 @@ class Episode_Repository {
 
 		// Fetch all episodes for display
 		return get_posts( $query_args );
+	}
+
+	/**
+	 * @param $episode_id
+	 *
+	 * @return false|mixed|void
+	 */
+	public function get_podcast_title( $episode_id ) {
+		$series_id = $this->get_episode_series_id( $episode_id );
+
+		if ( $series_id ) {
+			$title = get_option( 'ss_podcasting_data_title_' . $series_id );
+		}
+
+		if ( empty( $title ) ) {
+			$title = get_option( 'ss_podcasting_data_title' );
+		}
+
+		return $title;
 	}
 
 

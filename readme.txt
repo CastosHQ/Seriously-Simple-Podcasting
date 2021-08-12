@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.7
+Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.7.3
+Stable tag: 2.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,19 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.8.0 =
+* 2021-08-12
+* UPDATE SUMMARY: Playlist Player renovation, bug fixes
+* [UPDATE] Playlist player improvements, consistent with the standard player
+* [UPDATE] Playlist player widget now includes more setting options
+* [UPDATE] Improved the process of getting an image for the player, removed featured image from it
+* [UPDATE] Removed redundant HTML when Share or Subscribe buttons were disabled
+* [FIX] Player displayed the default podcast title instead of the Series title
+* [FIX] Reusable blocks disappeared from feed
+* [FIX] Notice error when using Rest API
+* [FIX] Character codes being displayed instead of special symbols
+* [FIX] Conflict between SSP and The Events Calendar Plugin
 
 = 2.7.3 =
 * 2021-07-26

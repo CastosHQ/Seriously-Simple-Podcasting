@@ -34,7 +34,8 @@ docReady(function() {
 			podcastTitle = player.querySelector('.player__podcast-title'),
 			episodeTitle = player.querySelector('.player__episode-title'),
 			playlistScroll = player.querySelector('.playlist__wrapper'),
-			playlistLoader = playlistScroll.querySelector('.loader');
+			isPlaylistPlayer = playlistScroll ? true : false,
+			playlistLoader;
 
 		/* Helper functions */
 		function padNum(num) {
@@ -359,7 +360,9 @@ docReady(function() {
 					return copyLink(rssCopyElm);
 				});
 			}
+		}
 
+		function initPlaylistEventListeners() {
 			let items = playlistItems.querySelectorAll('.playlist__item');
 
 			if (items) {
@@ -373,8 +376,12 @@ docReady(function() {
 			}
 		}
 
-		function init(){
+		function init() {
 			initEventListeners();
+			if (isPlaylistPlayer) {
+				playlistLoader = playlistScroll.querySelector('.loader');
+				initPlaylistEventListeners();
+			}
 			initAudio();
 		}
 

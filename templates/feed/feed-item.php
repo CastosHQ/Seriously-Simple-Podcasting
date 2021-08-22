@@ -2,17 +2,18 @@
 /**
  * Refactoring history:
  * 1st stage - created this file to move some code from the feed-podcast.php
- * @todo: 2nd stage: move the data preparation somewhere else, leave only xml part here
+ * @todo: 2nd stage: move the data preparation to the Feed_Controller
  *
+ * Available vars
  * @var $stylesheet_url
  * @var $title
- * @var $ss_podcasting
+ * @var $ss_podcasting //used here
  * @var $podcast_series
  * @var $description
  * @var $language
  * @var $copyright
  * @var $subtitle
- * @var $author
+ * @var $author //used here
  * @var $itunes_type
  * @var $podcast_description
  * @var $owner_name
@@ -21,11 +22,12 @@
  * @var $complete
  * @var $image
  * @var $new_feed_url
- * @var $turbo
+ * @var $turbo //used here
  * @var $googleplay_explicit
  * @var $exclude_series
- * @var $episode_description_uses_excerpt
- * @var WP_Query $qry
+ * @var $episode_description_uses_excerpt //used here
+ * @var WP_Query $qry //used here
+ * @var $locked
  */
 
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
@@ -50,7 +52,7 @@ if ( ! isset( $enclosure ) || ! $enclosure ) {
 }
 
 // Get episode image from post featured image
-/** @var Frontend_Controller  $ss_podcasting */
+/** @var Frontend_Controller $ss_podcasting */
 global $ss_podcasting;
 $episode_image = $ss_podcasting->get_episode_image_url( get_the_ID() );
 $episode_image = apply_filters( 'ssp_feed_item_image', $episode_image, get_the_ID() );
@@ -244,13 +246,14 @@ $title = esc_html( get_the_title_rss() );
 	<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
 	<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
 	<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
-	<itunes:author><![CDATA[<?php echo $author; ?>]]></itunes:author>
-	<?php if ( 'off' === $turbo ) { ?>
+	<itunes:author><![CDATA[<?php echo $author; ?>]]></itunes:author><?php
+	 if ( 'off' === $turbo ) { ?>
 		<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
 		<?php if ( $episode_image ) { ?>
 			<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
 		<?php } ?>
 		<googleplay:explicit><?php echo esc_html( $googleplay_explicit_flag ); ?></googleplay:explicit>
-		<googleplay:block><?php echo esc_html( $block_flag ); ?></googleplay:block>
-	<?php } ?>
+		<googleplay:block><?php echo esc_html( $block_flag ); ?></googleplay:block><?php
+	 } ?>
+
 </item>

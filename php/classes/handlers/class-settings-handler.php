@@ -778,6 +778,14 @@ class Settings_Handler {
 				'callback'    => 'wp_strip_all_tags',
 			),
 			array(
+				'id'          => 'locked',
+				'label'       => __( 'Locked', 'seriously-simple-podcasting' ),
+				'description' => __( 'Mark if this podcast is locked or not. Locked means that any attempt to import this feed into a new platform will be rejected.', 'seriously-simple-podcasting' ),
+				'type'        => 'checkbox',
+				'default'     => '',
+				'callback'    => 'wp_strip_all_tags',
+			),
+			array(
 				'id'          => 'publish_date',
 				'label'       => __( 'Source for publish date', 'seriously-simple-podcasting' ),
 				'description' => __( 'Use the "Published date" of the post or use "Date recorded" from the Podcast episode details.', 'seriously-simple-podcasting' ),

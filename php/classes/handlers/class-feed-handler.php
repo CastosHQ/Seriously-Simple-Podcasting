@@ -6,6 +6,7 @@ namespace SeriouslySimplePodcasting\Handlers;
  * SSP Feed Handler
  *
  * @package Seriously Simple Podcasting
+ * @author Sergey Zakharchenko, Jonathan Bossenger
  * @since 2.8.2
  */
 class Feed_Handler {
@@ -13,8 +14,10 @@ class Feed_Handler {
 
 	/**
 	 * Suppress all errors to make sure the feed is not broken
+	 *
+	 * @return void
 	 */
-	public function suppress_errors(){
+	public function suppress_errors() {
 		$force_hide_errors = true; //todo: remove
 		$hide_errors       = ! defined( 'WP_DEBUG' ) || ! WP_DEBUG;
 		if ( $force_hide_errors || $hide_errors ) {
@@ -176,8 +179,7 @@ class Feed_Handler {
 		);
 
 		foreach ( $series as $feed ) {
-			$option_name         = 'ss_podcasting_exclude_feed_' . $feed->term_id;
-			$exclude_feed_option = get_option( $option_name, 'off' );
+			$exclude_feed_option = get_option( 'ss_podcasting_exclude_feed_' . $feed->term_id, 'off' );
 			if ( 'on' === $exclude_feed_option ) {
 				$exclude_series[] = $feed->slug;
 			}
@@ -373,10 +375,10 @@ class Feed_Handler {
 	 */
 	public function is_explicit( $series_id ) {
 		if ( $series_id ) {
-			$explicit_option = get_option( 'ss_podcasting_explicit_' . $series_id, '' );
+			$explicit_option = get_option( 'ss_podcasting_explicit_' . $series_id, null );
 		}
 
-		if ( empty( $explicit_option ) ) {
+		if ( ! isset( $explicit_option ) ) {
 			$explicit_option = get_option( 'ss_podcasting_explicit', '' );
 		}
 
@@ -394,22 +396,16 @@ class Feed_Handler {
 	 */
 	public function get_complete( $series_id ) {
 		if ( $series_id ) {
-			$complete_option = get_option( 'ss_podcasting_complete_' . $series_id, '' );
+			$complete_option = get_option( 'ss_podcasting_complete_' . $series_id, null );
 		}
 
-		if ( empty( $complete_option ) ) {
+		if ( ! isset( $complete_option ) ) {
 			$complete_option = get_option( 'ss_podcasting_complete', '' );
 		}
 
 		$complete_option = apply_filters( 'ssp_feed_complete', $complete_option, $series_id );
 
-		if ( $complete_option && 'on' === $complete_option ) {
-			$complete = 'yes';
-		} else {
-			$complete = '';
-		}
-
-		return $complete;
+		return 'on' === $complete_option ? 'yes' : '';
 	}
 
 
@@ -449,10 +445,10 @@ class Feed_Handler {
 	 */
 	public function get_turbo( $series_id ) {
 		if ( $series_id ) {
-			$turbo = get_option( 'ss_podcasting_turbocharge_feed_' . $series_id );
+			$turbo = get_option( 'ss_podcasting_turbocharge_feed_' . $series_id, null );
 		}
 
-		if ( empty( $turbo ) ) {
+		if ( ! isset( $turbo ) ) {
 			$turbo = get_option( 'ss_podcasting_turbocharge_feed', 'off' );
 		}
 
@@ -487,7 +483,7 @@ class Feed_Handler {
 	 */
 	public function is_excerpt_mode( $series_id ) {
 		if ( $series_id ) {
-			$description_mode = get_option( 'ss_podcasting_episode_description_' . $series_id, 'excerpt' );
+			$description_mode = get_option( 'ss_podcasting_episode_description_' . $series_id );
 		} else {
 			$description_mode = get_option( 'ss_podcasting_episode_description', 'excerpt' );
 		}
@@ -508,6 +504,25 @@ class Feed_Handler {
 		global $ss_podcasting;
 
 		return apply_filters( 'ssp_rss_stylesheet', $ss_podcasting->template_url . 'feed-stylesheet.xsl' );
+	}
+
+	/**
+	 * Checks whether the current feed is in excerpt mode or not
+	 *
+	 * @param int $series_id
+	 *
+	 * @return string Yes|No
+	 */
+	public function get_locked( $series_id ) {
+		if ( $series_id ) {
+			$locked = get_option( 'ss_podcasting_locked_' . $series_id, null );
+		}
+
+		if ( ! isset( $locked ) ) {
+			$locked = get_option( 'ss_podcasting_locked', '' );
+		}
+
+		return 'on' === $locked ? 'yes' : 'no';
 	}
 
 }

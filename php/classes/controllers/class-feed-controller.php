@@ -173,7 +173,10 @@ class Feed_Controller extends Controller {
 
 		$episode_description_uses_excerpt = $this->feed_handler->is_excerpt_mode( $series_id );
 
+		$locked = $this->feed_handler->get_locked( $series_id );
+
 		$stylesheet_url = $this->feed_handler->get_stylesheet_url();
+
 
 		$this->send_feed_headers();
 

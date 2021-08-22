@@ -450,6 +450,12 @@ class Settings_Controller extends Controller {
 			case 'password':
 			case 'number':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"' . $data_attrs . '/>' . "\n";
+			break;
+			case 'text_multi':
+				foreach ( $field['fields'] as $f ) {
+					$val = isset( $data[ $f['id'] ] ) ? $data[ $f['id'] ] : '';
+					$html .= '<input id="' . esc_attr( sprintf('%s_%s', $field['id'], $f['id']) ) . '" type="' . $f['type'] . '" name="' . esc_attr( sprintf('%s[%s]', $option_name, $f['id']) ) . '" placeholder="' . esc_attr( $f['placeholder'] ) . '" value="' . esc_attr( $val ) . '" class="' . $class . '"' . $data_attrs . '/><br><br>' . "\n";
+				}
 				break;
 			case 'colour-picker':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"' . $data_attrs . '/>' . "\n";

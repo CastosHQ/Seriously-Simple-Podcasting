@@ -175,6 +175,8 @@ class Feed_Controller extends Controller {
 
 		$locked = $this->feed_handler->get_locked( $series_id );
 
+		$funding = $this->feed_handler->get_funding( $series_id );
+
 		$stylesheet_url = $this->feed_handler->get_stylesheet_url();
 
 

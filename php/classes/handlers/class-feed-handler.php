@@ -525,4 +525,23 @@ class Feed_Handler {
 		return 'on' === $locked ? 'yes' : 'no';
 	}
 
+	/**
+	 * Gets funding settings
+	 *
+	 * @param int $series_id
+	 *
+	 * @return array|null
+	 */
+	public function get_funding( $series_id ) {
+		if ( $series_id ) {
+			$funding = get_option( 'ss_podcasting_funding_' . $series_id, null );
+		}
+
+		if ( ! isset( $funding ) ) {
+			$funding = get_option( 'ss_podcasting_funding', '' );
+		}
+
+		return $funding;
+	}
+
 }

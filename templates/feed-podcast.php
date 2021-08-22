@@ -29,7 +29,14 @@
  * @var $turbo
  * @var $googleplay_explicit
  * @var $exclude_series
- * @var $locked
+ * @var string $locked Yes or no.
+ *
+ * @var array $funding {
+ *      Array of link values.
+ *
+ * 	@type string $title Link title
+ * 	@type string $url Link url
+ * }
  */
 
 // Exit if accessed directly.
@@ -131,6 +138,10 @@ if ( $stylesheet_url ) {
 
 		if ( $locked ) :
 			?><podcast:locked owner="<?php echo esc_html( $owner_email ) ?>"><?php echo esc_html( $locked ) ?></podcast:locked>
+		<?php endif;
+
+		if ( $funding && ! empty( $funding['url'] ) && ! empty( $funding['title'] ) ) :
+			?><podcast:funding url="<?php echo esc_attr( $funding['url'] ) ?>"><?php echo esc_html( $funding['title'] ) ?></podcast:funding>
 		<?php endif;
 
 		// Prevent WP core from outputting an <image> element

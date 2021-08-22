@@ -7,7 +7,6 @@ namespace SeriouslySimplePodcasting\Handlers;
  *
  * @package Seriously Simple Podcasting
  */
-
 class Settings_Handler {
 
 	/**
@@ -225,7 +224,7 @@ class Settings_Handler {
 				'label' => __( 'Video Games', 'seriously-simple-podcasting' ),
 				'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
 			),
-			'Music Commentary'  => array(
+			'Music Commentary'   => array(
 				'label' => __( 'Music Commentary', 'seriously-simple-podcasting' ),
 				'group' => __( 'Music', 'seriously-simple-podcasting' ),
 			),
@@ -257,7 +256,7 @@ class Settings_Handler {
 				'label' => __( 'Politics', 'seriously-simple-podcasting' ),
 				'group' => __( 'News', 'seriously-simple-podcasting' ),
 			),
-			'Sports News'       => array(
+			'Sports News'        => array(
 				'label' => __( 'Sports News ', 'seriously-simple-podcasting' ),
 				'group' => __( 'News', 'seriously-simple-podcasting' ),
 			),
@@ -289,7 +288,7 @@ class Settings_Handler {
 				'label' => __( 'Spirituality', 'seriously-simple-podcasting' ),
 				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
 			),
-			'Religion'       => array(
+			'Religion'           => array(
 				'label' => __( 'Religion', 'seriously-simple-podcasting' ),
 				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
 			),
@@ -361,7 +360,7 @@ class Settings_Handler {
 				'label' => __( 'Cricket', 'seriously-simple-podcasting' ),
 				'group' => __( 'Sports', 'seriously-simple-podcasting' ),
 			),
-			'Fantasy Sports'    => array(
+			'Fantasy Sports'     => array(
 				'label' => __( 'Fantasy Sports ', 'seriously-simple-podcasting' ),
 				'group' => __( 'Sports', 'seriously-simple-podcasting' ),
 			),
@@ -761,6 +760,27 @@ class Settings_Handler {
 				'callback'    => 'wp_strip_all_tags',
 			),
 			array(
+				'id'          => 'funding',
+				'label'       => __( 'Podcast funding', 'seriously-simple-podcasting' ),
+				'description' => __( 'Funding for your podcast.', 'seriously-simple-podcasting' ),
+				'type'        => 'text_multi',
+				'class'       => 'large-text',
+				'fields'      => array(
+					array(
+						'id'          => 'url',
+						'type'        => 'text',
+						'placeholder' => __( 'Title', 'seriously-simple-podcasting' ),
+						'class'       => 'large-text',
+					),
+					array(
+						'id'          => 'title',
+						'type'        => 'text',
+						'placeholder' => home_url( 'donations/' ),
+						'class'       => 'large-text',
+					),
+				),
+			),
+			array(
 				'id'          => 'explicit',
 				'label'       => __( 'Explicit', 'seriously-simple-podcasting' ),
 				// translators: placeholders are for an Apple help document link
@@ -1060,7 +1080,7 @@ class Settings_Handler {
 	/**
 	 * Encode feed password
 	 *
-	 * @param  string $password User input
+	 * @param string $password User input
 	 *
 	 * @return string           Encoded password
 	 */
@@ -1079,7 +1099,7 @@ class Settings_Handler {
 	/**
 	 * Validate protectino message
 	 *
-	 * @param  string $message User input
+	 * @param string $message User input
 	 *
 	 * @return string          Validated message
 	 */
@@ -1159,11 +1179,12 @@ class Settings_Handler {
 
 	/**
 	 * Checks if a user role exists, used in the SettingsController add_caps method
-	 * @deprecated Use Roles_Handler::role_exists() instead
 	 *
 	 * @param $role
 	 *
 	 * @return bool
+	 * @deprecated Use Roles_Handler::role_exists() instead
+	 *
 	 */
 	public function role_exists( $role ) {
 		if ( ! empty( $role ) ) {

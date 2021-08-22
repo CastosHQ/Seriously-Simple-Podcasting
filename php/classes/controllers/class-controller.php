@@ -7,8 +7,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// @todo maybe this should be a trait ?
-
 /**
  * Main controller class
  *
@@ -17,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0
  */
-class Controller {
+abstract class Controller {
 
 	/**
 	 * JavaScript Suffix

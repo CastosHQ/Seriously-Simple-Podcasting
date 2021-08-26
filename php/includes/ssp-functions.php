@@ -1291,3 +1291,41 @@ if ( ! function_exists( 'ssp_get_episode_excerpt' ) ) {
 		return apply_filters( 'ssp_get_episode_excerpt', $excerpt, $episode );
 	}
 }
+
+
+/**
+ * Get the feed url by its slug
+ */
+if ( ! function_exists( 'ssp_get_feed_url' ) ) {
+	/**
+	 * @param string $series_slug
+	 *
+	 * @return string
+	 * @since 2.8.2
+	 */
+	function ssp_get_feed_url( $series_slug = '' ) {
+
+		$feed_series = $series_slug ? $series_slug : 'default';
+
+		$permalink_structure = get_option( 'permalink_structure' );
+
+		$home_url = trailingslashit( home_url() );
+
+		if ( $permalink_structure ) {
+			$feed_slug = apply_filters( 'ssp_feed_slug', SSP_CPT_PODCAST );
+			$feed_url  = $home_url . 'feed/' . $feed_slug;
+		} else {
+			$feed_url = $home_url . '?feed=' . SSP_CPT_PODCAST;
+		}
+
+		if ( $feed_series && 'default' !== $feed_series ) {
+			if ( $permalink_structure ) {
+				$feed_url .= '/' . $feed_series;
+			} else {
+				$feed_url .= '&podcast_series=' . $feed_series;
+			}
+		}
+
+		return apply_filters( 'ssp_get_feed_url', $feed_url, $series_slug );
+	}
+}

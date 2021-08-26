@@ -11,6 +11,11 @@ namespace SeriouslySimplePodcasting\Handlers;
  */
 class Feed_Handler {
 
+	/**
+	 * Unique "podcast" namespace UUID
+	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#guid
+	 * */
+	const PODCAT_NAMESPACE_UUID = 'ead4c236-bf58-58c6-a2c6-a6b28d128cb6';
 
 	/**
 	 * Suppress all errors to make sure the feed is not broken
@@ -542,6 +547,25 @@ class Feed_Handler {
 		}
 
 		return $funding;
+	}
+
+	/**
+	 * Gets funding settings
+	 *
+	 * @param string $series_slug
+	 *
+	 * @return string
+	 */
+	public function get_guid( $series_slug ) {
+		$series_url = ssp_get_feed_url( $series_slug );
+
+		$series_url = 'http://castos.loc/feed/podcast/first-series/';
+
+		$url_data = parse_url( $series_url );
+
+		$url = $url_data['host'] . rtrim( $url_data['path'], '/' );
+
+		return UUID_Handler::v5( self::PODCAT_NAMESPACE_UUID, $url );
 	}
 
 }

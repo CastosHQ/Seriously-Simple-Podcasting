@@ -177,8 +177,9 @@ class Feed_Controller extends Controller {
 
 		$funding = $this->feed_handler->get_funding( $series_id );
 
-		$stylesheet_url = $this->feed_handler->get_stylesheet_url();
+		$guid = $this->feed_handler->get_guid( $podcast_series );
 
+		$stylesheet_url = $this->feed_handler->get_stylesheet_url();
 
 		$this->send_feed_headers();
 

@@ -205,6 +205,7 @@ if ( isset( $turbo_post_count ) ) {
 
 $title = esc_html( get_the_title_rss() );
 ?>
+
 <item>
 	<title><?php echo $title; ?></title>
 	<link><?php the_permalink_rss(); ?></link>

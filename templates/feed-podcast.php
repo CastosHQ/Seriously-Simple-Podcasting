@@ -37,6 +37,7 @@
  * 	@type string $title Link title
  * 	@type string $url Link url
  * }
+ * @var string $guid
  */
 
 // Exit if accessed directly.
@@ -144,6 +145,8 @@ if ( $stylesheet_url ) {
 			?><podcast:funding url="<?php echo esc_attr( $funding['url'] ) ?>"><?php echo esc_html( $funding['title'] ) ?></podcast:funding>
 		<?php endif;
 
+		?><podcast:guid><?php echo esc_attr( $guid ) ?></podcast:guid>
+		<?php
 		// Prevent WP core from outputting an <image> element
 		remove_action( 'rss2_head', 'rss2_site_icon' );
 

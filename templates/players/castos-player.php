@@ -68,10 +68,10 @@
 				<?php if ( $show_subscribe_button || $show_share_button ) : ?>
 				<nav class="player-panels-nav">
 					<?php if ( $show_subscribe_button ) : ?>
-						<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="Subscribe"><?php _e( 'Subscribe', 'seriously-simple-podcasting' ) ?></button>
+						<button class="subscribe-btn" id="subscribe-btn-<?php echo $episode_id ?>" title="<?php _e( 'Subscribe', 'seriously-simple-podcasting' ) ?>"><?php _e( 'Subscribe', 'seriously-simple-podcasting' ) ?></button>
 					<?php endif; ?>
 					<?php if ( $show_share_button ) : ?>
-						<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="Share"><?php _e( 'Share', 'seriously-simple-podcasting' ) ?></button>
+						<button class="share-btn" id="share-btn-<?php echo $episode_id ?>" title="<?php _e( 'Share', 'seriously-simple-podcasting' ) ?>"><?php _e( 'Share', 'seriously-simple-podcasting' ) ?></button>
 					<?php endif; ?>
 				</nav>
 				<?php endif; ?>

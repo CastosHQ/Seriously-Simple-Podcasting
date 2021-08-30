@@ -227,21 +227,13 @@ class Frontend_Controller extends Controller {
 		 * Check if the user is using the ss_player shortcode anywhere in this post
 		 */
 		if ( ssp_check_if_podcast_has_shortcode( $episode_id, 'ss_player' ) ) {
-			$show_player = false;
-		}
-
-		if ( ! $show_player ) {
 			return false;
 		}
 
 		/**
 		 * Check if this post is using the HTML5 player block
 		 */
-		if ( has_block( 'seriously-simple-podcasting/castos-player' ) ) {
-			$show_player = false;
-		}
-
-		if ( ! $show_player ) {
+		if ( has_block( 'seriously-simple-podcasting/castos-player' ) || has_block( 'seriously-simple-podcasting/castos-html-player' ) ) {
 			return false;
 		}
 

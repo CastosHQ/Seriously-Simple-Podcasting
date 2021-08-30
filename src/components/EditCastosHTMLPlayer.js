@@ -6,11 +6,9 @@ import apiFetch from '@wordpress/api-fetch';
 
 import EpisodeSelector from "./EpisodeSelector";
 import CastosPlayer from "./CastosPlayer";
+import ServerSideRender from '@wordpress/server-side-render';
 
-/**
-* @deprecated Since 2.8.2 Use EditCastosHTMLPlayer instead
-* */
-class EditCastosPlayer extends Component {
+class EditCastosHTMLPlayer extends Component {
 	constructor({attributes, setAttributes, className}) {
 		super(...arguments);
 		this.episodeRef = React.createRef();
@@ -36,6 +34,7 @@ class EditCastosPlayer extends Component {
 	}
 
 	componentDidMount() {
+		this._isMounted = true;
 		let fetchPost = 'ssp/v1/episodes';
 		apiFetch({path: fetchPost}).then(posts => {
 			let episodes = []
@@ -52,6 +51,11 @@ class EditCastosPlayer extends Component {
 		});
 	}
 
+	componentWillUnmount() {
+		// fix Warning: Can't perform a React state update on an unmounted component
+		this._isMounted = false;
+	}
+
 	render() {
 		const {editing, episodes, episode, className, setAttributes} = this.state;
 		const switchToEditing = () => {
@@ -63,13 +67,7 @@ class EditCastosPlayer extends Component {
 			let fetchPost = 'ssp/v1/episodes?include=' + episodeId;
 			apiFetch({path: fetchPost}).then(post => {
 				const episode = {
-					episodeId: episodeId,
-					episodeImage: post[0].episode_player_image,
-					episodeFileUrl: post[0].player_link,
-					episodeTitle: post[0].title.rendered,
-					episodeDuration: post[0].meta.duration,
-					episodeDownloadUrl: post[0].download_link,
-					episodeData: post[0].episode_data,
+					episodeId: episodeId
 				}
 				this.setState({
 					key: episodeId,
@@ -77,13 +75,7 @@ class EditCastosPlayer extends Component {
 					editing: false
 				});
 				setAttributes({
-					id: episodeId,
-					image: episode.episodeImage,
-					file: episode.episodeFileUrl,
-					title: episode.episodeTitle,
-					duration: episode.episodeDuration,
-					download: episode.episodeDownloadUrl,
-					episode_data: episode.episodeData,
+					episodeId: episodeId,
 				});
 			});
 		};
@@ -111,21 +103,18 @@ class EditCastosPlayer extends Component {
 				/>
 			);
 		} else {
-			return [
-				controls, (
-					<CastosPlayer
-						key='castos-player'
-						className={this.state.className}
-						episodeId={episode.episodeId}
-						episodeImage={episode.episodeImage}
-						episodeTitle={episode.episodeTitle}
-						episodeFileUrl={episode.episodeFileUrl}
-						episodeDuration={episode.episodeDuration}
-						episodeData={episode.episodeData}
+			return (
+				[
+					controls,
+					<ServerSideRender className={className}
+									  key='castos-player'
+									  block="seriously-simple-podcasting/castos-html-player"
+									  attributes={{episodeId:episode.episodeId}}
 					/>
-				)];
+				]
+			);
 		}
 	}
 }
 
-export default EditCastosPlayer;
+export default EditCastosHTMLPlayer;

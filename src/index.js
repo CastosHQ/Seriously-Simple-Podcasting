@@ -8,6 +8,7 @@ import EditPlayer from './components/EditPlayer';
 import AudioPlayer from "./components/AudioPlayer";
 import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
+import EditCastosHTMLPlayer from './components/EditCastosHTMLPlayer';
 import EditPodcastList from "./components/EditPodcastList";
 
 /**
@@ -41,9 +42,10 @@ registerBlockType('seriously-simple-podcasting/audio-player', {
 
 /**
  * Castos Player block
+ * @deprecated Use 'seriously-simple-podcasting/castos-html-player' instead
  */
 registerBlockType('seriously-simple-podcasting/castos-player', {
-	title: __('Castos Player', 'seriously-simple-podcasting'),
+	title: __('Castos Player (OLD)', 'seriously-simple-podcasting'),
 	icon: 'controls-volumeon',
 	category: 'layout',
 	supports: {
@@ -92,6 +94,28 @@ registerBlockType('seriously-simple-podcasting/castos-player', {
 		} else {
 			return ('');
 		}
+	},
+});
+
+
+/**
+ * Castos HTML Player block
+ */
+registerBlockType('seriously-simple-podcasting/castos-html-player', {
+	title: __('Castos Player', 'seriously-simple-podcasting'),
+	icon: 'controls-volumeon',
+	category: 'layout',
+	supports: {
+		multiple: false,
+	},
+	attributes: {
+		episodeId: {
+			type: 'integer'
+		},
+	},
+	edit: EditCastosHTMLPlayer,
+	save: () => {
+		return null;
 	},
 });
 

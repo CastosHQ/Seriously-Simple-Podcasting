@@ -113,6 +113,26 @@ class Castos_Blocks extends Controller {
 			)
 		);
 
+		/**
+		 * Is used for both rendering the block itself and preview in editor
+		 * @since 2.8.2
+		 * */
+		register_block_type( 'seriously-simple-podcasting/castos-html-player', array(
+			'editor_script'   => 'ssp-block-script',
+			'editor_style'    => 'ssp-castos-player',
+			'attributes'      => array(
+				'episodeId' => array(
+					'type'    => 'integer',
+					'default' => '',
+				),
+			),
+			'render_callback' => function ( $args ) {
+				global $ss_podcasting;
+
+				return $ss_podcasting->players_controller->render_html_player( $args['episodeId'] );
+			}
+		) );
+
 		register_block_type(
 			'seriously-simple-podcasting/audio-player',
 			array(

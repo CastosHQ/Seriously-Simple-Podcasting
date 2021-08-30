@@ -700,7 +700,7 @@
 .castos-player .play-pause-controls button {
     position: absolute;
 }
-.castos-player .play-pause-controls .play-btn {
+.castos-player .play-progress .play-pause-controls .play-btn {
     background: url('images/player/images/icon-play.svg');
     background-repeat: no-repeat;
     background-position: 14px 11px;
@@ -711,7 +711,7 @@
     width: 44px;
     height: 44px;
 }
-.castos-player .play-pause-controls .play-btn:hover {
+.castos-player .play-progress .play-pause-controls .play-btn:hover {
     cursor: pointer;
     transform: scale(1.1);
 }
@@ -880,6 +880,7 @@
     color: #fff;
     background-color: rgba(255, 255, 255, 0);
 }
+
 .castos-player .player:hover .player-panels-nav button:hover {
     opacity: 1;
     cursor: pointer;
@@ -1248,9 +1249,9 @@
 }
 .castos-player.dark-mode .subscribe-icons span,
 .castos-player.dark-mode .share-icon span,
-.castos-player.dark-mode .player-btn__volume,
-.castos-player.dark-mode .player-btn__rwd,
-.castos-player.dark-mode .player-btn__fwd {
+.castos-player.dark-mode .playback__controls .player-btn__volume,
+.castos-player.dark-mode .playback__controls .player-btn__rwd,
+.castos-player.dark-mode .playback__controls .player-btn__fwd {
     background-color: #fff;
 }
 .castos-player.dark-mode .playlist__wrapper .playlist__item.active .playlist__item__details {

@@ -187,7 +187,7 @@ if ( $post_tags ) {
 	}
 	$tags = apply_filters( 'ssp_feed_item_itunes_keyword_tags', $tags, get_the_ID() );
 	if ( ! empty( $tags ) ) {
-		$keywords = implode( $tags, ',' );
+		$keywords = implode( ',', $tags );
 	}
 }
 

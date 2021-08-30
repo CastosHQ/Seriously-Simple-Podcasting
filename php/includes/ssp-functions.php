@@ -502,10 +502,11 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 	 * Get the XML markup for the feed category at the specified level
 	 *
 	 * @param int $level Category level
+	 * @param int $series_id
 	 *
 	 * @return string        XML output for feed vategory
 	 */
-	function ssp_get_feed_category_output( $level = 1, $series_id ) {
+	function ssp_get_feed_category_output( $level, $series_id ) {
 
 		$level = (int) $level;
 

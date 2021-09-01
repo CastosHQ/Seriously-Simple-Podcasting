@@ -715,8 +715,9 @@
     cursor: pointer;
     transform: scale(1.1);
 }
-.castos-player .play-pause-controls .pause-btn {
+.castos-player .play-progress .play-pause-controls .pause-btn {
     background: url('images/player/images/icon-pause.svg');
+	background-color: #fff;
     background-repeat: no-repeat;
     background-position: 13px 13px;
     border: none;

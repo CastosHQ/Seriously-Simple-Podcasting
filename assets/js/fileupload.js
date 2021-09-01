@@ -114,7 +114,17 @@ jQuery( document ).ready( function ( $ ) {
 		 * Show an error if anything goes wrong
 		 */
 		uploader.bind( 'Error', function ( up, err ) {
-			alert( 'Error #' + err.code + ': ' + err.message );
+			let msg = err.message;
+
+			try {
+				let res = JSON.parse(err.response);
+				if (typeof res === 'object' && res.hasOwnProperty('message')) {
+					msg = res.message;
+				}
+			} catch (e) {
+			}
+
+			alert( 'Error: ' + msg );
 		} );
 
 		/**

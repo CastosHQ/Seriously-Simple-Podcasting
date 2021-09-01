@@ -519,6 +519,7 @@ class Feed_Handler {
 	 * @return string Yes|No
 	 */
 	public function get_locked( $series_id ) {
+		return null; // Todo: enable when we're ready.
 		if ( $series_id ) {
 			$locked = get_option( 'ss_podcasting_locked_' . $series_id, null );
 		}
@@ -538,6 +539,7 @@ class Feed_Handler {
 	 * @return array|null
 	 */
 	public function get_funding( $series_id ) {
+		return null; // Todo: enable when we're ready.
 		if ( $series_id ) {
 			$funding = get_option( 'ss_podcasting_funding_' . $series_id, null );
 		}
@@ -554,9 +556,10 @@ class Feed_Handler {
 	 *
 	 * @param string $series_slug
 	 *
-	 * @return string
+	 * @return string|null
 	 */
 	public function get_guid( $series_slug ) {
+		return null; // Todo: enable when we're ready.
 		$series_url = ssp_get_feed_url( $series_slug );
 
 		$series_url = 'http://castos.loc/feed/podcast/first-series/';

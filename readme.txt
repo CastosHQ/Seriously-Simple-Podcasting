@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.1
+Stable tag: 2.8.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.8.2 =
+* 2021-09-01
+* UPDATE SUMMARY: Support PHP 8.0,  bug fixes, feed code refactoring
+* [UPDATE] PHP 8.0 support
+* [UPDATE] Gutenberg HTML player block improvements and fixes
+* [UPDATE] Code refactoring for podcast feed
+* [FIX] Empty podcast tags fix - in some cases tags didn't show the episodes
+* [FIX] Minor plugin translation improvements
+* [FIX] Fixed player CSS issues (style conflicts with some themes)
 
 = 2.8.1 =
 * 2021-08-13

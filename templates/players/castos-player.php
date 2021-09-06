@@ -43,7 +43,7 @@
 						<img src="<?php echo SSP_PLUGIN_URL ?>assets/css/images/player/images/icon-loader.svg" class="ssp-loader hide"/>
 					</div>
 					<div>
-						<audio <?php if ( empty( $playlist ) ) : ?>loop<?php endif; ?> preload="none" class="clip clip-<?php echo $episode_id ?>">
+						<audio preload="none" class="clip clip-<?php echo $episode_id ?>">
 							<source src="<?php echo $audio_file ?>">
 						</audio>
 						<div class="ssp-progress" title="Seek">

@@ -179,6 +179,8 @@ class Feed_Controller extends Controller {
 
 		$guid = $this->feed_handler->get_guid( $podcast_series );
 
+		$pub_date_type = $this->feed_handler->get_pub_date_type( $series_id );
+
 		$stylesheet_url = $this->feed_handler->get_stylesheet_url();
 
 		$this->send_feed_headers();

@@ -28,6 +28,8 @@
  * @var $episode_description_uses_excerpt //used here
  * @var WP_Query $qry //used here
  * @var $locked
+ * @var int $series_id
+ * @var string $pub_date_type
  */
 
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
@@ -169,16 +171,14 @@ $itunes_subtitle = str_replace(
 $itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
 $itunes_subtitle = apply_filters( 'ssp_feed_item_itunes_subtitle', $itunes_subtitle, get_the_ID() );
 
-// Date recorded
-$pub_date_type = get_option( 'ss_podcasting_publish_date', 'published' );
+// Date recorded.
 if ( 'published' === $pub_date_type ) {
 	$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) );
-} else // 'recorded'.
-{
+} else {
 	$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_meta( get_the_ID(), 'date_recorded', true ), false ) );
 }
 
-// Tags/keywords
+// Tags/keywords.
 $post_tags = get_the_tags( get_the_ID() );
 if ( $post_tags ) {
 	$tags = array();

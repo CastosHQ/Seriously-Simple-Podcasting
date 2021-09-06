@@ -38,6 +38,9 @@
  * 	@type string $url Link url
  * }
  * @var string $guid
+ * @var int $series_id
+ * @var string $pub_date_type
+ *
  */
 
 // Exit if accessed directly.

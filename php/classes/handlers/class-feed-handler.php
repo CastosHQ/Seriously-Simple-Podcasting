@@ -578,4 +578,16 @@ class Feed_Handler {
 		return $guid;
 	}
 
+	/**
+	 * Gets the variant of publication date type
+	 *
+	 * @param int $series_id
+	 *
+	 * @return string Either 'published' or 'recorded'
+	 */
+	public function get_pub_date_type( $series_id ) {
+		$pub_date_type_option = $series_id ? 'ss_podcasting_publish_date_' . $series_id : 'ss_podcasting_publish_date';
+		return get_option( $pub_date_type_option, 'published' );
+	}
+
 }

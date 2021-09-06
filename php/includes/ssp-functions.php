@@ -1096,6 +1096,16 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 		$podcast['itunes']      = get_option( 'ss_podcasting_itunes_url_' . $series_id, '' );
 		$podcast['google_play'] = get_option( 'ss_podcasting_google_play_url_' . $series_id, '' );
 
+		if ( $series_id ) {
+			$guid = get_option( 'ss_podcasting_data_guid_' . $series_id );
+		} else {
+			$guid = get_option( 'ss_podcasting_data_guid' );
+		}
+
+		if( $guid ){
+			$podcast['guid'] = $guid;
+		}
+
 		return $podcast;
 
 	}

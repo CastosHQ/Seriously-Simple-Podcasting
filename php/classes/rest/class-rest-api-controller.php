@@ -49,6 +49,7 @@ class Rest_Api_Controller {
 		$podcast['category1']       = ssp_get_feed_category_output( 1, $series_id );
 		$podcast['category2']       = ssp_get_feed_category_output( 2, $series_id );
 		$podcast['category3']       = ssp_get_feed_category_output( 3, $series_id );
+		$podcast['guid']            = get_option( 'ss_podcasting_data_guid', '' );
 
 		return $podcast;
 	}

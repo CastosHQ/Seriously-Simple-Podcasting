@@ -519,7 +519,6 @@ class Feed_Handler {
 	 * @return string Yes|No
 	 */
 	public function get_locked( $series_id ) {
-		return null; // Todo: enable when we're ready.
 		if ( $series_id ) {
 			$locked = get_option( 'ss_podcasting_locked_' . $series_id, null );
 		}
@@ -539,13 +538,12 @@ class Feed_Handler {
 	 * @return array|null
 	 */
 	public function get_funding( $series_id ) {
-		return null; // Todo: enable when we're ready.
 		if ( $series_id ) {
 			$funding = get_option( 'ss_podcasting_funding_' . $series_id, null );
 		}
 
 		if ( ! isset( $funding ) ) {
-			$funding = get_option( 'ss_podcasting_funding', '' );
+			$funding = get_option( 'ss_podcasting_funding', null );
 		}
 
 		return $funding;
@@ -556,19 +554,28 @@ class Feed_Handler {
 	 *
 	 * @param string $series_slug
 	 *
-	 * @return string|null
+	 * @return string
 	 */
 	public function get_guid( $series_slug ) {
-		return null; // Todo: enable when we're ready.
-		$series_url = ssp_get_feed_url( $series_slug );
 
-		$series_url = 'http://castos.loc/feed/podcast/first-series/';
+		$feed_url = ssp_get_feed_url( $series_slug );
 
-		$url_data = parse_url( $series_url );
+		$term    = get_term_by( 'slug', $series_slug, 'series' );
+		$term_id = isset( $term->term_id ) ? $term->term_id : null;
 
-		$url = $url_data['host'] . rtrim( $url_data['path'], '/' );
+		$option     = $term_id ? 'ss_podcasting_data_guid_' . $term_id : 'ss_podcasting_data_guid';
+		$saved_guid = get_option( $option );
 
-		return UUID_Handler::v5( self::PODCAT_NAMESPACE_UUID, $url );
+		if ( empty( $saved_guid ) ) {
+			$url_data = parse_url( $feed_url );
+			$url      = $url_data['host'] . rtrim( $url_data['path'], '/' );
+			$guid     = UUID_Handler::v5( self::PODCAT_NAMESPACE_UUID, $url );
+			update_option( $option, $guid );
+		} else {
+			$guid = $saved_guid;
+		}
+
+		return $guid;
 	}
 
 }

@@ -90,7 +90,7 @@
 				<div class="subscribe-icons">
 					<?php foreach ( $subscribe_links as $key => $subscribe_link ) : ?>
 						<?php if ( ! empty( $subscribe_link['url'] ) ) : ?>
-							<a href="<?php echo $subscribe_link['url'] ?>" target="_blank" class="<?php echo esc_attr( $subscribe_link['class']) ?>" title="Subscribe on  <?php echo $subscribe_link['label'] ?>">
+							<a href="<?php echo $subscribe_link['url'] ?>" target="_blank" rel="noopener noreferrer" class="<?php echo esc_attr( $subscribe_link['class']) ?>" title="Subscribe on  <?php echo $subscribe_link['label'] ?>">
 								<span></span>
 								<?php echo $subscribe_link['label'] ?>
 							</a>
@@ -121,15 +121,15 @@
 				</div>
 				<div class="icons-holder">
 					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audio_file; ?>&t=<?php echo $episode->post_title; ?>"
-					   target="_blank" class="share-icon facebook" title="<?php _e( 'Share on Facebook', 'seriously-simple-podcasting' ) ?>">
+					   target="_blank" rel="noopener noreferrer" class="share-icon facebook" title="<?php _e( 'Share on Facebook', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 					</a>
 					<a href="https://twitter.com/intent/tweet?text=<?php echo $audio_file; ?>&url=<?php echo $episode->post_title; ?>"
-					   target="_blank" class="share-icon twitter" title="<?php _e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
+					   target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="<?php _e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 					</a>
 					<a href="<?php echo $audio_file ?>"
-					   target="_blank" class="share-icon download" title="<?php _e( 'Download', 'seriously-simple-podcasting' ) ?>" download>
+					   target="_blank" rel="noopener noreferrer" class="share-icon download" title="<?php _e( 'Download', 'seriously-simple-podcasting' ) ?>" download>
 						<span></span>
 					</a>
 				</div>

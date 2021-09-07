@@ -759,7 +759,7 @@ class Settings_Handler {
 				'class'       => 'large-text',
 				'callback'    => 'wp_strip_all_tags',
 			),
-			/*array(
+			array(
 				'id'          => 'funding',
 				'label'       => __( 'Podcast funding', 'seriously-simple-podcasting' ),
 				'description' => __( 'Funding for your podcast.', 'seriously-simple-podcasting' ),
@@ -779,7 +779,7 @@ class Settings_Handler {
 						'class'       => 'large-text',
 					),
 				),
-			),*/
+			),
 			array(
 				'id'          => 'explicit',
 				'label'       => __( 'Explicit', 'seriously-simple-podcasting' ),
@@ -797,14 +797,14 @@ class Settings_Handler {
 				'default'     => '',
 				'callback'    => 'wp_strip_all_tags',
 			),
-			/*array(
+			array(
 				'id'          => 'locked',
 				'label'       => __( 'Locked', 'seriously-simple-podcasting' ),
 				'description' => __( 'Mark if this podcast is locked or not. Locked means that any attempt to import this feed into a new platform will be rejected.', 'seriously-simple-podcasting' ),
 				'type'        => 'checkbox',
 				'default'     => '',
 				'callback'    => 'wp_strip_all_tags',
-			),*/
+			),
 			array(
 				'id'          => 'publish_date',
 				'label'       => __( 'Source for publish date', 'seriously-simple-podcasting' ),

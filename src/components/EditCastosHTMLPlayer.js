@@ -5,7 +5,6 @@ import {Button, Toolbar} from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 import EpisodeSelector from "./EpisodeSelector";
-import CastosPlayer from "./CastosPlayer";
 import ServerSideRender from '@wordpress/server-side-render';
 
 class EditCastosHTMLPlayer extends Component {
@@ -35,7 +34,7 @@ class EditCastosHTMLPlayer extends Component {
 
 	componentDidMount() {
 		this._isMounted = true;
-		let fetchPost = 'ssp/v1/episodes';
+		let fetchPost = 'ssp/v1/episodes?per_page=100';
 		apiFetch({path: fetchPost}).then(posts => {
 			let episodes = []
 			Object.keys(posts).map(function (key) {

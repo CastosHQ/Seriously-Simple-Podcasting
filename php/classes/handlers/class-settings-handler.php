@@ -108,8 +108,8 @@ class Settings_Handler {
 				'label' => __( 'Marketing', 'seriously-simple-podcasting' ),
 				'group' => __( 'Business', 'seriously-simple-podcasting' ),
 			),
-			'Non-profit'         => array(
-				'label' => __( 'Non-profit', 'seriously-simple-podcasting' ),
+			'Non-Profit'         => array(
+				'label' => __( 'Non-Profit', 'seriously-simple-podcasting' ),
 				'group' => __( 'Business', 'seriously-simple-podcasting' ),
 			),
 			'Comedy Interviews'  => array(
@@ -120,24 +120,24 @@ class Settings_Handler {
 				'label' => __( 'Improv', 'seriously-simple-podcasting' ),
 				'group' => __( 'Comedy', 'seriously-simple-podcasting' ),
 			),
-			'Standup'            => array(
-				'label' => __( 'Standup', 'seriously-simple-podcasting' ),
+			'Stand-Up'            => array(
+				'label' => __( 'Stand-Up', 'seriously-simple-podcasting' ),
 				'group' => __( 'Comedy', 'seriously-simple-podcasting' ),
 			),
 			'Courses'            => array(
 				'label' => __( 'Courses', 'seriously-simple-podcasting' ),
 				'group' => __( 'Education', 'seriously-simple-podcasting' ),
 			),
-			'How to'             => array(
-				'label' => __( 'How to', 'seriously-simple-podcasting' ),
+			'How To'             => array(
+				'label' => __( 'How To', 'seriously-simple-podcasting' ),
 				'group' => __( 'Education', 'seriously-simple-podcasting' ),
 			),
 			'Language Learning'  => array(
 				'label' => __( 'Language Learning', 'seriously-simple-podcasting' ),
 				'group' => __( 'Education', 'seriously-simple-podcasting' ),
 			),
-			'Self Improvement'   => array(
-				'label' => __( 'Self Improvement', 'seriously-simple-podcasting' ),
+			'Self-Improvement'   => array(
+				'label' => __( 'Self-Improvement', 'seriously-simple-podcasting' ),
 				'group' => __( 'Education', 'seriously-simple-podcasting' ),
 			),
 			'Comedy Fiction'     => array(
@@ -284,12 +284,12 @@ class Settings_Handler {
 				'label' => __( 'Judaism', 'seriously-simple-podcasting' ),
 				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
 			),
-			'Spirituality'       => array(
-				'label' => __( 'Spirituality', 'seriously-simple-podcasting' ),
-				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-			),
 			'Religion'           => array(
 				'label' => __( 'Religion', 'seriously-simple-podcasting' ),
+				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
+			),
+			'Spirituality'       => array(
+				'label' => __( 'Spirituality', 'seriously-simple-podcasting' ),
 				'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
 			),
 			'Astronomy'          => array(

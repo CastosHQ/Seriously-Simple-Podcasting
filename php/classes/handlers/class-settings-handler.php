@@ -120,7 +120,7 @@ class Settings_Handler {
 				'label' => __( 'Improv', 'seriously-simple-podcasting' ),
 				'group' => __( 'Comedy', 'seriously-simple-podcasting' ),
 			),
-			'Stand-Up'            => array(
+			'Stand-Up'           => array(
 				'label' => __( 'Stand-Up', 'seriously-simple-podcasting' ),
 				'group' => __( 'Comedy', 'seriously-simple-podcasting' ),
 			),
@@ -762,20 +762,24 @@ class Settings_Handler {
 			array(
 				'id'          => 'funding',
 				'label'       => __( 'Podcast funding', 'seriously-simple-podcasting' ),
-				'description' => __( 'Funding for your podcast.', 'seriously-simple-podcasting' ),
 				'type'        => 'text_multi',
 				'class'       => 'large-text',
 				'fields'      => array(
 					array(
 						'id'          => 'url',
 						'type'        => 'text',
-						'placeholder' => __( 'Title', 'seriously-simple-podcasting' ),
+						'placeholder' => __( 'e.g. Donate to the show', 'seriously-simple-podcasting' ),
 						'class'       => 'large-text',
+						'description' => sprintf(
+							'<a href="%s">%s</a>',
+							'https://support.castos.com/hc/en-us/articles/4406045498002',
+							__( 'Learn More', 'seriously-simple-podcasting' )
+						),
 					),
 					array(
 						'id'          => 'title',
 						'type'        => 'text',
-						'placeholder' => home_url( 'donations/' ),
+						'placeholder' => __( 'e.g. https://buymeacoffee.com', 'seriously-simple-podcasting' ),
 						'class'       => 'large-text',
 					),
 				),

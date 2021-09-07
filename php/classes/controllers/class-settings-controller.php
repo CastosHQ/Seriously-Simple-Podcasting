@@ -435,8 +435,13 @@ class Settings_Controller extends Controller {
 			break;
 			case 'text_multi':
 				foreach ( $field['fields'] as $f ) {
-					$val = isset( $data[ $f['id'] ] ) ? $data[ $f['id'] ] : '';
-					$html .= '<input id="' . esc_attr( sprintf('%s_%s', $field['id'], $f['id']) ) . '" type="' . $f['type'] . '" name="' . esc_attr( sprintf('%s[%s]', $option_name, $f['id']) ) . '" placeholder="' . esc_attr( $f['placeholder'] ) . '" value="' . esc_attr( $val ) . '" class="' . $class . '"' . $data_attrs . '/><br><br>' . "\n";
+					$val      = isset( $data[ $f['id'] ] ) ? $data[ $f['id'] ] : '';
+					$field_id = esc_attr( sprintf( '%s_%s', $field['id'], $f['id'] ) );
+					$html     .= '<input id="' . $field_id . '" type="' . $f['type'] . '" name="' . esc_attr( sprintf( '%s[%s]', $option_name, $f['id'] ) ) . '" placeholder="' . esc_attr( $f['placeholder'] ) . '" value="' . esc_attr( $val ) . '" class="' . $class . '"' . $data_attrs . '/>';
+					if ( isset( $f['description'] ) ) {
+						$html .= '<label for=' . $field_id . '><span class="description">' . $f['description'] . '</span></label>';
+					}
+					$html .= '<br><br>' . "\n";
 				}
 				break;
 			case 'colour-picker':
@@ -549,7 +554,7 @@ class Settings_Controller extends Controller {
 				break;
 		}
 
-		if ( ! in_array( $field['type'], array( 'feed_link', 'feed_link_series', 'podcast_url', 'hidden' ), true ) ) {
+		if ( ! in_array( $field['type'], array( 'feed_link', 'feed_link_series', 'podcast_url', 'hidden', 'text_multi' ), true ) ) {
 			switch ( $field['type'] ) {
 				case 'checkbox_multi':
 				case 'radio':

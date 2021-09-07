@@ -20,12 +20,12 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Main plugin class
  *
- * @author      Hugh Lashbrooke
+ * @author      Hugh Lashbrooke, Sergey Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0
  */
-class Admin_Controller extends Controller {
+class App_Controller extends Controller {
 
 	/**
 	 * @var Ajax_Handler

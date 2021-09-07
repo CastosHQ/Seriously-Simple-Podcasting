@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 use SeriouslySimplePodcasting\Blocks\Castos_Blocks;
-use SeriouslySimplePodcasting\Controllers\Admin_Controller;
+use SeriouslySimplePodcasting\Controllers\App_Controller;
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Controllers\Options_Controller;
@@ -73,7 +73,7 @@ ssp_beta_check();
  * @todo alternatively the non admin specific functionality should be moved into it's own 'foundation' controller, perhaps even the parent controller, or a trait
  */
 global $ssp_admin, $ss_podcasting, $ssp_players;
-$ssp_admin     = new Admin_Controller( __FILE__, SSP_VERSION );
+$ssp_admin     = new App_Controller( __FILE__, SSP_VERSION );
 $ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
 $ssp_players   = new Players_Controller( __FILE__, SSP_VERSION );
 

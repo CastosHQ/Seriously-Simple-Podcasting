@@ -520,11 +520,11 @@ class Feed_Handler {
 	 */
 	public function get_locked( $series_id ) {
 		if ( $series_id ) {
-			$locked = get_option( 'ss_podcasting_locked_' . $series_id, null );
+			$locked = get_option( 'ss_podcasting_locked_' . $series_id, 'on' );
 		}
 
 		if ( ! isset( $locked ) ) {
-			$locked = get_option( 'ss_podcasting_locked', '' );
+			$locked = get_option( 'ss_podcasting_locked', 'on' );
 		}
 
 		return 'on' === $locked ? 'yes' : 'no';

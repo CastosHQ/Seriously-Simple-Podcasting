@@ -806,7 +806,7 @@ class Settings_Handler {
 				'label'       => __( 'Locked', 'seriously-simple-podcasting' ),
 				'description' => __( 'Mark if this podcast is locked or not. Locked means that any attempt to import this feed into a new platform will be rejected.', 'seriously-simple-podcasting' ),
 				'type'        => 'checkbox',
-				'default'     => '',
+				'default'     => 'on',
 				'callback'    => 'wp_strip_all_tags',
 			),
 			array(

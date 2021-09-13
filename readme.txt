@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.8.2
+Stable tag: 2.9.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,19 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.9.0 =
+* 2021-09-13
+* UPDATE SUMMARY: Podcast 2.0 tags, bug fixes
+* [UPDATE] Podcast 2.0 namespace - podcast:GUID
+* [UPDATE] Podcast 2.0 namespace - podcast:funding
+* [UPDATE] Podcast 2.0 namespace - podcast:locked
+* [UPDATE] Added rel=”noopener noreferrer” to external links in player
+* [FIX] Removed CDATA from <itunes:author> tag
+* [FIX] Fixed looping episode issue
+* [FIX] Fixed setting “Source for publish date" not working for series feeds
+* [FIX] Fixed some feed category names
+* [FIX] Castos player block pulled only latest 10 episodes
 
 = 2.8.2 =
 * 2021-09-01

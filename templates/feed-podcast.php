@@ -77,7 +77,7 @@ if ( $stylesheet_url ) {
 		<language><?php echo esc_html( $language ); ?></language>
 		<copyright><?php echo esc_html( $copyright ); ?></copyright>
 		<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>
-		<itunes:author><?php echo esc_html( $author ); ?>></itunes:author>
+		<itunes:author><?php echo esc_html( $author ); ?></itunes:author>
 		<?php if ( $itunes_type ) : ?>
 			<itunes:type><?php echo $itunes_type; ?></itunes:type>
 		<?php endif ?>

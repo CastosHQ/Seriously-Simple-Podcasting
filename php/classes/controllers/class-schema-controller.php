@@ -2,10 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-
-
-use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastEpisode;
-use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastSeries;
+use SeriouslySimplePodcasting\Integrations\Yoast\Schema\Podcast_Episode_Schema;
+use SeriouslySimplePodcasting\Integrations\Yoast\Schema\Podcast_Series_Schema;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -28,10 +26,8 @@ class Schema_Controller extends Controller {
 	}
 
     public static function add_graph_pieces( $data ) {
-		return $data; //todo: remove this line
-
-		$data[] = new PodcastEpisode();
-		$data[] = new PodcastSeries();
+		$data[] = new Podcast_Episode_Schema();
+		$data[] = new Podcast_Series_Schema();
 
         return $data;
     }

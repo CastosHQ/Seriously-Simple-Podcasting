@@ -12,9 +12,9 @@ use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
 /**
  * Returns schema PodcastEpisode data.
  *
- * @since 2.7.3
+ * @since 2.10.0
  */
-class PodcastEpisode extends Abstract_Schema_Piece {
+class Podcast_Episode_Schema extends Abstract_Schema_Piece {
 
 	/**
 	 * Determines whether an Organization graph piece should be added.
@@ -102,10 +102,10 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		$time = 'P';
 
 		if ( $hours ) {
-			$time .= intval( $hours ) . 'H';
+			$time .= $hours . 'H';
 		}
 		if ( $minutes ) {
-			$time .= intval( $minutes ) . 'M';
+			$time .= $minutes . 'M';
 		}
 
 		return $time;

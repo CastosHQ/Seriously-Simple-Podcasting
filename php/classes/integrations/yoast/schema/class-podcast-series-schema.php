@@ -12,9 +12,9 @@ use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
 /**
  * Returns schema PodcastSeries data.
  *
- * @since 2.7.3
+ * @since 2.10.0
  */
-class PodcastSeries extends Abstract_Schema_Piece {
+class Podcast_Series_Schema extends Abstract_Schema_Piece {
 
 	/**
 	 * Determines whether an Organization graph piece should be added.

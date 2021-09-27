@@ -24,7 +24,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Main plugin class
+ * Frontend Controller
  *
  * @author      Hugh Lashbrooke
  * @category    Class
@@ -102,12 +102,6 @@ class Frontend_Controller extends Controller {
 
 		// Trigger import podcast process (if active)
 		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor' ) );
-
-		// Register widgets
-		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
-
-		// Add shortcodes
-		add_action( 'init', array( $this, 'register_shortcodes' ), 1 );
 
 		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
 
@@ -1422,28 +1416,6 @@ class Frontend_Controller extends Controller {
 		}
 
 		echo "\n" . apply_filters( 'ssp_rss_meta_tag', $html ) . "\n\n";
-	}
-
-	/**
-	 * Register plugin widgets
-	 * @return void
-	 */
-	public function register_widgets () {
-		register_widget( new Playlist() );
-		register_widget( new Series() );
-		register_widget( new Single_Episode() );
-		register_widget( new Recent_Episodes() );
-	}
-
-	/**
-	 * Register plugin shortcodes
-	 * @return void
-	 */
-	public function register_shortcodes () {
-		add_shortcode( 'ss_player', array( new Player(), 'shortcode' ) );
-		add_shortcode( 'ss_podcast', array( new Podcast(), 'shortcode' ) );
-		add_shortcode( 'podcast_episode', array( new Podcast_Episode(), 'shortcode' ) );
-		add_shortcode( 'podcast_playlist', array( new Podcast_Playlist(), 'shortcode' ) );
 	}
 
 	/**

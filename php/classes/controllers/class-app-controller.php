@@ -11,6 +11,10 @@ use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Blocks\Castos_Blocks;
+use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
+use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
+use SeriouslySimplePodcasting\Handlers\Images_Handler;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -68,6 +72,16 @@ class App_Controller extends Controller {
 	protected $schema_controller;
 
 	/**
+	 * @var Shortcodes_Controller
+	 */
+	protected $shortcodes_controller;
+
+	/**
+	 * @var Widgets_Controller
+	 */
+	protected $widgets_controller;
+
+	/**
 	 * @var CPT_Podcast_Handler
 	 */
 	protected $cpt_podcast_handler;
@@ -86,6 +100,16 @@ class App_Controller extends Controller {
 	 * @param $version string plugin version
 	 */
 	public function __construct( $file, $version ) {
+		if ( ! ssp_is_php_version_ok() ) {
+			return;
+		}
+
+		if ( ! ssp_is_vendor_ok() ) {
+			return;
+		}
+
+		ssp_beta_check();
+
 		parent::__construct( $file, $version );
 		$this->bootstrap();
 	}
@@ -93,7 +117,10 @@ class App_Controller extends Controller {
 	/**
 	 * Set up all hooks and filters for this class
 	 */
-	public function bootstrap() {
+	protected function bootstrap() {
+
+		global $images_handler;
+		$images_handler = new Images_Handler();
 
 		$this->ajax_handler = new Ajax_Handler();
 
@@ -114,13 +141,56 @@ class App_Controller extends Controller {
 
 		$this->schema_controller = new Schema_Controller( $this->file, $this->version );
 
+		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version  );
+
+		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
+
 		if ( is_admin() ) {
 			$this->admin_notices_handler = ( new Admin_Notifications_Handler( $this->token ) )->bootstrap();
+
+			global $ssp_settings, $ssp_options;
+			$ssp_settings = new Settings_Controller( __FILE__, SSP_VERSION );
+			$ssp_options  = new Options_Controller( __FILE__, SSP_VERSION );
 		}
+
+		// todo: further refactoring - get rid of global here
+		global $ss_podcasting, $ssp_players;
+		$ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
+		$ssp_players   = new Players_Controller( __FILE__, SSP_VERSION );
+
+		$this->init_integrations();
+		$this->register_hooks_and_filters();
 
 		// Handle localisation.
 		$this->load_plugin_textdomain();
+	}
 
+	protected function init_integrations(){
+		/**
+		 * Only load Blocks if the WordPress version is newer than 5.0
+		 */
+		global $wp_version;
+		if ( version_compare( $wp_version, '5.0', '>=' ) ) {
+			new Castos_Blocks( __FILE__, SSP_VERSION );
+		}
+		/**
+		 * Only load WP REST API Endpoints if the WordPress version is newer than 4.7
+		 */
+		global $wp_version;
+		if ( version_compare( $wp_version, '4.7', '>=' ) ) {
+			global $ssp_wp_rest_api;
+			$ssp_wp_rest_api = new Rest_Api_Controller( __FILE__, SSP_VERSION );
+		}
+
+		if ( ssp_is_elementor_ok() ) {
+			new Elementor_Widgets();
+		}
+	}
+
+	/**
+	 * Register all relevant front end hooks and filters
+	 */
+	protected function register_hooks_and_filters() {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
 		// Regsiter podcast post type, taxonomies and meta fields.
@@ -205,7 +275,7 @@ class App_Controller extends Controller {
 			// Filter Embed HTML Code
 			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
 
-		} // End if().
+		}
 
 		// Setup activation and deactivation hooks
 		register_activation_hook( $this->file, array( $this, 'activate' ) );

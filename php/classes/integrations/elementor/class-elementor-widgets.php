@@ -26,7 +26,7 @@ final class Elementor_Widgets {
 	 *
 	 * @var string Minimum PHP version required to run the plugin.
 	 */
-	const MINIMUM_PHP_VERSION = '7.0';
+	const MINIMUM_PHP_VERSION = '5.6';
 
 	protected $template_importer;
 

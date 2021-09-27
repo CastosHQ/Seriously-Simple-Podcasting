@@ -39,7 +39,7 @@ class Elementor_Subscribe_Buttons_Widget extends \Elementor\Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'fa fa-link';
+		return 'eicon-link';
 	}
 
 	public function get_categories() {

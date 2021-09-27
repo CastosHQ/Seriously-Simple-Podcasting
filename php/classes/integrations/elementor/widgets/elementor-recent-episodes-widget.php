@@ -14,7 +14,7 @@ class Elementor_Recent_Episodes_Widget extends \Elementor\Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'fa fa-broadcast-tower';
+		return 'eicon-archive-posts';
 	}
 
 	public function get_categories() {

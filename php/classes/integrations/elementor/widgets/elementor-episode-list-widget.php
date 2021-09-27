@@ -15,7 +15,7 @@ class Elementor_Episode_List_Widget extends \Elementor\Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'fa fa-list';
+		return 'eicon-post-list';
 	}
 
 	public function get_categories() {

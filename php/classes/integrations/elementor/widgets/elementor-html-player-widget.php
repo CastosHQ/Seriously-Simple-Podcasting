@@ -38,7 +38,7 @@ class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
 	}
 
 	public function get_icon() {
-		return 'fa fa-html5';
+		return 'eicon-play-o';
 	}
 
 	public function get_categories() {

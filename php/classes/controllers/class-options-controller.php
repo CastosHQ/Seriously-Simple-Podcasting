@@ -348,7 +348,7 @@ class Options_Controller extends Controller {
 	 */
 	public function add_menu_item() {
 		add_submenu_page(
-			'edit.php?post_type=podcast',
+			'edit.php?post_type='. SSP_CPT_PODCAST,
 			__( 'Podcast Options', 'seriously-simple-podcasting' ),
 			__( 'Options', 'seriously-simple-podcasting' ),
 			'manage_podcast',

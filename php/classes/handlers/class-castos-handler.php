@@ -238,6 +238,7 @@ class Castos_Handler {
 			'episode_number' => get_post_meta( $post->ID, 'itunes_episode_number', true ),
 			'episode_type'   => get_post_meta( $post->ID, 'itunes_episode_type', true ),
 			'post_date'      => $post->post_date,
+			'post_date_gmt'  => $post->post_date_gmt,
 			'file_id'        => $podmotor_file_id,
 			'series_id'      => $series_id,
 		);

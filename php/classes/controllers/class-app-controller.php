@@ -1423,7 +1423,7 @@ HTML;
 		}
 
 		$castos_handler = new Castos_Handler();
-		$response       = $castos_handler->upload_podcast_to_podmotor( $post );
+		$response       = $castos_handler->upload_episode_to_castos( $post );
 
 		if ( 'success' === $response['status'] ) {
 			set_transient( $cache_key, true, 30 );

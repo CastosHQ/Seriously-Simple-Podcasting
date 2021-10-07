@@ -198,7 +198,7 @@ class Castos_Handler {
 	 *
 	 * @return array
 	 */
-	public function upload_podcast_to_podmotor( $post ) {
+	public function upload_episode_to_castos( $post ) {
 
 		$this->setup_response();
 

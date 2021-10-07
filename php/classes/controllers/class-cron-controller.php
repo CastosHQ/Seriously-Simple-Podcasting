@@ -34,7 +34,7 @@ class Cron_Controller {
 		$castos_handler = new Castos_Handler();
 		$uploaded = 0;
 		foreach ( $this->get_scheduled_episodes() as $episode ) {
-			$response = $castos_handler->upload_podcast_to_podmotor( $episode );
+			$response = $castos_handler->upload_episode_to_castos( $episode );
 
 			if ( 'success' === $response['status'] ) {
 				delete_post_meta( $episode->ID, 'podmotor_schedule_upload' );

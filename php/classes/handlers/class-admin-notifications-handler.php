@@ -265,7 +265,7 @@ class Admin_Notifications_Handler {
 		$revalidate_api_credentials_url  = wp_nonce_url(
 			add_query_arg(
 				array( 'ssp_revalidate_api_credentials' => 'true' ),
-				admin_url( 'edit.php?post_type=podcast' )
+				admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST )
 			),
 			'revalidate-api-credentials'
 		);
@@ -583,7 +583,7 @@ class Admin_Notifications_Handler {
 					),
 				)
 			),
-			esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options' ) )
+			esc_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_options' ) )
 		);
 		?>
 		<div class="notice notice-info">
@@ -596,7 +596,7 @@ class Admin_Notifications_Handler {
 	 * Show the Distrubution Links Upgrade notice, prompting the user to trigger the upgrade, as well as download a copy of their current settings
 	 */
 	public function show_distribution_links_upgrade_notice() {
-		$distribution_backup_url = add_query_arg( '_wpnonce', wp_create_nonce( 'export_options' ), admin_url( 'edit.php?post_type=podcast&page=podcast_options&export_options=true' ) );
+		$distribution_backup_url = add_query_arg( '_wpnonce', wp_create_nonce( 'export_options' ), admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_options&export_options=true' ) );
 		$distribution_backup = sprintf(
 			wp_kses(
 				// translators: Placeholder is the url to download the current options
@@ -665,7 +665,7 @@ class Admin_Notifications_Handler {
 					),
 				)
 			),
-			esc_url( admin_url('edit.php?post_type=podcast&page=podcast_settings&tab=extensions') )
+			esc_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings&tab=extensions' ) )
 		);
 
 		$ignore_message_url = add_query_arg( array( 'ssp_disable_elementor_template_notice' => 'true' ) );

@@ -121,7 +121,7 @@ class Extensions_Controller extends Controller {
 			$elementor_templates = array(
 				'title'       => __( 'Elementor Templates', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'elementor.jpg',
-				'url'         => wp_nonce_url( admin_url( 'edit.php?post_type=podcast&page=podcast_settings&tab=extensions&elementor_import_templates=true' ), '', 'import_template_nonce' ),
+				'url'         => wp_nonce_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings&tab=extensions&elementor_import_templates=true' ), '', 'import_template_nonce' ),
 				'description' => __( 'Looking for a custom elementor template to use with Seriously Simple Podcasting? Click here to import all of them righ now!', 'seriously-simple-podcasting' ),
 				'button_text' => __( 'Import Templates', 'seriously-simple-podcasting' ),
 				'new_window'  => 'redirect'

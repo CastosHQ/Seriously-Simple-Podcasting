@@ -152,12 +152,12 @@ class Settings_Controller extends Controller {
 	 * @return void
 	 */
 	public function add_menu_item() {
-		add_submenu_page( 'edit.php?post_type=podcast', __( 'Podcast Settings', 'seriously-simple-podcasting' ), __( 'Settings', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings', array(
+		add_submenu_page( 'edit.php?post_type=' . SSP_CPT_PODCAST, __( 'Podcast Settings', 'seriously-simple-podcasting' ), __( 'Settings', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings', array(
 			$this,
 			'settings_page',
 		) );
 
-		add_submenu_page( 'edit.php?post_type=podcast', __( 'Extensions', 'seriously-simple-podcasting' ), __( 'Extensions', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings&tab=extensions', array(
+		add_submenu_page( 'edit.php?post_type=podcast' . SSP_CPT_PODCAST, __( 'Extensions', 'seriously-simple-podcasting' ), __( 'Extensions', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings&tab=extensions', array(
 			$this,
 			'settings_page',
 		) );
@@ -177,7 +177,7 @@ class Settings_Controller extends Controller {
 	 * @return array $links Modified links
 	 */
 	public function add_plugin_links( $links ) {
-		$settings_link = '<a href="edit.php?post_type=podcast&page=podcast_settings">' . __( 'Settings', 'seriously-simple-podcasting' ) . '</a>';
+		$settings_link = '<a href="edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings">' . __( 'Settings', 'seriously-simple-podcasting' ) . '</a>';
 		array_push( $links, $settings_link );
 
 		return $links;

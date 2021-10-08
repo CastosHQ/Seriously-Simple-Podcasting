@@ -15,7 +15,7 @@ class Feed_Handler {
 	 * Unique "podcast" namespace UUID
 	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#guid
 	 * */
-	const PODCAT_NAMESPACE_UUID = 'ead4c236-bf58-58c6-a2c6-a6b28d128cb6';
+	const PODCAST_NAMESPACE_UUID = 'ead4c236-bf58-58c6-a2c6-a6b28d128cb6';
 
 	/**
 	 * Suppress all errors to make sure the feed is not broken
@@ -141,7 +141,7 @@ class Feed_Handler {
 	 */
 	public function maybe_redirect_to_the_new_feed() {
 		$redirect = get_option( 'ss_podcasting_redirect_feed' );
-		if ( ! $redirect || 'on' !== $redirect ) {
+		if ( 'on' !== $redirect ) {
 			return;
 		}
 
@@ -568,7 +568,7 @@ class Feed_Handler {
 		if ( empty( $saved_guid ) ) {
 			$url_data = parse_url( $feed_url );
 			$url      = $url_data['host'] . rtrim( $url_data['path'], '/' );
-			$guid     = UUID_Handler::v5( self::PODCAT_NAMESPACE_UUID, $url );
+			$guid     = UUID_Handler::v5( self::PODCAST_NAMESPACE_UUID, $url );
 			update_option( $option, $guid );
 		} else {
 			$guid = $saved_guid;

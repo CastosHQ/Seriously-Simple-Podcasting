@@ -149,14 +149,14 @@ class App_Controller extends Controller {
 			$this->admin_notices_handler = ( new Admin_Notifications_Handler( $this->token ) )->bootstrap();
 
 			global $ssp_settings, $ssp_options;
-			$ssp_settings = new Settings_Controller( __FILE__, SSP_VERSION );
-			$ssp_options  = new Options_Controller( __FILE__, SSP_VERSION );
+			$ssp_settings = new Settings_Controller( $this->file, SSP_VERSION );
+			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}
 
 		// todo: further refactoring - get rid of global here
 		global $ss_podcasting, $ssp_players;
-		$ss_podcasting = new Frontend_Controller( __FILE__, SSP_VERSION );
-		$ssp_players   = new Players_Controller( __FILE__, SSP_VERSION );
+		$ss_podcasting = new Frontend_Controller( $this->file, SSP_VERSION );
+		$ssp_players   = new Players_Controller( $this->file, SSP_VERSION );
 
 		$this->init_integrations();
 		$this->register_hooks_and_filters();

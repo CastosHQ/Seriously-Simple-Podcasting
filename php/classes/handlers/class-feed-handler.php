@@ -156,11 +156,10 @@ class Feed_Handler {
 		$current_date  = time();
 
 		// Redirect with 301 if it is more than 2 days since redirect was saved
-		if ( $current_date > $redirect_date ) {
-			header( 'HTTP/1.1 301 Moved Permanently' );
-			header( 'Location: ' . $new_feed_url );
-			exit;
-		}
+		$status_code = $current_date > $redirect_date ? 301 : 302;
+
+		wp_redirect( $new_feed_url, $status_code );
+		exit;
 	}
 
 	/**

@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.9.1
+Stable tag: 2.9.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.9.2 =
+* 2021-10-12
+* UPDATE SUMMARY: Elementor widgets improvements, bug fixes, code refactoring
+* [UPDATE] Show Elementor widgets for PHP 5.6
+* [UPDATE] Code refactoring: added separate controllers for widgets and shortcodes
+* [UPDATE] Code refactoring: renamed some functions and constants
+* [UPDATE] Feed redirect improvement: 302 redirect for first 48 hours, then 301 redirect
+* [FIX] Fix Elementor widget icons for the recent Elementor update
+* [FIX] Modifying SSP_CPT_PODCAST caused settings page to disappear
+* [FIX] Fixed onboarding wizard permissions bug
 
 = 2.9.1 =
 * 2021-09-14

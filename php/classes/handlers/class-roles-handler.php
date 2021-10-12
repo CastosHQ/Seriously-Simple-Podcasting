@@ -18,6 +18,7 @@ class Roles_Handler {
 
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'manage_default_roles' ), 1 );
+		add_action( 'activated_plugin', array( $this, 'manage_default_roles' ), 1 );
 
 		// Adds podcast roles
 		add_filter( 'admin_init', array( $this, 'add_podcast_editor_role' ) );

@@ -1,6 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Blocks;
+namespace SeriouslySimplePodcasting\Integrations\Blocks;
 
 use SeriouslySimplePodcasting\Controllers\Controller;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
@@ -22,7 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Castos_Blocks extends Controller {
 
 	/**
-	 * @var Blocks asset file
+	 * @var array $asset_file
 	 */
 	protected $asset_file;
 

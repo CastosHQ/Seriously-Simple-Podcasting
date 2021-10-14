@@ -11,7 +11,7 @@ use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Renderers\Renderer;
-use SeriouslySimplePodcasting\Blocks\Castos_Blocks;
+use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
@@ -139,8 +139,6 @@ class App_Controller extends Controller {
 
 		$this->cron_controller = new Cron_Controller();
 
-		$this->schema_controller = new Schema_Controller( $this->file, $this->version );
-
 		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version  );
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
@@ -185,6 +183,8 @@ class App_Controller extends Controller {
 		if ( ssp_is_elementor_ok() ) {
 			new Elementor_Widgets();
 		}
+
+		$this->schema_controller = new Schema_Controller( $this->file, $this->version );
 	}
 
 	/**

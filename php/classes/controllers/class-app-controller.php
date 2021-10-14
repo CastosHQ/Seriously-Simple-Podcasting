@@ -157,6 +157,7 @@ class App_Controller extends Controller {
 		$ssp_players   = new Players_Controller( $this->file, SSP_VERSION );
 
 		$this->init_integrations();
+		$this->init_rest_api();
 		$this->register_hooks_and_filters();
 
 		// Handle localisation.
@@ -165,26 +166,44 @@ class App_Controller extends Controller {
 
 	protected function init_integrations(){
 		/**
+		 * Gutenberg integration.
 		 * Only load Blocks if the WordPress version is newer than 5.0
 		 */
-		global $wp_version;
-		if ( version_compare( $wp_version, '5.0', '>=' ) ) {
+		if ( version_compare( $this->get_wp_version(), '5.0', '>=' ) ) {
 			new Castos_Blocks( __FILE__, SSP_VERSION );
 		}
-		/**
-		 * Only load WP REST API Endpoints if the WordPress version is newer than 4.7
-		 */
-		global $wp_version;
-		if ( version_compare( $wp_version, '4.7', '>=' ) ) {
-			global $ssp_wp_rest_api;
-			$ssp_wp_rest_api = new Rest_Api_Controller( __FILE__, SSP_VERSION );
-		}
 
+		// Elementor integration.
 		if ( ssp_is_elementor_ok() ) {
 			new Elementor_Widgets();
 		}
 
+		// Yoast Schema integration.
 		$this->schema_controller = new Schema_Controller( $this->file, $this->version );
+	}
+
+	/**
+	 * Gets current WP version.
+	 *
+	 * @return string
+	 * */
+	protected function get_wp_version(){
+		global $wp_version;
+
+		return $wp_version;
+	}
+
+	/**
+	 * Init REST API
+	 */
+	protected function init_rest_api(){
+		global $wp_version;
+
+		// Only load WP REST API Endpoints if the WordPress version is newer than 4.7.
+		if ( version_compare( $wp_version, '4.7', '>=' ) ) {
+			global $ssp_wp_rest_api;
+			$ssp_wp_rest_api = new Rest_Api_Controller( __FILE__, SSP_VERSION );
+		}
 	}
 
 	/**

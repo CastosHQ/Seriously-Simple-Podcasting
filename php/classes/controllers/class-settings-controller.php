@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Handles plugin settings page
  *
- * @author      Hugh Lashbrooke
+ * @author      Hugh Lashbrooke, Sergey Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.0
@@ -112,7 +112,10 @@ class Settings_Controller extends Controller {
 		add_action( 'update_option', array( $this, 'mark_feed_redirect_date' ), 10, 3 );
 
 		// Trigger the disconnect action
-		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array( $this, 'maybe_disconnect_from_castos' ), 10, 2 );
+		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array(
+			$this,
+			'maybe_disconnect_from_castos'
+		), 10, 2 );
 
 		// Quick and dirty colour picker implementation
 		// If we do not have the WordPress core colour picker field, then we don't break anything
@@ -172,7 +175,7 @@ class Settings_Controller extends Controller {
 	/**
 	 * Add links to plugin list table
 	 *
-	 * @param  array $links Default links.
+	 * @param array $links Default links.
 	 *
 	 * @return array $links Modified links
 	 */
@@ -190,7 +193,7 @@ class Settings_Controller extends Controller {
 	 */
 	public function enqueue_scripts() {
 		global $pagenow;
-		$page = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
+		$page  = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
 		$pages = array( 'post-new.php', 'post.php' );
 		if ( in_array( $pagenow, $pages, true ) || ( ! empty( $page ) && 'podcast_settings' === $page ) ) {
 			wp_enqueue_media();
@@ -220,7 +223,7 @@ class Settings_Controller extends Controller {
 	 * Load settings
 	 */
 	public function load_settings() {
-		$this->settings   = $this->settings_handler->settings_fields();
+		$this->settings = $this->settings_handler->settings_fields();
 	}
 
 	/**
@@ -311,7 +314,6 @@ class Settings_Controller extends Controller {
 						}
 
 
-
 						// Add field to page.
 						add_settings_field( $field['id'], $field['label'],
 							array(
@@ -362,7 +364,7 @@ class Settings_Controller extends Controller {
 	/**
 	 * Generate HTML for displaying fields
 	 *
-	 * @param  array $args Field data
+	 * @param array $args Field data
 	 *
 	 * @return void
 	 */
@@ -432,7 +434,7 @@ class Settings_Controller extends Controller {
 			case 'password':
 			case 'number':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"' . $data_attrs . '/>' . "\n";
-			break;
+				break;
 			case 'text_multi':
 				foreach ( $field['fields'] as $f ) {
 					$val      = isset( $data[ $f['id'] ] ) ? $data[ $f['id'] ] : '';
@@ -483,7 +485,7 @@ class Settings_Controller extends Controller {
 				}
 				break;
 			case 'select':
-				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '"' . $data_attrs . '>';
+				$html       .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '"' . $data_attrs . '>';
 				$prev_group = '';
 				foreach ( $field['options'] as $k => $v ) {
 
@@ -554,7 +556,13 @@ class Settings_Controller extends Controller {
 				break;
 		}
 
-		if ( ! in_array( $field['type'], array( 'feed_link', 'feed_link_series', 'podcast_url', 'hidden', 'text_multi' ), true ) ) {
+		if ( ! in_array( $field['type'], array(
+			'feed_link',
+			'feed_link_series',
+			'podcast_url',
+			'hidden',
+			'text_multi'
+		), true ) ) {
 			switch ( $field['type'] ) {
 				case 'checkbox_multi':
 				case 'radio':
@@ -577,7 +585,7 @@ class Settings_Controller extends Controller {
 	/**
 	 * Validate URL slug
 	 *
-	 * @param  string $slug User input
+	 * @param string $slug User input
 	 *
 	 * @return string       Validated string
 	 */
@@ -592,9 +600,9 @@ class Settings_Controller extends Controller {
 	/**
 	 * Mark redirect date for feed
 	 *
-	 * @param  string $option Name of option being updated
-	 * @param  mixed $old_value Old value of option
-	 * @param  mixed $new_value New value of option
+	 * @param string $option Name of option being updated
+	 * @param mixed $old_value Old value of option
+	 * @param mixed $new_value New value of option
 	 *
 	 * @return void
 	 */
@@ -619,7 +627,7 @@ class Settings_Controller extends Controller {
 				'post_type' => null,
 				'page'      => null,
 				'view'      => null,
-				'tab'       => null
+				'tab'       => null,
 			)
 		);
 
@@ -627,7 +635,6 @@ class Settings_Controller extends Controller {
 			$entry = sanitize_title( $entry );
 		} );
 
-		// Build page HTML
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";
 
 		$html .= '<h1>' . __( 'Podcast Settings', 'seriously-simple-podcasting' ) . '</h1>' . "\n";
@@ -637,9 +644,35 @@ class Settings_Controller extends Controller {
 			$tab = $_GET['tab'];
 		}
 
+		$html .= $this->show_page_messages();
 		$html .= '<div id="main-settings">' . "\n";
+		$html .= $this->show_page_tabs();
+		$html .= $this->show_tab_before_settings( $tab );
+		$html .= $this->show_tab_settings( $tab );
+		$html .= $this->show_tab_after_settings( $tab );
 
-		// Show page tabs
+		echo $html;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function show_page_messages() {
+		$html = '';
+		if ( isset( $_GET['settings-updated'] ) ) {
+			$html .= '<br/><div class="updated notice notice-success is-dismissible">
+									<p>' . sprintf( __( '%1$s settings updated.', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) . '</b>' ) . '</p>
+								</div>';
+		}
+
+		return apply_filters( 'ssp_settings_show_page_tabs', $html );
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function show_page_tabs() {
+		$html = '';
 		if ( is_array( $this->settings ) && 1 < count( $this->settings ) ) {
 
 			$html .= '<h2 class="nav-tab-wrapper">' . "\n";
@@ -679,70 +712,28 @@ class Settings_Controller extends Controller {
 			$html .= '</h2>' . "\n";
 		}
 
-		if ( isset( $_GET['settings-updated'] ) ) {
-			$html .= '<br/><div class="updated notice notice-success is-dismissible">
-									<p>' . sprintf( __( '%1$s settings updated.', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) . '</b>' ) . '</p>
-								</div>';
+		return apply_filters( 'ssp_settings_show_page_tabs', $html );
+	}
+
+	/**
+	 * @param string $tab
+	 *
+	 * @return string
+	 */
+	protected function show_tab_before_settings( $tab ) {
+		$html = '';
+
+		switch ( $tab ) {
+			case 'security':
+				$html .= $this->show_tab_security_content();
+				break;
+			case 'feed-details':
+				$html .= $this->show_tab_feed_details_content();
+				break;
+			case 'import':
 		}
 
-		if ( function_exists( 'php_sapi_name' ) && 'security' == $tab ) {
-			$sapi_type = php_sapi_name();
-			if ( strpos( $sapi_type, 'fcgi' ) !== false ) {
-				$html .= '<br/><div class="update-nag">
-									<p>' . sprintf( __( 'It looks like your server has FastCGI enabled, which will prevent the feed password protection feature from working. You can fix this by following %1$sthis quick guide%2$s.', 'seriously-simple-podcasting' ), '<a href="http://www.seriouslysimplepodcasting.com/documentation/why-does-the-feed-password-protection-feature-not-work/" target="_blank">', '</a>' ) . '</p>
-								</div>';
-			}
-		}
-
-		$current_series = '';
-
-		// Series submenu for feed details
-		if ( 'feed-details' == $tab ) {
-			$series = get_terms( 'series', array( 'hide_empty' => false ) );
-
-			if ( ! empty( $series ) ) {
-
-				if ( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
-					$current_series = esc_attr( $_GET['feed-series'] );
-					$series_class   = '';
-				} else {
-					$current_series = 'default';
-					$series_class   = 'current';
-				}
-
-				$html .= '<div class="feed-series-list-container">' . "\n";
-				$html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'seriously-simple-podcasting' ) . '"></span>' . "\n";
-
-				$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
-				$html .= '<li><a href="' . add_query_arg( array(
-						'feed-series'      => 'default',
-						'settings-updated' => false
-					) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'seriously-simple-podcasting' ) . '</a></li>';
-
-				foreach ( $series as $s ) {
-
-					if ( $current_series == $s->slug ) {
-						$series_class = 'current';
-					} else {
-						$series_class = '';
-					}
-
-					$html .= '<li>' . "\n";
-					$html .= ' | <a href="' . esc_url( add_query_arg( array(
-							'feed-series'      => $s->slug,
-							'settings-updated' => false
-						) ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
-					$html .= '</li>' . "\n";
-				}
-
-				$html .= '</ul>' . "\n";
-				$html .= '<br class="clear" />' . "\n";
-				$html .= '</div>' . "\n";
-
-			}
-		}
-
-		if ( isset( $tab ) && 'import' == $tab ) {
+		if ( 'import' === $tab ) {
 			$current_admin_url = add_query_arg(
 				array(
 					'post_type' => SSP_CPT_PODCAST,
@@ -751,21 +742,29 @@ class Settings_Controller extends Controller {
 				),
 				admin_url( 'edit.php' )
 			);
-			$html .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
-			$html .= '<input type="hidden" name="action" value="post_import_form" />';
-			$html .= wp_nonce_field( 'ss_podcasting_import', '_wpnonce', true, false );
-			$html .= wp_nonce_field( 'ss_podcasting_import', 'podcast_settings_tab_nonce', false, false );
+			$html              .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
+			$html              .= '<input type="hidden" name="action" value="post_import_form" />';
+			$html              .= wp_nonce_field( 'ss_podcasting_import', '_wpnonce', true, false );
+			$html              .= wp_nonce_field( 'ss_podcasting_import', 'podcast_settings_tab_nonce', false, false );
 		} else {
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 		}
 
-
 		// Add current series to posted data
-		if ( $current_series ) {
-			$html .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
+		if ( 'feed-details' === $tab ) {
+			$current_series = $this->get_current_series();
+			$html           .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
 		}
 
-		// Get settings fields
+		return apply_filters( sprintf( 'ssp_settings_show_tab_%s_before_settings', $tab ), $html );
+	}
+
+	/**
+	 * @param string $tab
+	 *
+	 * @return mixed|void
+	 */
+	protected function show_tab_settings( $tab ) {
 		// Get settings fields
 		ob_start();
 		if ( isset( $tab ) && 'import' !== $tab ) {
@@ -773,8 +772,18 @@ class Settings_Controller extends Controller {
 			wp_nonce_field( 'ss_podcasting_' . $tab, 'podcast_settings_tab_nonce', false );
 		}
 		do_settings_sections( 'ss_podcasting' );
-		$html .= ob_get_clean();
+		$html = ob_get_clean();
 
+		return apply_filters( sprintf( 'ssp_settings_show_tab_%s_settings', $tab ), $html );
+	}
+
+	/**
+	 * @param string $tab
+	 *
+	 * @return string
+	 */
+	protected function show_tab_after_settings( $tab ) {
+		$html = '';
 		if ( isset( $tab ) && 'castos-hosting' === $tab ) {
 			// Validate button
 			$html .= '<p class="submit">' . "\n";
@@ -817,7 +826,84 @@ class Settings_Controller extends Controller {
 
 		$html .= '</div>' . "\n";
 
-		echo $html;
+		return apply_filters( sprintf( 'ssp_settings_show_tab_%s_after_settings', $tab ), $html );
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function show_tab_security_content() {
+		$html = '';
+		if ( function_exists( 'php_sapi_name' ) ) {
+			$sapi_type = php_sapi_name();
+			if ( strpos( $sapi_type, 'fcgi' ) !== false ) {
+				$html .= '<br/><div class="update-nag">';
+				$html .= '<p>' . sprintf( __( 'It looks like your server has FastCGI enabled, which will prevent the feed password protection feature from working. You can fix this by following %1$sthis quick guide%2$s.', 'seriously-simple-podcasting' ),
+						'<a href="http://www.seriouslysimplepodcasting.com/documentation/why-does-the-feed-password-protection-feature-not-work/" target="_blank">', '</a>' ) . '</p>';
+				$html .= '</div>';
+			}
+		}
+
+		return $html;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function show_tab_feed_details_content() {
+
+		$html = '';
+
+		// Series submenu for feed details
+		$series = get_terms( 'series', array( 'hide_empty' => false ) );
+
+		if ( empty( $series ) ) {
+			return $html;
+		}
+
+		$current_series = $this->get_current_series();
+		$series_class   = 'default' === $current_series ? 'current' : '';
+
+		$html .= '<div class="feed-series-list-container">' . "\n";
+		$html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'seriously-simple-podcasting' ) . '"></span>' . "\n";
+
+		$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
+		$html .= '<li><a href="' . add_query_arg( array(
+				'feed-series'      => 'default',
+				'settings-updated' => false
+			) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'seriously-simple-podcasting' ) . '</a></li>';
+
+		foreach ( $series as $s ) {
+			$series_class = $current_series === $s->slug ? 'current' : '';
+
+			$html .= '<li>' . "\n";
+			$html .= ' | <a href="' . esc_url( add_query_arg( array(
+					'feed-series'      => $s->slug,
+					'settings-updated' => false
+				) ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
+			$html .= '</li>' . "\n";
+		}
+
+		$html .= '</ul>' . "\n";
+		$html .= '<br class="clear" />' . "\n";
+		$html .= '</div>' . "\n";
+
+		return $html;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_current_series() {
+		if ( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
+			$current_series = esc_attr( $_GET['feed-series'] );
+			$series_class   = '';
+		} else {
+			$current_series = 'default';
+			$series_class   = 'current';
+		}
+
+		return $current_series;
 	}
 
 	/**

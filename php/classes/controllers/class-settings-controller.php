@@ -53,15 +53,6 @@ class Settings_Controller extends Controller {
 	 * */
 	protected $series_handler;
 
-	/**
-	 * @var Import_Controller
-	 * */
-	protected $import_controller;
-
-	/**
-	 * @var Extensions_Controller
-	 * */
-	protected $extensions_controller;
 
 	/**
 	 * Constructor
@@ -76,8 +67,6 @@ class Settings_Controller extends Controller {
 
 		$this->settings_handler      = new Settings_Handler();
 		$this->series_handler        = new Series_Handler();
-		$this->import_controller     = new Import_Controller();
-		$this->extensions_controller = new Extensions_Controller( $file, $version );
 
 		$this->register_hooks_and_filters();
 	}
@@ -232,113 +221,137 @@ class Settings_Controller extends Controller {
 	 * @return void
 	 */
 	public function register_settings() {
-		if ( is_array( $this->settings ) ) {
-			$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_SANITIZE_STRING ) : '' );
-			// Check posted/selected tab.
-			$current_section = 'general';
-			if ( ! empty( $tab ) ) {
-				$current_section = $tab;
-			} else {
-				$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_SANITIZE_STRING ) : '' );
-				if ( ! empty( $tab ) ) {
-					$current_section = $tab;
-				}
-			}
 
-			foreach ( $this->settings as $section => $data ) {
+		$section = $this->get_settings_section();
+		$data    = $this->get_settings_data( $section );
 
-				if ( $current_section && $current_section !== $section ) {
-					continue;
-				}
+		if ( ! $data ) {
+			return;
+		}
 
-				// Get data for specific feed series.
-				$title_tail = '';
-				$series_id  = 0;
-				if ( 'feed-details' === $section ) {
-					$feed_series = ( isset( $_REQUEST['feed-series'] ) ? filter_var( $_REQUEST['feed-series'], FILTER_SANITIZE_STRING ) : '' );
-					if ( ! empty( $feed_series ) && 'default' !== $feed_series ) {
+		// Get data for specific feed series.
+		$series_id  = 0;
+		$feed_series = '';
+		$section_title = $data['title'];
+		if ( 'feed-details' === $section ) {
+			$feed_series = ( isset( $_REQUEST['feed-series'] ) ? filter_var( $_REQUEST['feed-series'], FILTER_SANITIZE_STRING ) : '' );
+			if ( $feed_series && 'default' !== $feed_series ) {
 
-						// Get selected series.
-						$series = get_term_by( 'slug', esc_attr( $feed_series ), 'series' );
+				// Get selected series.
+				$series = get_term_by( 'slug', esc_attr( $feed_series ), 'series' );
 
-						// Store series ID for later use.
-						$series_id = $series->term_id;
+				// Store series ID for later use.
+				$series_id = $series->term_id;
 
-						// Append series name to section title.
-						if ( $series ) {
-							$title_tail = ': ' . $series->name;
-						}
-					}
-				}
-
-				$section_title = $data['title'] . $title_tail;
-
-				// Add section to page.
-				add_settings_section( $section, $section_title, array( $this, 'settings_section' ), 'ss_podcasting' );
-
-				if ( ! empty( $data['fields'] ) ) {
-
-					foreach ( $data['fields'] as $field ) {
-
-						// only show the exclude_feed field on the non default feed settings
-						if ( ( 'exclude_feed' === $field['id'] ) ) {
-							if ( empty( $feed_series ) || 'default' === $feed_series ) {
-								continue;
-							}
-						}
-
-						// Validation callback for field.
-						$validation = '';
-						if ( isset( $field['callback'] ) ) {
-							$validation = $field['callback'];
-						}
-
-						// Get field option name.
-						$option_name = $this->settings_base . $field['id'];
-
-						// Append series ID if selected.
-						if ( $series_id ) {
-							$option_name .= '_' . $series_id;
-						}
-
-						// Register setting.
-						register_setting( 'ss_podcasting', $option_name, $validation );
-
-						if ( 'hidden' === $field['type'] ) {
-							continue;
-						}
-
-						$container_class = '';
-						if ( isset( $field['container_class'] ) && ! empty( $field['container_class'] ) ) {
-							$container_class = $field['container_class'];
-						}
-
-
-						// Add field to page.
-						add_settings_field( $field['id'], $field['label'],
-							array(
-								$this,
-								'display_field',
-							),
-							'ss_podcasting',
-							$section,
-							array(
-								'field'       => $field,
-								'prefix'      => $this->settings_base,
-								'feed-series' => $series_id,
-								'class'       => $container_class
-							)
-						);
-					}
+				// Append series name to section title.
+				if ( $series ) {
+					$section_title .= ': ' . $series->name;
 				}
 			}
 		}
+
+		// Add section to page.
+		add_settings_section( $section, $section_title, array( $this, 'settings_section' ), 'ss_podcasting' );
+
+		if ( empty( $data['fields'] ) ) {
+			return;
+		}
+
+		foreach ( $data['fields'] as $field ) {
+			$this->register_settings_field( $section, $field, $feed_series, $series_id );
+		}
+	}
+
+	/**
+	 * @param string $section
+	 *
+	 * @return array|null
+	 */
+	protected function get_settings_data( $section ) {
+		$data = isset( $this->settings[ $section ] ) ? $this->settings[ $section ] : null;
+
+		if ( 'integrations' === $section ) {
+			$integration = filter_input( INPUT_GET, 'integration', FILTER_SANITIZE_STRING );
+
+			$data = isset( $data[ $integration ] ) ? $data [ $integration ] : null;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_settings_section(){
+		$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_SANITIZE_STRING ) : '' );
+		if ( ! $tab ) {
+			$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_SANITIZE_STRING ) : '' );
+		}
+
+		return $tab ?: 'general';
+	}
+
+	/**
+	 * @param string $section
+	 * @param array $field
+	 * @param string $feed_series
+	 * @param int $series_id
+	 */
+	protected function register_settings_field( $section, $field, $feed_series, $series_id ){
+		// only show the exclude_feed field on the non default feed settings
+		if ( 'exclude_feed' === $field['id'] ) {
+			if ( empty( $feed_series ) || 'default' === $feed_series ) {
+				return;
+			}
+		}
+
+		// Validation callback for field.
+		$validation = '';
+		if ( isset( $field['callback'] ) ) {
+			$validation = $field['callback'];
+		}
+
+		// Get field option name.
+		$option_name = $this->settings_base . $field['id'];
+
+		// Append series ID if selected.
+		if ( $series_id ) {
+			$option_name .= '_' . $series_id;
+		}
+
+		// Register setting.
+		register_setting( 'ss_podcasting', $option_name, $validation );
+
+		if ( 'hidden' === $field['type'] ) {
+			return;
+		}
+
+		$container_class = '';
+		if ( isset( $field['container_class'] ) && ! empty( $field['container_class'] ) ) {
+			$container_class = $field['container_class'];
+		}
+
+		// Add field to page.
+		add_settings_field( $field['id'], $field['label'],
+			array(
+				$this,
+				'display_field',
+			),
+			'ss_podcasting',
+			$section,
+			array(
+				'field'       => $field,
+				'prefix'      => $this->settings_base,
+				'feed-series' => $series_id,
+				'class'       => $container_class
+			)
+		);
 	}
 
 	/**
 	 * Settings Section
 	 *
-	 * @param string $section section.
+	 * @param array $section section.
 	 */
 	public function settings_section( $section ) {
 		$html = '<p>' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
@@ -355,7 +368,7 @@ class Settings_Controller extends Controller {
 		}
 
 		if ( 'extensions' === $section['id'] ) {
-			$html .= $this->extensions_controller->render_seriously_simple_extensions();
+			$html .= $this->render_seriously_simple_extensions();
 		}
 
 		echo $html;
@@ -406,7 +419,6 @@ class Settings_Controller extends Controller {
 
 			// Get series-specific option
 			$data = get_option( $option_name, $option_default );
-
 		}
 
 		// Get field class if supplied
@@ -609,8 +621,7 @@ class Settings_Controller extends Controller {
 	public function mark_feed_redirect_date( $option, $old_value, $new_value ) {
 		if ( 'ss_podcasting_redirect_feed' === $option ) {
 			if ( ( $new_value != $old_value ) && 'on' === $new_value ) {
-				$date = time();
-				update_option( 'ss_podcasting_redirect_feed_date', $date );
+				update_option( 'ss_podcasting_redirect_feed_date', time() );
 			}
 		}
 	}
@@ -621,28 +632,13 @@ class Settings_Controller extends Controller {
 	 */
 	public function settings_page() {
 
-		$q_args = wp_parse_args(
-			$_GET,
-			array(
-				'post_type' => null,
-				'page'      => null,
-				'view'      => null,
-				'tab'       => null,
-			)
-		);
-
-		array_walk( $q_args, function ( &$entry ) {
-			$entry = sanitize_title( $entry );
-		} );
+		$q_args = $this->get_query_args();
 
 		$html = '<div class="wrap" id="podcast_settings">' . "\n";
 
 		$html .= '<h1>' . __( 'Podcast Settings', 'seriously-simple-podcasting' ) . '</h1>' . "\n";
 
-		$tab = 'general';
-		if ( isset( $_GET['tab'] ) && $_GET['tab'] ) {
-			$tab = $_GET['tab'];
-		}
+		$tab = empty( $q_args['tab'] ) ? 'general' : $q_args['tab'];
 
 		$html .= $this->show_page_messages();
 		$html .= '<div id="main-settings">' . "\n";
@@ -669,6 +665,26 @@ class Settings_Controller extends Controller {
 	}
 
 	/**
+	 * @return array
+	 */
+	protected function get_query_args() {
+		$q_args = wp_parse_args( $_GET,
+			array(
+				'post_type' => null,
+				'page'      => null,
+				'view'      => null,
+				'tab'       => null,
+			)
+		);
+
+		array_walk( $q_args, function ( &$entry ) {
+			$entry = sanitize_title( $entry );
+		} );
+
+		return $q_args;
+	}
+
+	/**
 	 * @return string
 	 */
 	protected function show_page_tabs() {
@@ -683,14 +699,10 @@ class Settings_Controller extends Controller {
 
 				// Set tab class
 				$class = 'nav-tab';
-				if ( ! isset( $_GET['tab'] ) ) {
-					if ( 0 === $c ) {
-						$class .= ' nav-tab-active';
-					}
-				} else {
-					if ( isset( $_GET['tab'] ) && $section == $_GET['tab'] ) {
-						$class .= ' nav-tab-active';
-					}
+				$tab_defined = !empty( $_GET['tab'] );
+
+				if ( ( $tab_defined && $section === $_GET['tab'] ) || ( ! $tab_defined && 0 === $c ) ) {
+					$class .= ' nav-tab-active';
 				}
 
 				// Set tab link
@@ -760,12 +772,13 @@ class Settings_Controller extends Controller {
 	}
 
 	/**
+	 * Get settings fields
+	 *
 	 * @param string $tab
 	 *
 	 * @return mixed|void
 	 */
 	protected function show_tab_settings( $tab ) {
-		// Get settings fields
 		ob_start();
 		if ( isset( $tab ) && 'import' !== $tab ) {
 			settings_fields( 'ss_podcasting' );
@@ -812,9 +825,9 @@ class Settings_Controller extends Controller {
 			}
 
 			if ( ssp_get_external_rss_being_imported() ) {
-				$html .= $this->import_controller->render_external_import_process();
+				$html .= $this->render_external_import_process();
 			} else {
-				$html .= $this->import_controller->render_external_import_form();
+				$html .= $this->render_external_import_form();
 			}
 		}
 
@@ -822,7 +835,7 @@ class Settings_Controller extends Controller {
 
 		$html .= '</div>' . "\n";
 
-		$html .= $this->extensions_controller->render_seriously_simple_sidebar();
+		$html .= $this->render_seriously_simple_sidebar();
 
 		$html .= '</div>' . "\n";
 
@@ -895,12 +908,10 @@ class Settings_Controller extends Controller {
 	 * @return string
 	 */
 	protected function get_current_series() {
-		if ( isset( $_GET['feed-series'] ) && $_GET['feed-series'] && 'default' != $_GET['feed-series'] ) {
+		$current_series = 'default';
+
+		if ( isset( $_GET['feed-series'] ) && $_GET['feed-series'] ) {
 			$current_series = esc_attr( $_GET['feed-series'] );
-			$series_class   = '';
-		} else {
-			$current_series = 'default';
-			$series_class   = 'current';
 		}
 
 		return $current_series;
@@ -918,5 +929,226 @@ class Settings_Controller extends Controller {
 		delete_option( $this->settings_base . 'podmotor_account_api_token' );
 		delete_option( $this->settings_base . 'podmotor_account_id' );
 		delete_option( $this->settings_base . 'podmotor_disconnect' );
+	}
+
+
+	public function render_seriously_simple_sidebar() {
+		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
+		ob_start();
+		include $this->template_path . DIRECTORY_SEPARATOR . 'settings-sidebar.php';
+
+		return ob_get_clean();
+	}
+
+	public function render_seriously_simple_extensions() {
+		add_thickbox();
+
+		$image_dir  = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
+
+		$extensions = array(
+			'connect'     => array(
+				'title'       => __( 'NEW - Castos Podcast Hosting', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'castos-icon-extension.jpg',
+				'url'         => SSP_CASTOS_APP_URL,
+				'description' => __( 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Castos.', 'seriously-simple-podcasting' ),
+				'button_text' => __( 'Get Castos Hosting', 'seriously-simple-podcasting' ),
+				'new_window'  => true,
+			),
+			'stats'       => array(
+				'title'       => __( 'Seriously Simple Podcasting Stats', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'ssp-stats.jpg',
+				'url'         => add_query_arg(
+					array(
+						'tab'       => 'plugin-information',
+						'plugin'    => 'seriously-simple-stats',
+						'TB_iframe' => 'true',
+						'width'     => '772',
+						'height'    => '859',
+					),
+					admin_url(
+						'plugin-install.php'
+					)
+				),
+				'description' => __( 'Seriously Simple Stats offers integrated analytics for your podcast, giving you access to incredibly useful information about who is listening to your podcast and how they are accessing it.', 'seriously-simple-podcasting' ),
+			),
+			'transcripts' => array(
+				'title'       => __( 'Seriously Simple Podcasting Transcripts', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'ssp-transcripts.jpg',
+				'url'         => add_query_arg(
+					array(
+						'tab'       => 'plugin-information',
+						'plugin'    => 'seriously-simple-transcripts',
+						'TB_iframe' => 'true',
+						'width'     => '772',
+						'height'    => '859',
+					),
+					admin_url(
+						'plugin-install.php'
+					)
+				),
+				'description' => __( 'Seriously Simple Transcripts gives you a simple and automated way for you to add downloadable transcripts to your podcast episodes. It’s an easy way for you to provide episode transcripts to your listeners without taking up valuable space in your episode content.', 'seriously-simple-podcasting' ),
+			),
+			'speakers'    => array(
+				'title'       => __( 'Seriously Simple Podcasting Speakers', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'ssp-speakers.jpg',
+				'url'         => add_query_arg(
+					array(
+						'tab'       => 'plugin-information',
+						'plugin'    => 'seriously-simple-speakers',
+						'TB_iframe' => 'true',
+						'width'     => '772',
+						'height'    => '859',
+					),
+					admin_url(
+						'plugin-install.php'
+					)
+				),
+				'description' => __( 'Does your podcast have a number of different speakers? Or maybe a different guest each week? Perhaps you have unique hosts for each episode? If any of those options describe your podcast then Seriously Simple Speakers is the add-on for you!', 'seriously-simple-podcasting' ),
+			),
+			'genesis'     => array(
+				'title'       => __( 'Seriously Simple Podcasting Genesis Support ', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'ssp-genesis.jpg',
+				'url'         => add_query_arg(
+					array(
+						'tab'       => 'plugin-information',
+						'plugin'    => 'seriously-simple-podcasting-genesis-support',
+						'TB_iframe' => 'true',
+						'width'     => '772',
+						'height'    => '859',
+					),
+					admin_url(
+						'plugin-install.php'
+					)
+				),
+				'description' => __( 'The Genesis compatibility add-on for Seriously Simple Podcasting gives you full support for the Genesis theme framework. It adds support to the podcast post type for the features that Genesis requires. If you are using Genesis and Seriously Simple Podcasting together then this plugin will make your website look and work much more smoothly.', 'seriously-simple-podcasting' ),
+			),
+			'second-line' => array(
+				'title'       => __( 'Second Line Themes', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'second-line-themes.png',
+				'url'         => 'https://secondlinethemes.com/?utm_source=ssp-settings',
+				'description' => __( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out SecondLineThemes!', 'seriously-simple-podcasting' ),
+				'new_window'  => true,
+				'button_text' => __( 'Get Second Line Themes', 'seriously-simple-podcasting' ),
+			),
+		);
+
+		if ( ssp_is_elementor_ok() ) {
+			$elementor_templates = array(
+				'title'       => __( 'Elementor Templates', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'elementor.jpg',
+				'url'         => wp_nonce_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings&tab=extensions&elementor_import_templates=true' ), '', 'import_template_nonce' ),
+				'description' => __( 'Looking for a custom elementor template to use with Seriously Simple Podcasting? Click here to import all of them righ now!', 'seriously-simple-podcasting' ),
+				'button_text' => __( 'Import Templates', 'seriously-simple-podcasting' ),
+				'new_window'  => 'redirect'
+			);
+			$extensions = array_slice($extensions, 0, 1, true) + array("elementor-templates" =>  $elementor_templates) + array_slice($extensions, 1, count($extensions)-1, true);
+
+		}
+
+		$html = '<div id="ssp-extensions">';
+		foreach ( $extensions as $extension ) {
+			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>';
+			if ( ! empty( $extension['new_window'] ) ) {
+				if ( isset( $extensions['elementor-templates'] ) && 'redirect' === $extensions['elementor-templates']['new_window'] ) {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+				} else {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+				}
+			} else {
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
+			}
+			$html       .= '<p></p>';
+			$html       .= '<p>' . $extension['description'] . '</p>';
+			$html       .= '<p></p>';
+			$button_text = 'Get this Extension';
+			if ( ! empty( $extension['button_text'] ) ) {
+				$button_text = $extension['button_text'];
+			}
+			if ( ! empty( $extension['new_window'] ) ) {
+				if ( isset( $extensions['elementor-templates'] ) && 'redirect' === $extensions['elementor-templates']['new_window'] ) {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="button-secondary">' . $button_text . '</a>';
+				} else {
+					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">' . $button_text . '</a>';
+				}
+			} else {
+				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">' . $button_text . '</a>';
+			}
+			$html .= '</div>';
+		}
+		$html .= '</div>';
+
+		return $html;
+	}
+
+	/**
+	 * Render the progress bar to show the importing RSS feed progress
+	 *
+	 * @return false|string
+	 */
+	public function render_external_import_process() {
+		ob_start();
+		?>
+		<h3 class="ssp-ssp-external-feed-message">Your external RSS feed is being imported. Please leave this window open until it completes</h3>
+		<div id="ssp-external-feed-progress"></div>
+		<div id="ssp-external-feed-status"><p>Commencing feed import</p></div>
+		<?php
+		$html = ob_get_clean();
+
+		return $html;
+	}
+
+	/**
+	 * Render the form to enable importing an external RSS feed
+	 *
+	 * @return false|string
+	 */
+	public function render_external_import_form() {
+		$post_types = ssp_post_types( true );
+		$series = get_terms( 'series', array( 'hide_empty' => false ) );
+		ob_start();
+		?>
+		<p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
+			the RSS Feed in the form below and the plugin will import the episodes for you.</p>
+		<table class="form-table">
+			<tbody>
+			<tr>
+				<th scope="row">RSS feed</th>
+				<td>
+					<input id="external_rss" name="external_rss" type="text" placeholder="https://externalservice.com/rss" value="" class="regular-text">
+				</td>
+			</tr>
+			<?php if ( count( $post_types ) > 1 ) { ?>
+				<tr>
+					<th scope="row">Post Type</th>
+					<td>
+						<select id="import_post_type" name="import_post_type">
+							<?php foreach ( $post_types as $post_type ) { ?>
+								<option value="<?php echo $post_type; ?>"><?php echo ucfirst( $post_type ); ?></option>
+							<?php } ?>
+						</select>
+					</td>
+				</tr>
+			<?php } ?>
+			<?php if ( count( $series ) > 1 ) { ?>
+				<tr>
+					<th scope="row">Series</th>
+					<td>
+						<select id="import_series" name="import_series">
+							<?php foreach ( $series as $series_item ) { ?>
+								<option value="<?php echo $series_item->term_id; ?>"><?php echo $series_item->name; ?></option>
+							<?php } ?>
+						</select>
+					</td>
+				</tr>
+			<?php } ?>
+			</tbody>
+		</table>
+		<p class="submit">
+			<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Begin Import Now', 'seriously-simple-podcasting' ) ) ?>"/>
+		</p>
+		<?php
+		$html = ob_get_clean();
+
+		return $html;
 	}
 }

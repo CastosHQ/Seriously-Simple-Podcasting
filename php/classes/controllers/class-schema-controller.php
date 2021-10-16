@@ -19,11 +19,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.7.3
  */
-class Schema_Controller extends Controller {
+class Schema_Controller {
 
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
-
+	public function __construct() {
 		add_filter( 'wpseo_schema_graph_pieces', array( $this, 'add_graph_pieces' ) );
 	}
 

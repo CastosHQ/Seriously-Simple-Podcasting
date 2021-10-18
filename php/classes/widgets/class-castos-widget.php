@@ -90,7 +90,7 @@ abstract class Castos_Widget extends WP_Widget {
 			return '';
 		}
 
-		return $this->renderer->render( $field, sprintf( 'widget/fields/%s', $field['type'] ) );
+		return $this->renderer->render_deprecated( $field, sprintf( 'widget/fields/%s', $field['type'] ) );
 	}
 
 	public function widget( $args, $instance ) {

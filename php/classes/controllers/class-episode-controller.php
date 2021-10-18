@@ -243,7 +243,7 @@ class Episode_Controller extends Controller {
 
 		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
 
-		return $this->renderer->render( $episodes_template_data, 'episodes/episode-list' );
+		return $this->renderer->render_deprecated( $episodes_template_data, 'episodes/episode-list' );
 	}
 
 	/**
@@ -272,7 +272,7 @@ class Episode_Controller extends Controller {
 
 		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
 
-		return $this->renderer->render( $episodes_template_data, 'episodes/all-episodes-list' );
+		return $this->renderer->render_deprecated( $episodes_template_data, 'episodes/all-episodes-list' );
 	}
 
 	/**
@@ -304,7 +304,7 @@ class Episode_Controller extends Controller {
 	public function render_recent_episodes() {
 		$template_data = $this->recent_episodes();
 
-		return $this->renderer->render( $template_data, 'episodes/recent-episodes' );
+		return $this->renderer->render_deprecated( $template_data, 'episodes/recent-episodes' );
 	}
 
 }

@@ -241,6 +241,6 @@ class Onboarding_Controller extends Controller {
 	 * @param $template
 	 */
 	protected function render( $data, $template ) {
-		echo $this->renderer->render( $data, $template );
+		echo $this->renderer->render_deprecated( $data, $template );
 	}
 }

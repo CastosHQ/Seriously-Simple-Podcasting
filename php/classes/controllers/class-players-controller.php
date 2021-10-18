@@ -152,7 +152,7 @@ class Players_Controller extends Controller {
 
 		$this->enqueue_player_assets();
 
-		return $this->renderer->render( $template_data, 'players/castos-player' );
+		return $this->renderer->render_deprecated( $template_data, 'players/castos-player' );
 	}
 
 
@@ -192,7 +192,7 @@ class Players_Controller extends Controller {
 			$template_data['playlist'][] = $this->get_player_data( $episode->ID );
 		}
 
-		return $this->renderer->render( $template_data, 'players/castos-player' );
+		return $this->renderer->render_deprecated( $template_data, 'players/castos-player' );
 	}
 
 	/**
@@ -233,7 +233,7 @@ class Players_Controller extends Controller {
 			do_action( 'wp_playlist_scripts', $atts['type'], $atts['style'] );
 		}
 
-		return $this->renderer->render(
+		return $this->renderer->render_deprecated(
 			compact('safe_style', 'safe_type', 'data', 'width', 'height'),
 			'players/playlist-compact-player'
 		);
@@ -273,7 +273,7 @@ class Players_Controller extends Controller {
 
 		$template_data = apply_filters( 'ssp_subscribe_buttons_data', $template_data );
 
-		return $this->renderer->render( $template_data, 'players/subscribe-buttons' );
+		return $this->renderer->render_deprecated( $template_data, 'players/subscribe-buttons' );
 	}
 
 	public function media_player( $id ) {
@@ -307,7 +307,7 @@ class Players_Controller extends Controller {
 	public function render_media_player( $id ) {
 		$template_data = $this->media_player( $id );
 
-		return $this->renderer->render( $template_data, 'players/media-player' );
+		return $this->renderer->render_deprecated( $template_data, 'players/media-player' );
 	}
 
 	/**

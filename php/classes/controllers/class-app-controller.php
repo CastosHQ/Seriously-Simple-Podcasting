@@ -10,11 +10,13 @@ use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Paid_Memberships_Pro_Integrator;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
+
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -30,6 +32,36 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       1.0
  */
 class App_Controller extends Controller {
+
+	// Controllers.
+
+	/**
+	 * @var Onboarding_Controller
+	 */
+	protected $onboarding_controller;
+
+	/**
+	 * @var Feed_Controller
+	 */
+	protected $feed_controller;
+
+	/**
+	 * @var Cron_Controller
+	 */
+	protected $cron_controller;
+
+	/**
+	 * @var Shortcodes_Controller
+	 */
+	protected $shortcodes_controller;
+
+	/**
+	 * @var Widgets_Controller
+	 */
+	protected $widgets_controller;
+
+
+	// Handlers.
 
 	/**
 	 * @var Ajax_Handler
@@ -47,39 +79,9 @@ class App_Controller extends Controller {
 	protected $admin_notices_handler;
 
 	/**
-	 * @var Feed_Controller
-	 */
-	protected $feed_controller;
-
-	/**
-	 * @var Onboarding_Controller
-	 */
-	protected $onboarding_controller;
-
-	/**
 	 * @var Log_Helper
 	 * */
 	protected $logger;
-
-	/**
-	 * @var Cron_Controller
-	 */
-	protected $cron_controller;
-
-	/**
-	 * @var Schema_Controller
-	 */
-	protected $schema_controller;
-
-	/**
-	 * @var Shortcodes_Controller
-	 */
-	protected $shortcodes_controller;
-
-	/**
-	 * @var Widgets_Controller
-	 */
-	protected $widgets_controller;
 
 	/**
 	 * @var CPT_Podcast_Handler
@@ -179,7 +181,10 @@ class App_Controller extends Controller {
 		}
 
 		// Yoast Schema integration.
-		$this->schema_controller = new Schema_Controller( $this->file, $this->version );
+		new Schema_Controller();
+
+		// Paid Memberships Pro integration
+		Paid_Memberships_Pro_Integrator::instance()->init();
 	}
 
 	/**

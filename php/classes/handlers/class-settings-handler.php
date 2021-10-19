@@ -1076,9 +1076,16 @@ class Settings_Handler {
 			'disable_save_button' => true,
 		);
 
-		$settings = apply_filters( 'ssp_settings_fields', $settings );
+		$settings['integrations'] = apply_filters( 'ssp_integration_settings', array(
+			'title' => __( 'Integrations', 'seriously-simple-podcasting' ),
+			'items' => [],
+		) );
 
-		return $settings;
+		if ( empty( $settings['integrations']['items'] ) ) {
+			unset( $settings['integrations'] );
+		}
+
+		return apply_filters( 'ssp_settings_fields', $settings );
 	}
 
 	/**

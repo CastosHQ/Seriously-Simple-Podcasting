@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
+use SeriouslySimplePodcasting\Renderers\Renderer;
 
 /**
  * SSP Settings
@@ -53,6 +54,11 @@ class Settings_Controller extends Controller {
 	 * */
 	protected $series_handler;
 
+	/**
+	 * @var Renderer
+	 * */
+	protected $renderer;
+
 
 	/**
 	 * Constructor
@@ -65,8 +71,9 @@ class Settings_Controller extends Controller {
 
 		$this->settings_base = 'ss_podcasting_';
 
-		$this->settings_handler      = new Settings_Handler();
-		$this->series_handler        = new Series_Handler();
+		$this->settings_handler = new Settings_Handler();
+		$this->series_handler   = new Series_Handler();
+		$this->renderer         = new Renderer();
 
 		$this->register_hooks_and_filters();
 	}
@@ -215,6 +222,7 @@ class Settings_Controller extends Controller {
 		$this->settings = $this->settings_handler->settings_fields();
 	}
 
+
 	/**
 	 * Register plugin settings
 	 *
@@ -271,9 +279,14 @@ class Settings_Controller extends Controller {
 		$data = isset( $this->settings[ $section ] ) ? $this->settings[ $section ] : null;
 
 		if ( 'integrations' === $section ) {
-			$integration = filter_input( INPUT_GET, 'integration', FILTER_SANITIZE_STRING );
+			$integration = $this->get_current_integration();
 
-			$data = isset( $data[ $integration ] ) ? $data [ $integration ] : null;
+			foreach ( $data['items'] as $item ) {
+				if ( $integration === $item['id'] ) {
+					$data = $item;
+					break;
+				}
+			}
 		}
 
 		return $data;
@@ -354,21 +367,33 @@ class Settings_Controller extends Controller {
 	 * @param array $section section.
 	 */
 	public function settings_section( $section ) {
-		$html = '<p>' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
+		$html = '';
 
-		if ( 'feed-details' === $section['id'] ) {
-
-			$feed_series = isset( $_GET['feed-series'] ) ? esc_attr( $_GET['feed-series'] ) : 'default';
-
-			$feed_url = ssp_get_feed_url( $feed_series );
-
-			if ( $feed_url ) {
-				$html .= '<p><a class="view-feed-link" href="' . esc_url( $feed_url ) . '" target="_blank"><span class="dashicons dashicons-rss"></span>' . __( 'View feed', 'seriously-simple-podcasting' ) . '</a></p>' . "\n";
-			}
+		if ( ! empty( $this->settings[ $section['id'] ]['description'] ) ) {
+			$html = '<p>' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
 		}
 
-		if ( 'extensions' === $section['id'] ) {
-			$html .= $this->render_seriously_simple_extensions();
+		switch ( $section['id'] ) {
+			case 'feed-details':
+				$feed_series = isset( $_GET['feed-series'] ) ? esc_attr( $_GET['feed-series'] ) : 'default';
+
+				$feed_url = ssp_get_feed_url( $feed_series );
+
+				if ( $feed_url ) {
+					$html .= '<p><a class="view-feed-link" href="' . esc_url( $feed_url ) . '" target="_blank"><span class="dashicons dashicons-rss"></span>' . __( 'View feed', 'seriously-simple-podcasting' ) . '</a></p>' . "\n";
+				}
+				break;
+
+			case 'extensions':
+				$html .= $this->render_seriously_simple_extensions();
+				break;
+
+			case 'integrations':
+				$integration = $this->get_current_integration();
+				if ( ! empty( $this->settings['integrations']['items'][ $integration ]['description'] ) ) {
+					$html = '<p>' . $this->settings['integrations']['items'][ $integration ]['description'] . '</p>' . "\n";
+				}
+				break;
 		}
 
 		echo $html;
@@ -706,7 +731,12 @@ class Settings_Controller extends Controller {
 				}
 
 				// Set tab link
-				$tab_link = add_query_arg( array( 'tab' => $section ) );
+				$tab_link = add_query_arg( 'tab', $section );
+
+				if ( 'integrations' === $section ) {
+					$tab_link = add_query_arg( 'integration', $this->get_current_integration(), $tab_link );
+				}
+
 				if ( isset( $_GET['settings-updated'] ) ) {
 					$tab_link = remove_query_arg( 'settings-updated', $tab_link );
 				}
@@ -740,25 +770,28 @@ class Settings_Controller extends Controller {
 				$html .= $this->show_tab_security_content();
 				break;
 			case 'feed-details':
-				$html .= $this->show_tab_feed_details_content();
+				$html .= $this->show_tab_feed_details_subtabs();
 				break;
 			case 'import':
+				$current_admin_url = add_query_arg(
+					array(
+						'post_type' => SSP_CPT_PODCAST,
+						'page'      => 'podcast_settings',
+						'tab'       => 'import',
+					),
+					admin_url( 'edit.php' )
+				);
+				$html              .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
+				$html              .= '<input type="hidden" name="action" value="post_import_form" />';
+				$html              .= wp_nonce_field( 'ss_podcasting_import', '_wpnonce', true, false );
+				$html              .= wp_nonce_field( 'ss_podcasting_import', 'podcast_settings_tab_nonce', false, false );
+				break;
+			case 'integrations':
+				$html .= $this->show_tab_integrations_subtabs();
+				break;
 		}
 
-		if ( 'import' === $tab ) {
-			$current_admin_url = add_query_arg(
-				array(
-					'post_type' => SSP_CPT_PODCAST,
-					'page'      => 'podcast_settings',
-					'tab'       => 'import',
-				),
-				admin_url( 'edit.php' )
-			);
-			$html              .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
-			$html              .= '<input type="hidden" name="action" value="post_import_form" />';
-			$html              .= wp_nonce_field( 'ss_podcasting_import', '_wpnonce', true, false );
-			$html              .= wp_nonce_field( 'ss_podcasting_import', 'podcast_settings_tab_nonce', false, false );
-		} else {
+		if ( 'import' !== $tab ) {
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
 		}
 
@@ -863,7 +896,7 @@ class Settings_Controller extends Controller {
 	/**
 	 * @return string
 	 */
-	protected function show_tab_feed_details_content() {
+	protected function show_tab_feed_details_subtabs() {
 
 		$html = '';
 
@@ -907,14 +940,49 @@ class Settings_Controller extends Controller {
 	/**
 	 * @return string
 	 */
-	protected function get_current_series() {
-		$current_series = 'default';
-
-		if ( isset( $_GET['feed-series'] ) && $_GET['feed-series'] ) {
-			$current_series = esc_attr( $_GET['feed-series'] );
+	protected function show_tab_integrations_subtabs() {
+		if ( empty( $this->settings['integrations']['items'] ) ) {
+			return '<h2>' . __( 'No integrations found', 'seriously-simple-podcasting' ) . '</h2>';
 		}
 
-		return $current_series;
+		$integrations = $this->settings['integrations']['items'];
+		$current = $this->get_current_integration();
+
+		return $this->renderer->fetch( 'settings/integrations-subtabs', compact( 'integrations', 'current' ) );
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_current_integration() {
+		$integration = $this->get_current_parameter( 'integration' );
+		if ( 'default' === $integration ) {
+			// If no integration provided, let's get the first one.
+			$item        = reset( $this->settings['integrations']['items'] );
+			$integration = isset( $item['id'] ) ? $item['id'] : '';
+		}
+
+		return $integration;
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_current_series() {
+		return $this->get_current_parameter( 'feed-series' );
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_current_parameter( $param ) {
+		$current = 'default';
+
+		if ( ! empty( $_GET[ $param ] ) ) {
+			$current = esc_attr( $_GET[ $param ] );
+		}
+
+		return $current;
 	}
 
 	/**

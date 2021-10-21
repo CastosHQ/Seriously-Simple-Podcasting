@@ -238,7 +238,7 @@ class CPT_Podcast_Handler {
 		$fields['audio_file'] = array(
 			'name'             => __( 'Episode file:', 'seriously-simple-podcasting' ),
 			'description'      => __( 'Upload audio episode files as MP3 or M4A, video episodes as MP4, or paste the file URL.', 'seriously-simple-podcasting' ),
-			'type'             => 'file',
+			'type'             => 'episode_file',
 			'default'          => '',
 			'section'          => 'info',
 			'meta_description' => __( 'The full URL for the podcast episode media file.', 'seriously-simple-podcasting' ),

@@ -31,7 +31,7 @@ class PodcastSeries extends Abstract_Schema_Piece {
 	 * @return array $data The Organization schema.
 	 */
 	public function generate() {
-		global $ssp_admin;
+		global $ssp_app;
 
 		/**
 		 * @var \WP_Term
@@ -44,10 +44,10 @@ class PodcastSeries extends Abstract_Schema_Piece {
 
 		$schema = array(
 			"@type"   => "PodcastSeries",
-			"image"   => $ssp_admin->get_series_image_src( $series ),
+			"image"   => $ssp_app->get_series_image_src( $series ),
 			"url"     => $this->context->canonical,
 			"name"    => $this->context->title,
-			"webFeed" => $ssp_admin->get_series_feed_url( $series ),
+			"webFeed" => $ssp_app->get_series_feed_url( $series ),
 		);
 
 		if ( $description ) {

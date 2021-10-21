@@ -46,5 +46,5 @@ require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
 require_once SSP_PLUGIN_PATH . 'php/includes/ssp-functions.php';
 
-global $ssp_admin;
-$ssp_admin = new App_Controller( __FILE__, SSP_VERSION );
+global $ssp_app;
+$ssp_app = new App_Controller( __FILE__, SSP_VERSION );

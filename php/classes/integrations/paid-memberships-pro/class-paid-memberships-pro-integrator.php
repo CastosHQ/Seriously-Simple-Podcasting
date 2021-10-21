@@ -48,6 +48,14 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			),
 		);
 
+		if ( ! ssp_is_connected_to_castos() ) {
+			$msg = __( 'Please <a href="%s">connect to Castos hosting</a> to enable integrations', 'seriously-simple-podcasting' );
+			$msg = sprintf( $msg, admin_url( 'edit.php?post_type=podcast&page=podcast_settings&tab=castos-hosting' ) );
+
+			$args['description'] = $msg;
+			$args['fields']      = array();
+		}
+
 		$this->add_integration_settings( $args );
 	}
 }

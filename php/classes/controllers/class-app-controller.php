@@ -217,7 +217,7 @@ class App_Controller extends Controller {
 	protected function register_hooks_and_filters() {
 		add_action( 'init', array( $this, 'load_localisation' ), 0 );
 
-		// Regsiter podcast post type, taxonomies and meta fields.
+		// Register podcast post type, taxonomies and meta fields.
 		add_action( 'init', array( $this, 'register_post_type' ), 11 );
 
 		// Setup custom permalink structures.

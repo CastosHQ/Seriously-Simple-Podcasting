@@ -90,7 +90,7 @@ class Settings_Controller extends Controller {
 	 */
 	public function register_hooks_and_filters() {
 
-		add_action( 'init', array( $this, 'load_settings' ), 11 );
+		add_action( 'init', array( $this, 'load_settings' ), 15 );
 
 		//Todo: Can we use pre_update_option_ss_podcasting_data_title action instead?
 		add_action( 'admin_init', array( $this, 'maybe_feed_saved' ), 11 );

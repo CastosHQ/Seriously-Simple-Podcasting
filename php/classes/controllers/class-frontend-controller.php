@@ -1157,8 +1157,15 @@ class Frontend_Controller extends Controller {
 					$file = $this->get_enclosure( $episode_id );
 				}
 
+				// Ensure that $file is a valid URL
+				$file = filter_var( $file, FILTER_VALIDATE_URL );
+
+				// Ensure that $file is either audio or video type
+				$allowed_types = array( 'mp3|m4a' => 'audio/mpeg', 'mp4' => 'video/mp4' );
+				$filetype = wp_check_filetype( $file, $allowed_types );
+
 				// Exit if no file is found
-				if ( ! $file ) {
+				if ( ! $file || ! $filetype['type'] ) {
 					return;
 				}
 

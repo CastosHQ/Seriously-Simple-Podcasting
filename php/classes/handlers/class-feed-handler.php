@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use WP_Query;
+
 /**
  * SSP Feed Handler
  *
@@ -587,6 +589,28 @@ class Feed_Handler {
 	public function get_pub_date_type( $series_id ) {
 		$pub_date_type_option = $series_id ? 'ss_podcasting_publish_date_' . $series_id : 'ss_podcasting_publish_date';
 		return get_option( $pub_date_type_option, 'published' );
+	}
+
+	/**
+	 * Gets the feed query
+	 *
+	 * @param string $podcast_series
+	 * @param array $exclude_series
+	 * @param string $pub_date_type
+	 *
+	 * @return WP_Query
+	 */
+	public function get_feed_query( $podcast_series, $exclude_series, $pub_date_type ) {
+		$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ) ) );
+
+		$args = ssp_episodes( $num_posts, $podcast_series, true, 'feed', $exclude_series );
+
+		if ( 'recorded' === $pub_date_type ) {
+			$args['orderby']  = 'meta_value';
+			$args['meta_key'] = 'date_recorded';
+		}
+
+		return new WP_Query( $args );
 	}
 
 }

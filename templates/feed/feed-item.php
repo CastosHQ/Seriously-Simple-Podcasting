@@ -172,11 +172,8 @@ $itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
 $itunes_subtitle = apply_filters( 'ssp_feed_item_itunes_subtitle', $itunes_subtitle, get_the_ID() );
 
 // Date recorded.
-if ( 'published' === $pub_date_type ) {
-	$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true ), false ) );
-} else {
-	$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_post_meta( get_the_ID(), 'date_recorded', true ), false ) );
-}
+$pub_date = ( 'published' === $pub_date_type ) ? get_post_time( 'Y-m-d H:i:s', true ) : get_post_meta( get_the_ID(), 'date_recorded', true );
+$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', $pub_date, false ) );
 
 // Tags/keywords.
 $post_tags = get_the_tags( get_the_ID() );

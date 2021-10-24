@@ -134,10 +134,10 @@ jQuery(document).ready(function($) {
       	showAnim: 'slideDown',
       	dateFormat: 'd MM, yy',
       	altField: '#date_recorded',
-      	altFormat: 'dd-mm-yy',
+      	altFormat: 'yy-mm-dd',
       	onClose : function ( dateText, obj ) {
 		    var d = $.datepicker.parseDate("d MM, yy", dateText);
-		    var date = $.datepicker.formatDate("dd-mm-yy", d);
+		    var date = $.datepicker.formatDate("yy-mm-dd", d);
 		    var save_field = $(this).attr('id').replace( '_display', '' );
 		    $( '#' + save_field ).val( date );
 		}

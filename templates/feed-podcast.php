@@ -40,6 +40,7 @@
  * @var string $guid
  * @var int $series_id
  * @var string $pub_date_type
+ * @var \WP_Query $qry
  *
  */
 
@@ -157,13 +158,6 @@ if ( $stylesheet_url ) {
 
 		// Add RSS2 headers
 		do_action( 'rss2_head' );
-
-		// Get post IDs of all podcast episodes
-		$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ) ) );
-
-		$args = ssp_episodes( $num_posts, $podcast_series, true, 'feed', $exclude_series );
-
-		$qry = new WP_Query( $args );
 
 		if ( 'on' === $turbo ) {
 			$turbo_post_count = 0;

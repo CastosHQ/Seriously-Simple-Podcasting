@@ -60,6 +60,11 @@ class App_Controller extends Controller {
 	 */
 	protected $widgets_controller;
 
+	/**
+	 * @var DB_Migration_Controller
+	 */
+	protected $db_migration_controller;
+
 
 	// Handlers.
 
@@ -132,6 +137,8 @@ class App_Controller extends Controller {
 
 		// Todo: dependency injection for other controllers as well
 		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version, new Renderer(), new Settings_Handler() );
+
+		$this->db_migration_controller = DB_Migration_Controller::instance()->init();
 
 		$this->roles_handler = new Roles_Handler();
 
@@ -250,7 +257,7 @@ class App_Controller extends Controller {
 
 			// Episode meta box.
 			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
-			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 1 );
+			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 2 );
 
 			// Update podcast details to Castos when a post is updated or saved
 			add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
@@ -880,10 +887,11 @@ HTML;
 	 * Save episode meta box content
 	 *
 	 * @param  integer $post_id ID of post
+	 * @param  \WP_Post $post
 	 *
 	 * @return mixed
 	 */
-	public function meta_box_save( $post_id ) {
+	public function meta_box_save( $post_id, $post ) {
 		global $ss_podcasting;
 
 		$podcast_post_types = ssp_post_types( true );
@@ -936,6 +944,10 @@ HTML;
 		}
 
 		if ( $enclosure ) {
+
+			if ( get_post_meta( $post_id, 'date_recorded', true ) == '' ) {
+				update_post_meta( $post_id, 'date_recorded', $post->post_date );
+			}
 
 			if ( ! ssp_is_connected_to_castos() ) {
 				// Get file duration

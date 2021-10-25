@@ -11,7 +11,7 @@
 	        <?php endif; ?>
         <?php } ?>
         <?php if ($counter == 0): ?>
-            <p>You have no subscribe urls set, please go to Podcast → Settings → Feed Details to set you your subscribe urls.</p>
+            <p><?php _e( 'You have no subscribe urls set, please go to Podcast → Settings → Feed Details to set you your subscribe urls.', 'seriously-simple-podcasting' ) ?></p>
         <?php endif; ?>
     </div>
 </div>

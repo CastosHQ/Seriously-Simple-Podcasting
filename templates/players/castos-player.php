@@ -38,23 +38,33 @@
 				</div>
 				<div class="play-progress">
 					<div class="play-pause-controls">
-						<button title="Play" class="play-btn"><span class="screen-reader-text">Play Episode</span></button>
-						<button title="Pause" class="pause-btn hide"><span class="screen-reader-text">Pause Episode</span></button>
+						<button title="<?php _e( 'Play', 'seriously-simple-podcasting' ) ?>" class="play-btn">
+							<span class="screen-reader-text"><?php _e( 'Play Episode', 'seriously-simple-podcasting' ) ?></span>
+						</button>
+						<button title="<?php _e( 'Pause', 'seriously-simple-podcasting' ) ?>" class="pause-btn hide">
+							<span class="screen-reader-text"><?php _e( 'Pause Episode', 'seriously-simple-podcasting' ) ?></span>
+						</button>
 						<img src="<?php echo SSP_PLUGIN_URL ?>assets/css/images/player/images/icon-loader.svg" class="ssp-loader hide"/>
 					</div>
 					<div>
 						<audio preload="none" class="clip clip-<?php echo $episode_id ?>">
 							<source src="<?php echo $audio_file ?>">
 						</audio>
-						<div class="ssp-progress" title="Seek">
+						<div class="ssp-progress" title="<?php _e( 'Seek', 'seriously-simple-podcasting' ) ?>">
 							<span class="progress__filled"></span>
 						</div>
 						<div class="ssp-playback playback">
 							<div class="playback__controls">
-								<button class="player-btn__volume" title="Mute/Unmute"><span class="screen-reader-text">Mute/Unmute Episode</span></button>
-								<button data-skip="-10" class="player-btn__rwd" title="Rewind 10 seconds"><span class="screen-reader-text">Rewind 10 Seconds</span></button>
-								<button data-speed="1" class="player-btn__speed" title="Playback Speed">1x</button>
-								<button data-skip="30" class="player-btn__fwd" title="Fast Forward 30 seconds"><span class="screen-reader-text">Fast Forward 30 seconds</span></button>
+								<button class="player-btn__volume" title="<?php _e( 'Mute/Unmute', 'seriously-simple-podcasting' ) ?>">
+									<span class="screen-reader-text"><?php _e( 'Mute/Unmute Episode', 'seriously-simple-podcasting' ) ?></span>
+								</button>
+								<button data-skip="-10" class="player-btn__rwd" title="<?php _e( 'Rewind 10 seconds"', 'seriously-simple-podcasting' ) ?>">
+								<span class="screen-reader-text"><?php _e( 'Rewind 10 Seconds', 'seriously-simple-podcasting' ) ?></span>
+								</button>
+								<button data-speed="1" class="player-btn__speed" title="<?php _e( 'Playback Speed"', 'seriously-simple-podcasting' ) ?>">1x</button>
+								<button data-skip="30" class="player-btn__fwd" title="<?php _e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?>">
+									<span class="screen-reader-text"><?php _e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?></span>
+								</button>
 							</div>
 							<div class="playback__timers">
 								<time class="ssp-timer">00:00</time>

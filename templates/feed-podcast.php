@@ -41,7 +41,7 @@
  * @var int $series_id
  * @var string $pub_date_type
  * @var \WP_Query $qry
- *
+ * @var string $feed_link
  */
 
 // Exit if accessed directly.
@@ -72,7 +72,7 @@ if ( $stylesheet_url ) {
 	<channel>
 		<title><?php echo esc_html( $title ); ?></title>
 		<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml"/>
-		<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $ss_podcasting->home_url, $podcast_series ) ) ?></link>
+		<link><?php echo esc_url( $feed_link ); ?></link>
 		<description><?php echo esc_html( $description ); ?></description>
 		<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>
 		<language><?php echo esc_html( $language ); ?></language>

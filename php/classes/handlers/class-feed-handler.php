@@ -613,4 +613,18 @@ class Feed_Handler {
 		return new WP_Query( $args );
 	}
 
+
+	/**
+	 * Gets the feed link
+	 *
+	 * @param string $podcast_series
+	 *
+	 * @return string
+	 */
+	public function get_feed_link( $podcast_series ){
+		$link = $podcast_series ? get_term_link( $podcast_series, 'series' ) : trailingslashit( home_url() );
+
+		return apply_filters( 'ssp_feed_channel_link_tag', $link );
+	}
+
 }

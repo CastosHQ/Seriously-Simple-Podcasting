@@ -185,6 +185,8 @@ class Feed_Controller extends Controller {
 
 		$qry = $this->feed_handler->get_feed_query( $podcast_series, $exclude_series, $pub_date_type );
 
+		$feed_link = $this->feed_handler->get_feed_link( $podcast_series );
+
 		$this->send_feed_headers();
 
 		// Load user feed template if it exists, otherwise use plugin template

@@ -1340,3 +1340,36 @@ if ( ! function_exists( 'ssp_get_feed_url' ) ) {
 		return apply_filters( 'ssp_get_feed_url', $feed_url, $series_slug );
 	}
 }
+
+/**
+ * Get the SSP option
+ */
+if ( ! function_exists( 'ssp_get_option' ) ) {
+	/**
+	 * @param string $option
+	 * @param mixed $default
+	 *
+	 * @return string
+	 * @since 2.9.3
+	 */
+	function ssp_get_option( $option, $default = false ) {
+		$option = get_option( 'ss_podcasting_' . $option, $default );
+		return apply_filters( 'ssp_get_option', $option );
+	}
+}
+
+
+/**
+ * Check if it's an ajax action or not
+ */
+if ( ! function_exists( 'ssp_is_ajax' ) ) {
+
+	/**
+	 * Is_ajax - Returns true when the page is loaded via ajax.
+	 *
+	 * @return bool
+	 */
+	function ssp_is_ajax() {
+		return function_exists( 'wp_doing_ajax' ) ? wp_doing_ajax() : defined( 'DOING_AJAX' ) && DOING_AJAX;
+	}
+}

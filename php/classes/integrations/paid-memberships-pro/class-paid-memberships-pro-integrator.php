@@ -30,8 +30,87 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			return;
 		}
 
-		// Use 12 priority because Podcast and Series post types registered on 11
-		add_action( 'init', array( $this, 'init_integration_settings' ), 12 );
+		if ( is_admin() && ! ssp_is_ajax() ) {
+			// Use 12 priority because Podcast and Series post types registered on 11.
+			add_action( 'init', array( $this, 'init_integration_settings' ), 12 );
+		} else {
+			add_filter( "pmpro_has_membership_access_filter", array( $this, 'access_filter' ), 10, 4 );
+		}
+	}
+
+
+	/**
+	 *
+	 * @param array|false $access
+	 * @param \WP_Post $post
+	 * @param \WP_User $user
+	 * @param array $post_level_ids
+	 *
+	 * @return mixed
+	 */
+	public function access_filter( $access, $post, $user, $post_level_ids ) {
+		$is_admin   = is_admin() && ! ssp_is_ajax();
+		$is_podcast = in_array( $post->post_type, ssp_post_types() );
+
+		if ( $is_admin || ! $is_podcast || ! $access ) {
+			return $access;
+		}
+
+		$series = $this->get_episode_series( $post->ID );
+
+		foreach ( $series as $series_item ) {
+			$post_level_ids = array_merge( $post_level_ids, $this->get_series_level_ids( $series_item->term_id ) );
+		}
+
+		return $this->get_access( $user, $post_level_ids );
+	}
+
+	/**
+	 * Took the logic from PMPro
+	 * @see pmpro_has_membership_access()
+	 * */
+	protected function get_access( $user, $post_level_ids ) {
+		if ( empty( $post_level_ids ) ) {
+			return true;
+		}
+
+		$user_levels = pmpro_getMembershipLevelsForUser( $user->ID );
+
+		$user_level_ids = array_map( function ( $level ) {
+			return $level->id;
+		}, $user_levels );
+
+		return count( $user_levels ) && count( array_intersect( $user_level_ids, $post_level_ids ) );
+	}
+
+	/**
+	 * @param $term_id
+	 *
+	 * @return int[]
+	 */
+	protected function get_series_level_ids( $term_id ) {
+		$levels    = (array) ssp_get_option( sprintf( 'series_%s_pmpro_levels', $term_id ), array() );
+		$level_ids = array();
+		foreach ( $levels as $level ) {
+			$level_ids[] = (int) str_replace( 'lvl_', '', $level );
+		}
+
+		return $level_ids;
+	}
+
+	/**
+	 * @param $post_id
+	 *
+	 * @return \WP_Term[]
+	 */
+	protected function get_episode_series( $post_id ) {
+		$series = wp_get_post_terms( $post_id, 'series' );
+
+		if( is_wp_error($series) ){
+			return [];
+		}
+
+		return $series;
 	}
 
 	/**
@@ -72,7 +151,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		foreach ( $series as $series_item ) {
 
 			$series_item_settings = array(
-				'id'          => sprintf( 'series_%s_requires_pmp_lvl', $series_item->term_id ),
+				'id'          => sprintf( 'series_%s_pmpro_levels', $series_item->term_id ),
 				'label'       => $series_item->name,
 				'type'        => 'checkbox_multi',
 				'options'     => $checkbox_options,

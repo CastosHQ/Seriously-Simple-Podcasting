@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
+use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
@@ -98,6 +99,11 @@ class App_Controller extends Controller {
 	 */
 	protected $roles_handler;
 
+	/**
+	 * @var Feed_Handler
+	 * */
+	protected $feed_handler;
+
 
 
 	/**
@@ -129,14 +135,18 @@ class App_Controller extends Controller {
 		global $images_handler;
 		$images_handler = new Images_Handler();
 
+		$renderer = new Renderer();
+
 		$this->ajax_handler = new Ajax_Handler();
 
 		$this->upgrade_handler = new Upgrade_Handler();
 
-		$this->feed_controller = new Feed_Controller( $this->file, $this->version );
+		$this->feed_handler = new Feed_Handler();
+
+		$this->feed_controller = new Feed_Controller( $this->feed_handler, $renderer );
 
 		// Todo: dependency injection for other controllers as well
-		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version, new Renderer(), new Settings_Handler() );
+		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version, $renderer, new Settings_Handler() );
 
 		$this->db_migration_controller = DB_Migration_Controller::instance()->init();
 
@@ -191,7 +201,7 @@ class App_Controller extends Controller {
 		new Schema_Controller();
 
 		// Paid Memberships Pro integration
-		// Paid_Memberships_Pro_Integrator::instance()->init();
+		Paid_Memberships_Pro_Integrator::instance()->init();
 	}
 
 	/**

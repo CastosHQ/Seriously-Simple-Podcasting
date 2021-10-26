@@ -42,9 +42,13 @@
  * @var string $pub_date_type
  * @var \WP_Query $qry
  * @var string $feed_link
+ * @var Feed_Controller $feed_controller
+ * @var bool $episode_description_uses_excerpt
  */
 
 // Exit if accessed directly.
+use SeriouslySimplePodcasting\Controllers\Feed_Controller;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -165,11 +169,7 @@ if ( $stylesheet_url ) {
 
 		if ( $qry->have_posts() ) {
 			while ( $qry->have_posts() ) {
-				$qry->the_post();
-
-				$feed_item_path = apply_filters( 'ssp_feed_item_path', __DIR__ . '/feed/feed-item.php' );
-
-				include $feed_item_path;
+				$feed_controller->render_feed_item( $qry, $author, $episode_description_uses_excerpt, $pub_date_type, $turbo );
 			}
 		} ?>
 	</channel>

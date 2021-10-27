@@ -421,7 +421,7 @@ class Settings_Controller extends Controller {
 
 		$default = isset( $field['default'] ) ? $field['default'] : '';
 
-		$data = $this->get_field_data( $option_name, $default );
+		$data = $this->get_field_data( $option_name, $default, $args );
 
 		echo $this->settings_renderer->render_field( $field, $data, $option_name );
 	}
@@ -429,10 +429,11 @@ class Settings_Controller extends Controller {
 	/**
 	 * @param string $option_name
 	 * @param string $default
+	 * @param array $args
 	 *
 	 * @return mixed
 	 */
-	public function get_field_data( $option_name, $default ) {
+	public function get_field_data( $option_name, $default, $args ) {
 		// Get option value
 		$data = get_option( $option_name, $default );
 

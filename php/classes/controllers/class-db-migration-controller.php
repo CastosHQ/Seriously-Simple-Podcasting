@@ -36,7 +36,7 @@ class DB_Migration_Controller {
 		}
 
 		switch ( SSP_VERSION ) {
-			case '2.9.3-beta': //todo: change it to 2.9.3 for release
+			case '2.9.3-beta.2': //todo: change it to 2.9.3 for release
 				$this->update_date_recorded();
 				break;
 		}

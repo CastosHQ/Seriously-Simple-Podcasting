@@ -423,6 +423,10 @@ class Settings_Controller extends Controller {
 
 		$data = $this->get_field_data( $option_name, $default, $args );
 
+		if ( isset( $args['feed-series'] ) && $args['feed-series'] ) {
+			$option_name .= '_' . $args['feed-series'];
+		}
+
 		echo $this->settings_renderer->render_field( $field, $data, $option_name );
 	}
 

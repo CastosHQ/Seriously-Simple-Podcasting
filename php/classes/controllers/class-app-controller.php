@@ -191,7 +191,7 @@ class App_Controller extends Controller {
 		new Schema_Controller();
 
 		// Paid Memberships Pro integration
-		Paid_Memberships_Pro_Integrator::instance()->init();
+		// Paid_Memberships_Pro_Integrator::instance()->init();
 	}
 
 	/**

@@ -2,9 +2,9 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
-use SeriouslySimplePodcasting\Controllers\Players_Controller;
+use Elementor\Widget_Base;
 
-class Elementor_Media_Player_Widget extends \Elementor\Widget_Base {
+class Elementor_Media_Player_Widget extends Widget_Base {
 
 	public function get_name() {
 		return 'Media Player';

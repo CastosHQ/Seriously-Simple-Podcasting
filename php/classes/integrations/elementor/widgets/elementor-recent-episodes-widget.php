@@ -2,9 +2,10 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
+use Elementor\Widget_Base;
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 
-class Elementor_Recent_Episodes_Widget extends \Elementor\Widget_Base {
+class Elementor_Recent_Episodes_Widget extends Widget_Base {
 	public function get_name() {
 		return 'Recent Episodes';
 	}
@@ -22,8 +23,7 @@ class Elementor_Recent_Episodes_Widget extends \Elementor\Widget_Base {
 	}
 
 	protected function render() {
-		$settings          = $this->get_settings_for_display();
-		$episode_controller = new Episode_Controller( __FILE__, SSP_VERSION );
-		echo $episode_controller->render_recent_episodes();
+		global $ss_podcasting;
+		echo $ss_podcasting->episode_controller->render_recent_episodes();
 	}
 }

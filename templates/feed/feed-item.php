@@ -19,7 +19,6 @@
  * @var string $itunes_explicit_flag
  * @var string $block_flag
  * @var string $duration
- * @var string $turbo
  * @var string $gp_description
  * @var string $googleplay_explicit_flag
  */
@@ -67,7 +66,7 @@
 	<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
 	<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
 	<itunes:author><![CDATA[<?php echo $author; ?>]]></itunes:author><?php
-	 if ( 'off' === $turbo ) { ?>
+	 if ( ! $turbo_post_count ) { ?>
 		<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
 		<?php if ( $episode_image ) { ?>
 			<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>

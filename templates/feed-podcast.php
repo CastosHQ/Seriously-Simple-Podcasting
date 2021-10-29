@@ -11,7 +11,6 @@
  *
  * @var $stylesheet_url
  * @var $title
- * @var \SeriouslySimplePodcasting\Controllers\Frontend_Controller $ss_podcasting
  * @var $podcast_series
  * @var $description
  * @var $language
@@ -44,6 +43,7 @@
  * @var string $feed_link
  * @var Feed_Controller $feed_controller
  * @var bool $episode_description_uses_excerpt
+ * @var bool $home_url
  */
 
 // Exit if accessed directly.
@@ -101,7 +101,7 @@ if ( $stylesheet_url ) {
 			<image>
 				<url><?php echo esc_url( $image ); ?></url>
 				<title><?php echo esc_html( $title ); ?></title>
-				<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $ss_podcasting->home_url, $podcast_series ) ) ?></link>
+				<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $home_url, $podcast_series ) ) ?></link>
 			</image>
 		<?php endif;
 
@@ -169,7 +169,8 @@ if ( $stylesheet_url ) {
 
 		if ( $qry->have_posts() ) {
 			while ( $qry->have_posts() ) {
-				$feed_controller->render_feed_item( $qry, $author, $episode_description_uses_excerpt, $pub_date_type, $turbo );
+				$turbo_post_count = isset( $turbo_post_count ) ? $turbo_post_count + 1 : null;
+				echo $feed_controller->fetch_feed_item( $qry, $author, $episode_description_uses_excerpt, $pub_date_type, $turbo_post_count );
 			}
 		} ?>
 	</channel>

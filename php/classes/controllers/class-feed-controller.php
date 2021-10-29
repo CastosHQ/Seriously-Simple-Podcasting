@@ -198,6 +198,8 @@ class Feed_Controller {
 
 		$feed_link = $this->feed_handler->get_feed_link( $podcast_series );
 
+		$home_url = $this->home_url;
+
 		$this->send_feed_headers();
 
 		// Load user feed template if it exists, otherwise use plugin template
@@ -207,15 +209,22 @@ class Feed_Controller {
 
 		$feed_controller = $this;
 
-		global $ss_podcasting;
-
-		require $path;
+		require $path;  // todo: use renderer here
 
 		// Any functions hooked in here must NOT output any data or else feed will break
 		do_action( 'ssp_after_feed' );
 	}
 
-	public function render_feed_item( $qry, $author, $episode_description_uses_excerpt, $pub_date_type, $turbo ) {
+	/**
+	 * @param \WP_Query $qry
+	 * @param string $author
+	 * @param bool $episode_description_uses_excerpt
+	 * @param string $pub_date_type
+	 * @param int $turbo_post_count
+	 *
+	 * @return string
+	 */
+	public function fetch_feed_item( $qry, $author, $episode_description_uses_excerpt, $pub_date_type, $turbo_post_count ) {
 
 		$qry->the_post();
 
@@ -361,6 +370,36 @@ class Feed_Controller {
 		$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', $pub_date, false ) );
 
 		// Tags/keywords.
+		$keywords = $this->get_feed_item_keywords();
+
+		$itunes_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
+		$is_itunes_enabled = $itunes_enabled && $itunes_enabled == 'on';
+		// New iTunes WWDC 2017 Tags
+		$itunes_episode_type   = $is_itunes_enabled ? get_post_meta( get_the_ID(), 'itunes_episode_type', true ) : '';
+		$itunes_title          = $is_itunes_enabled ? get_post_meta( get_the_ID(), 'itunes_title', true ) : '';
+		$itunes_episode_number = $is_itunes_enabled ? get_post_meta( get_the_ID(), 'itunes_episode_number', true ) : '';
+		$itunes_season_number  = $is_itunes_enabled ? get_post_meta( get_the_ID(), 'itunes_season_number', true ) : '';
+
+		$title = esc_html( get_the_title_rss() );
+
+		$feed_item_path = apply_filters( 'ssp_feed_item_path', '/feed/feed-item' );
+
+		$args = apply_filters( 'ssp_feed_item_args', compact(
+			'title', 'pub_date', 'author', 'description', 'itunes_subtitle', 'keywords',
+			'itunes_episode_type', 'itunes_title', 'itunes_episode_number', 'itunes_season_number',
+			'turbo_post_count', 'enclosure', 'size', 'mime_type', 'turbo_post_count', 'itunes_summary',
+			'episode_image', 'itunes_explicit_flag', 'block_flag', 'duration', 'gp_description',
+			'googleplay_explicit_flag'
+		) );
+
+		return $this->renderer->fetch( $feed_item_path, $args );
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_feed_item_keywords() {
+		$keywords  = '';
 		$post_tags = get_the_tags( get_the_ID() );
 		if ( $post_tags ) {
 			$tags = array();
@@ -373,32 +412,7 @@ class Feed_Controller {
 			}
 		}
 
-		$is_itunes_fields_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
-		if ( $is_itunes_fields_enabled && $is_itunes_fields_enabled == 'on' ) {
-			// New iTunes WWDC 2017 Tags
-			$itunes_episode_type   = get_post_meta( get_the_ID(), 'itunes_episode_type', true );
-			$itunes_title          = get_post_meta( get_the_ID(), 'itunes_title', true );
-			$itunes_episode_number = get_post_meta( get_the_ID(), 'itunes_episode_number', true );
-			$itunes_season_number  = get_post_meta( get_the_ID(), 'itunes_season_number', true );
-		}
-		if ( isset( $turbo_post_count ) ) {
-			$turbo_post_count ++;
-		}
-
-		$title = esc_html( get_the_title_rss() );
-
-		$feed_item_path = apply_filters( 'ssp_feed_item_path', '/feed/feed-item' );
-
-		return $this->renderer->render(
-			$feed_item_path,
-			compact(
-				'title', 'pub_date', 'author', 'description', 'itunes_subtitle', 'keywords',
-				'itunes_episode_type', 'itunes_title', 'itunes_episode_number', 'itunes_season_number',
-				'turbo_post_count', 'enclosure', 'size', 'mime_type', 'turbo_post_count', 'itunes_summary',
-				'episode_image', 'itunes_explicit_flag', 'block_flag', 'duration', 'turbo', 'gp_description',
-				'googleplay_explicit_flag'
-			)
-		);
+		return $keywords;
 	}
 
 	/**

@@ -33,16 +33,20 @@ class Settings_Renderer {
 	/**
 	 * Prints the template.
 	 *
+	 * @param array $field
+	 * @param array $data
+	 * @param string $option_name
+	 * @param string $default_option_name It's needed only for feed images
+	 *
+	 * @return string
 	 * @since 2.9.3 Moved this function from the settings_controller.
 	 * Todo: further refactoring - split each field to separate function.
 	 *
-	 * @param array $field
-	 * @param array $data
-	 *
-	 * @return string
 	 */
-	public function render_field( $field, $data, $option_name ) {
+	public function render_field( $field, $data, $option_name, $default_option_name = '' ) {
+
 		$html = '';
+		$default_option_name = $default_option_name ?: $option_name;
 
 		// Get field class if supplied
 		$class = '';
@@ -152,10 +156,10 @@ class Settings_Renderer {
 				$html .= '</select> ';
 				break;
 			case 'image':
-				$html .= '<img id="' . esc_attr( $option_name ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;"' . $data_attrs . ' /><br/>' . "\n";
-				$html .= '<input id="' . esc_attr( $option_name ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />' . "\n";
-				$html .= '<input id="' . esc_attr( $option_name ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />' . "\n";
-				$html .= '<input id="' . esc_attr( $option_name ) . '" type="hidden" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
+				$html .= '<img id="' . esc_attr( $default_option_name ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:400px;height:auto;"' . $data_attrs . ' /><br/>' . "\n";
+				$html .= '<input id="' . esc_attr( $default_option_name ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />' . "\n";
+				$html .= '<input id="' . esc_attr( $default_option_name ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />' . "\n";
+				$html .= '<input id="' . esc_attr( $default_option_name ) . '" type="hidden" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
 				break;
 			case 'feed_link':
 				// Set feed URL based on site's permalink structure

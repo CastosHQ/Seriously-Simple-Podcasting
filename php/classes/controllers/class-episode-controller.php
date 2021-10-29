@@ -252,27 +252,29 @@ class Episode_Controller extends Controller {
 	 *
 	 * @param $settings
 	 *
-	 * @return mixed|void
+	 * @return string
 	 */
-	public function render_episodes($settings) {
+	public function render_episodes( $settings ) {
 		global $ss_podcasting;
 		$player = $ss_podcasting->players_controller;
+		$paged  = get_query_var( 'paged' );
 
-		$args  = array(
+		$args = array(
 			'post_type'      => SSP_CPT_PODCAST,
 			'posts_per_page' => 10,
+			'paged'          => $paged ?: 1,
 		);
 
 		$episodes               = new WP_Query( $args );
 		$episodes_template_data = array(
-			'player' => $player,
+			'player'   => $player,
 			'episodes' => $episodes,
 			'settings' => $settings,
 		);
 
 		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
 
-		return $this->renderer->render_deprecated( $episodes_template_data, 'episodes/all-episodes-list' );
+		return $this->renderer->fetch( 'episodes/all-episodes-list', $episodes_template_data );
 	}
 
 	/**

@@ -2,9 +2,10 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
-use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
-class Elementor_Html_Player_Widget extends \Elementor\Widget_Base {
+use Elementor\Widget_Base;
+
+class Elementor_Html_Player_Widget extends Widget_Base {
 
 	/**
 	 * Class constructor.

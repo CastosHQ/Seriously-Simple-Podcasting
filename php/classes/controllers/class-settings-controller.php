@@ -421,39 +421,20 @@ class Settings_Controller extends Controller {
 
 		$default = isset( $field['default'] ) ? $field['default'] : '';
 
-		$data = $this->get_field_data( $option_name, $default, $args );
-
 		$default_option_name = $option_name;
 
-		if ( isset( $args['feed-series'] ) && $args['feed-series'] ) {
-			$option_name .= '_' . $args['feed-series'];
-		}
-
-		echo $this->settings_renderer->render_field( $field, $data, $option_name, $default_option_name );
-	}
-
-	/**
-	 * @param string $option_name
-	 * @param string $default
-	 * @param array $args
-	 *
-	 * @return mixed
-	 */
-	public function get_field_data( $option_name, $default, $args ) {
 		// Get option value
 		$data = get_option( $option_name, $default );
 
 		// Get specific series data if applicable
 		if ( isset( $args['feed-series'] ) && $args['feed-series'] ) {
 
-			$option_default = '';
-
 			// Set placeholder to default feed option with specified default fallback
 			if ( $data ) {
 				$field['placeholder'] = $data;
 
 				if ( in_array( $field['type'], array( 'checkbox', 'select', 'image' ), true ) ) {
-					$option_default = $data;
+					$default = $data;
 				}
 			}
 
@@ -461,11 +442,12 @@ class Settings_Controller extends Controller {
 			$option_name .= '_' . $args['feed-series'];
 
 			// Get series-specific option
-			$data = get_option( $option_name, $option_default );
+			$data = get_option( $option_name, $default );
 		}
 
-		return $data;
+		echo $this->settings_renderer->render_field( $field, $data, $option_name, $default_option_name );
 	}
+
 
 	/**
 	 * Validate URL slug

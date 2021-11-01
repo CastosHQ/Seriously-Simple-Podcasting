@@ -73,6 +73,7 @@ if ( $stylesheet_url ) {
 	 xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 	 xmlns:podcast="https://podcastindex.org/namespace/1.0"
 	<?php do_action( 'rss2_ns' ); ?>>
+	<?php do_action( 'ssp_feed_before_channel_tag' ) ?>
 	<channel>
 		<title><?php echo esc_html( $title ); ?></title>
 		<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml"/>

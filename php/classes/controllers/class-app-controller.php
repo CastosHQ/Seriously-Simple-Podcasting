@@ -104,6 +104,11 @@ class App_Controller extends Controller {
 	 * */
 	protected $feed_handler;
 
+	/**
+	 * @var Renderer
+	 * */
+	protected $renderer;
+
 
 
 	/**
@@ -135,7 +140,7 @@ class App_Controller extends Controller {
 		global $images_handler;
 		$images_handler = new Images_Handler();
 
-		$renderer = new Renderer();
+		$this->renderer = new Renderer();
 
 		$this->ajax_handler = new Ajax_Handler();
 
@@ -143,10 +148,10 @@ class App_Controller extends Controller {
 
 		$this->feed_handler = new Feed_Handler();
 
-		$this->feed_controller = new Feed_Controller( $this->feed_handler, $renderer );
+		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
 		// Todo: dependency injection for other controllers as well
-		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version, $renderer, new Settings_Handler() );
+		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version, $this->renderer, new Settings_Handler() );
 
 		$this->db_migration_controller = DB_Migration_Controller::instance()->init();
 
@@ -201,7 +206,7 @@ class App_Controller extends Controller {
 		new Schema_Controller();
 
 		// Paid Memberships Pro integration
-		Paid_Memberships_Pro_Integrator::instance()->init();
+		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->renderer );
 	}
 
 	/**

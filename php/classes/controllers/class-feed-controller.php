@@ -209,6 +209,8 @@ class Feed_Controller {
 
 		$feed_controller = $this;
 
+		do_action( 'ssp_before_feed' );
+
 		require $path;  // todo: use renderer here
 
 		// Any functions hooked in here must NOT output any data or else feed will break

@@ -206,7 +206,9 @@ class Settings_Renderer {
 				case 'checkbox_multi':
 				case 'radio':
 				case 'select_multi':
-					$html .= '<br/><span class="description">' . esc_attr( $field['description'] ) . '</span>';
+					if ( ! empty( $field['description'] ) ) {
+						$html .= '<br/><span class="description">' . esc_attr( $field['description'] ) . '</span>';
+					}
 					break;
 				default:
 					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . wp_kses_post( $field['description'] ) . '</span></label>' . "\n";

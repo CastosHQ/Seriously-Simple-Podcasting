@@ -131,11 +131,12 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			return true;
 		}
 
-		$user_levels = pmpro_getMembershipLevelsForUser( $user->ID );
+		$user_levels = (array) pmpro_getMembershipLevelsForUser( $user->ID );
 
-		$user_level_ids = array_map( function ( $level ) {
-			return $level->id;
-		}, $user_levels );
+		$user_level_ids = array();
+		foreach ( $user_levels as $user_level ) {
+			$user_level_ids[] = $user_level->id;
+		}
 
 		return count( $user_levels ) && count( array_intersect( $user_level_ids, $post_level_ids ) );
 	}
@@ -148,13 +149,13 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return int[]
 	 */
 	protected function get_series_level_ids( $term_id ) {
-		$levels    = (array) ssp_get_option( sprintf( 'series_%s_pmpro_levels', $term_id ), array() );
+		$levels    = (array) ssp_get_option( sprintf( 'series_%s_pmpro_levels', $term_id ), null );
 		$level_ids = array();
 		foreach ( $levels as $level ) {
 			$level_ids[] = (int) str_replace( 'lvl_', '', $level );
 		}
 
-		return $level_ids;
+		return array_filter( $level_ids );
 	}
 
 	/**

@@ -71,6 +71,11 @@ class Settings_Renderer {
 		switch ( $field['type'] ) {
 			case 'text':
 			case 'password':
+			case 'hidden':
+				$html .= '<p>
+									<input name="' . esc_attr( $field['id'] ) . '" type="hidden" id="' . esc_attr( $field['id'] ) . '" value="' . esc_attr( $data ) . '" />
+								</p>' . "\n";
+				break;
 			case 'number':
 				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"' . $data_attrs . '/>' . "\n";
 				break;

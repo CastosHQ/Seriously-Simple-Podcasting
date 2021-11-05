@@ -78,6 +78,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		} else {
 			$this->protect_private_series();
 		}
+
+		add_action( 'ssp_bulk_sync_subscribers', array( $this, 'bulk_sync_subscribers' ) );
 	}
 
 
@@ -88,10 +90,78 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * 2. When Series -> Membership Level association is changed.
 	 */
 	protected function init_subscribers_sync() {
+
+		// When user's Membership Level is changed.
 		add_action( 'pmpro_before_change_membership_level', array(
 			$this,
 			'sync_subscribers_on_change_membership_level'
 		), 10, 3 );
+
+		// When Series -> Membership Level association is changed.
+		add_filter( 'allowed_options', function ( $allowed_options ) {
+			// Option ss_podcasting_is_pmpro_integration is just a marker that PMPro integration settings have been saved.
+			// If so, we can do the sync magic.
+			if ( isset( $allowed_options['ss_podcasting'] ) ) {
+				$key = array_search( 'ss_podcasting_is_pmpro_integration', $allowed_options['ss_podcasting'] );
+				if ( false !== $key ) {
+					unset( $allowed_options['ss_podcasting'][ $key ] );
+					$this->schedule_bulk_sync_subscribers();
+				}
+			}
+
+			return $allowed_options;
+		}, 20 );
+	}
+
+	/**
+	 * Schedule bulk sync subscribers.
+	 */
+	protected function schedule_bulk_sync_subscribers(){
+		// 1. Save old membership level map: [['level' => ['users']['series']]]
+		update_option( 'ss_pmpro_users_series_map', $this->get_users_series_map(), false );
+
+		// 2. Schedule a task to add/revoke users
+		if ( ! wp_next_scheduled( 'ssp_bulk_sync_subscribers' ) ) {
+			wp_schedule_single_event( time(), 'ssp_bulk_sync_subscribers' );
+		}
+	}
+
+
+	/**
+	 * Gets the map between levels, series and users [['level' => ['users']['series']]].
+	 *
+	 * @return array
+	 */
+	protected function get_users_series_map() {
+		$map    = array();
+
+		$membership_users = $this->get_membership_user_ids();
+
+		foreach ( $membership_users as $user ) {
+			$series = $this->get_series_ids_by_level( $user->membership_id );
+
+			$map[ $user->user_id ] = $series;
+		}
+
+		return $map;
+	}
+
+
+	/**
+	 * Bulk sync subscribers after settings change.
+	 */
+	public function bulk_sync_subscribers() {
+		$old_map = get_option( 'ss_pmpro_users_series_map', array() );
+		$new_map = $this->get_users_series_map();
+
+		foreach ( $new_map as $user_id => $new_series ) {
+			$old_series = isset( $old_map[ $user_id ] ) ? $old_map[ $user_id ] : array();
+
+			$add_series    = array_diff( $new_series, $old_series );
+			$revoke_series = array_diff( $old_series, $new_series );
+
+			$this->sync_user( $user_id, $revoke_series, $add_series );
+		}
 	}
 
 
@@ -103,9 +173,6 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @param $old_levels
 	 */
 	public function sync_subscribers_on_change_membership_level( $level_id, $user_id, $old_levels ) {
-
-		$user = get_user_by( 'id', $user_id );
-
 		$old_series_ids = array();
 
 		if ( $old_levels ) {
@@ -119,6 +186,21 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$revoke_series_ids = array_diff( $old_series_ids, $new_series_ids );
 
 		$add_series_ids = array_diff( $new_series_ids, $old_series_ids );
+
+		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+	}
+
+	/**
+	 * @param int $user_id
+	 * @param int[] $revoke_series_ids
+	 * @param int[] $add_series_ids
+	 */
+	protected function sync_user( $user_id, $revoke_series_ids, $add_series_ids ) {
+		$user = get_user_by( 'id', $user_id );
+
+		if ( ! $user ) {
+			return;
+		}
 
 		if ( $revoke_series_ids ) {
 			$this->logger->log( __METHOD__ . sprintf( ': Revoke user %s from series %s', $user->user_email, json_encode( $revoke_series_ids ) ) );
@@ -210,6 +292,45 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		return $series_ids;
+	}
+
+	/**
+	 * Gets IDs of the all the users who have any membership level.
+	 *
+	 * @param int $level_id
+	 *
+	 * @return array
+	 */
+	protected function get_membership_user_ids() {
+
+		global $wpdb;
+
+		$query = "SELECT DISTINCT user_id, membership_id from {$wpdb->pmpro_memberships_users} WHERE status='active'";
+
+		$res = $wpdb->get_results( $query );
+
+		return $res;
+	}
+
+
+	/**
+	 * Gets IDs of the series attached to the Membership Level.
+	 *
+	 * @param int $level_id
+	 *
+	 * @return array
+	 */
+	protected function get_user_ids_by_level( $level_id ) {
+
+		global $wpdb;
+
+		$query = "SELECT DISTINCT user_id from {$wpdb->pmpro_memberships_users} WHERE status='active' AND membership_id=%d";
+
+		$query = $wpdb->prepare( $query, $level_id );
+
+		$res = $wpdb->get_col( $query );
+
+		return $res;
 	}
 
 
@@ -446,7 +567,12 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			'id'          => 'paid_memberships_pro',
 			'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
 			'description' => __( 'Paid Memberships Pro integration settings.', 'seriously-simple-podcasting' ),
-			'fields'      => array(),
+			'fields' => array(
+				array(
+					'id'               => 'is_pmpro_integration',
+					'type'             => 'hidden',
+				),
+			),
 		);
 
 		foreach ( $series as $series_item ) {
@@ -471,7 +597,12 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 	/**
 	 * Check if the series is protected on Castos side.
-	 * */
+	 *
+	 * @param int $series_id
+	 * @param bool $default
+	 *
+	 * @return bool|mixed
+	 */
 	protected function is_series_protected_in_castos( $series_id, $default = true ) {
 		$podcasts = $this->get_castos_podcasts();
 

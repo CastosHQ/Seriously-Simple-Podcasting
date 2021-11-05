@@ -511,9 +511,11 @@ class Settings_Controller extends Controller {
 	protected function show_page_messages() {
 		$html = '';
 		if ( isset( $_GET['settings-updated'] ) ) {
-			$html .= '<br/><div class="updated notice notice-success is-dismissible">
-									<p>' . sprintf( __( '%1$s settings updated.', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) . '</b>' ) . '</p>
-								</div>';
+			$tab = filter_input( INPUT_GET, 'tab' );
+			$msg = $tab ?
+				sprintf( __( '%1$s settings updated', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) ) :
+				__( 'Settings updated', 'seriously-simple-podcasting' );
+			$html .= '<br/><div class="updated notice notice-success is-dismissible"><p>' . $msg . '</p></div>';
 		}
 
 		return apply_filters( 'ssp_settings_show_page_tabs', $html );

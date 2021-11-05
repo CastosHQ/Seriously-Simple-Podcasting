@@ -109,6 +109,10 @@ class App_Controller extends Controller {
 	 * */
 	protected $renderer;
 
+	/**
+	 * @var Castos_Handler
+	 * */
+	protected $castos_handler;
 
 
 	/**
@@ -167,6 +171,8 @@ class App_Controller extends Controller {
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
+		$this->castos_handler = new Castos_Handler();
+
 		if ( is_admin() ) {
 			$this->admin_notices_handler = ( new Admin_Notifications_Handler( $this->token ) )->bootstrap();
 
@@ -206,7 +212,7 @@ class App_Controller extends Controller {
 		new Schema_Controller();
 
 		// Paid Memberships Pro integration
-		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->renderer );
+		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->renderer, $this->logger );
 	}
 
 	/**
@@ -479,6 +485,7 @@ HTML;
 	 */
 	public function update_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
+		$this->save_series_data_to_feed( $term_id );
 	}
 
 	/**
@@ -514,8 +521,7 @@ HTML;
 		// push the series to Castos as a Podcast
 		$series_data              = get_series_data_for_castos( $term_id );
 		$series_data['series_id'] = $term_id;
-		$castos_handler           = new Castos_Handler();
-		$castos_handler->upload_series_to_podmotor( $series_data );
+		$this->castos_handler->upload_series_to_podmotor( $series_data );
 	}
 
 
@@ -1486,8 +1492,7 @@ HTML;
 			return;
 		}
 
-		$castos_handler = new Castos_Handler();
-		$response       = $castos_handler->upload_episode_to_castos( $post );
+		$response       = $this->castos_handler->upload_episode_to_castos( $post );
 
 		if ( 'success' === $response['status'] ) {
 			set_transient( $cache_key, true, 30 );
@@ -1532,9 +1537,7 @@ HTML;
 			return;
 		}
 
-		$castos_handler = new Castos_Handler();
-
-		$castos_handler->delete_podcast( $post );
+		$this->castos_handler->delete_podcast( $post );
 
 		delete_post_meta( $post_id, 'podmotor_file_id' );
 		delete_post_meta( $post_id, 'podmotor_episode_id' );
@@ -1575,8 +1578,7 @@ HTML;
 		if ( $trigger_import_submit === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
-				$castos_handler = new Castos_Handler();
-				$result         = $castos_handler->trigger_podcast_import();
+				$result         = $this->castos_handler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
 				} else {

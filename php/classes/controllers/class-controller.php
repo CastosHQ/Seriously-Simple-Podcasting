@@ -14,6 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0
+ * @deprecated Use Useful_Variables trait instead
  */
 abstract class Controller {
 

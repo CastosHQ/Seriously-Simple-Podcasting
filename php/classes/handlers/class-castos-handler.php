@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use Braintree\Exception;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 
 // Exit if accessed directly.
@@ -17,6 +18,11 @@ class Castos_Handler {
 	const MIN_IMG_SIZE = 300;
 
 	/**
+	 * @const int
+	 * */
+	const TIMEOUT = 45;
+
+	/**
 	 * @var string
 	 */
 	protected $api_token;
@@ -25,6 +31,8 @@ class Castos_Handler {
 	 * Response array
 	 *
 	 * @var array
+	 *
+	 * Todo: get rid of storing response?
 	 */
 	public $response = array();
 
@@ -44,7 +52,7 @@ class Castos_Handler {
 	/**
 	 * Sets up the response array
 	 */
-	protected function setup_response() {
+	protected function setup_default_response() {
 		$this->response = array(
 			'status'  => 'error',
 			'message' => 'An error occurred.',
@@ -66,6 +74,7 @@ class Castos_Handler {
 	 * Effectively replicates the the_content function, but for a specific podcast
 	 *
 	 * @param $post
+	 *
 	 * @return string|string[]
 	 */
 	protected function get_rendered_post_content( $post ) {
@@ -94,7 +103,7 @@ class Castos_Handler {
 	 */
 	public function validate_api_credentials( $account_api_token = '', $account_email = '' ) {
 
-		$this->setup_response();
+		$this->setup_default_response();
 
 		if ( empty( $account_api_token ) || empty( $account_email ) ) {
 			$this->update_response( 'message', 'Invalid API Token or email.' );
@@ -158,7 +167,7 @@ class Castos_Handler {
 	 * Triggers the podcast import fom the Import settings screen
 	 */
 	public function trigger_podcast_import() {
-		$this->setup_response();
+		$this->setup_default_response();
 
 		$api_url = SSP_CASTOS_APP_URL . 'api/user/import';
 		$this->logger->log( $api_url );
@@ -200,7 +209,7 @@ class Castos_Handler {
 	 */
 	public function upload_episode_to_castos( $post ) {
 
-		$this->setup_response();
+		$this->setup_default_response();
 
 		if ( empty( $post ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
@@ -266,11 +275,11 @@ class Castos_Handler {
 		$post_body = wp_json_encode( $post_body );
 
 		$options = array(
-			'body'        => $post_body,
-			'headers'     => array(
+			'body'    => $post_body,
+			'headers' => array(
 				'Content-Type' => 'application/json',
 			),
-			'timeout'     => 60,
+			'timeout' => 60,
 		);
 
 		$app_response = wp_remote_post( $api_url, $options );
@@ -365,16 +374,18 @@ class Castos_Handler {
 	 * @return bool
 	 */
 	public function delete_podcast( $post ) {
-		$this->setup_response();
+		$this->setup_default_response();
 
 		if ( empty( $post ) ) {
 			$this->logger->log( 'Post to trash empty', array( 'post', $post ) );
+
 			return false;
 		}
 
 		$episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
 		if ( empty( $episode_id ) ) {
 			$this->logger->log( 'Episode ID to trash empty', array( 'episode_id', $episode_id ) );
+
 			return false;
 		}
 
@@ -408,7 +419,7 @@ class Castos_Handler {
 	 */
 	public function upload_podcasts_to_podmotor( $podcast_data ) {
 
-		$this->setup_response();
+		$this->setup_default_response();
 
 		if ( empty( $podcast_data ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
@@ -464,7 +475,7 @@ class Castos_Handler {
 	 * @return array
 	 */
 	public function upload_series_to_podmotor( $series_data ) {
-		$this->setup_response();
+		$this->setup_default_response();
 
 		if ( empty( $series_data ) ) {
 			$this->update_response( 'message', 'Invalid Series data' );
@@ -518,7 +529,7 @@ class Castos_Handler {
 	 */
 	public function insert_podmotor_queue() {
 
-		$this->setup_response();
+		$this->setup_default_response();
 
 		$api_url = SSP_CASTOS_APP_URL . 'api/insert_queue';
 		$this->logger->log( $api_url );
@@ -559,5 +570,173 @@ class Castos_Handler {
 		$this->update_response( 'queue_id', $response_object->queue_id );
 
 		return $this->response;
+	}
+
+	public function get_podcasts() {
+		$this->setup_default_response();
+
+		$api_url = SSP_CASTOS_APP_URL . 'api/v2/podcasts';
+
+		$this->logger->log( 'Get podcasts', $api_url );
+
+		$api_payload = array(
+			'timeout' => 45,
+			'body'    => array(
+				'token'        => $this->api_token,
+				'show_details' => true,
+			),
+		);
+
+		$app_response = wp_remote_get( $api_url, $api_payload );
+
+		if ( is_wp_error( $app_response ) ) {
+			$this->update_response( 'message', 'An error occurred connecting to the Castos server to get podcasts lists.' );
+			$this->logger->log( 'response', $this->response );
+
+			return $this->response;
+		}
+
+		$this->update_response( 'status', 'success' );
+		$this->update_response( 'message', 'Successfully retrieved podcasts.' );
+
+		$podcasts      = isset( $app_response['body'] ) ? json_decode( $app_response['body'], true ) : array();
+		$podcasts_data = isset( $podcasts['data'] ) ? $podcasts['data'] : array();
+
+		$this->update_response( 'data', $podcasts_data );
+
+		return $this->response;
+	}
+
+
+	/**
+	 * Gets podcast subscribers.
+	 *
+	 * @param int $podcast_id
+	 *
+	 * @return array
+	 */
+	public function get_podcast_subscribers( $podcast_id ) {
+		$this->logger->log( __METHOD__ );
+
+		$res = $this->send_request( 'api/v2/private-subscribers', [ 'podcast_id' => $podcast_id ] );
+
+		return ! empty( $res['subscribers'] ) ? $res['subscribers'] : array();
+	}
+
+
+	/**
+	 * Add single podcast subscriber.
+	 *
+	 * @param int $podcast_id
+	 * @param string $email
+	 * @param string $name
+	 *
+	 * @throws Exception
+	 */
+	public function add_podcast_subscriber( $podcast_id, $email, $name ) {
+		$this->logger->log( __METHOD__, compact( 'podcast_id', 'email', 'name' ) );
+
+		if ( empty( $podcast_id ) || empty( $email ) ) {
+			throw new Exception( __METHOD__ . ': Wrong arguments!' );
+		}
+
+		return $this->send_request( 'api/v2/private-subscribers', compact( 'podcast_id', 'email', 'name' ), 'POST' );
+	}
+
+
+	/**
+	 * Add subscriber to multiple podcasts.
+	 *
+	 * @param array $podcast_ids
+	 * @param string $email
+	 * @param string $name
+	 */
+	public function add_subscriber_to_podcasts( $podcast_ids, $email, $name ) {
+		$this->logger->log( __METHOD__, compact( 'podcast_ids', 'email', 'name' ) );
+
+		$podcasts = array();
+
+		foreach ( $podcast_ids as $podcast_id ) {
+			$podcasts[] = array( 'id' => $podcast_id );
+		}
+
+		$subscribers = array(
+			array(
+				'email' => $email,
+				'name'  => $name,
+			),
+		);
+
+		return $this->send_request( 'api/v2/create-private-subscribers', compact( 'podcasts', 'subscribers' ), 'POST' );
+	}
+
+
+	/**
+	 * Revoke subscriber from multiple podcasts.
+	 *
+	 * @param array $podcast_ids
+	 * @param string $email
+	 *
+	 * @return array|null
+	 */
+	public function revoke_subscriber_from_podcasts( $podcast_ids, $email ) {
+		$this->logger->log( __METHOD__, compact( 'podcast_ids', 'email' ) );
+
+		$subscribers = array();
+
+		foreach ( $podcast_ids as $podcast_id ) {
+			$subscribers[] = array(
+				'email'      => $email,
+				'podcast_id' => $podcast_id,
+			);
+		}
+
+		return $this->send_request( sprintf( 'api/v2/revoke-private-subscribers' ), compact( 'subscribers' ), 'POST' );
+	}
+
+
+	/**
+	 * Sends request to Castos API.
+	 *
+	 * @param string $api_url
+	 * @param array $args
+	 *
+	 * @return array|null Response object or the default errors array.
+	 */
+	protected function send_request( $api_url, $args = array(), $method = 'GET' ) {
+
+		$this->setup_default_response();
+
+		$api_url = SSP_CASTOS_APP_URL . $api_url;
+
+		$this->logger->log( sprintf( 'Sending %s request to: ', $method ), compact( 'api_url', 'args', 'method' ) );
+
+		// Some endpoints ask for token, some - for api_token. Let's provide both.
+		$default_args = array(
+			'token'     => $this->api_token,
+			'api_token' => $this->api_token,
+		);
+
+		$body = array_merge( $default_args, $args );
+
+		$app_response = wp_remote_request(
+			$api_url,
+			array(
+				'timeout' => self::TIMEOUT,
+				'method'  => $method,
+				'body'    => $body,
+			)
+		);
+
+		$this->logger->log( 'Response:', $app_response );
+
+		if ( is_wp_error( $app_response ) ) {
+			$this->logger->log( 'Response error: ' . $app_response->get_error_message() );
+			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
+
+			return null;
+		}
+
+		return json_decode( wp_remote_retrieve_body( $app_response ), true );
 	}
 }

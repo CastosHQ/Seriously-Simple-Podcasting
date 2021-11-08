@@ -560,17 +560,18 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		$checkbox_options = [];
 		foreach ( $levels as $level ) {
-			$checkbox_options[ 'lvl_' . $level->id ] = sprintf( 'Show for %s membership', $level->name );
+			$checkbox_options[ 'lvl_' . $level->id ] = sprintf( 'Require %s to access', $level->name );
 		}
 
 		$settings = array(
 			'id'          => 'paid_memberships_pro',
 			'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
-			'description' => __( 'Paid Memberships Pro integration settings.', 'seriously-simple-podcasting' ),
-			'fields' => array(
+			'description' => __( 'Select which podcast Series you would like to be available only
+								to Members via Paid Memberships Pro.', 'seriously-simple-podcasting' ),
+			'fields'      => array(
 				array(
-					'id'               => 'is_pmpro_integration',
-					'type'             => 'hidden',
+					'id'   => 'is_pmpro_integration',
+					'type' => 'hidden',
 				),
 			),
 		);

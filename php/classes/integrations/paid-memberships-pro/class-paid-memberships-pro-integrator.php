@@ -623,7 +623,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 *
 	 * @return bool|mixed
 	 */
-	protected function is_series_protected_in_castos( $series_id, $default = true ) {
+	protected function is_series_protected_in_castos( $series_id, $default = false ) {
 		$podcasts = $this->get_castos_podcasts();
 
 		foreach ( $podcasts as $podcast ) {

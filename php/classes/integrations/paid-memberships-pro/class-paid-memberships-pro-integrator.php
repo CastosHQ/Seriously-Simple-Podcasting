@@ -569,12 +569,6 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$series = $this->get_series();
 		$levels = $this->get_membership_levels();
 
-		$checkbox_options = array();
-
-		foreach ( $levels as $level ) {
-			$checkbox_options[ 'lvl_' . $level->id ] = sprintf( 'Require %s to access', $level->name );
-		}
-
 		$settings = array(
 			'id'          => 'paid_memberships_pro',
 			'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
@@ -587,6 +581,19 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 				),
 			),
 		);
+
+		if ( ! $levels ) {
+			$levels_url              = admin_url( 'admin.php?page=pmpro-membershiplevels' );
+			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up a
+										membership level</a> first.', 'seriously-simple-podcasting' ), $levels_url );
+			return $settings;
+		}
+
+		$checkbox_options = array();
+
+		foreach ( $levels as $level ) {
+			$checkbox_options[ 'lvl_' . $level->id ] = sprintf( 'Require %s to access', $level->name );
+		}
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(

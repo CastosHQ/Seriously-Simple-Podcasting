@@ -412,6 +412,10 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Protects access to private feeds.
 	 * */
 	public function protect_feed_access() {
+		$series_slug = $this->feed_handler->get_podcast_series();
+		if ( empty( $series_slug ) ) {
+			return;
+		}
 		$series = get_term_by( 'slug', $this->feed_handler->get_podcast_series(), 'series' );
 
 		$series_levels = $this->get_series_level_ids( $series->term_id );
@@ -565,7 +569,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$series = $this->get_series();
 		$levels = $this->get_membership_levels();
 
-		$checkbox_options = [];
+		$checkbox_options = array();
+
 		foreach ( $levels as $level ) {
 			$checkbox_options[ 'lvl_' . $level->id ] = sprintf( 'Require %s to access', $level->name );
 		}

@@ -74,12 +74,11 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
-			$this->init_subscribers_sync();
 		} else {
 			$this->protect_private_series();
 		}
 
-		add_action( 'ssp_bulk_sync_subscribers', array( $this, 'bulk_sync_subscribers' ) );
+		$this->init_subscribers_sync();
 	}
 
 
@@ -91,13 +90,14 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 */
 	protected function init_subscribers_sync() {
 
-		// When user's Membership Level is changed.
-		add_action( 'pmpro_before_change_membership_level', array(
+		// Sync users when their Membership Level is changed (from admin panel, when registered or cancelled).
+		add_filter( 'pmpro_change_level', array(
 			$this,
 			'sync_subscribers_on_change_membership_level'
 		), 10, 3 );
 
-		// When Series -> Membership Level association is changed.
+
+		// Schedule the bulk sync when Series -> Membership Level association is changed.
 		add_filter( 'allowed_options', function ( $allowed_options ) {
 			// Option ss_podcasting_is_pmpro_integration is just a marker that PMPro integration settings have been saved.
 			// If so, we can do the sync magic.
@@ -111,6 +111,9 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 			return $allowed_options;
 		}, 20 );
+
+		// Run the scheduled bulk sync.
+		add_action( 'ssp_bulk_sync_subscribers', array( $this, 'bulk_sync_subscribers' ) );
 	}
 
 	/**
@@ -168,18 +171,16 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	/**
 	 * Sync subscribers when user's Membership Level is changed (case 1).
 	 *
-	 * @param $level_id
-	 * @param $user_id
-	 * @param $old_levels
+	 * @param array|int $level
+	 * @param int $user_id
 	 */
-	public function sync_subscribers_on_change_membership_level( $level_id, $user_id, $old_levels ) {
-		$old_series_ids = array();
+	public function sync_subscribers_on_change_membership_level( $level, $user_id ) {
 
-		if ( $old_levels ) {
-			foreach ( $old_levels as $old_level ) {
-				$old_series_ids = array_merge( $old_series_ids, $this->get_series_ids_by_level( $old_level->id ) );
-			}
-		}
+		$level_id = is_array( $level ) ? $level['membership_id'] : $level;
+
+		$old_level = pmpro_getMembershipLevelForUser( $user_id );
+
+		$old_series_ids = $this->get_series_ids_by_level( $old_level->id );
 
 		$new_series_ids = $this->get_series_ids_by_level( $level_id );
 
@@ -188,6 +189,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$add_series_ids = array_diff( $new_series_ids, $old_series_ids );
 
 		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+
+		return $level_id;
 	}
 
 	/**
@@ -273,20 +276,24 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	/**
 	 * Gets IDs of the series attached to the Membership Level.
 	 *
-	 * @param $level
+	 * @param int $level_id
 	 *
 	 * @return array
 	 */
-	protected function get_series_ids_by_level( $level ) {
-
-		$series_terms = $this->get_series();
+	protected function get_series_ids_by_level( $level_id ) {
 
 		$series_ids = array();
 
-		foreach ( $series_terms as $series ) {
-			$levels = $this->get_series_level_ids( $series->term_id );
+		if ( empty( $level_id ) ) {
+			return $series_ids;
+		}
 
-			if ( in_array( $level, $levels ) ) {
+		$series_terms = $this->get_series();
+
+		foreach ( $series_terms as $series ) {
+			$levels_ids = $this->get_series_level_ids( $series->term_id );
+
+			if ( in_array( $level_id, $levels_ids ) ) {
 				$series_ids[] = $series->term_id;
 			}
 		}

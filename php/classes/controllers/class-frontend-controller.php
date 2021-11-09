@@ -1160,13 +1160,9 @@ class Frontend_Controller extends Controller {
 				// Ensure that $file is a valid URL
 				$file = filter_var( $file, FILTER_VALIDATE_URL );
 
-				// Ensure that $file is either audio or video type
-				$allowed_types = array( 'mp3|m4a' => 'audio/mpeg', 'mp4' => 'video/mp4' );
-				$filetype = wp_check_filetype( $file, $allowed_types );
-
 				// Exit if no file is found
-				if ( ! $file || ! $filetype['type'] ) {
-					return;
+				if ( ! $file ) {
+					$this->send_404();
 				}
 
 				// Get file referrer
@@ -1249,6 +1245,17 @@ class Frontend_Controller extends Controller {
 
 			}
 		}
+	}
+
+	/**
+	 * Show the 404 not found page content.
+	 */
+	protected function send_404() {
+		global $wp_query;
+		$wp_query->set_404();
+		status_header( 404 );
+		get_template_part( 404 );
+		exit();
 	}
 
 	/**

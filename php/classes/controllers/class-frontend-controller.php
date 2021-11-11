@@ -70,7 +70,7 @@ class Frontend_Controller extends Controller {
 		$locations = get_option( 'ss_podcasting_player_locations', array( 'content' ) );
 
 		if ( in_array( 'content', (array) $locations, true ) ) {
-			add_filter( 'the_content', array( $this, 'content_meta_data' ), 4, 1 );
+			add_filter( 'the_content', array( $this, 'content_meta_data' ), 10, 1 );
 		}
 
 		if ( in_array( 'excerpt', (array) $locations, true ) ) {

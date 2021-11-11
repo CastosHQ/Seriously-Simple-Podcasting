@@ -405,6 +405,58 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	protected function protect_private_series() {
 		add_filter( 'pmpro_has_membership_access_filter', array( $this, 'access_filter' ), 10, 4 );
 		add_action( 'ssp_before_feed', array( $this, 'protect_feed_access' ) );
+
+		// Protect the player that was added to the content by Frontend_Controller::content_meta_data().
+		// The problem is that PMPro uses priority 5 for protecting the content.
+		// It means that the player is not protected since it's added via priority 10 (after PMPro protects it).
+		// First intention was to change the priority to 4, but unfortunately it conflicts with Elementor who uses priority 10 for rewriting content.
+		// So if priority 4 is used, player disappears from all the elementor pages.
+		// Decided: by default, use priority 10, and only for sites with PMPro use priority 4.
+
+		$this->change_the_filter_priority( 'the_content', 'content_meta_data', 4 );
+	}
+
+	/**
+	 * Changes the filter priority.
+	 *
+	 * @param string $hook_name
+	 * @param string $function_name Either function or method name
+	 * @param int $new_priority
+	 *
+	 * @return bool If it's changed correctly or not.
+	 */
+	protected function change_the_filter_priority( $hook_name, $function_name, $new_priority ) {
+		global $wp_filter;
+
+		if ( empty( $wp_filter[ $hook_name ] ) ) {
+			return false;
+		}
+
+		$hook = $wp_filter[ $hook_name ];
+
+		foreach ( $hook->callbacks as $priority => $callbacks ) {
+			foreach ( $callbacks as $callback_id => $callback ) {
+				$current_function = $callback['function'];
+				if ( is_array( $current_function ) ) { // case it's a function in the class.
+					$current_function = $current_function[1];
+				}
+
+				if ( $function_name === $current_function ) {
+					if ( $new_priority != $priority ) {
+						$priority_existed = isset( $hook->callbacks[ $new_priority ] );
+						$hook->callbacks[ $new_priority ][ $callback_id ] = $hook->callbacks[ $priority ][ $callback_id ];
+						unset( $hook->callbacks[ $priority ][ $callback_id ] );
+						if ( ! $priority_existed ) {
+							ksort( $hook->callbacks, SORT_NUMERIC );
+						}
+
+						return true;
+					}
+				}
+			}
+		}
+
+		return false;
 	}
 
 

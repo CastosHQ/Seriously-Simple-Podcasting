@@ -167,6 +167,10 @@ class Frontend_Controller extends Controller {
 			return $content;
 		}
 
+		if ( ! apply_filters( 'ssp_show_media_player_in_content', true, $post, $content ) ) {
+			return $content;
+		}
+
 		$podcast_post_types = ssp_post_types( true );
 
 		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );

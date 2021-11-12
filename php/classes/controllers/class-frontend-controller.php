@@ -1158,10 +1158,10 @@ class Frontend_Controller extends Controller {
 				}
 
 				// Ensure that $file is a valid URL
-				$file = filter_var( $file, FILTER_VALIDATE_URL );
+				$is_url = 0 === strpos( $file, 'http' );
 
 				// Exit if no file is found
-				if ( ! $file ) {
+				if ( ! $is_url ) {
 					$this->send_404();
 				}
 

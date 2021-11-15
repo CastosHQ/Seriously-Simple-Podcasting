@@ -1,0 +1,72 @@
+image: php:7.4
+
+variables:
+  SSH_PRIVATE_KEY: ""
+  SSH_USER: ""
+  SSH_HOSTNAME: ""
+  SSH_PORT: ""
+  SSH_PATH: ""
+stages:
+  - build
+  - deploy
+
+build:
+  stage: build
+  only:
+    - automated_tests
+    - staging
+  artifacts:
+    paths:
+      - dist
+  script:
+    # Install Composer and its dependencies
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
+    - chmod +x composer.phar
+    - mv composer.phar /usr/local/bin/composer
+
+    # Install NPM and its dependencies
+    - curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
+    - apt-get update -y
+    - apt-get install -y nodejs
+    - npm install --ignore-scripts
+    - apt-get install zip unzip -yqq
+
+    # Now we can build the plugin
+    - export NODE_OPTIONS=--openssl-legacy-provider
+    - npm run predeploy
+
+    # Create the dist plugin folder for the deploy
+    - mkdir dist
+    - cp -r assets dist/assets
+    - cp -r build dist/build
+    - cp -r php dist/php
+    - cp -r templates dist/templates
+    - cp -r vendor dist/vendor
+    - cp LICENSE dist/LICENSE
+    - cp index.php dist/index.php
+    - cp readme.txt dist/readme.txt
+    - cp seriously-simple-podcasting.php dist/seriously-simple-podcasting.php
+
+
+deploy:
+  stage: deploy
+  when: manual
+  only:
+    - automated_tests
+    - staging
+  dependencies:
+    - build
+  script:
+    - ls -la
+    - apt-get update
+    - apt-get install openssh-client openssh-server -yqq > /dev/null
+    - eval $(ssh-agent -s)
+    - ssh-add <(echo $SSH_PRIVATE_KEY | base64 --decode)
+    - mkdir -p ~/.ssh
+    - chmod 700 ~/.ssh
+    - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\tPort 18765" > ~/.ssh/config'
+    - ssh -p$SSH_PORT $SSH_USER@$SSH_HOSTNAME "rm -rf $SSH_PATH/deploying-ssp && mkdir $SSH_PATH/deploying-ssp"
+    - scp -P$SSH_PORT -r dist/* $SSH_USER@$SSH_HOSTNAME:$SSH_PATH/deploying-ssp
+    - ssh -p$SSH_PORT $SSH_USER@$SSH_HOSTNAME "rm -rf $SSH_PATH/seriously-simple-podcasting && mv $SSH_PATH/deploying-ssp $SSH_PATH/seriously-simple-podcasting"

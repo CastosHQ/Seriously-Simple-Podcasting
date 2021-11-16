@@ -42,8 +42,9 @@
  * @var \WP_Query $qry
  * @var string $feed_link
  * @var Feed_Controller $feed_controller
- * @var bool $episode_description_uses_excerpt
+ * @var bool $is_excerpt_mode
  * @var bool $home_url
+ * @var string $media_prefix
  */
 
 // Exit if accessed directly.
@@ -171,7 +172,8 @@ if ( $stylesheet_url ) {
 		if ( $qry->have_posts() ) {
 			while ( $qry->have_posts() ) {
 				$turbo_post_count = isset( $turbo_post_count ) ? $turbo_post_count + 1 : null;
-				echo $feed_controller->fetch_feed_item( $qry, $author, $episode_description_uses_excerpt, $pub_date_type, $turbo_post_count );
+				$args             = compact( 'author', 'is_excerpt_mode', 'pub_date_type', 'turbo_post_count', 'media_prefix' );
+				echo $feed_controller->fetch_feed_item( $qry, $args );
 			}
 		} ?>
 	</channel>

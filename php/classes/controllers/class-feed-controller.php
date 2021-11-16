@@ -182,7 +182,7 @@ class Feed_Controller {
 		// Get media prefix setting
 		$media_prefix = $this->feed_handler->get_media_prefix( $series_id );
 
-		$episode_description_uses_excerpt = $this->feed_handler->is_excerpt_mode( $series_id );
+		$is_excerpt_mode = $this->feed_handler->is_excerpt_mode( $series_id );
 
 		$locked = $this->feed_handler->get_locked( $series_id );
 
@@ -219,14 +219,26 @@ class Feed_Controller {
 
 	/**
 	 * @param \WP_Query $qry
-	 * @param string $author
-	 * @param bool $episode_description_uses_excerpt
-	 * @param string $pub_date_type
-	 * @param int $turbo_post_count
+	 *
+	 * @param array $args {
+	 *     Array of the arguments for the feed item.
+	 *
+	 *     @type int      $author            Episode author.
+	 *     @type bool     $is_excerpt_mode   Use excerpt mode or not.
+	 *     @type string   $pub_date_type     Date type.
+	 *     @type int|null $turbo_post_count  Feed items counter.
+	 *     @type string   $media_prefix      Prefix for Podtrac, Chartable, and other tracking services.
+	 * }
 	 *
 	 * @return string
 	 */
-	public function fetch_feed_item( $qry, $author, $episode_description_uses_excerpt, $pub_date_type, $turbo_post_count ) {
+	public function fetch_feed_item( $qry, $args ) {
+
+		$author           = isset( $args['author'] ) ? $args['author'] : '';
+		$is_excerpt_mode  = isset( $args['is_excerpt_mode'] ) ? $args['is_excerpt_mode'] : '';
+		$pub_date_type    = isset( $args['pub_date_type'] ) ? $args['pub_date_type'] : '';
+		$turbo_post_count = isset( $args['turbo_post_count'] ) ? $args['turbo_post_count'] : '';
+		$media_prefix     = isset( $args['media_prefix'] ) ? $args['media_prefix'] : '';
 
 		$qry->the_post();
 
@@ -313,42 +325,42 @@ class Feed_Controller {
 			$block_flag = 'no';
 		}
 
-		// Episode author
+		// Episode author.
 		$author = apply_filters( 'ssp_feed_item_author', $author, get_the_ID() );
 
-		// Cache the post in case it changes
+		// Cache the post in case it changes.
 		$post_id = get_the_ID();
 
-		// Description is set based on feed setting
-		if ( $episode_description_uses_excerpt ) {
+		// Description is set based on feed setting.
+		if ( $is_excerpt_mode ) {
 			ob_start();
 			the_excerpt_rss();
 			$description = ob_get_clean();
 		} else {
 			$description = ssp_get_the_feed_item_content();
 			if ( isset( $turbo_post_count ) && $turbo_post_count > 10 ) {
-				// If turbo is on, limit the full html description to 4000 chars
+				// If turbo is on, limit the full html description to 4000 chars.
 				$description = mb_substr( $description, 0, 3999 );
 			}
 		}
 
 		$description = apply_filters( 'ssp_feed_item_description', $description, get_the_ID() );
 
-		// Clean up after shortcodes in content and excerpts
+		// Clean up after shortcodes in content and excerpts.
 		if ( $post_id !== get_the_ID() ) {
 			$qry->reset_postdata();
 		}
 
-		// iTunes summary excludes HTML and must be shorter than 4000 characters
+		// iTunes summary excludes HTML and must be shorter than 4000 characters.
 		$itunes_summary = wp_strip_all_tags( $description );
 		$itunes_summary = mb_substr( $itunes_summary, 0, 3999 );
 		$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, get_the_ID() );
 
-		// Google Play description is the same as iTunes summary, but must be shorter than 1000 characters
+		// Google Play description is the same as iTunes summary, but must be shorter than 1000 characters.
 		$gp_description = mb_substr( $itunes_summary, 0, 999 );
 		$gp_description = apply_filters( 'ssp_feed_item_gp_description', $gp_description, get_the_ID() );
 
-		// iTunes subtitle excludes HTML and must be shorter than 255 characters
+		// iTunes subtitle excludes HTML and must be shorter than 255 characters.
 		$itunes_subtitle = wp_strip_all_tags( $description );
 		$itunes_subtitle = str_replace(
 			array(
@@ -376,7 +388,7 @@ class Feed_Controller {
 
 		$itunes_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
 		$is_itunes_enabled = $itunes_enabled && $itunes_enabled == 'on';
-		// New iTunes WWDC 2017 Tags
+		// New iTunes WWDC 2017 Tags.
 		$itunes_episode_type   = $is_itunes_enabled ? get_post_meta( get_the_ID(), 'itunes_episode_type', true ) : '';
 		$itunes_title          = $is_itunes_enabled ? get_post_meta( get_the_ID(), 'itunes_title', true ) : '';
 		$itunes_episode_number = $is_itunes_enabled ? get_post_meta( get_the_ID(), 'itunes_episode_number', true ) : '';

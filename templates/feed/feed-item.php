@@ -1,5 +1,7 @@
 <?php
 /**
+ * @see \SeriouslySimplePodcasting\Controllers\Feed_Controller::fetch_feed_item()
+ *
  * @var string $title
  * @var string $pub_date
  * @var string $author

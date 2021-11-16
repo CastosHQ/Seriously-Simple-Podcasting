@@ -837,7 +837,7 @@ class Settings_Handler {
 				'id'          => 'media_prefix',
 				'label'       => __( 'Media File Prefix', 'seriously-simple-podcasting' ),
 				// translators: placeholders are for help document link
-				'description' => sprintf( __( 'Enter your Podtrac, Chartable, or other media file prefix here. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/95-adding-a-media-file-prefix-for-podtrac-chartable-and-other-tracking-services' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+				'description' => sprintf( __( 'Enter your Podtrac, Chartable, or other media file prefix here. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/hc/en-us/articles/360019364119-Add-a-media-file-prefix-in-WordPress-for-Podtrac-Chartable-and-other-analytics-or-tracking-services' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'text',
 				'default'     => '',
 				'placeholder' => __( 'https://dts.podtrac.com/redirect/mp3/', 'seriously-simple-podcasting' ),

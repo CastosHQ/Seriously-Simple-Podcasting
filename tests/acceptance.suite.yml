@@ -23,10 +23,10 @@ modules:
 
     config:
       WPBrowser:
-        url: 'http://castos.loc'
+        url: '%SITE_URL%'
         adminUsername: 'zdev'
-        adminPassword: 'N%^!JtIjaSY$IJf5zd(j74Sk'
-        adminPath: 'http://castos.loc/wp-login.php'
+        adminPassword: ''
+        adminPath: '%SITE_URL%/wp-admin'
 
 step_decorators: ~
 

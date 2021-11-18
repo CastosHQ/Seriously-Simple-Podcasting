@@ -6,9 +6,13 @@ variables:
   SSH_HOSTNAME: ""
   SSH_PORT: ""
   SSH_PATH: ""
+  SITE_URL: ""
+  SITE_USER: ""
+  SITE_USER_PASS: ""
 stages:
   - build
   - deploy
+  - testing
 
 build:
   stage: build
@@ -19,7 +23,7 @@ build:
     paths:
       - dist
   script:
-    # Install Composer and its dependencies
+    # Install Composer
     - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
     - php composer-setup.php
     - php -r "unlink('composer-setup.php');"
@@ -52,7 +56,6 @@ build:
 
 deploy:
   stage: deploy
-  when: manual
   only:
     - automated_tests
     - staging
@@ -70,3 +73,37 @@ deploy:
     - ssh -p$SSH_PORT $SSH_USER@$SSH_HOSTNAME "rm -rf $SSH_PATH/deploying-ssp && mkdir $SSH_PATH/deploying-ssp"
     - scp -P$SSH_PORT -r dist/* $SSH_USER@$SSH_HOSTNAME:$SSH_PATH/deploying-ssp
     - ssh -p$SSH_PORT $SSH_USER@$SSH_HOSTNAME "rm -rf $SSH_PATH/seriously-simple-podcasting && mv $SSH_PATH/deploying-ssp $SSH_PATH/seriously-simple-podcasting"
+
+testing:
+  stage: testing
+  only:
+    - automated_tests
+    - staging
+  script:
+    # Install Composer dependencies
+    - apt-get update -yqq
+    - apt-get install -yqq libfreetype6-dev libjpeg62-turbo-dev libpng-dev
+    # @see https://hub.docker.com/_/php
+    - docker-php-ext-configure gd --with-freetype --with-jpeg > /dev/null
+    - docker-php-ext-install gd > /dev/null
+    - apt-get install zip unzip -yqq
+    - apt-get install git -yqq
+
+    # Install Composer
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
+    - php composer-setup.php
+    - php -r "unlink('composer-setup.php');"
+    - chmod +x composer.phar
+    - mv composer.phar /usr/local/bin/composer
+
+    # Get all libraries
+    - composer install
+
+    # Prepare environment
+    - touch .env.testing
+    - echo "SITE_URL=$SSH_USER" >> .env.testing
+    - echo "SITE_USER=$SITE_USER" >> .env.testing
+    - echo "SITE_USER_PASS=$SITE_USER_PASS" >> .env.testing
+
+    # Run Acceptance tests
+    - vendor/bin/codecept run acceptance

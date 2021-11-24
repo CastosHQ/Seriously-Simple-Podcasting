@@ -465,14 +465,17 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			return true;
 		}
 
-		$user_levels = (array) pmpro_getMembershipLevelsForUser( $user->ID );
+		$user_levels = pmpro_getMembershipLevelsForUser( $user->ID );
 
 		$user_level_ids = array();
-		foreach ( $user_levels as $user_level ) {
-			$user_level_ids[] = $user_level->id;
+
+		if ( is_array( $user_levels ) ) {
+			foreach ( $user_levels as $user_level ) {
+				$user_level_ids[] = $user_level->id;
+			}
 		}
 
-		return count( $user_levels ) && count( array_intersect( $user_level_ids, $post_level_ids ) );
+		return count( $user_level_ids ) && count( array_intersect( $user_level_ids, $post_level_ids ) );
 	}
 
 

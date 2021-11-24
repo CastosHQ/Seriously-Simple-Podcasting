@@ -39,9 +39,15 @@ https://codeception.com/07-24-2013/testing-wordpress-plugins.html
 
 
 ### Run acceptance tests:
-`vendor/bin/codecept run acceptance`
+`vendor/bin/codecept run acceptance --steps`
 
 ### How to print variables:
 `codecept_debug($myVar);`
-`vendor/bin/codecept run --debug acceptance`
+`vendor/bin/codecept run --debug acceptance --steps`
 
+## BDD
+### Links
+https://codeception.com/docs/07-BDD
+
+### Generate the code
+`vendor/bin/codecept gherkin:snippets acceptance`

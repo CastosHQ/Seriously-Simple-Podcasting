@@ -107,6 +107,29 @@ class Frontend_Controller extends Controller {
 
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
+
+		add_filter( "archive_template_hierarchy", array( $this, 'fix_template_hierarchy' ) );
+	}
+
+	/**
+	 * Unfortunately, WP core doesn't search for archive-podcast.php automatically (though it should).
+	 * So add the template to search list manually.
+	 *
+	 * @param array $templates
+	 *
+	 * @return array
+	 */
+	public function fix_template_hierarchy( $templates ) {
+		$use_post_tag = apply_filters( 'ssp_use_post_tags', true );
+
+		// Use queried object because is_tax('post_tag') doesn't work ( is_tax is false ).
+		$queried = get_queried_object();
+
+		if ( is_tax( 'series' ) || ( $use_post_tag && 'post_tag' === $queried->taxonomy ) ) {
+			$templates = array_merge( array( 'archive-' . SSP_CPT_PODCAST . '.php' ), $templates );
+		}
+
+		return $templates;
 	}
 
 	public function register_ajax_actions() {
@@ -859,6 +882,7 @@ class Frontend_Controller extends Controller {
 			$podcast_post_types = ssp_post_types( false );
 
 			if ( empty( $podcast_post_types ) ) {
+				$query->set( 'post_type', SSP_CPT_PODCAST );
 				return;
 			}
 
@@ -867,11 +891,9 @@ class Frontend_Controller extends Controller {
 
 				$query->set( 'post__in', $episode_ids );
 
-				$podcast_post_types[] = SSP_CPT_PODCAST;
+				$podcast_post_types = array_merge( array( SSP_CPT_PODCAST ), $podcast_post_types );
 				$query->set( 'post_type', $podcast_post_types );
-
 			}
-
 		}
 
 	}
@@ -886,12 +908,17 @@ class Frontend_Controller extends Controller {
 			return;
 		}
 
-		if ( !is_tag() ) {
+		if ( ! is_tag() ) {
 			return;
 		}
 
-		$post_types             = (array) $query->get( 'post_type' );
+		if ( ! apply_filters( 'ssp_use_post_tags', true ) ) {
+			return;
+		}
+
+		$post_types             = $query->get( 'post_type' ) ?: array();
 		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array( 'post', SSP_CPT_PODCAST ) );
+
 		$query->set( 'post_type', array_merge( $post_types, $tag_archive_post_types ) );
 	}
 

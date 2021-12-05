@@ -72,7 +72,7 @@ deploy:
     - '[[ -f /.dockerenv ]] && echo -e "Host *\n\tStrictHostKeyChecking no\n\tPort 18765" > ~/.ssh/config'
     - ssh -p$SSH_PORT $SSH_USER@$SSH_HOSTNAME "rm -rf $SSH_PATH/deploying-ssp && mkdir $SSH_PATH/deploying-ssp"
     - scp -P$SSH_PORT -r dist/* $SSH_USER@$SSH_HOSTNAME:$SSH_PATH/deploying-ssp
-    - ssh -p$SSH_PORT $SSH_USER@$SSH_HOSTNAME "rm -rf $SSH_PATH/wp-content/plugins/seriously-simple-podcasting && mv $SSH_PATH/deploying-ssp $SSH_PATH/wp-content/plugins/seriously-simple-podcasting && wp db import $SSH_PATH/seed.sql"
+    - ssh -p$SSH_PORT $SSH_USER@$SSH_HOSTNAME "rm -rf $SSH_PATH/wp-content/plugins/seriously-simple-podcasting && mv $SSH_PATH/deploying-ssp $SSH_PATH/wp-content/plugins/seriously-simple-podcasting && cd $SSH_PATH && wp db import seed.sql"
 
 testing:
   stage: testing

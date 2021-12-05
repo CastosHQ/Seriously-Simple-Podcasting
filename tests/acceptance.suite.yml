@@ -7,8 +7,8 @@
 actor: AcceptanceTester
 modules:
     enabled:
-        - WPBrowser
-#        - PhpBrowser:
+#        - WPBrowser
+        - PhpBrowser:
 #            url: http://castos.loc
         - \Helper\Acceptance
 #        - WPWebDriver:
@@ -22,7 +22,7 @@ modules:
 #            adminUrl: /wp-admin
 
     config:
-      WPBrowser:
+      PhpBrowser:
         url: '%SITE_URL%'
         adminUsername: 'zdev'
         adminPassword: ''

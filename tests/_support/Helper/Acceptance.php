@@ -43,4 +43,9 @@ class Acceptance extends \Codeception\Module
 	public function wait($seconds){
 		sleep($seconds);
 	}
+
+	public function getConfig( $arg = null ){
+		$browser = $this->getModule('PhpBrowser');
+		return $browser->_getConfig( $arg );
+	}
 }

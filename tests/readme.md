@@ -37,11 +37,11 @@ For testing purposes, we use Codeception. It provides possibility to run any kin
 ### Useful links
 https://codeception.com/07-24-2013/testing-wordpress-plugins.html
 
-
 ### Run acceptance tests:
 `vendor/bin/codecept run acceptance --steps`
+`vendor/bin/codecept run acceptance settings-general.feature --steps`
 
-### How to print variables:
+### Debugging:
 `codecept_debug($myVar);`
 `vendor/bin/codecept run --debug acceptance --steps`
 
@@ -49,5 +49,5 @@ https://codeception.com/07-24-2013/testing-wordpress-plugins.html
 ### Links
 https://codeception.com/docs/07-BDD
 
-### Generate the code
+### Generate the code stubs by feature steps
 `vendor/bin/codecept gherkin:snippets acceptance`

@@ -18,4 +18,3 @@ Feature: SSP Plugin Hosting Settings
 		And I can see "Your Castos API token. Available from your Castos account dashboard."
 		And I can see "Disconnect Castos"
 		And I can see "Disconnect your Castos account."
-		And I can see "Validate credentials"

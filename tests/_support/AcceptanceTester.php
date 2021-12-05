@@ -107,7 +107,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	 */
 	public function iActivateTheSSPPlugin() {
 		$this->click( '#activate-seriously-simple-podcasting' );
-		$this->wait( 2 );
+		$this->wait( 1 );
 	}
 
 	/**
@@ -115,7 +115,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	 */
 	public function iActivateTheClassicEditorPlugin() {
 		$this->click( '#activate-seriously-simple-podcasting' );
-		$this->wait( 2 );
+		$this->wait( 1 );
 	}
 
 	/**
@@ -130,7 +130,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	 */
 	public function iDeactivateTheSSPPlugin() {
 		$this->click( '#deactivate-seriously-simple-podcasting' );
-		$this->wait( 2 );
+		$this->wait( 1 );
 	}
 
 	/**
@@ -261,7 +261,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	 */
 	public function iClickMenuSubmenu( $arg1, $arg2 ) {
 		$this->click( $arg2, sprintf( '#%s ul li a', $this->getAdminMenuId( $arg1 ) ) );
-		$this->wait( 2 );
+		$this->wait( 1 );
 	}
 
 	/**
@@ -298,7 +298,7 @@ class AcceptanceTester extends \Codeception\Actor {
 
 	protected function getAdminMenuId( $menu_title ) {
 		$id = 'menu-posts';
-		if ( 'posts' !== $menu_title ) {
+		if ( 'Posts' !== $menu_title ) {
 			$id .= '-' . strtolower( str_replace( ' ', '-', $menu_title ) );
 		}
 
@@ -350,6 +350,32 @@ class AcceptanceTester extends \Codeception\Actor {
 		$this->click( '#publish' );
 	}
 
+	/**
+	 *
+	 *
+	 * @Given I create episodes
+	 *
+	 * @param \Behat\Gherkin\Node\TableNode $args
+	 */
+	public function iCreateEpisodes( $args ) {
+		$episodes = $args->getTable();
+
+		// Remove titles.
+		array_shift( $episodes );
+
+		foreach ( $episodes as $episode ) {
+			$this->createEpisode( $episode );
+		}
+	}
+
+	/**
+	 * @Then I can see that current url is :arg1
+	 */
+	public function iCanSeeThatCurrentUrlIs( $arg1 ) {
+		$this->seeInCurrentUrl( $arg1 );
+	}
+
+
 	protected function isAbsoluteUrl( $url ) {
 		$pattern = "/^(?:ftp|https?|feed)?:?\/\/(?:(?:(?:[\w\.\-\+!$&'\(\)*\+,;=]|%[0-9a-f]{2})+:)*
         (?:[\w\.\-\+%!$&'\(\)*\+,;=]|%[0-9a-f]{2})+@)?(?:
@@ -357,5 +383,26 @@ class AcceptanceTester extends \Codeception\Actor {
         (?:[\w#!:\.\?\+\|=&@$'~*,;\/\(\)\[\]\-]|%[0-9a-f]{2})*)?$/xi";
 
 		return (bool) preg_match( $pattern, $url );
+	}
+
+	protected function createEpisode( $args ) {
+		$this->iClickMenuSubmenu( 'Podcast', "Add New" );
+		$this->iFillTheFieldWith( 'Episode title', $args[0] );
+		$this->iFillTheFieldWith( 'Episode content', $args[1] );
+
+		$file = isset( $args[2] ) ? $args[2] : self::DEFAULT_EPISODE_FILE;
+		$this->iFillTheFieldWith( 'Episode file', $file );
+		$this->iSaveTheEpisode();
+	}
+
+	/**
+	 * @Then I can see in source :arg1
+	 */
+	public function iCanSeeInSource( $arg1 ) {
+		$arg1 = str_replace( '\"', '"', $arg1 );
+		if ( false !== strpos( $arg1, '{{base_url}}' ) ) {
+			$arg1 = str_replace( '{{base_url}}', $this->getConfig( 'url' ), $arg1 );
+		}
+		$this->seeInSource( $arg1 );
 	}
 }

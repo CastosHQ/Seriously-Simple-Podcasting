@@ -48,4 +48,10 @@ class Acceptance extends \Codeception\Module
 		$browser = $this->getModule('PhpBrowser');
 		return $browser->_getConfig( $arg );
 	}
+
+	public function getCurrentUrl(){
+		$browser = $this->getModule('PhpBrowser');
+
+		return $browser->_getCurrentUri();
+	}
 }

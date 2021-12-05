@@ -10,9 +10,9 @@ Feature: SSP Plugin Import Settings
 		When I click tab "Import"
 		Then I can see that "Import" tab is active
 
-	Scenario: All hosting settings exist
+	Scenario: All import settings exist
 		Then I can see "Use this option for a one time import of your existing WordPress podcast to your Castos account."
 		And I can see "If you have a podcast hosted on an external service"
 		And I can see "RSS feed"
 		And I can see "Post Type"
-		And I can see "Begin import Now"
+

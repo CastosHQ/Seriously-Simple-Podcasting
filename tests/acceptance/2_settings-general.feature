@@ -17,5 +17,5 @@ Feature: SSP Plugin General Settings
 	Scenario: Change podcast post types
 		When I check "Podcast post types Posts" checkbox
 		And I save settings
-		Then I can see that "Series" submenu exists in "Posts menu"
+		Then I can see that "Series" submenu exists in "Posts"
 

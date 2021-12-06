@@ -1,16 +1,13 @@
 # Testing Gist
 
 ## Overview
-The testing process includes the following steps:
-1. Plugin delivery.
-2. Running the tests.
+The testing process includes 3 steps:
+1. Plugin build.
+2. Plugin delivery.
+3. Running the tests.
 
 Please check the `.gitlab-ci.yml` file for more information.
 
-## Plugin delivery
-Has 2 steps:
-1. Building the plugin
-2. Uploading plugin to automated.ssp-testing.xyz
 
 ### Useful links
 https://lorisleiva.com/laravel-deployment-using-gitlab-pipelines/

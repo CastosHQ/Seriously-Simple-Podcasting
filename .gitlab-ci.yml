@@ -17,8 +17,7 @@ stages:
 build:
   stage: build
   only:
-    - automated_tests
-    - staging
+    - develop
   artifacts:
     paths:
       - dist
@@ -57,8 +56,7 @@ build:
 deploy:
   stage: deploy
   only:
-    - automated_tests
-    - staging
+    - develop
   dependencies:
     - build
   script:
@@ -77,8 +75,7 @@ deploy:
 testing:
   stage: testing
   only:
-    - automated_tests
-    - staging
+    - develop
   script:
     # Install Composer dependencies
     - apt-get update -yqq
@@ -106,4 +103,4 @@ testing:
     - echo "SITE_USER_PASS=$SITE_USER_PASS" >> .env.testing
 
     # Run Acceptance tests
-    - vendor/bin/codecept run acceptance
+    - vendor/bin/codecept run acceptance --steps

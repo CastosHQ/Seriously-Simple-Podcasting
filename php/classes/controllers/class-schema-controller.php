@@ -3,7 +3,6 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 
-
 use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastEpisode;
 use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastSeries;
 
@@ -25,12 +24,10 @@ class Schema_Controller {
 		add_filter( 'wpseo_schema_graph_pieces', array( $this, 'add_graph_pieces' ) );
 	}
 
-    public static function add_graph_pieces( $data ) {
-		return $data; //todo: remove this line
-
+	public static function add_graph_pieces( $data ) {
 		$data[] = new PodcastEpisode();
 		$data[] = new PodcastSeries();
 
-        return $data;
-    }
+		return $data;
+	}
 }

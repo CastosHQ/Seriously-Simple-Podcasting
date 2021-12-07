@@ -102,10 +102,10 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		$time = 'P';
 
 		if ( $hours ) {
-			$time .= intval( $hours ) . 'H';
+			$time .= $hours . 'H';
 		}
 		if ( $minutes ) {
-			$time .= intval( $minutes ) . 'M';
+			$time .= $minutes . 'M';
 		}
 
 		return $time;

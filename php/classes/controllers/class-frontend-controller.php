@@ -2,19 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Renderers\Renderer;
 use stdClass;
 use WP_Query;
-
-use SeriouslySimplePodcasting\ShortCodes\Player;
-use SeriouslySimplePodcasting\ShortCodes\Podcast;
-use SeriouslySimplePodcasting\ShortCodes\Podcast_Episode;
-use SeriouslySimplePodcasting\ShortCodes\Podcast_Playlist;
-
-use SeriouslySimplePodcasting\Widgets\Playlist;
-use SeriouslySimplePodcasting\Widgets\Series;
-use SeriouslySimplePodcasting\Widgets\Recent_Episodes;
-use SeriouslySimplePodcasting\Widgets\Single_Episode;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 

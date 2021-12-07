@@ -1,5 +1,6 @@
 <?php
 
+use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
 
@@ -1371,5 +1372,22 @@ if ( ! function_exists( 'ssp_is_ajax' ) ) {
 	 */
 	function ssp_is_ajax() {
 		return function_exists( 'wp_doing_ajax' ) ? wp_doing_ajax() : defined( 'DOING_AJAX' ) && DOING_AJAX;
+	}
+}
+
+
+/**
+ * Get an episode controller.
+ */
+if ( ! function_exists( 'ssp_episode_controller' ) ) {
+
+	/**
+	 * Get an episode controller.
+	 *
+	 * @return Episode_Controller
+	 */
+	function ssp_episode_controller() {
+		global $ss_podcasting;
+		return $ss_podcasting->episode_controller;
 	}
 }

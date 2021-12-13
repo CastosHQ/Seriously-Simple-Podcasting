@@ -513,9 +513,9 @@ class Settings_Controller extends Controller {
 		if ( isset( $_GET['settings-updated'] ) ) {
 			$tab = filter_input( INPUT_GET, 'tab' );
 			$msg = $tab ?
-				sprintf( __( '%1$s settings updated', 'seriously-simple-podcasting' ), '<b>' . str_replace( '-', ' ', ucwords( $tab ) ) ) :
+				sprintf( __( '%1$s settings updated', 'seriously-simple-podcasting' ),  str_replace( '-', ' ', ucwords( $tab ) ) ) :
 				__( 'Settings updated', 'seriously-simple-podcasting' );
-			$html .= '<br/><div class="updated notice notice-success is-dismissible"><p>' . $msg . '</p></div>';
+			$html .= '<br/><div class="updated notice notice-success is-dismissible"><p><b>' . $msg . '</b></p></div>';
 		}
 
 		return apply_filters( 'ssp_settings_show_page_tabs', $html );

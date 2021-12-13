@@ -9,8 +9,13 @@
  * @var string $read_more_text
  * @var string $date_source
  * @var string $date_format
+ * @var string $episode_image_source
  * @var int $columns
  * */
+
+
+$get_image_func = 'featured_image' === $episode_image_source ? 'get_featured_image_src' : 'get_album_art';
+$ssp_episode_controller = ssp_episode_controller();
 ?>
 <div class="elementor-section elementor-section-boxed">
 	<style>
@@ -25,7 +30,7 @@
 					<div class="ssp-recent-episode-post">
 						<?php if ( $show_episode_image ) : ?>
 						<a href="<?php echo get_the_permalink( $episode->ID ); ?>" title="<?php echo $episode->post_title ?>">
-							<?php $album_art = ssp_episode_controller()->get_album_art( $episode->ID, 'medium' );  ?>
+							<?php $album_art = $ssp_episode_controller->$get_image_func( $episode->ID, 'medium' ); ?>
 							<img src="<?php echo esc_url( $album_art['src'] ); ?>" alt="<?php echo $episode->post_title ?>">
 						</a>
 						<?php endif; ?>

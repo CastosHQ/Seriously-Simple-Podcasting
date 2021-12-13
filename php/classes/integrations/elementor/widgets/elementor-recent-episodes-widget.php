@@ -42,6 +42,22 @@ class Elementor_Recent_Episodes_Widget extends Widget_Base {
 		);
 
 		$this->add_control(
+			'episode_image_source',
+			array(
+				'label'   => __( 'Image Source', 'seriously-simple-podcasting' ),
+				'type'      => Controls_Manager::SELECT,
+				'options' => array(
+					'featured_image' => __( 'Featured Image' ),
+					'player_image'  => __( 'Player Image' ),
+				),
+				'default'   => 'featured_image',
+				'condition' => array(
+					'show_episode_image' => 'yes',
+				),
+			)
+		);
+
+		$this->add_control(
 			'show_episode_title',
 			array(
 				'label'   => __( 'Show Episode Title', 'seriously-simple-podcasting' ),

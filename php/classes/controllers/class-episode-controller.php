@@ -212,6 +212,24 @@ class Episode_Controller extends Controller {
 	}
 
 	/**
+	 * Get featured image src.
+	 *
+	 * @param int $episode_id ID of the episode.
+	 *
+	 * @return array|null [ $src, $width, $height ]
+	 *
+	 * @since 2.9.9
+	 */
+	public function get_featured_image_src( $episode_id, $size = 'full' ) {
+		$thumb_id = get_post_thumbnail_id( $episode_id );
+		if ( empty( $thumb_id ) ) {
+			return null;
+		}
+		return ssp_get_attachment_image_src( $thumb_id, $size );
+	}
+
+
+	/**
 	 * Get Episode List
 	 *
 	 * @param array $episode_ids , array of episode ids being loaded into the player

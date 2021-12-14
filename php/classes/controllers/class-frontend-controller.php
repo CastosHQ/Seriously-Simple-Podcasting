@@ -1590,7 +1590,7 @@ class Frontend_Controller extends Controller {
 	/**
 	 * Render the HTML content for the podcast list dynamic block
 	 *
-	 * @param arrau $attributes Block attributes.
+	 * @param array $attributes Block attributes.
 	 *
 	 * @return string
 	 */
@@ -1673,9 +1673,11 @@ class Frontend_Controller extends Controller {
 
 		$links = array();
 
-		foreach ( $all_links as $item ) {
-			if ( strpos( $item, 'class="next' ) || strpos( $item, 'class="prev' ) ) {
-				$links[] = $item;
+		if ( is_array( $all_links ) ) {
+			foreach ( $all_links as $item ) {
+				if ( strpos( $item, 'class="next' ) || strpos( $item, 'class="prev' ) ) {
+					$links[] = $item;
+				}
 			}
 		}
 

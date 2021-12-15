@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Renderers\Renderer;
 use WP_Query;
 
 /**
@@ -20,22 +21,37 @@ class Feed_Handler {
 	const PODCAST_NAMESPACE_UUID = 'ead4c236-bf58-58c6-a2c6-a6b28d128cb6';
 
 	/**
+	 * @var Renderer
+	 * */
+	protected $renderer;
+
+
+	/**
+	 * Feed_Handler constructor.
+	 *
+	 * @param Renderer $renderer
+	 */
+	public function __construct( $renderer ) {
+		$this->renderer = $renderer;
+	}
+
+	/**
 	 * Suppress all errors to make sure the feed is not broken
 	 *
 	 * @return void
 	 */
 	public function suppress_errors() {
-		$force_hide_errors = true; //todo: remove
-		$hide_errors       = ! defined( 'WP_DEBUG' ) || ! WP_DEBUG;
-		if ( $force_hide_errors || $hide_errors ) {
-			error_reporting( 0 );// Hide all errors
+		$suppress_errors = apply_filters( 'ssp_suppress_feed_errors', true );
+
+		if ( $suppress_errors ) {
+			error_reporting( 0 );
 		}
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function has_access() {
+	public function has_password_protected_access() {
 		// Allow feed access by default.
 		$give_access = true;
 
@@ -43,7 +59,7 @@ class Feed_Handler {
 		$protection = get_option( 'ss_podcasting_protect', '' );
 
 		// Handle feed protection if required.
-		if ( $protection && 'on' === $protection ) {
+		if ( 'on' === $protection ) {
 
 			$give_access = false;
 
@@ -103,39 +119,68 @@ class Feed_Handler {
 		return $series_id;
 	}
 
+
 	/**
-	 * Close access to protected feed
+	 * Close access to password protected feed ( Podcast->Settings->Security ).
 	 *
-	 * @param bool $give_access
 	 * @param int $series_id
 	 */
-	public function protect_unauthorized_access( $give_access, $series_id ) {
+	public function maybe_protect_unauthorized_access( $series_id ) {
 
 		// Allow dynamic access control.
-		$give_access = apply_filters( 'ssp_feed_access', $give_access, $series_id );
+		$has_access = apply_filters( 'ssp_feed_access', $this->has_password_protected_access(), $series_id );
 
-		// Send 401 status and display no access message if access has been denied.
-		if ( ! $give_access ) {
-
-			// Set default message.
-			$message = __( 'You are not permitted to view this podcast feed.', 'seriously-simple-podcasting' );
-
-			// Check message option from plugin settings.
-			$message_option = get_option( 'ss_podcasting_protection_no_access_message' );
-			if ( $message_option ) {
-				$message = $message_option;
-			}
-
-			// Allow message to be filtered dynamically.
-			$message = apply_filters( 'ssp_feed_no_access_message', $message );
-
-			$no_access_message = '<div style="text-align:center;font-family:sans-serif;border:1px solid red;background:pink;padding:20px 0;color:red;">' . $message . '</div>';
-
-			header( 'WWW-Authenticate: Basic realm="Podcast Feed"' );
-			header( 'HTTP/1.0 401 Unauthorized' );
-
-			die( $no_access_message );
+		if ( $has_access ) {
+			return;
 		}
+
+		// Set default message.
+		$default_message = __( 'You are not permitted to view this podcast feed.', 'seriously-simple-podcasting' );
+
+		// Check message option from plugin settings.
+		$message = get_option( 'ss_podcasting_protection_no_access_message', $default_message );
+
+		// Allow message to be filtered dynamically.
+		$message = apply_filters( 'ssp_feed_no_access_message', $message );
+
+		header( 'WWW-Authenticate: Basic realm="Podcast Feed"' );
+
+		$this->render_feed_no_access( $series_id, $message );
+	}
+
+
+	/**
+	 * Close access to private feed ( Podcast->Settings->Feed details->Set Podcast To Private ).
+	 *
+	 * @param int $series_id
+	 */
+	public function maybe_protect_private_feed( $series_id ) {
+		if ( 'yes' !== ssp_get_option( 'is_private', '', $series_id ) ) {
+			return;
+		}
+
+		$message = __( 'This content is Private. To access this podcast, contact the site owner.', 'seriously-simple-podcasting' );
+
+		$message = apply_filters( 'ssp_private_feed_message', $message );
+
+		$this->render_feed_no_access( $series_id, $message );
+	}
+
+
+	/**
+	 * @param int $series_id
+	 * @param string $description
+	 */
+	public function render_feed_no_access( $series_id, $description ) {
+		header( 'HTTP/1.0 401 Unauthorized' );
+
+		$stylesheet_url = $this->get_stylesheet_url();
+		$title          = esc_html( $this->get_podcast_title( $series_id ) );
+		$args           = apply_filters( 'ssp_feed_no_access_args', compact( 'stylesheet_url', 'title', 'description' ) );
+		$path           = apply_filters( 'ssp_feed_no_access_path', 'feed/feed-no-access' );
+
+		$this->renderer->render( $path, $args );
+		exit;
 	}
 
 	/**
@@ -206,7 +251,7 @@ class Feed_Handler {
 
 		$redirect = get_option( 'ss_podcasting_redirect_feed_' . $series_id );
 
-		if ( $redirect && 'on' === $redirect ) {
+		if ( 'on' === $redirect ) {
 			$new_feed_url = get_option( 'ss_podcasting_new_feed_url_' . $series_id );
 			if ( $new_feed_url ) {
 				header( 'HTTP/1.1 301 Moved Permanently' );
@@ -588,6 +633,7 @@ class Feed_Handler {
 	 */
 	public function get_pub_date_type( $series_id ) {
 		$pub_date_type_option = $series_id ? 'ss_podcasting_publish_date_' . $series_id : 'ss_podcasting_publish_date';
+
 		return get_option( $pub_date_type_option, 'published' );
 	}
 
@@ -621,7 +667,7 @@ class Feed_Handler {
 	 *
 	 * @return string
 	 */
-	public function get_feed_link( $podcast_series ){
+	public function get_feed_link( $podcast_series ) {
 		$link = $podcast_series ? get_term_link( $podcast_series, 'series' ) : trailingslashit( home_url() );
 
 		return apply_filters( 'ssp_feed_channel_link_tag', $link );

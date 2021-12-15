@@ -150,7 +150,7 @@ class App_Controller extends Controller {
 
 		$this->upgrade_handler = new Upgrade_Handler();
 
-		$this->feed_handler = new Feed_Handler();
+		$this->feed_handler = new Feed_Handler( $this->renderer );
 
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
@@ -182,9 +182,8 @@ class App_Controller extends Controller {
 		}
 
 		// todo: further refactoring - get rid of global here
-		global $ss_podcasting, $ssp_players;
+		global $ss_podcasting;
 		$ss_podcasting = new Frontend_Controller( $this->file, SSP_VERSION );
-		$ssp_players   = new Players_Controller( $this->file, SSP_VERSION );
 
 		$this->init_integrations();
 		$this->init_rest_api();
@@ -212,7 +211,7 @@ class App_Controller extends Controller {
 		new Schema_Controller();
 
 		// Paid Memberships Pro integration
-		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->renderer, $this->logger );
+		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger );
 	}
 
 	/**

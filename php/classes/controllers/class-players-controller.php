@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -14,24 +15,28 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Players_Controller class
  *
- * @author      Danilo Radovic
+ * @author      Danilo Radovic, Sergey Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.3
  */
-class Players_Controller extends Controller {
+class Players_Controller {
+
+	use Useful_Variables;
 
 	public $renderer = null;
-	public $episode_controller;
 	public $options_handler;
-	public $episode_repository;
 
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
+	public function __construct() {
 		$this->renderer           = new Renderer();
-		$this->episode_controller = new Episode_Controller( $file, $version );
 		$this->options_handler    = new Options_Handler();
-		$this->episode_repository = new Episode_Repository();
+	}
+
+	/**
+	 * @return Episode_Controller
+	 */
+	protected function episode_controller(){
+		return ssp_episode_controller();
 	}
 
 
@@ -48,7 +53,9 @@ class Players_Controller extends Controller {
 			wp_send_json_error();
 		}
 
-		$episodes = $this->episode_repository->get_playlist_episodes( array_merge( $atts, compact( 'page' ) ) );
+		$episode_repository = ssp_episode_controller()->episode_repository;
+
+		$episodes = $episode_repository->get_playlist_episodes( array_merge( $atts, compact( 'page' ) ) );
 		$items    = array();
 
 		$allowed_keys = array(
@@ -86,6 +93,8 @@ class Players_Controller extends Controller {
 			return apply_filters( 'ssp_html_player_data', array() );
 		}
 
+		$episode_controller = $this->episode_controller();
+
 		/**
 		 * Get the episode (post) object
 		 * If the id passed is empty or 0, get_post will return the current post
@@ -94,10 +103,10 @@ class Players_Controller extends Controller {
 		$current_post          = $current_post ?: $episode;
 		$episode_duration      = get_post_meta( $id, 'duration', true );
 		$current_url           = get_post_permalink( $current_post->ID );
-		$audio_file            = $this->episode_controller->get_episode_player_link( $id );
-		$album_art             = $this->episode_controller->get_album_art( $id, 'thumbnail' );
-		$podcast_title         = $this->episode_repository->get_podcast_title( $id );
-		$feed_url              = $this->episode_repository->get_feed_url( $id );
+		$audio_file            = $episode_controller->get_episode_player_link( $id );
+		$album_art             = $episode_controller->get_album_art( $id, 'thumbnail' );
+		$podcast_title         = $episode_controller->episode_repository->get_podcast_title( $id );
+		$feed_url              = $episode_controller->episode_repository->get_feed_url( $id );
 		$embed_code            = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );
 		$player_mode           = get_option( 'ss_podcasting_player_mode', 'dark' );
 		$show_subscribe_button = 'on' === get_option( 'ss_podcasting_subscribe_button_enabled', 'on' );
@@ -125,9 +134,7 @@ class Players_Controller extends Controller {
 			'player_id'             => wp_rand(),
 		);
 
-		$template_data = apply_filters( 'ssp_html_player_data', $template_data );
-
-		return $template_data;
+		return apply_filters( 'ssp_html_player_data', $template_data );
 	}
 
 	protected function format_post_date( $post_date, $format = 'M j, Y' ) {
@@ -282,19 +289,17 @@ class Players_Controller extends Controller {
 		 * If the id passed is empty or 0, get_post will return the current post
 		 */
 		$episode  = get_post( $id );
-		$src_file = $this->episode_controller->get_episode_player_link( $id );
+		$src_file = $this->episode_controller()->get_episode_player_link( $id );
 		$params   = array(
 			'src'     => $src_file,
 			'preload' => 'none',
 		);
 
 		$audio_player = wp_audio_shortcode( $params );
-		$template_data = array(
+		return array(
 			'episode'      => $episode,
 			'audio_player' => $audio_player,
 		);
-
-		return $template_data;
 	}
 
 	/**
@@ -316,7 +321,7 @@ class Players_Controller extends Controller {
 	 * @return int[]|\WP_Post[]
 	 */
 	public function get_playlist_episodes( $atts ) {
-		return $this->episode_repository->get_playlist_episodes( $atts );
+		return $this->episode_controller()->episode_repository->get_playlist_episodes( $atts );
 	}
 
 	/**
@@ -325,6 +330,6 @@ class Players_Controller extends Controller {
 	 * @return int
 	 */
 	public function get_latest_episode_id() {
-		return $this->episode_repository->get_latest_episode_id();
+		return $this->episode_controller()->episode_repository->get_latest_episode_id();
 	}
 }

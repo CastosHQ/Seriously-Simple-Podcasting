@@ -42,7 +42,7 @@ class Frontend_Controller extends Controller {
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 		$this->episode_controller = new Episode_Controller( $file, $version );
-		$this->players_controller = new Players_Controller( $file, $version );
+		$this->players_controller = new Players_Controller();
 		$this->register_hooks_and_filters();
 		$this->register_ajax_actions();
 	}

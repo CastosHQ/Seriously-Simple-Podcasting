@@ -30,6 +30,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Settings_Controller extends Controller {
 
+	const SETTINGS_BASE = 'ss_podcasting_';
+
 	/**
 	 * Base string for option name keys
 	 *
@@ -75,7 +77,7 @@ class Settings_Controller extends Controller {
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
 
-		$this->settings_base = 'ss_podcasting_';
+		$this->settings_base = self::SETTINGS_BASE;
 
 		$this->settings_handler  = new Settings_Handler();
 		$this->series_handler    = new Series_Handler();
@@ -447,7 +449,6 @@ class Settings_Controller extends Controller {
 
 		echo $this->settings_renderer->render_field( $field, $data, $option_name, $default_option_name );
 	}
-
 
 	/**
 	 * Validate URL slug

@@ -118,27 +118,25 @@ class Feed_Controller {
 	 * @todo: Further refactoring - use renderer, get_feed_data() function
 	 */
 	public function load_feed_template() {
-		status_header( 200 );
 
 		// Any functions hooked in here must NOT output any data or else feed will break
 		do_action( 'ssp_before_feed' );
 
 		$this->feed_handler->suppress_errors();
 
-		$give_access = $this->feed_handler->has_access();
-
 		$podcast_series = $this->feed_handler->get_podcast_series();
 
 		$series_id = $this->feed_handler->get_series_id( $podcast_series );
 
-		// Send 401 status and display no access message if access has been denied
-		$this->feed_handler->protect_unauthorized_access( $give_access, $series_id );
+		$this->feed_handler->maybe_protect_unauthorized_access( $series_id );
 
 		// If this is a series specific feed, then check if we need to redirect
 		$this->feed_handler->maybe_redirect_series( $series_id );
 
 		// If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
 		$this->feed_handler->maybe_redirect_to_the_new_feed();
+
+		$this->feed_handler->maybe_protect_private_feed( $series_id );
 
 		$exclude_series = $this->feed_handler->get_excluded_series( $series_id );
 
@@ -208,8 +206,6 @@ class Feed_Controller {
 		$path = file_exists( $user_template_file ) ? $user_template_file : $this->template_path . $this->feed_file_name;
 
 		$feed_controller = $this;
-
-		do_action( 'ssp_before_feed' );
 
 		require $path;  // todo: use renderer here
 
@@ -431,7 +427,8 @@ class Feed_Controller {
 	/**
 	 * Sends RSS content type and charset headers
 	 */
-	public function send_feed_headers(){
+	public function send_feed_headers() {
+		status_header( 200 );
 		header( 'Content-Type: ' . feed_content_type( SSP_CPT_PODCAST ) . '; charset=' . get_option( 'blog_charset' ), true );
 	}
 

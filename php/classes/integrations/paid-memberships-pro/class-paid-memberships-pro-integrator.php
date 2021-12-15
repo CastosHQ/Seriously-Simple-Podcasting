@@ -39,11 +39,6 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	protected $castos_handler;
 
 	/**
-	 * @var Renderer
-	 * */
-	protected $renderer;
-
-	/**
 	 * @var Log_Helper
 	 * */
 	protected $logger;
@@ -59,17 +54,15 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 *
 	 * @param Feed_Handler $feed_handler
 	 * @param Castos_Handler $castos_handler
-	 * @param Renderer $renderer
 	 * @param Log_Helper $logger
 	 */
-	public function init( $feed_handler, $castos_handler, $renderer, $logger ) {
+	public function init( $feed_handler, $castos_handler, $logger ) {
 		if ( ! $this->check_dependencies() ) {
 			return;
 		}
 
 		$this->feed_handler   = $feed_handler;
 		$this->castos_handler = $castos_handler;
-		$this->renderer       = $renderer;
 		$this->logger         = $logger;
 
 		if ( is_admin() && ! ssp_is_ajax() ) {
@@ -409,12 +402,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$has_access    = $this->has_access( wp_get_current_user(), $series_levels );
 
 		if ( ! $has_access ) {
-			$stylesheet_url = $this->feed_handler->get_stylesheet_url();
-			$title          = esc_html( get_the_title_rss() );
-			$description    = wp_strip_all_tags( pmpro_get_no_access_message( '', $series_levels ) );
-			$args           = apply_filters( 'ssp_feed_no_access_args', compact( 'stylesheet_url', 'title', 'description' ) );
-			$path           = apply_filters( 'ssp_feed_no_access_path', 'feed/feed-no-access' );
-			$this->renderer->render( $path, $args );
+			$description = wp_strip_all_tags( pmpro_get_no_access_message( '', $series_levels ) );
+			$this->feed_handler->render_feed_no_access( $series->term_id, $description );
 			exit();
 		}
 	}

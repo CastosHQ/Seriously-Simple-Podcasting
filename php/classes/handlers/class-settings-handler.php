@@ -892,6 +892,16 @@ class Settings_Handler {
 				'class'       => 'regular-text',
 			),
 			array(
+				'id'          => 'is_private',
+				'label'       => __( 'Set Podcast To Private', 'seriously-simple-podcasting' ),
+				'type'        => 'radio',
+				'options'     => array(
+					'yes' => __( 'Yes', 'seriously-simple-podcasting' ),
+					'no' => __( 'No', 'seriously-simple-podcasting' ),
+				),
+				'default'     => 'no',
+			),
+			array(
 				'id'          => '',
 				'label'       => __( 'Subscribe button links', 'seriously-simple-podcasting' ),
 				'description' => __( 'To create Subscribe Buttons for your site visitors, enter the Distribution URL to your show in the directories below.', 'seriously-simple-podcasting' ),

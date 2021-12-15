@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.8
 Requires PHP: 5.6
-Stable tag: 2.9.8
+Stable tag: 2.9.9
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -161,18 +161,28 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.9.9 =
+* 2021-12-15
+* UPDATE SUMMARY: Bug fixes and improvements
+* [UPDATE] Elementor recent episodes widget - added settings and improved styles
+* [UPDATE] Elementor recent episodes widget - option to show image from Episode Image field
+* [UPDATE] Elementor recent episodes widget - fixed not showing the last episode bug
+* [FIX] Gutenberg Podcast List block pagination fix
+* [FIX] Fixed archive-podcast.php template
+* [FIX] Fixed bold text after saving plugin settings
+
 = 2.9.8 =
 * 2021-11-18
 * UPDATE SUMMARY: Bug fixes and improvements
 * [UPDATE] Possibility to change the <content:encoded> tag via ssp_feed_item_args filter
-* [FIX]  Feed analytics prefixes fix
+* [FIX] Feed analytics prefixes fix
 
 = 2.9.7 =
 * 2021-11-15
 * UPDATE SUMMARY: Bug fixes and improvements
-* [FIX]  Fixed audio files with special chars not downloading
-* [FIX]  Fixed the player being sent to Castos content
-* [FIX]  Fixed the player disappearing on Elementor
+* [FIX] Fixed audio files with special chars not downloading
+* [FIX] Fixed the player being sent to Castos content
+* [FIX] Fixed the player disappearing on Elementor
 
 = 2.9.6 =
 * 2021-11-09

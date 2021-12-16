@@ -42,3 +42,7 @@
 #ssp-sidebar .sidebar-content form input {
     width: 100%;
 }
+
+.wp-admin #wpcontent #wpbody #podcast_settings.wrap h1 {
+	display: block;
+}

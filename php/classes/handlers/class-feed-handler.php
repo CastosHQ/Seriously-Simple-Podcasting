@@ -184,28 +184,21 @@ class Feed_Handler {
 	}
 
 	/**
-	 * If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago.
+	 * If redirect is on, redirect user to the new url.
 	 */
-	public function maybe_redirect_to_the_new_feed() {
-		$redirect = get_option( 'ss_podcasting_redirect_feed' );
+	public function maybe_redirect_to_the_new_feed( $series_id ) {
+		$redirect = ssp_get_option( 'redirect_feed', '', $series_id );
 		if ( 'on' !== $redirect ) {
 			return;
 		}
 
-		$new_feed_url = get_option( 'ss_podcasting_new_feed_url' );
-		$update_date  = get_option( 'ss_podcasting_redirect_feed_date' );
+		$new_feed_url = ssp_get_option( 'new_feed_url', '', $series_id );
 
-		if ( ! $new_feed_url || ! $update_date ) {
+		if ( ! $new_feed_url ) {
 			return;
 		}
 
-		$redirect_date = strtotime( '+2 days', $update_date );
-		$current_date  = time();
-
-		// Redirect with 301 if it is more than 2 days since redirect was saved
-		$status_code = $current_date > $redirect_date ? 301 : 302;
-
-		wp_redirect( $new_feed_url, $status_code );
+		wp_redirect( $new_feed_url, 301 );
 		exit;
 	}
 
@@ -237,28 +230,6 @@ class Feed_Handler {
 		}
 
 		return $exclude_series;
-	}
-
-	/**
-	 * Maybe redirect series to the new feed url
-	 *
-	 * @param $series_id
-	 */
-	public function maybe_redirect_series( $series_id ) {
-		if ( ! $series_id ) {
-			return;
-		}
-
-		$redirect = get_option( 'ss_podcasting_redirect_feed_' . $series_id );
-
-		if ( 'on' === $redirect ) {
-			$new_feed_url = get_option( 'ss_podcasting_new_feed_url_' . $series_id );
-			if ( $new_feed_url ) {
-				header( 'HTTP/1.1 301 Moved Permanently' );
-				header( 'Location: ' . $new_feed_url );
-				exit;
-			}
-		}
 	}
 
 	/**

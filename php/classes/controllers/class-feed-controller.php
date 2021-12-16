@@ -128,13 +128,9 @@ class Feed_Controller {
 
 		$series_id = $this->feed_handler->get_series_id( $podcast_series );
 
+		$this->feed_handler->maybe_redirect_to_the_new_feed( $series_id );
+
 		$this->feed_handler->maybe_protect_unauthorized_access( $series_id );
-
-		// If this is a series specific feed, then check if we need to redirect
-		$this->feed_handler->maybe_redirect_series( $series_id );
-
-		// If redirect is on, get new feed URL and redirect if setting was changed more than 48 hours ago
-		$this->feed_handler->maybe_redirect_to_the_new_feed();
 
 		$this->feed_handler->maybe_protect_private_feed( $series_id );
 

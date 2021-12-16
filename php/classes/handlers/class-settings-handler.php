@@ -959,31 +959,6 @@ class Settings_Handler {
 			),
 		);
 
-		$settings['redirection'] = array(
-			'title'       => __( 'Redirection', 'seriously-simple-podcasting' ),
-			'description' => __( 'Use these settings to safely move your podcast to a different location. Only do this once your new podcast is setup and active.', 'seriously-simple-podcasting' ),
-			'fields'      => array(
-				array(
-					'id'          => 'redirect_feed',
-					'label'       => __( 'Redirect podcast feed to new URL', 'seriously-simple-podcasting' ),
-					'description' => sprintf( __( 'Redirect your feed to a new URL (specified below).%1$sThis will inform all podcasting services that your podcast has moved and 48 hours after you have saved this option it will permanently redirect your feed to the new URL.', 'seriously-simple-podcasting' ), '<br/>' ),
-					'type'        => 'checkbox',
-					'default'     => '',
-					'callback'    => 'wp_strip_all_tags',
-				),
-				array(
-					'id'          => 'new_feed_url',
-					'label'       => __( 'New podcast feed URL', 'seriously-simple-podcasting' ),
-					'description' => __( 'Your podcast feed\'s new URL.', 'seriously-simple-podcasting' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'New feed URL', 'seriously-simple-podcasting' ),
-					'callback'    => 'esc_url_raw',
-					'class'       => 'regular-text',
-				),
-			),
-		);
-
 		$settings['publishing'] = array(
 			'title'       => __( 'Publishing', 'seriously-simple-podcasting' ),
 			'description' => __( 'Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes).', 'seriously-simple-podcasting' ),

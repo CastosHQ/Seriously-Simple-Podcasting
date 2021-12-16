@@ -113,9 +113,6 @@ class Settings_Controller extends Controller {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
 
-		// Mark date on which feed redirection was activated.
-		add_action( 'update_option', array( $this, 'mark_feed_redirect_date' ), 10, 3 );
-
 		// Trigger the disconnect action
 		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array(
 			$this,
@@ -463,23 +460,6 @@ class Settings_Controller extends Controller {
 		}
 
 		return $slug;
-	}
-
-	/**
-	 * Mark redirect date for feed
-	 *
-	 * @param string $option Name of option being updated
-	 * @param mixed $old_value Old value of option
-	 * @param mixed $new_value New value of option
-	 *
-	 * @return void
-	 */
-	public function mark_feed_redirect_date( $option, $old_value, $new_value ) {
-		if ( 'ss_podcasting_redirect_feed' === $option ) {
-			if ( ( $new_value != $old_value ) && 'on' === $new_value ) {
-				update_option( 'ss_podcasting_redirect_feed_date', time() );
-			}
-		}
 	}
 
 	/**

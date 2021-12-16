@@ -78,11 +78,18 @@ class Castos_Handler {
 	 * @return string|string[]
 	 */
 	protected function get_rendered_post_content( $post ) {
-		global $ss_podcasting;
+		$ss_podcasting = ssp_frontend_controller();
+
 		/**
 		 * Remove the filter that adds our media player to the post_content
 		 */
 		remove_filter( 'the_content', array( $ss_podcasting, 'content_meta_data' ) );
+
+		/**
+		 * Remove the filter that replaces content with
+		 */
+		remove_filter( 'the_content', array( $ss_podcasting, 'show_private_content_message' ), 20 );
+
 		/**
 		 * Get the post content and run it through the rest of the registered 'the_content' filters
 		 */

@@ -2,11 +2,13 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 use stdClass;
 use WP_Query;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
+use WP_Term;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -50,6 +52,7 @@ class Frontend_Controller {
 
 		$this->register_hooks_and_filters();
 		$this->register_ajax_actions();
+		$this->protect_private_podcast_episodes();
 	}
 
 	/**
@@ -103,6 +106,60 @@ class Frontend_Controller {
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 
 		add_filter( "archive_template_hierarchy", array( $this, 'fix_template_hierarchy' ) );
+	}
+
+	/**
+	 * Adds filter for private podcast episodes content.
+	 */
+	protected function protect_private_podcast_episodes() {
+		$filter = array( $this, 'show_private_content_message' );
+		add_filter( 'the_content', $filter, 20 );
+		add_filter( 'the_content_rss', $filter, 20 );
+		add_filter( 'comment_text_rss', $filter, 20 );
+	}
+
+	/**
+	 * Show a message that episode belongs to private podcast.
+	 *
+	 * @param $content
+	 *
+	 * @return mixed|string|void
+	 */
+	public function show_private_content_message( $content ) {
+
+		$post = get_post();
+
+		$ssp_post_types = ssp_post_types();
+
+		if ( ! in_array( $post->post_type, $ssp_post_types ) ) {
+			return $content;
+		}
+
+		$terms = wp_get_post_terms( $post->ID, CPT_Podcast_Handler::TAXONOMY_SERIES );
+
+		if ( ! is_array( $terms ) ) {
+			return $content;
+		}
+
+		$message =  __( 'This content is Private. To access this podcast, contact the site owner.', 'seriously-simple-podcasting' );
+
+		// Protect default feed episodes.
+		if ( empty( $terms ) && 'yes' === ssp_get_option( 'is_podcast_private' ) ) {
+			return $message;
+		}
+
+		/**
+		 * Protect episodes that belong to series.
+		 *
+		 * @var WP_Term[] $terms
+		 * */
+		foreach ( $terms as $term ) {
+			if ( 'yes' === ssp_get_option( 'is_podcast_private', '', $term->term_id ) ) {
+				return $message;
+			}
+		}
+
+		return $content;
 	}
 
 	/**

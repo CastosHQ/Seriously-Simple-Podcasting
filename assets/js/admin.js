@@ -184,9 +184,8 @@ jQuery(document).ready(function($) {
 				var minWidth = 1400,
 					maxWidth = 3000;
 				return attachment.width >= minWidth &&
-					attachment.height >= minWidth &&
 					attachment.width <= maxWidth &&
-					attachment.height <= maxWidth;
+					attachment.height === attachment.width;
 			},
 			validateImageSize = 'cover_image_button' === $(e.target).prop('id') ? coverImgValidator : feedImgValidator,
 			description = $(this).parent().find('.description'),

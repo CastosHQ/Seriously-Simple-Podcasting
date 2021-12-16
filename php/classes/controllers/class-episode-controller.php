@@ -2,36 +2,97 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 use WP_Query;
+use WP_Term;
 
 /**
  * SSP Episode Controller
  *
  * @package Seriously Simple Podcasting
  */
-class Episode_Controller extends Controller {
+class Episode_Controller {
+
+	use Useful_Variables;
 
 	/**
 	 * @var Renderer
 	 * */
-	public $renderer = null;
+	public $renderer;
 
 	/**
 	 * @var Episode_Repository
 	 * */
-	public $episode_repository = null;
+	public $episode_repository;
 
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
-		$this->renderer = new Renderer();
-		$this->episode_repository = new Episode_Repository(); //Todo: use DI or Facade here
-		$this->init();
+	/**
+	 * @param Renderer $renderer
+	 */
+	public function __construct( $renderer ) {
+		$this->init_useful_variables();
+
+		$this->renderer = $renderer;
+		$this->episode_repository = new Episode_Repository();
+		$this->init_assets();
+		$this->protect_private_podcast_episodes();
 	}
 
-	public function init() {
+	protected function init_assets() {
 		add_action( 'wp_enqueue_scripts', array( $this, 'load_recent_episodes_assets' ) );
+	}
+
+	protected function protect_private_podcast_episodes() {
+		$filter = array( $this, 'show_episode_protected_message' );
+		add_filter( 'the_content', $filter, 20 );
+		add_filter( 'the_content_rss', $filter, 20 );
+		add_filter( 'comment_text_rss', $filter, 20 );
+	}
+
+	/**
+	 * Show protected message if episode belongs to private podcast.
+	 *
+	 * @param $content
+	 *
+	 * @return mixed|string|void
+	 */
+	public function show_episode_protected_message( $content ) {
+
+		$post = get_post();
+
+		$ssp_post_types = ssp_post_types();
+
+		if ( ! in_array( $post->post_type, $ssp_post_types ) ) {
+			return $content;
+		}
+
+		$terms = wp_get_post_terms( $post->ID, CPT_Podcast_Handler::TAXONOMY_SERIES );
+
+		if ( ! is_array( $terms ) ) {
+			return $content;
+		}
+
+		$message =  __( 'This content is Private. To access this podcast, contact the site owner.', 'seriously-simple-podcasting' );
+
+		// Protect default feed episodes.
+		if ( empty( $terms ) && 'yes' === ssp_get_option( 'is_podcast_private' ) ) {
+			return $message;
+		}
+
+		/**
+		 * Protect episodes that belong to series.
+		 *
+		 * @var WP_Term[] $terms
+		 * */
+		foreach ( $terms as $term ) {
+			if ( 'yes' === ssp_get_option( 'is_podcast_private', '', $term->term_id ) ) {
+				return $message;
+			}
+		}
+
+		return $content;
 	}
 
 	public function load_recent_episodes_assets() {

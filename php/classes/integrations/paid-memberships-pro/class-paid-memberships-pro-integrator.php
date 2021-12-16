@@ -447,7 +447,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Check if user has access to the episode. Took the logic from PMPro.
 	 *
 	 * @return bool
-	 * *@see pmpro_has_membership_access()
+	 * @see pmpro_has_membership_access()
 	 */
 	protected function has_access( $user, $post_level_ids ) {
 		if ( empty( $post_level_ids ) ) {

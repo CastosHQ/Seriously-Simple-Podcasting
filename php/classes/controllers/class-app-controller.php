@@ -66,6 +66,17 @@ class App_Controller extends Controller {
 	 */
 	protected $db_migration_controller;
 
+	/**
+	 * @var Episode_Controller
+	 */
+	public $episode_controller;
+
+
+	/**
+	 * @var Players_Controller
+	 * */
+	public $players_controller;
+
 
 	// Handlers.
 
@@ -181,9 +192,12 @@ class App_Controller extends Controller {
 			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}
 
+		$this->episode_controller = new Episode_Controller( $this->renderer );
+		$this->players_controller = new Players_Controller();
+
 		// todo: further refactoring - get rid of global here
 		global $ss_podcasting;
-		$ss_podcasting = new Frontend_Controller( $this->file, SSP_VERSION );
+		$ss_podcasting = new Frontend_Controller( $this->episode_controller, $this->players_controller );
 
 		$this->init_integrations();
 		$this->init_rest_api();
@@ -194,9 +208,9 @@ class App_Controller extends Controller {
 	}
 
 	protected function init_integrations(){
-		/**
+		/*
 		 * Gutenberg integration.
-		 * Only load Blocks if the WordPress version is newer than 5.0
+		 * Only load Blocks if the WordPress version is newer than 5.0.
 		 */
 		if ( version_compare( $this->get_wp_version(), '5.0', '>=' ) ) {
 			new Castos_Blocks( __FILE__, SSP_VERSION );

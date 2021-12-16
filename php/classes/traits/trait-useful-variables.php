@@ -22,17 +22,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Useful_Variables {
 
-	protected $version;
-	protected $dir;
-	protected $assets_dir;
-	protected $assets_url;
-	protected $template_path;
-	protected $template_url;
-	protected $home_url;
-	protected $site_url;
-	protected $token;
-	protected $plugin_slug;
-	protected $script_suffix;
+	public $version;
+	public $dir;
+	public $assets_dir;
+	public $assets_url;
+	public $template_path;
+	public $template_url;
+	public $home_url;
+	public $site_url;
+	public $token;
+	public $plugin_slug;
+	public $script_suffix;
 
 	/**
 	 * Init useful plugin variables

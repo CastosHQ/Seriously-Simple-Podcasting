@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 use stdClass;
 use WP_Query;
 
@@ -20,7 +21,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0
  */
-class Frontend_Controller extends Controller {
+class Frontend_Controller {
+
+	use Useful_Variables;
 
 	/**
 	 * @var Episode_Controller
@@ -34,15 +37,17 @@ class Frontend_Controller extends Controller {
 	public $players_controller;
 
 	/**
-	 * Constructor
+	 * Frontend_Controller constructor.
 	 *
-	 * @param string $file Plugin base file.
-	 * @param string $version Plugin version number
+	 * @param Episode_Controller $episode_controller
+	 * @param Players_Controller $players_controller
 	 */
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
-		$this->episode_controller = new Episode_Controller( $file, $version );
-		$this->players_controller = new Players_Controller();
+	public function __construct( $episode_controller, $players_controller ) {
+		$this->init_useful_variables();
+
+		$this->episode_controller = $episode_controller;
+		$this->players_controller = $players_controller;
+
 		$this->register_hooks_and_filters();
 		$this->register_ajax_actions();
 	}
@@ -1469,7 +1474,7 @@ class Frontend_Controller extends Controller {
 	}
 
 	public function load_localisation () {
-		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( dirname( $this->file ) ) . '/languages/' );
+		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( $this->dir ) . '/languages/' );
 	}
 
 	/**

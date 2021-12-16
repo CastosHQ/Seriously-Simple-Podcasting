@@ -155,7 +155,7 @@ class Feed_Handler {
 	 * @param int $series_id
 	 */
 	public function maybe_protect_private_feed( $series_id ) {
-		if ( 'yes' !== ssp_get_option( 'is_private', '', $series_id ) ) {
+		if ( 'yes' !== ssp_get_option( 'is_podcast_private', '', $series_id ) ) {
 			return;
 		}
 

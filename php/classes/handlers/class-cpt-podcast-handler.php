@@ -10,6 +10,8 @@ namespace SeriouslySimplePodcasting\Handlers;
  */
 class CPT_Podcast_Handler {
 
+	const TAXONOMY_SERIES = 'series';
+
 	protected $roles_handler;
 
 	/**
@@ -41,7 +43,7 @@ class CPT_Podcast_Handler {
 		$podcast_post_types = ssp_post_types( true );
 
 		$args = $this->get_series_args();
-		register_taxonomy( apply_filters( 'ssp_series_taxonomy', 'series' ), $podcast_post_types, $args );
+		register_taxonomy( apply_filters( 'ssp_series_taxonomy', self::TAXONOMY_SERIES ), $podcast_post_types, $args );
 
 		// Add Tags to podcast post type
 		if ( apply_filters( 'ssp_use_post_tags', true ) ) {
@@ -170,14 +172,14 @@ class CPT_Podcast_Handler {
 		$series_args = array(
 			'public'            => true,
 			'hierarchical'      => true,
-			'rewrite'           => array( 'slug' => apply_filters( 'ssp_series_slug', 'series' ) ),
+			'rewrite'           => array( 'slug' => apply_filters( 'ssp_series_slug', self::TAXONOMY_SERIES ) ),
 			'labels'            => $series_labels,
 			'show_in_rest'      => true,
 			'show_admin_column' => true,
 			'capabilities'      => $this->roles_handler->get_podcast_tax_capabilities(),
 		);
 
-		return apply_filters( 'ssp_register_taxonomy_args', $series_args, 'series' );
+		return apply_filters( 'ssp_register_taxonomy_args', $series_args, self::TAXONOMY_SERIES );
 	}
 
 	/**

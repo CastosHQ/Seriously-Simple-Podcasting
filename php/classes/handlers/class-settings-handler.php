@@ -892,7 +892,7 @@ class Settings_Handler {
 				'class'       => 'regular-text',
 			),
 			array(
-				'id'          => 'is_private',
+				'id'          => 'is_podcast_private',
 				'label'       => __( 'Set Podcast To Private', 'seriously-simple-podcasting' ),
 				'type'        => 'radio',
 				'options'     => array(

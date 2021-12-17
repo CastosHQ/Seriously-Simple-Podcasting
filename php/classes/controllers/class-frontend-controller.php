@@ -176,7 +176,7 @@ class Frontend_Controller {
 		// Use queried object because is_tax('post_tag') doesn't work ( is_tax is false ).
 		$queried = get_queried_object();
 
-		if ( is_tax( 'series' ) || ( $use_post_tag && 'post_tag' === $queried->taxonomy ) ) {
+		if ( is_tax( 'series' ) || ( $use_post_tag && isset( $queried->taxonomy ) && 'post_tag' === $queried->taxonomy ) ) {
 			$templates = array_merge( array( 'archive-' . SSP_CPT_PODCAST . '.php' ), $templates );
 		}
 

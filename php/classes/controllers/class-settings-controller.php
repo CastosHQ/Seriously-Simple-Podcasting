@@ -827,7 +827,7 @@ class Settings_Controller extends Controller {
 		$image_dir  = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
 
 		$extensions = array(
-			'connect'     => array(
+			'connect'              => array(
 				'title'       => __( 'NEW - Castos Podcast Hosting', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'castos-icon-extension.jpg',
 				'url'         => SSP_CASTOS_APP_URL,
@@ -835,7 +835,7 @@ class Settings_Controller extends Controller {
 				'button_text' => __( 'Get Castos Hosting', 'seriously-simple-podcasting' ),
 				'new_window'  => true,
 			),
-			'stats'       => array(
+			'stats'                => array(
 				'title'       => __( 'Seriously Simple Podcasting Stats', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'ssp-stats.jpg',
 				'url'         => add_query_arg(
@@ -850,9 +850,10 @@ class Settings_Controller extends Controller {
 						'plugin-install.php'
 					)
 				),
+				'thickbox'    => true,
 				'description' => __( 'Seriously Simple Stats offers integrated analytics for your podcast, giving you access to incredibly useful information about who is listening to your podcast and how they are accessing it.', 'seriously-simple-podcasting' ),
 			),
-			'transcripts' => array(
+			'transcripts'          => array(
 				'title'       => __( 'Seriously Simple Podcasting Transcripts', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'ssp-transcripts.jpg',
 				'url'         => add_query_arg(
@@ -867,9 +868,10 @@ class Settings_Controller extends Controller {
 						'plugin-install.php'
 					)
 				),
+				'thickbox'    => true,
 				'description' => __( 'Seriously Simple Transcripts gives you a simple and automated way for you to add downloadable transcripts to your podcast episodes. It’s an easy way for you to provide episode transcripts to your listeners without taking up valuable space in your episode content.', 'seriously-simple-podcasting' ),
 			),
-			'speakers'    => array(
+			'speakers'             => array(
 				'title'       => __( 'Seriously Simple Podcasting Speakers', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'ssp-speakers.jpg',
 				'url'         => add_query_arg(
@@ -884,9 +886,10 @@ class Settings_Controller extends Controller {
 						'plugin-install.php'
 					)
 				),
+				'thickbox'    => true,
 				'description' => __( 'Does your podcast have a number of different speakers? Or maybe a different guest each week? Perhaps you have unique hosts for each episode? If any of those options describe your podcast then Seriously Simple Speakers is the add-on for you!', 'seriously-simple-podcasting' ),
 			),
-			'genesis'     => array(
+			'genesis'              => array(
 				'title'       => __( 'Seriously Simple Podcasting Genesis Support ', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'ssp-genesis.jpg',
 				'url'         => add_query_arg(
@@ -901,15 +904,24 @@ class Settings_Controller extends Controller {
 						'plugin-install.php'
 					)
 				),
+				'thickbox'    => true,
 				'description' => __( 'The Genesis compatibility add-on for Seriously Simple Podcasting gives you full support for the Genesis theme framework. It adds support to the podcast post type for the features that Genesis requires. If you are using Genesis and Seriously Simple Podcasting together then this plugin will make your website look and work much more smoothly.', 'seriously-simple-podcasting' ),
 			),
-			'second-line' => array(
+			'second-line'          => array(
 				'title'       => __( 'Second Line Themes', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'second-line-themes.png',
 				'url'         => 'https://secondlinethemes.com/?utm_source=ssp-settings',
 				'description' => __( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out SecondLineThemes!', 'seriously-simple-podcasting' ),
 				'new_window'  => true,
 				'button_text' => __( 'Get Second Line Themes', 'seriously-simple-podcasting' ),
+			),
+			'paid-memberships-pro' => array(
+				'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
+				'image'       => $image_dir . 'pmpro.jpg',
+				'url'         => 'https://www.paidmembershipspro.com/',
+				'description' => __( 'Connect with your membership site participants by automatically sending new member signups from Paid Memberships Pro to Castos as Private Podcast Subscribers. This native integration automates the entire process of adding (and removing) members from your private podcast to create another great way to engage your members.', 'seriously-simple-podcasting' ),
+				'new_window'  => true,
+				'button_text' => __( 'Get Paid Memberships Pro', 'seriously-simple-podcasting' ),
 			),
 		);
 
@@ -920,45 +932,71 @@ class Settings_Controller extends Controller {
 				'url'         => wp_nonce_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings&tab=extensions&elementor_import_templates=true' ), '', 'import_template_nonce' ),
 				'description' => __( 'Looking for a custom elementor template to use with Seriously Simple Podcasting? Click here to import all of them righ now!', 'seriously-simple-podcasting' ),
 				'button_text' => __( 'Import Templates', 'seriously-simple-podcasting' ),
-				'new_window'  => 'redirect'
 			);
 			$extensions = array_slice($extensions, 0, 1, true) + array("elementor-templates" =>  $elementor_templates) + array_slice($extensions, 1, count($extensions)-1, true);
-
 		}
 
 		$html = '<div id="ssp-extensions">';
 		foreach ( $extensions as $extension ) {
 			$html .= '<div class="ssp-extension"><h3 class="ssp-extension-title">' . $extension['title'] . '</h3>';
-			if ( ! empty( $extension['new_window'] ) ) {
-				if ( isset( $extensions['elementor-templates'] ) && 'redirect' === $extensions['elementor-templates']['new_window'] ) {
-					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
-				} else {
-					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
-				}
-			} else {
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox"><img width="880" height="440" src="' . $extension['image'] . '" class="attachment-showcase size-showcase wp-post-image" alt="" title="' . $extension['title'] . '"></a>';
-			}
-			$html       .= '<p></p>';
-			$html       .= '<p>' . $extension['description'] . '</p>';
-			$html       .= '<p></p>';
-			$button_text = 'Get this Extension';
-			if ( ! empty( $extension['button_text'] ) ) {
-				$button_text = $extension['button_text'];
-			}
-			if ( ! empty( $extension['new_window'] ) ) {
-				if ( isset( $extensions['elementor-templates'] ) && 'redirect' === $extensions['elementor-templates']['new_window'] ) {
-					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="button-secondary">' . $button_text . '</a>';
-				} else {
-					$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" target="_blank" class="button-secondary">' . $button_text . '</a>';
-				}
-			} else {
-				$html .= '<a href="' . $extension['url'] . '" title="' . $extension['title'] . '" class="thickbox button-secondary">' . $button_text . '</a>';
-			}
+			$html .= $this->render_extension_link( $extension, true );
+			$html .= '<p></p>';
+			$html .= '<p>' . $extension['description'] . '</p>';
+			$html .= '<p></p>';
+			$html .= $this->render_extension_link( $extension, false );
 			$html .= '</div>';
 		}
 		$html .= '</div>';
 
 		return $html;
+	}
+
+
+	/**
+	 * Render extension link.
+	 *
+	 * @return string
+	 * *@since 2.10.0
+	 *
+	 * @var array $args
+	 */
+	protected function render_extension_link( $args, $is_image ) {
+		$defaults = array(
+			'title'       => '',
+			'image'       => '',
+			'url'         => '',
+			'description' => '',
+			'button_text' => __( 'Get this Extension' ),
+			'new_window'  => false,
+			'thickbox'    => false,
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		$inner = $args['button_text'];
+
+		if ( $is_image ) {
+			$inner = sprintf( '<img width="880" height="440" src="%s"
+								class="attachment-showcase size-showcase wp-post-image" alt="" title="%s">',
+				$args['image'], $args['title'] );
+		}
+
+		$target = $args['new_window'] ? ' target="_blank" ' : '';
+
+		if ( $args['thickbox'] ) {
+			$classes[] = 'thickbox';
+		}
+
+		if ( ! $is_image ) {
+			$classes[] = 'button-secondary';
+		}
+
+		$class = isset( $classes ) ? implode( ' ', $classes ) : '';
+
+		return sprintf(
+			'<a href="%s" title="%s" class="%s"%s>%s</a>',
+			$args['url'], $args['title'], $class, $target, $inner
+		);
 	}
 
 	/**

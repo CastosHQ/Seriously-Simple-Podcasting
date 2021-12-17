@@ -73,7 +73,7 @@ class Castos_Handler {
 	 * Takes the raw content from the post object, and runs it through the the_content filters
 	 * Effectively replicates the the_content function, but for a specific podcast
 	 *
-	 * @param $post
+	 * @param \WP_Post $post
 	 *
 	 * @return string|string[]
 	 */
@@ -93,8 +93,8 @@ class Castos_Handler {
 		/**
 		 * Get the post content and run it through the rest of the registered 'the_content' filters
 		 */
-		$post_content = get_the_content( null, false, $post );
-		$post_content = apply_filters( 'the_content', $post_content );
+		$post_content = apply_filters( 'the_content', $post->post_content );
+		$post_content = str_replace( '<!--more-->', '', $post_content );
 		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
 
 		return $post_content;

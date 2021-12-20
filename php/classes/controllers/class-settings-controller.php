@@ -828,7 +828,7 @@ class Settings_Controller extends Controller {
 
 		$extensions = array(
 			'connect'              => array(
-				'title'       => __( 'NEW - Castos Podcast Hosting', 'seriously-simple-podcasting' ),
+				'title'       => __( 'Castos Podcast Hosting', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'castos-icon-extension.jpg',
 				'url'         => SSP_CASTOS_APP_URL,
 				'description' => __( 'Host your podcast media files safely and securely in a CDN-powered cloud platform designed specifically to connect beautifully with Seriously Simple Podcasting.  Faster downloads, better live streaming, and take back security for your web server with Castos.', 'seriously-simple-podcasting' ),

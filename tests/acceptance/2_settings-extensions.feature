@@ -13,7 +13,7 @@ Feature: SSP Plugin Extensions Settings
 		Then I can see that "Extensions" tab is active
 		And I can see "These extensions add functionality to your Seriously Simple Podcasting powered podcast."
 
-		And I can see "NEW - Castos Podcast Hosting"
+		And I can see "Castos Podcast Hosting"
 		And I can see "Host your podcast media files safely and securely in a CDN"
 		And I can see link with title "Get Castos Hosting" and url "https://app.castos.com/"
 

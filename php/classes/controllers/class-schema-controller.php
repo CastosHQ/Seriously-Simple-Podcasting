@@ -26,8 +26,6 @@ class Schema_Controller {
 	}
 
     public static function add_graph_pieces( $data ) {
-		return $data; //todo: remove this line
-
 		$data[] = new PodcastEpisode();
 		$data[] = new PodcastSeries();
 

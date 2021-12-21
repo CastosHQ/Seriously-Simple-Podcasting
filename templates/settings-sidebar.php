@@ -3,21 +3,21 @@
 		<img src="<?php echo $image_dir ?>castos-plugin-settings-banner.jpg" src="https://www.castos.com">
 		<form action="https://www.getdrip.com/forms/38739479/submissions" method="post" data-drip-embedded-form="38739479">
 			<h3 data-drip-attribute="headline">Castos Hosting Discount - Get 20% off</h3>
-			<div data-drip-attribute="description">Drop in your name and email and we’ll send you a coupon for 20% off your subscription to Castos Podcast Hosting.</div>
+			<p data-drip-attribute="description">Drop in your name and email and we’ll send you a coupon for 20% off your subscription to Castos Podcast Hosting.</p>
 			<div>
-				<label for="drip-first-name">First Name</label><br />
+				<label for="drip-first-name">First Name</label>
 				<input type="text" id="drip-first-name" name="fields[first_name]" value="" />
 			</div>
 			<div>
-				<label for="drip-last-name">Last Name</label><br />
+				<label for="drip-last-name">Last Name</label>
 				<input type="text" id="drip-last-name" name="fields[last_name]" value="" />
 			</div>
 			<div>
-				<label for="drip-email">Email Address</label><br />
+				<label for="drip-email">Email Address</label>
 				<input type="email" id="drip-email" name="fields[email]" value="" />
 			</div>
 			<div style="display: none;" aria-hidden="true">
-				<label for="website">Website</label><br />
+				<label for="website">Website</label>
 				<input type="text" id="website" name="website" tabindex="-1" autocomplete="false" value="" />
 			</div>
 			<div>

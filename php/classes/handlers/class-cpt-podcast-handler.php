@@ -88,7 +88,7 @@ class CPT_Podcast_Handler {
 			'show_in_nav_menus'   => true,
 			'query_var'           => true,
 			'can_export'          => true,
-			'rewrite'             => array( 'slug' => $slug, 'feeds' => true ),
+			'rewrite'             => array( 'slug' => $slug, 'feeds' => true, 'with_front' => false ),
 			'capability_type'     => 'post',
 			'has_archive'         => true,
 			'hierarchical'        => false,

@@ -112,7 +112,7 @@
 						<?php _e( 'RSS Feed', 'seriously-simple-podcasting' ) ?>
 					</div>
 					<div>
-						<input value="<?php echo $feed_url ?>" class="input-rss input-rss-<?php echo $episode_id ?>" />
+						<input value="<?php echo $feed_url ?>" class="input-rss input-rss-<?php echo $episode_id ?>" readonly />
 					</div>
 					<button class="copy-rss copy-rss-<?php echo $episode_id ?>"></button>
 				</div>
@@ -149,9 +149,9 @@
 					<?php _e( 'Link', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div>
-					<input value="<?php echo $current_url ?>" class="input-link input-link-<?php echo $episode_id ?>"/>
+					<input value="<?php echo $current_url ?>" class="input-link input-link-<?php echo $episode_id ?>" readonly />
 				</div>
-				<button class="copy-link copy-link-<?php echo $episode_id ?>"></button>
+				<button class="copy-link copy-link-<?php echo $episode_id ?>" readonly=""></button>
 			</div>
 			<div class="player-panel-row">
 				<div class="title">
@@ -159,7 +159,7 @@
 				</div>
 				<div style="height: 10px;">
 					<input type="text" value='<?php echo esc_attr( $embed_code) ?>'
-					       class="input-embed input-embed-<?php echo $episode_id ?>"/>
+					       class="input-embed input-embed-<?php echo $episode_id ?>" readonly/>
 				</div>
 				<button class="copy-embed copy-embed-<?php echo $episode_id ?>"></button>
 			</div>

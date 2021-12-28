@@ -1,7 +1,7 @@
 import {__} from '@wordpress/i18n';
 import {Component} from '@wordpress/element';
 import {BlockControls} from '@wordpress/block-editor';
-import {Button, Toolbar} from '@wordpress/components';
+import {ToolbarButton, ToolbarGroup} from '@wordpress/components';
 import apiFetch from '@wordpress/api-fetch';
 
 import EpisodeSelector from "./EpisodeSelector";
@@ -11,23 +11,15 @@ class EditCastosHTMLPlayer extends Component {
 	constructor({attributes, setAttributes, className}) {
 		super(...arguments);
 		this.episodeRef = React.createRef();
-		const episode = {
-			episodeImage: attributes.image || "",
-			episodeFileUrl: attributes.file || "",
-			episodeTitle: attributes.title || "",
-			episodeDuration: attributes.duration || "",
-			episodeDownloadUrl: attributes.download || "",
-			episodeData: attributes.episode_data || "",
-		}
 		let editing = true;
-		if (attributes.title){
+		if (attributes.episodeId){
 			editing = false;
 		}
 		this.state = {
 			editing: editing,
 			className,
 			episodes: [],
-			episode: episode,
+			episodeId: attributes.episodeId || "",
 			setAttributes: setAttributes
 		};
 	}
@@ -50,27 +42,20 @@ class EditCastosHTMLPlayer extends Component {
 		});
 	}
 
-	componentWillUnmount() {
-		// fix Warning: Can't perform a React state update on an unmounted component
-		this._isMounted = false;
-	}
-
 	render() {
-		const {editing, episodes, episode, className, setAttributes} = this.state;
+		const {editing, episodes, episodeId, className, setAttributes} = this.state;
+
 		const switchToEditing = () => {
 			this.setState({editing: true});
 		};
 
 		const activateEpisode = () => {
-			const episodeId = this.episodeRef.current.value;
+			let episodeId = this.episodeRef.current.value;
 			let fetchPost = 'ssp/v1/episodes?include=' + episodeId;
-			apiFetch({path: fetchPost}).then(post => {
-				const episode = {
-					episodeId: episodeId
-				}
+			apiFetch({path: fetchPost}).then(() => {
 				this.setState({
 					key: episodeId,
-					episode: episode,
+					episodeId: episodeId,
 					editing: false
 				});
 				setAttributes({
@@ -81,22 +66,24 @@ class EditCastosHTMLPlayer extends Component {
 
 		const controls = (
 			<BlockControls key="controls">
-				<Toolbar>
-					<Button
+				<ToolbarGroup>
+					<ToolbarButton
 						className="components-icon-button components-toolbar__control"
 						label={__('Select Podcast', 'seriously-simple-podcasting')}
 						onClick={switchToEditing}
 						icon="edit"
 					/>
-				</Toolbar>
+				</ToolbarGroup>
 			</BlockControls>
 		);
+
 
 		if (editing) {
 			return (
 				<EpisodeSelector
 					className={className}
 					episodeRef={this.episodeRef}
+					episodeId={episodeId}
 					episodes={episodes}
 					activateEpisode={activateEpisode}
 				/>
@@ -108,7 +95,7 @@ class EditCastosHTMLPlayer extends Component {
 					<ServerSideRender className={className}
 									  key='castos-player'
 									  block="seriously-simple-podcasting/castos-html-player"
-									  attributes={{episodeId:episode.episodeId}}
+									  attributes={{episodeId:episodeId}}
 					/>
 				]
 			);

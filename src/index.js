@@ -110,7 +110,7 @@ registerBlockType('seriously-simple-podcasting/castos-html-player', {
 	},
 	attributes: {
 		episodeId: {
-			type: 'integer'
+			type: 'string'
 		},
 	},
 	edit: EditCastosHTMLPlayer,

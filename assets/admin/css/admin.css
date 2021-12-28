@@ -63,11 +63,11 @@ textarea#episode_embed_code {
   line-height: 1.8;
 }
 
-#podcast-episode-data input[type="radio"] {
+#podcast-episode-data input[type=radio] {
   vertical-align: middle !important;
 }
 
-#podcast-episode-data input[type="text"] {
+#podcast-episode-data input[type=text] {
   min-width: 50%;
 }
 
@@ -87,13 +87,43 @@ textarea#episode_embed_code {
   display: none;
 }
 
+.wp-core-ui .editor-styles-wrapper .castos-select {
+  font-size: 14px;
+  line-height: 2;
+  color: #2c3338;
+  border-color: #8c8f94;
+  box-shadow: none;
+  border-radius: 3px;
+  padding: 0 24px 0 8px;
+  min-height: 30px;
+  -webkit-appearance: none;
+  background: #fff url(data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M5%206l5%205%205-5%202%201-7%207-7-7%202-1z%22%20fill%3D%22%23555%22%2F%3E%3C%2Fsvg%3E) no-repeat right 5px top 55%;
+  background-size: 16px 16px;
+  cursor: pointer;
+  vertical-align: middle;
+  margin: 0 5px 0 10px;
+  width: 300px;
+}
+.wp-core-ui .editor-styles-wrapper .button {
+  vertical-align: middle;
+  min-height: 30px;
+}
+@media screen and (max-width: 600px) {
+  .wp-core-ui .editor-styles-wrapper .castos-select, .wp-core-ui .editor-styles-wrapper .button {
+    width: 100%;
+    max-width: 100%;
+    margin: 10px 0 0;
+    line-height: 1em;
+  }
+}
+
 .ssp-onboarding {
   padding: 10px;
   width: 700px;
   margin: 0 auto;
 }
 .ssp-onboarding span, .ssp-onboarding h1, .ssp-onboarding h2, .ssp-onboarding h3, .ssp-onboarding label, .ssp-onboarding button, .ssp-onboarding input, .ssp-onboarding p, .ssp-onboarding li, .ssp-onboarding a {
-  font-family: 'Inter', sans-serif;
+  font-family: "Inter", sans-serif;
   font-style: normal;
   font-weight: 500;
 }
@@ -147,7 +177,7 @@ textarea#episode_embed_code {
   position: relative;
 }
 .ssp-onboarding__steps:before, .ssp-onboarding__steps:after {
-  content: '';
+  content: "";
   position: absolute;
   width: 620px;
   height: 4px;
@@ -165,7 +195,7 @@ textarea#episode_embed_code {
   position: relative;
 }
 .ssp-onboarding__step span:after {
-  content: '';
+  content: "";
   position: absolute;
   width: 20px;
   height: 20px;
@@ -239,7 +269,7 @@ textarea#episode_embed_code {
   margin: 20px 0;
 }
 .ssp-onboarding-step-4-info__usps li:before {
-  content: '';
+  content: "";
   position: absolute;
   left: 0;
   top: 5px;
@@ -259,7 +289,7 @@ textarea#episode_embed_code {
   width: 298px;
   height: 86px;
   box-sizing: border-box;
-  transition: .3s;
+  transition: 0.3s;
 }
 .ssp-onboarding-step-4-info-button:hover {
   background: #e7ecf1;
@@ -267,7 +297,7 @@ textarea#episode_embed_code {
 .ssp-onboarding-step-4-info-button:after {
   display: block;
   position: absolute;
-  content: '';
+  content: "";
   width: 20px;
   height: 16px;
   background: url(../img/hosting-arrow.svg) no-repeat;
@@ -322,7 +352,7 @@ textarea#episode_embed_code {
   position: relative;
 }
 .ssp-onboarding__select:before, .ssp-onboarding__select:after {
-  content: '';
+  content: "";
   display: block;
   height: 2px;
   width: 10px;
@@ -390,7 +420,7 @@ textarea#episode_embed_code {
   background: #DF4E4F;
   font-size: 18px;
   padding: 0 55px 0 33px;
-  transition: .3s;
+  transition: 0.3s;
   cursor: pointer;
 }
 .ssp-onboarding__submit button[type=submit]:hover, .ssp-onboarding__submit button[type=submit]:active, .ssp-onboarding__submit button[type=submit]:focus, .ssp-onboarding__submit .button:hover, .ssp-onboarding__submit .button:active, .ssp-onboarding__submit .button:focus {
@@ -398,7 +428,7 @@ textarea#episode_embed_code {
   color: #FFFFFF;
 }
 .ssp-onboarding__submit button[type=submit]:after, .ssp-onboarding__submit .button:after {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   width: 24px;
@@ -407,7 +437,7 @@ textarea#episode_embed_code {
   filter: invert(98%) sepia(93%) saturate(30%) hue-rotate(119deg) brightness(107%) contrast(100%);
   right: 18px;
   top: 14px;
-  transition: .3s;
+  transition: 0.3s;
 }
 .ssp-onboarding__submit button[type=submit]:disabled, .ssp-onboarding__submit .button:disabled {
   background: #9CA3AF;
@@ -443,7 +473,7 @@ textarea#episode_embed_code {
   padding: 0 20px 0 45px;
 }
 .ssp-onboarding__submit .validate-token:after {
-  content: '';
+  content: "";
   display: block;
   position: absolute;
   background: url(../img/validate.svg) no-repeat;
@@ -504,7 +534,7 @@ textarea#episode_embed_code {
   cursor: pointer;
 }
 .ssp-onboarding__delete-image:before, .ssp-onboarding__delete-image:after {
-  content: '';
+  content: "";
   display: block;
   height: 1.5px;
   width: 14px;
@@ -512,7 +542,7 @@ textarea#episode_embed_code {
   position: absolute;
   left: 7px;
   top: 46%;
-  transition: .3s;
+  transition: 0.3s;
 }
 .ssp-onboarding__delete-image:before {
   transform: rotate(45deg);
@@ -578,7 +608,7 @@ textarea#episode_embed_code {
   text-decoration: none;
 }
 .ssp-onboarding__hosting-step a:before {
-  content: '1';
+  content: "1";
   display: block;
   position: absolute;
   width: 30px;
@@ -593,10 +623,10 @@ textarea#episode_embed_code {
   line-height: 28px;
 }
 .ssp-onboarding__hosting-step a:nth-child(2):before {
-  content: '2';
+  content: "2";
 }
 .ssp-onboarding__hosting-step:nth-child(2) a:before {
-  content: '2';
+  content: "2";
 }
 .ssp-onboarding__hosting-step--header {
   display: block;
@@ -614,7 +644,7 @@ textarea#episode_embed_code {
 }
 .ssp-onboarding__hosting-step--info:after {
   display: inline-block;
-  content: '';
+  content: "";
   position: absolute;
   right: -18px;
   top: 0;
@@ -642,7 +672,7 @@ textarea#episode_embed_code {
 }
 .ssp-onboarding__dragable span:before {
   display: block;
-  content: '';
+  content: "";
   position: absolute;
   width: 33px;
   height: 33px;

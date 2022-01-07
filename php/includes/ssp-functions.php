@@ -1010,6 +1010,7 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 	 * @param $series_id
 	 *
 	 * @return array
+	 * // todo: move to class
 	 */
 	function get_series_data_for_castos( $series_id ) {
 		$podcast = array();
@@ -1098,6 +1099,15 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 
 		$podcast['itunes']      = get_option( 'ss_podcasting_itunes_url_' . $series_id, '' );
 		$podcast['google_play'] = get_option( 'ss_podcasting_google_play_url_' . $series_id, '' );
+
+		$is_private_option = 'ss_podcasting_is_podcast_private';
+		if ( $series_id ) {
+			$is_private_option .= '_' . $series_id;
+		}
+		$is_private                   = get_option( $is_private_option );
+		$podcast['private_podcast']   = 'yes' === $is_private ? 1 : 0;
+		$podcast['is_feed_protected'] = 'yes' === $is_private ? 1 : 0;
+
 
 		if ( $series_id ) {
 			$guid = get_option( 'ss_podcasting_data_guid_' . $series_id );

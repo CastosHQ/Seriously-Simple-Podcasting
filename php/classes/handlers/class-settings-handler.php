@@ -892,24 +892,30 @@ class Settings_Handler {
 				'callback'    => 'esc_url_raw',
 				'class'       => 'regular-text',
 			),
-			array(
-				'id'          => 'is_podcast_private',
-				'label'       => __( 'Set Podcast To Private', 'seriously-simple-podcasting' ),
-				'type'        => 'radio',
-				'options'     => array(
-					'yes' => __( 'Yes', 'seriously-simple-podcasting' ),
-					'no' => __( 'No', 'seriously-simple-podcasting' ),
-				),
-				'default'     => 'no',
-			),
-			array(
-				'id'          => '',
-				'label'       => __( 'Subscribe button links', 'seriously-simple-podcasting' ),
-				'description' => __( 'To create Subscribe Buttons for your site visitors, enter the Distribution URL to your show in the directories below.', 'seriously-simple-podcasting' ),
-				'type'        => '',
-				'placeholder' => __( 'Subscribe button links', 'seriously-simple-podcasting' ),
-			),
 		);
+
+		$private_podcast = array(
+			'id'          => 'is_podcast_private',
+			'label'       => __( 'Set Podcast To Private', 'seriously-simple-podcasting' ),
+			'type'        => 'radio',
+			'options'     => array(
+				'yes' => __( 'Yes', 'seriously-simple-podcasting' ),
+				'no'  => __( 'No', 'seriously-simple-podcasting' ),
+			),
+			'default'     => 'no',
+		);
+
+		if ( ! ssp_is_connected_to_castos() ) {
+			$private_podcast['description'] = __( 'Setting a podcast as Private is only available to Castos hosting customers.', 'seriously-simple-podcasting' );
+			$private_podcast['type']        = '';
+		}
+
+		if ( class_exists( 'PMPro_Membership_Level' ) ) {
+			$private_podcast['description'] = __( 'Looks like you\'re already using Paid Membership Pro to make your podcast private.', 'seriously-simple-podcasting' );
+			$private_podcast['type']        = '';
+		}
+
+		$feed_details_fields[] = $private_podcast;
 
 		$subscribe_options_array            = $this->get_subscribe_field_options();
 		$settings['feed-details']['fields'] = array_merge( $feed_details_fields, $subscribe_options_array );
@@ -1128,7 +1134,13 @@ class Settings_Handler {
 	 * @return array
 	 */
 	public function get_subscribe_field_options() {
-		$subscribe_field_options = array();
+		$subscribe_field_options[] = array(
+			'id'          => '',
+			'label'       => __( 'Subscribe button links', 'seriously-simple-podcasting' ),
+			'description' => __( 'To create Subscribe Buttons for your site visitors, enter the Distribution URL to your show in the directories below.', 'seriously-simple-podcasting' ),
+			'type'        => '',
+			'placeholder' => __( 'Subscribe button links', 'seriously-simple-podcasting' ),
+		);
 
 		$options_handler             = new Options_Handler();
 		$available_subscribe_options = $options_handler->available_subscribe_options;

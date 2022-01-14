@@ -161,7 +161,7 @@ class App_Controller extends Controller {
 
 		$this->upgrade_handler = new Upgrade_Handler();
 
-		$this->feed_handler = new Feed_Handler( $this->renderer );
+		$this->feed_handler = new Feed_Handler();
 
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 

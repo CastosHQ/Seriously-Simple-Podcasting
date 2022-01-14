@@ -215,11 +215,11 @@ class Feed_Controller {
 	 * @param array $args {
 	 *     Array of the arguments for the feed item.
 	 *
-	 *     @type int      $author            Episode author.
-	 *     @type bool     $is_excerpt_mode   Use excerpt mode or not.
-	 *     @type string   $pub_date_type     Date type.
-	 *     @type int|null $turbo_post_count  Feed items counter.
-	 *     @type string   $media_prefix      Prefix for Podtrac, Chartable, and other tracking services.
+	 * @type int $author Episode author.
+	 * @type bool $is_excerpt_mode Use excerpt mode or not.
+	 * @type string $pub_date_type Date type.
+	 * @type int|null $turbo_post_count Feed items counter.
+	 * @type string $media_prefix Prefix for Podtrac, Chartable, and other tracking services.
 	 * }
 	 *
 	 * @return string
@@ -229,7 +229,7 @@ class Feed_Controller {
 		$author           = isset( $args['author'] ) ? $args['author'] : '';
 		$is_excerpt_mode  = isset( $args['is_excerpt_mode'] ) ? $args['is_excerpt_mode'] : '';
 		$pub_date_type    = isset( $args['pub_date_type'] ) ? $args['pub_date_type'] : '';
-		$turbo_post_count = isset( $args['turbo_post_count'] ) ? $args['turbo_post_count'] : '';
+		$turbo_post_count = isset( $args['turbo_post_count'] ) ? $args['turbo_post_count'] : 0;
 		$media_prefix     = isset( $args['media_prefix'] ) ? $args['media_prefix'] : '';
 
 		$qry->the_post();
@@ -322,20 +322,7 @@ class Feed_Controller {
 		// Episode author.
 		$author = apply_filters( 'ssp_feed_item_author', $author, $post_id );
 
-		// Description is set based on feed setting.
-		if ( $is_excerpt_mode ) {
-			ob_start();
-			the_excerpt_rss();
-			$content = ob_get_clean();
-		} else {
-			$content = ssp_get_the_feed_item_content();
-			if ( isset( $turbo_post_count ) && $turbo_post_count > 10 ) {
-				// If turbo is on, limit the full html description to 4000 chars.
-				$content = mb_substr( $content, 0, 3999 );
-			}
-		}
-
-		$description = apply_filters( 'ssp_feed_item_description', $content, $post_id );
+		$description = $this->feed_handler->get_feed_item_description( $post_id, $is_excerpt_mode, $turbo_post_count );
 
 		// Clean up after shortcodes in content and excerpts.
 		if ( $post_id !== get_the_ID() ) {
@@ -377,7 +364,7 @@ class Feed_Controller {
 		// Tags/keywords.
 		$keywords = $this->get_feed_item_keywords();
 
-		$itunes_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
+		$itunes_enabled    = get_option( 'ss_podcasting_itunes_fields_enabled' );
 		$is_itunes_enabled = $itunes_enabled && $itunes_enabled == 'on';
 		// New iTunes WWDC 2017 Tags.
 		$itunes_episode_type   = $is_itunes_enabled ? get_post_meta( $post_id, 'itunes_episode_type', true ) : '';
@@ -390,7 +377,7 @@ class Feed_Controller {
 		$feed_item_path = apply_filters( 'ssp_feed_item_path', '/feed/feed-item' );
 
 		$args = apply_filters( 'ssp_feed_item_args', compact(
-			'title', 'pub_date', 'author', 'content', 'description', 'itunes_subtitle', 'keywords',
+			'title', 'pub_date', 'author', 'description', 'itunes_subtitle', 'keywords',
 			'itunes_episode_type', 'itunes_title', 'itunes_episode_number', 'itunes_season_number',
 			'turbo_post_count', 'enclosure', 'size', 'mime_type', 'turbo_post_count', 'itunes_summary',
 			'episode_image', 'itunes_explicit_flag', 'block_flag', 'duration', 'gp_description',

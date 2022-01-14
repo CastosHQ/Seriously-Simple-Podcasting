@@ -38,6 +38,13 @@ class Frontend_Controller {
 	 * */
 	public $players_controller;
 
+
+	/**
+	 * @var array
+	 * */
+	protected $removed_filters;
+
+
 	/**
 	 * Frontend_Controller constructor.
 	 *
@@ -106,6 +113,40 @@ class Frontend_Controller {
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 
 		add_filter( "archive_template_hierarchy", array( $this, 'fix_template_hierarchy' ) );
+	}
+
+	/**
+	 * Remove class filters.
+	 *
+	 * @since 2.11.0
+	 * @param $filter_name
+	 * @param $function_name
+	 * @param int $priority
+	 *
+	 * @return bool
+	 */
+	public function remove_filter( $filter_name, $function_name, $priority = 10 ) {
+		$removed = remove_filter( $filter_name, array( $this, $function_name ), $priority );
+
+		if ( $removed ) {
+			$this->removed_filters[] = array(
+				'filter_name'   => $filter_name,
+				'function_name' => $function_name,
+				'priority'      => $priority,
+			);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Restore filters removed previously with $this->remove_filter().
+	 * @since 2.11.0
+	 * */
+	public function restore_filters() {
+		foreach ( $this->removed_filters as $filter ) {
+			add_filter( $filter['filter_name'], array( $this, $filter['function_name'] ), $filter['priority'] );
+		}
 	}
 
 	/**
@@ -1186,6 +1227,8 @@ class Frontend_Controller {
 	/**
 	 * Public action which is triggered from the Seriously Simple Hosting queue
 	 * Imports episodes to Serioulsy Simple Hosting
+	 * @deprecated
+	 * @todo: investigate and remove. Looks like an obsolete function.
 	 */
 	public function import_existing_podcast_to_podmotor(){
 		// this will soon be deprecated

@@ -42,11 +42,17 @@ class Castos_Handler {
 	public $logger;
 
 	/**
+	 * @var Feed_Handler
+	 * */
+	protected $feed_handler;
+
+	/**
 	 * Castos_Handler constructor.
 	 */
 	public function __construct() {
-		$this->logger    = new Log_Helper();
-		$this->api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		$this->feed_handler = new Feed_Handler();
+		$this->logger       = new Log_Helper();
+		$this->api_token    = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
 	}
 
 	/**
@@ -76,6 +82,8 @@ class Castos_Handler {
 	 * @param \WP_Post $post
 	 *
 	 * @return string|string[]
+	 * @deprecated Since 2.11.0. Use Feed_Handler::get_feed_item_description() instead.
+	 * Todo: remove
 	 */
 	protected function get_rendered_post_content( $post ) {
 		$ss_podcasting = ssp_frontend_controller();
@@ -248,7 +256,7 @@ class Castos_Handler {
 			'token'          => $this->api_token,
 			'post_id'        => $post->ID,
 			'post_title'     => $post->post_title,
-			'post_content'   => $this->get_rendered_post_content( $post ),
+			'post_content'   => $this->get_episode_content( $post->ID, $series_id ),
 			'keywords'       => get_keywords_for_episode( $post->ID ),
 			'series_number'  => get_post_meta( $post->ID, 'itunes_season_number', true ),
 			'episode_number' => get_post_meta( $post->ID, 'itunes_episode_number', true ),
@@ -317,6 +325,22 @@ class Castos_Handler {
 		$this->update_response( 'episode_id', $response_object->episode->id );
 
 		return $this->response;
+	}
+
+
+	/**
+	 * Get episode content.
+	 * @since 2.11.0
+	 *
+	 * @param int $episode_id
+	 * @param int $series_id
+	 *
+	 * @return string
+	 */
+	public function get_episode_content( $episode_id, $series_id ) {
+		$is_excerpt_mode = $this->feed_handler->is_excerpt_mode( $series_id );
+
+		return $this->feed_handler->get_feed_item_description( $episode_id, $is_excerpt_mode );
 	}
 
 	/**
@@ -423,6 +447,8 @@ class Castos_Handler {
 	 * @param $podcast_data array of post values
 	 *
 	 * @return array
+	 * @deprecated
+	 * @todo invesigate and remove, looks like it's an obsolete function.
 	 */
 	public function upload_podcasts_to_podmotor( $podcast_data ) {
 
@@ -477,7 +503,7 @@ class Castos_Handler {
 	/**
 	 * Upload series data to Castos
 	 *
-	 * @param $series
+	 * @param array $series_data
 	 *
 	 * @return array
 	 */
@@ -533,6 +559,9 @@ class Castos_Handler {
 	 * Creates the podcast import queue with Castos
 	 *
 	 * @return array
+	 * @deprecated
+	 * Todo: invesigate and remove, it looks like this is obsolete function. Endpoint api/insert_queue doesn't exist in Castos.
+	 *
 	 */
 	public function insert_podmotor_queue() {
 

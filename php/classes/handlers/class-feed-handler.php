@@ -28,11 +28,9 @@ class Feed_Handler {
 
 	/**
 	 * Feed_Handler constructor.
-	 *
-	 * @param Renderer $renderer
 	 */
-	public function __construct( $renderer ) {
-		$this->renderer = $renderer;
+	public function __construct() {
+		$this->renderer = new Renderer();
 	}
 
 	/**
@@ -642,6 +640,31 @@ class Feed_Handler {
 		$link = $podcast_series ? get_term_link( $podcast_series, 'series' ) : trailingslashit( home_url() );
 
 		return apply_filters( 'ssp_feed_channel_link_tag', $link );
+	}
+
+
+	/**
+	 * Gets feed item description
+	 *
+	 * @param int $post_id
+	 * @param bool $is_excerpt_mode
+	 * @param int $turbo_post_count
+	 *
+	 * @return string
+	 */
+	public function get_feed_item_description( $post_id, $is_excerpt_mode, $turbo_post_count = 0 ) {
+		if ( $is_excerpt_mode ) {
+			$output  = get_the_excerpt( $post_id );
+			$content = apply_filters( 'the_excerpt_rss', $output );
+		} else {
+			$content = ssp_get_the_feed_item_content( $post_id );
+			if ( $turbo_post_count > 10 ) {
+				// If turbo is on, limit the full html description to 4000 chars.
+				$content = mb_substr( $content, 0, 3999 );
+			}
+		}
+
+		return apply_filters( 'ssp_feed_item_description', $content, $post_id );
 	}
 
 }

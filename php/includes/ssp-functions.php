@@ -753,6 +753,8 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 	 * Imports existing podcasts to Seriously Simple Hosting
 	 *
 	 * @return bool
+	 * @deprecated
+	 * Todo: Investigate and remove. Looks like an obsolete function.
 	 */
 	function import_existing_podcast() {
 
@@ -1243,10 +1245,18 @@ if ( ! function_exists( 'ssp_get_attachment_image_src' ) ) {
  */
 if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 	/**
+	 * @param \WP_Post|int|null $post
+	 *
 	 * @return string
 	 */
-	function ssp_get_the_feed_item_content() {
-		$content = get_the_content();
+	function ssp_get_the_feed_item_content( $post = null ) {
+		$post = get_post( $post );
+
+		if ( ! $post instanceof WP_Post ) {
+			return '';
+		}
+
+		$content = $post->post_content;
 		$blocks  = parse_blocks( $content );
 
 		/**
@@ -1279,7 +1289,10 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 				}
 			}
 		} else {
+			$frontend_controller = ssp_frontend_controller();
+			$frontend_controller->remove_filter( 'the_content', 'content_meta_data' );
 			$content = get_the_content_feed( 'rss2' );
+			$frontend_controller->restore_filters();
 		}
 
 		$content = strip_shortcodes( $content );

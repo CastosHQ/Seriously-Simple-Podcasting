@@ -89,4 +89,13 @@ class Elementor_Media_Player_Widget extends Widget_Base {
 		<# } ) #>
 		<?php
 	}
+
+	/**
+	 * Render plain content (what data should be stored in the post_content).
+	 *
+	 * @since 2.11.0
+	 */
+	public function render_plain_content() {
+		echo '';
+	}
 }

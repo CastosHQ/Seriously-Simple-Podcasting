@@ -117,4 +117,13 @@ class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
 		echo $player->render_subscribe_buttons( $episode_id );
 	}
 
+	/**
+	 * Render plain content (what data should be stored in the post_content).
+	 *
+	 * @since 2.11.0
+	 */
+	public function render_plain_content() {
+		echo '';
+	}
+
 }

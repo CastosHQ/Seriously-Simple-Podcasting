@@ -71,4 +71,13 @@ class Elementor_Episode_List_Widget extends Widget_Base {
 		global $ss_podcasting;
 		echo $ss_podcasting->episode_controller->render_episodes( $render_settings );
 	}
+
+	/**
+	 * Render plain content (what data should be stored in the post_content).
+	 *
+	 * @since 2.11.0
+	 */
+	public function render_plain_content() {
+		echo '';
+	}
 }

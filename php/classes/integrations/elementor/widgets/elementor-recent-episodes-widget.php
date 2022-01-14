@@ -195,4 +195,13 @@ class Elementor_Recent_Episodes_Widget extends Widget_Base {
 
 		echo ssp_episode_controller()->render_recent_episodes( $settings );
 	}
+
+	/**
+	 * Render plain content (what data should be stored in the post_content).
+	 *
+	 * @since 2.11.0
+	 */
+	public function render_plain_content() {
+		echo '';
+	}
 }

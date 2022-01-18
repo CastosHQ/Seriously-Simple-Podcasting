@@ -86,7 +86,7 @@ You have full control over how podcast epsidoes appear on your website by pickin
 
 Feature embedded video players within any podcast post.
 
-- Embed video players from YouTube, Vimeo, VideoPress, or the common video block.
+- Embed video players from Vimeo, VideoPress, or the common video block.
 - Display the embedded video player anywhere within your podcast post.
 - With Castos, host your audio and video podcast files with our [Growth and Pro plans](https://castos.com/pricing/).
 

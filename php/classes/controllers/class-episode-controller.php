@@ -38,17 +38,8 @@ class Episode_Controller {
 
 		$this->renderer = $renderer;
 		$this->episode_repository = new Episode_Repository();
-		$this->init_assets();
 	}
 
-	protected function init_assets() {
-		add_action( 'wp_enqueue_scripts', array( $this, 'load_recent_episodes_assets' ) );
-	}
-
-	public function load_recent_episodes_assets() {
-		wp_register_style( 'ssp-recent-episodes', $this->assets_url . 'css/recent-episodes.css', array(), $this->version );
-		wp_enqueue_style( 'ssp-recent-episodes' );
-	}
 
 	/**
 	 * Get episode enclosure
@@ -346,17 +337,4 @@ class Episode_Controller {
 
 		return $episodes_query->get_posts();
 	}
-
-	/**
-	 * Render the template for the Elementor Recent Episodes Widget
-	 *
-	 * @return mixed|void
-	 */
-	public function render_recent_episodes( $template_data ) {
-		$template_data['episodes'] = $this->get_recent_episodes( $template_data );
-		$template_data             = apply_filters( 'recent_episodes_template_data', $template_data );
-
-		return $this->renderer->fetch( 'episodes/recent-episodes', $template_data );
-	}
-
 }

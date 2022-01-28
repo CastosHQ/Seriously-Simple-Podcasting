@@ -18,7 +18,6 @@
  * @var $subtitle
  * @var $author
  * @var $itunes_type
- * @var $podcast_description
  * @var $owner_name
  * @var $owner_email
  * @var $itunes_explicit
@@ -88,7 +87,7 @@ if ( $stylesheet_url ) {
 		<?php if ( $itunes_type ) : ?>
 			<itunes:type><?php echo $itunes_type; ?></itunes:type>
 		<?php endif ?>
-		<itunes:summary><?php echo esc_html( $podcast_description ); ?></itunes:summary>
+		<itunes:summary><?php echo esc_html( $description ); ?></itunes:summary>
 		<itunes:owner>
 			<itunes:name><?php echo esc_html( $owner_name ); ?></itunes:name>
 			<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>

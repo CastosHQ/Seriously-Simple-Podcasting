@@ -41,7 +41,7 @@ Feature: Login
 		And I can see in source "<copyright>&#xA9; 2022 My WordPress</copyright>"
 		And I can see in source "<itunes:subtitle>Just another WordPress site</itunes:subtitle>"
 		And I can see in source "<itunes:author>My WordPress</itunes:author>"
-		And I can see in source "<itunes:summary></itunes:summary>"
+		And I can see in source "<itunes:summary>This show is to test some SSP functionality</itunes:summary>"
 		And I can see in source "<itunes:owner>"
 		And I can see in source "<itunes:name>My WordPress</itunes:name>"
 		And I can see in source "<itunes:email>craig@castos.com</itunes:email>"

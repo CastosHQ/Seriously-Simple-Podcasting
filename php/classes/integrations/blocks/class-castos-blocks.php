@@ -122,14 +122,12 @@ class Castos_Blocks extends Controller {
 			'editor_style'    => 'ssp-castos-player',
 			'attributes'      => array(
 				'episodeId' => array(
-					'type'    => 'integer',
+					'type' => 'string',
 					'default' => '',
 				),
 			),
 			'render_callback' => function ( $args ) {
-				global $ss_podcasting;
-
-				return $ss_podcasting->players_controller->render_html_player( $args['episodeId'] );
+				return ssp_frontend_controller()->players_controller->render_html_player( $args['episodeId'], false );
 			}
 		) );
 

@@ -153,6 +153,7 @@ class Episodes_Controller extends WP_REST_Controller {
 
 		// Handle query results
 		$posts = array();
+
 		foreach ( $query_result as $post ) {
 
 			// Get PostController for Post Type
@@ -181,13 +182,31 @@ class Episodes_Controller extends WP_REST_Controller {
 		// Calc total page count
 		$max_pages = ceil( $total_posts / (int) $query_args['posts_per_page'] );
 
+		$request_params = $request->get_query_params();
+
+		// Add additional current and recent options to the response
+		if ( ! empty( $request_params['get_additional_options'] ) ) {
+			array_unshift( $posts, array(
+				'id'    => 0,
+				'title' => array(
+					'rendered' => __( 'Current Episode', 'seriously-simple-podcasting' ),
+				)
+			) );
+
+			array_unshift( $posts, array(
+				'id'    => - 1,
+				'title' => array(
+					'rendered' => __( 'Latest Episode', 'seriously-simple-podcasting' ),
+				),
+			) );
+		}
+
 		// Construct response
 		$response = rest_ensure_response( $posts );
 		$response->header( 'X-WP-Total', (int) $total_posts );
 		$response->header( 'X-WP-TotalPages', (int) $max_pages );
 
 		// Construct base url for pagination links
-		$request_params = $request->get_query_params();
 		if ( ! empty( $request_params['filter'] ) ) {
 			// Normalize the pagination params.
 			unset( $request_params['filter']['posts_per_page'] );
@@ -219,8 +238,8 @@ class Episodes_Controller extends WP_REST_Controller {
 	 * Determine the allowed query_vars for a get_items() response and prepare
 	 * for WP_Query.
 	 *
-	 * @param  array $prepared_args
-	 * @param  \WP_REST_Request $request
+	 * @param array $prepared_args
+	 * @param \WP_REST_Request $request
 	 *
 	 * @return array            $query_args
 	 */
@@ -233,9 +252,10 @@ class Episodes_Controller extends WP_REST_Controller {
 			 *
 			 * The dynamic portion of the hook name, `$key`, refers to the query_var key.
 			 *
+			 * @param string $value The query_var value.
+			 *
 			 * @since 4.7.0
 			 *
-			 * @param string $value The query_var value.
 			 */
 			$query_args[ $key ] = apply_filters( "rest_query_var-{$key}", $value ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		}
@@ -475,7 +495,7 @@ class Episodes_Controller extends WP_REST_Controller {
 	/**
 	 * Validate whether the user can query private statuses
 	 *
-	 * @param  mixed $value
+	 * @param mixed $value
 	 *
 	 * @return \WP_Error|boolean
 	 */

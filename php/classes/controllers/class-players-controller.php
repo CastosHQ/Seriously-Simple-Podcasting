@@ -80,80 +80,26 @@ class Players_Controller {
 	/**
 	 * Sets up the template data for the HTML5 player, based on the episode id passed.
 	 *
-	 * @param int $id Episode id
+	 * @param int $id Episode id, 0 for current, -1 for latest
 	 * @param \WP_Post $current_post Current post
-	 *
-	 * Todo: move it to Episode_Repository
 	 *
 	 * @return array
 	 */
-	public function get_player_data( $id, $current_post = null ) {
-		$audio_file = get_post_meta( $id, 'audio_file', true );
-		if ( empty( $audio_file ) ) {
-			return apply_filters( 'ssp_html_player_data', array() );
-		}
-
-		$episode_controller = $this->episode_controller();
-
-		/**
-		 * Get the episode (post) object
-		 * If the id passed is empty or 0, get_post will return the current post
-		 */
-		$episode               = get_post( $id );
-		$current_post          = $current_post ?: $episode;
-		$episode_duration      = get_post_meta( $id, 'duration', true );
-		$current_url           = get_post_permalink( $current_post->ID );
-		$audio_file            = $episode_controller->get_episode_player_link( $id );
-		$album_art             = $episode_controller->get_album_art( $id, 'thumbnail' );
-		$podcast_title         = $episode_controller->episode_repository->get_podcast_title( $id );
-		$feed_url              = $episode_controller->episode_repository->get_feed_url( $id );
-		$embed_code            = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );
-		$player_mode           = get_option( 'ss_podcasting_player_mode', 'dark' );
-		$show_subscribe_button = 'on' === get_option( 'ss_podcasting_subscribe_button_enabled', 'on' );
-		$show_share_button     = 'on' === get_option( 'ss_podcasting_share_button_enabled', 'on' );
-		$subscribe_links       = $this->options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
-
-		// set any other info
-		$template_data = array(
-			'episode'               => $episode,
-			'episode_id'            => $episode->ID,
-			'date'                  => $this->format_post_date( $episode->post_date ),
-			'duration'              => $episode_duration,
-			'current_url'           => $current_url,
-			'audio_file'            => $audio_file,
-			'album_art'             => $album_art,
-			'podcast_title'         => $podcast_title,
-			'feed_url'              => $feed_url,
-			'subscribe_links'       => $subscribe_links,
-			'embed_code'            => $embed_code,
-			'player_mode'           => $player_mode,
-			'show_subscribe_button' => $show_subscribe_button,
-			'show_share_button'     => $show_share_button,
-			'title'                 => $episode->post_title,
-			'excerpt'               => ssp_get_episode_excerpt( $episode->ID ),
-			'player_id'             => wp_rand(),
-		);
-
-		return apply_filters( 'ssp_html_player_data', $template_data );
-	}
-
-	protected function format_post_date( $post_date, $format = 'M j, Y' ) {
-		$timestamp = strtotime( $post_date );
-
-		return date( $format, $timestamp );
+	public function get_player_data( $id, $current_post = null, $skip_empty_audio = true ) {
+		return $this->episode_controller()->episode_repository->get_player_data( $id, $current_post, $skip_empty_audio );
 	}
 
 	/**
 	 * Renders the HTML5 player, based on the attributes sent to the method
 	 * If the player assets are registered but not already enqueued, this will enqueue them
 	 *
-	 * @param $episode_id
+	 * @param int $episode_id Post ID, -1 for current, 0 for latest
 	 *
 	 * @return string
 	 */
-	public function render_html_player( $episode_id ) {
-		$template_data = $this->get_player_data( $episode_id );
-		if ( ! array_key_exists( 'audio_file', $template_data ) ) {
+	public function render_html_player( $episode_id, $skip_empty_audio = true ) {
+		$template_data = $this->get_player_data( $episode_id, null, false );
+		if ( $skip_empty_audio && ! array_key_exists( 'audio_file', $template_data ) ) {
 			return '';
 		}
 
@@ -319,6 +265,7 @@ class Players_Controller {
 	 * @param array $atts
 	 *
 	 * @return int[]|\WP_Post[]
+	 * @deprecated Use Episode_Repository::get_playlist_episodes()
 	 */
 	public function get_playlist_episodes( $atts ) {
 		return $this->episode_controller()->episode_repository->get_playlist_episodes( $atts );
@@ -328,6 +275,7 @@ class Players_Controller {
 	 * Get the latest episode ID for a player
 	 *
 	 * @return int
+	 * @deprecated Use Episode_Repository::get_latest_episode_id()
 	 */
 	public function get_latest_episode_id() {
 		return $this->episode_controller()->episode_repository->get_latest_episode_id();

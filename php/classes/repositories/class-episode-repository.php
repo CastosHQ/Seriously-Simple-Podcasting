@@ -2,6 +2,9 @@
 
 namespace SeriouslySimplePodcasting\Repositories;
 
+use SeriouslySimplePodcasting\Handlers\Options_Handler;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
+
 /**
  * Episode Repository
  *
@@ -14,6 +17,12 @@ namespace SeriouslySimplePodcasting\Repositories;
  * @since 2.4.3
  */
 class Episode_Repository {
+
+	use Useful_Variables;
+
+	public function __construct() {
+		$this->init_useful_variables();
+	}
 
 	/**
 	 * Return a series id for an episode
@@ -197,43 +206,264 @@ class Episode_Repository {
 	}
 
 	/**
-	 * Gather a list of the last 3 episodes for the Elementor Recent Episodes Widget
+	 * Sets up the template data for the HTML5 player, based on the episode id passed.
 	 *
-	 * @param array $args {
-	 *     Optional. Array or string of Query parameters.
+	 * @param int $id Episode id, 0 for current, -1 for latest
+	 * @param \WP_Post $current_post Current post
 	 *
-	 *     @type int    $episodes_number Number of episodes. Default: 3.
-	 *     @type string $episode_types   Episode types. Variants: all_podcast_types, podcast. Default: podcast.
-	 *     @type string $order_by        Order by field. Variants: published, recorded. Default: published.
-	 * }
-	 *
-	 * @return \WP_Post[]
+	 * @return array
 	 */
-	public function get_recent_episodes( $args = array() ) {
-		$defaults = array(
-			'episodes_number' => 3,
-			'episode_types'   => 'all_podcast_types',
-			'order_by'        => 'published',
-		);
+	public function get_player_data( $id, $current_post = null, $skip_empty_audio = true ) {
+		try {
+			$player_mode           = get_option( 'ss_podcasting_player_mode', 'dark' );
+			$show_subscribe_button = 'on' === get_option( 'ss_podcasting_subscribe_button_enabled', 'on' );
+			$show_share_button     = 'on' === get_option( 'ss_podcasting_share_button_enabled', 'on' );
 
-		$args = wp_parse_args( $args, $defaults );
+			if ( '0' == $id || '' === $id ) {
+				global $post;
 
-		$post_types = ( 'all_podcast_types' === $args['episode_types'] ) ? ssp_post_types( true ) : SSP_CPT_PODCAST;
+				$allowed_post_types = array_merge( ssp_post_types(), array('auto_draft') );
 
-		$query = array(
-			'posts_per_page' => $args['episodes_number'],
-			'post_type'      => $post_types,
-			'post_status'    => array( 'publish' ),
-		);
+				if ( empty( $post ) || ! in_array( $post->post_type, $allowed_post_types ) ) {
+					// Possibly it's a page, or a Gutenberg template editor
+					$id = $this->get_latest_episode_id();
+				} else {
+					$id = $post->ID;
+				}
 
-		if ( 'recorded' === $args['order_by'] ) {
-			$query['orderby']  = 'meta_value';
-			$query['meta_key'] = 'date_recorded';
-			$query['order']    = 'DESC';
+				if ( 'Auto Draft' === $post->post_title ) {
+					$post->post_title = __( 'Current Episode', 'seriously-simple-podcasting' );
+				}
+
+
+			}
+
+			if ( '-1' == $id ) {
+				$id = $this->get_latest_episode_id();
+			}
+
+			$audio_file = get_post_meta( $id, 'audio_file', true );
+
+			if ( $skip_empty_audio && empty( $audio_file ) ) {
+				throw new \Exception();
+			}
+
+			$options_handler = new Options_Handler();
+
+			/**
+			 * Get the episode (post) object
+			 * If the id passed is empty or 0, get_post will return the current post
+			 */
+			$episode               = isset( $post ) ? $post : get_post( $id );
+			$current_post          = $current_post ?: $episode;
+			$episode_duration      = get_post_meta( $id, 'duration', true );
+			$current_url           = get_post_permalink( $current_post->ID );
+			$audio_file            = $this->get_episode_player_link( $id );
+			$album_art             = $this->get_album_art( $id, 'thumbnail' );
+			$podcast_title         = $this->get_podcast_title( $id );
+			$feed_url              = $this->get_feed_url( $id );
+			$embed_code            = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );
+			$subscribe_links       = $options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
+
+			// set any other info
+			$template_data = array(
+				'episode'               => $episode,
+				'episode_id'            => $episode->ID,
+				'date'                  => $this->format_post_date( $episode->post_date ),
+				'duration'              => $episode_duration,
+				'current_url'           => $current_url,
+				'audio_file'            => $audio_file,
+				'album_art'             => $album_art,
+				'podcast_title'         => $podcast_title,
+				'feed_url'              => $feed_url,
+				'subscribe_links'       => $subscribe_links,
+				'embed_code'            => $embed_code,
+				'player_mode'           => $player_mode,
+				'show_subscribe_button' => $show_subscribe_button,
+				'show_share_button'     => $show_share_button,
+				'title'                 => $episode->post_title,
+				'excerpt'               => ssp_get_episode_excerpt( $episode->ID ),
+				'player_id'             => wp_rand(),
+			);
+
+			return apply_filters( 'ssp_html_player_data', $template_data );
+		} catch( \Exception $e ){
+			return apply_filters( 'ssp_html_player_data', array() );
 		}
 
-		$episodes_query = new \WP_Query( $query );
 
-		return $episodes_query->get_posts();
+	}
+
+	protected function format_post_date( $post_date, $format = 'M j, Y' ) {
+		$timestamp = strtotime( $post_date );
+
+		return date( $format, $timestamp );
+	}
+
+	/**
+	 * Get player link for episode.
+	 *
+	 * @param int $episode_id
+	 *
+	 * @return string
+	 */
+	public function get_episode_player_link( $episode_id ) {
+		$file = $this->get_episode_download_link( $episode_id );
+
+		// Switch to podcast player URL
+		$file = str_replace( 'podcast-download', 'podcast-player', $file );
+
+		return $file;
+	}
+
+	/**
+	 * Get download link for episode
+	 *
+	 * @param $episode_id
+	 * @param string $referrer
+	 *
+	 * @return string
+	 */
+	public function get_episode_download_link( $episode_id, $referrer = '' ) {
+
+		// Get file URL
+		$file = $this->get_enclosure( $episode_id );
+
+		if ( ! $file ) {
+			return '';
+		}
+
+		// Get download link based on permalink structure
+		if ( get_option( 'permalink_structure' ) ) {
+			$episode = get_post( $episode_id );
+			// Get file extension - default to MP3 to prevent empty extension strings
+			$ext = pathinfo( $file, PATHINFO_EXTENSION );
+			if ( ! $ext ) {
+				$ext = 'mp3';
+			}
+			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
+		} else {
+			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
+		}
+
+		// Allow for dyamic referrer
+		$referrer = apply_filters( 'ssp_download_referrer', $referrer, $episode_id );
+
+		// Add referrer flag if supplied
+		if ( $referrer ) {
+			$link = add_query_arg( array( 'ref' => $referrer ), $link );
+		}
+
+		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
+	}
+
+	/**
+	 * Get episode enclosure
+	 *
+	 * @param integer $episode_id ID of episode
+	 *
+	 * @return string              URL of enclosure
+	 */
+	public function get_enclosure( $episode_id = 0 ) {
+
+		if ( $episode_id ) {
+			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ), true ), $episode_id );
+		}
+
+		return '';
+	}
+
+
+	/**
+	 * Get Album Art for Player
+	 *
+	 * Iteratively tries to find the correct album art based on whether the desired image is of square aspect ratio.
+	 * Falls back to default album art if it can not find the correct ones.
+	 *
+	 * @param int $episode_id ID of the episode being loaded into the player
+	 *
+	 * @return array [ $src, $width, $height ]
+	 */
+	public function get_album_art( $episode_id = false, $size = 'full' ) {
+
+		/**
+		 * In case the episode id is not passed
+		 */
+		if ( ! $episode_id ) {
+			return $this->get_no_album_art_image_array();
+		}
+
+		/**
+		 * Option 1: if the episode has a custom field image that is square, then use that
+		 */
+		$thumb_id = get_post_meta( $episode_id, 'cover_image_id', true );
+		if ( ! empty( $thumb_id ) ) {
+			$image_data_array = ssp_get_attachment_image_src( $thumb_id, $size );
+			if ( ssp_is_image_square( $image_data_array ) ) {
+				return $image_data_array;
+			}
+		}
+
+		/**
+		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
+		 */
+		$series_id  = $this->get_episode_series_id( $episode_id );
+
+		if ( $series_id ) {
+			$series_image_attachment_id = get_term_meta( $series_id, $this->token . '_series_image_settings', true );
+		}
+
+		if ( ! empty( $series_image_attachment_id ) ) {
+			$image_data_array = ssp_get_attachment_image_src( $series_image_attachment_id, $size );
+			if ( ssp_is_image_square( $image_data_array ) ) {
+				return $image_data_array;
+			}
+		}
+
+		/**
+		 * Option 3: if the series feed settings have an image that is square, then use that
+		 */
+		if ( $series_id ) {
+			$feed_image = get_option( 'ss_podcasting_data_image_' . $series_id, false );
+		}
+
+		if ( ! empty( $feed_image ) ) {
+			$feed_image_attachment_id = attachment_url_to_postid( $feed_image );
+			$image_data_array         = ssp_get_attachment_image_src( $feed_image_attachment_id, $size );
+			if ( ssp_is_image_square( $image_data_array ) ) {
+				return $image_data_array;
+			}
+		}
+
+		/**
+		 * Option 4: if the default feed settings have an image that is square, then use that
+		 */
+		$feed_image = get_option( 'ss_podcasting_data_image', false );
+		if ( $feed_image ) {
+			$feed_image_attachment_id = attachment_url_to_postid( $feed_image );
+			$image_data_array         = ssp_get_attachment_image_src( $feed_image_attachment_id, $size );
+			if ( ssp_is_image_square( $image_data_array ) ) {
+				return $image_data_array;
+			}
+		}
+
+		/**
+		 * Option 5: None of the above passed, return the no-album-art image
+		 */
+		return $this->get_no_album_art_image_array();
+	}
+
+
+	/**
+	 * Returns the no album art image
+	 *
+	 * @return array
+	 */
+	public function get_no_album_art_image_array() {
+		$src    = SSP_PLUGIN_URL . 'assets/images/no-album-art.png';
+		$width  = 300;
+		$height = 300;
+
+		return compact( 'src', 'width', 'height' );
 	}
 }

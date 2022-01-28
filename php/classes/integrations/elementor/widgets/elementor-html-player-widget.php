@@ -56,8 +56,8 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 
 		$episodes       = get_posts( $args );
 		$episode_options = [
-			'-1' => 'Current Epsiode',
-			'0'   => 'Latest Epsiode',
+			'-1' => __( 'Current Episode', 'seriously-simple-podcasting' ),
+			'0'  => __( 'Latest Episode', 'seriously-simple-podcasting' ),
 		];
 		foreach ( $episodes as $episode ) {
 			$episode_options[ (string) $episode->ID ] = $episode->post_title;

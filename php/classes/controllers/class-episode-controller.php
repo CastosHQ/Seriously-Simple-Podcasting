@@ -194,30 +194,6 @@ class Episode_Controller {
 	 * @return \WP_Post[]
 	 */
 	public function get_recent_episodes( $args = array() ) {
-		$defaults = array(
-			'episodes_number' => 3,
-			'episode_types'   => 'all_podcast_types',
-			'order_by'        => 'published',
-		);
-
-		$args = wp_parse_args( $args, $defaults );
-
-		$post_types = ( 'all_podcast_types' === $args['episode_types'] ) ? ssp_post_types( true ) : SSP_CPT_PODCAST;
-
-		$query = array(
-			'posts_per_page' => $args['episodes_number'],
-			'post_type'      => $post_types,
-			'post_status'    => array( 'publish' ),
-		);
-
-		if ( 'recorded' === $args['order_by'] ) {
-			$query['orderby']  = 'meta_value';
-			$query['meta_key'] = 'date_recorded';
-			$query['order']    = 'DESC';
-		}
-
-		$episodes_query = new WP_Query( $query );
-
-		return $episodes_query->get_posts();
+		return $this->episode_repository->get_recent_episodes( $args );
 	}
 }

@@ -466,4 +466,45 @@ class Episode_Repository {
 
 		return compact( 'src', 'width', 'height' );
 	}
+
+	/**
+	 * Gather a list of the last 3 episodes for the Elementor Recent Episodes Widget
+	 *
+	 * @param array $args {
+	 *     Optional. Array or string of Query parameters.
+	 *
+	 *     @type int    $episodes_number Number of episodes. Default: 3.
+	 *     @type string $episode_types   Episode types. Variants: all_podcast_types, podcast. Default: podcast.
+	 *     @type string $order_by        Order by field. Variants: published, recorded. Default: published.
+	 * }
+	 *
+	 * @return \WP_Post[]
+	 */
+	public function get_recent_episodes( $args = array() ) {
+		$defaults = array(
+			'episodes_number' => 3,
+			'episode_types'   => 'all_podcast_types',
+			'order_by'        => 'published',
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		$post_types = ( 'all_podcast_types' === $args['episode_types'] ) ? ssp_post_types( true ) : SSP_CPT_PODCAST;
+
+		$query = array(
+			'posts_per_page' => $args['episodes_number'],
+			'post_type'      => $post_types,
+			'post_status'    => array( 'publish' ),
+		);
+
+		if ( 'recorded' === $args['order_by'] ) {
+			$query['orderby']  = 'meta_value';
+			$query['meta_key'] = 'date_recorded';
+			$query['order']    = 'DESC';
+		}
+
+		$episodes_query = new \WP_Query( $query );
+
+		return $episodes_query->get_posts();
+	}
 }

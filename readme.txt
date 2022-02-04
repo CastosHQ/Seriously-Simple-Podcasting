@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.8
+Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.10.0
+Stable tag: 2.11.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,19 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.11.0 =
+* 2022-02-04
+* UPDATE SUMMARY: Support WordPress 5.9, improved Castos player widget
+* [UPDATE] Filter inline episode styles and scripts in RSS feed
+* [UPDATE] Castos player Gutenberg widget - possibility to set current and latest episode
+* [UPDATE] Made share/subscribe text fields in the player to be read-only
+* [UPDATE] Send Post Excerpt to Castos when selected, not post content
+* [UPDATE] SSP Settings banner style improvements
+* [UPDATE] Site speed optimization (removed redundant styles)
+* [FIX] Empty <itunes:summary> tag fixed
+* [FIX] Fixed Gutenberg Castos Player block not showing in editor after save
+* [FIX] Removed player HTML code from RSS feed in case Elementor Player block was used
 
 = 2.10.0 =
 * 2022-01-17

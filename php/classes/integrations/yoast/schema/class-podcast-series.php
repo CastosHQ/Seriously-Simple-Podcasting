@@ -44,6 +44,7 @@ class PodcastSeries extends Abstract_Schema_Piece {
 
 		$schema = array(
 			"@type"   => "PodcastSeries",
+			"@id"     => $this->context->canonical . '#/schema/podcastSeries',
 			"image"   => $ssp_admin->get_series_image_src( $series ),
 			"url"     => $this->context->canonical,
 			"name"    => $this->context->title,

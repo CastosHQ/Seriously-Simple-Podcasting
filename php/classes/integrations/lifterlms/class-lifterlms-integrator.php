@@ -1,16 +1,15 @@
 <?php
 /**
- * Paid Memberships Pro controller.
+ * Lifter LMS integrator.
  */
 
-namespace SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro;
+namespace SeriouslySimplePodcasting\Integrations\LifterLMS;
 
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Integrations\Abstract_Integrator;
 use SeriouslySimplePodcasting\Traits\Singleton;
-use WP_Error;
 use WP_Term;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -18,13 +17,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Paid Memberships Pro controller
+ * Lifter LMS integrator.
  *
  * @author Sergey Zakharchenko
  * @package SeriouslySimplePodcasting
- * @since 2.9.3
+ * @since 2.12.0
  */
-class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
+class LifterLMS_Integrator extends Abstract_Integrator {
 
 	use Singleton;
 
@@ -57,10 +56,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @param Log_Helper $logger
 	 */
 	public function init( $feed_handler, $castos_handler, $logger ) {
-
-		if ( ! $this->check_dependencies(
-			array( 'PMPro_Membership_Level' ),
-			array( 'pmpro_getMembershipLevelsForUser', 'pmpro_get_no_access_message' ) ) ) {
+		if ( ! $this->check_dependencies( array( 'LifterLMS', 'LLMS_Student' ), array( 'llms_page_restricted' ) ) ) {
 			return;
 		}
 
@@ -71,7 +67,10 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
 		} else {
-			$this->protect_private_series();
+			$integration_enabled = ssp_get_option( 'enable_lifterlms_integration' );
+			if ( $integration_enabled ) {
+				$this->protect_private_series();
+			}
 		}
 
 		$this->init_subscribers_sync();
@@ -80,25 +79,33 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 	/**
 	 * Inits subscribers sync.
-	 * There are 2 cases when sync is needed:
-	 * 1. When user's Membership Level is changed.
-	 * 2. When Series -> Membership Level association is changed.
+	 * There are 3 cases when sync is needed:
+	 * 1. When user is enrolled in course.
+	 * 2. When user is removed from course.
+	 * 3. When Series -> Course association is changed (bulk sync).
 	 */
 	protected function init_subscribers_sync() {
 
 		// Sync users when their Membership Level is changed (from admin panel, when registered or cancelled).
-		add_filter( 'pmpro_change_level', array(
+		add_filter( 'llms_user_enrolled_in_course', array(
 			$this,
-			'sync_subscribers_on_change_membership_level'
-		), 10, 3 );
+			'sync_subscriber_on_user_enrolled_in_course'
+		), 10, 2 );
 
 
+		add_filter( 'llms_user_removed_from_course', array(
+			$this,
+			'sync_subscriber_on_user_removed_from_course'
+		), 10, 2 );
+
+
+		// Todo: not realized yet, just a template for future work
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
 		add_filter( 'allowed_options', function ( $allowed_options ) {
-			// Option ss_podcasting_is_pmpro_integration is just a marker that PMPro integration settings have been saved.
+			// Option ss_podcasting_is_lifterlms_integration is just a marker that PMPro integration settings have been saved.
 			// If so, we can do the sync magic.
 			if ( isset( $allowed_options['ss_podcasting'] ) ) {
-				$key = array_search( 'ss_podcasting_is_pmpro_integration', $allowed_options['ss_podcasting'] );
+				$key = array_search( 'ss_podcasting_is_lifterlms_integration', $allowed_options['ss_podcasting'] );
 				if ( false !== $key ) {
 					unset( $allowed_options['ss_podcasting'][ $key ] );
 					$this->schedule_bulk_sync_subscribers();
@@ -109,37 +116,73 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}, 20 );
 
 		// Run the scheduled bulk sync.
-		add_action( 'ssp_bulk_sync_subscribers', array( $this, 'bulk_sync_subscribers' ) );
+		add_action( 'ssp_bulk_sync_lifterlms_subscribers', array( $this, 'bulk_sync_subscribers' ) );
 	}
+
+
+	/**
+	 * @param int $user_id
+	 * @param int $course_id
+	 *
+	 * @return void
+	 */
+	public function sync_subscriber_on_user_enrolled_in_course( $user_id, $course_id ) {
+		$revoke_series_ids = array();
+
+		$add_series_ids = $this->get_series_ids_by_course( $course_id );
+
+		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+	}
+
+
+	/**
+	 * @param int $user_id
+	 * @param int $course_id
+	 *
+	 * @return void
+	 */
+	public function sync_subscriber_on_user_removed_from_course( $user_id, $course_id ) {
+		$add_series_ids = array();
+
+		$revoke_series_ids = $this->get_series_ids_by_course( $course_id );
+
+		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+	}
+
 
 	/**
 	 * Schedule bulk sync subscribers.
 	 */
-	protected function schedule_bulk_sync_subscribers(){
+	protected function schedule_bulk_sync_subscribers() {
 		// 1. Save old membership level map: [['level' => ['users']['series']]]
-		update_option( 'ss_pmpro_users_series_map', $this->get_users_series_map(), false );
+		update_option( 'ssp_lifterlms_users_series_map', $this->get_users_series_map(), false );
 
 		// 2. Schedule a task to add/revoke users
-		if ( ! wp_next_scheduled( 'ssp_bulk_sync_subscribers' ) ) {
-			wp_schedule_single_event( time(), 'ssp_bulk_sync_subscribers' );
+		if ( ! wp_next_scheduled( 'ssp_bulk_sync_lifterlms_subscribers' ) ) {
+			wp_schedule_single_event( time(), 'ssp_bulk_sync_lifterlms_subscribers' );
 		}
 	}
 
 
 	/**
-	 * Gets the map between users and related series [['2' => [3, 4]]].
+	 * Gets the map users and series [['user_id' => ['series1_id', 'series2_id']]].
 	 *
 	 * @return array
 	 */
 	protected function get_users_series_map() {
-		$map    = array();
+		$map = array();
 
-		$membership_users = $this->get_membership_user_ids();
+		$users = get_users( array( 'fields' => array( 'ID' ) ) );
 
-		foreach ( $membership_users as $user ) {
-			$series = $this->get_series_ids_by_level( $user->membership_id );
+		foreach ( $users as $user ) {
+			$student      = new \LLMS_Student( $user->ID );
+			$user_courses = $student->get_courses();
 
-			$map[ $user->user_id ] = $series;
+			foreach ( $user_courses['results'] as $course_id ) {
+				$series = $this->get_series_ids_by_course( $course_id );
+
+				$map[ $user->ID ] = $series;
+			}
 		}
 
 		return $map;
@@ -150,7 +193,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Bulk sync subscribers after settings change.
 	 */
 	public function bulk_sync_subscribers() {
-		$old_map = get_option( 'ss_pmpro_users_series_map', array() );
+		$old_map = get_option( 'ssp_lifterlms_users_series_map', array() );
+
 		$new_map = $this->get_users_series_map();
 
 		foreach ( $new_map as $user_id => $new_series ) {
@@ -161,32 +205,6 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 			$this->sync_user( $user_id, $revoke_series, $add_series );
 		}
-	}
-
-
-	/**
-	 * Sync subscribers when user's Membership Level is changed (case 1).
-	 *
-	 * @param array|int $level
-	 * @param int $user_id
-	 */
-	public function sync_subscribers_on_change_membership_level( $level, $user_id ) {
-
-		$level_id = is_array( $level ) ? $level['membership_id'] : $level;
-
-		$old_level = pmpro_getMembershipLevelForUser( $user_id );
-
-		$old_series_ids = $this->get_series_ids_by_level( $old_level->id );
-
-		$new_series_ids = $this->get_series_ids_by_level( $level_id );
-
-		$revoke_series_ids = array_diff( $old_series_ids, $new_series_ids );
-
-		$add_series_ids = array_diff( $new_series_ids, $old_series_ids );
-
-		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
-
-		return $level_id;
 	}
 
 	/**
@@ -272,47 +290,29 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	/**
 	 * Gets IDs of the series attached to the Membership Level.
 	 *
-	 * @param int $level_id
+	 * @param int $course_id
 	 *
 	 * @return array
 	 */
-	protected function get_series_ids_by_level( $level_id ) {
+	protected function get_series_ids_by_course( $course_id ) {
 
 		$series_ids = array();
 
-		if ( empty( $level_id ) ) {
+		if ( empty( $course_id ) ) {
 			return $series_ids;
 		}
 
 		$series_terms = $this->get_series();
 
 		foreach ( $series_terms as $series ) {
-			$levels_ids = $this->get_series_level_ids( $series->term_id );
+			$course_ids = $this->get_series_course_ids( array( $series ) );
 
-			if ( in_array( $level_id, $levels_ids ) ) {
+			if ( in_array( $course_id, $course_ids ) ) {
 				$series_ids[] = $series->term_id;
 			}
 		}
 
 		return $series_ids;
-	}
-
-	/**
-	 * Gets IDs of the all the users who have any membership level.
-	 *
-	 * @param int $level_id
-	 *
-	 * @return array
-	 */
-	protected function get_membership_user_ids() {
-
-		global $wpdb;
-
-		$query = "SELECT DISTINCT user_id, membership_id from {$wpdb->pmpro_memberships_users} WHERE status='active'";
-
-		$res = $wpdb->get_results( $query );
-
-		return $res;
 	}
 
 
@@ -353,16 +353,104 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Protects private series.
 	 * */
 	protected function protect_private_series() {
-		add_filter( 'pmpro_has_membership_access_filter', array( $this, 'access_filter' ), 10, 4 );
 		add_action( 'ssp_before_feed', array( $this, 'protect_feed_access' ) );
+		add_filter( 'template_include', array( $this, 'protect_content' ) );
+	}
 
-		add_filter( 'ssp_show_media_player_in_content', function ( $show ) {
-			if ( function_exists( 'pmpro_has_membership_access' ) && ! pmpro_has_membership_access() ) {
-				return false;
+
+	/**
+	 * This code was partially copied and modified from LLMS_Template_Loader::template_loader()
+	 * */
+	public function protect_content( $template ) {
+
+		// We need to protect series and their episodes
+		$current_series = $this->get_current_page_related_series();
+
+		if ( empty( $current_series ) ) {
+			return $template;
+		}
+
+		// We need to protect only private series
+		$private_series = array();
+
+		foreach ( $current_series as $series ) {
+			if ( $this->is_series_protected_in_castos( $series->term_id ) ) {
+				$private_series[] = $series;
 			}
+		}
 
-			return $show;
-		} );
+		// Let's find courses that are related to private series
+		// If user don't have access to any of those courses then don't provide access to them
+		$course_ids = $this->get_series_course_ids( $private_series );
+
+		$restrict_filter = function ( $results, $post_id ) {
+			$results['restriction_id'] = $post_id;
+			$results['reason']         = 'enrollment_lesson';
+
+			return $results;
+		};
+
+		add_filter( 'llms_page_restricted_before_check_access', $restrict_filter, 10, 2 );
+
+		foreach ( $course_ids as $course_id ) {
+
+			$page_restricted = llms_page_restricted( $course_id );
+
+			if ( ! $page_restricted['is_restricted'] ) {
+				continue;
+			}
+			/**
+			 * Generic action triggered when content is restricted.
+			 *
+			 * @param array $page_restricted Restriction information from `llms_page_restricted()`.
+			 *
+			 * @see llms_content_restricted_by_{$page_restricted['reason']} A specific hook triggered by a specific restriction reason.
+			 *
+			 * @since Unknown
+			 *
+			 */
+			do_action( 'lifterlms_content_restricted', $page_restricted );
+
+			/**
+			 * Action triggered when content is restricted for the specified reason.
+			 *
+			 * The dynamic portion of this hook, `{$page_restricted['reason']}` refers to the restriction reason
+			 * code generated by `llms_page_restricted()`.
+			 *
+			 * @param array $page_restricted Restriction information from `llms_page_restricted()`.
+			 *
+			 * @see llms_content_restricted A generic hook triggered at the same time.
+			 *
+			 * @since Unknown
+			 *
+			 */
+			do_action( "llms_content_restricted_by_enrollment_lesson", $page_restricted );
+		}
+
+		remove_filter( 'llms_page_restricted_before_check_access', $restrict_filter );
+
+		return $template;
+	}
+
+	/**
+	 * @return WP_Term[]
+	 */
+	protected function get_current_page_related_series() {
+		// First, lets check if it's series page
+		$queried = get_queried_object();
+
+		if ( isset( $queried->taxonomy ) && 'series' === $queried->taxonomy ) {
+			return array( $queried );
+		}
+
+		// If it's episode page, get related series
+		global $post;
+
+		if( isset( $post->post_type ) && SSP_CPT_PODCAST === $post->post_type ){
+			return $this->get_episode_series( $post->ID );
+		}
+
+		return array();
 	}
 
 
@@ -374,50 +462,27 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		if ( empty( $series_slug ) ) {
 			return;
 		}
+
 		$series = get_term_by( 'slug', $this->feed_handler->get_podcast_series(), 'series' );
 
-		$series_levels = $this->get_series_level_ids( $series->term_id );
-		$has_access    = $this->has_access( wp_get_current_user(), $series_levels );
+		// Do not protect unprotected series
+		if ( ! $this->is_series_protected_in_castos( $series->term_id ) ) {
+			return;
+		}
+
+		// Series is protected, does user have access?
+		$has_access = false;
+		$related_course_ids = $this->get_series_course_ids( array( $series ) );
+
+		if ( $related_course_ids ) {
+			$has_access = $this->has_access( wp_get_current_user(), $related_course_ids );
+		}
 
 		if ( ! $has_access ) {
-			$description = wp_strip_all_tags( pmpro_get_no_access_message( '', $series_levels ) );
+			$description = __( 'This content is Private. To access this podcast, contact the site owner.', 'seriously-simple-podcasting' );
 			$this->feed_handler->render_feed_no_access( $series->term_id, $description );
 			exit();
 		}
-	}
-
-
-	/**
-	 * Protects access to private episodes.
-	 *
-	 * @param array|false $access
-	 * @param \WP_Post $post
-	 * @param \WP_User $user
-	 * @param object[] $post_levels
-	 *
-	 * @return bool
-	 */
-	public function access_filter( $access, $post, $user, $post_levels ) {
-
-		// Get level ids.
-		$post_level_ids = array_filter( array_map( function ( $item ) {
-			return isset( $item->id ) ? $item->id : null;
-		}, (array) $post_levels ) );
-
-		$is_admin   = is_admin() && ! ssp_is_ajax();
-		$is_podcast = in_array( $post->post_type, ssp_post_types() );
-
-		if ( $is_admin || ! $is_podcast || ! $access ) {
-			return $access;
-		}
-
-		$series = $this->get_episode_series( $post->ID );
-
-		foreach ( $series as $series_item ) {
-			$post_level_ids = array_merge( $post_level_ids, $this->get_series_level_ids( $series_item->term_id ) );
-		}
-
-		return $this->has_access( $user, $post_level_ids );
 	}
 
 
@@ -427,40 +492,62 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return bool
 	 * @see pmpro_has_membership_access()
 	 */
-	protected function has_access( $user, $post_level_ids ) {
-		if ( empty( $post_level_ids ) ) {
+	protected function has_access( $user, $course_ids ) {
+		if ( empty( $course_ids ) ) {
 			return true;
 		}
 
-		$user_levels = pmpro_getMembershipLevelsForUser( $user->ID );
+		$student = new \LLMS_Student( $user );
 
-		$user_level_ids = array();
-
-		if ( is_array( $user_levels ) ) {
-			foreach ( $user_levels as $user_level ) {
-				$user_level_ids[] = $user_level->id;
+		foreach ( $course_ids as $course_id ) {
+			if ( ! $student->is_enrolled( $course_id ) ) {
+				return false;
 			}
 		}
 
-		return count( $user_level_ids ) && count( array_intersect( $user_level_ids, $post_level_ids ) );
+		return true;
 	}
 
 
 	/**
 	 * Gets series level ids.
 	 *
-	 * @param $term_id
+	 * @param WP_Term[] $series_terms
 	 *
 	 * @return int[]
 	 */
-	protected function get_series_level_ids( $term_id ) {
-		$levels    = (array) ssp_get_option( sprintf( 'series_%s_pmpro_levels', $term_id ), null );
-		$level_ids = array();
-		foreach ( $levels as $level ) {
-			$level_ids[] = (int) str_replace( 'lvl_', '', $level );
+	protected function get_series_course_ids( $series_terms ) {
+		$course_ids = array();
+
+		foreach ( $series_terms as $series ) {
+			$courses    = (array) ssp_get_option( sprintf( 'series_%s_lifterlms_courses', $series->term_id  ), null );
+			$current_course_ids = array();
+			foreach ( $courses as $course ) {
+				$current_course_ids[] = (int) str_replace( 'course_', '', $course );
+			}
+
+			$course_ids = array_merge( $course_ids, $current_course_ids );
 		}
 
-		return array_filter( $level_ids );
+		return array_filter( $course_ids );
+	}
+
+
+	/**
+	 * Gets array of episode series terms.
+	 *
+	 * @param $post_id
+	 *
+	 * @return WP_Term[]
+	 */
+	protected function get_episode_series( $post_id ) {
+		$series = wp_get_post_terms( $post_id, 'series' );
+
+		if ( is_wp_error( $series ) ) {
+			return [];
+		}
+
+		return $series;
 	}
 
 
@@ -506,37 +593,42 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 */
 	protected function get_integration_settings() {
 		$series = $this->get_series();
-		$levels = $this->get_membership_levels();
 
 		$settings = array(
-			'id'          => 'paid_memberships_pro',
-			'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
+			'id'          => 'lifterlms',
+			'title'       => __( 'LifterLMS', 'seriously-simple-podcasting' ),
 			'description' => __( 'Select which podcast Series you would like to be available only
-								to Members via Paid Memberships Pro.', 'seriously-simple-podcasting' ),
+								to Members via LifterLMS.', 'seriously-simple-podcasting' ),
 			'fields'      => array(
 				array(
-					'id'   => 'is_pmpro_integration',
+					'id'   => 'is_lifterlms_integration',
 					'type' => 'hidden',
+				),
+				array(
+					'id'    => 'enable_lifterlms_integration',
+					'type'  => 'checkbox',
+					'label' => __( 'Enable integration', 'seriously-simple-podcasting' ),
+					'description' => __( 'Enable LifterLMS integration', 'seriously-simple-podcasting' ),
 				),
 			),
 		);
 
-		if ( ! $levels ) {
-			$levels_url              = admin_url( 'admin.php?page=pmpro-membershiplevels' );
-			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up a
-										membership level</a> first.', 'seriously-simple-podcasting' ), $levels_url );
+
+		if ( ! ssp_get_option( 'enable_lifterlms_integration' ) ) {
 			return $settings;
 		}
 
 		$checkbox_options = array();
 
-		foreach ( $levels as $level ) {
-			$checkbox_options[ 'lvl_' . $level->id ] = sprintf( 'Require %s to access', $level->name );
+		$courses = $this->get_courses();
+
+		foreach ( $courses as $course ) {
+			$checkbox_options[ 'course_' . $course->ID ] = sprintf( 'Require enrollment to course "%s"', $course->post_title );
 		}
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(
-				'id'      => sprintf( 'series_%s_pmpro_levels', $series_item->term_id ),
+				'id'      => sprintf( 'series_%s_lifterlms_courses', $series_item->term_id ),
 				'label'   => $series_item->name,
 				'type'    => 'checkbox_multi',
 				'options' => $checkbox_options,
@@ -551,6 +643,19 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		return $settings;
+	}
+
+
+	/**
+	 * @return \WP_Post[]
+	 */
+	protected function get_courses() {
+		$args = array(
+			'post_type'   => 'course',
+			'post_status' => 'publish',
+		);
+
+		return get_posts( $args );
 	}
 
 
@@ -588,25 +693,5 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		return $this->castos_podcasts;
-	}
-
-
-	/**
-	 * Gets array of all available series terms.
-	 *
-	 * @return WP_Term[]|WP_Error
-	 */
-	protected function get_series() {
-		return get_terms( 'series', array( 'hide_empty' => false ) );
-	}
-
-
-	/**
-	 * Gets all possible membership levels.
-	 *
-	 * @return array
-	 */
-	protected function get_membership_levels() {
-		return (array) pmpro_getAllLevels();
 	}
 }

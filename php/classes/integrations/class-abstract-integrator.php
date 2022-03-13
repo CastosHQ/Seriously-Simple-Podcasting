@@ -3,7 +3,7 @@
  * Paid Memberships Pro controller
  */
 
-namespace SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro;
+namespace SeriouslySimplePodcasting\Integrations;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -29,5 +29,52 @@ abstract class Abstract_Integrator {
 
 			return $settings;
 		} );
+	}
+
+	/**
+	 * Checks if all needed classes and functions exist.
+	 *
+	 * @return bool
+	 */
+	protected function check_dependencies( $classes, $functions ) {
+		foreach ( $classes as $class ) {
+			if ( ! class_exists( $class ) ) {
+				return false;
+			}
+		}
+
+		foreach ( $functions as $function ) {
+			if ( ! function_exists( $function ) ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Gets array of all available series terms.
+	 *
+	 * @return \WP_Term[]|\WP_Error
+	 */
+	protected function get_series() {
+		return get_terms( 'series', array( 'hide_empty' => false ) );
+	}
+
+	/**
+	 * Gets array of episode series terms.
+	 *
+	 * @param $post_id
+	 *
+	 * @return \WP_Term[]
+	 */
+	protected function get_episode_series( $post_id ) {
+		$series = wp_get_post_terms( $post_id, 'series' );
+
+		if ( is_wp_error( $series ) ) {
+			return [];
+		}
+
+		return $series;
 	}
 }

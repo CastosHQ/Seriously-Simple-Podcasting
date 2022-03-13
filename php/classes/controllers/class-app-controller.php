@@ -11,6 +11,7 @@ use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use SeriouslySimplePodcasting\Integrations\LifterLMS\LifterLMS_Integrator;
 use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Paid_Memberships_Pro_Integrator;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
@@ -226,6 +227,9 @@ class App_Controller extends Controller {
 
 		// Paid Memberships Pro integration
 		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger );
+
+		// Lifter LMS integration
+		LifterLMS_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger );
 	}
 
 	/**

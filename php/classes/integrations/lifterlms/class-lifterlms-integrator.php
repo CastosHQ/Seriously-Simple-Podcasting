@@ -176,13 +176,16 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 
 		foreach ( $users as $user ) {
 			$student      = new \LLMS_Student( $user->ID );
-			$user_courses = $student->get_courses();
+			$user_courses = $student->get_courses( array( 'status' => 'enrolled' ) );
 
+			$user_series = array();
 			foreach ( $user_courses['results'] as $course_id ) {
 				$series = $this->get_series_ids_by_course( $course_id );
 
-				$map[ $user->ID ] = $series;
+				$user_series = array_merge( $user_series, $series );
 			}
+
+			$map[ $user->ID ] = array_unique( $user_series );
 		}
 
 		return $map;
@@ -203,7 +206,9 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 			$add_series    = array_diff( $new_series, $old_series );
 			$revoke_series = array_diff( $old_series, $new_series );
 
-			$this->sync_user( $user_id, $revoke_series, $add_series );
+			if ( $add_series || $revoke_series ) {
+				$this->sync_user( $user_id, $revoke_series, $add_series );
+			}
 		}
 	}
 

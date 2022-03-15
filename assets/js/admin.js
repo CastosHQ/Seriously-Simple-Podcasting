@@ -210,4 +210,6 @@ jQuery(document).ready(function($) {
 		$( '#cover_image, #cover_image_id' ).val( '' );
 		$( '#cover_image_preview' ).attr( 'src', '' );
 	});
+
+	$('.js-ssp-select2').select2();
 });

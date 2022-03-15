@@ -117,6 +117,14 @@ class Settings_Renderer {
 					$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) . '"><input type="checkbox" ' . checked( $checked, true, false ) . ' name="' . esc_attr( $option_name ) . '[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</label><br/>';
 				}
 				break;
+			case 'select2_multi':
+				$html .= '<select class="js-ssp-select2" name="' . esc_attr( $option_name ) . '[]" multiple="multiple">';
+                foreach ( $field['options'] as $k => $v ) {
+	                $selected = in_array( $k, (array) $data, true );
+					$html .= '<option ' . selected( $selected, true, false ) . ' value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) . '" class="' . $class . '" /> ' . $v . '</option>';
+                }
+				$html .= '</select>';
+				break;
 			case 'radio':
 				foreach ( $field['options'] as $k => $v ) {
 					$checked = false;
@@ -209,6 +217,7 @@ class Settings_Renderer {
 				case 'checkbox_multi':
 				case 'radio':
 				case 'select_multi':
+				case 'select2_multi':
 					if ( ! empty( $field['description'] ) ) {
 						$html .= '<br/><span class="description">' . esc_attr( $field['description'] ) . '</span>';
 					}

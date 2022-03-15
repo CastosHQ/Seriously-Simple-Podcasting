@@ -99,7 +99,6 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		), 10, 2 );
 
 
-		// Todo: not realized yet, just a template for future work
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
 		add_filter( 'allowed_options', function ( $allowed_options ) {
 			// Option ss_podcasting_is_lifterlms_integration is just a marker that PMPro integration settings have been saved.
@@ -628,15 +627,16 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		$courses = $this->get_courses();
 
 		foreach ( $courses as $course ) {
-			$checkbox_options[ 'course_' . $course->ID ] = sprintf( 'Require enrollment to course "%s"', $course->post_title );
+			$checkbox_options[ 'course_' . $course->ID ] = $course->post_title;
 		}
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(
 				'id'      => sprintf( 'series_%s_lifterlms_courses', $series_item->term_id ),
 				'label'   => $series_item->name,
-				'type'    => 'checkbox_multi',
+				'type'    => 'select2_multi',
 				'options' => $checkbox_options,
+				'description' => 'Require enrollment to course',
 			);
 
 			if ( ! $this->is_series_protected_in_castos( $series_item->term_id ) ) {

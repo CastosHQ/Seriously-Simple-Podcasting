@@ -1177,6 +1177,9 @@ HTML;
 		wp_register_style( 'jquery-ui-datepicker-wp', esc_url( $this->assets_url . 'css/datepicker.css' ), array(), $this->version );
 		wp_enqueue_style( 'jquery-ui-datepicker-wp' );
 
+		wp_register_style( 'ssp-select2-css', esc_url( $this->assets_url . 'css/select2.css' ), array(), $this->version );
+		wp_enqueue_style( 'ssp-select2-css' );
+
 		/**
 		 * Only load the peekabar styles when adding/editing podcasts
 		 */
@@ -1219,6 +1222,9 @@ HTML;
 
 		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'ssp-settings' );
+
+		wp_register_script( 'ssp-select2-js', esc_url( $this->assets_url . 'js/select2' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
+		wp_enqueue_script( 'ssp-select2-js' );
 
 		// Only enqueue the WordPress Media Library picker for adding and editing SSP tags/terms post types.
 		if ( 'edit-tags.php' === $hook || 'term.php' === $hook ) {

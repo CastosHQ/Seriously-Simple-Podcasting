@@ -1631,7 +1631,7 @@ class Frontend_Controller {
 						if ( get_option( 'permalink_structure' ) ) {
 							$file = $this->get_episode_download_link( $episode_id );
 						}
-						$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, "large" ) . '</div>' . "\n";
+						$html .= '<div id="podcast_player_' . $episode_id . '" class="podcast_player">' . $this->media_player( $file, $episode_id, "large" ) . '</div>' . "\n";
 						break;
 
 					case 'details':

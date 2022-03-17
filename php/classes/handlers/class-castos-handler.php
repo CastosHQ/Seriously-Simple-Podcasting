@@ -747,10 +747,12 @@ class Castos_Handler {
 
 		$this->logger->log( sprintf( 'Sending %s request to: ', $method ), compact( 'api_url', 'args', 'method' ) );
 
+		$token = apply_filters( 'ssp_castos_api_token', $this->api_token, $api_url, $args, $method );
+
 		// Some endpoints ask for token, some - for api_token. Let's provide both.
 		$default_args = array(
-			'token'     => $this->api_token,
-			'api_token' => $this->api_token,
+			'token'     => $token,
+			'api_token' => $token,
 		);
 
 		$body = array_merge( $default_args, $args );

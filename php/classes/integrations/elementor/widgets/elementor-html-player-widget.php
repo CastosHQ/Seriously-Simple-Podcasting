@@ -49,7 +49,7 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 	public function get_episodes() {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
-			'posts_per_page' => get_option('posts_per_page', 10),
+			'posts_per_page' => -1,
 			'post_type'      => ssp_post_types( true ),
 			'post_status'    => array( 'publish', 'draft', 'future' ),
 		);

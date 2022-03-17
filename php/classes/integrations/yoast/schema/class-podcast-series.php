@@ -17,7 +17,7 @@ use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
 class PodcastSeries extends Abstract_Schema_Piece {
 
 	/**
-	 * Determines whether an Organization graph piece should be added.
+	 * Determines whether PodcastSeries graph piece should be added.
 	 *
 	 * @return bool
 	 */
@@ -26,9 +26,9 @@ class PodcastSeries extends Abstract_Schema_Piece {
 	}
 
 	/**
-	 * Returns the Organization Schema data.
+	 * Returns the PodcastSeries Schema data.
 	 *
-	 * @return array $data The Organization schema.
+	 * @return array $data The PodcastSeries schema.
 	 */
 	public function generate() {
 		global $ssp_app;

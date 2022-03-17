@@ -18,7 +18,7 @@ use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
 class PodcastEpisode extends Abstract_Schema_Piece {
 
 	/**
-	 * Determines whether an Organization graph piece should be added.
+	 * Determines whether PodcastEpisode graph piece should be added.
 	 *
 	 * @return bool
 	 */

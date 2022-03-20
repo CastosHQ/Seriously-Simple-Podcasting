@@ -72,6 +72,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			$this->init_integration_settings();
 		} else {
 			$this->protect_private_series();
+			$this->print_private_podcast_feeds();
 		}
 
 		$this->init_subscribers_sync();
@@ -117,7 +118,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 */
 	protected function schedule_bulk_sync_subscribers(){
 		// 1. Save old membership level map: [['level' => ['users']['series']]]
-		update_option( 'ss_pmpro_users_series_map', $this->get_users_series_map(), false );
+		$this->update_users_series_map( $this->generate_users_series_map() );
 
 		// 2. Schedule a task to add/revoke users
 		if ( ! wp_next_scheduled( 'ssp_bulk_sync_subscribers' ) ) {
@@ -125,13 +126,32 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 	}
 
+	/**
+	 * Gets users series map.
+	 *
+	 * @return array
+	 */
+	protected function get_users_series_map() {
+		return get_option( 'ss_pmpro_users_series_map', array() );
+	}
+
+	/**
+	 * Updates users series map.
+	 *
+	 * @param array $map
+	 *
+	 * @return void
+	 */
+	protected function update_users_series_map( $map ) {
+		update_option( 'ss_pmpro_users_series_map', $map, false );
+	}
 
 	/**
 	 * Gets the map between users and related series [['2' => [3, 4]]].
 	 *
 	 * @return array
 	 */
-	protected function get_users_series_map() {
+	protected function generate_users_series_map() {
 		$map    = array();
 
 		$membership_users = $this->get_membership_user_ids();
@@ -150,8 +170,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Bulk sync subscribers after settings change.
 	 */
 	public function bulk_sync_subscribers() {
-		$old_map = get_option( 'ss_pmpro_users_series_map', array() );
-		$new_map = $this->get_users_series_map();
+		$old_map = $this->get_users_series_map();
+		$new_map = $this->generate_users_series_map();
 
 		foreach ( $new_map as $user_id => $new_series ) {
 			$old_series = isset( $old_map[ $user_id ] ) ? $old_map[ $user_id ] : array();
@@ -365,6 +385,86 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		} );
 	}
 
+	/**
+	 * Prints list of private podcast feeds
+	 *
+	 * @return void
+	 */
+	protected function print_private_podcast_feeds() {
+		add_action( 'pmpro_account_bullets_top', function () {
+			$feed_urls = $this->get_private_feed_urls();
+
+			if ( empty( $feed_urls ) ) {
+				return;
+			}
+
+			$add = '<li class="ssp-pmpro-private-feeds"><strong>' . __( 'Private Podcast Feeds', 'seriously-simple-podcasting' ) . ':</strong> ' . '<ul>';
+
+			foreach ( $feed_urls as $feed_url ) {
+				$add .= '<li>' . make_clickable( $feed_url ) . '</li>';
+			}
+
+			$add .= '</ul></li>';
+
+			echo $add;
+		} );
+	}
+
+	/**
+	 * Get array of private feed URLs
+	 *
+	 * @return string[]
+	 */
+	protected function get_private_feed_urls() {
+		$current_user     = wp_get_current_user();
+		$users_series_map = $this->generate_users_series_map();
+
+		$feed_urls = get_transient( 'ssp_pmpro_feed_urls_user_' . $current_user->ID );
+
+		if ( $feed_urls ) {
+			return $feed_urls;
+		}
+
+		if ( ! empty( $users_series_map[ $current_user->ID ] ) ) {
+			$podcast_ids = $this->convert_series_ids_to_podcast_ids( $users_series_map[ $current_user->ID ] );
+		}
+
+		if ( empty( $podcast_ids ) ) {
+			return array();
+		}
+
+		foreach ( $podcast_ids as $podcast_id ) {
+			$feed_urls[] = $this->get_podcast_feed_url( $podcast_id );
+		}
+
+		$feed_urls = array_values( $feed_urls );
+
+		if ( $feed_urls ) {
+			set_transient( 'ssp_pmpro_feed_urls_user_' . $current_user->ID, $feed_urls, HOUR_IN_SECONDS );
+		}
+
+		return $feed_urls;
+	}
+
+	/**
+	 * Get podcast feed url.
+	 *
+	 * @param $podcast_id
+	 *
+	 * @return string|null
+	 */
+	protected function get_podcast_feed_url( $podcast_id ) {
+		$current_user = wp_get_current_user();
+		$subscribers  = $this->castos_handler->get_podcast_subscribers( $podcast_id );
+
+		foreach ( $subscribers as $subscriber ) {
+			if ( 'active' === $subscriber['status'] && $current_user->user_email === $subscriber['email'] ) {
+				return $subscriber['feed_url'];
+			}
+		}
+
+		return null;
+	}
 
 	/**
 	 * Protects access to private feeds.
@@ -525,6 +625,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			$levels_url              = admin_url( 'admin.php?page=pmpro-membershiplevels' );
 			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up a
 										membership level</a> first.', 'seriously-simple-podcasting' ), $levels_url );
+
 			return $settings;
 		}
 

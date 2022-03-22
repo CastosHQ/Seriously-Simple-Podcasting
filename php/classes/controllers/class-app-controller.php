@@ -757,11 +757,14 @@ HTML;
 
 	/**
 	 * Load content for episode meta box
+	 *
+	 * @param \WP_Post $post
+	 *
 	 * @return void
 	 */
-	public function meta_box_content() {
-		//add_thickbox();
-		global $post_id;
+	public function meta_box_content( $post ) {
+
+		$post_id = $post->ID;
 
 		$field_data = $this->custom_fields();
 

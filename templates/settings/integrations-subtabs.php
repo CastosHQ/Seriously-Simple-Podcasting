@@ -4,8 +4,8 @@
  * @var array $current
  * */
 ?>
-<div class="feed-series-list-container">
-	<ul id="feed-series-list" class="subsubsub series-open">
+<div class="integrations-list-container">
+	<ul id="integrations-list" class="subsubsub integration-open">
 		<?php foreach ( $integrations as $id => $item ) :
 			$url = esc_url( add_query_arg( array( 'integration' => $id ) ) );
 			$class = $current === $id ? 'current' : '';

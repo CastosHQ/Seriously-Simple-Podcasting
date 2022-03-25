@@ -34,6 +34,11 @@
 	margin: 0;
 }
 
+.integrations-list-container > ul > li:not(:last-child):after {
+	content: '|';
+	padding-left: 3px;
+}
+
 .view-feed-link {
 	text-decoration: none;
 }

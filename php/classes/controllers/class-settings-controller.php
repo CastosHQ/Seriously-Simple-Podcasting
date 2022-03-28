@@ -341,8 +341,11 @@ class Settings_Controller extends Controller {
 		// Register setting.
 		register_setting( 'ss_podcasting', $option_name, $validation );
 
+		// If field is hidden, lets hide the settings parent <tr>, otherwise it shows redundant empty space
 		if ( 'hidden' === $field['type'] ) {
-			return;
+			$field['container_class'] = isset( $field['container_class'] ) ? $field['container_class'] : '';
+			$field['container_class'] .= ' hidden';
+			$field['label'] = '';
 		}
 
 		$container_class = '';
@@ -606,12 +609,18 @@ class Settings_Controller extends Controller {
 
 		if ( 'import' !== $tab ) {
 			$html .= '<form method="post" action="options.php" enctype="multipart/form-data">' . "\n";
-		}
 
-		// Add current series to posted data
-		if ( 'feed-details' === $tab ) {
-			$current_series = $this->get_current_series();
-			$html           .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
+			// Add current series to posted data
+			if ( 'feed-details' === $tab ) {
+				$current_series = $this->get_current_series();
+				$html           .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
+			}
+
+			// Add current integration to posted data
+			if ( 'integrations' === $tab ) {
+				$current_integration = $this->get_current_integration();
+				$html .= '<input type="hidden" name="ssp_integration" value="' . esc_attr( $current_integration ) . '" />' . "\n";
+			}
 		}
 
 		return apply_filters( sprintf( 'ssp_settings_show_tab_%s_before_settings', $tab ), $html );
@@ -769,8 +778,12 @@ class Settings_Controller extends Controller {
 	 */
 	protected function get_current_integration() {
 		$integration = $this->get_current_parameter( 'integration' );
+		if ( 'default' === $integration && ! empty( $_POST['ssp_integration'] ) ) {
+			$integration = $_POST['ssp_integration'];
+		}
+
+		// If no integration provided, let's get the first one.
 		if ( 'default' === $integration ) {
-			// If no integration provided, let's get the first one.
 			$item        = reset( $this->settings['integrations']['items'] );
 			$integration = isset( $item['id'] ) ? $item['id'] : '';
 		}

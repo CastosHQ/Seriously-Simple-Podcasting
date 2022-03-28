@@ -619,6 +619,8 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 
 
 		if ( ! ssp_get_option( 'enable_lifterlms_integration' ) ) {
+			$settings['description'] = '';
+
 			return $settings;
 		}
 

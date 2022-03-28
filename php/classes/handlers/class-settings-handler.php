@@ -913,6 +913,9 @@ class Settings_Handler {
 		if ( class_exists( 'PMPro_Membership_Level' ) ) {
 			$private_podcast['description'] = __( 'Looks like you\'re already using Paid Membership Pro to make your podcast private.', 'seriously-simple-podcasting' );
 			$private_podcast['type']        = '';
+		} elseif ( class_exists( 'LifterLMS' ) ) {
+			$private_podcast['description'] = __( 'Looks like you\'re already using LifterLMS to make your podcast private.', 'seriously-simple-podcasting' );
+			$private_podcast['type']        = '';
 		}
 
 		$feed_details_fields[] = $private_podcast;

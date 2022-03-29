@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.11.0
+Stable tag: 2.12.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.12.0 =
+* 2022-03-29
+* UPDATE SUMMARY: Lifter LMS integration, improvements for Yoast SEO and PMPro integration, minor fixes
+* [UPDATE] Lifter LMS integration
+* [UPDATE] Yoast SEO integration improvements
+* [UPDATE] Added a filter to dynamically change Castos API token
+* [UPDATE] Show private podcast feed URLs in Paid Memberships Pro dashboard
+* [FIX] Elementor Castos player episodes limit fixed
+* [FIX] Fixed periodical disappearance of the podcast audio field
 
 = 2.11.0 =
 * 2022-02-04

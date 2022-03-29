@@ -1013,6 +1013,8 @@ HTML;
 	 */
 	public function enqueue_admin_styles( $hook ) {
 
+		wp_enqueue_style( 'ssp-custom-font', 'https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap', array(), $this->version );
+
 		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'admin/css/admin.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
 

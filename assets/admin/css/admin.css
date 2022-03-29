@@ -1,4 +1,3 @@
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;600&display=swap");
 #dashboard_right_now a.podcast-count:before, #dashboard_right_now span.podcast-count:before {
   content: "\f482";
 }

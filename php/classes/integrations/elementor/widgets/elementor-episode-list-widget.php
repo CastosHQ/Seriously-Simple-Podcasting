@@ -68,8 +68,8 @@ class Elementor_Episode_List_Widget extends Widget_Base {
 			'show_episode_player'  => $settings['show_episode_player'],
 			'show_episode_excerpt' => $settings['show_episode_excerpt'],
 		);
-		global $ss_podcasting;
-		echo $ss_podcasting->episode_controller->render_episodes( $render_settings );
+
+		echo ssp_episode_controller()->render_episodes( $render_settings );
 	}
 
 	/**

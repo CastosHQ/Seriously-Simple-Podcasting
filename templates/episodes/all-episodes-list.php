@@ -1,11 +1,16 @@
 <?php
+/**
+ * @var array $episodes
+ * @var array $settings
+ * @var \SeriouslySimplePodcasting\Controllers\Players_Controller $player
+ * */
 
 while ( $episodes->have_posts() ) : $episodes->the_post();
 
 	$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
 
 	if ( $player_style === 'standard' ) {
-		$media_player = $player->media_player( get_post()->ID );
+		$media_player = $player->render_media_player( get_post()->ID );
 	} else {
 		$media_player = $player->render_html_player( get_post()->ID );
 	}
@@ -51,4 +56,3 @@ if ( $total_pages > 1 ) {
 }
 
 wp_reset_postdata();
-?>

@@ -44,6 +44,10 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 
 			$url = get_term_link( $term );
 
+			if ( is_wp_error( $url ) ) {
+				continue;
+			}
+
 			$series_parts[] = array(
 				"@type" => "PodcastSeries",
 				"name"  => $term->name,

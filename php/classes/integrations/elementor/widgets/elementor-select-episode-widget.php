@@ -74,8 +74,7 @@ class Elementor_Select_Episode_Widget extends Widget_Base {
 			$i ++;
 		}
 
-		global $ss_podcasting;
-		echo $ss_podcasting->episode_controller->episode_list( $episode_ids );
+		ssp_episode_controller()->episode_list( $episode_ids );
 	}
 
 	/**

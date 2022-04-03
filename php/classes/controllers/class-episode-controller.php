@@ -179,21 +179,4 @@ class Episode_Controller {
 
 		return $this->renderer->fetch( 'episodes/all-episodes-list', $episodes_template_data );
 	}
-
-	/**
-	 * Gather a list of the last 3 episodes for the Elementor Recent Episodes Widget
-	 *
-	 * @param array $args {
-	 *     Optional. Array or string of Query parameters.
-	 *
-	 *     @type int    $episodes_number Number of episodes. Default: 3.
-	 *     @type string $episode_types   Episode types. Variants: all_podcast_types, podcast. Default: podcast.
-	 *     @type string $order_by        Order by field. Variants: published, recorded. Default: published.
-	 * }
-	 *
-	 * @return \WP_Post[]
-	 */
-	public function get_recent_episodes( $args = array() ) {
-		return $this->episode_repository->get_recent_episodes( $args );
-	}
 }

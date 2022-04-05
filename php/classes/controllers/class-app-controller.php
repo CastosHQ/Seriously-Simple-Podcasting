@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
+use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
@@ -131,6 +132,11 @@ class App_Controller extends Controller {
 	 * */
 	protected $castos_handler;
 
+	/**
+	 * @var Podping_Handler
+	 * */
+	protected $podping_handler;
+
 
 	/**
 	 * Admin_Controller constructor.
@@ -190,6 +196,8 @@ class App_Controller extends Controller {
 
 		$this->castos_handler = new Castos_Handler();
 
+		$this->podping_handler = new Podping_Handler( $this->logger );
+
 		if ( is_admin() ) {
 			$this->admin_notices_handler = ( new Admin_Notifications_Handler( $this->token ) )->bootstrap();
 
@@ -200,7 +208,12 @@ class App_Controller extends Controller {
 
 		$this->episode_controller            = new Episode_Controller( $this->renderer );
 		$this->players_controller            = new Players_Controller();
-		$this->podcast_post_types_controller = new Podcast_Post_Types_Controller( $this->cpt_podcast_handler, $this->castos_handler, $this->admin_notices_handler );
+		$this->podcast_post_types_controller = new Podcast_Post_Types_Controller(
+			$this->cpt_podcast_handler,
+			$this->castos_handler,
+			$this->admin_notices_handler,
+			$this->podping_handler
+		);
 
 
 		// todo: further refactoring - get rid of global here

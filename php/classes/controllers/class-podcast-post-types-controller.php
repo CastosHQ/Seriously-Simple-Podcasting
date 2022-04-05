@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 
@@ -40,6 +41,11 @@ class Podcast_Post_Types_Controller {
 	protected $admin_notices_handler;
 
 	/**
+	 * @var Podping_Handler
+	 */
+	protected $podping_handler;
+
+	/**
 	 * @param CPT_Podcast_Handler $cpt_podcast_handler
 	 * @param Castos_Handler $castos_handler
 	 * @param Admin_Notifications_Handler $admin_notices_handler
@@ -47,11 +53,13 @@ class Podcast_Post_Types_Controller {
 	public function __construct(
 		$cpt_podcast_handler,
 		$castos_handler,
-		$admin_notices_handler
+		$admin_notices_handler,
+		$podping_handler
 	) {
-		$this->cpt_podcast_handler = $cpt_podcast_handler;
-		$this->castos_handler = $castos_handler;
+		$this->cpt_podcast_handler   = $cpt_podcast_handler;
+		$this->castos_handler        = $castos_handler;
 		$this->admin_notices_handler = $admin_notices_handler;
+		$this->podping_handler       = $podping_handler;
 
 
 		$this->init_useful_variables();
@@ -66,40 +74,39 @@ class Podcast_Post_Types_Controller {
 		// Register podcast post type, taxonomies and meta fields.
 		add_action( 'init', array( $this, 'register_post_type' ), 11 );
 
+		// prevent copying some meta fields
+		add_action( 'admin_init', array( $this, 'prevent_copy_meta' ) );
+
+		// Episode meta box.
+		add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
+		add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 2 );
+
+		// Update podcast details to Castos when a post is updated or saved
+		add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
+
+		// Clear the cache on post save.
+		add_action( 'save_post', array( $this, 'invalidate_cache' ), 10, 2 );
+
+		// Notify Podping if new episode has been published, or if new series is assigned to the episode
+		add_action( 'wp_after_insert_post', array( $this, 'notify_podping' ), 10, 4 );
+		add_action( 'added_term_relationship', array( $this, 'notify_podping_on_series_added' ), 10, 3 );
+
 		// Delete podcast from Castos
 		add_action( 'trashed_post', array( $this, 'delete_post' ), 11, 1 );
 
-		if ( is_admin() ) {
+		// Episode edit screen.
+		add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
+		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 
-			// prevent copying some meta fields
-			add_action( 'admin_init', array( $this, 'prevent_copy_meta' ) );
+		// Episodes list table.
+		add_filter( 'manage_edit-' . $this->token . '_columns', array(
+			$this,
+			'register_custom_column_headings',
+		), 10, 1 );
+		add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
 
-			// Episode meta box.
-			add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
-			add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 2 );
-
-			// Update podcast details to Castos when a post is updated or saved
-			add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
-
-			// Episode edit screen.
-			add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
-			add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
-
-
-			// Episodes list table.
-			add_filter( 'manage_edit-' . $this->token . '_columns', array(
-				$this,
-				'register_custom_column_headings',
-			), 10, 1 );
-			add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
-
-			// Clear the cache on post save.
-			add_action( 'save_post', array( $this, 'invalidate_cache' ), 10, 2 );
-
-			// Filter Embed HTML Code
-			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
-
-		}
+		// Filter Embed HTML Code
+		add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
 	}
 
 	/**
@@ -109,6 +116,91 @@ class Podcast_Post_Types_Controller {
 	 */
 	public function register_post_type() {
 		$this->cpt_podcast_handler->register_post_type();
+	}
+
+	/**
+	 * This function fires in such cases:
+	 *  - if a new episode with series is published
+	 *  - if a new series is added to existing episode.
+	 *
+	 * @param int $post_id
+	 * @param int $term_id
+	 * @param string $taxonomy
+	 *
+	 * @return bool
+	 */
+	public function notify_podping_on_series_added( $post_id, $term_id, $taxonomy ) {
+		if ( 'series' !== $taxonomy ) {
+			return false;
+		}
+
+		$post = get_post( $post_id );
+
+		if ( 'publish' !== $post->post_status ) {
+			return false;
+		}
+
+		// If this action was fired, it means that we don't need to fire notify_podping() anymore
+		remove_action( 'wp_after_insert_post', array( $this, 'notify_podping' ) );
+
+		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
+			return false;
+		}
+
+		$term = get_term_by( 'id', $term_id, $taxonomy );
+
+		if ( empty( $term->slug ) ) {
+			return false;
+		}
+
+		$feed_url = ssp_get_feed_url( $term->slug );
+
+		return $this->podping_handler->notify( $feed_url );
+	}
+
+	/**
+	 * This function is needed for such cases:
+	 *  - when a new episode without series is created
+	 *  - when a new episode with series was first created as draft and then published.
+	 * For all other cases, @see notify_podping_on_series_added()
+	 *
+	 * @param \WP_Post $post
+	 */
+	public function notify_podping( $post_id, $post, $update, $post_before ) {
+
+		$is_just_published = 'publish' !== $post_before->post_status && 'publish' === $post->post_status;
+
+		if ( ! $is_just_published ) {
+			return;
+		}
+
+		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
+			return;
+		}
+
+		$series_terms = wp_get_post_terms( $post->ID, 'series' );
+		$feed_urls    = array();
+
+		/**
+		 * Episode can belong to multiple series feeds, so let's notify all of them.
+		 * If episode doesn't belong to any series, it belongs to the main feed.
+		 * */
+		if ( is_array( $series_terms ) && $series_terms ) {
+			// This is the case when episode with series was saved first as draft and then published.
+			foreach ( $series_terms as $term ) {
+				/**
+				 * @var \WP_Term $term
+				 * */
+				$feed_urls[] = ssp_get_feed_url( $term->slug );
+			}
+		} else {
+			// This is the case when a new episode without series was published.
+			$feed_urls[] = ssp_get_feed_url();
+		}
+
+		foreach ( $feed_urls as $feed_url ) {
+			$this->podping_handler->notify( $feed_url );
+		}
 	}
 
 
@@ -187,8 +279,8 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Save episode meta box content
 	 *
-	 * @param  integer $post_id ID of post
-	 * @param  \WP_Post $post
+	 * @param integer $post_id ID of post
+	 * @param \WP_Post $post
 	 *
 	 * @return mixed
 	 */
@@ -310,7 +402,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Get content for episode embed code meta box
 	 *
-	 * @param  object $post Current post object
+	 * @param object $post Current post object
 	 *
 	 * @return void
 	 */
@@ -557,10 +649,11 @@ class Podcast_Post_Types_Controller {
 		$podcast_saved = get_transient( $cache_key );
 		if ( false !== $podcast_saved ) {
 			delete_transient( $cache_key );
+
 			return;
 		}
 
-		$response       = $this->castos_handler->upload_episode_to_castos( $post );
+		$response = $this->castos_handler->upload_episode_to_castos( $post );
 
 		if ( 'success' === $response['status'] ) {
 			set_transient( $cache_key, true, 30 );
@@ -586,7 +679,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Modify the 'enter title here' text
 	 *
-	 * @param  string $title Default text
+	 * @param string $title Default text
 	 *
 	 * @return string        Modified text
 	 */
@@ -601,7 +694,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Create custom dashboard message
 	 *
-	 * @param  array $messages Default messages
+	 * @param array $messages Default messages
 	 *
 	 * @return array           Modified messages
 	 */
@@ -628,7 +721,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Register columns for podcast list table
 	 *
-	 * @param  array $defaults Default columns
+	 * @param array $defaults Default columns
 	 *
 	 * @return array           Modified columns
 	 */
@@ -650,8 +743,8 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Display column data in podcast list table
 	 *
-	 * @param  string $column_name Name of current column
-	 * @param  integer $id ID of episode
+	 * @param string $column_name Name of current column
+	 * @param integer $id ID of episode
 	 *
 	 * @return void
 	 */
@@ -680,8 +773,8 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Clear the cache on post save.
 	 *
-	 * @param  int $id POST ID
-	 * @param  object $post WordPress Post Object
+	 * @param int $id POST ID
+	 * @param object $post WordPress Post Object
 	 *
 	 * @return void
 	 */

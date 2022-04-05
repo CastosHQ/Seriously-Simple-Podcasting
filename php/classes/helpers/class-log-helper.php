@@ -59,6 +59,6 @@ class Log_Helper {
 			$message = array( $message => $data );
 		}
 		$data_string = print_r( $message, true ) . PHP_EOL; //phpcs:ignore WordPress.PHP
-		file_put_contents( $this->log_path, $data_string, FILE_APPEND ); //phpcs:ignore WordPress.WP
+		return file_put_contents( $this->log_path, $data_string, FILE_APPEND ); //phpcs:ignore WordPress.WP
 	}
 }

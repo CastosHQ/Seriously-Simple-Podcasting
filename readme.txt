@@ -88,7 +88,7 @@ Feature embedded video players within any podcast post.
 
 - Embed video players from Vimeo, VideoPress, or the common video block.
 - Display the embedded video player anywhere within your podcast post.
-- With Castos, host your audio and video podcast files with our [Growth and Pro plans](https://castos.com/pricing/).
+- With Castos, host your audio and video podcast files with our [Pro plan](https://castos.com/pricing/).
 
 ***FREE ANALYTICS ADD-ONS & INTEGRATIONS***
 

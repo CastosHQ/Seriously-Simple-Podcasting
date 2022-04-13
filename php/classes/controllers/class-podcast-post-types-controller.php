@@ -104,10 +104,8 @@ class Podcast_Post_Types_Controller {
 			'register_custom_column_headings',
 		), 10, 1 );
 		add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
-
-		// Filter Embed HTML Code
-		add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
 	}
+
 
 	/**
 	 * Register SSP_CPT_PODCAST post type

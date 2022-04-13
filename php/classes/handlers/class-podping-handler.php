@@ -43,6 +43,14 @@ class Podping_Handler {
 			return false;
 		}
 
+		// Now let's check if the feed URL is not protected.
+		$result = wp_remote_get( $feed_url );
+		if ( isset( $result['response']['code'] ) && 401 === $result['response']['code'] ) {
+			$this->logger->log( __METHOD__ . sprintf( ': The feed %s is protected, skipped it from ping!', $feed_url ) );
+
+			return false;
+		}
+
 		$options = array(
 			'headers' => array(
 				'Authorization' => $this->get_token(),

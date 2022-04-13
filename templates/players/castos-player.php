@@ -130,11 +130,11 @@
 					<?php _e( 'Share', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div class="icons-holder">
-					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $audio_file; ?>&t=<?php echo $episode->post_title; ?>"
+					<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo $current_url; ?>&t=<?php echo $episode->post_title; ?>"
 					   target="_blank" rel="noopener noreferrer" class="share-icon facebook" title="<?php _e( 'Share on Facebook', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 					</a>
-					<a href="https://twitter.com/intent/tweet?text=<?php echo $audio_file; ?>&url=<?php echo $episode->post_title; ?>"
+					<a href="https://twitter.com/intent/tweet?text=<?php echo $current_url; ?>&url=<?php echo $episode->post_title; ?>"
 					   target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="<?php _e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 					</a>

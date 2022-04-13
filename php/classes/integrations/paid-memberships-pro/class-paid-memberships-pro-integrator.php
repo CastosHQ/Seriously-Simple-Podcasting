@@ -71,8 +71,11 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
 		} else {
-			$this->protect_private_series();
-			$this->print_private_podcast_feeds();
+			$integration_enabled = ssp_get_option( 'enable_pmpro_integration', 'on' );
+			if ( $integration_enabled ) {
+				$this->protect_private_series();
+				$this->print_private_podcast_feeds();
+			}
 		}
 
 		$this->init_subscribers_sync();
@@ -618,8 +621,21 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 					'id'   => 'is_pmpro_integration',
 					'type' => 'hidden',
 				),
+				array(
+					'id'          => 'enable_pmpro_integration',
+					'type'        => 'checkbox',
+					'default'     => 'on',
+					'label'       => __( 'Enable integration', 'seriously-simple-podcasting' ),
+					'description' => __( 'Enable Paid Memberships Pro integration', 'seriously-simple-podcasting' ),
+				),
 			),
 		);
+
+		if ( ! ssp_get_option( 'enable_pmpro_integration', 'on' ) ) {
+			$settings['description'] = '';
+
+			return $settings;
+		}
 
 		if ( ! $levels ) {
 			$levels_url              = admin_url( 'admin.php?page=pmpro-membershiplevels' );

@@ -910,10 +910,11 @@ class Settings_Handler {
 			$private_podcast['type']        = '';
 		}
 
-		if ( class_exists( 'PMPro_Membership_Level' ) ) {
+		// Option enable_pmpro_integration is "on" by default for backward compatibility
+		if ( class_exists( 'PMPro_Membership_Level' ) && ssp_get_option( 'enable_pmpro_integration', 'on' ) ) {
 			$private_podcast['description'] = __( 'Looks like you\'re already using Paid Membership Pro to make your podcast private.', 'seriously-simple-podcasting' );
 			$private_podcast['type']        = '';
-		} elseif ( class_exists( 'LifterLMS' ) ) {
+		} elseif ( class_exists( 'LifterLMS' ) && ssp_get_option( 'enable_lifterlms_integration' ) ) {
 			$private_podcast['description'] = __( 'Looks like you\'re already using LifterLMS to make your podcast private.', 'seriously-simple-podcasting' );
 			$private_podcast['type']        = '';
 		}

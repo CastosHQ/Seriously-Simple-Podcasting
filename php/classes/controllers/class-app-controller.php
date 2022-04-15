@@ -198,8 +198,10 @@ class App_Controller extends Controller {
 
 		$this->podping_handler = new Podping_Handler( $this->logger );
 
+		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
+
 		if ( is_admin() ) {
-			$this->admin_notices_handler = ( new Admin_Notifications_Handler( $this->token ) )->bootstrap();
+			$this->admin_notices_handler->bootstrap();
 
 			global $ssp_settings, $ssp_options;
 			$ssp_settings = new Settings_Controller( $this->file, SSP_VERSION );

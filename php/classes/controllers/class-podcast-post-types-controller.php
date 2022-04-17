@@ -747,8 +747,6 @@ class Podcast_Post_Types_Controller {
 	 * @return void
 	 */
 	public function register_custom_columns( $column_name, $id ) {
-		global $ss_podcasting;
-
 		switch ( $column_name ) {
 
 			case 'series':
@@ -758,7 +756,7 @@ class Podcast_Post_Types_Controller {
 				break;
 
 			case 'image':
-				$value = $ss_podcasting->get_image( $id, 40 );
+				$value = ssp_frontend_controller()->get_image( $id, 40 );
 				echo $value;
 				break;
 

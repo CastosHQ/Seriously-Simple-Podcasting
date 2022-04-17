@@ -1081,15 +1081,22 @@ class Frontend_Controller {
 	 * @return string        Image HTML markup
 	 */
 	public function get_image( $post_id = 0, $size = 'full' ) {
+
 		$image = '';
 
-		if ( has_post_thumbnail( $post_id ) ) {
-			// If not a string or an array, and not an integer, default to 200x9999.
-			if ( is_int( $size ) || ( 0 < intval( $size ) ) ) {
-				$size = array( intval( $size ), intval( $size ) );
-			} elseif ( ! is_string( $size ) && ! is_array( $size ) ) {
-				$size = array( 200, 9999 );
-			}
+		if ( is_int( $size ) || ( 0 < intval( $size ) ) ) {
+			$size = array( intval( $size ), intval( $size ) );
+		} elseif ( ! is_string( $size ) && ! is_array( $size ) ) {
+			$size = array( 200, 9999 );
+		}
+
+		$image_id = get_post_meta( $post_id, 'cover_image_id', true );
+
+		if ( $image_id ) {
+			$image = wp_get_attachment_image( $image_id, $size );
+		}
+
+		if ( empty( $image ) && has_post_thumbnail( $post_id ) ) {
 			$image = get_the_post_thumbnail( intval( $post_id ), $size );
 		}
 

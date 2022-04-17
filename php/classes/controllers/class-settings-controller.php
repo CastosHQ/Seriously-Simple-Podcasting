@@ -195,7 +195,7 @@ class Settings_Controller extends Controller {
 	 */
 	public function enqueue_scripts() {
 		global $pagenow;
-		$page  = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_SANITIZE_STRING ) : '' );
+		$page  = ( isset( $_GET['page'] ) ? filter_var( $_GET['page'], FILTER_DEFAULT ) : '' );
 		$pages = array( 'post-new.php', 'post.php' );
 		if ( in_array( $pagenow, $pages, true ) || ( ! empty( $page ) && 'podcast_settings' === $page ) ) {
 			wp_enqueue_media();
@@ -248,7 +248,7 @@ class Settings_Controller extends Controller {
 		$feed_series = '';
 		$section_title = $data['title'];
 		if ( 'feed-details' === $section ) {
-			$feed_series = ( isset( $_REQUEST['feed-series'] ) ? filter_var( $_REQUEST['feed-series'], FILTER_SANITIZE_STRING ) : '' );
+			$feed_series = ( isset( $_REQUEST['feed-series'] ) ? filter_var( $_REQUEST['feed-series'], FILTER_DEFAULT ) : '' );
 			if ( $feed_series && 'default' !== $feed_series ) {
 
 				// Get selected series.
@@ -302,9 +302,9 @@ class Settings_Controller extends Controller {
 	 * @return string
 	 */
 	protected function get_settings_section(){
-		$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_SANITIZE_STRING ) : '' );
+		$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_DEFAULT ) : '' );
 		if ( ! $tab ) {
-			$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_SANITIZE_STRING ) : '' );
+			$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_DEFAULT ) : '' );
 		}
 
 		return $tab ?: 'general';

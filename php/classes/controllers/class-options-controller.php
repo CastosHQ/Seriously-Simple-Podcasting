@@ -251,13 +251,13 @@ class Options_Controller extends Controller {
 	 */
 	public function register_options() {
 		if ( is_array( $this->options ) ) {
-			$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_SANITIZE_STRING ) : '' );
+			$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_DEFAULT ) : '' );
 			// Check posted/selected tab.
 			$current_section = 'subscribe';
 			if ( ! empty( $tab ) ) {
 				$current_section = $tab;
 			} else {
-				$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_SANITIZE_STRING ) : '' );
+				$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_DEFAULT ) : '' );
 				if ( ! empty( $tab ) ) {
 					$current_section = $tab;
 				}

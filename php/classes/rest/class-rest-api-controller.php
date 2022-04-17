@@ -178,7 +178,7 @@ class Rest_Api_Controller {
 			'message' => '',
 		);
 
-		$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_SANITIZE_STRING ) : '' );
+		$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_DEFAULT ) : '' );
 		if ( empty( $ssp_podcast_api_token ) ) {
 			$response['message'] = 'No Castos API token set';
 			return $response;
@@ -215,7 +215,7 @@ class Rest_Api_Controller {
 	 * @return array $podcast Podcast data
 	 */
 	public function get_episode_audio_player() {
-		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_SANITIZE_STRING ) : '' );
+		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_DEFAULT ) : '' );
 		global $ss_podcasting;
 		$file   = $ss_podcasting->episode_controller->get_episode_player_link( $podcast_id );
 		$params = array( 'src' => $file, 'preload' => 'none' );

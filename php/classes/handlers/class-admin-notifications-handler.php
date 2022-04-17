@@ -635,7 +635,7 @@ class Admin_Notifications_Handler {
 
 	public function show_elementor_templates_available() {
 		// only show this on podcast list pages
-		$post_type = ( isset( $_GET['post_type'] ) ? filter_var( $_GET['post_type'], FILTER_SANITIZE_STRING ) : '' );
+		$post_type = ( isset( $_GET['post_type'] ) ? filter_var( $_GET['post_type'], FILTER_DEFAULT ) : '' );
 		if ( empty( $post_type ) || SSP_CPT_PODCAST !== $post_type ) {
 			return;
 		}

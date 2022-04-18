@@ -6,18 +6,18 @@ When contributing please ensure you follow the guidelines below so that we can k
 
 __Note:__
 
-GitHub is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](http://wordpress.org/support/plugin/seriously-simple-podcasting) instead for general support, but make sure to read through the [documentation](http://www.seriouslysimplepodcasting.com/documentation/) first.
+GitLab is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](http://wordpress.org/support/plugin/seriously-simple-podcasting) instead for general support, but make sure to read through the [documentation](http://www.seriouslysimplepodcasting.com/documentation/) first.
 
 ## Getting Started
 
-* Make sure you have a [GitHub account](https://github.com/signup/free)
+* Make sure you have a [GitLab account](https://gitlab.com/users/sign_up)
 * Submit a ticket for your issue, assuming one does not already exist.
   * Clearly describe the issue including steps to reproduce when it is a bug.
   * Make sure you fill in the earliest version that you know has the issue.
 
 ## Making Changes
 
-* Fork the repository on GitHub.
+* [Fork](https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#creating-a-fork) the repository on GitLab.
 * Clone the forked repository to your local development environment
 * Run `npm install`, which will install any npm and composer dependencies, as well as build any block editor assets
 * Define the `SCRIPT_DEBUG` constant in your wp-config.php to use the development versions of any JavaScript and CSS assets
@@ -35,8 +35,8 @@ Translations for Seriously Simple Podcasting are managed directly on WordPress.o
 
 # Additional Resources
 
-* [General GitHub documentation](http://help.github.com/)
-* [GitHub pull request documentation](http://help.github.com/send-pull-requests/)
+* [General GitLab documentation](https://docs.gitlab.com/)
+* [GitLab merge request documentation](https://docs.gitlab.com/ee/user/project/merge_requests/)
 * [Seriously Simple Podcasting Docs](http://www.seriouslysimplepodcasting.com/)
 * [Seriously Simple Podcasting Support](http://wordpress.org/support/plugin/seriously-simple-podcasting)
 

@@ -122,7 +122,7 @@ Seriously Simple Podcasting comes with complete user and developer [documentati
 
 **How to contribute**
 
-If you want to contribute to Seriously Simple Podcasting, you can [fork the GitHub repository](https://github.com/thecraighewitt/Seriously-Simple-Podcasting) – please read the [contributor guidelines](https://github.com/thecraighewitt/Seriously-Simple-Podcasting/blob/master/CONTRIBUTING.md) for more information on how you can do this.
+If you want to contribute to Seriously Simple Podcasting, you can [fork the GitLab repository](https://gitlab.com/castos/Seriously-Simple-Podcasting) – please read the [contributor guidelines](https://gitlab.com/castos/Seriously-Simple-Podcasting/-/blob/master/CONTRIBUTING.md) for more information on how you can do this.
 
 **Help translate this plugin**
 

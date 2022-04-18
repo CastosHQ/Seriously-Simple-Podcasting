@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 5.9
 Requires PHP: 5.6
-Stable tag: 2.12.0
+Stable tag: 2.13.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,18 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.13.0 =
+* 2022-04-18
+* UPDATE SUMMARY: Podping notification when feed is updated, code refactoring, minor improvements
+* [UPDATE] Podping notification when feed is updated
+* [UPDATE] Code refactoring: moved podcast CPT functions to a separate controller
+* [UPDATE] PMPro integration: possibility to enable/disable integration with settings
+* [UPDATE] Changed the contributing guide from GitHub to GitLab
+* [FIX] Fixed Elementor episode list widget in compact mode
+* [FIX] Bug fixed: Yoast integration critical error
+* [FIX] Fixed the Twitter share URL
+* [FIX] Fixed intermittent update episode error
 
 = 2.12.0 =
 * 2022-03-29

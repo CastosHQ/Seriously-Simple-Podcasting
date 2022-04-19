@@ -128,18 +128,14 @@ class Podcast_Post_Types_Controller {
 	 * @return bool
 	 */
 	public function notify_podping_on_series_added( $post_id, $term_id, $taxonomy ) {
-		if ( 'series' !== $taxonomy ) {
-			return false;
-		}
 
 		$post = get_post( $post_id );
 
-		if ( 'publish' !== $post->post_status ) {
+		if ( 'series' !== $taxonomy || 'publish' !== $post->post_status ) {
 			return false;
 		}
 
-		$is_notification_enabled = ssp_get_option( 'podping_notification', 'on', $term_id );
-		if ( ! $is_notification_enabled ) {
+		if ( ! get_option( 'blog_public' ) || ! ssp_get_option( 'podping_notification', 'on', $term_id ) ) {
 			return false;
 		}
 
@@ -171,13 +167,14 @@ class Podcast_Post_Types_Controller {
 	 */
 	public function notify_podping( $post_id, $post, $update, $post_before ) {
 
-		$is_just_published = 'publish' !== $post_before->post_status && 'publish' === $post->post_status;
+		$is_just_published = isset( $post_before->post_status ) && isset( $post->post_status ) &&
+		                     'publish' !== $post_before->post_status && 'publish' === $post->post_status;
 
 		if ( ! $is_just_published ) {
 			return;
 		}
 
-		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
+		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) || ! get_option( 'blog_public' ) ) {
 			return;
 		}
 

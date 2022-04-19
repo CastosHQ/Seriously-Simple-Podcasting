@@ -892,6 +892,14 @@ class Settings_Handler {
 				'callback'    => 'esc_url_raw',
 				'class'       => 'regular-text',
 			),
+			array(
+				'id'          => 'podping_notification',
+				'label'       => __( 'Podping', 'seriously-simple-podcasting' ),
+				'description' => __( 'Enable podping notification.', 'seriously-simple-podcasting' ),
+				'type'        => 'checkbox',
+				'default'     => 'on',
+				'callback'    => 'wp_strip_all_tags',
+			),
 		);
 
 		$private_podcast = array(

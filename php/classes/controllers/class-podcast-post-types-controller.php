@@ -138,6 +138,11 @@ class Podcast_Post_Types_Controller {
 			return false;
 		}
 
+		$is_notification_enabled = ssp_get_option( 'podping_notification', 'on', $term_id );
+		if ( ! $is_notification_enabled ) {
+			return false;
+		}
+
 		// If this action was fired, it means that we don't need to fire notify_podping() anymore
 		remove_action( 'wp_after_insert_post', array( $this, 'notify_podping' ) );
 
@@ -182,18 +187,22 @@ class Podcast_Post_Types_Controller {
 		/**
 		 * Episode can belong to multiple series feeds, so let's notify all of them.
 		 * If episode doesn't belong to any series, it belongs to the main feed.
+		 * @var \WP_Term[] $series_terms
 		 * */
 		if ( is_array( $series_terms ) && $series_terms ) {
 			// This is the case when episode with series was saved first as draft and then published.
 			foreach ( $series_terms as $term ) {
-				/**
-				 * @var \WP_Term $term
-				 * */
-				$feed_urls[] = ssp_get_feed_url( $term->slug );
+				$is_notification_enabled = ssp_get_option( 'podping_notification', 'on', $term->term_id );
+				if ( $is_notification_enabled ) {
+					$feed_urls[] = ssp_get_feed_url( $term->slug );
+				}
 			}
 		} else {
 			// This is the case when a new episode without series was published.
-			$feed_urls[] = ssp_get_feed_url();
+			$is_notification_enabled = ssp_get_option( 'podping_notification', 'on' );
+			if ( $is_notification_enabled ) {
+				$feed_urls[] = ssp_get_feed_url();
+			}
 		}
 
 		foreach ( $feed_urls as $feed_url ) {

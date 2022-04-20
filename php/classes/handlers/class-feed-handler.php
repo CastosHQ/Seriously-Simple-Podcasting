@@ -667,4 +667,167 @@ class Feed_Handler {
 		return apply_filters( 'ssp_feed_item_description', $content, $post_id );
 	}
 
+	/**
+	 * Get episode image (cover or featured image).
+	 *
+	 * @param $post_id
+	 *
+	 * @return mixed|void
+	 */
+	public function get_feed_item_image( $post_id ) {
+		$episode_image = ssp_frontend_controller()->get_episode_image_url( $post_id );
+		return apply_filters( 'ssp_feed_item_image', $episode_image, $post_id );
+	}
+
+	/**
+	 * Get feed item duration.
+	 * Episode duration (default to 0:00 to ensure there is always a value for this)
+	 *
+	 * @param $post_id
+	 *
+	 * @return mixed|void
+	 */
+	public function get_feed_item_duration( $post_id ){
+		$duration = get_post_meta( $post_id, 'duration', true );
+		if ( ! $duration ) {
+			$duration = '0:00';
+		}
+		return apply_filters( 'ssp_feed_item_duration', $duration, $post_id );
+	}
+
+	/**
+	 * Get feed item file size in bytes.
+	 *
+	 * @param $post_id
+	 *
+	 * @return int
+	 */
+	public function get_feed_item_file_size( $post_id ){
+		$size = get_post_meta( $post_id, 'filesize_raw', true );
+
+		if ( ! $size ) {
+			$formatted_size = get_post_meta( $post_id, 'filesize', true );
+			if ( ssp_is_connected_to_castos() || $formatted_size ) {
+				$size = convert_human_readable_to_bytes( $formatted_size );
+			} else {
+				$size = 1;
+			}
+		}
+		return apply_filters( 'ssp_feed_item_size', $size, $post_id );
+	}
+
+	/**
+	 * Get feed item mime type.
+	 * Default to MP3/MP4 to ensure there is always a value for this.
+	 *
+	 * @param $audio_file
+	 * @param $post_id
+	 *
+	 * @return mixed|void
+	 */
+	public function get_feed_item_mime_type( $audio_file, $post_id ) {
+
+		$ss_podcasting = ssp_frontend_controller();
+		$mime_type     = $ss_podcasting->get_attachment_mimetype( $audio_file );
+		if ( ! $mime_type ) {
+
+			// Get the episode type (audio or video) to determine the appropriate default MIME type
+			$episode_type = $ss_podcasting->get_episode_type( $post_id );
+			switch ( $episode_type ) {
+				case 'audio':
+					$mime_type = 'audio/mpeg';
+					break;
+				case 'video':
+					$mime_type = 'video/mp4';
+					break;
+			}
+		}
+
+		return apply_filters( 'ssp_feed_item_mime_type', $mime_type, $post_id );
+	}
+
+	/**
+	 * Get feed item itunes summary.
+	 * iTunes summary excludes HTML and must be shorter than 4000 characters.
+	 *
+	 * @param $description
+	 * @param $post_id
+	 *
+	 * @return mixed|void
+	 */
+	public function get_feed_item_itunes_summary( $description, $post_id ) {
+		$itunes_summary = wp_strip_all_tags( $description );
+		$itunes_summary = mb_substr( $itunes_summary, 0, 3999 );
+		return apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, $post_id );
+	}
+
+	/**
+	 * Get feed item Google Play description.
+	 * Google Play description is the same as iTunes summary, but must be shorter than 1000 characters.
+	 *
+	 * @param $description
+	 * @param $post_id
+	 *
+	 * @return mixed|void
+	 */
+	public function get_feed_item_google_play_description( $description, $post_id ){
+		$gp_description = wp_strip_all_tags( $description );
+		$gp_description = mb_substr( $gp_description, 0, 999 );
+		return apply_filters( 'ssp_feed_item_gp_description', $gp_description, $post_id );
+	}
+
+	/**
+	 * Get feed item iTunes subtitle.
+	 * iTunes subtitle excludes HTML and must be shorter than 255 characters.
+	 *
+	 * @param $description
+	 * @param $post_id
+	 *
+	 * @return mixed|void
+	 */
+	public function get_feed_item_itunes_subtitle( $description, $post_id ){
+		$itunes_subtitle = wp_strip_all_tags( $description );
+		$itunes_subtitle = str_replace(
+			array(
+				'>',
+				'<',
+				'\'',
+				'"',
+				'`',
+				'[andhellip;]',
+				'[&hellip;]',
+				'[&#8230;]',
+			),
+			array( '', '', '', '', '', '', '', '' ),
+			$itunes_subtitle
+		);
+
+		$itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
+		return apply_filters( 'ssp_feed_item_itunes_subtitle', $itunes_subtitle, $post_id );
+	}
+
+	/**
+	 * Get feed item publication date.
+	 *
+	 * @param $pub_date_type
+	 * @param $post_id
+	 *
+	 * @return mixed|void
+	 */
+	public function get_feed_item_pub_date( $pub_date_type, $post_id ) {
+		$pub_date = ( 'published' === $pub_date_type ) ? get_post_time( 'Y-m-d H:i:s', true ) : get_post_meta( $post_id, 'date_recorded', true );
+		$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', $pub_date, false ) );
+
+		return apply_filters( 'ssp_feed_item_pub_date', $pub_date, $post_id, $pub_date_type );
+	}
+
+	/**
+	 * @param $post_id
+	 *
+	 * @return mixed|void
+	 */
+	public function get_feed_item_explicit_flag( $post_id ) {
+		$ep_explicit = get_post_meta( $post_id, 'explicit', true );
+		return apply_filters( 'ssp_feed_item_explicit', $ep_explicit, $post_id );
+	}
 }

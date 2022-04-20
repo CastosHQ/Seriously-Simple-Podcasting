@@ -215,11 +215,11 @@ class Feed_Controller {
 	 * @param array $args {
 	 *     Array of the arguments for the feed item.
 	 *
-	 * @type int $author Episode author.
-	 * @type bool $is_excerpt_mode Use excerpt mode or not.
-	 * @type string $pub_date_type Date type.
-	 * @type int|null $turbo_post_count Feed items counter.
-	 * @type string $media_prefix Prefix for Podtrac, Chartable, and other tracking services.
+	 *  @type int $author Episode author.
+	 *  @type bool $is_excerpt_mode Use excerpt mode or not.
+	 *  @type string $pub_date_type Date type.
+	 *  @type int|null $turbo_post_count Feed items counter.
+	 *  @type string $media_prefix Prefix for Podtrac, Chartable, and other tracking services.
 	 * }
 	 *
 	 * @return string
@@ -258,50 +258,12 @@ class Feed_Controller {
 			return '';
 		}
 
-		// Get episode image from post featured image
-		$episode_image = $ss_podcasting->get_episode_image_url( $post_id );
-		$episode_image = apply_filters( 'ssp_feed_item_image', $episode_image, $post_id );
+		$episode_image = $this->feed_handler->get_feed_item_image( $post_id );
+		$duration      = $this->feed_handler->get_feed_item_duration( $post_id );
+		$size          = $this->feed_handler->get_feed_item_file_size( $post_id );
+		$mime_type     = $this->feed_handler->get_feed_item_mime_type( $audio_file, $post_id );
+		$ep_explicit   = $this->feed_handler->get_feed_item_explicit_flag( $post_id );
 
-		// Episode duration (default to 0:00 to ensure there is always a value for this)
-		$duration = get_post_meta( $post_id, 'duration', true );
-		if ( ! $duration ) {
-			$duration = '0:00';
-		}
-		$duration = apply_filters( 'ssp_feed_item_duration', $duration, $post_id );
-
-		// File size
-		$size = get_post_meta( $post_id, 'filesize_raw', true );
-
-		if ( ! $size ) {
-			$formatted_size = get_post_meta( $post_id, 'filesize', true );
-			if ( ssp_is_connected_to_castos() || $formatted_size ) {
-				$size = convert_human_readable_to_bytes( $formatted_size );
-			} else {
-				$size = 1;
-			}
-		}
-		$size = apply_filters( 'ssp_feed_item_size', $size, $post_id );
-
-		// File MIME type (default to MP3/MP4 to ensure there is always a value for this)
-		$mime_type = $ss_podcasting->get_attachment_mimetype( $audio_file );
-		if ( ! $mime_type ) {
-
-			// Get the episode type (audio or video) to determine the appropriate default MIME type
-			$episode_type = $ss_podcasting->get_episode_type( $post_id );
-			switch ( $episode_type ) {
-				case 'audio':
-					$mime_type = 'audio/mpeg';
-					break;
-				case 'video':
-					$mime_type = 'video/mp4';
-					break;
-			}
-		}
-		$mime_type = apply_filters( 'ssp_feed_item_mime_type', $mime_type, $post_id );
-
-		// Episode explicit flag
-		$ep_explicit = get_post_meta( $post_id, 'explicit', true );
-		$ep_explicit = apply_filters( 'ssp_feed_item_explicit', $ep_explicit, $post_id );
 		if ( $ep_explicit && $ep_explicit == 'on' ) {
 			$itunes_explicit_flag     = 'yes';
 			$googleplay_explicit_flag = 'Yes';
@@ -313,11 +275,7 @@ class Feed_Controller {
 		// Episode block flag
 		$ep_block = get_post_meta( $post_id, 'block', true );
 		$ep_block = apply_filters( 'ssp_feed_item_block', $ep_block, $post_id );
-		if ( $ep_block && $ep_block == 'on' ) {
-			$block_flag = 'yes';
-		} else {
-			$block_flag = 'no';
-		}
+		$block_flag = ( $ep_block && $ep_block == 'on' ) ? 'yes' : 'no';
 
 		// Episode author.
 		$author = apply_filters( 'ssp_feed_item_author', $author, $post_id );
@@ -329,40 +287,11 @@ class Feed_Controller {
 			$qry->reset_postdata();
 		}
 
-		// iTunes summary excludes HTML and must be shorter than 4000 characters.
-		$itunes_summary = wp_strip_all_tags( $description );
-		$itunes_summary = mb_substr( $itunes_summary, 0, 3999 );
-		$itunes_summary = apply_filters( 'ssp_feed_item_itunes_summary', $itunes_summary, $post_id );
-
-		// Google Play description is the same as iTunes summary, but must be shorter than 1000 characters.
-		$gp_description = mb_substr( $itunes_summary, 0, 999 );
-		$gp_description = apply_filters( 'ssp_feed_item_gp_description', $gp_description, $post_id );
-
-		// iTunes subtitle excludes HTML and must be shorter than 255 characters.
-		$itunes_subtitle = wp_strip_all_tags( $description );
-		$itunes_subtitle = str_replace(
-			array(
-				'>',
-				'<',
-				'\'',
-				'"',
-				'`',
-				'[andhellip;]',
-				'[&hellip;]',
-				'[&#8230;]',
-			),
-			array( '', '', '', '', '', '', '', '' ),
-			$itunes_subtitle
-		);
-		$itunes_subtitle = mb_substr( $itunes_subtitle, 0, 254 );
-		$itunes_subtitle = apply_filters( 'ssp_feed_item_itunes_subtitle', $itunes_subtitle, $post_id );
-
-		// Date recorded.
-		$pub_date = ( 'published' === $pub_date_type ) ? get_post_time( 'Y-m-d H:i:s', true ) : get_post_meta( $post_id, 'date_recorded', true );
-		$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', $pub_date, false ) );
-
-		// Tags/keywords.
-		$keywords = $this->get_feed_item_keywords();
+		$itunes_summary  = $this->feed_handler->get_feed_item_itunes_summary( $description, $post_id );
+		$gp_description  = $this->feed_handler->get_feed_item_google_play_description( $description, $post_id );
+		$itunes_subtitle = $this->feed_handler->get_feed_item_itunes_subtitle( $description, $post_id );
+		$pub_date        = $this->feed_handler->get_feed_item_pub_date( $pub_date_type, $post_id );
+		$keywords        = $this->get_feed_item_keywords();
 
 		$itunes_enabled    = get_option( 'ss_podcasting_itunes_fields_enabled' );
 		$is_itunes_enabled = $itunes_enabled && $itunes_enabled == 'on';

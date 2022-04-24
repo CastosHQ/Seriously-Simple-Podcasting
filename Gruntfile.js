@@ -1,4 +1,6 @@
 module.exports = function (a) {
+	const sass = require('node-sass');
+
 	a.initConfig({
 		pkg: a.file.readJSON("package.json"),
 		addtextdomain: {
@@ -40,6 +42,9 @@ module.exports = function (a) {
 			}
 		},
 		sass: {
+			options: {
+				implementation: sass
+			},
 			dist: {
 				options: {
 					sourcemap: false,
@@ -81,7 +86,7 @@ module.exports = function (a) {
 	});
 	a.loadNpmTasks('grunt-contrib-cssmin');
 	a.loadNpmTasks('grunt-contrib-uglify');
-	a.loadNpmTasks('grunt-contrib-sass');
+	a.loadNpmTasks('grunt-sass');
 	a.loadNpmTasks('grunt-contrib-watch');
 	a.registerTask('default',['sass', 'watch']);
 /*

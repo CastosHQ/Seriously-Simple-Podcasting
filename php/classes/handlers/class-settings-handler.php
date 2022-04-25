@@ -500,13 +500,6 @@ class Settings_Handler {
 					'default'     => 'all',
 				),
 				array(
-					'id'          => 'player_meta_data_enabled',
-					'label'       => __( 'Enable Player meta data', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn this on to enable player meta data underneath the player. (download link, episode duration and date recorded).', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
 					'id'          => 'player_subscribe_urls_enabled',
 					'label'       => __( 'Show subscribe urls', 'seriously-simple-podcasting' ),
 					'description' => __( 'Turn on to display subscribe urls under the player', 'seriously-simple-podcasting' ),
@@ -560,7 +553,16 @@ class Settings_Handler {
 			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $html_5_player_settings );
 		}
 
-		$meta_data_enabled = 'on' === get_option( 'ss_podcasting_player_meta_data_enabled', 'on' );
+		$settings['player-settings']['fields'][] = array(
+			'id'          => 'player_meta_data_enabled',
+			'label'       => __( 'Enable Player meta data', 'seriously-simple-podcasting' ),
+			'description' => __( 'Turn this on to enable player meta data underneath the player (download link, episode duration, date recorded, etc.).', 'seriously-simple-podcasting' ),
+			'type'        => 'checkbox',
+			'default'     => 'on',
+		);
+
+		$meta_data_enabled = 'on' === ssp_get_option( 'player_meta_data_enabled', 'on' );
+
 		if ( $meta_data_enabled ) {
 			$meta_settings = array(
 				array(
@@ -592,6 +594,8 @@ class Settings_Handler {
 					'default'     => 'on',
 				),
 			);
+
+			$meta_settings = apply_filters( 'ssp_player_meta_settings', $meta_settings );
 
 			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $meta_settings );
 		}

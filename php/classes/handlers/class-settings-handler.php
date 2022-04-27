@@ -1043,19 +1043,25 @@ class Settings_Handler {
 					'callback'    => 'sanitize_text_field',
 					'class'       => 'regular-text',
 				),
+				array(
+					'id'          => 'podmotor_disconnect',
+					'label'       => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
+					'description' => __( 'Disconnect your Castos account.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+					'callback'    => 'wp_strip_all_tags',
+					'class'       => 'disconnect-castos',
+				),
 			),
 		);
 
-		if ( ssp_is_connected_to_castos() ) {
-			$settings['castos-hosting']['fields'][] = array(
-				'id'          => 'podmotor_disconnect',
-				'label'       => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
-				'description' => __( 'Disconnect your Castos account.', 'seriously-simple-podcasting' ),
-				'type'        => 'checkbox',
-				'default'     => '',
-				'callback'    => 'wp_strip_all_tags',
-				'class'       => 'disconnect-castos',
-			);
+		if ( ! ssp_is_connected_to_castos() ) {
+			foreach ( $settings['castos-hosting']['fields'] as $k => $field ) {
+				if ( 'podmotor_disconnect' === $field['id'] ) {
+					$settings['castos-hosting']['fields'][ $k ]['type'] = 'hidden';
+					break;
+				}
+			}
 		}
 
 		$fields = array();

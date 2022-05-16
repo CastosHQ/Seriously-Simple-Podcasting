@@ -172,7 +172,7 @@ class Frontend_Controller {
 
 		$ssp_post_types = ssp_post_types();
 
-		if ( ! in_array( $post->post_type, $ssp_post_types ) ) {
+		if ( empty( $post->post_type ) || ! in_array( $post->post_type, $ssp_post_types ) ) {
 			return $content;
 		}
 

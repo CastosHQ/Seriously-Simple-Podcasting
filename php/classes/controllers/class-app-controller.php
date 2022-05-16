@@ -538,7 +538,7 @@ HTML;
 		unset( $columns['posts'] );
 
 		$columns['series_image']    = __( 'Series Image', 'seriously-simple-podcasting' );
-		$columns['series_feed_url'] = __( 'Series feed URL', 'seriously-simple-podcasting' );
+		$columns['series_feed_url'] = __( 'Podcast feed URL', 'seriously-simple-podcasting' );
 		$columns['posts']           = __( 'Episodes', 'seriously-simple-podcasting' );
 		$columns = apply_filters( 'ssp_admin_columns_series', $columns );
 

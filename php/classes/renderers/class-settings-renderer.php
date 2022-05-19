@@ -72,7 +72,8 @@ class Settings_Renderer {
 			case 'text':
 			case 'password':
 			case 'number':
-				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $field['placeholder'] ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"' . $data_attrs . '/>' . "\n";
+				$placeholder = isset( $field['placeholder'] ) ? $field['placeholder'] : '';
+				$html .= '<input id="' . esc_attr( $field['id'] ) . '" type="' . $field['type'] . '" name="' . esc_attr( $option_name ) . '" placeholder="' . esc_attr( $placeholder ) . '" value="' . esc_attr( $data ) . '" class="' . $class . '"' . $data_attrs . '/>' . "\n";
 				break;
 			case 'hidden':
 				$html .= '<input name="' . esc_attr( $field['id'] ) . '" type="hidden" id="' . esc_attr( $field['id'] ) . '" value="' . esc_attr( $data ) . '" />' . "\n";

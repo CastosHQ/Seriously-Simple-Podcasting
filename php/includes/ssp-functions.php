@@ -4,6 +4,7 @@ use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
 
 // Exit if accessed directly.
@@ -1449,5 +1450,31 @@ if ( ! function_exists( 'ssp_episode_controller' ) ) {
 	 */
 	function ssp_episode_controller() {
 		return ssp_frontend_controller()->episode_controller;
+	}
+}
+
+
+/**
+ * Get the current Series base slug.
+ */
+if ( ! function_exists( 'ssp_series_slug' ) ) {
+
+	/**
+	 * Get base slug for Series taxonomy.
+	 * Since 2.14.0, Series taxonomy was renamed to Podcasts.
+	 * @since 2.14.0
+	 *
+	 * @return string
+	 */
+	function ssp_series_slug() {
+		if ( $slug = ssp_get_option( 'series_slug' ) ) {
+			return $slug;
+		}
+
+		$is_old_customer = wp_count_terms( CPT_Podcast_Handler::TAXONOMY_SERIES );
+
+		$slug =  $is_old_customer ? CPT_Podcast_Handler::TAXONOMY_SERIES : CPT_Podcast_Handler::DEFAULT_SERIES_SLUG;
+
+		return apply_filters( 'ssp_series_slug', $slug );
 	}
 }

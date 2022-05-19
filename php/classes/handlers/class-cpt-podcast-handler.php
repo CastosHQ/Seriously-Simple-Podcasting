@@ -12,6 +12,8 @@ class CPT_Podcast_Handler {
 
 	const TAXONOMY_SERIES = 'series';
 
+	const DEFAULT_SERIES_SLUG = 'podcasts';
+
 	protected $roles_handler;
 
 	/**
@@ -43,7 +45,8 @@ class CPT_Podcast_Handler {
 		$podcast_post_types = ssp_post_types( true );
 
 		$args = $this->get_series_args();
-		register_taxonomy( apply_filters( 'ssp_series_taxonomy', self::TAXONOMY_SERIES ), $podcast_post_types, $args );
+		$this->register_series_taxonomy( $podcast_post_types, $args );
+		$this->listen_updating_series_slug( $podcast_post_types, $args );
 
 		// Add Tags to podcast post type
 		if ( apply_filters( 'ssp_use_post_tags', true ) ) {
@@ -56,6 +59,41 @@ class CPT_Podcast_Handler {
 			$args = $this->get_podcast_tags_args();
 			register_taxonomy( apply_filters( 'ssp_podcast_tags_taxonomy', 'podcast_tags' ), $podcast_post_types, $args );
 		}
+	}
+
+	/**
+	 * @param array $podcast_post_types
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	protected function listen_updating_series_slug( $podcast_post_types, $args ) {
+		add_filter( 'pre_update_option_ss_podcasting_series_slug', function ( $slug ) use ( $podcast_post_types, $args ) {
+			$forbidden = array(
+				'podcast',
+				'category'
+			);
+
+			$slug = empty( $slug ) || in_array( $slug, $forbidden ) ? ssp_series_slug() : $slug;
+
+			$args['rewrite']['slug'] = $slug;
+
+			// Reregister series taxonomy with the new slug and flush rewrite rules after that.
+			$this->register_series_taxonomy( $podcast_post_types, $args );
+			flush_rewrite_rules();
+
+			return $slug;
+		} );
+	}
+
+	/**
+	 * @param array $podcast_post_types
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	protected function register_series_taxonomy( $podcast_post_types, $args ) {
+		register_taxonomy( apply_filters( 'ssp_series_taxonomy', self::TAXONOMY_SERIES ), $podcast_post_types, $args );
 	}
 
 	protected function get_podcast_args() {
@@ -172,7 +210,7 @@ class CPT_Podcast_Handler {
 		$series_args = array(
 			'public'            => true,
 			'hierarchical'      => true,
-			'rewrite'           => array( 'slug' => apply_filters( 'ssp_series_slug', self::TAXONOMY_SERIES ) ),
+			'rewrite'           => array( 'slug' => ssp_series_slug() ),
 			'labels'            => $series_labels,
 			'show_in_rest'      => true,
 			'show_admin_column' => true,

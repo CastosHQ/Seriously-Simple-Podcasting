@@ -458,6 +458,14 @@ class Settings_Handler {
 					'type'        => 'checkbox',
 					'default'     => '',
 				),
+				array(
+					// After 2.14.0, we renamed Series to Podcasts
+					'id'          => 'series_slug',
+					'label'       => __( 'Podcasts slug', 'seriously-simple-podcasting' ),
+					'description' => __( 'Podcast permalink base. Please don\'t use reserved slug `podcast`.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => ssp_series_slug(),
+				),
 			),
 		);
 

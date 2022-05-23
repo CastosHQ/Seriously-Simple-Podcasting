@@ -1285,18 +1285,23 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 			$allowed_blocks = apply_filters( 'ssp_feed_item_content_allowed_blocks', $allowed_blocks );
 
 			foreach ( $blocks as $block ) {
-				if ( in_array( $block['blockName'], $allowed_blocks ) ) {
-					$block_content = render_block( $block );
+				$is_allowed = in_array( $block['blockName'], $allowed_blocks ) &&
+							  ( ! isset( $block['attrs']['hideFromFeed'] ) || true !== $block['attrs']['hideFromFeed'] );
 
-					// Strip tags with content inside (styles, scripts)
-					$strip_tags = array('style', 'script');
-
-					foreach ( $strip_tags as $strip_tag ) {
-						$strip_pattern = sprintf( '/<%s[^>]*>([\s\S]*?)<\/%s[^>]*>/', $strip_tag, $strip_tag );
-						$block_content = preg_replace( $strip_pattern, '', $block_content );
-					}
-					$content .= $block_content;
+				if ( ! $is_allowed ) {
+					continue;
 				}
+
+				$block_content = render_block( $block );
+
+				// Strip tags with content inside (styles, scripts)
+				$strip_tags = array('style', 'script');
+
+				foreach ( $strip_tags as $strip_tag ) {
+					$strip_pattern = sprintf( '/<%s[^>]*>([\s\S]*?)<\/%s[^>]*>/', $strip_tag, $strip_tag );
+					$block_content = preg_replace( $strip_pattern, '', $block_content );
+				}
+				$content .= $block_content;
 			}
 		} else {
 			$frontend_controller = ssp_frontend_controller();

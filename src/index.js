@@ -10,6 +10,7 @@ import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
 import EditCastosHTMLPlayer from './components/EditCastosHTMLPlayer';
 import EditPodcastList from "./components/EditPodcastList";
+import './settingsExtender.js';
 
 /**
  * Standard Audio Player Block

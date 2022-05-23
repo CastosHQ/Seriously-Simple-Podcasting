@@ -1280,6 +1280,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 				'core/verse',
 				'core/columns',
 				'core/block',
+				'create-block/castos-transcript',
 			];
 
 			$allowed_blocks = apply_filters( 'ssp_feed_item_content_allowed_blocks', $allowed_blocks );

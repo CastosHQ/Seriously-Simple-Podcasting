@@ -23,6 +23,11 @@ const enabledBlocks = [
 	'core/verse',
 	'core/columns',
 	'core/block',
+	'create-block/castos-transcript',
+];
+
+const feedHiddenByDefaultBlocks = [
+	'create-block/castos-transcript',
 ];
 
 const addAttributes = ( settings, name ) => {
@@ -34,7 +39,7 @@ const addAttributes = ( settings, name ) => {
 	if (!settings.attributes.hasOwnProperty('hideFromFeed')) {
 		settings.attributes.hideFromFeed = {
 			type: "boolean",
-			default: false,
+			default: null,
 		};
 	}
 
@@ -53,7 +58,11 @@ const extendBlockSettings = createHigherOrderComponent((BlockEdit) => {
 			);
 		}
 
-        const {hideFromFeed} = props.attributes;
+		// Workaround: we change the value dynamically here to save the attributes in the database for PHP.
+		// Unfortunately, default attributes are not saved.
+		if (feedHiddenByDefaultBlocks.includes(props.name) && null === props.attributes.hideFromFeed) {
+			props.attributes.hideFromFeed = true;
+		}
 
         return (
             <Fragment>
@@ -65,7 +74,7 @@ const extendBlockSettings = createHigherOrderComponent((BlockEdit) => {
                     >
                         <ToggleControl
                             label={__('Hide From Feed')}
-                            checked={hideFromFeed}
+                            checked={props.attributes.hideFromFeed}
                             onChange={(val) => {
                                 props.setAttributes({
                                     hideFromFeed: val,

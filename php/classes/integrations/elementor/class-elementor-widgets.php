@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor;
 
+use Elementor\Controls_Manager;
 use SeriouslySimplePodcasting\Integrations\Elementor\Widgets\Elementor_Episode_List_Widget;
 use SeriouslySimplePodcasting\Integrations\Elementor\Widgets\Elementor_Recent_Episodes_Widget;
 use SeriouslySimplePodcasting\Integrations\Elementor\Widgets\Elementor_Html_Player_Widget;
@@ -29,6 +30,8 @@ final class Elementor_Widgets {
 	const MINIMUM_PHP_VERSION = '5.6';
 
 	protected $template_importer;
+	protected $settings_extender;
+
 
 	public function __construct() {
 		add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ] );
@@ -59,18 +62,9 @@ final class Elementor_Widgets {
 
 	public function init() {
 		$this->template_importer = new Elementor_Template_Importer();
-		add_action( 'elementor/elements/categories_registered', [ $this, 'add_elementor_widget_categories' ] );
-		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
-	}
+		$this->settings_extender = new Settings_Extender();
 
-	public function add_elementor_widget_categories( $elements_manager ) {
-		$elements_manager->add_category(
-			'podcasting',
-			[
-				'title' => __( 'Podcasting', 'plugin-name' ),
-				'icon'  => 'fa fa-microphone',
-			]
-		);
+		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
 	}
 
 	public function init_widgets() {

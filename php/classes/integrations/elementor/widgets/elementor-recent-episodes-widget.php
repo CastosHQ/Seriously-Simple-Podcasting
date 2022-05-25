@@ -7,11 +7,13 @@ use Elementor\Plugin as ElementorPlugin;
 use Elementor\Widget_Base;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Traits\Elementor_Widget_Helper;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 class Elementor_Recent_Episodes_Widget extends Widget_Base {
 
 	use Useful_Variables;
+	use Elementor_Widget_Helper;
 
 	/**
 	 * @var Renderer
@@ -186,6 +188,11 @@ class Elementor_Recent_Episodes_Widget extends Widget_Base {
 				),
 				'default' => 'all_podcast_types',
 			)
+		);
+
+		$this->add_control(
+			'podcast_term',
+			$this->get_select_podcast_settings()
 		);
 
 		$this->add_control(

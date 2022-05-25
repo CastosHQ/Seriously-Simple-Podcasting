@@ -2,10 +2,14 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
+use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 use Exception;
+use SeriouslySimplePodcasting\Traits\Elementor_Widget_Helper;
 
 class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
+
+	use Elementor_Widget_Helper;
 
 	/**
 	 * Class constructor.
@@ -52,40 +56,11 @@ class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
 			'content_section',
 			[
 				'label' => __( 'Content', 'seriously-simple-podcasting' ),
-				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+				'tab'   => Controls_Manager::TAB_CONTENT,
 			]
 		);
 
-		$series = get_terms(
-			array(
-				'taxonomy' => 'series',
-			)
-		);
-
-		$series_options = array(
-			0 => 'Default',
-		);
-
-		if ( ! empty( $series ) ) {
-			foreach ( $series as $key => $series ) {
-				if ( is_object( $series ) ) {
-					$series_options[ $series->term_id ] = $series->name;
-				}
-			}
-		}
-
-		$series_options_ids = array_keys( $series_options );
-
-		$this->add_control(
-			'show_elements',
-			[
-				'label'    => __( 'Select Podcast', 'seriously-simple-podcasting' ),
-				'type'     => \Elementor\Controls_Manager::SELECT2,
-				'options'  => $series_options,
-				'multiple' => false,
-				'default'  => array_shift( $series_options_ids )
-			]
-		);
+		$this->add_control( 'show_elements', $this->get_select_podcast_settings() );
 
 		$this->end_controls_section();
 	}

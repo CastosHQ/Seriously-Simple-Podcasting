@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Repositories;
 
+use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -501,6 +502,16 @@ class Episode_Repository {
 			$query['orderby']  = 'meta_value';
 			$query['meta_key'] = 'date_recorded';
 			$query['order']    = 'DESC';
+		}
+
+		if ( ! empty( $args['podcast_term'] ) ) {
+			$query['tax_query'] = array(
+				array(
+					'taxonomy' => CPT_Podcast_Handler::TAXONOMY_SERIES,
+					'field'    => 'id',
+					'terms'    => $args['podcast_term'],
+				),
+			);
 		}
 
 		$episodes_query = new \WP_Query( $query );

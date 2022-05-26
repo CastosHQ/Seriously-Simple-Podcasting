@@ -38,6 +38,7 @@ build:
 
     # Now we can build the plugin
     - export NODE_OPTIONS=--openssl-legacy-provider
+    - npm rebuild node-sass
     - npm run predeploy
 
     # Create the dist plugin folder for the deploy

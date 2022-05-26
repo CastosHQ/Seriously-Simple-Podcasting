@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Repositories;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
+use WP_Query;
 
 /**
  * Episode Repository
@@ -477,15 +478,20 @@ class Episode_Repository {
 	 *     @type int    $episodes_number Number of episodes. Default: 3.
 	 *     @type string $episode_types   Episode types. Variants: all_podcast_types, podcast. Default: podcast.
 	 *     @type string $order_by        Order by field. Variants: published, recorded. Default: published.
+	 *     @type string $podcast_term    Fetch episodes from the specified podcast.
+	 *     @type int $paged              Page number.
 	 * }
 	 *
-	 * @return \WP_Post[]
+	 * @return WP_Query
 	 */
-	public function get_recent_episodes( $args = array() ) {
+	public function get_episodes_query( $args = array() ) {
 		$defaults = array(
 			'episodes_number' => 3,
 			'episode_types'   => 'all_podcast_types',
 			'order_by'        => 'published',
+			'podcast_term'    => 0,
+			'paged'           => 1,
+			'order'           => 'DESC',
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -496,15 +502,16 @@ class Episode_Repository {
 			'posts_per_page' => $args['episodes_number'],
 			'post_type'      => $post_types,
 			'post_status'    => array( 'publish' ),
+			'paged'          => $args['paged'],
+			'order'          => $args['order'],
 		);
 
 		if ( 'recorded' === $args['order_by'] ) {
 			$query['orderby']  = 'meta_value';
 			$query['meta_key'] = 'date_recorded';
-			$query['order']    = 'DESC';
 		}
 
-		if ( ! empty( $args['podcast_term'] ) ) {
+		if ( $args['podcast_term'] ) {
 			$query['tax_query'] = array(
 				array(
 					'taxonomy' => CPT_Podcast_Handler::TAXONOMY_SERIES,
@@ -514,8 +521,6 @@ class Episode_Repository {
 			);
 		}
 
-		$episodes_query = new \WP_Query( $query );
-
-		return $episodes_query->get_posts();
+		return new WP_Query( $query );
 	}
 }

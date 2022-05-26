@@ -148,35 +148,4 @@ class Episode_Controller {
 
 		return $this->renderer->render_deprecated( $episodes_template_data, 'episodes/episode-list' );
 	}
-
-	/**
-	 * Render a list of all episodes, based on settings sent
-	 * @todo, currently used for Elementor, update to use for the Block editor as well.
-	 *
-	 * @param $settings
-	 *
-	 * @return string
-	 */
-	public function render_episodes( $settings ) {
-		global $ss_podcasting;
-		$player = $ss_podcasting->players_controller;
-		$paged  = get_query_var( 'paged' );
-
-		$args = array(
-			'post_type'      => SSP_CPT_PODCAST,
-			'posts_per_page' => 10,
-			'paged'          => $paged ?: 1,
-		);
-
-		$episodes               = new WP_Query( $args );
-		$episodes_template_data = array(
-			'player'   => $player,
-			'episodes' => $episodes,
-			'settings' => $settings,
-		);
-
-		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
-
-		return $this->renderer->fetch( 'episodes/all-episodes-list', $episodes_template_data );
-	}
 }

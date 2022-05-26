@@ -6,6 +6,8 @@
 namespace SeriouslySimplePodcasting\Renderers;
 
 // Exit if accessed directly.
+use SeriouslySimplePodcasting\Traits\Singleton;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -15,6 +17,15 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package SeriouslySimplePodcasting
  * */
 class Renderer {
+
+	use Singleton;
+
+	/**
+	 * Todo: get rid of direct instance creating
+	 * */
+	public function __construct() {
+		return $this;
+	}
 
 	/**
 	 * Renderer function (old)

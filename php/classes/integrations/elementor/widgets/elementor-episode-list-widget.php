@@ -5,8 +5,13 @@ namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Traits\Elementor_Widget_Helper;
 
 class Elementor_Episode_List_Widget extends Widget_Base {
+
+	use Elementor_Widget_Helper;
+
 	public function get_name() {
 		return 'Episode List';
 	}
@@ -59,17 +64,38 @@ class Elementor_Episode_List_Widget extends Widget_Base {
 		);
 
 		$this->end_controls_section();
+
+		$this->add_episodes_query_controls( array( 'episodes_number' => 10 ) );
 	}
 
 	protected function render() {
 		$settings          = $this->get_settings_for_display();
-		$render_settings         = array(
+		$settings['paged'] = get_query_var( 'paged' ) ?: 1;
+
+		$supported_args = array(
+			'episodes_number',
+			'episode_types',
+			'order_by',
+			'order',
+			'podcast_term',
+			'paged',
+		);
+
+		$query_args = array_intersect_key( $settings, array_flip( $supported_args ) );
+
+		$episode_repository = new Episode_Repository();
+
+		$data = array(
+			'player'               => ssp_frontend_controller()->players_controller,
+			'episodes_query'       => $episode_repository->get_episodes_query( $query_args ),
 			'show_featured_image'  => $settings['show_featured_image'],
 			'show_episode_player'  => $settings['show_episode_player'],
 			'show_episode_excerpt' => $settings['show_episode_excerpt'],
 		);
 
-		echo ssp_episode_controller()->render_episodes( $render_settings );
+		$data = apply_filters( 'episode_list_data', $data );
+
+		$this->renderer()->render( 'episodes/all-episodes-list', $data );
 	}
 
 	/**

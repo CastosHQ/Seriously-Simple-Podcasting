@@ -32,9 +32,9 @@ class Series extends WP_Widget {
 	public function __construct() {
 		// Widget variable settings
 		$this->widget_cssclass = 'widget_podcast_series';
-		$this->widget_description = __( 'Display a list of episodes from a single series.', 'seriously-simple-podcasting' );
+		$this->widget_description = __( 'Display a list of episodes from a single podcast.', 'seriously-simple-podcasting' );
 		$this->widget_idbase = 'ss_podcast';
-		$this->widget_title = __( 'Podcast: Series', 'seriously-simple-podcasting' );
+		$this->widget_title = __( 'Podcast', 'seriously-simple-podcasting' );
 
 		// Widget settings
 		$widget_ops = array(
@@ -175,7 +175,7 @@ class Series extends WP_Widget {
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'seriously-simple-podcasting' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" placeholder="<?php _e( 'Use series title', 'seriously-simple-podcasting' ); ?>" value="<?php echo $title; ?>" /></p>
 
-		<p><label for="<?php echo $this->get_field_id( 'series_id' ); ?>"><?php _e( 'Series:', 'seriously-simple-podcasting' ); ?></label>
+		<p><label for="<?php echo $this->get_field_id( 'series_id' ); ?>"><?php _e( 'Podcast:', 'seriously-simple-podcasting' ); ?></label>
 		<select id="<?php echo $this->get_field_id( 'series_id' ); ?>" name="<?php echo $this->get_field_name( 'series_id' ); ?>">
 			<?php
 			foreach ( $series as $s ) {

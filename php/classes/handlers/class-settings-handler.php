@@ -1012,7 +1012,7 @@ class Settings_Handler {
 				),
 				array(
 					'id'          => 'feed_link_series',
-					'label'       => __( 'Feed for a specific series', 'seriously-simple-podcasting' ),
+					'label'       => __( 'Feed for a specific podcast', 'seriously-simple-podcasting' ),
 					'description' => '',
 					'type'        => 'feed_link_series',
 					'callback'    => 'esc_url_raw',

@@ -512,8 +512,8 @@ class Castos_Handler {
 		$this->setup_default_response();
 
 		if ( empty( $series_data ) ) {
-			$this->update_response( 'message', 'Invalid Series data' );
-			$this->logger->log( 'Invalid Series data when uploading series data' );
+			$this->update_response( 'message', 'Invalid Podcast data' );
+			$this->logger->log( 'Invalid Podcast data when uploading' );
 
 			return $this->response;
 		}
@@ -549,9 +549,9 @@ class Castos_Handler {
 			return $this->response;
 		}
 
-		$this->logger->log( 'Series data successfully uploaded to Castos' );
+		$this->logger->log( 'Podcast data successfully uploaded to Castos' );
 		$this->update_response( 'status', 'success' );
-		$this->update_response( 'message', 'Series data successfully uploaded to Castos' );
+		$this->update_response( 'message', 'Podcast data successfully uploaded to Castos' );
 
 		return $this->response;
 	}

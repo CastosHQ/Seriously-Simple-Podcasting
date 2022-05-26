@@ -601,7 +601,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		$settings = array(
 			'id'          => 'lifterlms',
 			'title'       => __( 'LifterLMS', 'seriously-simple-podcasting' ),
-			'description' => __( 'Select which podcast Series you would like to be available only
+			'description' => __( 'Select which Podcast you would like to be available only
 								to Members via LifterLMS.', 'seriously-simple-podcasting' ),
 			'fields'      => array(
 				array(

@@ -381,12 +381,12 @@ class CPT_Podcast_Handler {
 			 * New iTunes Tag Announced At WWDC 2017
 			 */
 			$fields['itunes_title'] = array(
-				'name'             => __( 'iTunes Episode Title (Exclude Your Series / Show Number):', 'seriously-simple-podcasting' ),
-				'description'      => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included.', 'seriously-simple-podcasting' ),
+				'name'             => __( 'iTunes Episode Title (Exclude Your Podcast / Show Number):', 'seriously-simple-podcasting' ),
+				'description'      => __( 'The iTunes Episode Title. NO Podcast / Show Number Should Be Included.', 'seriously-simple-podcasting' ),
 				'type'             => 'text',
 				'default'          => '',
 				'section'          => 'info',
-				'meta_description' => __( 'The iTunes Episode Title. NO Series / Show Number Should Be Included', 'seriously-simple-podcasting' ),
+				'meta_description' => __( 'The iTunes Episode Title. NO Podcast / Show Number Should Be Included', 'seriously-simple-podcasting' ),
 			);
 
 			/**

@@ -34,13 +34,13 @@ if ( ! empty( $series ) ) {
     }
 
     $html .= '<div class="feed-series-list-container">' . "\n";
-    $html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'seriously-simple-podcasting' ) . '"></span>' . "\n";
+    $html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle podcasts list display', 'seriously-simple-podcasting' ) . '"></span>' . "\n";
 
     $html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
     $html .= '<li><a href="' . add_query_arg( array(
             'feed-series' => 'all',
             'settings-updated' => false
-        ) ) . '" class="' . $series_class . '">' . __( 'All Series', 'seriously-simple-podcasting' ) . '</a></li>';
+        ) ) . '" class="' . $series_class . '">' . __( 'All Podcasts', 'seriously-simple-podcasting' ) . '</a></li>';
 
     foreach ( $series as $s ) {
 

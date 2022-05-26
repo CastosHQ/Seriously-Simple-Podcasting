@@ -188,9 +188,9 @@ class Settings_Renderer {
 				// Set feed URL based on site's permalink structure
 				if ( get_option( 'permalink_structure' ) ) {
 					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-					$url       = $this->home_url . 'feed/' . $feed_slug . '/series-slug';
+					$url       = $this->home_url . 'feed/' . $feed_slug . '/podcast-slug';
 				} else {
-					$url = $this->home_url . '?feed=' . $this->token . '&podcast_series=series-slug';
+					$url = $this->home_url . '?feed=' . $this->token . '&podcast_series=podcast-slug';
 				}
 
 				$html .= esc_url( $url ) . "\n";

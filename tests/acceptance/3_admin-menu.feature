@@ -9,6 +9,6 @@ Feature: Admin menu
 		And I can see that "All Episodes" submenu exists in "Podcast"
 		And I can see that "Add New" submenu exists in "Podcast"
 		And I can see that "Tags" submenu exists in "Podcast"
-		And I can see that "Series" submenu exists in "Podcast"
+		And I can see that "Podcasts" submenu exists in "Podcast"
 		And I can see that "Settings" submenu exists in "Podcast"
 		And I can see that "Options" submenu exists in "Podcast"

@@ -107,7 +107,7 @@ class Playlist extends Castos_Widget {
 			array(
 				'type'        => 'select',
 				'id'          => 'series_slug',
-				'label'       => __( 'Series:', 'seriously-simple-podcasting' ),
+				'label'       => __( 'Podcast:', 'seriously-simple-podcasting' ),
 				'placeholder' => __( 'Default', 'seriously-simple-podcasting' ),
 				'items'       => $this->get_series(),
 			),

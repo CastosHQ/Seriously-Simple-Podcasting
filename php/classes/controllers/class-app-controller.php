@@ -435,8 +435,8 @@ class App_Controller extends Controller {
 		$image_width   = "auto";
 		$image_height  = "auto";
 
-		$series_img_title = __( 'Series Image', 'seriously-simple-podcasting' );
-		$upload_btn_text  = __( 'Choose series image', 'seriously-simple-podcasting' );
+		$series_img_title = __( 'Podcast Image', 'seriously-simple-podcasting' );
+		$upload_btn_text  = __( 'Choose podcast image', 'seriously-simple-podcasting' );
 		$upload_btn_value = __( 'Add Image', 'seriously-simple-podcasting' );
 		$upload_btn_title = __( 'Choose an image file', 'seriously-simple-podcasting' );
 		$series_img_desc  = __( "Set an image as the artwork for the series. No image will be set if not provided.", 'seriously-simple-podcasting' );
@@ -537,7 +537,7 @@ HTML;
 		unset( $columns['description'] );
 		unset( $columns['posts'] );
 
-		$columns['series_image']    = __( 'Series Image', 'seriously-simple-podcasting' );
+		$columns['series_image']    = __( 'Podcast Image', 'seriously-simple-podcasting' );
 		$columns['series_feed_url'] = __( 'Podcast feed URL', 'seriously-simple-podcasting' );
 		$columns['posts']           = __( 'Episodes', 'seriously-simple-podcasting' );
 		$columns = apply_filters( 'ssp_admin_columns_series', $columns );

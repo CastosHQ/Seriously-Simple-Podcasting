@@ -1063,7 +1063,7 @@ class Settings_Controller extends Controller {
 			<?php } ?>
 			<?php if ( count( $series ) > 1 ) { ?>
 				<tr>
-					<th scope="row">Series</th>
+					<th scope="row">Podcast</th>
 					<td>
 						<select id="import_series" name="import_series">
 							<?php foreach ( $series as $series_item ) { ?>

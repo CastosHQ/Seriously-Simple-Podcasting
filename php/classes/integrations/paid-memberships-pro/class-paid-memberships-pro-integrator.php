@@ -614,7 +614,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$settings = array(
 			'id'          => 'paid_memberships_pro',
 			'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
-			'description' => __( 'Select which podcast Series you would like to be available only
+			'description' => __( 'Select which Podcast you would like to be available only
 								to Members via Paid Memberships Pro.', 'seriously-simple-podcasting' ),
 			'fields'      => array(
 				array(

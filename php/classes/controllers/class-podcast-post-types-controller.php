@@ -730,7 +730,7 @@ class Podcast_Post_Types_Controller {
 	 */
 	public function register_custom_column_headings( $defaults ) {
 		$new_columns = apply_filters( 'ssp_admin_columns_episodes', array(
-			'series' => __( 'Series', 'seriously-simple-podcasting' ),
+			'series' => __( 'Podcast', 'seriously-simple-podcasting' ),
 			'image'  => __( 'Image', 'seriously-simple-podcasting' ),
 		) );
 

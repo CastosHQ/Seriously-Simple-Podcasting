@@ -157,6 +157,11 @@ if ( $stylesheet_url ) {
 		if ( $guid ) :
 		?><podcast:guid><?php echo esc_attr( $guid ) ?></podcast:guid>
 		<?php endif;
+		?>
+
+		<!-- podcast_generator="SSP by Castos/<?php echo SSP_VERSION ?>" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->
+		<?php
+
 
 		// Prevent WP core from outputting an <image> element
 		remove_action( 'rss2_head', 'rss2_site_icon' );

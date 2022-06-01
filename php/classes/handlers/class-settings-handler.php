@@ -926,17 +926,18 @@ class Settings_Handler {
 		);
 
 		if ( ! ssp_is_connected_to_castos() ) {
-			$private_podcast['description'] = __( 'Setting a podcast as Private is only available to Castos hosting customers.', 'seriously-simple-podcasting' );
-			$private_podcast['type']        = '';
+			$private_unavailable_descr = __( 'Setting a podcast as Private is only available to Castos hosting customers.', 'seriously-simple-podcasting' );
+		} elseif ( class_exists( 'PMPro_Membership_Level' ) && ssp_get_option( 'enable_pmpro_integration', 'on' ) ) {
+			$private_unavailable_descr = __( 'Looks like you\'re already using Paid Membership Pro to make your podcast private.', 'seriously-simple-podcasting' );
+		} elseif ( class_exists( 'LifterLMS' ) && ssp_get_option( 'enable_lifterlms_integration' ) ) {
+			$private_unavailable_descr = __( 'Looks like you\'re already using LifterLMS to make your podcast private.', 'seriously-simple-podcasting' );
 		}
 
-		// Option enable_pmpro_integration is "on" by default for backward compatibility
-		if ( class_exists( 'PMPro_Membership_Level' ) && ssp_get_option( 'enable_pmpro_integration', 'on' ) ) {
-			$private_podcast['description'] = __( 'Looks like you\'re already using Paid Membership Pro to make your podcast private.', 'seriously-simple-podcasting' );
+		if ( ! empty( $private_unavailable_descr ) ) {
+			$private_podcast['description'] = $private_unavailable_descr;
 			$private_podcast['type']        = '';
-		} elseif ( class_exists( 'LifterLMS' ) && ssp_get_option( 'enable_lifterlms_integration' ) ) {
-			$private_podcast['description'] = __( 'Looks like you\'re already using LifterLMS to make your podcast private.', 'seriously-simple-podcasting' );
-			$private_podcast['type']        = '';
+			// Change the ID to not override the original settings.
+			$private_podcast['id'] = 'is_podcast_private_unavailable';
 		}
 
 		$feed_details_fields[] = $private_podcast;

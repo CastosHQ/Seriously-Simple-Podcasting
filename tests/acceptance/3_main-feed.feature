@@ -80,3 +80,4 @@ Feature: Login
 
 		And I can see in source "<title>Episode1</title>"
 		And I can see in source "<description><![CDATA[Episode1 content]]></description>"
+		And I can see in source "<!-- podcast_generator"

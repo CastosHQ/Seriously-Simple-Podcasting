@@ -907,7 +907,7 @@ class Settings_Handler {
 			array(
 				'id'          => 'podping_notification',
 				'label'       => __( 'Podping', 'seriously-simple-podcasting' ),
-				'description' => __( 'Enable podping notification.', 'seriously-simple-podcasting' ),
+				'description' => sprintf( __( 'Enable podping notification. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/275-what-is-podping' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'checkbox',
 				'default'     => 'on',
 				'callback'    => 'wp_strip_all_tags',

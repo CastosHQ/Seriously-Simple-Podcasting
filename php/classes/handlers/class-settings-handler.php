@@ -37,6 +37,363 @@ class Settings_Handler {
 			$post_type_options[ $post_type ] = $data->labels->name;
 		}
 
+		$settings = array();
+
+		$settings['general'] = array(
+			'title'       => __( 'General', 'seriously-simple-podcasting' ),
+			'description' => __( 'General Settings', 'seriously-simple-podcasting' ),
+			'fields'      => array(
+				array(
+					'id'          => 'use_post_types',
+					'label'       => __( 'Podcast post types', 'seriously-simple-podcasting' ),
+					'description' => __( 'Use this setting to enable podcast functions on any post type - this will add all podcast posts from the specified types to your podcast feed.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox_multi',
+					'options'     => $post_type_options,
+					'default'     => array(),
+				),
+				array(
+					'id'          => 'include_in_main_query',
+					'label'       => __( 'Include podcast in main blog', 'seriously-simple-podcasting' ),
+					'description' => __( 'This setting may behave differently in each theme, so test it carefully after activation - it will add the \'podcast\' post type to your site\'s main query so that your podcast episodes appear on your home page along with your blog posts.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+				),
+				array(
+					'id'          => 'itunes_fields_enabled',
+					'label'       => __( 'Enable iTunes fields ', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+				),
+				array(
+					// After 2.14.0, we renamed Series to Podcasts
+					'id'          => 'series_slug',
+					'label'       => __( 'Podcasts slug', 'seriously-simple-podcasting' ),
+					'description' => __( 'Podcast permalink base. Please don\'t use reserved slug `podcast`.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => ssp_series_slug(),
+				),
+			),
+		);
+
+		$settings['player-settings'] = array(
+			'title'       => __( 'Player', 'seriously-simple-podcasting' ),
+			'description' => __( 'Player Settings', 'seriously-simple-podcasting' ),
+			'fields'      => array(
+				array(
+					'id'          => 'player_locations',
+					'label'       => __( 'Media player locations', 'seriously-simple-podcasting' ),
+					'description' => __( 'Select where to show the podcast media player along with the episode data (download link, duration and file size)', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox_multi',
+					'options'     => array(
+						'content'       => __( 'Full content', 'seriously-simple-podcasting' ),
+						'excerpt'       => __( 'Excerpt', 'seriously-simple-podcasting' ),
+						'excerpt_embed' => __( 'oEmbed Excerpt', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'content',
+				),
+				array(
+					'id'          => 'player_content_location',
+					'label'       => __( 'Media player position', 'seriously-simple-podcasting' ),
+					'description' => __( 'Select whether to display the media player above or below the full post content.', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array(
+						'above' => __( 'Above content', 'seriously-simple-podcasting' ),
+						'below' => __( 'Below content', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'above',
+				),
+				array(
+					'id'          => 'player_content_visibility',
+					'label'       => __( 'Media player visibility', 'seriously-simple-podcasting' ),
+					'description' => __( 'Select whether to display the media player to everybody or only logged in users.', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array(
+						'all'         => __( 'Everybody', 'seriously-simple-podcasting' ),
+						'membersonly' => __( 'Only logged in users', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'all',
+				),
+				array(
+					'id'          => 'player_subscribe_urls_enabled',
+					'label'       => __( 'Show subscribe urls', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display subscribe urls under the player', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'player_style',
+					'label'       => __( 'Media player style', 'seriously-simple-podcasting' ),
+					'description' => __( 'Select the style of media player you wish to display on your site.', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array(
+						'larger'   => __( 'HTML5 Player With Album Art', 'seriously-simple-podcasting' ),
+						'standard' => __( 'Standard Compact Player', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'larger',
+				),
+			),
+		);
+
+		$ss_podcasting_player_style = get_option( 'ss_podcasting_player_style', 'larger' );
+		if ( 'larger' === $ss_podcasting_player_style ) {
+			$html_5_player_settings = array(
+				array(
+					'id'          => 'player_mode',
+					'label'       => __( 'Player mode', 'seriously-simple-podcasting' ),
+					'description' => __( 'Choose between Dark or Light mode, depending on your theme', 'seriously-simple-podcasting' ),
+					'type'        => 'radio',
+					'options'     => array(
+						'dark'  => __( 'Dark Mode', 'seriously-simple-podcasting' ),
+						'light' => __( 'Light Mode', 'seriously-simple-podcasting' ),
+					),
+					'default'     => 'dark',
+				),
+				array(
+					'id'          => 'subscribe_button_enabled',
+					'label'       => __( 'Show subscribe button', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the subscribe button', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'share_button_enabled',
+					'label'       => __( 'Show share button', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the share button', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+			);
+
+			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $html_5_player_settings );
+		}
+
+		$settings['player-settings']['fields'][] = array(
+			'id'          => 'player_meta_data_enabled',
+			'label'       => __( 'Enable Player meta data', 'seriously-simple-podcasting' ),
+			'description' => __( 'Turn this on to enable player meta data underneath the player (download link, episode duration, date recorded, etc.).', 'seriously-simple-podcasting' ),
+			'type'        => 'checkbox',
+			'default'     => 'on',
+		);
+
+		$meta_data_enabled = 'on' === ssp_get_option( 'player_meta_data_enabled', 'on' );
+
+		if ( $meta_data_enabled ) {
+			$meta_settings = array(
+				array(
+					'id'          => 'download_file_enabled',
+					'label'       => __( 'Show download file link', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the download file link', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'play_in_new_window_enabled',
+					'label'       => __( 'Show play in new window link', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the play in new window link', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'duration_enabled',
+					'label'       => __( 'Show duration', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the track duration information', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+				array(
+					'id'          => 'date_recorded_enabled',
+					'label'       => __( 'Show recorded date', 'seriously-simple-podcasting' ),
+					'description' => __( 'Turn on to display the recorded date information', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => 'on',
+				),
+			);
+
+			$meta_settings = apply_filters( 'ssp_player_meta_settings', $meta_settings );
+
+			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $meta_settings );
+		}
+
+		$settings['feed-details'] = array(
+			'title'       => __( 'Feed details', 'seriously-simple-podcasting' ),
+			// translators: placeholders are simply html tags to break up the content
+			'description' => sprintf( __( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe.%1$sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.%2$s', 'seriously-simple-podcasting' ), '<br/><em>', '</em>' ),
+		);
+
+
+		$settings['feed-details']['fields'] = $this->get_feed_fields();
+
+		$settings['security'] = array(
+			'title'       => __( 'Security', 'seriously-simple-podcasting' ),
+			'description' => __( 'Change these settings to ensure that your podcast feed remains private. This will block feed readers (including iTunes) from accessing your feed.', 'seriously-simple-podcasting' ),
+			'fields'      => array(
+				array(
+					'id'          => 'protect',
+					'label'       => __( 'Password protect your podcast feed', 'seriously-simple-podcasting' ),
+					'description' => __( 'Mark if you would like to password protect your podcast feed - you can set the username and password below. This will block all feed readers (including iTunes) from accessing your feed.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+					'callback'    => 'wp_strip_all_tags',
+				),
+				array(
+					'id'          => 'protection_username',
+					'label'       => __( 'Username', 'seriously-simple-podcasting' ),
+					'description' => __( 'Username for your podcast feed.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'Feed username', 'seriously-simple-podcasting' ),
+					'class'       => 'regular-text',
+					'callback'    => 'wp_strip_all_tags',
+				),
+				array(
+					'id'          => 'protection_password',
+					'label'       => __( 'Password', 'seriously-simple-podcasting' ),
+					'description' => __( 'Password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again.', 'seriously-simple-podcasting' ),
+					'type'        => 'text_secret',
+					'default'     => '',
+					'placeholder' => __( 'Feed password', 'seriously-simple-podcasting' ),
+					'callback'    => array( $this, 'encode_password' ),
+					'class'       => 'regular-text',
+				),
+				array(
+					'id'          => 'protection_no_access_message',
+					'label'       => __( 'No access message', 'seriously-simple-podcasting' ),
+					'description' => __( 'This message will be displayed to people who are not allowed access to your podcast feed. Limited HTML allowed.', 'seriously-simple-podcasting' ),
+					'type'        => 'textarea',
+					'default'     => __( 'You are not permitted to view this podcast feed.', 'seriously-simple-podcasting' ),
+					'placeholder' => __( 'Message displayed to users who do not have access to the podcast feed', 'seriously-simple-podcasting' ),
+					'callback'    => array( $this, 'validate_message' ),
+					'class'       => 'large-text',
+				),
+			),
+		);
+
+		$settings['publishing'] = array(
+			'title'       => __( 'Publishing', 'seriously-simple-podcasting' ),
+			'description' => __( 'Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes).', 'seriously-simple-podcasting' ),
+			'fields'      => array(
+				array(
+					'id'          => 'feed_url',
+					'label'       => __( 'External feed URL', 'seriously-simple-podcasting' ),
+					'description' => __( 'If you are syndicating your podcast using a third-party service (like Feedburner) you can insert the URL here, otherwise this must be left blank.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'External feed URL', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_url_raw',
+					'class'       => 'regular-text',
+				),
+				array(
+					'id'          => 'feed_link',
+					'label'       => __( 'Complete feed', 'seriously-simple-podcasting' ),
+					'description' => '',
+					'type'        => 'feed_link',
+					'callback'    => 'esc_url_raw',
+				),
+				array(
+					'id'          => 'feed_link_series',
+					'label'       => __( 'Feed for a specific podcast', 'seriously-simple-podcasting' ),
+					'description' => '',
+					'type'        => 'feed_link_series',
+					'callback'    => 'esc_url_raw',
+				),
+				array(
+					'id'          => 'podcast_url',
+					'label'       => __( 'Podcast page', 'seriously-simple-podcasting' ),
+					'description' => '',
+					'type'        => 'podcast_url',
+					'callback'    => 'esc_url_raw',
+				),
+			),
+		);
+
+		$settings['castos-hosting'] = array(
+			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
+			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
+			'fields'      => array(
+				array(
+					'id'          => 'podmotor_account_email',
+					'label'       => __( 'Your email', 'seriously-simple-podcasting' ),
+					'description' => __( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'email@domain.com', 'seriously-simple-podcasting' ),
+					'callback'    => 'esc_email',
+					'class'       => 'regular-text',
+				),
+				array(
+					'id'          => 'podmotor_account_api_token',
+					'label'       => __( 'Castos API token', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your Castos API token. Available from your Castos account dashboard.', 'seriously-simple-podcasting' ),
+					'type'        => 'text',
+					'default'     => '',
+					'placeholder' => __( 'Enter your api token', 'seriously-simple-podcasting' ),
+					'callback'    => 'sanitize_text_field',
+					'class'       => 'regular-text',
+				),
+				array(
+					'id'          => 'podmotor_disconnect',
+					'label'       => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
+					'description' => __( 'Disconnect your Castos account.', 'seriously-simple-podcasting' ),
+					'type'        => 'checkbox',
+					'default'     => '',
+					'callback'    => 'wp_strip_all_tags',
+					'class'       => 'disconnect-castos',
+				),
+			),
+		);
+
+		if ( ! ssp_is_connected_to_castos() ) {
+			foreach ( $settings['castos-hosting']['fields'] as $k => $field ) {
+				if ( 'podmotor_disconnect' === $field['id'] ) {
+					$settings['castos-hosting']['fields'][ $k ]['type'] = 'hidden';
+					break;
+				}
+			}
+		}
+
+		$fields = array();
+		if ( ssp_is_connected_to_castos() ) {
+			if ( ! ssp_get_external_rss_being_imported() ) {
+				$fields = array(
+					array(
+						'id'          => 'podmotor_import',
+						'label'       => __( 'Import your podcast', 'seriously-simple-podcasting' ),
+						'description' => __( 'Import your podcast to your Castos hosting account.', 'seriously-simple-podcasting' ),
+						'type'        => 'checkbox',
+						'default'     => '',
+						'callback'    => 'wp_strip_all_tags',
+						'class'       => 'import-castos',
+					),
+				);
+			}
+		}
+		$settings['import'] = array(
+			'title'       => __( 'Import', 'seriously-simple-podcasting' ),
+			'description' => sprintf( __( 'Use this option for a one time import of your existing WordPress podcast to your Castos account. If you encounter any problems with this import, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ), '<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
+			'fields'      => $fields,
+		);
+
+		$settings['extensions'] = array(
+			'title'               => __( 'Extensions', 'seriously-simple-podcasting' ),
+			'description'         => __( 'These extensions add functionality to your Seriously Simple Podcasting powered podcast.', 'seriously-simple-podcasting' ),
+			'fields'              => array(),
+			'disable_save_button' => true,
+		);
+
+		$settings['integrations'] = apply_filters( 'ssp_integration_settings', array(
+			'title' => __( 'Integrations', 'seriously-simple-podcasting' ),
+			'items' => [],
+		) );
+
+		if ( empty( $settings['integrations']['items'] ) ) {
+			unset( $settings['integrations'] );
+		}
+
+		return apply_filters( 'ssp_settings_fields', $settings );
+	}
+
+	public function get_feed_fields(){
 		// Set up available category options.
 		$category_options = array(
 			''                        => __( '-- None --', 'seriously-simple-podcasting' ),
@@ -430,190 +787,6 @@ class Settings_Handler {
 			),
 		);
 
-		$settings = array();
-
-		$settings['general'] = array(
-			'title'       => __( 'General', 'seriously-simple-podcasting' ),
-			'description' => __( 'General Settings', 'seriously-simple-podcasting' ),
-			'fields'      => array(
-				array(
-					'id'          => 'use_post_types',
-					'label'       => __( 'Podcast post types', 'seriously-simple-podcasting' ),
-					'description' => __( 'Use this setting to enable podcast functions on any post type - this will add all podcast posts from the specified types to your podcast feed.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox_multi',
-					'options'     => $post_type_options,
-					'default'     => array(),
-				),
-				array(
-					'id'          => 'include_in_main_query',
-					'label'       => __( 'Include podcast in main blog', 'seriously-simple-podcasting' ),
-					'description' => __( 'This setting may behave differently in each theme, so test it carefully after activation - it will add the \'podcast\' post type to your site\'s main query so that your podcast episodes appear on your home page along with your blog posts.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => '',
-				),
-				array(
-					'id'          => 'itunes_fields_enabled',
-					'label'       => __( 'Enable iTunes fields ', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => '',
-				),
-				array(
-					// After 2.14.0, we renamed Series to Podcasts
-					'id'          => 'series_slug',
-					'label'       => __( 'Podcasts slug', 'seriously-simple-podcasting' ),
-					'description' => __( 'Podcast permalink base. Please don\'t use reserved slug `podcast`.', 'seriously-simple-podcasting' ),
-					'type'        => 'text',
-					'default'     => ssp_series_slug(),
-				),
-			),
-		);
-
-		$settings['player-settings'] = array(
-			'title'       => __( 'Player', 'seriously-simple-podcasting' ),
-			'description' => __( 'Player Settings', 'seriously-simple-podcasting' ),
-			'fields'      => array(
-				array(
-					'id'          => 'player_locations',
-					'label'       => __( 'Media player locations', 'seriously-simple-podcasting' ),
-					'description' => __( 'Select where to show the podcast media player along with the episode data (download link, duration and file size)', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox_multi',
-					'options'     => array(
-						'content'       => __( 'Full content', 'seriously-simple-podcasting' ),
-						'excerpt'       => __( 'Excerpt', 'seriously-simple-podcasting' ),
-						'excerpt_embed' => __( 'oEmbed Excerpt', 'seriously-simple-podcasting' ),
-					),
-					'default'     => 'content',
-				),
-				array(
-					'id'          => 'player_content_location',
-					'label'       => __( 'Media player position', 'seriously-simple-podcasting' ),
-					'description' => __( 'Select whether to display the media player above or below the full post content.', 'seriously-simple-podcasting' ),
-					'type'        => 'radio',
-					'options'     => array(
-						'above' => __( 'Above content', 'seriously-simple-podcasting' ),
-						'below' => __( 'Below content', 'seriously-simple-podcasting' ),
-					),
-					'default'     => 'above',
-				),
-				array(
-					'id'          => 'player_content_visibility',
-					'label'       => __( 'Media player visibility', 'seriously-simple-podcasting' ),
-					'description' => __( 'Select whether to display the media player to everybody or only logged in users.', 'seriously-simple-podcasting' ),
-					'type'        => 'radio',
-					'options'     => array(
-						'all'         => __( 'Everybody', 'seriously-simple-podcasting' ),
-						'membersonly' => __( 'Only logged in users', 'seriously-simple-podcasting' ),
-					),
-					'default'     => 'all',
-				),
-				array(
-					'id'          => 'player_subscribe_urls_enabled',
-					'label'       => __( 'Show subscribe urls', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display subscribe urls under the player', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
-					'id'          => 'player_style',
-					'label'       => __( 'Media player style', 'seriously-simple-podcasting' ),
-					'description' => __( 'Select the style of media player you wish to display on your site.', 'seriously-simple-podcasting' ),
-					'type'        => 'radio',
-					'options'     => array(
-						'larger'   => __( 'HTML5 Player With Album Art', 'seriously-simple-podcasting' ),
-						'standard' => __( 'Standard Compact Player', 'seriously-simple-podcasting' ),
-					),
-					'default'     => 'larger',
-				),
-			),
-		);
-
-		$ss_podcasting_player_style = get_option( 'ss_podcasting_player_style', 'larger' );
-		if ( 'larger' === $ss_podcasting_player_style ) {
-			$html_5_player_settings = array(
-				array(
-					'id'          => 'player_mode',
-					'label'       => __( 'Player mode', 'seriously-simple-podcasting' ),
-					'description' => __( 'Choose between Dark or Light mode, depending on your theme', 'seriously-simple-podcasting' ),
-					'type'        => 'radio',
-					'options'     => array(
-						'dark'  => __( 'Dark Mode', 'seriously-simple-podcasting' ),
-						'light' => __( 'Light Mode', 'seriously-simple-podcasting' ),
-					),
-					'default'     => 'dark',
-				),
-				array(
-					'id'          => 'subscribe_button_enabled',
-					'label'       => __( 'Show subscribe button', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the subscribe button', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
-					'id'          => 'share_button_enabled',
-					'label'       => __( 'Show share button', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the share button', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-			);
-
-			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $html_5_player_settings );
-		}
-
-		$settings['player-settings']['fields'][] = array(
-			'id'          => 'player_meta_data_enabled',
-			'label'       => __( 'Enable Player meta data', 'seriously-simple-podcasting' ),
-			'description' => __( 'Turn this on to enable player meta data underneath the player (download link, episode duration, date recorded, etc.).', 'seriously-simple-podcasting' ),
-			'type'        => 'checkbox',
-			'default'     => 'on',
-		);
-
-		$meta_data_enabled = 'on' === ssp_get_option( 'player_meta_data_enabled', 'on' );
-
-		if ( $meta_data_enabled ) {
-			$meta_settings = array(
-				array(
-					'id'          => 'download_file_enabled',
-					'label'       => __( 'Show download file link', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the download file link', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
-					'id'          => 'play_in_new_window_enabled',
-					'label'       => __( 'Show play in new window link', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the play in new window link', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
-					'id'          => 'duration_enabled',
-					'label'       => __( 'Show duration', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the track duration information', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
-					'id'          => 'date_recorded_enabled',
-					'label'       => __( 'Show recorded date', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the recorded date information', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-			);
-
-			$meta_settings = apply_filters( 'ssp_player_meta_settings', $meta_settings );
-
-			$settings['player-settings']['fields'] = array_merge( $settings['player-settings']['fields'], $meta_settings );
-		}
-
-		$settings['feed-details'] = array(
-			'title'       => __( 'Feed details', 'seriously-simple-podcasting' ),
-			// translators: placeholders are simply html tags to break up the content
-			'description' => sprintf( __( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe.%1$sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.%2$s', 'seriously-simple-podcasting' ), '<br/><em>', '</em>' ),
-		);
-
 		$feed_details_fields = array(
 			array(
 				'id'          => 'data_title',
@@ -870,7 +1043,7 @@ class Settings_Handler {
 			),
 			array(
 				'id'          => 'exclude_feed',
-				'label'       => __( 'Exclude series from default feed', 'seriously-simple-podcasting' ),
+				'label'       => __( 'Exclude podcasts from default feed', 'seriously-simple-podcasting' ),
 				// translators: placeholders are html anchor tags to support document
 				'description' => sprintf( __( 'When enabled, this will exclude any episodes in this series feed from the default feed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/114-excluding-series-episodes-from-the-default-feed' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'checkbox',
@@ -943,175 +1116,8 @@ class Settings_Handler {
 		$feed_details_fields[] = $private_podcast;
 
 		$subscribe_options_array            = $this->get_subscribe_field_options();
-		$settings['feed-details']['fields'] = array_merge( $feed_details_fields, $subscribe_options_array );
 
-		$settings['security'] = array(
-			'title'       => __( 'Security', 'seriously-simple-podcasting' ),
-			'description' => __( 'Change these settings to ensure that your podcast feed remains private. This will block feed readers (including iTunes) from accessing your feed.', 'seriously-simple-podcasting' ),
-			'fields'      => array(
-				array(
-					'id'          => 'protect',
-					'label'       => __( 'Password protect your podcast feed', 'seriously-simple-podcasting' ),
-					'description' => __( 'Mark if you would like to password protect your podcast feed - you can set the username and password below. This will block all feed readers (including iTunes) from accessing your feed.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => '',
-					'callback'    => 'wp_strip_all_tags',
-				),
-				array(
-					'id'          => 'protection_username',
-					'label'       => __( 'Username', 'seriously-simple-podcasting' ),
-					'description' => __( 'Username for your podcast feed.', 'seriously-simple-podcasting' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'Feed username', 'seriously-simple-podcasting' ),
-					'class'       => 'regular-text',
-					'callback'    => 'wp_strip_all_tags',
-				),
-				array(
-					'id'          => 'protection_password',
-					'label'       => __( 'Password', 'seriously-simple-podcasting' ),
-					'description' => __( 'Password for your podcast feed. Once saved, the password is encoded and secured so it will not be visible on this page again.', 'seriously-simple-podcasting' ),
-					'type'        => 'text_secret',
-					'default'     => '',
-					'placeholder' => __( 'Feed password', 'seriously-simple-podcasting' ),
-					'callback'    => array( $this, 'encode_password' ),
-					'class'       => 'regular-text',
-				),
-				array(
-					'id'          => 'protection_no_access_message',
-					'label'       => __( 'No access message', 'seriously-simple-podcasting' ),
-					'description' => __( 'This message will be displayed to people who are not allowed access to your podcast feed. Limited HTML allowed.', 'seriously-simple-podcasting' ),
-					'type'        => 'textarea',
-					'default'     => __( 'You are not permitted to view this podcast feed.', 'seriously-simple-podcasting' ),
-					'placeholder' => __( 'Message displayed to users who do not have access to the podcast feed', 'seriously-simple-podcasting' ),
-					'callback'    => array( $this, 'validate_message' ),
-					'class'       => 'large-text',
-				),
-			),
-		);
-
-		$settings['publishing'] = array(
-			'title'       => __( 'Publishing', 'seriously-simple-podcasting' ),
-			'description' => __( 'Use these URLs to share and publish your podcast feed. These URLs will work with any podcasting service (including iTunes).', 'seriously-simple-podcasting' ),
-			'fields'      => array(
-				array(
-					'id'          => 'feed_url',
-					'label'       => __( 'External feed URL', 'seriously-simple-podcasting' ),
-					'description' => __( 'If you are syndicating your podcast using a third-party service (like Feedburner) you can insert the URL here, otherwise this must be left blank.', 'seriously-simple-podcasting' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'External feed URL', 'seriously-simple-podcasting' ),
-					'callback'    => 'esc_url_raw',
-					'class'       => 'regular-text',
-				),
-				array(
-					'id'          => 'feed_link',
-					'label'       => __( 'Complete feed', 'seriously-simple-podcasting' ),
-					'description' => '',
-					'type'        => 'feed_link',
-					'callback'    => 'esc_url_raw',
-				),
-				array(
-					'id'          => 'feed_link_series',
-					'label'       => __( 'Feed for a specific podcast', 'seriously-simple-podcasting' ),
-					'description' => '',
-					'type'        => 'feed_link_series',
-					'callback'    => 'esc_url_raw',
-				),
-				array(
-					'id'          => 'podcast_url',
-					'label'       => __( 'Podcast page', 'seriously-simple-podcasting' ),
-					'description' => '',
-					'type'        => 'podcast_url',
-					'callback'    => 'esc_url_raw',
-				),
-			),
-		);
-
-		$settings['castos-hosting'] = array(
-			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
-			'fields'      => array(
-				array(
-					'id'          => 'podmotor_account_email',
-					'label'       => __( 'Your email', 'seriously-simple-podcasting' ),
-					'description' => __( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'email@domain.com', 'seriously-simple-podcasting' ),
-					'callback'    => 'esc_email',
-					'class'       => 'regular-text',
-				),
-				array(
-					'id'          => 'podmotor_account_api_token',
-					'label'       => __( 'Castos API token', 'seriously-simple-podcasting' ),
-					'description' => __( 'Your Castos API token. Available from your Castos account dashboard.', 'seriously-simple-podcasting' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'Enter your api token', 'seriously-simple-podcasting' ),
-					'callback'    => 'sanitize_text_field',
-					'class'       => 'regular-text',
-				),
-				array(
-					'id'          => 'podmotor_disconnect',
-					'label'       => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
-					'description' => __( 'Disconnect your Castos account.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => '',
-					'callback'    => 'wp_strip_all_tags',
-					'class'       => 'disconnect-castos',
-				),
-			),
-		);
-
-		if ( ! ssp_is_connected_to_castos() ) {
-			foreach ( $settings['castos-hosting']['fields'] as $k => $field ) {
-				if ( 'podmotor_disconnect' === $field['id'] ) {
-					$settings['castos-hosting']['fields'][ $k ]['type'] = 'hidden';
-					break;
-				}
-			}
-		}
-
-		$fields = array();
-		if ( ssp_is_connected_to_castos() ) {
-			if ( ! ssp_get_external_rss_being_imported() ) {
-				$fields = array(
-					array(
-						'id'          => 'podmotor_import',
-						'label'       => __( 'Import your podcast', 'seriously-simple-podcasting' ),
-						'description' => __( 'Import your podcast to your Castos hosting account.', 'seriously-simple-podcasting' ),
-						'type'        => 'checkbox',
-						'default'     => '',
-						'callback'    => 'wp_strip_all_tags',
-						'class'       => 'import-castos',
-					),
-				);
-			}
-		}
-		$settings['import'] = array(
-			'title'       => __( 'Import', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Use this option for a one time import of your existing WordPress podcast to your Castos account. If you encounter any problems with this import, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ), '<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
-			'fields'      => $fields,
-		);
-
-		$settings['extensions'] = array(
-			'title'               => __( 'Extensions', 'seriously-simple-podcasting' ),
-			'description'         => __( 'These extensions add functionality to your Seriously Simple Podcasting powered podcast.', 'seriously-simple-podcasting' ),
-			'fields'              => array(),
-			'disable_save_button' => true,
-		);
-
-		$settings['integrations'] = apply_filters( 'ssp_integration_settings', array(
-			'title' => __( 'Integrations', 'seriously-simple-podcasting' ),
-			'items' => [],
-		) );
-
-		if ( empty( $settings['integrations']['items'] ) ) {
-			unset( $settings['integrations'] );
-		}
-
-		return apply_filters( 'ssp_settings_fields', $settings );
+		return array_merge( $feed_details_fields, $subscribe_options_array );
 	}
 
 	/**

@@ -84,6 +84,11 @@ class App_Controller extends Controller {
 	 * */
 	public $podcast_post_types_controller;
 
+	/**
+	 * @var Settings_Controller
+	 * */
+	public $settings_controller;
+
 
 	// Handlers.
 
@@ -204,7 +209,7 @@ class App_Controller extends Controller {
 			$this->admin_notices_handler->bootstrap();
 
 			global $ssp_settings, $ssp_options;
-			$ssp_settings = new Settings_Controller( $this->file, SSP_VERSION );
+			$ssp_settings = $this->settings_controller = new Settings_Controller( $this->file, SSP_VERSION );
 			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}
 
@@ -377,11 +382,73 @@ class App_Controller extends Controller {
 	}
 
 	/**
+	 * @return Settings_Handler
+	 */
+	public function get_settings_handler() {
+		return $this->settings_controller->settings_handler;
+	}
+
+	/**
+	 * @param \WP_Term $term
+	 *
+	 * @return void
+	 *
+	 * // Todo: move all the Series-related functions to the separate class
+	 */
+	protected function show_feed_info( $term ) {
+		$edit_feed_url = sprintf(
+			'edit.php?post_type=%s&page=podcast_settings&tab=feed-details&feed-series=%s',
+			SSP_CPT_PODCAST,
+			$term->slug
+		);
+		$edit_feed_url = admin_url( $edit_feed_url );
+
+		$feed_fields = $this->get_settings_handler()->get_feed_fields();
+
+		?>
+		<tr class="form-field term-upload-wrap">
+			<th scope="row">
+				<label><?php echo __( 'Podcast Feed Details', 'seriously-simple-podcasting' ) ?></label>
+				<p><a class="view-feed-link" href="<?php echo esc_url( $edit_feed_url ) ?>" target="_blank">
+						<span class="dashicons dashicons-edit"></span>
+						<?php echo __( 'Edit Feed Settings', 'seriously-simple-podcasting' ) ?></a></p>
+				<p><a class="view-feed-link" href="<?php echo esc_url( ssp_get_feed_url( $term->slug ) ); ?>" target="_blank">
+						<span class="dashicons dashicons-rss"></span>
+						<?php echo __( 'View feed', 'seriously-simple-podcasting' ) ?>
+					</a></p>
+			</th>
+			<td>
+				<table style="border: 1px solid #ccc; width: 100%; padding: 0 10px;">
+					<?php foreach ( $feed_fields as $field ) :
+						$value = ssp_get_option( $field['id'], '', $term->term_id );
+						if ( ! $value ) {
+							$value = ssp_get_option( $field['id'] );
+						}
+						if ( ! $value || ! is_string( $value ) ) {
+							continue;
+						}
+						if ( 'image' === $field['type'] ) {
+							$value = sprintf('<img src="%s" style="width: 100px;">', $value );
+						}
+						?>
+						<tr>
+							<th><?php echo $field['label']; ?>:</th>
+							<td><?php echo $value; ?></td>
+						</tr>
+					<?php endforeach; ?>
+				</table>
+			</td>
+		</tr>
+		<?php
+	}
+
+	/**
 	 * Adds series term metaboxes to the edit series form.
 	 */
 	public function edit_series_term_meta_fields( $term, $taxonomy ) {
 		// Add series image edit/upload metabox.
-		$this->series_image_uploader( $taxonomy, $mode = 'UPDATE', $term = $term );
+		$this->series_image_uploader( $taxonomy, 'UPDATE', $term );
+		$this->show_feed_info( $term );
 	}
 
 	/**

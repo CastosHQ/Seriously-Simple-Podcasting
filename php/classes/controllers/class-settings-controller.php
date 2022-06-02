@@ -50,7 +50,7 @@ class Settings_Controller extends Controller {
 	/**
 	 * @var Settings_Handler
 	 * */
-	protected $settings_handler;
+	public $settings_handler;
 
 	/**
 	 * @var Series_Handler

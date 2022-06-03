@@ -153,11 +153,11 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	 * Schedule bulk sync subscribers.
 	 */
 	protected function schedule_bulk_sync_subscribers() {
-		// 1. Save old membership level map: [['level' => ['users']['series']]]
-		update_option( 'ssp_lifterlms_users_series_map', $this->get_users_series_map(), false );
-
-		// 2. Schedule a task to add/revoke users
 		if ( ! wp_next_scheduled( 'ssp_bulk_sync_lifterlms_subscribers' ) ) {
+			// 1. Save old membership level map: [['level' => ['users']['series']]]
+			update_option( 'ssp_lifterlms_users_series_map', $this->get_users_series_map(), false );
+
+			// 2. Schedule a task to add/revoke users
 			wp_schedule_single_event( time(), 'ssp_bulk_sync_lifterlms_subscribers' );
 		}
 	}

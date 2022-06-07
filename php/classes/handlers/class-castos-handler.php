@@ -504,14 +504,14 @@ class Castos_Handler {
 	/**
 	 * Upload series data to Castos
 	 *
-	 * @param array $series_data
+	 * @param array $podcast_data
 	 *
 	 * @return array
 	 */
-	public function upload_series_to_podmotor( $series_data ) {
+	public function update_podcast_data( $podcast_data ) {
 		$this->setup_default_response();
 
-		if ( empty( $series_data ) ) {
+		if ( empty( $podcast_data ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
 			$this->logger->log( 'Invalid Podcast data when uploading' );
 
@@ -522,13 +522,13 @@ class Castos_Handler {
 
 		$this->logger->log( 'API URL', $api_url );
 
-		$series_data['token'] = $this->api_token;
+		$podcast_data['token'] = $this->api_token;
 
 		$app_response = wp_remote_post(
 			$api_url,
 			array(
 				'timeout' => 45,
-				'body'    => $series_data,
+				'body'    => $podcast_data,
 			)
 		);
 

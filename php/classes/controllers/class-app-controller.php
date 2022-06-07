@@ -589,7 +589,7 @@ HTML;
 		// push the series to Castos as a Podcast
 		$series_data              = get_series_data_for_castos( $term_id );
 		$series_data['series_id'] = $term_id;
-		$this->castos_handler->upload_series_to_podmotor( $series_data );
+		$this->castos_handler->update_podcast_data( $series_data );
 	}
 
 	/**

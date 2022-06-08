@@ -56,11 +56,21 @@ class Settings_Extender {
 	 * @return array
 	 */
 	protected function filter_feed_hidden_element( $el ) {
-		if ( isset( $el['settings']['ssp_feed_hidden'] ) &&
-		     'yes' === $el['settings']['ssp_feed_hidden'] &&
-		     isset( $el['settings']['editor'] )
-		) {
-			$el['settings']['editor'] = '';
+
+		$hidden_by_default_widgets = array(
+			'ssp-transcript',
+		);
+
+		$is_hidden_by_default = isset( $el['widgetType'] ) && in_array( $el['widgetType'], $hidden_by_default_widgets );
+
+		$is_feed_hidden =
+			( isset( $el['settings']['ssp_feed_hidden'] ) && 'yes' === $el['settings']['ssp_feed_hidden'] ) ||
+			( $is_hidden_by_default && ! isset( $el['settings']['ssp_feed_hidden'] ) ); // ! isset because default values are not provided
+
+		if ( $is_feed_hidden ) {
+			$el['settings']['title']   = '';
+			$el['settings']['editor']  = '';
+			$el['settings']['content'] = '';
 		}
 
 		if ( ! empty( $el['elements'] ) ) {

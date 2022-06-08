@@ -180,7 +180,7 @@ class Rest_Api_Controller {
 
 		$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_DEFAULT ) : '' );
 		if ( empty( $ssp_podcast_api_token ) ) {
-			$response['message'] = 'No Castos API token set';
+			$response['message'] = 'No Castos API key set';
 			return $response;
 		}
 

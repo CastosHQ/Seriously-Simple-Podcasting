@@ -129,7 +129,7 @@
 				</div>
 
 				<div class="ssp-onboarding__settings-item">
-					<h2>Castos API Token</h2>
+					<h2>Castos API Key</h2>
 					<label for="podmotor_account_api_token" class="description">
 						Available from your Castos account dashboard.
 					</label>

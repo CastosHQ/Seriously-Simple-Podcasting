@@ -474,20 +474,7 @@ class App_Controller extends Controller {
 	 * @return int|null
 	 */
 	public function get_series_image_src( $term ) {
-		$media_id = $this->get_series_image_id( $term );
-
-		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
-
-		if ( empty( $media_id ) ) {
-			return $default_image;
-		}
-
-		$image_width  = "auto";
-		$image_height = "auto";
-
-		$src = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
-
-		return ! empty( $src[0] ) ? $src[0] : $default_image;
+		return ssp_get_podcast_image_src( $term );
 	}
 
 	/**

@@ -1475,3 +1475,35 @@ if ( ! function_exists( 'ssp_series_slug' ) ) {
 		return apply_filters( 'ssp_series_slug', $slug );
 	}
 }
+
+
+/**
+ * Get the current Series base slug.
+ */
+if ( ! function_exists( 'ssp_get_podcast_image_src' ) ) {
+	/**
+	 *
+	 * @param \WP_Term $term
+	 *
+	 * @return int|null
+	 */
+	function ssp_get_podcast_image_src( $term ) {
+
+		if ( ! empty( $term->term_id ) ) {
+			$media_id = get_term_meta( $term->term_id, SSP_CPT_PODCAST . '_series_image_settings', true );
+		}
+
+		$default_image = esc_url( SSP_PLUGIN_URL . 'assets/images/no-image.png' );
+
+		if ( empty( $media_id ) ) {
+			return $default_image;
+		}
+
+		$image_width  = "auto";
+		$image_height = "auto";
+
+		$src = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
+
+		return ! empty( $src[0] ) ? $src[0] : $default_image;
+	}
+}

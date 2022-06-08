@@ -409,7 +409,7 @@ class App_Controller extends Controller {
 		<tr class="form-field term-upload-wrap">
 			<th scope="row">
 				<label><?php echo __( 'Podcast Feed Details', 'seriously-simple-podcasting' ) ?></label>
-				<p><a class="view-feed-link" href="<?php echo esc_url( $edit_feed_url ) ?>" target="_blank">
+				<p><a class="view-feed-link" href="<?php echo esc_url( $edit_feed_url ) ?>">
 						<span class="dashicons dashicons-edit"></span>
 						<?php echo __( 'Edit Feed Settings', 'seriously-simple-podcasting' ) ?></a></p>
 				<p><a class="view-feed-link" href="<?php echo esc_url( ssp_get_feed_url( $term->slug ) ); ?>" target="_blank">

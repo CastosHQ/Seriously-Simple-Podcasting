@@ -1349,7 +1349,7 @@ if ( ! function_exists( 'ssp_get_feed_url' ) ) {
 	 */
 	function ssp_get_feed_url( $series_slug = '' ) {
 
-		$feed_series = $series_slug ? $series_slug : 'default';
+		$feed_series = $series_slug ?: 'default';
 
 		$permalink_structure = get_option( 'permalink_structure' );
 

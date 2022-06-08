@@ -166,7 +166,7 @@ class Settings_Extender {
 		);
 
 		$settings = array(
-			'label'   => __( 'Hide From Feed', 'seriously-simple-podcasting' ),
+			'label'   => __( 'Hide From Podcast RSS Feed', 'seriously-simple-podcasting' ),
 			'type'    => Controls_Manager::SWITCHER,
 		);
 

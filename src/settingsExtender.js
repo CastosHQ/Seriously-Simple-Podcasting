@@ -73,7 +73,7 @@ const extendBlockSettings = createHigherOrderComponent((BlockEdit) => {
                         initialOpen={true}
                     >
                         <ToggleControl
-                            label={__('Hide From Feed')}
+                            label={__('Hide From Podcast RSS Feed')}
                             checked={props.attributes.hideFromFeed}
                             onChange={(val) => {
                                 props.setAttributes({

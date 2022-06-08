@@ -506,7 +506,7 @@ class App_Controller extends Controller {
 		$upload_btn_text  = __( 'Choose podcast image', 'seriously-simple-podcasting' );
 		$upload_btn_value = __( 'Add Image', 'seriously-simple-podcasting' );
 		$upload_btn_title = __( 'Choose an image file', 'seriously-simple-podcasting' );
-		$series_img_desc  = __( "Set an image as the artwork for the series. No image will be set if not provided.", 'seriously-simple-podcasting' );
+		$series_img_desc  = __( "Set an image as the artwork for the podcast page. No image will be set if not provided.", 'seriously-simple-podcasting' );
 		$series_img_form_label = <<<HTML
 <label>{$series_img_title}</label>
 HTML;

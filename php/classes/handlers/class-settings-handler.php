@@ -1045,7 +1045,7 @@ class Settings_Handler {
 				'id'          => 'exclude_feed',
 				'label'       => __( 'Exclude podcasts from default feed', 'seriously-simple-podcasting' ),
 				// translators: placeholders are html anchor tags to support document
-				'description' => sprintf( __( 'When enabled, this will exclude any episodes in this series feed from the default feed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/114-excluding-series-episodes-from-the-default-feed' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+				'description' => sprintf( __( 'When enabled, this will exclude any episodes in this podcast feed from the default feed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/114-excluding-series-episodes-from-the-default-feed' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'checkbox',
 				'default'     => '',
 				'callback'    => 'wp_strip_all_tags',

@@ -26,7 +26,8 @@
     "classmap": ["php/"]
   },
   "require-dev": {
-    "lucatume/wp-browser": "^2.4",
-    "codeception/module-phpbrowser": "^1.0"
+    "lucatume/wp-browser": "^3.0",
+    "codeception/module-phpbrowser": "^1.0",
+    "codeception/module-asserts": "^2.0"
   }
 }

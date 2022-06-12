@@ -3,13 +3,13 @@
 # Suite for unit or integration tests that require WordPress functions and classes.
 
 modules:
-    config:
-        WPLoader:
-            wpRootFolder: "/app/"
-            dbName: "test"
-            dbHost: "test_database"
-            dbUser: "test"
-            dbPassword: "test"
-            tablePrefix: "wp_test_"
-            domain: "castos.loc"
-            adminEmail: "castostesting@castos.com"
+  config:
+    WPLoader:
+      wpRootFolder: "/app/"
+      dbName: "%TEST_DB_NAME%"
+      dbHost: "%TEST_DB_HOST%"
+      dbUser: "%TEST_DB_USER%"
+      dbPassword: "%TEST_DB_PASSWORD%"
+      tablePrefix: "%TEST_DB_PREFIX%"
+      domain: "%TEST_DOMAIN%"
+      adminEmail: "%TEST_ADMIN_EMAIL%"

@@ -42,6 +42,11 @@ https://codeception.com/07-24-2013/testing-wordpress-plugins.html
 `codecept_debug($myVar);`
 `vendor/bin/codecept run --debug acceptance --steps`
 
+### Run unit tests:
+`vendor/bin/codecept run wpunit`
+`vendor/bin/codecept run --debug wpunit`
+
+
 ## BDD
 ### Links
 https://codeception.com/docs/07-BDD

@@ -31,6 +31,7 @@ class Players_Controller_Test extends WPTestCase {
 		);
 		$episode                  = get_post( $episode_id );
 		$html_player_content      = $this->players_controller->render_html_player( $episode->ID );
+		$permalink                = get_post_permalink( $episode_id );
 
 		$player_parts = array(
 			'<div class="castos-player dark-mode"',
@@ -63,12 +64,11 @@ class Players_Controller_Test extends WPTestCase {
 
 
 			'<nav class="player-panels-nav">',
-			'<button class="subscribe-btn" id="subscribe-btn-4" title="Subscribe">Subscribe</button>',
-			'<button class="share-btn" id="share-btn-4" title="Share">Share</button>',
-
-			'<div class="player-panels player-panels-4">',
-			'<div class="subscribe player-panel subscribe-4">',
-			'<div class="close-btn close-btn-4">',
+			sprintf( '<button class="subscribe-btn" id="subscribe-btn-%s" title="Subscribe">Subscribe</button>', $episode_id ),
+			sprintf( '<button class="share-btn" id="share-btn-%s" title="Share">Share</button>', $episode_id ),
+			sprintf( '<div class="player-panels player-panels-%s">', $episode_id ),
+			sprintf( '<div class="subscribe player-panel subscribe-%s">', $episode_id ),
+			sprintf( '<div class="close-btn close-btn-%s">', $episode_id ),
 
 			'<div class="panel__inner">',
 			'<div class="subscribe-icons">',
@@ -76,30 +76,37 @@ class Players_Controller_Test extends WPTestCase {
 			'<div class="player-panel-row">',
 
 			'RSS Feed',
-			'<input value="http://castos.loc/?feed=podcast" class="input-rss input-rss-4" readonly />',
+			sprintf( '<input value="http://castos.loc/?feed=podcast" class="input-rss input-rss-%s" readonly />', $episode_id ),
 
-			'<button class="copy-rss copy-rss-4"></button>',
+			sprintf( '<button class="copy-rss copy-rss-%s"></button>', $episode_id ),
 
-			'<div class="share share-4 player-panel">',
-			'<div class="close-btn close-btn-4">',
+			sprintf( '<div class="share share-%s player-panel">', $episode_id ),
+			sprintf( '<div class="close-btn close-btn-%s">', $episode_id ),
 
 			'<div class="player-panel-row">',
 
 			'Share',
 			'<div class="icons-holder">',
-			'<a href="https://www.facebook.com/sharer/sharer.php?u=http://castos.loc/?podcast=post-title-18&t=Post title 18"
-					   target="_blank" rel="noopener noreferrer" class="share-icon facebook" title="Share on Facebook">',
-			'<a href="https://twitter.com/intent/tweet?text=http://castos.loc/?podcast=post-title-18&url=Post title 18"
-					   target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="Share on Twitter">',
-			'<a href=""
-					   target="_blank" rel="noopener noreferrer" class="share-icon download" title="Download" download>',
-			'<div class="player-panel-row">',
+			sprintf(
+				'<a href="https://www.facebook.com/sharer/sharer.php?u=%s&t=%s"',
+				$permalink,
+				$episode->post_title
+			),
+			'target="_blank" rel="noopener noreferrer" class="share-icon facebook" title="Share on Facebook"',
+			sprintf(
+				'<a href="https://twitter.com/intent/tweet?text=%s&url=%s"',
+				$permalink,
+				$episode->post_title
+			),
+			'target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="Share on Twitter">',
+			'target="_blank" rel="noopener noreferrer" class="share-icon download" title="Download" download>',
+			'<div class="title">',
 			'Link',
-			'<input value="http://castos.loc/?podcast=post-title-18" class="input-link input-link-4" readonly />',
-			'<button class="copy-link copy-link-4" readonly=""></button>',
+			sprintf( '<input value="%s" class="input-link input-link-%s" readonly />', $permalink, $episode_id ),
+			sprintf( '<button class="copy-link copy-link-%s" readonly=""></button>', $episode_id ),
 			'<div class="player-panel-row">',
 			'Embed',
-			'<button class="copy-embed copy-embed-4"></button>',
+			sprintf('<button class="copy-embed copy-embed-%s"></button>', $episode_id),
 		);
 
 		foreach ( $player_parts as $player_part ) {

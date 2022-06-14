@@ -5,7 +5,7 @@
  * @package WordPress
  * @subpackage SeriouslySimplePodcasting
  *
- * @see \SeriouslySimplePodcasting\Controllers\Feed_Controller::load_feed_template()
+ * @see \SeriouslySimplePodcasting\Controllers\Feed_Controller::get_podcast_feed()
  *
  * @var $stylesheet_url
  * @var $title

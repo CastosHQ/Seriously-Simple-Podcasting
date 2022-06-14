@@ -79,7 +79,10 @@ class Renderer {
 		extract( $data, EXTR_OVERWRITE );
 		ob_start();
 
-		$template_file = SSP_PLUGIN_PATH . 'templates/' . $template_path . '.php';
+		$template_file = ( false === strpos( $template_path, SSP_PLUGIN_PATH ) ) ?
+			SSP_PLUGIN_PATH . 'templates/' . $template_path . '.php' :
+			$template_path;
+
 		include $template_file;
 
 		$template_content = (string) ob_get_clean();

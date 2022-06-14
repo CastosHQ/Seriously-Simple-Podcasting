@@ -107,19 +107,19 @@ class Feed_Controller {
 			$wp_query->is_feed = true;
 		}
 
-		$this->load_feed_template();
+		echo $this->get_podcast_feed();
 
 		exit;
-
 	}
 
-	/**
-	 * Loads the feed template file
-	 * @todo: Further refactoring - use renderer, get_feed_data() function
-	 */
-	public function load_feed_template() {
 
-		// Any functions hooked in here must NOT output any data or else feed will break
+	/**
+	 * Loads the feed template.
+	 *
+	 * @return string
+	 */
+	public function get_podcast_feed() {
+
 		do_action( 'ssp_before_feed' );
 
 		$this->feed_handler->suppress_errors();
@@ -203,10 +203,13 @@ class Feed_Controller {
 
 		$feed_controller = $this;
 
-		require $path;  // todo: use renderer here
+		$feed_data = apply_filters( 'ssp_feed_data', get_defined_vars() );
 
-		// Any functions hooked in here must NOT output any data or else feed will break
+		$feed = $this->renderer->fetch( $path, $feed_data );
+
 		do_action( 'ssp_after_feed' );
+
+		return apply_filters( 'ssp_podcast_feed', $feed, $feed_data );
 	}
 
 	/**

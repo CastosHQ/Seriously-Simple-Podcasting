@@ -7,7 +7,7 @@
  *
  * Refactoring history:
  * Moved the data preparation to the feed controller
- * @see \SeriouslySimplePodcasting\Controllers\Feed_Controller::load_feed_template()
+ * @see \SeriouslySimplePodcasting\Controllers\Feed_Controller::get_podcast_feed()
  *
  * @var $stylesheet_url
  * @var $title

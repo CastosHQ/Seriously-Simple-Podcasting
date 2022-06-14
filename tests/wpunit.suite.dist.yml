@@ -16,7 +16,7 @@ modules:
             dbPassword: ""
             tablePrefix: ""
             domain: ""
-            adminEmail: ""
+            adminEmail: "castostesting@castos.com"
             title: "WordPress Test"
             plugins: ['seriously-simple-podcasting/seriously-simple-podcasting.php']
             activatePlugins: ['seriously-simple-podcasting/seriously-simple-podcasting.php']

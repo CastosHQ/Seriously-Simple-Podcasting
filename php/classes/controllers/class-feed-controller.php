@@ -237,7 +237,7 @@ class Feed_Controller {
 
 		$qry->the_post();
 
-		global $ss_podcasting;
+		$ss_podcasting = ssp_frontend_controller();
 
 		$post_id = get_the_ID();
 

@@ -18,7 +18,7 @@ class Players_Controller_Test extends WPTestCase {
 	}
 
 	/**
-	 * Tests that the Players_Controller::html_player method returns the new html player code
+	 * @covers Players_Controller::render_html_player() method returns the new html player code
 	 */
 	public function test_player_controller_html_player_method() {
 		$this->players_controller = new Players_Controller();

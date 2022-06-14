@@ -2,7 +2,6 @@
 
 use Codeception\TestCase\WPTestCase;
 use SeriouslySimplePodcasting\Controllers\Feed_Controller;
-use SeriouslySimplePodcasting\Controllers\Players_Controller;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 
@@ -21,24 +20,88 @@ class Feed_Controller_Test extends WPTestCase {
 	}
 
 	/**
-	 * Tests Feed_Controller::load_feed_template()
+	 * @covers \SeriouslySimplePodcasting\Controllers\Feed_Controller::get_podcast_feed
 	 */
-	public function test_load_feed_template() {
+	public function test_get_podcast_feed() {
 
-		$this->factory->post->create(
+		$episode_id = $this->factory->post->create(
 			array(
-				'title'       => 'My Custom Podcast',
+				'post_title'  => 'My Test Episode',
 				'post_status' => 'publish',
 				'post_type'   => SSP_CPT_PODCAST,
 			)
 		);
 
+		update_post_meta( $episode_id, 'audio_file', site_url( 'test.mp3' ) );
+
+		$excerpt = get_the_excerpt( $episode_id );
+
 		$feed_controller = new Feed_Controller( new Feed_Handler(), new Renderer() );
 
-		ob_start();
-		$feed_controller->load_feed_template();
-		$results = ob_end_flush();
+		$feed = $feed_controller->get_podcast_feed();
 
-		$this->assertNotEmpty( $results );
+		$test_parts = array(
+			'<?xml version="1.0" encoding="UTF-8"?>',
+			'<?xml-stylesheet type="text/xsl" href="http://castos.loc/wp-content/plugins/seriously-simple-podcasting/templates/feed-stylesheet.xsl"?>',
+			'<rss version="2.0"',
+			'xmlns:content="http://purl.org/rss/1.0/modules/content/"',
+			'xmlns:wfw="http://wellformedweb.org/CommentAPI/"',
+			'xmlns:dc="http://purl.org/dc/elements/1.1/"',
+			'xmlns:atom="http://www.w3.org/2005/Atom"',
+			'xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"',
+			'xmlns:slash="http://purl.org/rss/1.0/modules/slash/"',
+			'xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"',
+			'xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"',
+			'xmlns:podcast="https://podcastindex.org/namespace/1.0"',
+			'<channel>',
+			'<title>WordPress Test</title>',
+			'<atom:link href="http://castos.loc" rel="self" type="application/rss+xml"/>',
+			sprintf( '<link>%s</link>', trailingslashit( site_url() ) ),
+			'<description>Just another WordPress site</description>',
+			'<lastBuildDate>',
+			'<language>en-US</language>',
+			'<copyright>&#xA9; 2022 WordPress Test</copyright>',
+			'<itunes:subtitle>Just another WordPress site</itunes:subtitle>',
+			'<itunes:author>WordPress Test</itunes:author>',
+			'<itunes:summary>Just another WordPress site</itunes:summary>',
+			'<itunes:owner>',
+			'<itunes:name>WordPress Test</itunes:name>',
+			'<itunes:email>castostesting@castos.com</itunes:email>',
+			'<itunes:explicit>clean</itunes:explicit>',
+			'<googleplay:author><![CDATA[WordPress Test]]></googleplay:author>',
+			'<googleplay:email>castostesting@castos.com</googleplay:email>',
+			'<googleplay:description></googleplay:description>',
+			'<googleplay:explicit>No</googleplay:explicit>',
+			'<podcast:locked owner="castostesting@castos.com">yes</podcast:locked>',
+			'<podcast:guid>',
+			'<!-- podcast_generator="SSP by Castos/2.14.0-beta.4" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->',
+			'<generator>https://wordpress.org/?v=6.0</generator>',
+
+
+			// Test the item created
+			'<item>',
+			'<title>My Test Episode</title>',
+			sprintf( '<link>%s</link>', get_post_permalink( $episode_id ) ),
+			sprintf( '<pubDate>%s</pubDate>', mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true, $episode_id ) ) ),
+			'<dc:creator><![CDATA[WordPress Test]]></dc:creator>',
+			sprintf( '<guid isPermaLink="false">%s</guid>', get_post_permalink( $episode_id ) ),
+			sprintf( '<description><![CDATA[%s]]></description>', $excerpt ),
+			sprintf( '<itunes:subtitle><![CDATA[%s]]></itunes:subtitle>', $excerpt ),
+			sprintf( '<content:encoded><![CDATA[%s]]></content:encoded>', $excerpt ),
+			sprintf( '<enclosure url="%s" length="1" type="audio/mpeg"></enclosure>', site_url( 'test.mp3' ) ),
+			sprintf( '<itunes:summary><![CDATA[%s]]></itunes:summary>', $excerpt ),
+			'<itunes:explicit>clean</itunes:explicit>',
+			'<itunes:block>no</itunes:block>',
+			'<itunes:duration>0:00</itunes:duration>',
+			'<itunes:author><![CDATA[WordPress Test]]></itunes:author>',
+			sprintf( '<googleplay:description><![CDATA[%s]]></googleplay:description>', $excerpt ),
+			'<googleplay:explicit>No</googleplay:explicit>',
+			'<googleplay:block>no</googleplay:block>',
+			'</item>',
+		);
+
+		foreach ( $test_parts as $test_part ) {
+			$this->assertStringContainsString( $test_part, $feed );
+		}
 	}
 }

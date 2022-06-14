@@ -10,6 +10,6 @@ modules:
       dbHost: "%TEST_DB_HOST%"
       dbUser: "%TEST_DB_USER%"
       dbPassword: "%TEST_DB_PASSWORD%"
-      tablePrefix: "%TEST_DB_PREFIX%"
       domain: "%TEST_DOMAIN%"
-      adminEmail: "%TEST_ADMIN_EMAIL%"
+      tablePrefix: "test_"
+      adminEmail: "castostesting@castos.com"

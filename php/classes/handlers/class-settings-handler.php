@@ -958,7 +958,7 @@ class Settings_Handler {
 						'class'       => 'large-text',
 						'description' => sprintf(
 							'<a href="%s">%s</a>',
-							'https://support.castos.com/hc/en-us/articles/4406045498002',
+							'https://support.castos.com/article/236-podcast-20-funding-tag-in-seriously-simple-podcasting',
 							__( 'Learn More', 'seriously-simple-podcasting' )
 						),
 					),
@@ -1043,9 +1043,9 @@ class Settings_Handler {
 			),
 			array(
 				'id'          => 'exclude_feed',
-				'label'       => __( 'Exclude podcasts from default feed', 'seriously-simple-podcasting' ),
+				'label'       => __( 'Exclude podcast from default feed', 'seriously-simple-podcasting' ),
 				// translators: placeholders are html anchor tags to support document
-				'description' => sprintf( __( 'When enabled, this will exclude any episodes in this podcast feed from the default feed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/114-excluding-series-episodes-from-the-default-feed' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+				'description' => sprintf( __( 'When enabled, this will exclude any episodes in this podcast feed from the default feed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/67-include-series-episodes-in-the-default-feed' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'checkbox',
 				'default'     => '',
 				'callback'    => 'wp_strip_all_tags',
@@ -1054,7 +1054,7 @@ class Settings_Handler {
 				'id'          => 'turbocharge_feed',
 				'label'       => __( 'Turbocharge podcast feed', 'seriously-simple-podcasting' ),
 				// translators: placeholders are html anchor tags to support document
-				'description' => sprintf( __( 'When enabled, this setting will speed up your feed loading time. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/89-turbocharging-your-feed-to-maximize-available-episodes' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+				'description' => sprintf( __( 'When enabled, this setting will speed up your feed loading time. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/220-turbocharging-your-feed-to-maximize-available-episodes' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'checkbox',
 				'default'     => '',
 				'callback'    => 'wp_strip_all_tags',

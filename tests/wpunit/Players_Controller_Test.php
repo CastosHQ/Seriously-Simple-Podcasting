@@ -32,6 +32,7 @@ class Players_Controller_Test extends WPTestCase {
 		$episode                  = get_post( $episode_id );
 		$html_player_content      = $this->players_controller->render_html_player( $episode->ID );
 		$permalink                = get_post_permalink( $episode_id );
+		$site_url                 = site_url();
 
 		$player_parts = array(
 			'<div class="castos-player dark-mode"',
@@ -76,7 +77,7 @@ class Players_Controller_Test extends WPTestCase {
 			'<div class="player-panel-row">',
 
 			'RSS Feed',
-			sprintf( '<input value="http://castos.loc/?feed=podcast" class="input-rss input-rss-%s" readonly />', $episode_id ),
+			sprintf( '<input value="%s/?feed=podcast" class="input-rss input-rss-%s" readonly />', $site_url, $episode_id ),
 
 			sprintf( '<button class="copy-rss copy-rss-%s"></button>', $episode_id ),
 
@@ -106,7 +107,7 @@ class Players_Controller_Test extends WPTestCase {
 			sprintf( '<button class="copy-link copy-link-%s" readonly=""></button>', $episode_id ),
 			'<div class="player-panel-row">',
 			'Embed',
-			sprintf('<button class="copy-embed copy-embed-%s"></button>', $episode_id),
+			sprintf( '<button class="copy-embed copy-embed-%s"></button>', $episode_id ),
 		);
 
 		foreach ( $player_parts as $player_part ) {

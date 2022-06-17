@@ -5,7 +5,7 @@
 modules:
   config:
     WPLoader:
-      wpRootFolder: "/app/"
+      wpRootFolder: "%TEST_WP_ROOT%"
       dbName: "%TEST_DB_NAME%"
       dbHost: "%TEST_DB_HOST%"
       dbUser: "%TEST_DB_USER%"
@@ -13,3 +13,5 @@ modules:
       domain: "%TEST_DOMAIN%"
       tablePrefix: "test_"
       adminEmail: "castostesting@castos.com"
+      plugins: [ 'seriously-simple-podcasting/seriously-simple-podcasting.php' ]
+      activatePlugins: [ 'seriously-simple-podcasting/seriously-simple-podcasting.php' ]

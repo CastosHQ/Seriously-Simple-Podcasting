@@ -39,10 +39,11 @@ class Feed_Controller_Test extends WPTestCase {
 		$feed_controller = new Feed_Controller( new Feed_Handler(), new Renderer() );
 
 		$feed = $feed_controller->get_podcast_feed();
+		$site_url = site_url();
 
 		$test_parts = array(
 			'<?xml version="1.0" encoding="UTF-8"?>',
-			'<?xml-stylesheet type="text/xsl" href="http://castos.loc/wp-content/plugins/seriously-simple-podcasting/templates/feed-stylesheet.xsl"?>',
+			sprintf( '<?xml-stylesheet type="text/xsl" href="%s/wp-content/plugins/seriously-simple-podcasting/templates/feed-stylesheet.xsl"?>', $site_url ),
 			'<rss version="2.0"',
 			'xmlns:content="http://purl.org/rss/1.0/modules/content/"',
 			'xmlns:wfw="http://wellformedweb.org/CommentAPI/"',
@@ -55,7 +56,7 @@ class Feed_Controller_Test extends WPTestCase {
 			'xmlns:podcast="https://podcastindex.org/namespace/1.0"',
 			'<channel>',
 			'<title>WordPress Test</title>',
-			'<atom:link href="http://castos.loc" rel="self" type="application/rss+xml"/>',
+			sprintf( '<atom:link href="%s" rel="self" type="application/rss+xml"/>', $site_url ),
 			sprintf( '<link>%s</link>', trailingslashit( site_url() ) ),
 			'<description>Just another WordPress site</description>',
 			'<lastBuildDate>',
@@ -74,7 +75,7 @@ class Feed_Controller_Test extends WPTestCase {
 			'<googleplay:explicit>No</googleplay:explicit>',
 			'<podcast:locked owner="castostesting@castos.com">yes</podcast:locked>',
 			'<podcast:guid>',
-			'<!-- podcast_generator="SSP by Castos/2.14.0-beta.4" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->',
+			sprintf('<!-- podcast_generator="SSP by Castos/%s" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->', SSP_VERSION),
 			'<generator>https://wordpress.org/?v=6.0</generator>',
 
 

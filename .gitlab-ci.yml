@@ -9,10 +9,60 @@ variables:
   SITE_URL: ""
   SITE_USER: ""
   SITE_USER_PASS: ""
+
 stages:
+  - unit_tests
   - build
   - deploy
-  - testing
+  - acceptance_tests
+
+unit_tests:
+  stage: unit_tests
+  only:
+    - develop
+
+  image: wordpress:cli-2.6
+  services:
+    - name: mysql:5.7
+      alias: db
+
+  variables:
+    MYSQL_DATABASE: "testdb"
+    MYSQL_ROOT_PASSWORD: "dbrootpass"
+    MYSQL_USER: "wordpress"
+    MYSQL_PASSWORD: "wordpress"
+
+  script:
+
+    # Install composer and PHP dependencies
+    - php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && php composer-setup.php
+    - php composer.phar install
+
+    # Move the plugin files to the separate folder
+    - mkdir ssp && mv `ls -A | grep -v ssp` ssp
+
+    # Download WordPress
+    - wp core download
+
+    # Prepare testing environment file
+    - touch .env.testing
+    - echo "TEST_WP_ROOT=$(pwd)"
+    - echo "TEST_WP_ROOT=$(pwd)" >> .env.testing
+    - echo "TEST_DB_HOST=db" >> .env.testing
+    - echo "TEST_DB_NAME=$MYSQL_DATABASE" >> .env.testing
+    - echo "TEST_DB_USER=$MYSQL_USER" >> .env.testing
+    - echo "TEST_DB_PASSWORD=$MYSQL_PASSWORD" >> .env.testing
+    - echo "TEST_DOMAIN=test.com" >> .env.testing
+    - mv .env.testing ssp/
+
+    # Move the plugin to the plugins folder
+    - mv ssp ./wp-content/plugins/seriously-simple-podcasting
+    - cd wp-content/plugins/seriously-simple-podcasting
+
+    # Run tests
+    - ls -la
+    - vendor/bin/codecept run wpunit
+
 
 build:
   stage: build
@@ -36,12 +86,12 @@ build:
     - npm install --ignore-scripts
     - apt-get install zip unzip -yqq
 
-    # Now we can build the plugin
+    # Build the plugin
     - export NODE_OPTIONS=--openssl-legacy-provider
     - npm rebuild node-sass
     - npm run predeploy
 
-    # Create the dist plugin folder for the deploy
+    # Create the dist plugin folder for the deployment
     - mkdir dist
     - cp -r assets dist/assets
     - cp -r build dist/build
@@ -52,7 +102,6 @@ build:
     - cp index.php dist/index.php
     - cp readme.txt dist/readme.txt
     - cp seriously-simple-podcasting.php dist/seriously-simple-podcasting.php
-
 
 deploy:
   stage: deploy
@@ -73,8 +122,8 @@ deploy:
     - scp -P$SSH_PORT -r dist/* $SSH_USER@$SSH_HOSTNAME:$SSH_PATH/deploying-ssp
     - ssh -p$SSH_PORT $SSH_USER@$SSH_HOSTNAME "rm -rf $SSH_PATH/wp-content/plugins/seriously-simple-podcasting && mv $SSH_PATH/deploying-ssp $SSH_PATH/wp-content/plugins/seriously-simple-podcasting && cd $SSH_PATH && wp db import seed.sql"
 
-testing:
-  stage: testing
+acceptance_tests:
+  stage: acceptance_tests
   only:
     - develop
   script:

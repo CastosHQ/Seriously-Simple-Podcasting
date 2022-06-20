@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 5.9
+Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.13.0
+Stable tag: 2.14.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,31 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.14.0 =
+2022-06-20
+UPDATE SUMMARY: Renamed Series to Podcasts, improved transcripts features, other improvements
+[UPDATE] Renamed Series to Podcasts, renamed appropriate menu items
+[UPDATE] Added settings for changing Podcasts (Series) slug
+[UPDATE] Improved UX/UI for the Podcast (Series) settings
+[UPDATE] Filtering by Podcast (Series) for Elementor Recent Episodes widget
+[UPDATE] Filtering by Podcast (Series) for Elementor Episode List Widget
+[UPDATE] Podcast 2.0 namespace: added podcast:transcript tag
+[UPDATE] Prepared plugin for PHP 8.1 (removed FILTER_SANITIZE_STRING)
+[UPDATE] Show correct images in podcast overview column “Image”
+[UPDATE] Possibility to disable PodPing notification
+[UPDATE] Hide Disconnect Castos checkbox if site is not connected to Castos
+[UPDATE] Gutenberg settings to hide any block from feed
+[UPDATE] Elementor: feed hidden settings for Text Editor and Transcripts
+[UPDATE] Include more info link about PodPing
+[UPDATE] Added a generator tag to SSP feeds
+[UPDATE] Removed confusing synchronization between SSP and Castos private settings
+[UPDATE] Renamed Castos token to Castos key
+[UPDATE] Updated feed details Learn More links
+[UPDATE] Code refactoring
+[FIX] Fixed notification error
+[FIX] LifterLMS: fixed potential sync issue
+
 
 = 2.13.0 =
 * 2022-04-18

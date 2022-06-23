@@ -127,9 +127,8 @@ class Settings_Renderer {
 				$html .= '</select>';
 				break;
 			case 'radio':
-				// Fix bug when data is not equals to the any option
-				$has_value = in_array( $data, $field['options'] );
-				if ( ! $has_value ) {
+				// Fix bug when data is not equals to any option
+				if ( ! array_key_exists( $data, $field['options'] ) ) {
 					$data = isset( $field['default'] ) ? $field['default'] : $field['options'][0];
 				}
 

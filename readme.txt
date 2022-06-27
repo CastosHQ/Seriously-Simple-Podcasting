@@ -161,8 +161,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 2.14.1 =
-* 2022-06-23
+= 2.14.2 =
+* 2022-06-27
 * UPDATE SUMMARY: Fixed custom feed template support
 * [FIX] Fixed custom feed template support
 

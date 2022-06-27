@@ -810,8 +810,8 @@ class Settings_Handler {
 			),
 			array(
 				'id'          => 'data_author',
-				'label'       => __( 'Author', 'seriously-simple-podcasting' ),
-				'description' => __( 'Your podcast author.', 'seriously-simple-podcasting' ),
+				'label'       => __( 'Host', 'seriously-simple-podcasting' ),
+				'description' => __( 'Your podcast host.', 'seriously-simple-podcasting' ),
 				'type'        => 'text',
 				'default'     => get_bloginfo( 'name' ),
 				'placeholder' => get_bloginfo( 'name' ),

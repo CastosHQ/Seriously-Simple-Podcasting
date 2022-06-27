@@ -13,7 +13,7 @@ Feature: SSP Plugin Settings
 		And I can see "View feed"
 		And I can see "Title"
 		And I can see "Subtitle"
-		And I can see "Author"
+		And I can see "Host"
 		And I can see "Primary Category"
 		And I can see "Primary Sub-Category"
 		And I can see "Secondary Category"

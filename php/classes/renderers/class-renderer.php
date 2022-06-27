@@ -70,20 +70,53 @@ class Renderer {
 	/**
 	 * Fetches the template string.
 	 *
+	 * There are 4 possible path variants:
+	 * 1. Absolute path: /app/wp-content/plugins/seriously-simple-podcasting/templates/feed/feed-item.php
+	 * 2. Relative WP path: wp-content/plugins/seriously-simple-podcasting/templates/feed/feed-item.php
+	 * 3. Relative plugin path: templates/feed/feed-item.php
+	 * 4. Relative plugin path inside templates folder: feed/feed-item.php
+	 * And each path variant can be with and without .php extension.
+	 *
 	 * @param string $template_path
 	 * @param array $data
 	 *
 	 * @return string
 	 */
-	public function fetch( $template_path, $data ) {
+	public function fetch( $template_path, $data = [] ) {
+		$abs_path = '';
+
+		// Check if there is extension in the end. If not, lets add it.
+		$ext = pathinfo( $template_path, PATHINFO_EXTENSION );
+
+		if ( ! $ext ) {
+			$template_path .= '.php';
+		}
+
+		// Now try to search template in different locations
+		if ( file_exists( SSP_PLUGIN_PATH . 'templates/' . $template_path ) ) {
+			$abs_path = SSP_PLUGIN_PATH . 'templates/' . $template_path;
+		}
+
+		if ( ! $abs_path && file_exists( SSP_PLUGIN_PATH . $template_path ) ) {
+			$abs_path = SSP_PLUGIN_PATH . $template_path;
+		}
+
+		if ( ! $abs_path && file_exists( ABSPATH . $template_path ) ) {
+			$abs_path = ABSPATH . $template_path;
+		}
+
+		if ( ! $abs_path && file_exists( $template_path ) ) {
+			$abs_path = $template_path;
+		}
+
+		if ( ! $abs_path ) {
+			return '';
+		}
+
 		extract( $data, EXTR_OVERWRITE );
 		ob_start();
 
-		$template_file = ( false === strpos( $template_path, SSP_PLUGIN_PATH ) ) ?
-			SSP_PLUGIN_PATH . 'templates/' . $template_path . '.php' :
-			$template_path;
-
-		include $template_file;
+		include $abs_path;
 
 		$template_content = (string) ob_get_clean();
 

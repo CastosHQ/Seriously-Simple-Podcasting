@@ -30,7 +30,34 @@ class Players_Controller {
 	public function __construct() {
 		$this->renderer           = new Renderer();
 		$this->options_handler    = new Options_Handler();
+
+		add_action( 'init', array( $this, 'register_player_assets' ) );
 	}
+
+	/**
+	 * Registers player assets
+	 *
+	 * @return void
+	 */
+	public function register_player_assets() {
+		$version = SCRIPT_DEBUG ? time() : SSP_VERSION;
+
+		wp_register_script(
+			'ssp-castos-player',
+			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player.js' ),
+			array(),
+			$version,
+			true
+		);
+
+		wp_register_style(
+			'ssp-castos-player',
+			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player.css' ),
+			array(),
+			$version
+		);
+	}
+
 
 	/**
 	 * @return Episode_Controller

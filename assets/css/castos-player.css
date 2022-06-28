@@ -424,6 +424,10 @@
     height: 20px;
     background-color: #fff;
 }
+.castos-player .subscribe-icons .audible span {
+	mask-image: url('images/player/images/brands/icon-brand-audible.svg');
+	-webkit-mask-image: url('images/player/images/brands/icon-brand-audible.svg');
+}
 .castos-player .subscribe-icons .apple_podcasts span,
 .castos-player .subscribe-icons .itunes span {
     mask-image: url('images/player/images/brands/icon-brand-apple-podcasts.svg');

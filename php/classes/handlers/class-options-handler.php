@@ -13,6 +13,7 @@ class Options_Handler {
 		'acast'            => 'Acast',
 		'amazon'           => 'Amazon',
 		'anchor'           => 'Anchor',
+		'audible'          => 'Audible',
 		'apple_podcasts'   => 'Apple Podcasts',
 		'blubrry'          => 'Blubrry',
 		'breaker'          => 'Breaker',

@@ -90,21 +90,6 @@ class Castos_Blocks extends Controller {
 			$this->asset_file['version']
 		);
 
-		wp_register_script(
-			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player.js' ),
-			array(),
-			$this->asset_file['version'],
-			true
-		);
-
-		wp_register_style(
-			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player.css' ),
-			array(),
-			$this->asset_file['version']
-		);
-
 		register_block_type(
 			'seriously-simple-podcasting/castos-player',
 			array(

@@ -321,8 +321,8 @@ class Settings_Handler {
 			),
 		);
 
-		$ss_podcasting_player_style = get_option( 'ss_podcasting_player_style', 'larger' );
-		if ( 'larger' === $ss_podcasting_player_style ) {
+		$player_style = ssp_get_option( 'player_style', 'larger' );
+		if ( 'larger' === $player_style ) {
 			$html_5_player_settings = array(
 				array(
 					'id'          => 'player_mode',
@@ -330,8 +330,8 @@ class Settings_Handler {
 					'description' => __( 'Choose between Dark or Light mode, depending on your theme', 'seriously-simple-podcasting' ),
 					'type'        => 'radio',
 					'options'     => array(
-						'dark'  => __( 'Dark Mode', 'seriously-simple-podcasting' ),
-						'light' => __( 'Light Mode', 'seriously-simple-podcasting' ),
+						'dark'   => __( 'Dark Mode', 'seriously-simple-podcasting' ),
+						'light'  => __( 'Light Mode', 'seriously-simple-podcasting' ),
 					),
 					'default'     => 'dark',
 				),
@@ -365,43 +365,77 @@ class Settings_Handler {
 		$meta_data_enabled = 'on' === ssp_get_option( 'player_meta_data_enabled', 'on' );
 
 		if ( $meta_data_enabled ) {
-			$meta_settings = array(
-				array(
-					'id'          => 'download_file_enabled',
-					'label'       => __( 'Show download file link', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the download file link', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
-					'id'          => 'play_in_new_window_enabled',
-					'label'       => __( 'Show play in new window link', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the play in new window link', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
-					'id'          => 'duration_enabled',
-					'label'       => __( 'Show duration', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the track duration information', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-				array(
-					'id'          => 'date_recorded_enabled',
-					'label'       => __( 'Show recorded date', 'seriously-simple-podcasting' ),
-					'description' => __( 'Turn on to display the recorded date information', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => 'on',
-				),
-			);
-
-			$meta_settings = apply_filters( 'ssp_player_meta_settings', $meta_settings );
+			$meta_settings = $this->get_player_meta_settings();
 
 			$player_settings['fields'] = array_merge( $player_settings['fields'], $meta_settings );
 		}
 
+		$player_settings['fields'][] = array(
+			'id'          => 'player_custom_colors',
+			'label'       => __( 'Enable Custom Player Colors', 'seriously-simple-podcasting' ),
+			'description' => __( 'Turn this on to enable customer player color settings', 'seriously-simple-podcasting' ),
+			'type'        => 'checkbox',
+			'default'     => '',
+		);
+
+		$custom_colors_enabled = 'on' === ssp_get_option( 'player_custom_colors' );
+
+		if ( $custom_colors_enabled ) {
+			$color_settings = $this->get_player_color_settings();
+
+			$player_settings['fields'] = array_merge( $player_settings['fields'], $color_settings );
+		}
+
 		return $player_settings;
+	}
+
+	protected function get_player_color_settings() {
+		$settings = array(
+			array(
+				'id'          => 'player_title_color',
+				'label'       => __( 'Title color', 'seriously-simple-podcasting' ),
+				'description' => __( 'Turn on to display the download file link', 'seriously-simple-podcasting' ),
+				'type'        => 'checkbox',
+				'default'     => 'on',
+			),
+		);
+
+		return apply_filters( 'ssp_player_color_settings', $settings );
+	}
+
+	protected function get_player_meta_settings() {
+		$settings = array(
+			array(
+				'id'          => 'download_file_enabled',
+				'label'       => __( 'Show download file link', 'seriously-simple-podcasting' ),
+				'description' => __( 'Turn on to display the download file link', 'seriously-simple-podcasting' ),
+				'type'        => 'checkbox',
+				'default'     => 'on',
+			),
+			array(
+				'id'          => 'play_in_new_window_enabled',
+				'label'       => __( 'Show play in new window link', 'seriously-simple-podcasting' ),
+				'description' => __( 'Turn on to display the play in new window link', 'seriously-simple-podcasting' ),
+				'type'        => 'checkbox',
+				'default'     => 'on',
+			),
+			array(
+				'id'          => 'duration_enabled',
+				'label'       => __( 'Show duration', 'seriously-simple-podcasting' ),
+				'description' => __( 'Turn on to display the track duration information', 'seriously-simple-podcasting' ),
+				'type'        => 'checkbox',
+				'default'     => 'on',
+			),
+			array(
+				'id'          => 'date_recorded_enabled',
+				'label'       => __( 'Show recorded date', 'seriously-simple-podcasting' ),
+				'description' => __( 'Turn on to display the recorded date information', 'seriously-simple-podcasting' ),
+				'type'        => 'checkbox',
+				'default'     => 'on',
+			),
+		);
+
+		return apply_filters( 'ssp_player_meta_settings', $settings );
 	}
 
 	public function get_feed_fields(){

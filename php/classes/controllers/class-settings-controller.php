@@ -118,20 +118,6 @@ class Settings_Controller extends Controller {
 			$this,
 			'maybe_disconnect_from_castos'
 		), 10, 2 );
-
-		// Quick and dirty colour picker implementation
-		// If we do not have the WordPress core colour picker field, then we don't break anything
-		add_action( 'admin_footer', function () {
-			?>
-			<script>
-				jQuery(document).ready(function ($) {
-					if ("function" === typeof $.fn.wpColorPicker) {
-						$('.ssp-color-picker').wpColorPicker();
-					}
-				});
-			</script>
-			<?php
-		}, 99 );
 	}
 
 	/**

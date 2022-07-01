@@ -5,6 +5,7 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro;
 
+use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
@@ -28,6 +29,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 	use Singleton;
 
+	const BULK_UPDATE_STARTED = 'ssp_bulk_update_started';
+
 	/**
 	 * @var Feed_Handler
 	 * */
@@ -39,6 +42,11 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	protected $castos_handler;
 
 	/**
+	 * @var Admin_Notifications_Handler
+	 * */
+	protected $notices_handler;
+
+	/**
 	 * @var Log_Helper
 	 * */
 	protected $logger;
@@ -48,6 +56,16 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * */
 	protected $castos_podcasts;
 
+	/**
+	 * @var array
+	 * */
+	protected $series_levels_map;
+
+	/**
+	 * @var array
+	 * */
+	protected $series_podcasts_map;
+
 
 	/**
 	 * Class Paid_Memberships_Pro_Integrator constructor.
@@ -55,8 +73,9 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @param Feed_Handler $feed_handler
 	 * @param Castos_Handler $castos_handler
 	 * @param Log_Helper $logger
+	 * @param Admin_Notifications_Handler $notices_handler
 	 */
-	public function init( $feed_handler, $castos_handler, $logger ) {
+	public function init( $feed_handler, $castos_handler, $logger, $notices_handler ) {
 
 		if ( ! $this->check_dependencies(
 			array( 'PMPro_Membership_Level' ),
@@ -64,9 +83,10 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			return;
 		}
 
-		$this->feed_handler   = $feed_handler;
-		$this->castos_handler = $castos_handler;
-		$this->logger         = $logger;
+		$this->feed_handler    = $feed_handler;
+		$this->castos_handler  = $castos_handler;
+		$this->logger          = $logger;
+		$this->notices_handler = $notices_handler;
 
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
@@ -117,14 +137,31 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	}
 
 	/**
+	 * @return bool
+	 */
+	protected function is_bulk_update_running() {
+		$bulk_update_started = $this->bulk_update_started();
+
+		// Check that bulk update was started not more than 4 hrs ago just to be sure there won't be infinite stuck
+		return $bulk_update_started && time() - $bulk_update_started  < 4 * HOUR_IN_SECONDS;
+	}
+
+	/**
+	 * @return int
+	 */
+	protected function bulk_update_started() {
+		return intval( get_option( self::BULK_UPDATE_STARTED, 0 ) );
+	}
+
+	/**
 	 * Schedule bulk sync subscribers.
 	 */
 	protected function schedule_bulk_sync_subscribers(){
-		// 1. Save old membership level map: [['level' => ['users']['series']]]
-		$this->update_users_series_map( $this->generate_users_series_map() );
-
-		// 2. Schedule a task to add/revoke users
 		if ( ! wp_next_scheduled( 'ssp_bulk_sync_subscribers' ) ) {
+			// 1. Save old membership level map: [['level' => ['users']['series']]]
+			$this->update_users_series_map( $this->generate_users_series_map() );
+
+			// 2. Schedule a task to add/revoke users
 			wp_schedule_single_event( time(), 'ssp_bulk_sync_subscribers' );
 		}
 	}
@@ -173,17 +210,51 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Bulk sync subscribers after settings change.
 	 */
 	public function bulk_sync_subscribers() {
+		if ( $this->is_bulk_update_running() ) {
+			if ( ! wp_next_scheduled( 'ssp_bulk_sync_subscribers' ) ) {
+				wp_schedule_single_event( time() + 10 * MINUTE_IN_SECONDS, 'ssp_bulk_sync_subscribers' );
+			}
+
+			return;
+		}
+
+		add_option( self::BULK_UPDATE_STARTED, time(), '', false );
+
 		$old_map = $this->get_users_series_map();
 		$new_map = $this->generate_users_series_map();
+
+		$list_to_add = array();
+		$list_to_revoke = array();
 
 		foreach ( $new_map as $user_id => $new_series ) {
 			$old_series = isset( $old_map[ $user_id ] ) ? $old_map[ $user_id ] : array();
 
-			$add_series    = array_diff( $new_series, $old_series );
-			$revoke_series = array_diff( $old_series, $new_series );
+			$add_series = array_diff( $new_series, $old_series );
+			foreach ( $add_series as $series_id ) {
+				$list_to_add[ $series_id ][] = $user_id;
+			}
 
-			$this->sync_user( $user_id, $revoke_series, $add_series );
+			$revoke_series = array_diff( $old_series, $new_series );
+			foreach ( $revoke_series as $series_id ) {
+				$list_to_revoke[ $series_id ][] = $user_id;
+			}
+
+			//$this->sync_user( $user_id, $revoke_series, $add_series );
 		}
+
+		$list_to_add    = array_unique( $list_to_add );
+		$list_to_revoke = array_unique( $list_to_revoke );
+
+		foreach ( $list_to_add as $series_id => $user_ids ) {
+			$this->add_subscribers_to_podcast( $series_id, $user_ids );
+		}
+
+		foreach ( $list_to_revoke as $series_id => $user_ids ) {
+			$this->revoke_subscribers_from_podcast( $series_id, $user_ids );
+		}
+
+		delete_option( self::BULK_UPDATE_STARTED );
+		$this->notices_handler->add_flash_notice( __( 'PMPro data successfully synchronized!', 'seriously-simple-podcasting' ), 'success' );
 	}
 
 
@@ -199,7 +270,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		$old_level = pmpro_getMembershipLevelForUser( $user_id );
 
-		$old_series_ids = $this->get_series_ids_by_level( $old_level->id );
+		$old_series_ids = isset($old_level->id) ? $this->get_series_ids_by_level( $old_level->id ) : array();
 
 		$new_series_ids = $this->get_series_ids_by_level( $level_id );
 
@@ -273,6 +344,96 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 
 	/**
+	 * Adds subscriber to multiple Castos podcasts.
+	 *
+	 * @param int $series_id
+	 * @param int[] $user_ids
+	 *
+	 * @return int
+	 */
+	protected function add_subscribers_to_podcast( $series_id, $user_ids ) {
+		$podcast_ids = $this->convert_series_ids_to_podcast_ids( array( $series_id ) );
+
+		$subscribers = array();
+
+		$users_data = $this->get_users_data( $user_ids );
+
+		foreach ( $user_ids as $user_id ) {
+			if ( empty( $users_data[ $user_id ] ) ) {
+				$this->logger->log( __METHOD__ . ' Error: could not get user by id: ' . $user_id );
+			}
+			$subscribers[] = array(
+				'name'  => $users_data[ $user_id ]['display_name'],
+				'email' => $users_data[ $user_id ]['user_email'],
+			);
+		}
+
+		$count = $this->castos_handler->add_subscribers_to_podcasts( $podcast_ids, $subscribers );
+
+		$this->logger->log( __METHOD__ . ' Added subscribers: ' . $count );
+
+		return $count;
+	}
+
+	/**
+	 * @param int[] $user_ids
+	 *
+	 * @return array
+	 */
+	protected function get_users_data( $user_ids ) {
+		global $wpdb;
+		$query = sprintf(
+			'SELECT `ID`, `user_email`, `display_name` FROM %s WHERE `ID` IN(%s)',
+			$wpdb->users,
+			implode( ',', $user_ids )
+		);
+
+		$rows = $wpdb->get_results($query, ARRAY_A);
+
+		$users_data = array();
+
+		foreach ( $rows as $row ) {
+			$users_data[ $row['ID'] ] = array(
+				'user_email'   => $row['user_email'],
+				'display_name' => $row['display_name'],
+			);
+		}
+
+		return $users_data;
+	}
+
+
+	/**
+	 * Adds subscriber to multiple Castos podcasts.
+	 *
+	 * @param int $series_id
+	 * @param int[] $user_ids
+	 *
+	 * @return int
+	 */
+	protected function revoke_subscribers_from_podcast( $series_id, $user_ids ) {
+		$podcast_ids = $this->convert_series_ids_to_podcast_ids( array( $series_id ) );
+
+		$emails = array();
+
+		$user_data = $this->get_users_data( $user_ids );
+
+		foreach ( $user_ids as $user_id ) {
+			if ( empty( $user_data[ $user_id ] ) ) {
+				$this->logger->log( __METHOD__ . ' Error: could not get user by id: ' . $user_id );
+			}
+			$emails[] = $user_data[ $user_id ]['user_email'];
+		}
+
+		$count = $this->castos_handler->revoke_subscribers_from_podcasts( $podcast_ids, $emails );
+
+		$this->logger->log( __METHOD__ . ' Revoked subscribers: ' . $count );
+
+		return $count;
+	}
+
+
+	/**
 	 * Converts series IDs to the Castos podcast IDs.
 	 *
 	 * @param int[] $series_ids
@@ -280,6 +441,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return array
 	 */
 	protected function convert_series_ids_to_podcast_ids( $series_ids ) {
+
 		$series_podcasts_map = $this->get_series_podcasts_map();
 
 		$podcast_ids = array();
@@ -301,6 +463,10 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 */
 	protected function get_series_ids_by_level( $level_id ) {
 
+		if ( isset( $this->series_levels_map[ $level_id ] ) ) {
+			return $this->series_levels_map[ $level_id ];
+		}
+
 		$series_ids = array();
 
 		if ( empty( $level_id ) ) {
@@ -308,6 +474,11 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		$series_terms = $this->get_series();
+
+		if ( is_wp_error( $series_terms ) ) {
+			$this->logger->log( __METHOD__ . sprintf( ': Could not get terms for level: %s!', $level_id ) );
+			return $series_ids;
+		}
 
 		foreach ( $series_terms as $series ) {
 			$levels_ids = $this->get_series_level_ids( $series->term_id );
@@ -317,13 +488,13 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			}
 		}
 
+		$this->series_levels_map[ $level_id ] = $series_ids;
+
 		return $series_ids;
 	}
 
 	/**
-	 * Gets IDs of the all the users who have any membership level.
-	 *
-	 * @param int $level_id
+	 * Gets IDs of all users who have any membership level.
 	 *
 	 * @return array
 	 */
@@ -345,6 +516,10 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return array
 	 */
 	protected function get_series_podcasts_map() {
+		if ( $this->series_podcasts_map ) {
+			return $this->series_podcasts_map;
+		}
+
 		$podcasts = $this->castos_handler->get_podcasts();
 
 		$map = array();
@@ -358,6 +533,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		foreach ( $podcasts['data']['podcast_list'] as $podcast ) {
 			$map[ $podcast['series_id'] ] = $podcast['id'];
 		}
+
+		$this->series_podcasts_map = $map;
 
 		return $map;
 	}
@@ -584,6 +761,12 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 			$args['description'] = $msg;
 			$args['fields']      = array();
+		} else {
+			if ( 'integrations' === filter_input( INPUT_GET, 'tab' ) &&
+				'paid_memberships_pro' === filter_input( INPUT_GET, 'integration' ) &&
+				self::is_bulk_update_running() ) {
+				$this->notices_handler->add_flash_notice( __( 'Synchronizing PMPro data with Castos', 'seriously-simple-podcasting' ) );
+			}
 		}
 
 		$this->add_integration_settings( $args );

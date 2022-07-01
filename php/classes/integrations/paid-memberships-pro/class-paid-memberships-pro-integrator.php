@@ -173,6 +173,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Bulk sync subscribers after settings change.
 	 */
 	public function bulk_sync_subscribers() {
+		set_time_limit( 0 );
+		ignore_user_abort( true );
 		$old_map = $this->get_users_series_map();
 		$new_map = $this->generate_users_series_map();
 

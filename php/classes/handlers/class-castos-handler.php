@@ -709,6 +709,111 @@ class Castos_Handler {
 
 
 	/**
+	 * Add subscriber to multiple podcasts.
+	 *
+	 * @param array $podcast_ids
+	 * @param array $subscribers {
+	 *  array(
+	 *     Subscriber data
+	 *     @type string $email User email.
+	 *     @type string $name  User name.
+	 *  )
+	 * }
+	 *
+	 * @return int Number of added subscribers sent to all podcasts
+	 */
+	public function add_subscribers_to_podcasts( $podcast_ids, $subscribers ) {
+		$count = 0;
+		$this->logger->log(
+			__METHOD__,
+			array( 'podcast_ids' => $podcast_ids, 'subscribers' => array_keys( $subscribers ) )
+		);
+
+		$podcasts = array();
+
+		foreach ( $podcast_ids as $podcast_id ) {
+			$podcasts[] = array( 'id' => $podcast_id );
+		}
+
+		// If there's a lot of subscribers, API might fail, so let's chunk it and send 100 users per request
+		$subscribers_groups = array_chunk( $subscribers, 100 );
+
+		foreach ( $subscribers_groups as $subscribers_group ) {
+
+			// Make sure that all subscribers are valid (have email and name);
+			$subscribers_to_send = array_map( function ( $s ) {
+				if ( empty( $s['email'] ) || empty( $s['name'] ) ) {
+					$this->logger->log( __METHOD__, 'Error: wrong subscriber data: ' . print_r( $s, true ) );
+
+					return null;
+				}
+
+				return array(
+					'email' => $s['email'],
+					'name'  => $s['name'],
+				);
+			}, $subscribers_group );
+
+			$subscribers_to_send = array_filter( $subscribers_to_send );
+
+			$res = $this->send_request(
+				'api/v2/create-private-subscribers',
+				array(
+					'podcasts'    => $podcasts,
+					'subscribers' => $subscribers_to_send,
+				),
+				'POST'
+			);
+
+			if ( ! empty( $res['success'] ) ) {
+				$count += count( $subscribers_to_send );
+			} else {
+				$this->logger->log( __METHOD__, 'API response error!' );
+			}
+		}
+
+		return $count;
+	}
+
+	/**
+	 * Revoke subscriber from multiple podcasts.
+	 *
+	 * @param array $podcast_ids
+	 * @param string[] $emails
+	 *
+	 * @return int Number of revoked subscribers from all podcasts
+	 */
+	public function revoke_subscribers_from_podcasts( $podcast_ids, $emails ) {
+		$count = 0;
+		$this->logger->log( __METHOD__, compact( 'podcast_ids', 'emails' ) );
+
+		// If there's a lot of emails, API might fail, so let's chunk it and send 100 per request
+		$email_groups = array_chunk( $emails, 100 );
+
+		foreach ( $podcast_ids as $podcast_id ) {
+			foreach ( $email_groups as $email_group ) {
+				$subscribers = array();
+				foreach ( $email_group as $email ) {
+					$subscribers[] = array(
+						'email'      => $email,
+						'podcast_id' => $podcast_id,
+					);
+				}
+				$res = $this->send_request( sprintf( 'api/v2/revoke-private-subscribers' ), compact( 'subscribers' ), 'POST' );
+
+				if ( ! empty( $res['success'] ) ) {
+					$count += count( $subscribers );
+				} else {
+					$this->logger->log( __METHOD__, 'API response error!' );
+				}
+			}
+		}
+
+		return $count;
+	}
+
+
+	/**
 	 * Revoke subscriber from multiple podcasts.
 	 *
 	 * @param array $podcast_ids

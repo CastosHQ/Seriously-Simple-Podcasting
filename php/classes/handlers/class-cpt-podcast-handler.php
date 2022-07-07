@@ -2,13 +2,15 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Interfaces\Service;
+
 /**
  * SSP Custom Post Type Podcast Handler
  *
  * @package Seriously Simple Podcasting
  * @since 2.6.3 Moved from the admin controller class
  */
-class CPT_Podcast_Handler {
+class CPT_Podcast_Handler implements Service {
 
 	const TAXONOMY_SERIES = 'series';
 

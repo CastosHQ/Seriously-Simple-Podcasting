@@ -2,14 +2,15 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-// Exit if accessed directly.
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use SeriouslySimplePodcasting\Interfaces\Service;
 
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Podping_Handler {
+class Podping_Handler implements Service {
 
 	const BASE_TOKEN = 'fUak8QYUE67cT8gM5DxHhQ';
 	const TOKEN_NAME = 'podping_token';

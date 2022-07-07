@@ -2,12 +2,14 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Interfaces\Service;
+
 /**
  * SSP Settings Handler
  *
  * @package Seriously Simple Podcasting
  */
-class Settings_Handler {
+class Settings_Handler implements Service {
 
 	/**
 	 * Build settings fields
@@ -371,16 +373,14 @@ class Settings_Handler {
 		}
 
 		$player_settings['fields'][] = array(
-			'id'          => 'player_custom_colors',
+			'id'          => 'player_custom_colors_enabled',
 			'label'       => __( 'Enable Custom Player Colors', 'seriously-simple-podcasting' ),
 			'description' => __( 'Turn this on to enable customer player color settings', 'seriously-simple-podcasting' ),
 			'type'        => 'checkbox',
 			'default'     => '',
 		);
 
-		$custom_colors_enabled = 'on' === ssp_get_option( 'player_custom_colors' );
-
-		if ( $custom_colors_enabled ) {
+		if ( $this->is_player_custom_colors_enabled() ) {
 			$color_settings = $this->get_player_color_settings();
 
 			$player_settings['fields'] = array_merge( $player_settings['fields'], $color_settings );
@@ -389,14 +389,98 @@ class Settings_Handler {
 		return $player_settings;
 	}
 
-	protected function get_player_color_settings() {
+	/**
+	 * @return bool
+	 */
+	public function is_player_custom_colors_enabled() {
+		return 'on' === ssp_get_option( 'player_custom_colors_enabled' );
+	}
+
+	public function get_player_color_settings() {
 		$settings = array(
 			array(
-				'id'          => 'player_title_color',
-				'label'       => __( 'Title color', 'seriously-simple-podcasting' ),
-				'description' => __( 'Turn on to display the download file link', 'seriously-simple-podcasting' ),
-				'type'        => 'checkbox',
-				'default'     => 'on',
+				'id'      => 'player_text_color',
+				'label'   => __( 'Player Text Color', 'seriously-simple-podcasting' ),
+				'type'    => 'color',
+				'css_var' => array(
+					'--ssp-dark-mode-text-color',
+					'--ssp-light-mode-text-color'
+				),
+				'default' => '#fff',
+			),
+			array(
+				'id'      => 'player_bg_color_1',
+				'label'   => __( 'Player Background Color 1', 'seriously-simple-podcasting' ),
+				'type'    => 'color',
+				'css_var' => array(
+					'--ssp-dark-mode-bg1-color',
+					'--ssp-light-mode-bg1-color',
+				),
+				'default' => '#24212c',
+			),
+			array(
+				'id'      => 'player_bg_color_2',
+				'label'   => __( 'Player Background Color 2', 'seriously-simple-podcasting' ),
+				'type'    => 'color',
+				'css_var' => array(
+					'--ssp-dark-mode-bg2-color',
+					'--ssp-light-mode-bg2-color',
+				),
+				'default' => '#383344',
+			),
+			array(
+				'id'      => 'player_panel_bg',
+				'label'   => __( 'Player Panel Background', 'seriously-simple-podcasting' ),
+				'type'    => 'color',
+				'css_var' => array(
+					'--ssp-dark-mode-player-panel-bg',
+					'--ssp-light-mode-player-panel-bg',
+				),
+				'default' => '#2e2a37',
+			),
+			array(
+				'id'      => 'player_panel_bg',
+				'label'   => __( 'Player Panel Background', 'seriously-simple-podcasting' ),
+				'type'    => 'color',
+				'css_var' => array(
+					'--ssp-dark-mode-player-panel-bg',
+					'--ssp-light-mode-player-panel-bg',
+				),
+				'default' => '#2e2a37',
+			),
+			array(
+				'id'      => 'player_panel_input_bg',
+				'label'   => __( 'Player Panel Input Background', 'seriously-simple-podcasting' ),
+				'type'    => 'color',
+				'css_var' => array(
+					'--ssp-dark-mode-player-panel-input-bg',
+					'--ssp-light-mode-player-panel-input-bg',
+				),
+				'default' => '#423d4c',
+			),
+			array(
+				'id'      => 'player_progress_bar_color',
+				'label'   => __( 'Player Progress Bar Color', 'seriously-simple-podcasting' ),
+				'type'    => 'color',
+				'css_var' => '--ssp-progress-bar-color',
+				'default' => '#df4e4f',
+			),
+			array(
+				'id'      => 'player_btn_color',
+				'label'   => __( 'Player Button Color', 'seriously-simple-podcasting' ),
+				'type'    => 'color',
+				'css_var' => '--ssp-play-btn-color',
+				'default' => '#dd4142',
+			),
+			array(
+				'id'      => 'player_btns_opacity',
+				'label'   => __( 'Player Buttons Opacity', 'seriously-simple-podcasting' ),
+				'type'    => 'number',
+				'step'    => 0.1,
+				'min'     => 0.3,
+				'max'     => 1,
+				'default' => 0.5,
+				'css_var' => '--ssp-player-btns-opacity',
 			),
 		);
 

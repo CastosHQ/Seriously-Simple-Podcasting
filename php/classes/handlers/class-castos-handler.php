@@ -4,13 +4,14 @@ namespace SeriouslySimplePodcasting\Handlers;
 
 use Braintree\Exception;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use SeriouslySimplePodcasting\Interfaces\Service;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-class Castos_Handler {
+class Castos_Handler implements Service {
 
 	/**
 	 * @const int

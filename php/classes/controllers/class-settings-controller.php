@@ -118,6 +118,48 @@ class Settings_Controller extends Controller {
 			$this,
 			'maybe_disconnect_from_castos'
 		), 10, 2 );
+
+		$this->generate_dynamic_color_scheme();
+	}
+
+	protected function generate_dynamic_color_scheme() {
+		$color_settings = $this->settings_handler->get_player_color_settings();
+		foreach ( $color_settings as $color_setting ) {
+			add_action( 'update_option_' . $this->settings_base . $color_setting['id'], function () {
+				$dynamic_style_path = $this->get_dynamic_style_path();
+				wp_mkdir_p( dirname( $dynamic_style_path ) );
+				file_put_contents( $dynamic_style_path, $this->generate_player_css() );
+				update_option( self::SETTINGS_BASE . 'dynamic_style_version', wp_generate_password( 6, false ) );
+			}, 10, 2 );
+		}
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function generate_player_css() {
+		$color_settings = $this->settings_handler->get_player_color_settings();
+
+		$css = '';
+		foreach ( $color_settings as $color_setting ) {
+			if ( ! empty( $color_setting['css_var'] ) ) {
+				$default = empty( $color_setting['default'] ) ? '' : $color_setting['default'];
+
+				$value = ssp_get_option( $color_setting['id'], $default );
+				if ( $value ) {
+					foreach ( (array) $color_setting['css_var'] as $var ) {
+						$css .= sprintf( '%s:%s;', $var, $value );
+					}
+				}
+			}
+		}
+
+		return sprintf( ':root {%s}', $css );
+	}
+
+	protected function get_dynamic_style_path(){
+		$upload_dir = wp_upload_dir()['basedir'];
+		return $upload_dir . '/ssp/css/ssp-dynamic-style.css';
 	}
 
 	/**

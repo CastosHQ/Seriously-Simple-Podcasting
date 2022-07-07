@@ -112,40 +112,4 @@ class Episode_Controller {
 		}
 		return ssp_get_attachment_image_src( $thumb_id, $size );
 	}
-
-
-	/**
-	 * Get Episode List
-	 *
-	 * @param array $episode_ids , array of episode ids being loaded into the player
-	 * @param $include_title
-	 * @param $include_excerpt
-	 * @param $include_player
-	 * @param $include_subscribe_links
-	 *
-	 * @return array [ $src, $width, $height ]
-	 *
-	 * @since 2.2.3
-	 */
-	public function episode_list( $episode_ids, $include_title = false, $include_excerpt = false, $include_player = false, $include_subscribe_links = false ) {
-		$episodes = null;
-
-		if ( ! empty( $episode_ids ) ) {
-			$args = array(
-				'include'        => array_values( $episode_ids ),
-				'post_type'      => SSP_CPT_PODCAST,
-				'numberposts'    => -1
-			);
-
-			$episodes = get_posts( $args );
-		}
-
-		$episodes_template_data = array(
-			'episodes'       => $episodes,
-		);
-
-		$episodes_template_data = apply_filters( 'episode_list_data', $episodes_template_data );
-
-		return $this->renderer->render_deprecated( $episodes_template_data, 'episodes/episode-list' );
-	}
 }

@@ -2,12 +2,14 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Interfaces\Service;
+
 /**
  * SSP Options Handler
  *
  * @package Seriously Simple Podcasting
  */
-class Options_Handler {
+class Options_Handler implements Service {
 
 	public $available_subscribe_options = array(
 		'acast'            => 'Acast',

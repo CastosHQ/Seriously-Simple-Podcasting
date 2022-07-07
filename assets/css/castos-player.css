@@ -1,3 +1,22 @@
+/* Default vars, might be overwritten in ssp-dynamic-style.css */
+:root {
+	--ssp-dark-mode-text-color: #fff;
+	--ssp-dark-mode-bg1-color: #24212c;
+	--ssp-dark-mode-bg2-color: #383344;
+	--ssp-dark-mode-player-panel-bg: #2e2a37;
+	--ssp-dark-mode-player-panel-input-bg: #423d4c;
+
+	--ssp-light-mode-text-color: #4b4659;
+	--ssp-light-mode-bg1-color: #f0f0f0;
+	--ssp-light-mode-bg2-color: #dddddd;
+	--ssp-light-mode-player-panel-bg: #fff;
+	--ssp-light-mode-player-panel-input-bg: #f1f1f1;
+
+	--ssp-progress-bar-color: #df4e4f;
+	--ssp-play-btn-color: #dd4142;
+	--ssp-player-btns-opacity: .5;
+}
+
 /* Fonts */
 /* devanagari */
 @font-face {
@@ -705,19 +724,31 @@
     position: absolute;
 }
 .castos-player .play-progress .play-pause-controls .play-btn {
-    background: url('images/player/images/icon-play.svg');
-    background-repeat: no-repeat;
-    background-position: 14px 11px;
-    border: none;
+	background: var(--ssp-play-btn-color) no-repeat 14px 11px;
+	mask-image: url('images/player/images/icon-play.svg');
+	-webkit-mask-image: url('images/player/images/icon-play.svg');
+	mask-position: 14px 11px;
+	-webkit-mask-position: 14px 11px;
+	mask-repeat: no-repeat;
+	-webkit-mask-repeat: no-repeat;
+	border: none;
     padding: 22px;
     z-index: 2;
     border-radius: 50%;
     width: 44px;
     height: 44px;
 }
+
+/* For IE */
+@media screen\0 {
+	.castos-player .play-progress .play-pause-controls .play-btn {
+		background: url('images/player/images/icon-play.svg') no-repeat 14px 11px;
+	}
+}
 .castos-player .play-progress .play-pause-controls .play-btn:hover {
     cursor: pointer;
     transform: scale(1.1);
+	transition: .3s;
 }
 .castos-player .play-progress .play-pause-controls .pause-btn {
     background: url('images/player/images/icon-pause.svg');
@@ -774,6 +805,7 @@
     flex-basis: 0;
     border-radius: 10px;
     background-color: #df4e4f;
+    background-color: var(--ssp-progress-bar-color);
 }
 
 .castos-player .play-pause-controls .icon {
@@ -797,7 +829,8 @@
 }
 .castos-player .playback__timers {
     color: #fff;
-    opacity: 0.4;
+    opacity: .4;
+    opacity: var(--ssp-player-btns-opacity);
     font-size: 12px;
     letter-spacing: normal;
     transition: all 200ms ease-in-out;
@@ -806,7 +839,8 @@
     opacity: 0.6;
 }
 .castos-player .playback__controls button {
-    opacity: 0.4;
+	opacity: .4;
+    opacity: var(--ssp-player-btns-opacity);
     transition: all 200ms ease-in-out;
 }
 .castos-player .player:hover .playback__controls button,
@@ -880,7 +914,7 @@
     font-family: 'Poppins', sans-serif;
     border-radius: 4px;
     text-transform: uppercase;
-    opacity: 0.4;
+    opacity: var(--ssp-player-btns-opacity);
     transition: all 200ms ease-in-out;
     color: #fff;
     background-color: rgba(255, 255, 255, 0);
@@ -897,12 +931,14 @@
 /* ///////////////////////////////////////////////////////////////////////// */
 .castos-player.light-mode .player {
     background: linear-gradient(359.68deg, #dddddd 1.03%, #f0f0f0 77.9%);
+    background: linear-gradient(359.68deg, var(--ssp-light-mode-bg2-color) 1.03%, var(--ssp-light-mode-bg1-color) 77.9%);
 }
 .castos-player.light-mode .powered-by {
     background: url('images/player/images/castos-logo-dark.svg');
 }
 .castos-player.light-mode .player-panels .player-panel {
     background: #fff;
+    background: var(--ssp-light-mode-player-panel-bg);
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 }
 .castos-player.light-mode .close-btn {
@@ -918,16 +954,19 @@
 .castos-player.light-mode .player-panel .player-panel-row .title,
 .castos-player.light-mode .playback__timers {
     color: #4b4659;
+    color: var(--ssp-light-mode-text-color);
 }
 .castos-player.light-mode .share-icon,
 .castos-player.light-mode .player-panel .player-panel-row input {
     background-color: #f1f1f1;
+    background-color: var(--ssp-light-mode-player-panel-input-bg);
 }
 .castos-player.light-mode .player-panel .player-panel-row input {
     color: #5f596e;
 }
 .castos-player.light-mode .player-panels-nav button {
     color: #2e2a37;
+    color: var(--ssp-light-mode-text-color);
     background-color: rgba(0, 0, 0, 0);
 }
 .castos-player.light-mode .player:hover .player-panels-nav button:hover {
@@ -935,8 +974,11 @@
 }
 .castos-player.light-mode .player-btn__speed {
     color: #4b4659;
+    color: var(--ssp-light-mode-text-color);
     border: 1px solid #4b4659;
+    border: 1px solid var(--ssp-light-mode-text-color);
 }
+
 .castos-player.light-mode .ssp-progress {
     background-color: #d3d3d3;
 }
@@ -949,6 +991,7 @@
 .castos-player.light-mode .player-btn__rwd,
 .castos-player.light-mode .player-btn__fwd {
     background-color: #4c4659;
+    background-color: var(--ssp-light-mode-text-color);
 }
 
 /* ///////////////////////////////////////////////////////////////////////// */
@@ -1203,13 +1246,14 @@
 /* DARK MODE */
 /* ///////////////////////////////////////////////////////////////////////// */
 .castos-player.dark-mode .player {
-    background: linear-gradient(359.68deg, #24212c 1.03%, #383344 77.9%);
+    background: linear-gradient(359.68deg, var(--ssp-dark-mode-bg2-color) 1.03%, var(--ssp-dark-mode-bg1-color) 77.9%);
 }
 .castos-player.dark-mode .powered-by {
     background: url('images/player/images/castos-logo-light.svg');
 }
 .castos-player.dark-mode .player-panels .player-panel {
     background: #2e2a37;
+    background: var(--ssp-dark-mode-player-panel-bg);
     box-shadow: 0px 0px 12px rgba(0, 0, 0, 0.05);
 }
 .castos-player.dark-mode .close-btn {
@@ -1225,22 +1269,27 @@
 .castos-player.dark-mode .player-panel .player-panel-row .title,
 .castos-player.dark-mode .playback__timers {
     color: #fff;
+	color: var(--ssp-dark-mode-text-color);
 }
 .castos-player.dark-mode .share-icon,
 .castos-player.dark-mode .player-panel .player-panel-row input {
     color: #d4c9c9;
     background-color: #423d4c;
+    background-color: var(--ssp-dark-mode-player-panel-input-bg);
 }
 .castos-player.dark-mode .player-panels-nav button {
-    color: #fff;
+	color: #fff;
+    color: var(--ssp-dark-mode-text-color);
     background-color: rgba(255, 255, 255, 0);
 }
 .castos-player.dark-mode .player:hover .player-panels-nav button:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 .castos-player.dark-mode .player-btn__speed {
-    color: #fff;
-    border: 1px solid #fff;
+	color: #fff;
+	color: var(--ssp-dark-mode-text-color);
+	border: 1px solid #fff;
+    border: 1px solid var(--ssp-dark-mode-text-color);
 }
 .castos-player.dark-mode .progress, .castos-player.dark-mode .ssp-progress {
     background-color: #4c4659;
@@ -1258,6 +1307,7 @@
 .castos-player.dark-mode .playback__controls .player-btn__rwd,
 .castos-player.dark-mode .playback__controls .player-btn__fwd {
     background-color: #fff;
+    background-color: var(--ssp-dark-mode-text-color);
 }
 .castos-player.dark-mode .playlist__wrapper .playlist__item.active .playlist__item__details {
 	background-color: #4b4657;

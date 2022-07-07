@@ -2,12 +2,14 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Interfaces\Service;
+
 /**
  * SSP Roles Handler
  *
  * @package Seriously Simple Podcasting
  */
-class Roles_Handler {
+class Roles_Handler implements Service {
 
 	const PODCAST_EDITOR = 'podcast_editor';
 

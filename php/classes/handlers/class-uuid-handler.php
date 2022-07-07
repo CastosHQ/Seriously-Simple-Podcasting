@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Interfaces\Service;
+
 /**
  * UUID class
  *
@@ -16,7 +18,7 @@ namespace SeriouslySimplePodcasting\Handlers;
  * @link http://www.php.net/manual/en/function.uniqid.php#94959
  * @package Seriously Simple Podcasting
  */
-class UUID_Handler {
+class UUID_Handler implements Service {
 	/**
 	 * Generate v3 UUID
 	 *

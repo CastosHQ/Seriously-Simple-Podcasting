@@ -6,6 +6,7 @@
 namespace SeriouslySimplePodcasting\Renderers;
 
 // Exit if accessed directly.
+use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Singleton;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -17,7 +18,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author Sergey Zakharchenko
  * @package SeriouslySimplePodcasting
  * */
-class Settings_Renderer {
+class Settings_Renderer implements Service {
 
 	use Singleton;
 
@@ -51,9 +52,10 @@ class Settings_Renderer {
 		switch ( $field['type'] ) {
 			case 'text':
 			case 'password':
-			case 'number':
 				$html .= $this->render_text_field( $field, $data, $option_name );
 				break;
+			case 'number':
+				$html .= $this->render_number_field( $field, $data, $option_name );
 			case 'hidden':
 				$html .= $this->render_hidden_field( $field, $data );
 				break;
@@ -119,7 +121,9 @@ class Settings_Renderer {
 					}
 					break;
 				default:
-					$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . wp_kses_post( $field['description'] ) . '</span></label>' . "\n";
+					if ( ! empty( $field['description'] ) ) {
+						$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . wp_kses_post( $field['description'] ) . '</span></label>' . "\n";
+					}
 					break;
 			}
 		}
@@ -188,6 +192,38 @@ class Settings_Renderer {
 			   '" value="' . esc_attr( $data ) .
 			   '" class="' . $this->get_field_class( $field ) .
 			   '"' . $this->get_data_attrs( $field ) . '/>' . "\n";
+	}
+
+	/**
+	 * @param array $field
+	 * @param string $data
+	 * @param string $option_name
+	 *
+	 * @return string
+	 */
+	protected function render_number_field( $field, $data, $option_name ) {
+		$input = '<input id="' . esc_attr( $field['id'] ) .
+			   '" type="number';
+
+		if ( isset( $field['min'] ) ) {
+			$input .= '" min="' . $field['min'];
+		}
+
+		if ( isset( $field['max'] ) ) {
+			$input .= '" max="' . $field['max'];
+		}
+
+		if ( isset( $field['step'] ) ) {
+			$input .= '" step="' . $field['step'];
+		}
+
+		$input .= '" name="' . esc_attr( $option_name ) .
+			   '" placeholder="' . esc_attr( $this->get_field_placeholder( $field ) ) .
+			   '" value="' . esc_attr( $data ) .
+			   '" class="' . $this->get_field_class( $field ) .
+			   '"' . $this->get_data_attrs( $field ) . '/>' . "\n";
+
+		return $input;
 	}
 
 	/**

@@ -2,13 +2,15 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Interfaces\Service;
+
 /**
  * SSP Roles Handler
  *
  * @package Seriously Simple Podcasting
  * @since 2.6.3
  */
-class Images_Handler {
+class Images_Handler implements Service {
 
 	const MIN_FEED_IMAGE_SIZE = 1400;
 	const MAX_FEED_IMAGE_SIZE = 3000;

@@ -1,5 +1,6 @@
 <?php
 
+use SeriouslySimplePodcasting\Controllers\App_Controller;
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
 use SeriouslySimplePodcasting\Controllers\Settings_Controller;
@@ -1505,5 +1506,25 @@ if ( ! function_exists( 'ssp_get_podcast_image_src' ) ) {
 		$src = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
 
 		return ! empty( $src[0] ) ? $src[0] : $default_image;
+	}
+}
+
+/**
+ * Get SSP app object.
+ */
+if ( ! function_exists( 'ssp_app' ) ) {
+
+	/**
+	 * Get frontend controller.
+	 *
+	 * @return App_Controller
+	 */
+	function ssp_app() {
+		global $ssp_app;
+		if ( empty( $ssp_app ) ) {
+			$ssp_app = new App_Controller();
+		}
+
+		return $ssp_app;
 	}
 }

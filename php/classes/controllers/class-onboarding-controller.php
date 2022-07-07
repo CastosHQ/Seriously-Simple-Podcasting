@@ -6,6 +6,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -19,12 +20,17 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       5.7.0
  */
-class Onboarding_Controller extends Controller {
+class Onboarding_Controller {
+
+	use Useful_Variables;
 
 	const STEPS_NUMBER = 5;
 
 	const ONBOARDING_BASE_SLUG = 'ssp-onboarding';
 
+	/**
+	 * @var Renderer
+	 */
 	protected $renderer;
 
 	/**
@@ -35,16 +41,14 @@ class Onboarding_Controller extends Controller {
 	/**
 	 * Onboarding_Controller constructor.
 	 *
-	 * @param $file
-	 * @param $version
 	 * @param Renderer $renderer
 	 * @param Settings_Handler $settings_handler
 	 */
-	public function __construct( $file, $version, $renderer, $settings_handler ) {
-		parent::__construct( $file, $version );
-
+	public function __construct( $renderer, $settings_handler ) {
 		$this->renderer         = $renderer;
 		$this->settings_handler = $settings_handler;
+
+		$this->init_useful_variables();
 
 		add_action( 'admin_menu', array( $this, 'register_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );

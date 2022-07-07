@@ -219,14 +219,47 @@ class Players_Controller {
 		);
 	}
 
-
-	public function enqueue_player_assets(){
-		if ( wp_script_is( 'ssp-castos-player', 'registered' ) && ! wp_script_is( 'ssp-castos-player', 'enqueued' ) ) {
+	public function enqueue_player_assets() {
+		if ( $this->can_enqueue_script( 'ssp-castos-player' ) ) {
 			wp_enqueue_script( 'ssp-castos-player' );
 		}
-		if ( wp_style_is( 'ssp-castos-player', 'registered' ) && ! wp_style_is( 'ssp-castos-player', 'enqueued' ) ) {
+		if ( $this->can_enqueue_style( 'ssp-castos-player' ) ) {
 			wp_enqueue_style( 'ssp-castos-player' );
 		}
+
+		$is_player_custom_colors_enabled = ssp_app()->get_settings_handler()->is_player_custom_colors_enabled();
+
+		if ( $is_player_custom_colors_enabled && ! wp_style_is( 'ssp-dynamic-style', 'enqueued' ) ) {
+			$version = ssp_get_option( 'dynamic_style_version', time() );
+			wp_enqueue_style(
+				'ssp-dynamic-style',
+				esc_url( wp_upload_dir()['baseurl'] . '/ssp/css/ssp-dynamic-style.css' ),
+				array( 'ssp-castos-player' ),
+				$version
+			);
+		}
+	}
+
+	/**
+	 * Checks if the script is registered and not enqueued yet.
+	 *
+	 * @param string $handle
+	 *
+	 * @return bool
+	 */
+	protected function can_enqueue_script( $handle ){
+		return wp_script_is( $handle, 'registered' ) && ! wp_script_is( $handle, 'enqueued' );
+	}
+
+	/**
+	 * Checks if the style is registered and not enqueued yet.
+	 *
+	 * @param string $handle
+	 *
+	 * @return bool
+	 */
+	protected function can_enqueue_style( $handle ){
+		return wp_style_is( $handle, 'registered' ) && ! wp_style_is( $handle, 'enqueued' );
 	}
 
 

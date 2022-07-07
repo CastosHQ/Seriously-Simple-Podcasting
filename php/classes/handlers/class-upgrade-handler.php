@@ -2,7 +2,9 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-class Upgrade_Handler {
+use SeriouslySimplePodcasting\Interfaces\Service;
+
+class Upgrade_Handler implements Service {
 
 	/**
 	 * Main upgrade method, called from admin controller

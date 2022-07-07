@@ -2,12 +2,14 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Interfaces\Service;
+
 /**
  * SSP Series Handler
  *
  * @package Seriously Simple Podcasting
  */
-class Series_Handler {
+class Series_Handler implements Service {
 
 	const TAXONOMY = 'series';
 

@@ -6,6 +6,7 @@
 namespace SeriouslySimplePodcasting\Renderers;
 
 // Exit if accessed directly.
+use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Singleton;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @author Sergey Zakharchenko
  * @package SeriouslySimplePodcasting
  * */
-class Renderer {
+class Renderer implements Service {
 
 	use Singleton;
 

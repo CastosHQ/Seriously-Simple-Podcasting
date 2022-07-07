@@ -7,10 +7,13 @@ use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
+use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
-use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\Images_Handler;
+
+use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Integrations\LifterLMS\LifterLMS_Integrator;
 use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Paid_Memberships_Pro_Integrator;
@@ -18,7 +21,7 @@ use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
-use SeriouslySimplePodcasting\Handlers\Images_Handler;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 
 // Exit if accessed directly.
@@ -34,10 +37,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0
  */
-class App_Controller extends Controller {
+class App_Controller {
+
+	use Useful_Variables;
 
 	// Controllers.
-
 	/**
 	 * @var Onboarding_Controller
 	 */
@@ -72,7 +76,6 @@ class App_Controller extends Controller {
 	 * @var Episode_Controller
 	 */
 	public $episode_controller;
-
 
 	/**
 	 * @var Players_Controller
@@ -142,14 +145,22 @@ class App_Controller extends Controller {
 	 * */
 	protected $podping_handler;
 
+	/**
+	 * @var Settings_Handler
+	 * */
+	protected $settings_handler;
+
+	/**
+	 * @var Images_Handler
+	 * */
+	protected $images_handler;
 
 	/**
 	 * Admin_Controller constructor.
-	 *
-	 * @param $file string main plugin file
-	 * @param $version string plugin version
 	 */
-	public function __construct( $file, $version ) {
+	public function __construct() {
+
+
 		if ( ! ssp_is_php_version_ok() ) {
 			return;
 		}
@@ -160,7 +171,7 @@ class App_Controller extends Controller {
 
 		ssp_beta_check();
 
-		parent::__construct( $file, $version );
+		$this->init_useful_variables();
 		$this->bootstrap();
 	}
 
@@ -169,8 +180,8 @@ class App_Controller extends Controller {
 	 */
 	protected function bootstrap() {
 
-		global $images_handler;
-		$images_handler = new Images_Handler();
+		global $images_handler; // Todo: get rid of global here
+		$this->images_handler = $images_handler = new Images_Handler();
 
 		$this->renderer = new Renderer();
 
@@ -180,10 +191,13 @@ class App_Controller extends Controller {
 
 		$this->feed_handler = new Feed_Handler();
 
+		$this->settings_handler = new Settings_Handler();
+
+
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
 		// Todo: dependency injection for other controllers as well
-		$this->onboarding_controller = new Onboarding_Controller( $this->file, $this->version, $this->renderer, new Settings_Handler() );
+		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
 		$this->db_migration_controller = DB_Migration_Controller::instance()->init();
 
@@ -257,6 +271,33 @@ class App_Controller extends Controller {
 
 		// Lifter LMS integration
 		LifterLMS_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger );
+	}
+
+	/**
+	 * Get any registered here services (handlers, helpers)
+	 *
+	 * @return Service
+	 * */
+	public function get_service( $id ) {
+		$services = $this->get_available_services();
+
+		return $services[ $id ];
+	}
+
+	/**
+	 * @return Service[]
+	 */
+	public function get_available_services() {
+		$properties = get_object_vars( $this );
+		$services   = array();
+
+		foreach ( $properties as $k => $v ) {
+			if ( $v instanceof Service ) {
+				$services[ $k ] = $v;
+			}
+		}
+
+		return $services;
 	}
 
 	/**
@@ -382,10 +423,10 @@ class App_Controller extends Controller {
 	}
 
 	/**
-	 * @return Settings_Handler
+	 * @return Settings_Handler|Service
 	 */
 	public function get_settings_handler() {
-		return $this->settings_controller->settings_handler;
+		return $this->get_service( 'settings_handler' );
 	}
 
 	/**

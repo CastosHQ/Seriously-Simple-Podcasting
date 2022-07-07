@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use WP_Query;
 
@@ -12,7 +13,7 @@ use WP_Query;
  * @author Sergey Zakharchenko, Jonathan Bossenger
  * @since 2.8.2
  */
-class Feed_Handler {
+class Feed_Handler implements Service {
 
 	/**
 	 * Unique "podcast" namespace UUID

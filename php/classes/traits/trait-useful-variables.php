@@ -23,6 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Useful_Variables {
 
 	public $version;
+	public $file;
 	public $dir;
 	public $assets_dir;
 	public $assets_url;
@@ -39,6 +40,7 @@ trait Useful_Variables {
 	 */
 	protected function init_useful_variables() {
 		$this->version       = SSP_VERSION;
+		$this->file          = SSP_PLUGIN_FILE;
 		$this->dir           = trailingslashit( SSP_PLUGIN_PATH );
 		$this->assets_dir    = trailingslashit( $this->dir ) . 'assets';
 		$this->assets_url    = esc_url( trailingslashit( SSP_PLUGIN_URL . 'assets' ) );

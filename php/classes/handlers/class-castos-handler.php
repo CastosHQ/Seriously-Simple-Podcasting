@@ -360,8 +360,8 @@ class Castos_Handler implements Service {
 		$attachment_id = filter_input( INPUT_POST, $id_key );
 
 		if ( ! $episode_image || ! $this->is_valid_episode_image( $attachment_id ) ) {
-			$episode_image = get_post_meta( $post->ID, $key );
-			$attachment_id = get_post_meta( $post->ID, $id_key );
+			$episode_image = get_post_meta( $post->ID, $key, true );
+			$attachment_id = get_post_meta( $post->ID, $id_key, true );
 		}
 
 		if ( ! $episode_image || ! $this->is_valid_episode_image( $attachment_id ) ) {

@@ -153,7 +153,7 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 
 		$object = array(
 			"contentUrl"  => $enclosure,
-			"contentSize" => $ss_podcasting->get_file_size(),
+			"contentSize" => $ss_podcasting->episode_repository->get_file_size(),
 		);
 
 		if ( $type === 'audio' ) {

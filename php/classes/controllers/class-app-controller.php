@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
+use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Interfaces\Service;
@@ -19,6 +20,7 @@ use SeriouslySimplePodcasting\Integrations\LifterLMS\LifterLMS_Integrator;
 use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Paid_Memberships_Pro_Integrator;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
@@ -151,9 +153,19 @@ class App_Controller {
 	protected $settings_handler;
 
 	/**
+	 * @var Settings_Handler
+	 * */
+	protected $options_handler;
+
+	/**
 	 * @var Images_Handler
 	 * */
 	protected $images_handler;
+
+	/**
+	 * @var Episode_Repository
+	 * */
+	protected $episode_repository;
 
 	/**
 	 * Admin_Controller constructor.
@@ -193,6 +205,10 @@ class App_Controller {
 
 		$this->settings_handler = new Settings_Handler();
 
+		$this->options_handler = new Options_Handler();
+
+		$this->episode_repository = new Episode_Repository();
+
 
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
@@ -227,8 +243,8 @@ class App_Controller {
 			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}
 
-		$this->episode_controller            = new Episode_Controller( $this->renderer );
-		$this->players_controller            = new Players_Controller();
+		$this->episode_controller            = new Episode_Controller( $this->renderer, $this->episode_repository );
+		$this->players_controller            = new Players_Controller( $this->renderer, $this->options_handler, $this->episode_repository );
 		$this->podcast_post_types_controller = new Podcast_Post_Types_Controller(
 			$this->cpt_podcast_handler,
 			$this->castos_handler,
@@ -239,7 +255,7 @@ class App_Controller {
 
 		// todo: further refactoring - get rid of global here
 		global $ss_podcasting;
-		$ss_podcasting = new Frontend_Controller( $this->episode_controller, $this->players_controller );
+		$ss_podcasting = new Frontend_Controller( $this->episode_controller, $this->players_controller, $this->episode_repository );
 
 		$this->init_integrations();
 		$this->init_rest_api();

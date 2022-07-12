@@ -32,12 +32,13 @@ class Episode_Controller {
 
 	/**
 	 * @param Renderer $renderer
+	 * @param Episode_Repository $episode_repository
 	 */
-	public function __construct( $renderer ) {
+	public function __construct( $renderer, $episode_repository ) {
 		$this->init_useful_variables();
 
 		$this->renderer = $renderer;
-		$this->episode_repository = new Episode_Repository();
+		$this->episode_repository = $episode_repository;
 	}
 
 

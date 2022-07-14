@@ -14,13 +14,13 @@
 	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
-			<h1>Podcast Category</h1>
+			<h1><?php _e( 'Podcast Category', 'seriously-simple-podcasting' ); ?></h1>
 		</div>
 		<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
 			<div class="ssp-onboarding__settings-item">
-				<h2>Primary Category</h2>
+				<h2><?php _e( 'Primary Category', 'seriously-simple-podcasting' ); ?></h2>
 				<label for="<?php echo $categories['id'] ?>" class="description">
-					What primary category should we publish your podcast in?
+					<?php _e( 'What primary category should we publish your podcast in?', 'seriously-simple-podcasting' ); ?>
 				</label>
 				<div class="ssp-onboarding__select">
 					<select name="<?php echo $categories['id'] ?>" id="<?php echo $categories['id'] ?>" class="js-onboarding-field <?php echo $categories['class'] ?>" data-subcategory="data_subcategory">
@@ -32,9 +32,9 @@
 			</div>
 
 			<div class="ssp-onboarding__settings-item">
-				<h2>Primary Sub-Category</h2>
+				<h2><?php _e( 'Primary Sub-Category', 'seriously-simple-podcasting' ); ?></h2>
 				<label for="<?php echo $subcategories['id'] ?>" class="description">
-					Your podcast sub-category based on the primary category selected above.
+					<?php _e( 'Your podcast sub-category based on the primary category selected above.', 'seriously-simple-podcasting' ); ?>
 				</label>
 				<div class="ssp-onboarding__select">
 					<select id="<?php echo $subcategories['id'] ?>" name="<?php echo $subcategories['id'] ?>">
@@ -64,8 +64,11 @@
 			</div>
 
 			<div class="ssp-onboarding__submit">
-				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="button skip"><span>Skip</span></a>
-				<button type="submit" class="js-onboarding-btn">Proceed</button>
+				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="button skip"><span>
+					<?php _e( 'Skip', 'seriously-simple-podcasting' ); ?></span></a>
+				<button type="submit" class="js-onboarding-btn">
+					<?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?>
+				</button>
 			</div>
 		</form>
 	</div>

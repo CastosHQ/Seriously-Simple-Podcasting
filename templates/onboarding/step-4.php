@@ -51,14 +51,14 @@ $distribute_links = array(
 
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
-			<h1>Connect to Castos Hosting & Analytics</h1>
+			<h1><?php _e( 'Connect to Castos Hosting & Analytics', 'seriously-simple-podcasting' ); ?></h1>
 		</div>
 		<div class="ssp-onboarding-step-4-info js-hosting-step-1">
 			<div class="ssp-onboarding-step-4-info__left">
-				<h2>Castos gives you the tools to grow your audience.</h2>
+				<h2><?php _e( 'Castos gives you the tools to grow your audience.', 'seriously-simple-podcasting' ); ?></h2>
 
 				<div class="ssp-onboarding-step-4-info__links">
-					<h4>Distribute to</h4>
+					<h4>><?php _e( 'Distribute to', 'seriously-simple-podcasting' ); ?></h4>
 					<ul>
 						<?php foreach($distribute_links as $link) : ?>
 							<li>
@@ -71,24 +71,37 @@ $distribute_links = array(
 				</div>
 
 				<ul class="ssp-onboarding-step-4-info__usps">
-					<li>Unlimited storage and podcasts on all plans.</li>
-					<li>Advanced analytics.</li>
-					<li>YouTube Republishing and Automated Transcriptions.</li>
-					<li>Individualized Private Podcasting.</li>
+					<li><?php _e( 'Unlimited storage and podcasts on all plans.', 'seriously-simple-podcasting' ); ?></li>
+					<li><?php _e( 'Advanced analytics.', 'seriously-simple-podcasting' ); ?></li>
+					<li><?php _e( 'YouTube Republishing and Automated Transcriptions.', 'seriously-simple-podcasting' ); ?></li>
+					<li><?php _e( 'Individualized Private Podcasting.', 'seriously-simple-podcasting' ); ?></li>
 				</ul>
 			</div>
 			<div class="ssp-onboarding-step-4-info__right">
-				<a href="#have-account" class="ssp-onboarding-step-4-info-right__button ssp-onboarding-step-4-info-button">
-					<span class="ssp-onboarding-step-4-info-button__title button-title">I have a Castos account</span>
-					<span class="ssp-onboarding-step-4-info-button__description button-description">Let’s connect SSP and Castos through our API.</span>
+				<a href="#have-account"
+				   class="ssp-onboarding-step-4-info-right__button ssp-onboarding-step-4-info-button">
+					<span class="ssp-onboarding-step-4-info-button__title button-title">
+						<?php _e( 'I have a Castos account', 'seriously-simple-podcasting' ); ?>
+					</span>
+					<span class="ssp-onboarding-step-4-info-button__description button-description">
+						<?php _e( 'Let’s connect SSP and Castos through our API.', 'seriously-simple-podcasting' ); ?>
+					</span>
 				</a>
 				<a href="#start-free-trial" class="ssp-onboarding-step-4-info-right__button ssp-onboarding-step-4-info-button">
-					<span class="ssp-onboarding-step-4-info-button__title button-title">Start free trial on Castos</span>
-					<span class="ssp-onboarding-step-4-info-button__description button-description">No Credit Card Required</span>
+					<span class="ssp-onboarding-step-4-info-button__title button-title">
+						<?php _e( 'Start free trial on Castos', 'seriously-simple-podcasting' ); ?>
+					</span>
+					<span class="ssp-onboarding-step-4-info-button__description button-description">
+						<?php _e( 'No Credit Card Required', 'seriously-simple-podcasting' ); ?>
+					</span>
 				</a>
 				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="ssp-onboarding-step-4-info-right__button ssp-onboarding-step-4-info-button">
-					<span class="ssp-onboarding-step-4-info-button__title button-title">Skip</span>
-					<span class="ssp-onboarding-step-4-info-button__description button-description">Not interested right now.</span>
+					<span class="ssp-onboarding-step-4-info-button__title button-title">
+						<?php _e( 'Skip', 'seriously-simple-podcasting' ); ?>
+					</span>
+					<span class="ssp-onboarding-step-4-info-button__description button-description">
+						<?php _e( 'Not interested right now.', 'seriously-simple-podcasting' ); ?>
+					</span>
 				</a>
 			</div>
 		</div>
@@ -96,46 +109,50 @@ $distribute_links = array(
 			<div class="ssp-onboarding__hosting-steps js-hosting-registration">
 				<div class="ssp-onboarding__hosting-step">
 					<a href="https://app.castos.com/register" target="_blank">
-						<span class="ssp-onboarding__hosting-step--header">Sign-up</span>
+						<span class="ssp-onboarding__hosting-step--header">
+							<?php _e( 'Sign-up', 'seriously-simple-podcasting' ); ?>
+						</span>
 						<span class="ssp-onboarding__hosting-step--info">
-						Create your account at <span>app.castos.com</span>
-					</span>
+						 	<?php printf( __( 'Create your account at %s', 'seriously-simple-podcasting' ), '<span>app.castos.com</span>' ); ?>
+						</span>
 					</a>
 				</div>
 
 				<div class="ssp-onboarding__hosting-step">
 					<a href="https://app.castos.com/api-details" target="_blank">
-						<span class="ssp-onboarding__hosting-step--header">Complete details below</span>
+						<span class="ssp-onboarding__hosting-step--header">
+							<?php _e( 'Complete details below', 'seriously-simple-podcasting' ); ?>
+						</span>
 						<span class="ssp-onboarding__hosting-step--info">
-						Get your API key from <span>app.castos.com/api-details</span>
-					</span>
+							<?php printf( __( 'Get your API key from %s', 'seriously-simple-podcasting' ), '<span>app.castos.com/api-details</span>' ); ?>
+						</span>
 					</a>
 				</div>
 			</div>
 			<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
 				<div class="ssp-onboarding__settings-item">
-					<h2>Your Email</h2>
+					<h2><?php _e( 'Your Email', 'seriously-simple-podcasting' ); ?></h2>
 					<label for="podmotor_account_email" class="description">
-						The email address you used to register your Castos account.
+						<?php _e( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ); ?>
 					</label>
 					<input id="podmotor_account_email" type="text" class="js-onboarding-validate-token-field" name="podmotor_account_email" value="<?php echo $podmotor_account_email ?>">
 				</div>
 
 				<div class="ssp-onboarding__settings-item">
-					<h2>Castos API Key</h2>
+					<h2><?php _e( 'Castos API Key', 'seriously-simple-podcasting' ); ?></h2>
 					<label for="podmotor_account_api_token" class="description">
-						Available from your Castos account dashboard.
+						<?php _e( 'Available from your Castos account dashboard.', 'seriously-simple-podcasting' ); ?>
 					</label>
 					<input id="podmotor_account_api_token" type="text" class="js-onboarding-validate-token-field" name="podmotor_account_api_token" value="<?php echo $podmotor_account_api_token ?>">
 				</div>
 
 				<div class="ssp-onboarding__submit">
 					<button id="validate_api_credentials" type="button" class="button validate-token js-onboarding-validate-token" data-validating-txt="Validating Credentials" data-valid-txt="Valid Credentials" data-initial-txt="Validate Credentials" >
-						Validate Credentials
+						<?php _e( 'Validate Credentials', 'seriously-simple-podcasting' ); ?>
 					</button>
 					<?php wp_nonce_field( 'ss_podcasting_castos-hosting', 'podcast_settings_tab_nonce', false ); ?>
 					<span class="validate-api-credentials-message"></span>
-					<button type="submit" disabled="disabled">Proceed</button>
+					<button type="submit" disabled="disabled"><?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?></button>
 				</div>
 			</form>
 		</div>

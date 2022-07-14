@@ -5,18 +5,22 @@
  * */
 
 $steps = array(
-	1 => 'Welcome',
-	2 => 'Cover',
-	3 => 'Categories',
-	4 => 'Hosting',
-	5 => 'Done!',
+	1 => __( 'Welcome', 'seriously-simple-podcasting' ),
+	2 => __( 'Cover', 'seriously-simple-podcasting' ),
+	3 => __( 'Categories', 'seriously-simple-podcasting' ),
+	4 => __( 'Hosting', 'seriously-simple-podcasting' ),
+	5 => __( 'Done!', 'seriously-simple-podcasting' ),
 );
 ?>
 <div class="ssp-onboarding__logo">
 	<img alt="Seriously Simple Podcasting" src="<?php echo SSP_PLUGIN_URL . '/assets/admin/img/logo.png'; ?>">
 	<div class="ssp-onboarding__logo-text">
-		<span class="ssp-onboarding__logo-title">Seriously Simple Podcasting</span>
-		<span class="ssp-onboarding__logo-label">By Castos</span>
+		<span class="ssp-onboarding__logo-title">
+			<?php _e( 'Seriously Simple Podcasting', 'seriously-simple-podcasting' ); ?>
+		</span>
+		<span class="ssp-onboarding__logo-label">
+			<?php _e( 'By Castos', 'seriously-simple-podcasting' ); ?>
+		</span>
 	</div>
 </div>
 <ul class="ssp-onboarding__steps">

@@ -12,17 +12,19 @@ $img_name = $data_image ? pathinfo( $data_image, PATHINFO_BASENAME ) : '';
 	<?php include __DIR__ . '/steps-header.php'; ?>
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
-			<h1>Artwork</h1>
+			<h1><?php _e( 'Artwork', 'seriously-simple-podcasting' ); ?></h1>
 		</div>
 		<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
 			<div class="ssp-onboarding__settings-item">
-				<h2>Upload your podcast's cover image</h2>
+				<h2><?php _e( 'Upload your podcast\'s cover image', 'seriously-simple-podcasting' ); ?></h2>
 
-				<label for="ss_podcasting_data_image_button" class="description">Image must be JPG or PNG format and between 1400 x 1400px and 3000 x 3000px.</label>
+				<label for="ss_podcasting_data_image_button" class="description">
+					<?php _e( 'Image must be JPG or PNG format and between 1400 x 1400px and 3000 x 3000px.', 'seriously-simple-podcasting' ); ?>
+				</label>
 				<input id="ss_podcasting_data_image_button" type="hidden" class="button" value="Upload new image">
 
 				<div class="ssp-onboarding__dragable js-onboarding-dragable">
-					<span>Upload image...</span>
+					<span><?php _e( 'Upload image', 'seriously-simple-podcasting' ); ?>...</span>
 				</div>
 			</div>
 
@@ -33,8 +35,12 @@ $img_name = $data_image ? pathinfo( $data_image, PATHINFO_BASENAME ) : '';
 					<span class="js-onboarding-delete-img-info ssp-onboarding__delete-image"></span>
 					<input id="ss_podcasting_data_image" name="data_image" class="js-onboarding-img-val js-onboarding-field" type="hidden" value="<?php echo $data_image ?>">
 				</span>
-				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="button skip"><span>Skip</span></a>
-				<button type="submit" class="js-onboarding-btn">Proceed</button>
+				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="button skip"><span>
+					<?php _e( 'Skip', 'seriously-simple-podcasting' ); ?>
+				</span></a>
+				<button type="submit" class="js-onboarding-btn">
+					<?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?>
+				</button>
 			</div>
 		</form>
 	</div>

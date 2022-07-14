@@ -236,8 +236,6 @@ class Episode_Repository {
 				if ( 'Auto Draft' === $post->post_title ) {
 					$post->post_title = __( 'Current Episode', 'seriously-simple-podcasting' );
 				}
-
-
 			}
 
 			if ( '-1' == $id ) {

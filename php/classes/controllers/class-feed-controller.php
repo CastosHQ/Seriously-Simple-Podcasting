@@ -67,6 +67,28 @@ class Feed_Controller {
 
 		// Sanitize the podcast image
 		add_filter( 'ssp_feed_image', array( $this, 'sanitize_image' ) );
+
+		// Fix WP core bug - redirect canonical
+		add_filter( 'redirect_canonical', array( $this, 'fix_canonical_feed_url' ) );
+	}
+
+	/**
+	 * Fix WP core bug - canonical feed URLs.
+	 * Examples: https://site.com/feed/podcast/feed/podcast/, https://site.com/feed/podcast/my-podcast/feed/podcast/
+	 *
+	 * @param string $redirect_url
+	 *
+	 * @return string
+	 */
+	public function fix_canonical_feed_url( $redirect_url ) {
+		if ( ! is_feed() ) {
+			return $redirect_url;
+		}
+		$feed_slug   = $this->get_feed_slug();
+		$search  = sprintf( '#\/feed\/%s\/(.*)feed\/%s\/#', $feed_slug, $feed_slug );
+		$replace = sprintf( '/feed/%s/$1', $feed_slug );
+
+		return preg_replace($search, $replace, $redirect_url);
 	}
 
 	/**
@@ -74,8 +96,14 @@ class Feed_Controller {
 	 * @return void
 	 */
 	public function add_feed() {
-		$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-		add_feed( $feed_slug, array( $this, 'render_podcast_feed' ) );
+		add_feed( $this->get_feed_slug(), array( $this, 'render_podcast_feed' ) );
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function get_feed_slug() {
+		return apply_filters( 'ssp_feed_slug', $this->token );
 	}
 
 	/**

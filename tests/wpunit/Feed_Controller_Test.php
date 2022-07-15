@@ -40,6 +40,7 @@ class Feed_Controller_Test extends WPTestCase {
 
 		$feed = $feed_controller->get_podcast_feed();
 		$site_url = site_url();
+		global $wp_version;
 
 		$test_parts = array(
 			'<?xml version="1.0" encoding="UTF-8"?>',
@@ -76,7 +77,7 @@ class Feed_Controller_Test extends WPTestCase {
 			'<podcast:locked owner="castostesting@castos.com">yes</podcast:locked>',
 			'<podcast:guid>',
 			sprintf('<!-- podcast_generator="SSP by Castos/%s" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->', SSP_VERSION),
-			'<generator>https://wordpress.org/?v=6.0</generator>',
+			sprintf('<generator>https://wordpress.org/?v=%s</generator>', $wp_version),
 
 
 			// Test the item created

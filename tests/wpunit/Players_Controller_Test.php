@@ -21,7 +21,11 @@ class Players_Controller_Test extends WPTestCase {
 	 * @covers Players_Controller::render_html_player() method returns the new html player code
 	 */
 	public function test_player_controller_html_player_method() {
-		$this->players_controller = new Players_Controller();
+		$renderer = new \SeriouslySimplePodcasting\Renderers\Renderer();
+		$options_handler = new \SeriouslySimplePodcasting\Handlers\Options_Handler();
+		$episode_repository = new \SeriouslySimplePodcasting\Repositories\Episode_Repository();
+
+		$this->players_controller = new Players_Controller($renderer, $options_handler, $episode_repository);
 		$episode_id               = $this->factory->post->create(
 			array(
 				'title'       => 'My Custom Podcast',

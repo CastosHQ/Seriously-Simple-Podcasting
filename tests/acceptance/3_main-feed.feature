@@ -15,7 +15,7 @@ Feature: Login
 		When I click "Podcast" submenu "Settings"
 		And I click tab "Feed details"
 		And I click "View feed" link
-		Then I can see that current url is "/feed/podcast"
+		Then I can see that current url is "/feed/podcast/"
 
 
 		# Check XML elements

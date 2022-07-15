@@ -1371,6 +1371,8 @@ if ( ! function_exists( 'ssp_get_feed_url' ) ) {
 			}
 		}
 
+		$feed_url = trailingslashit( $feed_url );
+
 		return apply_filters( 'ssp_get_feed_url', $feed_url, $series_slug );
 	}
 }

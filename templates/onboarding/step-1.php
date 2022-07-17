@@ -27,9 +27,7 @@
 				<label for="show_description">
 					<?php _e( 'Pique listeners\' interest with a few details about your podcast.', 'seriously-simple-podcasting' ); ?>
 				</label>
-				<textarea id="show_description" class="js-onboarding-field" name="data_description" rows="7">
-					<?php echo $data_description ?>
-				</textarea>
+				<textarea id="show_description" class="js-onboarding-field" name="data_description" rows="7"><?php echo $data_description ?></textarea>
 			</div>
 			<div class="ssp-onboarding__submit">
 				<button type="submit" class="js-onboarding-btn" <?php if( empty( $data_title ) || empty( $data_description ) ) echo 'disabled="disabled"' ?>>

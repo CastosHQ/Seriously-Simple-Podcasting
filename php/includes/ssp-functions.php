@@ -1404,6 +1404,54 @@ if ( ! function_exists( 'ssp_get_option' ) ) {
 	}
 }
 
+/**
+ * Get the SSP option
+ */
+if ( ! function_exists( 'ssp_add_option' ) ) {
+	/**
+	 * @param string $option
+	 * @param mixed $value
+	 * @param int $series_id
+	 *
+	 * @return bool
+	 * @since 2.15.0
+	 */
+	function ssp_add_option( $option, $value, $series_id = '' ) {
+		$option = Settings_Controller::SETTINGS_BASE . $option;
+
+		// Maybe append series ID to option name.
+		if ( $series_id ) {
+			$option .= '_' . $series_id;
+		}
+
+		return add_option( $option, $value );
+	}
+}
+
+/**
+ * Get the SSP option
+ */
+if ( ! function_exists( 'ssp_update_option' ) ) {
+	/**
+	 * @param string $option
+	 * @param mixed $value
+	 * @param int $series_id
+	 *
+	 * @return bool
+	 * @since 2.15.0
+	 */
+	function ssp_update_option( $option, $value, $series_id = '' ) {
+		$option = Settings_Controller::SETTINGS_BASE . $option;
+
+		// Maybe append series ID to option name.
+		if ( $series_id ) {
+			$option .= '_' . $series_id;
+		}
+
+		return update_option( $option, $value );
+	}
+}
+
 
 /**
  * Check if it's an ajax action or not

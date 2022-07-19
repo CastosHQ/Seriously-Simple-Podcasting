@@ -94,6 +94,11 @@ class App_Controller {
 	 * */
 	public $settings_controller;
 
+	/**
+	 * @var Review_Controller
+	 * */
+	public $review_controller;
+
 
 	// Handlers.
 
@@ -251,6 +256,8 @@ class App_Controller {
 			$this->admin_notices_handler,
 			$this->podping_handler
 		);
+
+		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );
 
 
 		// todo: further refactoring - get rid of global here

@@ -1,0 +1,13 @@
+.ssp-review-notice {
+	padding: 15px;
+	position: relative;
+
+	&__buttons {
+		margin: 15px 0 5px;
+		display: flex;
+		align-items: center;
+	}
+	&__button {
+		margin-right: 10px;
+	}
+}

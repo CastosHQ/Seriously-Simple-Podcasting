@@ -62,7 +62,7 @@ class Renderer implements Service {
 	 *
 	 * @return void
 	 */
-	public function render( $template_path, $data ) {
+	public function render( $template_path, $data = [] ) {
 		$html = $this->fetch( $template_path, $data );
 
 		echo $html;

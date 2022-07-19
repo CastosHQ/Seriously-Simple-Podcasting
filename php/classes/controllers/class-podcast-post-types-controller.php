@@ -81,11 +81,11 @@ class Podcast_Post_Types_Controller {
 		add_action( 'admin_init', array( $this, 'register_meta_boxes' ) );
 		add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 2 );
 
-		// Update podcast details to Castos when a post is updated or saved
-		add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
-
 		// Clear the cache on post save.
 		add_action( 'save_post', array( $this, 'invalidate_cache' ), 10, 2 );
+
+		// Update podcast details to Castos when a post is updated or saved
+		add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
 
 		// Notify Podping if new episode has been published, or if new series is assigned to the episode
 		add_action( 'wp_after_insert_post', array( $this, 'notify_podping' ), 10, 4 );
@@ -291,16 +291,8 @@ class Podcast_Post_Types_Controller {
 	public function meta_box_save( $post_id, $post ) {
 		global $ss_podcasting;
 
-		$podcast_post_types = ssp_post_types( true );
-
-		// Post type check
-		if ( ! in_array( get_post_type(), $podcast_post_types ) ) {
+		if ( ! $this->save_podcast_action_check( $post ) ) {
 			return false;
-		}
-
-		// Security check
-		if ( ! isset( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ] ) || ! ( isset( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ] ) && wp_verify_nonce( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ], plugin_basename( $this->dir ) ) ) ) {
-			return $post_id;
 		}
 
 		// User capability check
@@ -374,6 +366,29 @@ class Podcast_Post_Types_Controller {
 
 			// Save podcast file to 'enclosure' meta field for standards-sake
 			update_post_meta( $post_id, 'enclosure', $enclosure );
+		}
+
+		return true;
+	}
+
+	/**
+	 * @param \WP_Post $post
+	 *
+	 * @return bool
+	 */
+	public function save_podcast_action_check( $post ){
+		$podcast_post_types = ssp_post_types( true );
+
+		// Post type check
+		if ( ! in_array( $post->post_type, $podcast_post_types ) ) {
+			return false;
+		}
+
+		// Security check
+		if ( ! isset( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ] ) ||
+		     ! wp_verify_nonce( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ], plugin_basename( $this->dir ) )
+		) {
+			return false;
 		}
 
 		return true;
@@ -613,10 +628,7 @@ class Podcast_Post_Types_Controller {
 			return;
 		}
 
-		/**
-		 * Only trigger this when the post type is podcast
-		 */
-		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
+		if ( ! $this->save_podcast_action_check( $post ) ) {
 			return;
 		}
 
@@ -643,23 +655,9 @@ class Podcast_Post_Types_Controller {
 			return;
 		}
 
-		/**
-		 * Don't trigger this if we've just updated the post
-		 * This is because both actions we're hooking into get triggered in a post update
-		 * So this is to prevent this method from being called twice during a post update.
-		 */
-		$cache_key     = 'ssp_podcast_updated';
-		$podcast_saved = get_transient( $cache_key );
-		if ( false !== $podcast_saved ) {
-			delete_transient( $cache_key );
-
-			return;
-		}
-
 		$response = $this->castos_handler->upload_episode_to_castos( $post );
 
 		if ( 'success' === $response['status'] ) {
-			set_transient( $cache_key, true, 30 );
 			$podmotor_episode_id = $response['episode_id'];
 			if ( $podmotor_episode_id ) {
 				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );

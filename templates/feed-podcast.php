@@ -84,10 +84,10 @@ if ( $stylesheet_url ) {
 		<copyright><?php echo esc_html( $copyright ); ?></copyright>
 		<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>
 		<itunes:author><?php echo esc_html( $author ); ?></itunes:author>
-		<?php if ( $itunes_type ) : ?>
-			<itunes:type><?php echo $itunes_type; ?></itunes:type>
-		<?php endif ?>
-		<itunes:summary><?php echo esc_html( $description ); ?></itunes:summary>
+		<?php if ( $itunes_type ) :
+		?><itunes:type><?php echo $itunes_type; ?></itunes:type>
+		<?php endif
+		?><itunes:summary><?php echo esc_html( $description ); ?></itunes:summary>
 		<itunes:owner>
 			<itunes:name><?php echo esc_html( $owner_name ); ?></itunes:name>
 			<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>

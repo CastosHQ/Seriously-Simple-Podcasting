@@ -416,11 +416,13 @@ class Settings_Controller extends Controller {
 
 				$term = get_term_by( 'slug', $feed_series, 'series' );
 
-				$edit_podcast_url = sprintf( 'term.php?taxonomy=series&tag_ID=%d&post_type=%s', $term->term_id, SSP_CPT_PODCAST );
+				if ( $term ) {
+					$edit_podcast_url = sprintf( 'term.php?taxonomy=series&tag_ID=%d&post_type=%s', $term->term_id, SSP_CPT_PODCAST );
 
-				$html .= '<p><a class="view-feed-link" href="' . esc_url( $edit_podcast_url ) . '">
+					$html .= '<p><a class="view-feed-link" href="' . esc_url( $edit_podcast_url ) . '">
 								<span class="dashicons dashicons-edit"></span>' . __( 'Edit Podcast Settings', 'seriously-simple-podcasting' ) .
-						 '</a></p>' . "\n";
+							 '</a></p>' . "\n";
+				}
 
 				$feed_url = ssp_get_feed_url( $feed_series );
 

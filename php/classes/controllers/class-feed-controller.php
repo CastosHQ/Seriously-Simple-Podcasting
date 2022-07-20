@@ -196,7 +196,7 @@ class Feed_Controller {
 		$category3 = ssp_get_feed_category_output( 3, $series_id );
 
 		// Get iTunes Type
-		$itunes_type = get_option( 'ss_podcasting_consume_order' . ( $series_id > 0 ? '_' . $series_id : null ) );
+		$itunes_type = ssp_get_option( 'consume_order', '', $series_id );
 
 		// Get turbo setting
 		$turbo = $this->feed_handler->get_turbo( $series_id );

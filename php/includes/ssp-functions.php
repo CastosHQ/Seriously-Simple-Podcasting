@@ -510,7 +510,7 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 	 * @param int $level Category level
 	 * @param int $series_id
 	 *
-	 * @return string        XML output for feed vategory
+	 * @return array        XML output for feed vategory
 	 */
 	function ssp_get_feed_category_output( $level, $series_id ) {
 

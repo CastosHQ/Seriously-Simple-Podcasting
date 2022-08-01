@@ -144,7 +144,7 @@ class Review_Controller {
 
 		if ( 0 === strpos( $status, 'start_since_' ) ) {
 			$start_time = intval( str_replace( 'start_since_', '', $status ) );
-			$current_time = time() + 8; // Todo: just for testing, remove plus part.
+			$current_time = time();
 			if ( $current_time > $start_time ) {
 				return true;
 			}

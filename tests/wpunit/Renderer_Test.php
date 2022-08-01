@@ -48,11 +48,13 @@ class Renderer_Test extends WPTestCase {
 
 		$template_path = SSP_PLUGIN_PATH . 'templates/test.php';
 
-		file_put_contents( $template_path, 'Test' );
+		file_put_contents( $template_path, '<p>Test Variable: <?php echo $test_var ?></p>' );
 
 		foreach ( $paths as $path ) {
-			$tmpl = $this->renderer->fetch( $path, [] );
-			$this->assertEquals( $tmpl, 'Test' );
+			$test_var = 'Some Value';
+			$tmpl     = $this->renderer->fetch( $path, compact( 'test_var' ) );
+
+			$this->assertEquals( $tmpl, '<p>Test Variable: Some Value</p>' );
 		}
 
 		unlink( $template_path );

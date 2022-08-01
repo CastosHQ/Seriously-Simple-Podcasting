@@ -805,9 +805,11 @@ class Frontend_Controller {
 
 
 	/**
-	 * Get podcast
+	 * Gets podcast query
 	 * @param  mixed $args Arguments to be passed to the query.
 	 * @return mixed       Array if true, boolean if false.
+	 * Todo: refactoring
+	 * @see ss_get_podcast()
 	 */
 	public function get_podcast( $args = '' ) {
 		$defaults = array(
@@ -936,122 +938,124 @@ class Frontend_Controller {
 	 */
 	public function download_file() {
 
-		if ( is_podcast_download() ) {
-			global $wp_query;
+		if (  ! ssp_is_podcast_download() ) {
+			return;
+		}
 
-			// Get requested episode ID
-			$episode_id = intval( $wp_query->query_vars['podcast_episode'] );
+		global $wp_query;
 
-			if ( isset( $episode_id ) && $episode_id ) {
+		// Get requested episode ID
+		$episode_id = intval( $wp_query->query_vars['podcast_episode'] );
 
-				// Get episode post object
-				$episode = get_post( $episode_id );
+		if ( isset( $episode_id ) && $episode_id ) {
 
-				// Make sure we have a valid episode post object
-				if ( ! $episode || ! is_object( $episode ) || is_wp_error( $episode ) || ! isset( $episode->ID ) ) {
-					return;
+			// Get episode post object
+			$episode = get_post( $episode_id );
+
+			// Make sure we have a valid episode post object
+			if ( ! $episode || ! is_object( $episode ) || is_wp_error( $episode ) || ! isset( $episode->ID ) ) {
+				return;
+			}
+
+			// Do we have newlines?
+			$parts = false;
+			if( is_string( $episode ) ) {
+				$parts = explode( "\n", $episode );
+			}
+
+			if ( $parts && is_array( $parts ) && count( $parts ) > 1 ) {
+				$file = $parts[0];
+			} else {
+				// Get audio file for download
+				$file = $this->get_enclosure( $episode_id );
+			}
+
+			// Ensure that $file is a valid URL
+			$is_url = 0 === strpos( $file, 'http' );
+
+			// Exit if no file is found
+			if ( ! $is_url ) {
+				$this->send_404();
+			}
+
+			// Get file referrer
+			$referrer = '';
+			if( isset( $wp_query->query_vars['podcast_ref'] ) && $wp_query->query_vars['podcast_ref'] ) {
+				$referrer = $wp_query->query_vars['podcast_ref'];
+			} else {
+				if( isset( $_GET['ref'] ) ) {
+					$referrer = esc_attr( $_GET['ref'] );
 				}
+			}
 
-				// Do we have newlines?
-				$parts = false;
-				if( is_string( $episode ) ) {
-					$parts = explode( "\n", $episode );
-				}
+			// Allow other actions - functions hooked on here must not output any data
+			do_action( 'ssp_file_download', $file, $episode, $referrer );
 
-				if ( $parts && is_array( $parts ) && count( $parts ) > 1 ) {
-					$file = $parts[0];
-				} else {
-					// Get audio file for download
-					$file = $this->get_enclosure( $episode_id );
-				}
+			// Set necessary headers
+			header( "Pragma: no-cache" );
+			header( "Expires: 0" );
+			header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
+			header( "Robots: none" );
 
-				// Ensure that $file is a valid URL
-				$is_url = 0 === strpos( $file, 'http' );
+			// Check file referrer
+			if( 'download' == $referrer ) {
 
-				// Exit if no file is found
-				if ( ! $is_url ) {
-					$this->send_404();
-				}
+				// Set size of file
+				// Do we have anything in Cache/DB?
+				$size = wp_cache_get( $episode_id, 'filesize_raw' );
 
-				// Get file referrer
-				$referrer = '';
-				if( isset( $wp_query->query_vars['podcast_ref'] ) && $wp_query->query_vars['podcast_ref'] ) {
-					$referrer = $wp_query->query_vars['podcast_ref'];
-				} else {
-					if( isset( $_GET['ref'] ) ) {
-						$referrer = esc_attr( $_GET['ref'] );
-					}
-				}
+				// Nothing in the cache, let's see if we can figure it out.
+				if ( false === $size ) {
 
-				// Allow other actions - functions hooked on here must not output any data
-				do_action( 'ssp_file_download', $file, $episode, $referrer );
+					// Do we have anything in post_meta?
+					$size = get_post_meta( $episode_id, 'filesize_raw', true );
 
-				// Set necessary headers
-				header( "Pragma: no-cache" );
-				header( "Expires: 0" );
-				header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-				header( "Robots: none" );
+					if ( empty( $size ) ) {
 
-				// Check file referrer
-				if( 'download' == $referrer ) {
+						// Let's see if we can figure out the path...
+						$attachment_id = $this->get_attachment_id_from_url( $file );
 
-					// Set size of file
-					// Do we have anything in Cache/DB?
-					$size = wp_cache_get( $episode_id, 'filesize_raw' );
-
-					// Nothing in the cache, let's see if we can figure it out.
-					if ( false === $size ) {
-
-						// Do we have anything in post_meta?
-						$size = get_post_meta( $episode_id, 'filesize_raw', true );
-
-						if ( empty( $size ) ) {
-
-							// Let's see if we can figure out the path...
-							$attachment_id = $this->get_attachment_id_from_url( $file );
-
-							if ( ! empty( $attachment_id )  ) {
-								$size = filesize( get_attached_file( $attachment_id ) );
-								update_post_meta( $episode_id, 'filesize_raw', $size );
-							}
-
+						if ( ! empty( $attachment_id )  ) {
+							$size = filesize( get_attached_file( $attachment_id ) );
+							update_post_meta( $episode_id, 'filesize_raw', $size );
 						}
 
-						// Update the cache
-						wp_cache_set( $episode_id, $size, 'filesize_raw' );
 					}
 
-					// Send Content-Length header
-					if ( ! empty( $size ) ) {
-						header( "Content-Length: " . $size );
-					}
-
-					// Force file download
-					header( "Content-Type: application/force-download" );
-
-					// Set other relevant headers
-					header( "Content-Description: File Transfer" );
-					header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
-					header( "Content-Transfer-Encoding: binary" );
-
-					// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
-					$file = str_replace( ' ', '%20', $file );
-
-					// Use ssp_readfile_chunked() if allowed on the server or simply access file directly
-					@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
-				} else {
-
-					// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
-					$file = str_replace( ' ', '%20', $file );
-
-					// For all other referrers redirect to the raw file
-					wp_redirect( $file, 302 );
+					// Update the cache
+					wp_cache_set( $episode_id, $size, 'filesize_raw' );
 				}
 
-				// Exit to prevent other processes running later on
-				exit;
+				// Send Content-Length header
+				if ( ! empty( $size ) ) {
+					header( "Content-Length: " . $size );
+				}
 
+				// Force file download
+				header( "Content-Type: application/force-download" );
+
+				// Set other relevant headers
+				header( "Content-Description: File Transfer" );
+				header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
+				header( "Content-Transfer-Encoding: binary" );
+
+				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
+				$file = str_replace( ' ', '%20', $file );
+
+				// Use ssp_readfile_chunked() if allowed on the server or simply access file directly
+				@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
+			} else {
+
+				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
+				$file = str_replace( ' ', '%20', $file );
+
+				// For all other referrers redirect to the raw file
+				wp_redirect( $file, 302 );
 			}
+
+			// Exit to prevent other processes running later on
+			exit;
+
 		}
 	}
 

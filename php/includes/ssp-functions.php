@@ -14,82 +14,113 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+
+if ( ! function_exists( 'ssp_beta_notice' ) ) {
+	/**
+	 * Displays SSP beta version notice.
+	 *
+	 * @return void
+	 */
+	function ssp_beta_notice() {
+		$beta_notice = __( 'You are using the Seriously Simple Podcasting beta, connected to ', 'seriously-simple-podcasting' );
+		?>
+		<div class="notice notice-warning">
+			<p>
+				<strong><?php echo $beta_notice . SSP_CASTOS_APP_URL; ?></strong>.
+			</p>
+		</div>
+		<?php
+	}
+}
+
+
 if ( ! function_exists( 'ssp_beta_check' ) ) {
+	/**
+	 * Checks if it's a beta version, and if yes, displays notice.
+	 *
+	 * @return bool
+	 */
 	function ssp_beta_check() {
 		if ( ! strstr( SSP_VERSION, 'beta' ) ) {
-			return;
+			return false;
 		}
 		/**
 		 * Display the beta notice.
 		 */
 		add_action( 'admin_notices', 'ssp_beta_notice' );
-		function ssp_beta_notice() {
-			$beta_notice = __( 'You are using the Seriously Simple Podcasting beta, connected to ', 'seriously-simple-podcasting' );
-			?>
-			<div class="notice notice-warning">
-				<p>
-					<strong><?php echo $beta_notice . SSP_CASTOS_APP_URL; ?></strong>.
-				</p>
-			</div>
-			<?php
+
+		return true;
+	}
+}
+
+if ( ! function_exists( 'ssp_php_version_notice' ) ) {
+	/**
+	 * Displays PHP version issue notice.
+	 *
+	 * @return void
+	 */
+	function ssp_php_version_notice() {
+		$error_notice         = __( 'The Seriously Simple Podcasting plugin requires PHP version 5.6 or higher. Please contact your web host to upgrade your PHP version or deactivate the plugin.', 'seriously-simple-podcasting' );
+		$error_notice_apology = __( 'We apologise for any inconvenience.', 'seriously-simple-podcasting' );
+		?>
+		<div class="error">
+			<p>
+				<strong><?php echo $error_notice; ?></strong>.
+			</p>
+			<p><?php echo $error_notice_apology; ?></p>
+		</div>
+		<?php
+	}
+}
+
+if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
+	/**
+	 * Checks if PHP version is ok, and if not, displays notice.
+	 *
+	 * @return bool
+	 */
+	function ssp_is_php_version_ok() {
+		if ( version_compare( PHP_VERSION, '5.6', '>=' ) ) {
+			return true;
 		}
+
+		/**
+		 * Display an admin notice.
+		 */
+		add_action( 'admin_notices', 'ssp_php_version_notice' );
 
 		return false;
 	}
 }
 
-
-if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
-	function ssp_is_php_version_ok() {
-		if ( ! version_compare( PHP_VERSION, '5.6', '<' ) ) {
-			return true;
-		}
-		/**
-		 * We are running under PHP 5.6
-		 */
-		if ( ! is_admin() ) {
-			return false;
-		}
-		/**
-		 * Display an admin notice and gracefully do nothing.
-		 */
-		add_action( 'admin_notices', 'ssp_php_version_notice' );
-		function ssp_php_version_notice() {
-			$error_notice = __( 'The Seriously Simple Podcasting plugin requires PHP version 5.6 or higher. Please contact your web host to upgrade your PHP version or deactivate the plugin.', 'seriously-simple-podcasting' );
-			$error_notice_apology = __( 'We apologise for any inconvenience.', 'seriously-simple-podcasting' );
-			?>
-			<div class="error">
-				<p>
-					<strong><?php echo $error_notice; ?></strong>.
-				</p>
-				<p><?php echo $error_notice_apology; ?></p>
-			</div>
-			<?php
-		}
-
-		return false;
+if ( ! function_exists( 'ssp_vendor_notice' ) ) {
+	/**
+	 * @return void
+	 */
+	function ssp_vendor_notice() {
+		$error_notice         = __( 'The Seriously Simple Podcasting vendor directory is missing or broken, please re-download/reinstall the plugin.', 'seriously-simple-podcasting' );
+		$error_notice_apology = __( 'We apologise for any inconvenience.', 'seriously-simple-podcasting' );
+		?>
+		<div class="error">
+			<p>
+				<strong><?php echo $error_notice; ?></strong>.
+			</p>
+			<p><?php echo $error_notice_apology; ?></p>
+		</div>
+		<?php
 	}
 }
 
 if ( ! function_exists( 'ssp_is_vendor_ok' ) ) {
+	/**
+	 * @return bool
+	 */
 	function ssp_is_vendor_ok() {
 
 		if ( file_exists( SSP_PLUGIN_PATH . 'vendor/autoload.php' ) ) {
 			return true;
 		}
 		add_action( 'admin_notices', 'ssp_vendor_notice' );
-		function ssp_vendor_notice() {
-			$error_notice         = __( 'The Seriously Simple Podcasting vendor directory is missing or broken, please re-download/reinstall the plugin.', 'seriously-simple-podcasting' );
-			$error_notice_apology = __( 'We apologise for any inconvenience.', 'seriously-simple-podcasting' );
-			?>
-			<div class="error">
-				<p>
-					<strong><?php echo $error_notice; ?></strong>.
-				</p>
-				<p><?php echo $error_notice_apology; ?></p>
-			</div>
-			<?php
-		}
 
 		return false;
 	}
@@ -103,7 +134,7 @@ if ( ! function_exists( 'ssp_get_upload_directory' ) ) {
 	 *
 	 * @param bool $return Whether to return the path or not
 	 *
-	 * @return bool|string
+	 * @return string|void
 	 */
 	function ssp_get_upload_directory( $return = true ) {
 		$time = current_time( 'mysql' );
@@ -144,13 +175,13 @@ if ( ! function_exists( 'ssp_cannot_write_uploads_dir_error' ) ) {
 	}
 }
 
-if ( ! function_exists( 'is_podcast_download' ) ) {
+if ( ! function_exists( 'ssp_is_podcast_download' ) ) {
 	/**
 	 * Check if podcast file is being downloaded
 	 * @return boolean True if file is being downloaded
 	 * @since  1.5
 	 */
-	function is_podcast_download() {
+	function ssp_is_podcast_download() {
 		$download = false;
 		$episode  = false;
 		global $wp_query;
@@ -165,7 +196,7 @@ if ( ! function_exists( 'is_podcast_download' ) ) {
 
 if ( ! function_exists( 'ss_get_podcast' ) ) {
 	/**
-	 * Wrapper function to get the podcast episodes from the SeriouslySimplePodcasting class.
+	 * Wrapper function to get the podcast episodes.
 	 *
 	 * @param mixed $args Arguments
 	 *
@@ -255,7 +286,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 						$title = '<a href="' . esc_url( $post->url ) . '" title="' . esc_attr( $title ) . '">' . $title . '</a>';
 					}
 
-					$meta = $ss_podcasting->episode_meta( $post->ID, 'shortcode' );
+					$meta = $ss_podcasting->episode_meta_details( $post->ID, 'shortcode' );
 
 					$template = str_replace( '%%CLASS%%', $class, $template );
 					$template = str_replace( '%%TITLE%%', $title, $template );

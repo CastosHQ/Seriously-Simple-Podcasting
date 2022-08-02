@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.14.2
+Stable tag: 2.15.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,21 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.15.0 =
+* 2022-08-02
+* UPDATE SUMMARY: Option to adjust player colors, PMPro sync improvements, player improvements
+* [UPDATE] Option to adjust player colors
+* [UPDATE] PMPro: bulk subscribers synchronization improvements
+* [UPDATE] Show notification for plugin review
+* [UPDATE] Made onboarding steps translatable
+* [UPDATE] Added distribute links to onboarding, step 4
+* [UPDATE] Gutenberg: show meta data underneath player
+* [UPDATE] Elementor: possibility to Enable/Disable Player Metadata
+* [UPDATE] Added option for Audible podcast URL
+* [UPDATE] Settings language improvements: renamed author to host
+* [FIX] Fixed episode image synchronization with Castos
+* [FIX] Fixed canonical feed URL
 
 = 2.14.2 =
 * 2022-06-27

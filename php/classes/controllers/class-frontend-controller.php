@@ -258,12 +258,21 @@ class Frontend_Controller {
 	}
 
 	/**
-	 * @Todo Rename to insert_player()
+	 * Add episode meta data to the full content
+	 * @param  string $content Existing content
+	 * @return string          Modified content
+	 * @deprecated Use embed_player_in_content() instead
+	 */
+	public function content_meta_data( $content = '' ) {
+		return $this->embed_player_in_content( $content );
+	}
+
+	/**
 	 * Add episode meta data to the full content
 	 * @param  string $content Existing content
 	 * @return string          Modified content
 	 */
-	public function content_meta_data( $content = '' ) {
+	public function embed_player_in_content( $content = '' ) {
 
 		global $post, $wp_current_filter, $episode_context;
 
@@ -274,6 +283,11 @@ class Frontend_Controller {
 
 		// Don't output unformatted data on excerpts
 		if ( in_array( 'get_the_excerpt', (array) $wp_current_filter, true ) ) {
+			return $content;
+		}
+
+		// Don't output player if Elementor Player widget was embedded manually
+		if ( false !== strpos( $content, 'data-widget_type="Castos Player.default"' ) ) {
 			return $content;
 		}
 

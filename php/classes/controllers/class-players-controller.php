@@ -327,9 +327,10 @@ class Players_Controller {
 
 		if ( $is_player_custom_colors_enabled && ! wp_style_is( 'ssp-dynamic-style', 'enqueued' ) ) {
 			$version = ssp_get_option( 'dynamic_style_version', time() );
+			$url = wp_upload_dir()['baseurl'] . '/ssp/css/ssp-dynamic-style.css';
 			wp_enqueue_style(
 				'ssp-dynamic-style',
-				esc_url( wp_upload_dir()['baseurl'] . '/ssp/css/ssp-dynamic-style.css' ),
+				esc_url( set_url_scheme( $url ) ),
 				array( 'ssp-castos-player' ),
 				$version
 			);

@@ -85,7 +85,7 @@ class Feed_Controller {
 			return $redirect_url;
 		}
 		$feed_slug   = $this->get_feed_slug();
-		$search  = sprintf( '#\/feed\/%s\/(.*)feed\/%s\/#', $feed_slug, $feed_slug );
+		$search  = sprintf( '#\/feed\/%s\/(.*)feed\/%s\/?#', $feed_slug, $feed_slug );
 		$replace = sprintf( '/feed/%s/$1', $feed_slug );
 
 		return preg_replace($search, $replace, $redirect_url);

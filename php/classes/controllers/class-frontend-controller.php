@@ -462,7 +462,7 @@ class Frontend_Controller {
 	 *
 	 * @return mixed|void
 	 */
-	public function load_media_player( $src_file, $episode_id, $player_size ) {
+	public function load_media_player( $src_file, $episode_id, $player_size, $context = 'block' ) {
 		// Get episode type and default to audio
 		$type = $this->episode_repository->get_episode_type( $episode_id );
 		if ( ! $type ) {
@@ -505,7 +505,7 @@ class Frontend_Controller {
 		if ( 'standard' === $player_size ) {
 			$player = $this->players_controller->render_media_player( $episode_id );
 		} else {
-			$player = $this->players_controller->render_html_player( $episode_id );
+			$player = $this->players_controller->render_html_player( $episode_id, true, $context );
 		}
 
 		// Allow filtering so that alternative players can be used

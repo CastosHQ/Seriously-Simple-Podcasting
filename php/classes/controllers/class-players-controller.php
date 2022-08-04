@@ -132,7 +132,7 @@ class Players_Controller {
 	 *
 	 * @return string
 	 */
-	public function render_html_player( $episode_id, $skip_empty_audio = true ) {
+	public function render_html_player( $episode_id, $skip_empty_audio = true, $context = 'block' ) {
 		$template_data = $this->episode_repository->get_player_data( $episode_id, null, false );
 		if ( $skip_empty_audio && ! array_key_exists( 'audio_file', $template_data ) ) {
 			return '';
@@ -145,8 +145,8 @@ class Players_Controller {
 		$meta = '';
 
 		// Adding 'block' context here for future, to distinguish that request is not from the content filter
-		if ( apply_filters( 'ssp_show_episode_details', true, $template_data['episode_id'], 'block' ) ) {
-			$meta = $this->episode_meta_details( $template_data['episode_id'], 'block' );
+		if ( apply_filters( 'ssp_show_episode_details', true, $template_data['episode_id'], $context ) ) {
+			$meta = $this->episode_meta_details( $template_data['episode_id'], $context );
 		}
 
 		return $player . $meta;

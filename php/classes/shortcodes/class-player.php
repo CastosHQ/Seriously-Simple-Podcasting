@@ -27,36 +27,27 @@ class Player implements Shortcode {
 		 * If we're in an RSS feed, don't render this shortcode
 		 */
 		if ( is_feed() ) {
-			return;
+			return '';
 		}
 
-		global $ss_podcasting;
+		$frontent_controller = ssp_frontend_controller();
 
 		$current_post = get_post();
 
 		// only render if this is a valid podcast type
 		if ( ! in_array( $current_post->post_type, ssp_post_types( true ), true ) ) {
-			return;
+			return '';
 		}
 
 		$episode_id = $current_post->ID;
-		$file       = $ss_podcasting->get_enclosure( $episode_id );
+		$file       = $frontent_controller->get_enclosure( $episode_id );
 		if ( get_option( 'permalink_structure' ) ) {
-			$file = $ss_podcasting->get_episode_download_link( $episode_id );
+			$file = $frontent_controller->get_episode_download_link( $episode_id );
 		}
 
 		$player_style = (string) get_option( 'ss_podcasting_player_style', 'standard' );
 
-		// Make sure we return and don't echo.
-		$args['echo'] = false;
-
-		$shortcode_player = $ss_podcasting->load_media_player( $file, $episode_id, $player_style );
-
-		if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, 'content' ) ) {
-			$shortcode_player .= $ss_podcasting->episode_meta_details( $episode_id, 'content' );
-		}
-
-		return $shortcode_player;
+		return $frontent_controller->load_media_player( $file, $episode_id, $player_style, 'shortcode' );
 	}
 
 }

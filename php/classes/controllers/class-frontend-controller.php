@@ -408,7 +408,7 @@ class Frontend_Controller {
 			$show_player = apply_filters( 'ssp_show_media_player', $show_player, $context );
 
 			if ( $show_player ) {
-				$player .= '<div class="podcast_player">' . $this->load_media_player( $file, $episode_id, $player_style ) . '</div>';
+				$player .= '<div class="podcast_player">' . $this->load_media_player( $file, $episode_id, $player_style, $context ) . '</div>';
 			}
 		}
 
@@ -503,7 +503,7 @@ class Frontend_Controller {
 
 
 		if ( 'standard' === $player_size ) {
-			$player = $this->players_controller->render_media_player( $episode_id );
+			$player = $this->players_controller->render_media_player( $episode_id, $context );
 		} else {
 			$player = $this->players_controller->render_html_player( $episode_id, true, $context );
 		}

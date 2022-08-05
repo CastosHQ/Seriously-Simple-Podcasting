@@ -412,10 +412,21 @@ class Players_Controller {
 	 *
 	 * @return string
 	 */
-	public function render_media_player( $id ) {
+	public function render_media_player( $id, $context = 'block' ) {
 		$template_data = $this->media_player( $id );
 
-		return $this->renderer->render_deprecated( $template_data, 'players/media-player' );
+		$player = $this->renderer->fetch( 'players/media-player', $template_data );
+
+		$meta = '';
+
+		$episode_id = isset( $template_data['episode']->ID ) ? $template_data['episode']->ID : 0;
+
+		// Adding 'block' context here for future, to distinguish that request is not from the content filter
+		if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
+			$meta = $this->episode_meta_details( $episode_id, $context );
+		}
+
+		return $player . $meta;
 	}
 
 	/**

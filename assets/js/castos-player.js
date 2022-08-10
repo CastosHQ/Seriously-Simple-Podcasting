@@ -34,8 +34,9 @@ docReady(function() {
 			podcastTitle = player.querySelector('.player__podcast-title'),
 			episodeTitle = player.querySelector('.player__episode-title'),
 			playlistScroll = player.querySelector('.playlist__wrapper'),
-			isPlaylistPlayer = playlistScroll ? true : false,
-			playlistLoader;
+			isPlaylistPlayer = !!playlistScroll,
+			playlistLoader,
+			toggleTimeout;
 
 		/* Helper functions */
 		function padNum(num) {
@@ -54,11 +55,16 @@ docReady(function() {
 
 		/* Build out functions */
 		function togglePlayback() {
-			if (audio.paused) {
-				playAudio();
-			} else {
-				pauseAudio();
-			}
+			clearTimeout(toggleTimeout);
+
+			// Prevent double toggling when user presses space button
+			toggleTimeout = setTimeout(function(){
+				if (audio.paused) {
+					playAudio();
+				} else {
+					pauseAudio();
+				}
+			}, 100);
 		}
 
 		function playAudio(){
@@ -124,6 +130,7 @@ docReady(function() {
 		}
 
 		function initAudio(){
+
 			handleCanPlay();
 			audio = player.querySelector('.clip-' + episodeId );
 			audio.addEventListener('play', syncPlayButton);
@@ -139,10 +146,15 @@ docReady(function() {
 			audio.onended = function () {
 				hideElement(pauseBtn);
 				showElement(playBtn);
-				let currentActiveItem = player.querySelector('.playlist__item.active'),
-					nextItem = currentActiveItem.nextElementSibling;
+				let currentActiveItem = player.querySelector('.playlist__item.active');
+
+				if(!currentActiveItem){
+					return;
+				}
 
 				currentActiveItem.classList.remove('active');
+
+				let	nextItem = currentActiveItem.nextElementSibling;
 				if (nextItem) {
 					let event = document.createEvent('HTMLEvents');
 					event.initEvent('click', true, false);
@@ -376,8 +388,34 @@ docReady(function() {
 			}
 		}
 
+		function initKeyboardListeners() {
+			document.addEventListener('keyup', (event) => {
+
+				// If the Space button was pressed and any of the player element is focused, toggle playback.
+				if (!document.activeElement.closest('.castos-player')) {
+					return;
+				}
+
+				if ('ArrowRight' === event.code) {
+					audio.currentTime += 10;
+					return;
+				}
+
+				if ('ArrowLeft' === event.code) {
+					audio.currentTime -= 10;
+					return;
+				}
+
+				if ('Space' === event.code) {
+					// Fire togglePlayback() via event to prevent the double toggling
+					playBtn.dispatchEvent(new Event('click'));
+				}
+			});
+		}
+
 		function init() {
 			initEventListeners();
+			initKeyboardListeners();
 			if (isPlaylistPlayer) {
 				playlistLoader = playlistScroll.querySelector('.loader');
 				initPlaylistEventListeners();

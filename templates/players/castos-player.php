@@ -23,7 +23,7 @@
 
 ?>
 
-<div class="castos-player <?php echo $player_mode ?>-mode" data-episode="<?php echo $episode_id ?>" data-player_id="<?php echo $player_id; ?>">
+<div id="<?php echo $player_id; ?>" class="castos-player <?php echo $player_mode ?>-mode" data-episode="<?php echo $episode_id ?>" data-player_id="<?php echo $player_id; ?>">
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo $episode_id?>">
@@ -50,7 +50,7 @@
 						<audio preload="none" class="clip clip-<?php echo $episode_id ?>">
 							<source src="<?php echo $audio_file ?>">
 						</audio>
-						<div class="ssp-progress" title="<?php _e( 'Seek', 'seriously-simple-podcasting' ) ?>">
+						<div class="ssp-progress" role="progressbar" title="<?php _e( 'Seek', 'seriously-simple-podcasting' ) ?>">
 							<span class="progress__filled"></span>
 						</div>
 						<div class="ssp-playback playback">
@@ -107,14 +107,14 @@
 						<?php endif ?>
 					<?php endforeach ?>
 				</div>
-				<div class="player-panel-row">
+				<div class="player-panel-row" area-label="RSS Feed URL">
 					<div class="title">
 						<?php _e( 'RSS Feed', 'seriously-simple-podcasting' ) ?>
 					</div>
 					<div>
-						<input value="<?php echo $feed_url ?>" class="input-rss input-rss-<?php echo $episode_id ?>" readonly />
+						<input value="<?php echo $feed_url ?>" class="input-rss input-rss-<?php echo $episode_id ?>" title="<?php _e( 'RSS Feed URL', 'seriously-simple-podcasting' ) ?>" readonly />
 					</div>
-					<button class="copy-rss copy-rss-<?php echo $episode_id ?>"></button>
+					<button class="copy-rss copy-rss-<?php echo $episode_id ?>" title="<?php _e('Copy RSS Feed URL', 'seriously-simple-podcasting') ?>"></button>
 				</div>
 			</div>
 		</div>
@@ -149,19 +149,19 @@
 					<?php _e( 'Link', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div>
-					<input value="<?php echo $current_url ?>" class="input-link input-link-<?php echo $episode_id ?>" readonly />
+					<input value="<?php echo $current_url ?>" class="input-link input-link-<?php echo $episode_id ?>" title="<?php _e('Episode URL', 'seriously-simple-podcasting') ?>" readonly />
 				</div>
-				<button class="copy-link copy-link-<?php echo $episode_id ?>" readonly=""></button>
+				<button class="copy-link copy-link-<?php echo $episode_id ?>" title="<?php _e('Copy Episode URL', 'seriously-simple-podcasting') ?>" readonly=""></button>
 			</div>
 			<div class="player-panel-row">
 				<div class="title">
 					<?php _e( 'Embed', 'seriously-simple-podcasting' ) ?>
 				</div>
 				<div style="height: 10px;">
-					<input type="text" value='<?php echo esc_attr( $embed_code) ?>'
+					<input type="text" value='<?php echo esc_attr( $embed_code) ?>' title="<?php _e('Embed Code', 'seriously-simple-podcasting') ?>"
 					       class="input-embed input-embed-<?php echo $episode_id ?>" readonly/>
 				</div>
-				<button class="copy-embed copy-embed-<?php echo $episode_id ?>"></button>
+				<button class="copy-embed copy-embed-<?php echo $episode_id ?>" title="<?php _e('Copy Embed Code', 'seriously-simple-podcasting') ?>"></button>
 			</div>
 		</div>
 		<?php endif ?>

@@ -216,7 +216,12 @@ docReady(function() {
 
 		/* Build out functions */
 		function togglePanel(panel) {
-			panel.classList.contains('open') ? panel.classList.remove('open') : panel.classList.add('open');
+			if(panel.classList.contains('open')){
+				panel.classList.remove('open');
+				return;
+			}
+			panel.classList.add('open');
+			panel.focus();
 		}
 
 		function copyLink(elm) {

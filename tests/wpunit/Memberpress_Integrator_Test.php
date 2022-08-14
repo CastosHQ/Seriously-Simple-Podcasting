@@ -1,0 +1,63 @@
+<?php
+
+use Codeception\TestCase\WPTestCase;
+use SeriouslySimplePodcasting\Controllers\Feed_Controller;
+use SeriouslySimplePodcasting\Handlers\Feed_Handler;
+use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator;
+use SeriouslySimplePodcasting\Renderers\Renderer;
+
+class Memberpress_Integrator_Test extends WPTestCase {
+	/**
+	 * @var \WpunitTester
+	 */
+	protected $tester;
+
+	public function setUp(): void {
+		parent::setUp();
+	}
+
+	public function tearDown(): void {
+		parent::tearDown();
+	}
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator::get_memberships()
+	 */
+	public function test_get_memberships() {
+
+		$integrator = new \ReflectionClass( '\SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator' );
+
+		$method = $integrator->getMethod( 'get_memberships' );
+		$method->setAccessible( true );
+		$instance = Memberpress_Integrator::instance();
+		$testing_arg              = new stdClass();
+
+		$testing_variants = array(
+			array(
+				'arg' => '123,456',
+				'expected'    => array( 123, 456 ),
+			),
+			array(
+				'arg' => '',
+				'expected'    => array(),
+			),
+			array(
+				'arg' => '123',
+				'expected'    => array( 123 ),
+			),
+			array(
+				'arg' => '123, hello',
+				'expected'    => array( 123 ),
+			),
+		);
+
+		foreach ( $testing_variants as $testing_variant ) {
+			$testing_arg->memberships = $testing_variant['arg'];
+			$res                      = $method->invokeArgs( $instance, [ $testing_arg ] );
+			self::assertEquals( $testing_variant['expected'], $res );
+		}
+
+		$res = $method->invokeArgs( $instance, [ null ] );
+		self::assertEquals( array(), $res );
+	}
+}

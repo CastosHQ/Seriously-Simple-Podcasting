@@ -8,6 +8,7 @@ use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
+use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
@@ -294,6 +295,9 @@ class App_Controller {
 
 		// Lifter LMS integration
 		LifterLMS_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger );
+
+		// Paid Memberships Pro integration
+		Memberpress_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
 	}
 
 	/**

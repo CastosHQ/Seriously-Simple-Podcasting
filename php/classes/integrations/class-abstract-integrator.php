@@ -36,7 +36,7 @@ abstract class Abstract_Integrator {
 	 *
 	 * @return bool
 	 */
-	protected function check_dependencies( $classes, $functions ) {
+	protected function check_dependencies( $classes, $functions = array() ) {
 		foreach ( $classes as $class ) {
 			if ( ! class_exists( $class ) ) {
 				return false;

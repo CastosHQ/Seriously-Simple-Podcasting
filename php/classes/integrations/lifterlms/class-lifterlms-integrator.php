@@ -351,7 +351,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		}
 
 		// Series is protected, does user have access?
-		$has_access = false;
+		$has_access = true;
 		$related_course_ids = $this->get_series_course_ids( array( $series ) );
 
 		if ( $related_course_ids ) {

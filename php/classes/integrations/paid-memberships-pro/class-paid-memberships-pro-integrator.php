@@ -40,31 +40,6 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 	const EVENT_REVOKE_SUBSCRIBERS = 'ssp_pmpro_revoke_subscribers';
 
-	/**
-	 * @var Feed_Handler
-	 * */
-	protected $feed_handler;
-
-	/**
-	 * @var Castos_Handler
-	 * */
-	protected $castos_handler;
-
-	/**
-	 * @var Admin_Notifications_Handler
-	 * */
-	protected $notices_handler;
-
-	/**
-	 * @var Log_Helper
-	 * */
-	protected $logger;
-
-	/**
-	 * @var array
-	 * */
-	protected $castos_podcasts;
-
 
 	/**
 	 * Class Paid_Memberships_Pro_Integrator constructor.
@@ -142,74 +117,12 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	}
 
 	/**
-	 * Checks if bulk update has been started.
-	 *
-	 * @return int
-	 */
-	protected function bulk_update_started() {
-		return intval( get_option( self::BULK_UPDATE_STARTED, 0 ) );
-	}
-
-	/**
-	 * Marks bulk update started.
-	 *
-	 * @return void
-	 */
-	protected function mark_bulk_update_started() {
-		add_option( self::BULK_UPDATE_STARTED, time(), '', false );
-	}
-
-	/**
-	 * Marks bulk update finished.
-	 *
-	 * @return int
-	 */
-	protected function mark_bulk_update_finished() {
-		return delete_option( self::BULK_UPDATE_STARTED );
-	}
-
-	/**
 	 * Gets users series map.
 	 *
 	 * @return array
 	 */
 	protected function get_users_series_map() {
 		return get_option( 'ss_pmpro_users_series_map', array() );
-	}
-
-	/**
-	 * Schedule bulk sync subscribers.
-	 *
-	 * Steps:
-	 * 1. When user changes the global podcasts => membership levels settings, we schedule new bulk sync.
-	 * 2. When we schedule it, we generate the users => podcasts(series) map, that existed before saving those settings.
-	 * 3. When bulk sync starts, we set BULK_UPDATE_STARTED mark. If this mark exists, we show a bulk updating notice on settings pages.
-	 * 4. We calculate user ids to add and to remove by difference between saved map and current map.
-	 *    We save these ids into separate options ADD_LIST_OPTION and REVOKE_LIST_OPTION.
-	 * 5. We schedule add subscribers process.
-	 * 6. We sync 100 subscribers per time, and after each successfull request, we update the list of users to sync.
-	 * 7. After add subscribers process is done, we schedule remove subscribers process.
-	 * 8. After remove subscribers process is done (list of subscribers to remove is empty), we remove BULK_UPDATE_STARTED mark.
-	 *
-	 * How does bulk sync works - we check the difference between old map and the new map.
-	 * Old map is generated when user saves the settings, new map - when EVENT_BULK_SYNC_SUBSCRIBERS job is run.
-	 * If user saves settings multiple times, between those events, it still should work correctly, because old map was already saved,
-	 * and we do not regenerate it again. So, when the job starts, it checks the difference between map generated before the first change and the last saved state.
-	 *
-	 * Edge cases:
-	 * 1. Sync job fails (API problems etc.), and we didn't sync all the subscribers.
-	 * To avoid that, we save ids to add and ids to revoke, and update them every time API returns OK.
-	 * 2. User changed settings when bulk update is not finished.
-	 * For this case, we regenerate map and schedule another bulk sync, which will run only when previous bulk update job is fully completed.
-	 */
-	protected function schedule_bulk_sync_subscribers() {
-		if ( ! wp_next_scheduled( self::EVENT_BULK_SYNC_SUBSCRIBERS ) ) {
-			// 1. Save old membership level map: [['level' => ['users']['series']]]
-			$this->update_users_series_map( $this->generate_users_series_map() );
-
-			// 2. Schedule a task to add/revoke users
-			wp_schedule_single_event( time(), self::EVENT_BULK_SYNC_SUBSCRIBERS );
-		}
 	}
 
 	/**
@@ -244,159 +157,10 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 
 	/**
-	 * Bulk sync subscribers after settings change.
+	 * @return string
 	 */
-	public function bulk_sync_subscribers() {
-		if ( $this->bulk_update_started() ) {
-
-			// Another process is running, try to sync later.
-			if ( ! wp_next_scheduled( self::EVENT_BULK_SYNC_SUBSCRIBERS ) ) {
-				wp_schedule_single_event( time() + 5 * MINUTE_IN_SECONDS, self::EVENT_BULK_SYNC_SUBSCRIBERS );
-			}
-
-			return;
-		}
-
-		$this->mark_bulk_update_started();
-
-		$old_map = $this->get_users_series_map();
-		$new_map = $this->generate_users_series_map();
-
-		$list_to_add    = array();
-		$list_to_revoke = array();
-
-		foreach ( $new_map as $user_id => $new_series ) {
-			$old_series = isset( $old_map[ $user_id ] ) ? $old_map[ $user_id ] : array();
-
-			$add_series = array_diff( $new_series, $old_series );
-			foreach ( $add_series as $series_id ) {
-				$list_to_add[ $series_id ][] = $user_id;
-			}
-
-			$revoke_series = array_diff( $old_series, $new_series );
-			foreach ( $revoke_series as $series_id ) {
-				$list_to_revoke[ $series_id ][] = $user_id;
-			}
-		}
-
-		$list_to_add    = array_unique( $list_to_add );
-		$list_to_revoke = array_unique( $list_to_revoke );
-
-		update_option( self::ADD_LIST_OPTION, $list_to_add );
-		update_option( self::REVOKE_LIST_OPTION, $list_to_revoke );
-
-		$this->schedule_bulk_add_subscribers( 0 );
-
-		$this->notices_handler->add_flash_notice( __( 'PMPro data successfully synchronized!', 'seriously-simple-podcasting' ), 'success' );
-	}
-
-	/**
-	 * Schedule bulk add subscribers.
-	 *
-	 * @param int $delay Schedule delay in minutes
-	 *
-	 * @return void
-	 */
-	protected function schedule_bulk_add_subscribers( $delay = 5 ) {
-		if ( ! wp_next_scheduled( self::EVENT_ADD_SUBSCRIBERS ) ) {
-			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::EVENT_ADD_SUBSCRIBERS );
-			$this->logger->log( __METHOD__ . ' Scheduled bulk add subscribers.' );
-		}
-	}
-
-	/**
-	 * Schedule bulk revoke subscribers.
-	 *
-	 * @return void
-	 */
-	protected function schedule_bulk_revoke_subscribers( $delay = 5 ) {
-		if ( ! wp_next_scheduled( self::EVENT_REVOKE_SUBSCRIBERS ) ) {
-			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::EVENT_REVOKE_SUBSCRIBERS );
-			$this->logger->log( __METHOD__ . ' Scheduled bulk revoke subscribers.' );
-		}
-	}
-
-	/**
-	 * Bulk sync subscribers after settings change.
-	 */
-	public function bulk_add_subscribers() {
-		// Always schedule next event till $list_to_add is not empty.
-		$list_to_add = $updated_list_to_add = get_option( self::ADD_LIST_OPTION );
-
-		if ( $list_to_add ) {
-			// Schedule it one more time to make sure we don't stop till it's done.
-			$this->schedule_bulk_add_subscribers();
-		} else {
-			$this->schedule_bulk_revoke_subscribers( 0 );
-
-			return;
-		}
-
-		foreach ( $list_to_add as $series_id => $user_ids ) {
-			$user_ids_chunked = array_chunk( $user_ids, 100 );
-			foreach ( $user_ids_chunked as $k => $bunch ) {
-				$count = $this->add_subscribers_to_podcast( $series_id, $bunch );
-
-				if ( ! $count ) {
-					// Something is wrong, let's wait for next run.
-					$this->logger->log( __METHOD__ . 'Add subscribers error! $count: ' . $count );
-
-					return;
-				}
-
-				// We successfully added subscribers, lets update our list
-				unset( $user_ids_chunked[ $k ] );
-				$updated_list_to_add[ $series_id ] = call_user_func_array( 'array_merge', $user_ids_chunked );
-				update_option( self::ADD_LIST_OPTION, $updated_list_to_add );
-			}
-
-			unset( $updated_list_to_add[ $series_id ] );
-			update_option( self::ADD_LIST_OPTION, $updated_list_to_add );
-		}
-
-		$this->logger->log( __METHOD__ . 'Add subscribers process successfully finished!' );
-	}
-
-	/**
-	 * Bulk sync subscribers after settings change.
-	 */
-	public function bulk_revoke_subscribers() {
-		// Always schedule next event till $list_to_revoke is not empty.
-		$list_to_revoke = $updated_list_to_revoke = get_option( self::REVOKE_LIST_OPTION );
-
-		if ( $list_to_revoke ) {
-			// Schedule it one more time to make sure we don't stop till it's done.
-			$this->schedule_bulk_revoke_subscribers();
-		} else {
-			// Last step: just remove bulk sync mark.
-			$this->mark_bulk_update_finished();
-			$this->logger->log( __METHOD__ . 'Bulk update successfully finished!' );
-
-			return;
-		}
-
-		foreach ( $list_to_revoke as $series_id => $user_ids ) {
-			$user_ids_chunked = array_chunk( $user_ids, 100 );
-			foreach ( $user_ids_chunked as $k => $bunch ) {
-				$count = $this->revoke_subscribers_from_podcast( $series_id, $bunch );
-
-				if ( ! $count ) {
-					// Something is wrong, let's wait for next run.
-					$this->logger->log( __METHOD__ . 'Add subscribers error! $count: ' . $count );
-
-					return;
-				}
-
-				// We successfully revoked subscribers, lets update our list
-				unset( $user_ids_chunked[ $k ] );
-				$updated_list_to_revoke[ $series_id ] = call_user_func_array( 'array_merge', $user_ids_chunked );
-				update_option( self::REVOKE_LIST_OPTION, $updated_list_to_revoke );
-			}
-			unset( $updated_list_to_revoke[ $series_id ] );
-			update_option( self::REVOKE_LIST_OPTION, $updated_list_to_revoke );
-		}
-
-		$this->logger->log( __METHOD__ . 'Revoke subscribers process successfully finished!' );
+	protected function get_successfully_finished_notice(){
+		return __( 'PMPro data successfully synchronized!', 'seriously-simple-podcasting' );
 	}
 
 
@@ -665,8 +429,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			$args['description'] = $msg;
 			$args['fields']      = array();
 		} else {
-			if ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) &&
-			     self::bulk_update_started() ) {
+			if ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) && $this->bulk_update_started() ) {
 				$this->notices_handler->add_flash_notice( __( 'Synchronizing Paid Memberships Pro data with Castos...', 'seriously-simple-podcasting' ) );
 			}
 		}
@@ -775,21 +538,6 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		// Return true
 		return $default;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	protected function get_castos_podcasts() {
-		if ( is_null( $this->castos_podcasts ) ) {
-			$podcasts              = $this->castos_handler->get_podcasts();
-			$this->castos_podcasts = isset( $podcasts['data']['podcast_list'] ) ?
-				$podcasts['data']['podcast_list'] :
-				array();
-		}
-
-		return $this->castos_podcasts;
 	}
 
 

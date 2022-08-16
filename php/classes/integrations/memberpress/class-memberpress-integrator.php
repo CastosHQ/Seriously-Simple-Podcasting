@@ -43,31 +43,6 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 	const SINGLE_SYNC_EVENT = 'ssp_memberpress_single_sync';
 
-	/**
-	 * @var Feed_Handler
-	 * */
-	protected $feed_handler;
-
-	/**
-	 * @var Castos_Handler
-	 * */
-	protected $castos_handler;
-
-	/**
-	 * @var Admin_Notifications_Handler
-	 * */
-	protected $notices_handler;
-
-	/**
-	 * @var Log_Helper
-	 * */
-	protected $logger;
-
-	/**
-	 * @var array
-	 * */
-	protected $castos_podcasts;
-
 
 	/**
 	 * Class Paid_Memberships_Pro_Integrator constructor.
@@ -312,17 +287,6 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	}
 
 	/**
-	 * Checks if bulk update has been started.
-	 *
-	 * @return int
-	 */
-	protected function bulk_update_started() {
-		return wp_next_scheduled( self::EVENT_BULK_SYNC_SUBSCRIBERS ) ||
-		       wp_next_scheduled( self::EVENT_ADD_SUBSCRIBERS ) ||
-		       wp_next_scheduled( self::EVENT_REVOKE_SUBSCRIBERS );
-	}
-
-	/**
 	 * Gets users series map.
 	 *
 	 * @return array
@@ -331,18 +295,6 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		return get_option( 'ss_memberpress_users_series_map', array() );
 	}
 
-	/**
-	 * Schedule bulk sync subscribers.
-	 */
-	protected function schedule_bulk_sync_subscribers() {
-		if ( ! wp_next_scheduled( self::EVENT_BULK_SYNC_SUBSCRIBERS ) ) {
-			// 1. Save old users->series map: [['user_id' => ['series1', [series2]],]
-			$this->update_users_series_map( $this->generate_users_series_map() );
-
-			// 2. Schedule a task to add/revoke users
-			wp_schedule_single_event( time(), self::EVENT_BULK_SYNC_SUBSCRIBERS );
-		}
-	}
 
 	/**
 	 * Updates users series map.
@@ -378,160 +330,10 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 
 	/**
-	 * Bulk sync subscribers after settings change.
+	 * @return string
 	 */
-	public function bulk_sync_subscribers() {
-		if ( $this->bulk_update_started() ) {
-
-			// Another process is running, try to sync later.
-			if ( ! wp_next_scheduled( self::EVENT_BULK_SYNC_SUBSCRIBERS ) ) {
-				wp_schedule_single_event( time() + 5 * MINUTE_IN_SECONDS, self::EVENT_BULK_SYNC_SUBSCRIBERS );
-			}
-
-			return;
-		}
-
-		$old_map = $this->get_users_series_map();
-		$new_map = $this->generate_users_series_map();
-
-		$list_to_add    = array();
-		$list_to_revoke = array();
-
-		foreach ( $new_map as $user_id => $new_series ) {
-			$old_series = isset( $old_map[ $user_id ] ) ? $old_map[ $user_id ] : array();
-
-			$add_series = array_diff( $new_series, $old_series );
-			foreach ( $add_series as $series_id ) {
-				$list_to_add[ $series_id ][] = $user_id;
-			}
-
-			$revoke_series = array_diff( $old_series, $new_series );
-			foreach ( $revoke_series as $series_id ) {
-				$list_to_revoke[ $series_id ][] = $user_id;
-			}
-		}
-
-		$list_to_add    = array_map( 'array_unique', $list_to_add );
-		$list_to_revoke = array_map( 'array_unique', $list_to_revoke );
-
-		update_option( self::ADD_LIST_OPTION, $list_to_add );
-		update_option( self::REVOKE_LIST_OPTION, $list_to_revoke );
-
-		$this->schedule_bulk_add_subscribers( 0 );
-	}
-
-	/**
-	 * Schedule bulk add subscribers.
-	 *
-	 * @param int $delay Schedule delay in minutes
-	 *
-	 * @return void
-	 */
-	protected function schedule_bulk_add_subscribers( $delay = 5 ) {
-		if ( ! wp_next_scheduled( self::EVENT_ADD_SUBSCRIBERS ) ) {
-			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::EVENT_ADD_SUBSCRIBERS );
-			$this->logger->log( __METHOD__ . ' Scheduled bulk add subscribers.' );
-		}
-	}
-
-	/**
-	 * Schedule bulk revoke subscribers.
-	 *
-	 * @return void
-	 */
-	protected function schedule_bulk_revoke_subscribers( $delay = 5 ) {
-		if ( ! wp_next_scheduled( self::EVENT_REVOKE_SUBSCRIBERS ) ) {
-			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::EVENT_REVOKE_SUBSCRIBERS );
-			$this->logger->log( __METHOD__ . ' Scheduled bulk revoke subscribers.' );
-		}
-	}
-
-	/**
-	 * Bulk sync subscribers after settings change.
-	 */
-	public function bulk_add_subscribers() {
-		// Always schedule next event till $list_to_add is not empty.
-		$list_to_add = $updated_list_to_add = get_option( self::ADD_LIST_OPTION );
-
-		// This block is needed just to make sure that if process dies another one will be started later
-		if ( $list_to_add ) {
-			// Schedule it one more time to make sure we don't stop till it's done.
-			$this->schedule_bulk_add_subscribers();
-		} else {
-			$this->schedule_bulk_revoke_subscribers( 0 );
-
-			return;
-		}
-
-		foreach ( $list_to_add as $series_id => $user_ids ) {
-			$user_ids_chunked = array_chunk( $user_ids, 100 );
-			foreach ( $user_ids_chunked as $k => $bunch ) {
-				$count = $this->add_subscribers_to_podcast( $series_id, $bunch );
-
-				if ( ! $count ) {
-					// Something is wrong, let's wait for next run.
-					$this->logger->log( __METHOD__ . 'Add subscribers error! $count: ' . $count );
-
-					return;
-				}
-
-				// We successfully added subscribers, lets update our list
-				unset( $user_ids_chunked[ $k ] );
-				$updated_list_to_add[ $series_id ] = call_user_func_array( 'array_merge', $user_ids_chunked );
-				update_option( self::ADD_LIST_OPTION, $updated_list_to_add );
-			}
-
-			unset( $updated_list_to_add[ $series_id ] );
-			update_option( self::ADD_LIST_OPTION, $updated_list_to_add );
-		}
-
-		// We successfully finished the job, so we can remove the spare one, and schedule the next step
-		wp_clear_scheduled_hook( self::EVENT_ADD_SUBSCRIBERS );
-		$this->schedule_bulk_revoke_subscribers( 0 );
-		$this->logger->log( __METHOD__ . 'Add subscribers process successfully finished!' );
-	}
-
-	/**
-	 * Bulk sync subscribers after settings change.
-	 */
-	public function bulk_revoke_subscribers() {
-		// Always schedule next event till $list_to_revoke is not empty.
-		$list_to_revoke = $updated_list_to_revoke = get_option( self::REVOKE_LIST_OPTION );
-
-		if ( $list_to_revoke ) {
-			// Schedule it one more time to make sure we don't stop till it's done.
-			$this->schedule_bulk_revoke_subscribers();
-		} else {
-			// Last step: do nothing, just log it.
-			$this->logger->log( __METHOD__ . 'Bulk update successfully finished!' );
-
-			return;
-		}
-
-		foreach ( $list_to_revoke as $series_id => $user_ids ) {
-			$user_ids_chunked = array_chunk( $user_ids, 100 );
-			foreach ( $user_ids_chunked as $k => $bunch ) {
-				$count = $this->revoke_subscribers_from_podcast( $series_id, $bunch );
-
-				if ( ! $count ) {
-					// Something is wrong, let's wait for next run.
-					$this->logger->log( __METHOD__ . 'Add subscribers error! $count: ' . $count );
-
-					return;
-				}
-
-				// We successfully revoked subscribers, lets update our list
-				unset( $user_ids_chunked[ $k ] );
-				$updated_list_to_revoke[ $series_id ] = call_user_func_array( 'array_merge', $user_ids_chunked );
-				update_option( self::REVOKE_LIST_OPTION, $updated_list_to_revoke );
-			}
-			unset( $updated_list_to_revoke[ $series_id ] );
-			update_option( self::REVOKE_LIST_OPTION, $updated_list_to_revoke );
-		}
-
-		wp_clear_scheduled_hook( self::EVENT_REVOKE_SUBSCRIBERS );
-
-		$this->logger->log( __METHOD__ . 'Revoke subscribers process successfully finished!' );
+	protected function get_successfully_finished_notice(){
+		return __( 'MemberPress data successfully synchronized!', 'seriously-simple-podcasting' );
 	}
 
 
@@ -850,21 +652,6 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 		// Return true
 		return $default;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	protected function get_castos_podcasts() {
-		if ( is_null( $this->castos_podcasts ) ) {
-			$podcasts              = $this->castos_handler->get_podcasts();
-			$this->castos_podcasts = isset( $podcasts['data']['podcast_list'] ) ?
-				$podcasts['data']['podcast_list'] :
-				array();
-		}
-
-		return $this->castos_podcasts;
 	}
 
 

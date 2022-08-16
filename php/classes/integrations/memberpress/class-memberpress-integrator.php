@@ -180,7 +180,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 						$this->logger->log( __METHOD__ . sprintf( ': Error! Failed to sync user %s. Will try again later.', $user_id ) );
 						$single_update_data['attempts'] = $single_update_data['attempts'] + 1;
 						update_option( self::SINGLE_SYNC_DATA_OPTION, $single_update_data );
-						$this->schedule_single_sync( time() + 20 * MINUTE_IN_SECONDS );
+						$this->schedule_single_sync( 20 );
 					}
 
 					return;
@@ -238,7 +238,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			);
 			$single_sync_data['attempts'] = 0;
 			update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_data, false );
-			$this->schedule_single_sync( time() );
+			$this->schedule_single_sync( 0 );
 
 			return $query;
 		} );
@@ -247,11 +247,13 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	/**
 	 * Schedule single sync.
 	 *
+	 * @param int $delay Schedule delay in minutes.
+	 *
 	 * @return void
 	 */
-	protected function schedule_single_sync( $time ){
+	protected function schedule_single_sync( $delay = 5 ){
 		if ( ! wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) {
-			wp_schedule_single_event( $time, self::SINGLE_SYNC_EVENT );
+			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::SINGLE_SYNC_EVENT );
 		}
 	}
 
@@ -597,10 +599,11 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(
-				'id'      => sprintf( 'series_%s_memberpress_levels', $series_item->term_id ),
-				'label'   => $series_item->name,
-				'type'    => 'checkbox_multi',
-				'options' => $checkbox_options,
+				'id'          => sprintf( 'series_%s_memberpress_levels', $series_item->term_id ),
+				'label'       => $series_item->name,
+				'type'        => 'select2_multi',
+				'options'     => $checkbox_options,
+				'description' => 'Require enrollment to membership',
 			);
 
 			if ( ! $this->is_series_protected_in_castos( $series_item->term_id ) ) {

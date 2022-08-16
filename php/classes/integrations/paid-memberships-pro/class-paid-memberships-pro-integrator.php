@@ -501,10 +501,11 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(
-				'id'      => sprintf( 'series_%s_pmpro_levels', $series_item->term_id ),
-				'label'   => $series_item->name,
-				'type'    => 'checkbox_multi',
-				'options' => $checkbox_options,
+				'id'          => sprintf( 'series_%s_pmpro_levels', $series_item->term_id ),
+				'label'       => $series_item->name,
+				'type'        => 'select2_multi',
+				'options'     => $checkbox_options,
+				'description' => 'Require enrollment to level',
 			);
 
 			if ( ! $this->is_series_protected_in_castos( $series_item->term_id ) ) {

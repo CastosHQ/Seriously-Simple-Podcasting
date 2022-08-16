@@ -1528,3 +1528,18 @@ if ( ! function_exists( 'ssp_get_service' ) ) {
 		return ssp_app()->get_service( $service_id );
 	}
 }
+
+
+/**
+ * Get SSP Player.
+ */
+if ( ! function_exists( 'ssp_player' ) ) {
+	function ssp_player( $post_id = 0 ) {
+		global $post;
+		if ( ! $post_id ) {
+			$post_id = $post->ID;
+		}
+
+		return ssp_frontend_controller()->audio_player( '', $post_id );
+	}
+}

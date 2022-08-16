@@ -492,24 +492,14 @@ class Settings_Renderer implements Service {
 	 */
 	protected function render_feed_link() {
 		// Set feed URL based on site's permalink structure
-		if ( get_option( 'permalink_structure' ) ) {
-			$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-			$url       = $this->home_url . 'feed/' . $feed_slug;
-		} else {
-			$url = $this->home_url . '?feed=' . $this->token;
-		}
+		$url = ssp_get_feed_url();
 
 		return '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>';
 	}
 
 	protected function render_feed_link_series() {
 		// Set feed URL based on site's permalink structure
-		if ( get_option( 'permalink_structure' ) ) {
-			$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-			$url       = $this->home_url . 'feed/' . $feed_slug . '/podcast-slug';
-		} else {
-			$url = $this->home_url . '?feed=' . $this->token . '&podcast_series=podcast-slug';
-		}
+		$url = ssp_get_feed_url( 'podcast-slug' );
 
 		return esc_url( $url ) . "\n";
 	}
@@ -520,7 +510,7 @@ class Settings_Renderer implements Service {
 			_x( SSP_CPT_PODCAST, 'Podcast URL slug', 'seriously-simple-podcasting' )
 		);
 
-		$podcast_url = $this->home_url . $slug;
+		$podcast_url = $this->home_url . $slug . '/';
 
 		return '<a href="' . esc_url( $podcast_url ) . '" target="_blank">' . $podcast_url . '</a>';
 	}

@@ -584,23 +584,12 @@ class Options_Controller extends Controller {
 				break;
 			case 'feed_link':
 				// Set feed URL based on site's permalink structure
-				if ( get_option( 'permalink_structure' ) ) {
-					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-					$url       = $this->home_url . 'feed/' . $feed_slug;
-				} else {
-					$url = $this->home_url . '?feed=' . $this->token;
-				}
-
+				$url = ssp_get_feed_url();
 				$html .= '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>';
 				break;
 			case 'feed_link_series':
 				// Set feed URL based on site's permalink structure
-				if ( get_option( 'permalink_structure' ) ) {
-					$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-					$url       = $this->home_url . 'feed/' . $feed_slug . '/podcast-slug';
-				} else {
-					$url = $this->home_url . '?feed=' . $this->token . '&podcast_series=podcast-slug';
-				}
+				$url = ssp_get_feed_url( 'podcast-slug' );
 
 				$html .= esc_url( $url ) . "\n";
 				break;

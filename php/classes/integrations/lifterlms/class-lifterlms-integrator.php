@@ -19,7 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Lifter LMS integrator.
  *
- * @author Sergey Zakharchenko
+ * @author Sergiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * @since 2.12.0
  */
@@ -211,85 +211,6 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		}
 	}
 
-	/**
-	 * @param int $user_id
-	 * @param int[] $revoke_series_ids
-	 * @param int[] $add_series_ids
-	 */
-	protected function sync_user( $user_id, $revoke_series_ids, $add_series_ids ) {
-		$user = get_user_by( 'id', $user_id );
-
-		if ( ! $user ) {
-			return;
-		}
-
-		if ( $revoke_series_ids ) {
-			$this->logger->log( __METHOD__ . sprintf( ': Revoke user %s from series %s', $user->user_email, json_encode( $revoke_series_ids ) ) );
-			$res = $this->revoke_subscriber_from_podcasts( $user, $revoke_series_ids );
-			$this->logger->log( __METHOD__ . ': Revoke result', $res );
-		}
-
-		if ( $add_series_ids ) {
-			$this->logger->log( __METHOD__ . sprintf( ': Add user %s to series %s', $user->user_email, json_encode( $add_series_ids ) ) );
-			$res = $this->add_subscriber_to_podcasts( $user, $add_series_ids );
-			$this->logger->log( __METHOD__ . ': Add result', $res );
-		}
-	}
-
-
-	/**
-	 * Revokes subscriber from multiple Castos podcasts.
-	 *
-	 * @param \WP_User $user
-	 * @param int[] $series_ids
-	 *
-	 * @return array
-	 */
-	protected function revoke_subscriber_from_podcasts( $user, $series_ids ) {
-		$podcast_ids = $this->convert_series_ids_to_podcast_ids( $series_ids );
-
-		return $this->castos_handler->revoke_subscriber_from_podcasts( $podcast_ids, $user->user_email );
-	}
-
-
-	/**
-	 * Adds subscriber to multiple Castos podcasts.
-	 *
-	 * @param \WP_User $user
-	 * @param int[] $series_ids
-	 *
-	 * @return array
-	 */
-	protected function add_subscriber_to_podcasts( $user, $series_ids ) {
-		$podcast_ids = $this->convert_series_ids_to_podcast_ids( $series_ids );
-
-		return $this->castos_handler->add_subscriber_to_podcasts(
-			$podcast_ids,
-			$user->user_email,
-			$user->display_name
-		);
-	}
-
-
-	/**
-	 * Converts series IDs to the Castos podcast IDs.
-	 *
-	 * @param int[] $series_ids
-	 *
-	 * @return array
-	 */
-	protected function convert_series_ids_to_podcast_ids( $series_ids ) {
-		$series_podcasts_map = $this->get_series_podcasts_map();
-
-		$podcast_ids = array();
-
-		foreach ( $series_ids as $series_id ) {
-			$podcast_ids[] = $series_podcasts_map[ $series_id ];
-		}
-
-		return $podcast_ids;
-	}
-
 
 	/**
 	 * Gets IDs of the series attached to the Membership Level.
@@ -317,30 +238,6 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		}
 
 		return $series_ids;
-	}
-
-
-	/**
-	 * Gets the map between series and podcasts.
-	 *
-	 * @return array
-	 */
-	protected function get_series_podcasts_map() {
-		$podcasts = $this->castos_handler->get_podcasts();
-
-		$map = array();
-
-		if ( empty( $podcasts['data']['podcast_list'] ) ) {
-			$this->logger->log( __METHOD__ . ': Error: empty podcasts!' );
-
-			return $map;
-		}
-
-		foreach ( $podcasts['data']['podcast_list'] as $podcast ) {
-			$map[ $podcast['series_id'] ] = $podcast['id'];
-		}
-
-		return $map;
 	}
 
 
@@ -434,27 +331,6 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		remove_filter( 'llms_page_restricted_before_check_access', $restrict_filter );
 
 		return $template;
-	}
-
-	/**
-	 * @return WP_Term[]
-	 */
-	protected function get_current_page_related_series() {
-		// First, lets check if it's series page
-		$queried = get_queried_object();
-
-		if ( isset( $queried->taxonomy ) && 'series' === $queried->taxonomy ) {
-			return array( $queried );
-		}
-
-		// If it's episode page, get related series
-		global $post;
-
-		if( isset( $post->post_type ) && SSP_CPT_PODCAST === $post->post_type ){
-			return $this->get_episode_series( $post->ID );
-		}
-
-		return array();
 	}
 
 

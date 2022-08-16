@@ -1233,6 +1233,8 @@ class Settings_Handler implements Service {
 			$private_unavailable_descr = __( 'Looks like you\'re already using Paid Membership Pro to make your podcast private.', 'seriously-simple-podcasting' );
 		} elseif ( class_exists( 'LifterLMS' ) && ssp_get_option( 'enable_lifterlms_integration' ) ) {
 			$private_unavailable_descr = __( 'Looks like you\'re already using LifterLMS to make your podcast private.', 'seriously-simple-podcasting' );
+		} elseif ( class_exists( 'MeprUser' ) && ssp_get_option( 'enable_memberpress_integration' ) ) {
+			$private_unavailable_descr = __( 'Looks like you\'re already using MemberPress to make your podcast private.', 'seriously-simple-podcasting' );
 		}
 
 		if ( ! empty( $private_unavailable_descr ) ) {

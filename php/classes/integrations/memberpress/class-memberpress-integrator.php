@@ -12,8 +12,6 @@ use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Integrations\Abstract_Integrator;
 use SeriouslySimplePodcasting\Traits\Singleton;
-use WP_Error;
-use WP_Term;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -23,15 +21,13 @@ if ( ! defined( 'ABSPATH' ) ) {
  * MemberPress Integrator
  *
  *
- * @author Sergey Zakharchenko
+ * @author Sergiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * @since 2.16.0
  */
 class Memberpress_Integrator extends Abstract_Integrator {
 
 	use Singleton;
-
-	const BULK_UPDATE_STARTED = 'ssp_memberpress_bulk_update_started';
 
 	const ADD_LIST_OPTION = 'ssp_memberpress_add_subscribers';
 
@@ -72,16 +68,6 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * */
 	protected $castos_podcasts;
 
-	/**
-	 * @var array
-	 * */
-	protected $series_levels_map;
-
-	/**
-	 * @var array
-	 * */
-	protected $series_podcasts_map;
-
 
 	/**
 	 * Class Paid_Memberships_Pro_Integrator constructor.
@@ -108,7 +94,6 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			$integration_enabled = ssp_get_option( 'enable_memberpress_integration' );
 			if ( $integration_enabled ) {
 				$this->protect_private_series();
-				$this->print_private_podcast_feeds();
 			}
 		}
 
@@ -233,7 +218,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 	/**
 	 * There is no action or filter on members update, and there might be a lot of possible cases where members can be updated,
-	 * so the only 100% way to listen the members updates is to listen the query action.
+	 * so the only 100% way to listen the members update is to listen the database queries.
 	 *
 	 * @return void
 	 */
@@ -248,16 +233,12 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			 * */
 			$mepr_db = \MeprDb::fetch();
 
-			// Does the table even exist?
-			if ( ! $mepr_db->table_exists( $mepr_db->members ) ) {
-				return $query;
-			}
-
 			// Does current query updates members table?
 			if ( false === strpos( $query, $mepr_db->members ) ) {
 				return $query;
 			}
 
+			// Lets get the user ID.
 			preg_match( "#`user_id`='(\d*)#", $query, $matches );
 
 			if ( empty( $matches[1] ) ) {
@@ -266,14 +247,14 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 			$user_id = $matches[1];
 
+			// And now we can calculate the changes and schedule the sync process.
 			$old_members_data = $mepr_db->get_one_record( $mepr_db->members, array( 'user_id' => $user_id ) );
-			$new_members_data = \MeprUser::member_data( $user_id );
 
 			$old_memberships = $this->get_memberships( $old_members_data );
-			$new_memberships = $this->get_memberships( $new_members_data );
+			$new_memberships = $this->get_user_memberships( $user_id );
 
 			$revoked_memberships = array_diff( $old_memberships, $new_memberships );
-			$added_memberships    = array_diff( $new_memberships, $old_memberships );
+			$added_memberships   = array_diff( $new_memberships, $old_memberships );
 
 			$single_sync_data             = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
 			$single_sync_data['users'][ $user_id ] = array(
@@ -282,7 +263,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			);
 			$single_sync_data['attempts'] = 0;
 			update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_data, false );
-			$this->schedule_single_sync( time() - DAY_IN_SECONDS );
+			$this->schedule_single_sync( time() );
 
 			return $query;
 		} );
@@ -314,12 +295,12 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	}
 
 	/**
-	 * @param $obj
+	 * @param object $member_data
 	 *
 	 * @return array
 	 */
-	protected function get_memberships( $obj ) {
-		$memberships = isset( $obj->memberships ) ? $obj->memberships : '';
+	protected function get_memberships( $member_data ) {
+		$memberships = isset( $member_data->memberships ) ? $member_data->memberships : '';
 
 		if ( strpos( $memberships, ',' ) ) {
 			$memberships = explode( ',', $memberships );
@@ -336,25 +317,9 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * @return int
 	 */
 	protected function bulk_update_started() {
-		return intval( get_option( self::BULK_UPDATE_STARTED, 0 ) );
-	}
-
-	/**
-	 * Marks bulk update started.
-	 *
-	 * @return void
-	 */
-	protected function mark_bulk_update_started() {
-		add_option( self::BULK_UPDATE_STARTED, time(), '', false );
-	}
-
-	/**
-	 * Marks bulk update finished.
-	 *
-	 * @return int
-	 */
-	protected function mark_bulk_update_finished() {
-		return delete_option( self::BULK_UPDATE_STARTED );
+		return wp_next_scheduled( self::EVENT_BULK_SYNC_SUBSCRIBERS ) ||
+		       wp_next_scheduled( self::EVENT_ADD_SUBSCRIBERS ) ||
+		       wp_next_scheduled( self::EVENT_REVOKE_SUBSCRIBERS );
 	}
 
 	/**
@@ -371,7 +336,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 */
 	protected function schedule_bulk_sync_subscribers() {
 		if ( ! wp_next_scheduled( self::EVENT_BULK_SYNC_SUBSCRIBERS ) ) {
-			// 1. Save old membership level map: [['level' => ['users']['series']]]
+			// 1. Save old users->series map: [['user_id' => ['series1', [series2]],]
 			$this->update_users_series_map( $this->generate_users_series_map() );
 
 			// 2. Schedule a task to add/revoke users
@@ -416,16 +381,15 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * Bulk sync subscribers after settings change.
 	 */
 	public function bulk_sync_subscribers() {
-		// If the old update process is running, do nothing
 		if ( $this->bulk_update_started() ) {
+
+			// Another process is running, try to sync later.
 			if ( ! wp_next_scheduled( self::EVENT_BULK_SYNC_SUBSCRIBERS ) ) {
-				wp_schedule_single_event( time() + 10 * MINUTE_IN_SECONDS, self::EVENT_BULK_SYNC_SUBSCRIBERS );
+				wp_schedule_single_event( time() + 5 * MINUTE_IN_SECONDS, self::EVENT_BULK_SYNC_SUBSCRIBERS );
 			}
 
 			return;
 		}
-
-		$this->mark_bulk_update_started();
 
 		$old_map = $this->get_users_series_map();
 		$new_map = $this->generate_users_series_map();
@@ -489,6 +453,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		// Always schedule next event till $list_to_add is not empty.
 		$list_to_add = $updated_list_to_add = get_option( self::ADD_LIST_OPTION );
 
+		// This block is needed just to make sure that if process dies another one will be started later
 		if ( $list_to_add ) {
 			// Schedule it one more time to make sure we don't stop till it's done.
 			$this->schedule_bulk_add_subscribers();
@@ -520,6 +485,9 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			update_option( self::ADD_LIST_OPTION, $updated_list_to_add );
 		}
 
+		// We successfully finished the job, so we can remove the spare one, and schedule the next step
+		wp_clear_scheduled_hook( self::EVENT_ADD_SUBSCRIBERS );
+		$this->schedule_bulk_revoke_subscribers( 0 );
 		$this->logger->log( __METHOD__ . 'Add subscribers process successfully finished!' );
 	}
 
@@ -534,8 +502,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			// Schedule it one more time to make sure we don't stop till it's done.
 			$this->schedule_bulk_revoke_subscribers();
 		} else {
-			// Last step: just remove bulk sync mark.
-			$this->mark_bulk_update_finished();
+			// Last step: do nothing, just log it.
 			$this->logger->log( __METHOD__ . 'Bulk update successfully finished!' );
 
 			return;
@@ -562,260 +529,11 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			update_option( self::REVOKE_LIST_OPTION, $updated_list_to_revoke );
 		}
 
+		wp_clear_scheduled_hook( self::EVENT_REVOKE_SUBSCRIBERS );
+
 		$this->logger->log( __METHOD__ . 'Revoke subscribers process successfully finished!' );
 	}
 
-
-	/**
-	 * Sync subscribers when user's Membership Level is changed (case 1).
-	 *
-	 * @param array|int $level
-	 * @param int $user_id
-	 */
-	public function sync_subscribers_on_change_membership_level( $level, $user_id ) {
-
-		$level_id = is_array( $level ) ? $level['membership_id'] : $level;
-
-		$old_level = pmpro_getMembershipLevelForUser( $user_id );
-
-		$old_series_ids = isset( $old_level->id ) ? $this->get_series_ids_by_level( $old_level->id ) : array();
-
-		$new_series_ids = $this->get_series_ids_by_level( $level_id );
-
-		$revoke_series_ids = array_diff( $old_series_ids, $new_series_ids );
-
-		$add_series_ids = array_diff( $new_series_ids, $old_series_ids );
-
-		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
-
-		return $level_id;
-	}
-
-	/**
-	 * @param int $user_id
-	 * @param int[] $revoke_series_ids
-	 * @param int[] $add_series_ids
-	 */
-	protected function sync_user( $user_id, $revoke_series_ids, $add_series_ids ) {
-		$user = get_user_by( 'id', $user_id );
-		$success = true;
-
-		if ( ! $user ) {
-			return false;
-		}
-
-		if ( $revoke_series_ids ) {
-			$this->logger->log( __METHOD__ . sprintf( ': Revoke user %s from series %s', $user->user_email, json_encode( $revoke_series_ids ) ) );
-			$revoke_res = $this->revoke_subscriber_from_podcasts( $user, $revoke_series_ids );
-			$this->logger->log( __METHOD__ . ': Revoke result', $revoke_res );
-
-			// Something went wrong.
-			if ( null === $revoke_res ) {
-				$this->logger->log( __METHOD__ . sprintf( ': Could not revoke user %s from series %s', $user->user_email, json_encode( $revoke_series_ids ) ) );
-				$success = false;
-			}
-		}
-
-		if ( $add_series_ids ) {
-			$this->logger->log( __METHOD__ . sprintf( ': Add user %s to series %s', $user->user_email, json_encode( $add_series_ids ) ) );
-			$add_res = $this->add_subscriber_to_podcasts( $user, $add_series_ids );
-			$this->logger->log( __METHOD__ . ': Add result', $add_res );
-
-			// Something went wrong.
-			if ( null === $add_res ) {
-				$this->logger->log( __METHOD__ . sprintf( ': Could not add user %s to series %s', $user->user_email, json_encode( $add_series_ids ) ) );
-				$success = false;
-			}
-		}
-
-		return $success;
-	}
-
-
-	/**
-	 * Revokes subscriber from multiple Castos podcasts.
-	 *
-	 * @param \WP_User $user
-	 * @param int[] $series_ids
-	 *
-	 * @return array
-	 */
-	protected function revoke_subscriber_from_podcasts( $user, $series_ids ) {
-		$podcast_ids = $this->convert_series_ids_to_podcast_ids( $series_ids );
-
-		return $this->castos_handler->revoke_subscriber_from_podcasts( $podcast_ids, $user->user_email );
-	}
-
-
-	/**
-	 * Adds subscriber to multiple Castos podcasts.
-	 *
-	 * @param \WP_User $user
-	 * @param int[] $series_ids
-	 *
-	 * @return array
-	 */
-	protected function add_subscriber_to_podcasts( $user, $series_ids ) {
-		$podcast_ids = $this->convert_series_ids_to_podcast_ids( $series_ids );
-
-		return $this->castos_handler->add_subscriber_to_podcasts(
-			$podcast_ids,
-			$user->user_email,
-			$user->display_name
-		);
-	}
-
-
-	/**
-	 * Adds subscriber to multiple Castos podcasts.
-	 *
-	 * @param int $series_id
-	 * @param int[] $user_ids
-	 *
-	 * @return int
-	 */
-	protected function add_subscribers_to_podcast( $series_id, $user_ids ) {
-		$podcast_ids = $this->convert_series_ids_to_podcast_ids( array( $series_id ) );
-
-		$subscribers = array();
-
-		$users_data = $this->get_users_data( $user_ids );
-
-		foreach ( $user_ids as $user_id ) {
-			if ( empty( $users_data[ $user_id ] ) ) {
-				$this->logger->log( __METHOD__ . ' Error: could not get user by id: ' . $user_id );
-			}
-			$subscribers[] = array(
-				'name'  => $users_data[ $user_id ]['display_name'],
-				'email' => $users_data[ $user_id ]['user_email'],
-			);
-		}
-
-		$count = $this->castos_handler->add_subscribers_to_podcasts( $podcast_ids, $subscribers );
-
-		$this->logger->log( __METHOD__ . ' Added subscribers: ' . $count );
-
-		return $count;
-	}
-
-	/**
-	 * @param int[] $user_ids
-	 *
-	 * @return array
-	 */
-	protected function get_users_data( $user_ids ) {
-		global $wpdb;
-		$query = sprintf(
-			'SELECT `ID`, `user_email`, `display_name` FROM %s WHERE `ID` IN(%s)',
-			$wpdb->users,
-			implode( ',', $user_ids )
-		);
-
-		$rows = $wpdb->get_results( $query, ARRAY_A );
-
-		$users_data = array();
-
-		foreach ( $rows as $row ) {
-			$users_data[ $row['ID'] ] = array(
-				'user_email'   => $row['user_email'],
-				'display_name' => $row['display_name'],
-			);
-		}
-
-		return $users_data;
-	}
-
-
-	/**
-	 * Adds subscriber to multiple Castos podcasts.
-	 *
-	 * @param int $series_id
-	 * @param int[] $user_ids
-	 *
-	 * @return int
-	 */
-	protected function revoke_subscribers_from_podcast( $series_id, $user_ids ) {
-		$podcast_ids = $this->convert_series_ids_to_podcast_ids( array( $series_id ) );
-
-		$emails = array();
-
-		$user_data = $this->get_users_data( $user_ids );
-
-		foreach ( $user_ids as $user_id ) {
-			if ( empty( $user_data[ $user_id ] ) ) {
-				$this->logger->log( __METHOD__ . ' Error: could not get user by id: ' . $user_id );
-			}
-			$emails[] = $user_data[ $user_id ]['user_email'];
-		}
-
-		$count = $this->castos_handler->revoke_subscribers_from_podcasts( $podcast_ids, $emails );
-
-		$this->logger->log( __METHOD__ . ' Revoked subscribers: ' . $count );
-
-		return $count;
-	}
-
-
-	/**
-	 * Converts series IDs to the Castos podcast IDs.
-	 *
-	 * @param int[] $series_ids
-	 *
-	 * @return array
-	 */
-	protected function convert_series_ids_to_podcast_ids( $series_ids ) {
-
-		$series_podcasts_map = $this->get_series_podcasts_map();
-
-		$podcast_ids = array();
-
-		foreach ( $series_ids as $series_id ) {
-			$podcast_ids[] = $series_podcasts_map[ $series_id ];
-		}
-
-		return $podcast_ids;
-	}
-
-
-	/**
-	 * Gets IDs of the series attached to the Membership Level.
-	 *
-	 * @param int $level_id
-	 *
-	 * @return array
-	 */
-	protected function get_series_ids_by_level( $level_id ) {
-
-		if ( isset( $this->series_levels_map[ $level_id ] ) ) {
-			return $this->series_levels_map[ $level_id ];
-		}
-
-		$series_ids = array();
-
-		if ( empty( $level_id ) ) {
-			return $series_ids;
-		}
-
-		$series_terms = $this->get_series();
-
-		if ( is_wp_error( $series_terms ) ) {
-			$this->logger->log( __METHOD__ . sprintf( ': Could not get terms for level: %s!', $level_id ) );
-
-			return $series_ids;
-		}
-
-		foreach ( $series_terms as $series ) {
-			$levels_ids = $this->get_series_level_ids( $series->term_id );
-
-			if ( in_array( $level_id, $levels_ids ) ) {
-				$series_ids[] = $series->term_id;
-			}
-		}
-
-		$this->series_levels_map[ $level_id ] = $series_ids;
-
-		return $series_ids;
-	}
 
 	/**
 	 * Gets IDs of all users who have any membership level.
@@ -835,47 +553,13 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		}
 
 		$membership_users = array_map( function ( $user ) {
-			$memberships = strpos( $user->memberships, ',' ) ?
-				explode( ',', $user->memberships ) :
-				array( $user->memberships );
-
 			return array(
 				'ID'          => intval( $user->ID ),
-				'memberships' => array_map( 'intval', $memberships ),
+				'memberships' => $this->get_memberships( $user ),
 			);
 		}, $list_table['results'] );
 
 		return $membership_users;
-	}
-
-
-	/**
-	 * Gets the map between series and podcasts.
-	 *
-	 * @return array
-	 */
-	protected function get_series_podcasts_map() {
-		if ( $this->series_podcasts_map ) {
-			return $this->series_podcasts_map;
-		}
-
-		$podcasts = $this->castos_handler->get_podcasts();
-
-		$map = array();
-
-		if ( empty( $podcasts['data']['podcast_list'] ) ) {
-			$this->logger->log( __METHOD__ . ': Error: empty podcasts!' );
-
-			return $map;
-		}
-
-		foreach ( $podcasts['data']['podcast_list'] as $podcast ) {
-			$map[ $podcast['series_id'] ] = $podcast['id'];
-		}
-
-		$this->series_podcasts_map = $map;
-
-		return $map;
 	}
 
 
@@ -892,97 +576,11 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * Protects private series.
 	 * */
 	protected function protect_private_series() {
-		add_filter( 'pmpro_has_membership_access_filter', array( $this, 'access_filter' ), 10, 4 );
+		// Protect feed.
 		add_action( 'ssp_before_feed', array( $this, 'protect_feed_access' ) );
 
-		add_filter( 'ssp_show_media_player_in_content', function ( $show ) {
-			if ( function_exists( 'pmpro_has_membership_access' ) && ! pmpro_has_membership_access() ) {
-				return false;
-			}
-
-			return $show;
-		} );
-	}
-
-	/**
-	 * Prints list of private podcast feeds
-	 *
-	 * @return void
-	 */
-	protected function print_private_podcast_feeds() {
-		add_action( 'pmpro_account_bullets_top', function () {
-			$feed_urls = $this->get_private_feed_urls();
-
-			if ( empty( $feed_urls ) ) {
-				return;
-			}
-
-			$add = '<li class="ssp-pmpro-private-feeds"><strong>' . __( 'Private Podcast Feeds', 'seriously-simple-podcasting' ) . ':</strong> ' . '<ul>';
-
-			foreach ( $feed_urls as $feed_url ) {
-				$add .= '<li>' . make_clickable( $feed_url ) . '</li>';
-			}
-
-			$add .= '</ul></li>';
-
-			echo $add;
-		} );
-	}
-
-	/**
-	 * Get array of private feed URLs
-	 *
-	 * @return string[]
-	 */
-	protected function get_private_feed_urls() {
-		$current_user     = wp_get_current_user();
-		$users_series_map = $this->generate_users_series_map();
-
-		$feed_urls = get_transient( 'ssp_memberpress_feed_urls_user_' . $current_user->ID );
-
-		if ( $feed_urls ) {
-			return $feed_urls;
-		}
-
-		if ( ! empty( $users_series_map[ $current_user->ID ] ) ) {
-			$podcast_ids = $this->convert_series_ids_to_podcast_ids( $users_series_map[ $current_user->ID ] );
-		}
-
-		if ( empty( $podcast_ids ) ) {
-			return array();
-		}
-
-		foreach ( $podcast_ids as $podcast_id ) {
-			$feed_urls[] = $this->get_podcast_feed_url( $podcast_id );
-		}
-
-		$feed_urls = array_values( $feed_urls );
-
-		if ( $feed_urls ) {
-			set_transient( 'ssp_memberpress_feed_urls_user_' . $current_user->ID, $feed_urls, HOUR_IN_SECONDS );
-		}
-
-		return $feed_urls;
-	}
-
-	/**
-	 * Get podcast feed url.
-	 *
-	 * @param $podcast_id
-	 *
-	 * @return string|null
-	 */
-	protected function get_podcast_feed_url( $podcast_id ) {
-		$current_user = wp_get_current_user();
-		$subscribers  = $this->castos_handler->get_podcast_subscribers( $podcast_id );
-
-		foreach ( $subscribers as $subscriber ) {
-			if ( 'active' === $subscriber['status'] && $current_user->user_email === $subscriber['email'] ) {
-				return $subscriber['feed_url'];
-			}
-		}
-
-		return null;
+		// Protect content.
+		add_filter( 'mepr-last-chance-to-block-content', array( $this, 'protect_content' ), 10, 2 );
 	}
 
 	/**
@@ -993,82 +591,105 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		if ( empty( $series_slug ) ) {
 			return;
 		}
+
 		$series = get_term_by( 'slug', $this->feed_handler->get_podcast_series(), 'series' );
 
-		$series_levels = $this->get_series_level_ids( $series->term_id );
-		$has_access    = $this->has_access( wp_get_current_user(), $series_levels );
+		$has_access         = true;
+		$required_level_ids = $this->get_series_level_ids( $series->term_id );
+
+		if ( $required_level_ids ) {
+			$has_access = $this->has_access( wp_get_current_user(), $required_level_ids );
+		}
 
 		if ( ! $has_access ) {
-			$description = wp_strip_all_tags( pmpro_get_no_access_message( '', $series_levels ) );
+			$description = __( 'This content is Private. To access this podcast, contact the site owner.', 'seriously-simple-podcasting' );
 			$this->feed_handler->render_feed_no_access( $series->term_id, $description );
 			exit();
 		}
 	}
 
-
 	/**
-	 * Protects access to private episodes.
-	 *
-	 * @param array|false $access
-	 * @param \WP_Post $post
-	 * @param \WP_User $user
-	 * @param object[] $post_levels
-	 *
-	 * @return bool
-	 */
-	public function access_filter( $access, $post, $user, $post_levels ) {
+	 * This code was partially copied and modified from LLMS_Template_Loader::template_loader()
+	 * */
+	public function protect_content( $is_protected, $current_post ) {
 
-		// Get level ids.
-		$post_level_ids = array_filter( array_map( function ( $item ) {
-			return isset( $item->id ) ? $item->id : null;
-		}, (array) $post_levels ) );
+		// We need to protect series and their episodes
+		$current_series = $this->get_current_page_related_series( $current_post );
 
-		$is_admin   = is_admin() && ! ssp_is_ajax();
-		$is_podcast = in_array( $post->post_type, ssp_post_types() );
-
-		if ( $is_admin || ! $is_podcast || ! $access ) {
-			return $access;
+		if ( empty( $current_series ) ) {
+			return $is_protected;
 		}
 
-		$series = $this->get_episode_series( $post->ID );
+		$protected_series = array();
 
-		foreach ( $series as $series_item ) {
-			$post_level_ids = array_merge( $post_level_ids, $this->get_series_level_ids( $series_item->term_id ) );
+		// We need to protect only private series
+		foreach ( $current_series as $series ) {
+			if ( $this->is_series_protected_in_castos( $series->term_id ) ) {
+				$protected_series[] = $series;
+			}
 		}
 
-		return $this->has_access( $user, $post_level_ids );
+		if ( empty( $protected_series ) ) {
+			return $is_protected;
+		}
+
+		// Now we need to check if current user has access to all protected post series
+		$user = wp_get_current_user();
+
+		if ( $this->is_admin_user( $user ) ) {
+			return $is_protected;
+		}
+
+		foreach ( $protected_series as $series ) {
+			$series_level_ids = $this->get_series_level_ids( $series->term_id );
+			if ( ! $this->has_access( $user, $series_level_ids ) ) {
+				return true;
+			}
+		}
+
+		return $is_protected;
 	}
 
 
 	/**
-	 * Check if user has access to the episode. Took the logic from PMPro.
+	 * Check if user has access to the episode.
+	 *
+	 * @param \WP_User $user
+	 * @param int[] $required_level_ids
 	 *
 	 * @return bool
-	 * @see pmpro_has_membership_access()
 	 */
-	protected function has_access( $user, $post_level_ids ) {
-		if ( empty( $post_level_ids ) ) {
+	protected function has_access( $user, $required_level_ids ) {
+		if ( empty( $required_level_ids ) ) {
 			return true;
 		}
 
-		$user_levels = pmpro_getMembershipLevelsForUser( $user->ID );
-
-		$user_level_ids = array();
-
-		if ( is_array( $user_levels ) ) {
-			foreach ( $user_levels as $user_level ) {
-				$user_level_ids[] = $user_level->id;
-			}
+		if ( ! $user->exists() ) {
+			return false;
 		}
 
-		return count( $user_level_ids ) && count( array_intersect( $user_level_ids, $post_level_ids ) );
+		$user_level_ids = $this->get_user_memberships( $user->ID );
+
+		return count( $user_level_ids ) && count( array_intersect( $user_level_ids, $required_level_ids ) );
+	}
+
+
+	/**
+	 * @param int $user_id
+	 *
+	 * @return array
+	 */
+	protected function get_user_memberships( $user_id ){
+		$member_data = \MeprUser::member_data( $user_id, [ 'memberships' ] );
+
+		return $this->get_memberships( $member_data );
 	}
 
 
 	/**
 	 * Gets series level ids.
 	 *
-	 * @param $term_id
+	 * @param int $term_id
 	 *
 	 * @return int[]
 	 */
@@ -1102,7 +723,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			$args['fields']      = array();
 		} else {
 			if ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) &&
-			     self::bulk_update_started() ) {
+			     ( $this->bulk_update_started() || wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) ) {
 				$this->notices_handler->add_flash_notice( __( 'Synchronizing MemberPress data with Castos...', 'seriously-simple-podcasting' ) );
 			}
 		}
@@ -1244,16 +865,6 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		}
 
 		return $this->castos_podcasts;
-	}
-
-
-	/**
-	 * Gets array of all available series terms.
-	 *
-	 * @return WP_Term[]|WP_Error
-	 */
-	protected function get_series() {
-		return get_terms( 'series', array( 'hide_empty' => false ) );
 	}
 
 

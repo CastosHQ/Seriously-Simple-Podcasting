@@ -2,6 +2,9 @@
 
 use Codeception\TestCase\WPTestCase;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
+use SeriouslySimplePodcasting\Handlers\Options_Handler;
+use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 class Players_Controller_Test extends WPTestCase {
 	/**
@@ -21,9 +24,9 @@ class Players_Controller_Test extends WPTestCase {
 	 * @covers Players_Controller::render_html_player() method returns the new html player code
 	 */
 	public function test_player_controller_html_player_method() {
-		$renderer = new \SeriouslySimplePodcasting\Renderers\Renderer();
-		$options_handler = new \SeriouslySimplePodcasting\Handlers\Options_Handler();
-		$episode_repository = new \SeriouslySimplePodcasting\Repositories\Episode_Repository();
+		$renderer = new Renderer();
+		$options_handler = new Options_Handler();
+		$episode_repository = new Episode_Repository();
 
 		$this->players_controller = new Players_Controller($renderer, $options_handler, $episode_repository);
 		$episode_id               = $this->factory->post->create(
@@ -39,7 +42,7 @@ class Players_Controller_Test extends WPTestCase {
 		$site_url                 = site_url();
 
 		$player_parts = array(
-			'<div class="castos-player dark-mode"',
+			'class="castos-player dark-mode"',
 			'<div class="currently-playing">',
 			sprintf( '<div class="episode-title player__episode-title">%s</div>', $episode->post_title ),
 			'<div class="play-progress">',
@@ -50,7 +53,7 @@ class Players_Controller_Test extends WPTestCase {
 			'<span class="screen-reader-text">Pause Episode</span>',
 			'/wp-content/plugins/seriously-simple-podcasting/assets/css/images/player/images/icon-loader.svg" class="ssp-loader hide"/>',
 			sprintf( '<audio preload="none" class="clip clip-%s">', $episode_id ),
-			'<div class="ssp-progress" title="Seek">',
+			'<div class="ssp-progress" role="progressbar" title="Seek">',
 			'<span class="progress__filled"></span>',
 
 			'<div class="ssp-playback playback">',
@@ -81,9 +84,9 @@ class Players_Controller_Test extends WPTestCase {
 			'<div class="player-panel-row">',
 
 			'RSS Feed',
-			sprintf( '<input value="%s/?feed=podcast" class="input-rss input-rss-%s" readonly />', $site_url, $episode_id ),
+			sprintf( '<input value="%s/?feed=podcast" class="input-rss input-rss-%s" title="RSS Feed URL" readonly />', $site_url, $episode_id ),
 
-			sprintf( '<button class="copy-rss copy-rss-%s"></button>', $episode_id ),
+			sprintf( '<button class="copy-rss copy-rss-%s" title="Copy RSS Feed URL"></button>', $episode_id ),
 
 			sprintf( '<div class="share share-%s player-panel">', $episode_id ),
 			sprintf( '<div class="close-btn close-btn-%s">', $episode_id ),
@@ -107,11 +110,11 @@ class Players_Controller_Test extends WPTestCase {
 			'target="_blank" rel="noopener noreferrer" class="share-icon download" title="Download" download>',
 			'<div class="title">',
 			'Link',
-			sprintf( '<input value="%s" class="input-link input-link-%s" readonly />', $permalink, $episode_id ),
-			sprintf( '<button class="copy-link copy-link-%s" readonly=""></button>', $episode_id ),
+			sprintf( '<input value="%s" class="input-link input-link-%s" title="Episode URL" readonly />', $permalink, $episode_id ),
+			sprintf( '<button class="copy-link copy-link-%s" title="Copy Episode URL" readonly=""></button>', $episode_id ),
 			'<div class="player-panel-row">',
 			'Embed',
-			sprintf( '<button class="copy-embed copy-embed-%s"></button>', $episode_id ),
+			sprintf( '<button class="copy-embed copy-embed-%s" title="Copy Embed Code"></button>', $episode_id ),
 		);
 
 		foreach ( $player_parts as $player_part ) {

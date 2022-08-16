@@ -204,9 +204,7 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 	 * @since  1.0.0
 	 */
 	function ss_get_podcast( $args = '' ) {
-		global $ss_podcasting;
-
-		return $ss_podcasting->get_podcast( $args );
+		return ssp_frontend_controller()->get_podcast( $args );
 	}
 }
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Importers;
+namespace SeriouslySimplePodcasting\Handlers;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.19.18
  */
-class Rss_Importer {
+class RSS_Import_Handler {
 
 	/**
 	 * RSS feed url

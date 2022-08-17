@@ -3,7 +3,7 @@
 namespace SeriouslySimplePodcasting\Ajax;
 
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
-use SeriouslySimplePodcasting\Importers\Rss_Importer;
+use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 
 class Ajax_Handler {
@@ -165,7 +165,7 @@ class Ajax_Handler {
 			$this->send_json_error( 'No feed to process' );
 		}
 
-		$rss_importer = new Rss_Importer( $ssp_external_rss );
+		$rss_importer = new RSS_Import_Handler( $ssp_external_rss );
 		$response     = $rss_importer->import_rss_feed();
 
 		wp_send_json( $response );

@@ -95,7 +95,7 @@ jQuery(document).ready(function ($) {
 		}).done(function (response) {
 			clearInterval(timer);
 			if ('error' === response['status']) {
-				alert_error();
+				alert_error(response.hasOwnProperty('message') ? response.message : '');
 				return;
 			}
 			update_progress_log(response.episodes);
@@ -150,7 +150,11 @@ jQuery(document).ready(function ($) {
 	/**
 	 * Shows an error to user
 	 */
-	function alert_error() {
-		alert('An error occurred importing the RSS feed, please refresh this page to try again');
+	function alert_error($msg = '') {
+		$msg = $msg ? $msg : 'An error occurred importing the RSS feed, please refresh this page to try again';
+
+		if (!alert($msg)) {
+			window.location.reload();
+		}
 	}
 });

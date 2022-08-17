@@ -144,6 +144,15 @@ class RSS_Import_Handler {
 
 		$this->load_rss_feed();
 
+		if ( $this->is_rss_feed_locked() ) {
+			update_option( 'ssp_external_rss', '' );
+
+			return array(
+				'status'  => 'error',
+				'message' => __( 'RSS Feed is locked!', 'seriously-simple-podcasting' ),
+			);
+		}
+
 		$this->podcast_count = count( $this->feed_object->channel->item );
 
 		for ( $i = 0; $i < $this->podcast_count; $i ++ ) {
@@ -192,5 +201,9 @@ class RSS_Import_Handler {
 
 		return $response;
 
+	}
+
+	protected function is_rss_feed_locked(){
+		return 'yes' === (string)$this->feed_object->channel->children('podcast', true)->locked;
 	}
 }

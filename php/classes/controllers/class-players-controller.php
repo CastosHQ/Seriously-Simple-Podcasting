@@ -177,7 +177,7 @@ class Players_Controller {
 		$size = get_post_meta( $episode_id , 'filesize' , true );
 		if ( ! $size ) {
 			$size_data = $this->episode_repository->get_file_size( $file );
-			$size = $size_data['formatted'];
+			$size = isset( $size_data['formatted'] ) ? $size_data['formatted'] : 0;
 			if ( $size ) {
 				if ( isset( $size_data['formatted'] ) ) {
 					update_post_meta( $episode_id, 'filesize', $size_data['formatted'] );

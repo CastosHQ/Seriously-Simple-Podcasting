@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * External RSS feed importer
  *
- * @author      Jonathan Bossenger
+ * @author      Jonathan Bossenger, Sergiy Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Classes
  * @since       1.19.18
@@ -93,9 +93,84 @@ class RSS_Import_Handler {
 	}
 
 	/**
+	 * Import the RSS Feed episodes
+	 *
+	 * @return array
+	 */
+	public function import_rss_feed() {
+
+		$this->load_rss_feed();
+
+		if ( $this->is_rss_feed_locked() ) {
+			update_option( 'ssp_external_rss', '' );
+
+			return array(
+				'status'  => 'error',
+				'message' => __( 'RSS Feed is locked!', 'seriously-simple-podcasting' ),
+			);
+		}
+
+		$this->podcast_count = count( $this->feed_object->channel->item );
+
+		for ( $i = 0; $i < $this->podcast_count; $i ++ ) {
+			$item = $this->feed_object->channel->item[ $i ];
+			$this->create_episode( $item );
+		}
+
+		$this->finish_import();
+
+		return array(
+			'status'   => 'success',
+			'message'  => 'RSS Feed successfully imported',
+			'count'    => $this->podcast_added,
+			'episodes' => $this->podcasts_imported,
+		);
+	}
+
+	protected function finish_import() {
+		update_option( 'ssp_external_rss', '' );
+		update_option( 'ssp_rss_import', '100' );
+	}
+
+	/**
+	 * @param \SimpleXMLElement $item
+	 *
+	 * @return void
+	 */
+	protected function create_episode( $item ) {
+
+		$post_data = $this->get_post_data( $item );
+
+		// Add the post
+		$post_id = wp_insert_post( $post_data );
+
+		/**
+		 * If an error occurring adding a post, continue the loop
+		 */
+		if ( is_wp_error( $post_id ) ) {
+			return;
+		}
+
+		$this->save_enclosure( $post_id, $this->get_enclosure_url( $item ) );
+		$this->save_image( $post_id, $this->get_image_url( $item ) );
+
+		// Set the series, if it is available
+		if ( ! empty( $this->series ) ) {
+			wp_set_post_terms( $post_id, $this->series, 'series' );
+		}
+
+		// Update the added count and imported title array
+		$this->podcast_added ++;
+		$this->podcasts_imported[] = $post_data['post_title'];
+
+		$this->update_ssp_rss_import();
+	}
+
+	/**
 	 * Get the value for post_content from the RSS episode item
 	 *
-	 * @param $item
+	 * @param \SimpleXMLElement $item
+	 * @param \SimpleXMLElement $itunes
 	 *
 	 * @return string
 	 */
@@ -117,7 +192,7 @@ class RSS_Import_Handler {
 	/**
 	 * Create post_data from RSS Feed item
 	 *
-	 * @param $item
+	 * @param \SimpleXMLElement $item
 	 *
 	 * @return array
 	 */
@@ -136,74 +211,95 @@ class RSS_Import_Handler {
 	}
 
 	/**
-	 * Import the RSS Feed episodes
+	 * @param int $post_id
+	 * @param string $image_url
 	 *
-	 * @return array
+	 * @return bool
 	 */
-	public function import_rss_feed() {
-
-		$this->load_rss_feed();
-
-		if ( $this->is_rss_feed_locked() ) {
-			update_option( 'ssp_external_rss', '' );
-
-			return array(
-				'status'  => 'error',
-				'message' => __( 'RSS Feed is locked!', 'seriously-simple-podcasting' ),
-			);
+	protected function save_image( $post_id, $image_url ) {
+		if ( ! $image_url ) {
+			return false;
 		}
 
-		$this->podcast_count = count( $this->feed_object->channel->item );
+		$image_id = $this->save_image_from_url( $image_url );
 
-		for ( $i = 0; $i < $this->podcast_count; $i ++ ) {
-
-			$item = $this->feed_object->channel->item[ $i ];
-			$post = $this->get_post_data( $item );
-
-			// Add the post
-			$post_id = wp_insert_post( $post );
-
-			/**
-			 * If an error occurring adding a post, continue the loop
-			 */
-			if ( is_wp_error( $post_id ) ) {
-				continue;
-			}
-
-			$url = (string) $item->enclosure['url'];
-			// strips out any possible weirdness in the file url
-			$url = preg_replace( '/(?s:.*)(https?:\/\/(?:[\w\-\.]+[^#?\s]+)(?:\.mp3))(?s:.*)/', '$1', $url );
-
-			// Set the audio_file
-			add_post_meta( $post_id, 'audio_file', $url );
-
-			// Set the series, if it is available
-			if ( ! empty( $this->series ) ) {
-				wp_set_post_terms( $post_id, $this->series, 'series' );
-			}
-
-			// Update the added count and imported title array
-			$this->podcast_added ++;
-			$this->podcasts_imported[] = $post['post_title'];
-
-			$this->update_ssp_rss_import();
+		if ( is_wp_error( $image_id ) ) {
+			return false;
 		}
 
-		update_option( 'ssp_external_rss', '' );
-		update_option( 'ssp_rss_import', '100' );
+		update_post_meta( $post_id, 'cover_image_id', $image_id );
 
-		$response = array(
-			'status'   => 'success',
-			'message'  => 'RSS Feed successfully imported',
-			'count'    => $this->podcast_added,
-			'episodes' => $this->podcasts_imported,
-		);
+		$url = wp_get_attachment_url( $image_id );
+		update_post_meta( $post_id, 'cover_image', $url );
 
-		return $response;
-
+		return true;
 	}
 
-	protected function is_rss_feed_locked(){
-		return 'yes' === (string)$this->feed_object->channel->children('podcast', true)->locked;
+	/**
+	 * @param string $url
+	 *
+	 * @return bool|int|string|\WP_Error
+	 */
+	protected function save_image_from_url( $url ) {
+		$tmp = download_url( $url );
+		if ( is_wp_error( $tmp ) ) {
+			return $tmp;
+		}
+
+		$file_array = array(
+			'name'     => basename( $url ),
+			'tmp_name' => $tmp
+		);
+
+		return media_handle_sideload( $file_array );
+	}
+
+	/**
+	 * @param int $post_id
+	 * @param string $url
+	 *
+	 * @return void
+	 */
+	protected function save_enclosure( $post_id, $url ) {
+		// strips out any possible weirdness in the file url
+		$url = preg_replace( '/(?s:.*)(https?:\/\/(?:[\w\-\.]+[^#?\s]+)(?:\.mp3))(?s:.*)/', '$1', $url );
+
+		// Set the audio_file
+		add_post_meta( $post_id, 'audio_file', $url );
+	}
+
+	/**
+	 * @return bool
+	 */
+	protected function is_rss_feed_locked() {
+		return 'yes' === (string) $this->feed_object->channel->children( 'podcast', true )->locked;
+	}
+
+	/**
+	 * @param \SimpleXMLElement $item
+	 *
+	 * @return string
+	 */
+	protected function get_enclosure_url( $item ) {
+		return (string) @$item->enclosure['url'];
+	}
+
+	/**
+	 * @param \SimpleXMLElement $item
+	 *
+	 * @return string
+	 */
+	protected function get_image_url( $item ) {
+		$image_url = '';
+
+		if ( count( $item->children( 'itunes', true )->image ) ) {
+			$image_url = (string) @$item->children( 'itunes', true )->image->attributes()->href;
+		}
+
+		if ( ! $image_url && count( $item->children( 'googleplay', true )->image ) ) {
+			$image_url = (string) @$item->children( 'googleplay', true )->image->attributes()->href;
+		}
+
+		return $image_url;
 	}
 }

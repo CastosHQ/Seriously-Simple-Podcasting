@@ -88,7 +88,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		add_filter( 'pmpro_change_level', array(
 			$this,
 			'sync_subscribers_on_change_membership_level'
-		), 10, 3 );
+		), 10, 2 );
 
 
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
@@ -186,7 +186,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
 
-		return $level_id;
+		return $level;
 	}
 
 

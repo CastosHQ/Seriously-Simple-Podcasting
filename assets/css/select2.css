@@ -195,7 +195,9 @@
   border-radius: 4px;
   cursor: text;
   padding-bottom: 5px;
-  padding-right: 5px;
+  padding-right: 10px;
+  overflow: scroll;
+  overflow-x: hidden;
   position: relative; }
   .select2-container--default .select2-selection--multiple.select2-selection--clearable {
     padding-right: 25px; }

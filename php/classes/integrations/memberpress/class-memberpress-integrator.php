@@ -199,7 +199,9 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 */
 	protected function listen_members_table_update(){
 		add_filter( 'query', function ( $query ) {
-			if ( false === strpos( $query, 'UPDATE' ) ) {
+
+			// We don't listen to INSERT because on insert they don't setup the memberships, it happens later on UPDATE
+			if ( ! $this->is_update_query( $query ) ) {
 				return $query;
 			}
 
@@ -213,20 +215,22 @@ class Memberpress_Integrator extends Abstract_Integrator {
 				return $query;
 			}
 
-			// Lets get the user ID.
-			preg_match( "#`user_id`='(\d*)#", $query, $matches );
+			if ( ! $user_id = $this->get_user_id_by_query( $query ) ) {
+				$this->logger->log( __METHOD__ . sprintf( ' Could not get user id by query: %s', $user_id ) );
 
-			if ( empty( $matches[1] ) ) {
 				return $query;
 			}
 
-			$user_id = $matches[1];
 
 			// And now we can calculate the changes and schedule the sync process.
 			$old_members_data = $mepr_db->get_one_record( $mepr_db->members, array( 'user_id' => $user_id ) );
 
 			$old_memberships = $this->get_memberships( $old_members_data );
 			$new_memberships = $this->get_user_memberships( $user_id );
+
+			if ( $old_memberships === $new_memberships ) {
+				return $query;
+			}
 
 			$revoked_memberships = array_diff( $old_memberships, $new_memberships );
 			$added_memberships   = array_diff( $new_memberships, $old_memberships );
@@ -242,6 +246,26 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 			return $query;
 		} );
+	}
+
+	/**
+	 * @param string $query
+	 *
+	 * @return int|false
+	 */
+	protected function get_user_id_by_query( $query ) {
+		preg_match( "/`user_id`='(\d*)/", $query, $matches );
+
+		return ( empty( $matches[1] ) ) ? false : $matches[1];
+	}
+
+	/**
+	 * @param string $query
+	 *
+	 * @return bool
+	 */
+	protected function is_update_query( $query ) {
+		return false !== strpos( $query, 'UPDATE' );
 	}
 
 	/**

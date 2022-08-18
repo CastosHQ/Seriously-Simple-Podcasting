@@ -584,9 +584,9 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		$levels = $this->get_membership_levels();
 
 		if ( ! $levels ) {
-			$levels_url              = admin_url( 'admin.php?page=pmpro-membershiplevels' );
-			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up a
-										membership level</a> first.', 'seriously-simple-podcasting' ), $levels_url );
+			$levels_url              = admin_url( 'edit.php?post_type=memberpressproduct' );
+			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up
+										memberships</a> first.', 'seriously-simple-podcasting' ), $levels_url );
 
 			return $settings;
 		}

@@ -263,6 +263,10 @@ class Settings_Controller extends Controller {
 	 * @return void
 	 */
 	public function register_settings() {
+		if ( 'podcast_settings' !== filter_input( INPUT_GET, 'page' ) &&
+			 'ss_podcasting' !== filter_input( INPUT_POST, 'option_page' ) ) {
+			return;
+		}
 
 		$section = $this->get_settings_section();
 		$data    = $this->get_settings_data( $section );

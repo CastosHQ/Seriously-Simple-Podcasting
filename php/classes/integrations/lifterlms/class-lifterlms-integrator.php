@@ -25,6 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class LifterLMS_Integrator extends Abstract_Integrator {
 
+	const SINGLE_SYNC_EVENT = 'ssp_lifterlms_single_sync';
+
+	const SINGLE_SYNC_DATA_OPTION = 'ssp_lifterlms_single_sync_data';
+
 	use Singleton;
 
 	/**
@@ -92,11 +96,12 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 			'sync_subscriber_on_user_enrolled_in_course'
 		), 10, 2 );
 
-
 		add_filter( 'llms_user_removed_from_course', array(
 			$this,
 			'sync_subscriber_on_user_removed_from_course'
 		), 10, 2 );
+
+		add_action( self::SINGLE_SYNC_EVENT, array( $this, 'process_single_sync_events' ) );
 
 
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
@@ -118,6 +123,17 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		add_action( 'ssp_bulk_sync_lifterlms_subscribers', array( $this, 'bulk_sync_subscribers' ) );
 	}
 
+	public function process_single_sync_events(){
+		$single_sync_events = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
+
+		foreach ( $single_sync_events as $event ) {
+			$user_id           = $event['user_id'];
+			$add_series_ids    = $this->get_series_ids_by_course( $event['add_course_id'] );
+			$revoke_series_ids = $this->get_series_ids_by_course( $event['revoke_course_id'] );
+
+			$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+		}
+	}
 
 	/**
 	 * @param int $user_id
@@ -126,13 +142,19 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	 * @return void
 	 */
 	public function sync_subscriber_on_user_enrolled_in_course( $user_id, $course_id ) {
-		$revoke_series_ids = array();
+		$single_sync_events = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
 
-		$add_series_ids = $this->get_series_ids_by_course( $course_id );
+		// Make sure that if there are multiple events, we don't miss any.
+		$single_sync_events[] = array(
+			'user_id'          => $user_id,
+			'add_course_id'    => $course_id,
+			'revoke_course_id' => '',
+		);
 
-		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+		update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_events );
+
+		$this->schedule_single_sync( 0 );
 	}
-
 
 	/**
 	 * @param int $user_id
@@ -141,11 +163,31 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	 * @return void
 	 */
 	public function sync_subscriber_on_user_removed_from_course( $user_id, $course_id ) {
-		$add_series_ids = array();
+		$single_sync_events = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
 
-		$revoke_series_ids = $this->get_series_ids_by_course( $course_id );
+		// Make sure that if there are multiple events, we don't miss any.
+		$single_sync_events[] = array(
+			'user_id'          => $user_id,
+			'add_course_id'    => '',
+			'revoke_course_id' => $course_id,
+		);
 
-		$this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+		update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_events );
+
+		$this->schedule_single_sync( 0 );
+	}
+
+	/**
+	 * Schedule single sync.
+	 *
+	 * @param int $delay Schedule delay in minutes.
+	 *
+	 * @return void
+	 */
+	protected function schedule_single_sync( $delay = 5 ){
+		if ( ! wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) {
+			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::SINGLE_SYNC_EVENT );
+		}
 	}
 
 

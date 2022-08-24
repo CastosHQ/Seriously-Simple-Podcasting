@@ -656,6 +656,8 @@ class Feed_Handler implements Service {
 	public function get_feed_item_description( $post_id, $is_excerpt_mode, $turbo_post_count = 0 ) {
 		if ( $is_excerpt_mode ) {
 			$output  = get_the_excerpt( $post_id );
+			// Remove filter convert_chars, because our feed is already escaped with CDATA.
+			remove_filter( 'the_excerpt_rss', 'convert_chars' );
 			$content = apply_filters( 'the_excerpt_rss', $output );
 		} else {
 			$content = ssp_get_the_feed_item_content( $post_id );

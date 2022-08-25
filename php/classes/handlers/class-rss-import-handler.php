@@ -104,9 +104,15 @@ class RSS_Import_Handler {
 		if ( $this->is_rss_feed_locked() ) {
 			update_option( 'ssp_external_rss', '' );
 
+			$msg = 'Your podcast cannot be imported at this time because the RSS feed is locked by the existing podcast hosting provider. ';
+			$msg .= 'Please unlock your RSS feed with your current host before attempting to import again. ';
+			$msg .= 'You can find out more about the podcast:lock tag here - https://support.castos.com/article/289-external-rss-feed-import-canceled';
+
+			$msg = __( $msg, 'seriously-simple-podcasting' );
+
 			return array(
 				'status'  => 'error',
-				'message' => __( 'RSS Feed is locked!', 'seriously-simple-podcasting' ),
+				'message' => sprintf( $msg, 'https://support.castos.com/article/289-external-rss-feed-import-canceled' ),
 			);
 		}
 

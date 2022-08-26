@@ -850,6 +850,9 @@ HTML;
 	 * @return void
 	 */
 	public function enqueue_admin_styles( $hook ) {
+		if ( 'post.php' !== $hook && ! strpos( $hook, 'ssp-onboarding' ) && ! $this->is_ssp_admin_page() ) {
+			return;
+		}
 
 		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'admin/css/admin.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
@@ -886,6 +889,15 @@ HTML;
 			wp_enqueue_style( 'import-rss' );
 
 		}
+	}
+
+	/**
+	 * Checks if it's an SSP admin page or not
+	 *
+	 * @return bool
+	 */
+	protected function is_ssp_admin_page() {
+		return SSP_CPT_PODCAST === filter_input( INPUT_GET, 'post_type' );
 	}
 
 	/**

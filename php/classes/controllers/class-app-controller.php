@@ -8,6 +8,7 @@ use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
+use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
@@ -850,7 +851,7 @@ HTML;
 	 * @return void
 	 */
 	public function enqueue_admin_styles( $hook ) {
-		if ( 'post.php' !== $hook && ! strpos( $hook, 'ssp-onboarding' ) && ! $this->is_ssp_admin_page() ) {
+		if ( ! $this->need_admin_scripts( $hook ) ) {
 			return;
 		}
 
@@ -891,6 +892,13 @@ HTML;
 		}
 	}
 
+	protected function need_admin_scripts( $hook ) {
+		return 'post.php' === $hook ||
+			   strpos( $hook, 'ssp-onboarding' ) ||
+			   $this->is_ssp_admin_page() ||
+			   ( 'term.php' === $hook && Series_Handler::TAXONOMY === filter_input( INPUT_GET, 'taxonomy' ) );
+	}
+
 	/**
 	 * Checks if it's an SSP admin page or not
 	 *
@@ -905,6 +913,10 @@ HTML;
 	 * @return void
 	 */
 	public function enqueue_admin_scripts( $hook ) {
+
+		if ( ! $this->need_admin_scripts( $hook ) ) {
+			return;
+		}
 
 		wp_register_script( 'ssp-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array(
 			'jquery',

@@ -35,6 +35,7 @@ $img_name = $data_image ? pathinfo( $data_image, PATHINFO_BASENAME ) : '';
 					<span class="js-onboarding-delete-img-info ssp-onboarding__delete-image"></span>
 					<input id="ss_podcasting_data_image" name="data_image" class="js-onboarding-img-val js-onboarding-field" type="hidden" value="<?php echo $data_image ?>">
 				</span>
+				<?php wp_nonce_field( 'ssp_onboarding_' . $step_number, 'nonce', false ); ?>
 				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="button skip"><span><?php _e( 'Skip', 'seriously-simple-podcasting' ); ?></span></a>
 				<button type="submit" class="js-onboarding-btn"><?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?></button>
 			</div>

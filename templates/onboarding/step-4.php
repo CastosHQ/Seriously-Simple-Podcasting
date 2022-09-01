@@ -147,6 +147,7 @@ $distribute_links = array(
 				</div>
 
 				<div class="ssp-onboarding__submit">
+					<?php wp_nonce_field( 'ssp_onboarding_' . $step_number, 'nonce', false ); ?>
 					<button id="validate_api_credentials" type="button" class="button validate-token js-onboarding-validate-token" data-validating-txt="Validating Credentials" data-valid-txt="Valid Credentials" data-initial-txt="Validate Credentials" >
 						<?php _e( 'Validate Credentials', 'seriously-simple-podcasting' ); ?>
 					</button>

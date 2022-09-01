@@ -204,6 +204,10 @@ class Onboarding_Controller {
 	 * @param int $step_number
 	 */
 	protected function save_step( $step_number ) {
+		$nonce = filter_input( INPUT_POST, 'nonce' );
+		if ( ! wp_verify_nonce( $nonce, 'ssp_onboarding_' . $step_number ) ) {
+			return false;
+		}
 		foreach ( $this->get_step_fields( $step_number ) as $field_id ) {
 			$val = filter_input( INPUT_POST, $field_id );
 			if ( $val ) {

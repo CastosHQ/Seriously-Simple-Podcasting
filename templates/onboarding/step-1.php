@@ -30,6 +30,7 @@
 				<textarea id="show_description" class="js-onboarding-field" name="data_description" rows="7"><?php echo $data_description ?></textarea>
 			</div>
 			<div class="ssp-onboarding__submit">
+				<?php wp_nonce_field( 'ssp_onboarding_' . $step_number, 'nonce', false ); ?>
 				<button type="submit" class="js-onboarding-btn" <?php if( empty( $data_title ) || empty( $data_description ) ) echo 'disabled="disabled"' ?>>
 					<?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?>
 				</button>

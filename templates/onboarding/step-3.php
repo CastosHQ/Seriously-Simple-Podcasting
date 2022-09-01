@@ -64,6 +64,7 @@
 			</div>
 
 			<div class="ssp-onboarding__submit">
+				<?php wp_nonce_field( 'ssp_onboarding_' . $step_number, 'nonce', false ); ?>
 				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="button skip"><span>
 					<?php _e( 'Skip', 'seriously-simple-podcasting' ); ?></span></a>
 				<button type="submit" class="js-onboarding-btn">

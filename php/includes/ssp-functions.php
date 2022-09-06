@@ -1543,3 +1543,12 @@ if ( ! function_exists( 'ssp_player' ) ) {
 		return ssp_frontend_controller()->audio_player( '', $post_id );
 	}
 }
+
+/**
+ * Get SSP episode image.
+ */
+if ( ! function_exists( 'ssp_episode_image' ) ) {
+	function ssp_episode_image( $episode_id, $size = 'full' ) {
+		return ssp_frontend_controller()->get_image( $episode_id, $size );
+	}
+}

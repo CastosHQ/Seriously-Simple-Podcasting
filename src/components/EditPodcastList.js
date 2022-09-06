@@ -2,9 +2,7 @@ import {__} from '@wordpress/i18n';
 import {Component} from '@wordpress/element';
 import {InspectorControls} from '@wordpress/block-editor';
 import {PanelBody, PanelRow, FormToggle} from '@wordpress/components';
-import apiFetch from '@wordpress/api-fetch';
-
-import PodcastListItem from './PodcastListItem';
+import ServerSideRender from '@wordpress/server-side-render';
 
 class EditPodcastList extends Component {
 	constructor({className}) {
@@ -15,27 +13,13 @@ class EditPodcastList extends Component {
 		};
 	}
 
-	componentDidMount() {
-		const fetchPost = 'ssp/v1/episodes';
-		apiFetch({path: fetchPost})
-			.then(posts => {
-				const episodes = []
-				Object.keys(posts).map(function (key) {
-					const episode = posts[key];
-					episodes.push(episode);
-				});
-				this.setState({
-					episodes: episodes,
-				});
-		});
-	}
-
 	render() {
-		const {className, episodes} = this.state;
+		const {className} = this.state;
 
 		const {attributes, setAttributes} = this.props;
 
 		const {featuredImage, excerpt, player} = attributes;
+
 
 		const toggleFeaturedImage = () => {
 			setAttributes({
@@ -99,14 +83,13 @@ class EditPodcastList extends Component {
 			</InspectorControls>
 		);
 
-		const episodeItems = episodes.map((post) =>
-			<PodcastListItem key={"podcast-list-item-" + post.id} className={className} post={post} attributes={attributes} />
-		);
-
 		return [
-			controls, (
-				<div key={"episode-items"}>{episodeItems}</div>
-			)];
+			controls,
+			<ServerSideRender className={className}
+							  key={"episode-items"}
+							  block="seriously-simple-podcasting/podcast-list"
+							  attributes={attributes}
+			/>];
 	}
 }
 

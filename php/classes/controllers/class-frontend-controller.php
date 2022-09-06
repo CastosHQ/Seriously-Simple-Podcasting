@@ -1428,13 +1428,12 @@ class Frontend_Controller {
 				$episode = get_post();
 
 				$player = '';
-				if ( isset( $attributes['player'] ) ) {
+				if ( !empty( $attributes['player'] ) ) {
 					$file = $this->get_enclosure( $episode->ID );
 					if ( get_option( 'permalink_structure' ) ) {
 						$file = $this->get_episode_download_link( $episode->ID );
 					}
 					$player = $this->load_media_player( $file, $episode->ID, $player_style );
-					$player .= $this->episode_meta_details( $episode->ID, 'content' );
 				}
 				?>
 				<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
@@ -1444,16 +1443,16 @@ class Frontend_Controller {
 						</a>
 					</h2>
 					<div class="podcast-content">
-						<?php if ( isset( $attributes['featuredImage'] ) ) { ?>
+						<?php if ( !empty( $attributes['featuredImage'] ) ) { ?>
 							<a class="podcast-image-link" href="<?php echo esc_url( get_permalink() ) ?>"
 							   aria-hidden="true" tabindex="-1">
-								<?php the_post_thumbnail( 'full' ); ?>
+								<?php echo ssp_episode_image( $episode->ID, 'thumbnail'); ?>
 							</a>
 						<?php } ?>
 						<?php if ( ! empty( $player ) ) { ?>
 							<p><?php echo $player; ?></p>
 						<?php } ?>
-						<?php if ( isset( $attributes['excerpt'] ) ) { ?>
+						<?php if ( !empty( $attributes['excerpt'] ) ) { ?>
 							<p><?php echo get_the_excerpt(); ?></p>
 						<?php } ?>
 					</div>

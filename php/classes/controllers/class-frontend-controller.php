@@ -1446,7 +1446,7 @@ class Frontend_Controller {
 						<?php if ( !empty( $attributes['featuredImage'] ) ) { ?>
 							<a class="podcast-image-link" href="<?php echo esc_url( get_permalink() ) ?>"
 							   aria-hidden="true" tabindex="-1">
-								<?php echo ssp_episode_image( $episode->ID, 'thumbnail'); ?>
+								<?php echo ssp_episode_image( $episode->ID, $attributes['featuredImageSize']); ?>
 							</a>
 						<?php } ?>
 						<?php if ( ! empty( $player ) ) { ?>

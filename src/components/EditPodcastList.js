@@ -1,7 +1,7 @@
 import {__} from '@wordpress/i18n';
 import {Component} from '@wordpress/element';
 import {InspectorControls} from '@wordpress/block-editor';
-import {PanelBody, PanelRow, FormToggle} from '@wordpress/components';
+import {PanelBody, PanelRow, FormToggle, SelectControl} from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
 class EditPodcastList extends Component {
@@ -18,7 +18,7 @@ class EditPodcastList extends Component {
 
 		const {attributes, setAttributes} = this.props;
 
-		const {featuredImage, excerpt, player} = attributes;
+		const {featuredImage, featuredImageSize, excerpt, player} = attributes;
 
 
 		const toggleFeaturedImage = () => {
@@ -47,12 +47,33 @@ class EditPodcastList extends Component {
 							{__('Show Featured Image', 'seriously-simple-podcasting')}
 						</label>
 						<FormToggle
-							id="high-contrast-form-toggle"
+							id="featured-image-form-toggle"
 							label={__('Show Featured Image', 'seriously-simple-podcasting')}
 							checked={featuredImage}
 							onChange={toggleFeaturedImage}
 						/>
 					</PanelRow>
+					{featuredImage &&
+					<PanelRow>
+						<label htmlFor="featured-image-size">
+							{__('Featured Image Size', 'seriously-simple-podcasting')}
+						</label>
+						<SelectControl
+							id="featured-image-size"
+							value={featuredImageSize}
+							options={[
+								{label: 'Full', value: 'full'},
+								{label: 'large', value: 'large'},
+								{label: 'Medium', value: 'medium'},
+								{label: 'Thumbnail', value: 'thumbnail'},
+							]}
+							onChange={(newSize) => {
+								setAttributes({
+									featuredImageSize: newSize
+								});
+							}}
+						/>
+					</PanelRow>}
 				</PanelBody>
 				<PanelBody key="panel-2" title={__('Podcast Player', 'seriously-simple-podcasting')}>
 					<PanelRow>

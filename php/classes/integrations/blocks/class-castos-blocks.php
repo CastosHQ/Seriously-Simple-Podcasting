@@ -131,6 +131,10 @@ class Castos_Blocks extends Controller {
 						'type'    => 'boolean',
 						'default' => false,
 					),
+					'featuredImageSize' => array(
+						'type'    => 'string',
+						'default' => 'full',
+					),
 					'excerpt' => array(
 						'type'    => 'boolean',
 						'default' => false,

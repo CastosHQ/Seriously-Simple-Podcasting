@@ -135,6 +135,10 @@ registerBlockType('seriously-simple-podcasting/podcast-list', {
 			type: 'boolean',
 			default: false,
 		},
+		featuredImageSize: {
+			type: 'string',
+			default: 'full',
+		},
 		excerpt: {
 			type: 'boolean',
 			default: false,

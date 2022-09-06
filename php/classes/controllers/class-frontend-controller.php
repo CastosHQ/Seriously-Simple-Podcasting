@@ -100,6 +100,9 @@ class Frontend_Controller {
 		// Add RSS meta tag to site header
 		add_action( 'wp_head', array( $this, 'rss_meta_tag' ) );
 
+		// Disable default RSS feed link for podcast archive page (/podcast)
+		add_filter( 'post_type_archive_feed_link', array( $this, 'disable_default_podcast_rss_feed_link' ) );
+
 		// Add podcast episode to main query loop if setting is activated
 		add_action( 'pre_get_posts', array( $this, 'add_to_home_query' ) );
 
@@ -155,6 +158,21 @@ class Frontend_Controller {
 		foreach ( $this->removed_filters as $filter ) {
 			add_filter( $filter['filter_name'], array( $this, $filter['function_name'] ), $filter['priority'] );
 		}
+	}
+
+	/**
+	 * Disable default podcast RSS feed link. We add the correct feed link manually @see rss_meta_tag()
+	 *
+	 * @param string $link
+	 *
+	 * @return string|null
+	 */
+	public function disable_default_podcast_rss_feed_link( $link ) {
+		if ( is_post_type_archive( SSP_CPT_PODCAST ) && strpos( $link, SSP_CPT_PODCAST . '/feed' ) ) {
+			return null;
+		}
+
+		return $link;
 	}
 
 	/**

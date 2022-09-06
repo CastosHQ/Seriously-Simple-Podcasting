@@ -66,7 +66,7 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 		return $episode_options;
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 
 		$this->start_controls_section(
 			'content_section',

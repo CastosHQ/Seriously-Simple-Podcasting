@@ -28,7 +28,7 @@ class Elementor_Episode_List_Widget extends Widget_Base {
 		return [ 'podcasting' ];
 	}
 
-	protected function _register_controls() {
+	protected function register_controls() {
 
 		$this->start_controls_section(
 			'content_section',

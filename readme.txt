@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.16.1
+Stable tag: 2.16.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -161,11 +161,19 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
+= 2.16.2 =
+* 2022-09-06
+* UPDATE SUMMARY: Compatibility improvements and fixes
+* [UPDATE] Updated Elementor compatibility
+* [UPDATE] Podcast List block: added featured image size option
+* [UPDATE] Disabled wrong podcast feed URL meta tag
+* [FIX] Fixed duplicated player meta for Podcast List block
+
 = 2.16.1 =
-* 2022-08-25
+* 2022-09-02
 * UPDATE SUMMARY: Fixed Thrive Apprentice conflict, security improvements
-* [UPDATE] Fixed Thrive Apprentice conflict
 * [UPDATE] Security improvements
+* [FIX] Fixed Thrive Apprentice conflict
 
 = 2.16.0 =
 * 2022-08-25

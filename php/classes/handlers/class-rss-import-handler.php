@@ -98,6 +98,7 @@ class RSS_Import_Handler {
 	 * @return array
 	 */
 	public function import_rss_feed() {
+		set_time_limit(0);
 
 		$this->load_rss_feed();
 

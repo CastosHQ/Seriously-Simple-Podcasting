@@ -92,6 +92,7 @@ jQuery(document).ready(function ($) {
 				'action': 'import_external_rss_feed',
 				'nonce': $nonce.val()
 			},
+			timeout: 0,
 		}).done(function (response) {
 			clearInterval(timer);
 			if ('error' === response['status']) {

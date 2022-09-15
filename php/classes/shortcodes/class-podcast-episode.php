@@ -24,8 +24,6 @@ class Podcast_Episode implements Shortcode {
 	 */
 	public function shortcode( $params ) {
 
-		global $ss_podcasting;
-
 		$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
 
 		$atts = shortcode_atts(
@@ -61,7 +59,7 @@ class Podcast_Episode implements Shortcode {
 		$content_items = array_map( 'trim', $content_items );
 
 		// Get episode for display
-		$html = $ss_podcasting->podcast_episode( $episode, $content_items, 'shortcode', $style );
+		$html = ssp_frontend_controller()->podcast_episode( $episode, $content_items, 'shortcode', $style );
 
 		return $html;
 	}

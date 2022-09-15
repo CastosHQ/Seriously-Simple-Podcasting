@@ -144,8 +144,15 @@ class Players_Controller {
 
 		$meta = '';
 
+		// For podcast_episode shortcode, we only show meta when explicitly specified with details parameter.
+		// Example: [podcast_episode episode="123" content="player,details"].
+		$no_meta_contexts = array( 'podcast_episode' );
+
+		$show_meta = ! in_array( $context, $no_meta_contexts );
+		$show_meta = apply_filters( 'ssp_show_episode_details', $show_meta, $template_data['episode_id'], $context );
+
 		// Adding 'block' context here for future, to distinguish that request is not from the content filter
-		if ( apply_filters( 'ssp_show_episode_details', true, $template_data['episode_id'], $context ) ) {
+		if ( $show_meta ) {
 			$meta = $this->episode_meta_details( $template_data['episode_id'], $context );
 		}
 
@@ -421,8 +428,15 @@ class Players_Controller {
 
 		$episode_id = isset( $template_data['episode']->ID ) ? $template_data['episode']->ID : 0;
 
+		// For podcast_episode shortcode, we only show meta when explicitly specified with details parameter.
+		// Example: [podcast_episode episode="123" content="player,details"].
+		$no_meta_contexts = array( 'podcast_episode' );
+
+		$show_meta = ! in_array( $context, $no_meta_contexts );
+		$show_meta = apply_filters( 'ssp_show_episode_details', $show_meta, $episode_id, $context );
+
 		// Adding 'block' context here for future, to distinguish that request is not from the content filter
-		if ( apply_filters( 'ssp_show_episode_details', true, $episode_id, $context ) ) {
+		if ( $show_meta ) {
 			$meta = $this->episode_meta_details( $episode_id, $context );
 		}
 

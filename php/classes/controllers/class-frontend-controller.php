@@ -475,22 +475,24 @@ class Frontend_Controller {
 	 * @param string $src_file
 	 * @param int $episode_id
 	 * @param string $player_size
+	 * @param string $context
 	 *
 	 * @return string
 	 */
-	public function media_player( $src_file = '', $episode_id = 0, $player_size = 'large' ) {
+	public function media_player( $src_file = '', $episode_id = 0, $player_size = 'large', $context = 'block' ) {
 		$media_player = '';
 		$show_player  = $this->validate_media_player( $episode_id );
 		if ( $show_player ) {
-			$media_player = $this->load_media_player( $src_file, $episode_id, $player_size );
+			$media_player = $this->load_media_player( $src_file, $episode_id, $player_size, $context );
 		}
 		return $media_player;
 	}
 
 	/**
-	 * @param $src_file
-	 * @param $episode_id
-	 * @param $player_size
+	 * @param string $src_file
+	 * @param int $episode_id
+	 * @param string $player_size
+	 * @param string $context
 	 *
 	 * @return mixed|void
 	 */
@@ -1327,79 +1329,40 @@ class Frontend_Controller {
 
 		$episode_context = $context;
 
-		if ( 'larger' == $style ) {
+		foreach ( $content_items as $item ) {
 
-			foreach ( $content_items as $item ) {
+			switch ( $item ) {
 
-				switch ( $item ) {
+				case 'title':
+					$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
+					break;
 
-					case 'title':
-						$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
-						break;
+				case 'excerpt':
+					$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
+					break;
 
-					case 'excerpt':
-						$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
-						break;
+				case 'content':
+					$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
+					break;
 
-					case 'content':
-						$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
-						break;
+				case 'player':
+					$file = $this->get_enclosure( $episode_id );
+					if ( get_option( 'permalink_structure' ) ) {
+						$file = $this->get_episode_download_link( $episode_id );
+					}
 
-					case 'player':
-						$file = $this->get_enclosure( $episode_id );
-						if ( get_option( 'permalink_structure' ) ) {
-							$file = $this->get_episode_download_link( $episode_id );
-						}
-						$html .= '<div id="podcast_player_' . $episode_id . '" class="podcast_player">' . $this->media_player( $file, $episode_id, "large" ) . '</div>' . "\n";
-						break;
+					$html .= '<div id="podcast_player_' . $episode_id . '" class="podcast_player">' . $this->media_player( $file, $episode_id, $style, 'podcast_episode' ) . '</div>' . "\n";
+					break;
 
-					case 'details':
-						$html .= $this->episode_meta_details( $episode_id, $episode_context );
-						break;
+				case 'details':
+				case 'meta':
+					$html .= $this->episode_meta_details( $episode_id, $episode_context );
+					break;
 
-					case 'image':
-						$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
-						break;
+				case 'image':
+					$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
+					break;
 
-				}
-			}
-		}
-
-		if ( 'standard' === $style ) {
-			// Display specified content items in the order supplied
-			foreach ( $content_items as $item ) {
-
-				switch ( $item ) {
-
-					case 'title':
-						$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
-						break;
-
-					case 'excerpt':
-						$html .= '<p class="episode-excerpt">' . get_the_excerpt() . '</p>' . "\n";
-						break;
-
-					case 'content':
-						$html .= '<div class="episode-content">' . apply_filters( 'the_content', get_the_content() ) . '</div>' . "\n";
-						break;
-
-					case 'player':
-						$file = $this->get_enclosure( $episode_id );
-						if ( get_option( 'permalink_structure' ) ) {
-							$file = $this->get_episode_download_link( $episode_id );
-						}
-						$html .= '<div class="podcast_player">' . $this->media_player( $file, $episode_id, $style ) . '</div>' . "\n";
-						break;
-
-					case 'details':
-						$html .= $this->episode_meta_details( $episode_id, $episode_context );
-						break;
-
-					case 'image':
-						$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
-						break;
-
-				}
 			}
 		}
 

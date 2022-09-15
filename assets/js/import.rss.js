@@ -69,7 +69,6 @@ jQuery(document).ready(function ($) {
 	 * @param episodes
 	 */
 	function update_progress_log(episodes) {
-		$('.ssp-ssp-external-feed-message').html('Import completed successfully !').css('color', 'green');
 		var ssp_external_feed_status = $('#ssp-external-feed-status');
 		var status_html = ssp_external_feed_status.html();
 		var log_html = '';
@@ -80,28 +79,54 @@ jQuery(document).ready(function ($) {
 		ssp_external_feed_status.html(status_html);
 	}
 
+	function show_success_message(){
+		$('.ssp-ssp-external-feed-message').html('Import completed successfully !').css('color', 'green');
+	}
+
 	/**
 	 * Import the external RSS feed
 	 */
 	function ssp_import_external_feed() {
-		timer = setInterval(update_external_feed_progress_bar, 250);
+		handle_progress_bar();
+		import_feed(0);
+	}
+
+	function handle_progress_bar(){
+		timer = setInterval(update_external_feed_progress_bar, 2000);
+	}
+
+	function stop_handling_progress_bar() {
+		clearInterval(timer);
+	}
+
+	function import_feed( startFrom ){
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
 			data: {
 				'action': 'import_external_rss_feed',
-				'nonce': $nonce.val()
+				'nonce': $nonce.val(),
+				'start_from': startFrom,
 			},
 			timeout: 0,
 		}).done(function (response) {
-			clearInterval(timer);
 			if ('error' === response['status']) {
+				stop_handling_progress_bar();
 				alert_error(response.hasOwnProperty('message') ? response.message : '');
 				return;
 			}
-			update_progress_log(response.episodes);
-			update_progress_bar(100, 'green');
+
+			// Import 10 items per request.
+			if (response['start_from']) {
+				import_feed(response['start_from']);
+			} else {
+				stop_handling_progress_bar();
+				update_progress_log(response.episodes);
+				update_progress_bar(100, 'green');
+				show_success_message();
+			}
 		}).fail(function (response) {
+			console.log('Fail:', response);
 			alert_error();
 		});
 	}
@@ -118,11 +143,8 @@ jQuery(document).ready(function ($) {
 				'nonce': $nonce.val()
 			},
 		}).done(function (response) {
-			if ('error' === response['status']) {
-				alert_error()
-				clearInterval(timer);
-			}
-			update_progress_bar(response, 'blue');
+			update_progress_bar(response.progress, 'blue');
+			update_progress_log(response.episodes);
 		});
 	}
 

@@ -3,6 +3,8 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 // Exit if accessed directly.
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -16,6 +18,10 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       1.19.18
  */
 class RSS_Import_Handler {
+
+	const RSS_IMPORT_DATA_KEY = 'ssp_rss_import_data';
+
+	const ITEMS_PER_REQUEST = 10;
 
 	/**
 	 * RSS feed url
@@ -50,21 +56,27 @@ class RSS_Import_Handler {
 	 *
 	 * @var int
 	 */
-	private $podcast_count = 0;
+	private $episodes_count = 0;
 
 	/**
 	 * Number of episodes successfully added
 	 *
 	 * @var int
 	 */
-	private $podcast_added = 0;
+	private $episodes_added = 0;
 
 	/**
 	 * Episode titles added
 	 *
 	 * @var array
 	 */
-	private $podcasts_imported = array();
+	private $episodes_imported = array();
+
+	/**
+	 * @var Log_Helper
+	 */
+	private $logger;
+
 
 	/**
 	 * SSP_External_RSS_Importer constructor.
@@ -75,21 +87,57 @@ class RSS_Import_Handler {
 		$this->rss_feed  = $ssp_external_rss['import_rss_feed'];
 		$this->post_type = $ssp_external_rss['import_post_type'];
 		$this->series    = $ssp_external_rss['import_series'];
+		$this->logger    = new Log_Helper();
+	}
+
+	public static function update_import_data( $key, $data ) {
+		$feed_data         = self::get_import_data();
+		$feed_data[ $key ] = $data;
+		update_option( self::RSS_IMPORT_DATA_KEY, $feed_data );
+	}
+
+	public static function reset_import_data() {
+		delete_option( self::RSS_IMPORT_DATA_KEY );
+	}
+
+	public static function get_import_data( $key = null ) {
+		$data = get_option( self::RSS_IMPORT_DATA_KEY, array() );
+		if ( $key ) {
+			return isset( $data[ $key ] ) ? $data[ $key ] : null;
+		}
+
+		return $data;
+	}
+
+	public function load_import_data() {
+		$feed_content            = $this->get_import_data( 'feed_content' );
+		$this->feed_object       = simplexml_load_string( $feed_content );
+		$this->episodes_count    = $this->get_import_data( 'episodes_count' );
+		$this->episodes_added    = $this->get_import_data( 'episodes_added' );
+		$this->episodes_imported = $this->get_import_data( 'episodes_imported' );
 	}
 
 	/**
 	 * Load the xml feed url into the feed_object
 	 */
 	public function load_rss_feed() {
-		$this->feed_object = simplexml_load_string( file_get_contents( $this->rss_feed ) );
+		$feed_content = file_get_contents( $this->rss_feed );
+		$this->update_import_data( 'feed_content', $feed_content );
+		$this->feed_object = simplexml_load_string( $feed_content );
+
+		$this->episodes_count = count( $this->feed_object->channel->item );
+		$this->update_import_data( 'episodes_count', $this->episodes_count );
 	}
 
 	/**
 	 * Update the import progress option
 	 */
-	public function update_ssp_rss_import() {
-		$progress = round( ( $this->podcast_added / $this->podcast_count ) * 100 );
-		update_option( 'ssp_rss_import', $progress );
+	public function update_import_progress() {
+		$progress = round( ( $this->episodes_added / $this->episodes_count ) * 100 );
+
+		$this->update_import_data( 'episodes_added', $this->episodes_added );
+		$this->update_import_data( 'episodes_imported', $this->episodes_imported );
+		$this->update_import_data( 'import_progress', $progress );
 	}
 
 	/**
@@ -98,40 +146,71 @@ class RSS_Import_Handler {
 	 * @return array
 	 */
 	public function import_rss_feed() {
-		set_time_limit(0);
+		try {
+			set_time_limit( 0 );
+			$start_from = filter_input( INPUT_GET, 'start_from', FILTER_VALIDATE_INT );
 
-		$this->load_rss_feed();
+			if ( $start_from ) {
+				$this->load_import_data();
+			} else {
+				$this->reset_import_data();
+				$this->load_rss_feed();
+				$this->check_lock_status();
+			}
 
-		if ( $this->is_rss_feed_locked() ) {
-			update_option( 'ssp_external_rss', '' );
+			for ( $i = $start_from, $count = 0; $i < $this->episodes_count; $i ++, $count ++ ) {
+				if ( $count >= self::ITEMS_PER_REQUEST ) {
+					return $this->create_response( 'Partially imported', $i );
+				}
+				$item = $this->feed_object->channel->item[ $i ];
+				$this->create_episode( $item );
+			}
 
-			$msg = 'Your podcast cannot be imported at this time because the RSS feed is locked by the existing podcast hosting provider. ';
-			$msg .= 'Please unlock your RSS feed with your current host before attempting to import again. ';
-			$msg .= 'You can find out more about the podcast:lock tag here - https://support.castos.com/article/289-external-rss-feed-import-canceled';
+			$this->finish_import();
 
-			$msg = __( $msg, 'seriously-simple-podcasting' );
+			return $this->create_response( 'RSS Feed successfully imported' );
+		} catch ( \Exception $e ) {
+			$this->logger->log( __METHOD__ . ' Error: ' . $e->getMessage() );
+
+			$this->reset_import_data();
 
 			return array(
 				'status'  => 'error',
-				'message' => sprintf( $msg, 'https://support.castos.com/article/289-external-rss-feed-import-canceled' ),
+				'message' => $e->getMessage(),
 			);
 		}
+	}
 
-		$this->podcast_count = count( $this->feed_object->channel->item );
+	protected function create_response( $msg = '', $start_from = null ) {
+		return array(
+			'status'     => 'success',
+			'message'    => $msg,
+			'count'      => $this->episodes_added,
+			'episodes'   => $this->episodes_imported,
+			'start_from' => $start_from,
+		);
+	}
 
-		for ( $i = 0; $i < $this->podcast_count; $i ++ ) {
-			$item = $this->feed_object->channel->item[ $i ];
-			$this->create_episode( $item );
+	/**
+	 * @return void
+	 * @throws \Exception
+	 */
+	protected function check_lock_status() {
+		if ( ! $this->is_rss_feed_locked() ) {
+			return;
 		}
 
-		$this->finish_import();
+		$msg = 'Your podcast cannot be imported at this time because the RSS feed is locked by the existing podcast hosting provider. ';
+		$msg .= 'Please unlock your RSS feed with your current host before attempting to import again. ';
+		$msg .= 'You can find out more about the podcast:lock tag here - https://support.castos.com/article/289-external-rss-feed-import-canceled';
 
-		return array(
-			'status'   => 'success',
-			'message'  => 'RSS Feed successfully imported',
-			'count'    => $this->podcast_added,
-			'episodes' => $this->podcasts_imported,
-		);
+		$msg = __( $msg, 'seriously-simple-podcasting' );
+
+		throw new \Exception( sprintf( $msg, 'https://support.castos.com/article/289-external-rss-feed-import-canceled' ) );
+	}
+
+	protected function get_last_imported() {
+
 	}
 
 	protected function finish_import() {
@@ -155,6 +234,8 @@ class RSS_Import_Handler {
 		 * If an error occurring adding a post, continue the loop
 		 */
 		if ( is_wp_error( $post_id ) ) {
+			$this->logger->log( __METHOD__ . ' Could not create episode!', compact( 'post_data' ) );
+
 			return;
 		}
 
@@ -167,10 +248,10 @@ class RSS_Import_Handler {
 		}
 
 		// Update the added count and imported title array
-		$this->podcast_added ++;
-		$this->podcasts_imported[] = $post_data['post_title'];
+		$this->episodes_added ++;
+		$this->episodes_imported[] = $post_data['post_title'];
 
-		$this->update_ssp_rss_import();
+		$this->update_import_progress();
 	}
 
 	/**

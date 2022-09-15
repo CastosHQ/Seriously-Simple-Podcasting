@@ -176,8 +176,9 @@ class Ajax_Handler {
 	 */
 	public function get_external_rss_feed_progress() {
 		$this->import_security_check();
-		$progress = (int) get_option( 'ssp_rss_import', 0 );
-		wp_send_json( $progress );
+		$progress = RSS_Import_Handler::get_import_data( 'import_progress' );
+		$episodes = RSS_Import_Handler::get_import_data( 'episodes_imported' );
+		wp_send_json( compact('progress', 'episodes') );
 	}
 
 	/**

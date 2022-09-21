@@ -1103,7 +1103,7 @@ class Settings_Controller extends Controller {
 					</td>
 				</tr>
 			<?php } ?>
-			<?php if ( count( $series ) > 1 ) { ?>
+			<?php if ( count( $series ) >= 1 ) { ?>
 				<tr>
 					<th scope="row">Podcast</th>
 					<td>

@@ -21,7 +21,9 @@ class RSS_Import_Handler {
 
 	const RSS_IMPORT_DATA_KEY = 'ssp_rss_import_data';
 
-	const ITEMS_PER_REQUEST = 10;
+	const CODE_DENY_TRY_AGAIN = 33;
+
+	const ITEMS_PER_REQUEST = 3;
 
 	/**
 	 * RSS feed url
@@ -148,15 +150,17 @@ class RSS_Import_Handler {
 	public function import_rss_feed() {
 		try {
 			set_time_limit( 0 );
-			$start_from = filter_input( INPUT_GET, 'start_from', FILTER_VALIDATE_INT );
 
-			if ( $start_from ) {
-				$this->load_import_data();
-			} else {
+			$is_initial = filter_input( INPUT_GET, 'isInitial', FILTER_VALIDATE_BOOLEAN );
+
+			if ( $is_initial ) {
 				$this->reset_import_data();
 				$this->load_rss_feed();
 				$this->check_lock_status();
+			} else {
+				$this->load_import_data();
 			}
+			$start_from = $this->episodes_added;
 
 			for ( $i = $start_from, $count = 0; $i < $this->episodes_count; $i ++, $count ++ ) {
 				if ( $count >= self::ITEMS_PER_REQUEST ) {
@@ -172,12 +176,19 @@ class RSS_Import_Handler {
 		} catch ( \Exception $e ) {
 			$this->logger->log( __METHOD__ . ' Error: ' . $e->getMessage() );
 
-			$this->reset_import_data();
-
-			return array(
-				'status'  => 'error',
-				'message' => $e->getMessage(),
+			$response = array(
+				'status'        => 'error',
+				'message'       => $e->getMessage(),
+				'can_try_again' => true,
 			);
+
+			if ( self::CODE_DENY_TRY_AGAIN === $e->getCode() ) {
+				$response['can_try_again'] = false;
+			} else {
+				$response['message'] = $response['message'] . "\n\n" . 'Would you like to try again?';
+			}
+
+			return $response;
 		}
 	}
 
@@ -206,7 +217,7 @@ class RSS_Import_Handler {
 
 		$msg = __( $msg, 'seriously-simple-podcasting' );
 
-		throw new \Exception( sprintf( $msg, 'https://support.castos.com/article/289-external-rss-feed-import-canceled' ) );
+		throw new \Exception( sprintf( $msg, 'https://support.castos.com/article/289-external-rss-feed-import-canceled' ), self::CODE_DENY_TRY_AGAIN );
 	}
 
 	protected function get_last_imported() {

@@ -70,16 +70,14 @@ jQuery(document).ready(function ($) {
 	 */
 	function update_progress_log(episodes) {
 		var ssp_external_feed_status = $('#ssp-external-feed-status');
-		var status_html = ssp_external_feed_status.html();
 		var log_html = '';
 		for (var i = 0; i < episodes.length; i++) {
 			log_html = '<p>Imported ' + episodes[i] + '</p>' + log_html;
 		}
-		status_html = log_html + status_html;
-		ssp_external_feed_status.html(status_html);
+		ssp_external_feed_status.html(log_html);
 	}
 
-	function show_success_message(){
+	function show_success_message() {
 		$('.ssp-ssp-external-feed-message').html('Import completed successfully !').css('color', 'green');
 	}
 
@@ -88,10 +86,10 @@ jQuery(document).ready(function ($) {
 	 */
 	function ssp_import_external_feed() {
 		handle_progress_bar();
-		import_feed(0);
+		import_feed(true);
 	}
 
-	function handle_progress_bar(){
+	function handle_progress_bar() {
 		timer = setInterval(update_external_feed_progress_bar, 2000);
 	}
 
@@ -99,35 +97,48 @@ jQuery(document).ready(function ($) {
 		clearInterval(timer);
 	}
 
-	function import_feed( startFrom ){
+	function import_feed(isInitial) {
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
 			data: {
 				'action': 'import_external_rss_feed',
 				'nonce': $nonce.val(),
-				'start_from': startFrom,
+				'isInitial': isInitial,
 			},
 			timeout: 0,
 		}).done(function (response) {
 			if ('error' === response['status']) {
-				stop_handling_progress_bar();
-				alert_error(response.hasOwnProperty('message') ? response.message : '');
+				let msg = response.hasOwnProperty('message') ? response.message : '',
+					tryAgain = response.hasOwnProperty('can_try_again') ? response.can_try_again : true;
+				alert_error(msg, tryAgain);
 				return;
 			}
 
 			// Import 10 items per request.
-			if (response['start_from']) {
-				import_feed(response['start_from']);
-			} else {
+			if (response['is_finished']) {
 				stop_handling_progress_bar();
 				update_progress_log(response.episodes);
 				update_progress_bar(100, 'green');
 				show_success_message();
+			} else {
+				import_feed(false);
 			}
 		}).fail(function (response) {
-			console.log('Fail:', response);
-			alert_error();
+			let msg = response.hasOwnProperty('message') ? response.message : '',
+				tryAgain = response.hasOwnProperty('can_try_again') ? response.can_try_again : true;
+			alert_error(msg, tryAgain);
+		});
+	}
+
+	function reset_import_data() {
+		$.ajax({
+			url: ajaxurl,
+			type: 'get',
+			data: {
+				'action': 'ssp_reset_import_data',
+				'nonce': $nonce.val(),
+			},
 		});
 	}
 
@@ -166,18 +177,34 @@ jQuery(document).ready(function ($) {
 			}
 
 			$('.ssp-ssp-external-feed-message').html('Import cancelled !').css('color', 'red');
-			$('#ssp-external-feed-status').html('');
 		});
 	}
 
 	/**
 	 * Shows an error to user
 	 */
-	function alert_error($msg = '') {
-		$msg = $msg ? $msg : 'An error occurred importing the RSS feed, please refresh this page to try again';
+	function alert_error($msg = '', tryAgain = false) {
+		$msg = $msg ? $msg : 'An error occurred importing the RSS feed. Would you like to proceed importing?';
 
+		if (tryAgain) {
+			return maybe_try_again($msg);
+		}
+
+		stop_handling_progress_bar();
+
+		// If not startFrom specified, we do not allow to try it again
 		if (!alert($msg)) {
+			reset_import_data();
 			window.location.reload();
+		}
+	}
+
+	function maybe_try_again($msg) {
+		if (confirm($msg)) {
+			import_feed(false);
+		} else {
+			stop_handling_progress_bar();
+			ssp_reset_external_feed();
 		}
 	}
 });

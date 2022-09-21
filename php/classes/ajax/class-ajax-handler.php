@@ -40,6 +40,9 @@ class Ajax_Handler {
 		// Add ajax action for importing external rss feed
 		add_action( 'wp_ajax_import_external_rss_feed', array( $this, 'import_external_rss_feed' ) );
 
+		// Add ajax action for reset importing external rss feed
+		add_action( 'wp_ajax_ssp_reset_import_external_rss_feed', array( $this, 'reset_import_external_rss_feed' ) );
+
 		// Add ajax action for getting external rss feed progress
 		add_action( 'wp_ajax_get_external_rss_feed_progress', array( $this, 'get_external_rss_feed_progress' ) );
 
@@ -150,6 +153,13 @@ class Ajax_Handler {
 		exit;
 	}
 
+	/**
+	 * Reset import data
+	 */
+	public function reset_import_external_rss_feed(){
+		delete_option( RSS_Import_Handler::RSS_IMPORT_DATA_KEY );
+		wp_send_json_success();
+	}
 
 
 	/**
@@ -163,6 +173,13 @@ class Ajax_Handler {
 		$ssp_external_rss = get_option( 'ssp_external_rss', '' );
 		if ( empty( $ssp_external_rss ) ) {
 			$this->send_json_error( 'No feed to process' );
+			wp_send_json(
+				[
+					'status'        => 'error',
+					'message'       => 'No feed to process',
+					'can_try_again' => false,
+				]
+			);
 		}
 
 		$rss_importer = new RSS_Import_Handler( $ssp_external_rss );

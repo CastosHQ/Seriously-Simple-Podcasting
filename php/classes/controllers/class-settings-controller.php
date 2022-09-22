@@ -713,17 +713,17 @@ class Settings_Controller extends Controller {
 		}
 
 		if ( 'import' === $tab ) {
-			// Custom submits for Imports
-			if ( ssp_is_connected_to_castos() ) {
-				$html .= '<p class="submit">' . "\n";
-				$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-				$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
-				$html .= '</p>' . "\n";
-			}
-
 			if ( ssp_get_external_rss_being_imported() ) {
 				$html .= $this->render_external_import_process();
 			} else {
+				// Custom submits for Imports
+				if ( ssp_is_connected_to_castos() ) {
+					$html .= '<p class="submit">' . "\n";
+					$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
+					$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger import', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+					$html .= '</p>' . "\n";
+				}
+
 				$html .= $this->render_external_import_form();
 			}
 		}

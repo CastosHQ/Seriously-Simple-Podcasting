@@ -12,12 +12,15 @@ jQuery(document).ready(function ($) {
 	 * If the progress bar appears on the page, trigger the import
 	 */
 	if (progressbar.length > 0) {
+		hide_other_settings();
+
 		var response = confirm('You are about to import an external RSS feed.');
 		if (true === response) {
-			update_progress_bar(0);
 			ssp_import_external_feed();
+			update_progress_bar(0);
 		} else {
 			ssp_reset_external_feed();
+			show_cancelled_message();
 		}
 	}
 
@@ -31,6 +34,10 @@ jQuery(document).ready(function ($) {
 			remove_class = 'green';
 		}
 		progressbar.removeClass(remove_class).addClass(colour);
+	}
+
+	function hide_other_settings(){
+		$('.form-table').hide().prev('p').hide();
 	}
 
 	/**
@@ -85,8 +92,8 @@ jQuery(document).ready(function ($) {
 	 * Import the external RSS feed
 	 */
 	function ssp_import_external_feed() {
+		import_feed();
 		handle_progress_bar();
-		import_feed(true);
 	}
 
 	function handle_progress_bar() {
@@ -97,48 +104,39 @@ jQuery(document).ready(function ($) {
 		clearInterval(timer);
 	}
 
-	function import_feed(isInitial) {
+	function import_feed() {
 		$.ajax({
 			url: ajaxurl,
 			type: 'get',
 			data: {
 				'action': 'import_external_rss_feed',
 				'nonce': $nonce.val(),
-				'isInitial': isInitial,
 			},
 			timeout: 0,
 		}).done(function (response) {
 			if ('error' === response['status']) {
-				let msg = response.hasOwnProperty('message') ? response.message : '',
-					tryAgain = response.hasOwnProperty('can_try_again') ? response.can_try_again : true;
-				alert_error(msg, tryAgain);
+				let msg = response.hasOwnProperty('message') ? response.message : '';
+				alert_error(msg);
 				return;
 			}
 
 			// Import 10 items per request.
 			if (response['is_finished']) {
 				stop_handling_progress_bar();
-				update_progress_log(response.episodes);
-				update_progress_bar(100, 'green');
-				show_success_message();
+
+				// Give possibility to finish the progress bar processes
+				setTimeout(function () {
+					update_progress_log(response.episodes);
+					update_progress_bar(100, 'green');
+					show_success_message();
+					ssp_reset_external_feed();
+				}, 1000);
 			} else {
-				import_feed(false);
+				import_feed();
 			}
 		}).fail(function (response) {
-			let msg = response.hasOwnProperty('message') ? response.message : '',
-				tryAgain = response.hasOwnProperty('can_try_again') ? response.can_try_again : true;
-			alert_error(msg, tryAgain);
-		});
-	}
-
-	function reset_import_data() {
-		$.ajax({
-			url: ajaxurl,
-			type: 'get',
-			data: {
-				'action': 'ssp_reset_import_data',
-				'nonce': $nonce.val(),
-			},
+			let msg = response.hasOwnProperty('message') ? response.message : '';
+			alert_error(msg);
 		});
 	}
 
@@ -167,44 +165,28 @@ jQuery(document).ready(function ($) {
 			url: ajaxurl,
 			type: 'get',
 			data: {
-				'action': 'reset_external_rss_feed_progress',
+				'action': 'reset_rss_feed_data',
 				'nonce': $nonce.val()
 			},
 		}).done(function (response) {
 			if ('error' === response['status']) {
 				alert('Could not reset current feed import, please refresh this page to try again');
-				return;
 			}
-
-			$('.ssp-ssp-external-feed-message').html('Import cancelled !').css('color', 'red');
 		});
+	}
+
+	function show_cancelled_message() {
+		$('.ssp-ssp-external-feed-message').html('Import cancelled !').css('color', 'red');
 	}
 
 	/**
 	 * Shows an error to user
 	 */
-	function alert_error($msg = '', tryAgain = false) {
-		$msg = $msg ? $msg : 'An error occurred importing the RSS feed. Would you like to proceed importing?';
+	function alert_error($msg = '') {
+		$msg = $msg ? $msg : "An error occurred importing the RSS feed. \n\n We'll try to proceed importing after the page refresh.";
 
-		if (tryAgain) {
-			return maybe_try_again($msg);
-		}
-
-		stop_handling_progress_bar();
-
-		// If not startFrom specified, we do not allow to try it again
 		if (!alert($msg)) {
-			reset_import_data();
 			window.location.reload();
-		}
-	}
-
-	function maybe_try_again($msg) {
-		if (confirm($msg)) {
-			import_feed(false);
-		} else {
-			stop_handling_progress_bar();
-			ssp_reset_external_feed();
 		}
 	}
 });

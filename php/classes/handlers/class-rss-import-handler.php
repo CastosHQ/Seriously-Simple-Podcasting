@@ -20,9 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class RSS_Import_Handler {
 
 	const RSS_IMPORT_DATA_KEY = 'ssp_rss_import_data';
-
-	const CODE_DENY_TRY_AGAIN = 33;
-
 	const ITEMS_PER_REQUEST = 3;
 
 	/**
@@ -99,24 +96,31 @@ class RSS_Import_Handler {
 	}
 
 	public static function reset_import_data() {
+		delete_option( 'ssp_external_rss' );
 		delete_option( self::RSS_IMPORT_DATA_KEY );
 	}
 
-	public static function get_import_data( $key = null ) {
+	public static function get_import_data( $key = null, $default = null ) {
 		$data = get_option( self::RSS_IMPORT_DATA_KEY, array() );
 		if ( $key ) {
-			return isset( $data[ $key ] ) ? $data[ $key ] : null;
+			return isset( $data[ $key ] ) ? $data[ $key ] : $default;
 		}
 
 		return $data;
 	}
 
 	public function load_import_data() {
-		$feed_content            = $this->get_import_data( 'feed_content' );
+		$feed_content = $this->get_import_data( 'feed_content' );
+		if ( empty( $feed_content ) ) {
+			return false;
+		}
+
 		$this->feed_object       = simplexml_load_string( $feed_content );
 		$this->episodes_count    = $this->get_import_data( 'episodes_count' );
 		$this->episodes_added    = $this->get_import_data( 'episodes_added' );
 		$this->episodes_imported = $this->get_import_data( 'episodes_imported' );
+
+		return true;
 	}
 
 	/**
@@ -151,54 +155,41 @@ class RSS_Import_Handler {
 		try {
 			set_time_limit( 0 );
 
-			$is_initial = filter_input( INPUT_GET, 'isInitial', FILTER_VALIDATE_BOOLEAN );
+			$is_initial = ! $this->load_import_data();;
 
 			if ( $is_initial ) {
-				$this->reset_import_data();
 				$this->load_rss_feed();
 				$this->check_lock_status();
-			} else {
-				$this->load_import_data();
 			}
+
 			$start_from = $this->episodes_added;
 
 			for ( $i = $start_from, $count = 0; $i < $this->episodes_count; $i ++, $count ++ ) {
 				if ( $count >= self::ITEMS_PER_REQUEST ) {
-					return $this->create_response( 'Partially imported', $i );
+					return $this->create_response( 'Partially imported' );
 				}
 				$item = $this->feed_object->channel->item[ $i ];
 				$this->create_episode( $item );
 			}
 
-			$this->finish_import();
-
-			return $this->create_response( 'RSS Feed successfully imported' );
+			return $this->create_response( 'RSS Feed successfully imported', true );
 		} catch ( \Exception $e ) {
 			$this->logger->log( __METHOD__ . ' Error: ' . $e->getMessage() );
 
-			$response = array(
+			return array(
 				'status'        => 'error',
 				'message'       => $e->getMessage(),
-				'can_try_again' => true,
 			);
-
-			if ( self::CODE_DENY_TRY_AGAIN === $e->getCode() ) {
-				$response['can_try_again'] = false;
-			} else {
-				$response['message'] = $response['message'] . "\n\n" . 'Would you like to try again?';
-			}
-
-			return $response;
 		}
 	}
 
-	protected function create_response( $msg = '', $start_from = null ) {
+	protected function create_response( $msg = '', $is_finished = false ) {
 		return array(
-			'status'     => 'success',
-			'message'    => $msg,
-			'count'      => $this->episodes_added,
-			'episodes'   => $this->episodes_imported,
-			'start_from' => $start_from,
+			'status'      => 'success',
+			'message'     => $msg,
+			'count'       => $this->episodes_added,
+			'episodes'    => $this->episodes_imported,
+			'is_finished' => $is_finished,
 		);
 	}
 
@@ -211,22 +202,19 @@ class RSS_Import_Handler {
 			return;
 		}
 
+		self::reset_import_data();
+
 		$msg = 'Your podcast cannot be imported at this time because the RSS feed is locked by the existing podcast hosting provider. ';
 		$msg .= 'Please unlock your RSS feed with your current host before attempting to import again. ';
 		$msg .= 'You can find out more about the podcast:lock tag here - https://support.castos.com/article/289-external-rss-feed-import-canceled';
 
 		$msg = __( $msg, 'seriously-simple-podcasting' );
 
-		throw new \Exception( sprintf( $msg, 'https://support.castos.com/article/289-external-rss-feed-import-canceled' ), self::CODE_DENY_TRY_AGAIN );
-	}
-
-	protected function get_last_imported() {
-
+		throw new \Exception( sprintf( $msg, 'https://support.castos.com/article/289-external-rss-feed-import-canceled' ) );
 	}
 
 	protected function finish_import() {
 		update_option( 'ssp_external_rss', '' );
-		update_option( 'ssp_rss_import', '100' );
 	}
 
 	/**

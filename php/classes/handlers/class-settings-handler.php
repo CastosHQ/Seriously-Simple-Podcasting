@@ -217,10 +217,15 @@ class Settings_Handler implements Service {
 			}
 		}
 
-		$fields = array();
+		$settings['import'] = array(
+			'title'       => __( 'Import', 'seriously-simple-podcasting' ),
+			'description' => '',
+			'fields'      => array(),
+		);
+
 		if ( ssp_is_connected_to_castos() ) {
 			if ( ! ssp_get_external_rss_being_imported() ) {
-				$fields = array(
+				$settings['import']['fields']      = array(
 					array(
 						'id'          => 'podmotor_import',
 						'label'       => __( 'Import your podcast', 'seriously-simple-podcasting' ),
@@ -231,13 +236,9 @@ class Settings_Handler implements Service {
 						'class'       => 'import-castos',
 					),
 				);
+				$settings['import']['description'] = sprintf( __( 'Use this option for a one time import of your existing WordPress podcast to your Castos account. If you encounter any problems with this import, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ), '<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>' );
 			}
 		}
-		$settings['import'] = array(
-			'title'       => __( 'Import', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Use this option for a one time import of your existing WordPress podcast to your Castos account. If you encounter any problems with this import, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ), '<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
-			'fields'      => $fields,
-		);
 
 		$settings['extensions'] = array(
 			'title'               => __( 'Extensions', 'seriously-simple-podcasting' ),

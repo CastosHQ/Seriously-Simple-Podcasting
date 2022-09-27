@@ -160,6 +160,7 @@ class RSS_Import_Handler {
 			if ( $is_initial ) {
 				$this->load_rss_feed();
 				$this->check_lock_status();
+				$this->update_podcast_data();
 			}
 
 			$start_from = $this->episodes_added;
@@ -177,11 +178,87 @@ class RSS_Import_Handler {
 			$this->logger->log( __METHOD__ . ' Error: ' . $e->getMessage() );
 
 			return array(
-				'status'        => 'error',
-				'message'       => $e->getMessage(),
+				'status'  => 'error',
+				'message' => $e->getMessage(),
 			);
 		}
 	}
+
+	/**
+	 * Update podcast data.
+	 *
+	 * @return void
+	 */
+	protected function update_podcast_data() {
+
+		$series_id = $this->series;
+
+		if ( isset( $this->feed_object->channel->title ) ) {
+			ssp_update_option( 'data_title', (string) $this->feed_object->channel->title, $series_id );
+		}
+
+		$itunes = $this->feed_object->channel->children( 'itunes', true );
+
+		if ( isset( $itunes->subtitle ) ) {
+			ssp_update_option( 'data_subtitle', (string) $itunes->subtitle, $series_id );
+		}
+
+		if ( isset( $itunes->author ) ) {
+			ssp_update_option( 'data_author', (string) $itunes->author, $series_id );
+		}
+
+
+		if ( isset( $itunes->category ) && is_iterable( $itunes->category ) ) {
+			$i = 0;
+			foreach ( $itunes->category as $category_item ) {
+				$i ++;
+				// Update category
+				if ( isset( $category_item->attributes()->text ) ) {
+					ssp_update_option(
+						'data_category' . ( ( 1 === $i ) ? '' : $i ),
+						(string) $category_item->attributes()->text, $series_id
+					);
+				}
+
+				// Update subcategory
+				if ( isset( $category_item->category ) && isset( $category_item->category->attributes()->text ) ) {
+					ssp_update_option(
+						'data_subcategory' . ( ( 1 === $i ) ? '' : $i ),
+						(string) $category_item->category->attributes()->text, $series_id
+					);
+				}
+			}
+		}
+
+		if ( isset( $this->feed_object->channel->description ) ) {
+			ssp_update_option( 'data_description', (string) $this->feed_object->channel->description, $series_id );
+		}
+
+		if ( isset( $itunes->image ) && isset( $itunes->image->attributes()->href ) ) {
+			$this->save_podcast_image( (string) $itunes->image->attributes()->href, $series_id );
+		}
+
+		if ( isset( $itunes->owner->name ) ) {
+			ssp_update_option( 'data_owner_name', (string) $itunes->owner->name, $series_id );
+		}
+
+		if ( isset( $itunes->owner->email ) ) {
+			ssp_update_option( 'data_owner_email', (string) $itunes->owner->email, $series_id );
+		}
+
+		if ( isset( $this->feed_object->channel->language ) ) {
+			ssp_update_option( 'data_language', (string) $this->feed_object->channel->language, $series_id );
+		}
+
+		if ( isset( $this->feed_object->channel->copyright ) ) {
+			ssp_update_option( 'data_copyright', (string) $this->feed_object->channel->copyright, $series_id );
+		}
+
+		if ( isset( $itunes->type ) ) {
+			ssp_update_option( 'consume_order', (string) $itunes->type, $series_id );
+		}
+	}
+
 
 	protected function create_response( $msg = '', $is_finished = false ) {
 		return array(
@@ -239,7 +316,7 @@ class RSS_Import_Handler {
 		}
 
 		$this->save_enclosure( $post_id, $this->get_enclosure_url( $item ) );
-		$this->save_image( $post_id, $this->get_image_url( $item ) );
+		$this->save_episode_image( $post_id, $this->get_image_url( $item ) );
 
 		// Set the series, if it is available
 		if ( ! empty( $this->series ) ) {
@@ -303,7 +380,7 @@ class RSS_Import_Handler {
 	 *
 	 * @return bool
 	 */
-	protected function save_image( $post_id, $image_url ) {
+	protected function save_episode_image( $post_id, $image_url ) {
 		if ( ! $image_url ) {
 			return false;
 		}
@@ -318,6 +395,29 @@ class RSS_Import_Handler {
 
 		$url = wp_get_attachment_url( $image_id );
 		update_post_meta( $post_id, 'cover_image', $url );
+
+		return true;
+	}
+
+	/**
+	 * @param string $image_url
+	 * @param int $series_id
+	 *
+	 * @return bool
+	 */
+	protected function save_podcast_image( $image_url, $series_id ) {
+		if ( ! $image_url ) {
+			return false;
+		}
+
+		$image_id = $this->save_image_from_url( $image_url );
+
+		if ( is_wp_error( $image_id ) ) {
+			return false;
+		}
+
+		$url = wp_get_attachment_url( $image_id );
+		ssp_update_option( 'data_image', $url, $series_id );
 
 		return true;
 	}

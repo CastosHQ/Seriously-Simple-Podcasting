@@ -1229,10 +1229,15 @@ HTML;
 				if ( isset( $_POST['import_series'] ) ) {
 					$import_series = sanitize_text_field( $_POST['import_series'] );
 				}
+				$import_podcast_data = false;
+				if ( isset( $_POST['import_podcast_data'] ) ) {
+					$import_podcast_data = filter_var( $_POST['import_podcast_data'], FILTER_VALIDATE_BOOLEAN );
+				}
 				$ssp_external_rss = array(
-					'import_rss_feed'  => $external_rss,
-					'import_post_type' => $import_post_type,
-					'import_series'    => $import_series,
+					'import_rss_feed'     => $external_rss,
+					'import_post_type'    => $import_post_type,
+					'import_series'       => $import_series,
+					'import_podcast_data' => $import_podcast_data,
 				);
 				update_option( 'ssp_external_rss', $ssp_external_rss );
 				add_action( 'admin_notices', array( $this, 'import_form_success' ) );

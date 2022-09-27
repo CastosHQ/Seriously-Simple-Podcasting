@@ -6,7 +6,8 @@ jQuery(document).ready(function ($) {
 	 */
 	var progressbar = $('#ssp-external-feed-progress'),
 		$nonce = $('#podcast_settings_tab_nonce'),
-		timer;
+		timer,
+		isProgressBarActive = true;
 
 	/**
 	 * If the progress bar appears on the page, trigger the import
@@ -97,10 +98,12 @@ jQuery(document).ready(function ($) {
 	}
 
 	function handle_progress_bar() {
+		isProgressBarActive = true;
 		timer = setInterval(update_external_feed_progress_bar, 2000);
 	}
 
 	function stop_handling_progress_bar() {
+		isProgressBarActive = false;
 		clearInterval(timer);
 	}
 
@@ -123,14 +126,10 @@ jQuery(document).ready(function ($) {
 			// Import 10 items per request.
 			if (response['is_finished']) {
 				stop_handling_progress_bar();
-
-				// Give possibility to finish the progress bar processes
-				setTimeout(function () {
-					update_progress_log(response.episodes);
-					update_progress_bar(100, 'green');
-					show_success_message();
-					ssp_reset_external_feed();
-				}, 1000);
+				update_progress_log(response.episodes);
+				update_progress_bar(100, 'green');
+				show_success_message();
+				ssp_reset_external_feed();
 			} else {
 				import_feed();
 			}
@@ -152,6 +151,9 @@ jQuery(document).ready(function ($) {
 				'nonce': $nonce.val()
 			},
 		}).done(function (response) {
+			if (!isProgressBarActive) {
+				return;
+			}
 			update_progress_bar(response.progress, 'blue');
 			update_progress_log(response.episodes);
 		});

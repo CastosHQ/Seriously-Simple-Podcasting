@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
@@ -714,7 +715,8 @@ class Settings_Controller extends Controller {
 
 		if ( 'import' === $tab ) {
 			if ( ssp_get_external_rss_being_imported() ) {
-				$html .= $this->render_external_import_process();
+				$progress = RSS_Import_Handler::get_import_data( 'import_progress', 0 );
+				$html     .= $this->render_external_import_process( $progress );
 			} else {
 				// Custom submits for Imports
 				if ( ssp_is_connected_to_castos() ) {
@@ -1059,8 +1061,8 @@ class Settings_Controller extends Controller {
 	 *
 	 * @return string
 	 */
-	public function render_external_import_process() {
-		return $this->renderer->fetch( 'settings/import-rss-info' );
+	public function render_external_import_process( $progress ) {
+		return $this->renderer->fetch( 'settings/import-rss-info', compact( 'progress' ) );
 	}
 
 	/**

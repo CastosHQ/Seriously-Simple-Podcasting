@@ -13,12 +13,19 @@ jQuery(document).ready(function ($) {
 	 * If the progress bar appears on the page, trigger the import
 	 */
 	if (progressbar.length > 0) {
+		let progress = progressbar.data('progress'),
+			response;
 		hide_other_settings();
 
-		var response = confirm('You are about to import an external RSS feed.');
+		response = confirm(
+			progress ?
+				'Would you like to restore the previous import?' :
+				'You are about to import an external RSS feed.'
+		);
+
 		if (true === response) {
 			ssp_import_external_feed();
-			update_progress_bar(0);
+			update_progress_bar(progress);
 		} else {
 			ssp_reset_external_feed();
 			show_cancelled_message();
@@ -47,29 +54,13 @@ jQuery(document).ready(function ($) {
 	 * @param colour
 	 */
 	function update_progress_bar(progress, colour) {
-		/**
-		 * First run
-		 */
-		if (0 === progress) {
-			progressbar.progressbar({
-				value: 0
-			});
-			return;
-		}
-
-		/**
-		 * Subsequent runs
-		 */
-		if ('' === colour) {
+		if (!colour) {
 			colour = 'blue';
 		}
-		var current_value = progressbar.progressbar('value');
-		if (current_value < 100) {
-			progressbar.progressbar({
-				value: progress
-			});
-			change_progress_colour(colour);
-		}
+		progressbar.progressbar({
+			value: progress
+		});
+		change_progress_colour(colour);
 	}
 
 	/**

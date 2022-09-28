@@ -34,7 +34,7 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	 * @return array $data The schema data.
 	 */
 	public function generate() {
-		global $ss_podcasting;
+		$ss_podcasting = ssp_frontend_controller();
 
 		$series_parts = [];
 		$series       = wp_get_post_terms( $this->context->post->ID, 'series' );
@@ -130,10 +130,10 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		$time = 'P';
 
 		if ( $hours ) {
-			$time .= intval( $hours ) . 'H';
+			$time .= $hours . 'H';
 		}
 		if ( $minutes ) {
-			$time .= intval( $minutes ) . 'M';
+			$time .= $minutes . 'M';
 		}
 
 		return $time;

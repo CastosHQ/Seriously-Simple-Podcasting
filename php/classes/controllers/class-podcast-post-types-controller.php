@@ -6,6 +6,7 @@ use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 
@@ -46,6 +47,11 @@ class Podcast_Post_Types_Controller {
 	protected $podping_handler;
 
 	/**
+	 * @var Episode_Repository
+	 */
+	protected $episode_repository;
+
+	/**
 	 * @param CPT_Podcast_Handler $cpt_podcast_handler
 	 * @param Castos_Handler $castos_handler
 	 * @param Admin_Notifications_Handler $admin_notices_handler
@@ -54,13 +60,14 @@ class Podcast_Post_Types_Controller {
 		$cpt_podcast_handler,
 		$castos_handler,
 		$admin_notices_handler,
-		$podping_handler
+		$podping_handler,
+		$episode_repository
 	) {
 		$this->cpt_podcast_handler   = $cpt_podcast_handler;
 		$this->castos_handler        = $castos_handler;
 		$this->admin_notices_handler = $admin_notices_handler;
 		$this->podping_handler       = $podping_handler;
-
+		$this->episode_repository    = $episode_repository;
 
 		$this->init_useful_variables();
 		$this->register_hooks_and_filters();
@@ -289,7 +296,6 @@ class Podcast_Post_Types_Controller {
 	 * @return mixed
 	 */
 	public function meta_box_save( $post_id, $post ) {
-		global $ss_podcasting;
 
 		if ( ! $this->save_podcast_action_check( $post ) ) {
 			return false;
@@ -308,7 +314,10 @@ class Podcast_Post_Types_Controller {
 
 		$field_data = $this->custom_fields();
 
+		$old_data = array();
+
 		$enclosure = '';
+		$old_enclosure = '';
 
 		foreach ( $field_data as $k => $field ) {
 
@@ -327,29 +336,36 @@ class Podcast_Post_Types_Controller {
 
 			if ( $k == 'audio_file' ) {
 				$enclosure = $val;
+				$old_enclosure = get_post_meta( $post_id, $k, true );
 			}
 
-			update_post_meta( $post_id, $k, $val );
+			$old_data[ $k ] = get_post_meta( $post_id, $k, true );
+
+			if ( $old_data[ $k ] !== $val ) {
+				update_post_meta( $post_id, $k, $val );
+			}
 		}
 
 		if ( $enclosure ) {
 
-			if ( get_post_meta( $post_id, 'date_recorded', true ) == '' ) {
+			$is_enclosure_updated = $old_enclosure !== $enclosure;
+
+			if ( $is_enclosure_updated || get_post_meta( $post_id, 'date_recorded', true ) == '' ) {
 				update_post_meta( $post_id, 'date_recorded', $post->post_date );
 			}
 
 			if ( ! ssp_is_connected_to_castos() ) {
 				// Get file duration
-				if ( get_post_meta( $post_id, 'duration', true ) == '' ) {
-					$duration = $ss_podcasting->get_file_duration( $enclosure );
+				if ( $is_enclosure_updated || get_post_meta( $post_id, 'duration', true ) == '' ) {
+					$duration = $this->episode_repository->get_file_duration( $enclosure );
 					if ( $duration ) {
 						update_post_meta( $post_id, 'duration', $duration );
 					}
 				}
 
 				// Get file size
-				if ( get_post_meta( $post_id, 'filesize', true ) == '' ) {
-					$filesize = $ss_podcasting->get_file_size( $enclosure );
+				if ( $is_enclosure_updated || get_post_meta( $post_id, 'filesize', true ) == '' ) {
+					$filesize = $this->episode_repository->get_file_size( $enclosure );
 					if ( $filesize ) {
 
 						if ( isset( $filesize['formatted'] ) ) {

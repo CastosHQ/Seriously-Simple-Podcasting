@@ -730,47 +730,7 @@ class Frontend_Controller {
 	 * @return mixed        File duration on success, boolean false on failure
 	 */
 	public function get_file_duration( $file ) {
-
-		/**
-		 * ssp_enable_get_file_duration filter to allow this functionality to be disabled programmatically
-		 */
-		$enabled = apply_filters( 'ssp_enable_get_file_duration', true );
-		if ( ! $enabled ) {
-			return false;
-		}
-
-		if ( $file ) {
-
-			// Include media functions if necessary
-			if ( ! function_exists( 'wp_read_audio_metadata' ) ) {
-				require_once( ABSPATH . 'wp-admin/includes/media.php' );
-			}
-
-			// translate file URL to local file path if possible
-			$file = $this->get_local_file_path( $file );
-
-			// Get file data (will only work for local files)
-			$data = wp_read_audio_metadata( $file );
-
-			$duration = false;
-
-			if ( $data ) {
-				if ( isset( $data['length_formatted'] ) && strlen( $data['length_formatted'] ) > 0 ) {
-					$duration = $data['length_formatted'];
-				} else {
-					if ( isset( $data['length'] ) && strlen( $data['length'] ) > 0 ) {
-						$duration = gmdate( 'H:i:s', $data['length'] );
-					}
-				}
-			}
-
-			if ( $data ) {
-				return apply_filters( 'ssp_file_duration', $duration, $file );
-			}
-
-		}
-
-		return false;
+		return $this->episode_repository->get_file_duration( $file );
 	}
 
 	/**

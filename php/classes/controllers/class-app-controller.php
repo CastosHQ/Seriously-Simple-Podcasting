@@ -256,7 +256,8 @@ class App_Controller {
 			$this->cpt_podcast_handler,
 			$this->castos_handler,
 			$this->admin_notices_handler,
-			$this->podping_handler
+			$this->podping_handler,
+			$this->episode_repository
 		);
 
 		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );

@@ -236,7 +236,7 @@ class Settings_Handler implements Service {
 						'class'       => 'import-castos',
 					),
 				);
-				$settings['import']['description'] = sprintf( __( 'Use this option for a one time import of your existing WordPress podcast to your Castos account. If you encounter any problems with this import, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ), '<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>' );
+				$settings['import']['description'] = sprintf( __( 'Use this option for a one time sync of your existing WordPress podcast to your Castos account. If you encounter any problems with it, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ), '<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>' );
 			}
 		}
 

@@ -895,6 +895,7 @@ HTML;
 
 	protected function need_admin_scripts( $hook ) {
 		return 'post.php' === $hook ||
+			   'post-new.php' === $hook ||
 			   strpos( $hook, 'ssp-onboarding' ) ||
 			   $this->is_ssp_admin_page() ||
 			   ( 'term.php' === $hook && Series_Handler::TAXONOMY === filter_input( INPUT_GET, 'taxonomy' ) );

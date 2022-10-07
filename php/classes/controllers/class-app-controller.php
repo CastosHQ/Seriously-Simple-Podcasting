@@ -1197,7 +1197,7 @@ HTML;
 		}
 
 		// The user has submitted the Import your podcast setting
-		$trigger_import_submit = __( 'Trigger import', 'seriously-simple-podcasting' );
+		$trigger_import_submit = __( 'Trigger sync', 'seriously-simple-podcasting' );
 		if ( $trigger_import_submit === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {

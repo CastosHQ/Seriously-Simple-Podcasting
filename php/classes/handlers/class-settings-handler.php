@@ -228,8 +228,8 @@ class Settings_Handler implements Service {
 				$settings['import']['fields']      = array(
 					array(
 						'id'          => 'podmotor_import',
-						'label'       => __( 'Import your podcast', 'seriously-simple-podcasting' ),
-						'description' => __( 'Import your podcast to your Castos hosting account.', 'seriously-simple-podcasting' ),
+						'label'       => __( 'Sync to Castos', 'seriously-simple-podcasting' ),
+						'description' => __( 'Sync your podcast to your Castos hosting account.', 'seriously-simple-podcasting' ),
 						'type'        => 'checkbox',
 						'default'     => '',
 						'callback'    => 'wp_strip_all_tags',

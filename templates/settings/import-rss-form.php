@@ -4,19 +4,22 @@
  * @var array $series
  * */
 ?>
-<p>If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
-	the RSS Feed in the form below and the plugin will import the episodes for you.</p>
+<h3><?php _e( 'Import External RSS Feed', 'seriously-simple-podcasting' ) ?></h3>
+
+<p><?php _e( 'If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
+	the RSS Feed in the form below and the plugin will import the episodes for you.', 'seriously-simple-podcasting' ) ?></p>
 <table class="form-table">
 	<tbody>
 	<tr>
-		<th scope="row">RSS feed</th>
+		<th scope="row"><?php _e( 'RSS feed', 'seriously-simple-podcasting' ) ?></th>
 		<td>
-			<input id="external_rss" name="external_rss" type="text" placeholder="https://externalservice.com/rss" value="" class="regular-text">
+			<input id="external_rss" name="external_rss" type="text" placeholder="https://externalservice.com/rss"
+				   value="" class="regular-text">
 		</td>
 	</tr>
 	<?php if ( count( $post_types ) > 1 ) { ?>
 		<tr>
-			<th scope="row">Post Type</th>
+			<th scope="row"><?php _e( 'Post Type', 'seriously-simple-podcasting' ) ?></th>
 			<td>
 				<select id="import_post_type" name="import_post_type">
 					<?php foreach ( $post_types as $post_type ) { ?>
@@ -28,7 +31,7 @@
 	<?php } ?>
 	<?php if ( count( $series ) >= 1 ) { ?>
 		<tr>
-			<th scope="row">Podcast</th>
+			<th scope="row"><?php _e( 'Podcast', 'seriously-simple-podcasting' ) ?></th>
 			<td>
 				<select id="import_series" name="import_series">
 					<?php foreach ( $series as $series_item ) { ?>
@@ -39,16 +42,18 @@
 		</tr>
 	<?php } ?>
 	<tr>
-		<th scope="row">Import Podcast Data</th>
+		<th scope="row"><?php _e( 'Import Podcast Data', 'seriously-simple-podcasting' ) ?></th>
 		<td>
 			<input id="import_podcast_data" type="checkbox" name="import_podcast_data" value="true" checked="checked">
 			<label for="import_podcast_data">
-				<span class="description">Import podcast data (Title, Description, Cover Art etc.).</span>
+				<span
+					class="description"><?php _e( 'Import podcast data (Title, Description, Cover Art etc.).', 'seriously-simple-podcasting' ) ?></span>
 			</label>
 		</td>
 	</tr>
 	</tbody>
 </table>
 <p class="submit">
-	<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="<?php echo esc_attr( __( 'Begin Import Now', 'seriously-simple-podcasting' ) ) ?>"/>
+	<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary"
+		   value="<?php echo esc_attr( __( 'Begin Import Now', 'seriously-simple-podcasting' ) ) ?>"/>
 </p>

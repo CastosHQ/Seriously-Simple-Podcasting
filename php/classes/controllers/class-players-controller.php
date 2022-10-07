@@ -233,7 +233,7 @@ class Players_Controller {
 
 		$podcast_display   = $this->get_podcast_display( $meta, $meta_sep );
 		$subscribe_display = $this->get_subscribe_display( $episode_id, $context, $meta_sep );
-		$meta_display      = $this->get_meta_display( $podcast_display, $subscribe_display );
+		$meta_display      = $this->get_meta_display( $podcast_display, $subscribe_display, $context );
 
 		return apply_filters('ssp_include_player_meta', $meta_display );
 	}
@@ -584,7 +584,7 @@ class Players_Controller {
 	 *
 	 * @return string
 	 */
-	public function get_meta_display( $podcast_display, $subscribe_display ) {
+	public function get_meta_display( $podcast_display, $subscribe_display, $context = '' ) {
 		$meta_display = '';
 
 		if ( ! $podcast_display && ! $subscribe_display ) {
@@ -597,7 +597,7 @@ class Players_Controller {
 
 			$ss_podcasting_player_meta_data_enabled = get_option( 'ss_podcasting_player_meta_data_enabled', 'on' );
 
-			if ( $ss_podcasting_player_meta_data_enabled && $ss_podcasting_player_meta_data_enabled == 'on' ) {
+			if ( 'on' === $ss_podcasting_player_meta_data_enabled || 'shortcode' === $context ) {
 				if ( ! empty( $podcast_display ) ) {
 					$podcast_display = '<p>' . $podcast_display . '</p>';
 					$podcast_display = apply_filters( 'ssp_include_episode_meta_data', $podcast_display );

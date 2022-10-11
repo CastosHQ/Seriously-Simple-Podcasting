@@ -11,8 +11,6 @@ Feature: SSP Plugin Import Settings
 		Then I can see that "Import" tab is active
 
 	Scenario: All import settings exist
-		And I can see "Use this option for a one time sync"
-		And I can see "Sync to Castos"
 		And I can see "If you have a podcast hosted on an external service"
 		And I can see "RSS feed"
 		And I can see "Post Type"

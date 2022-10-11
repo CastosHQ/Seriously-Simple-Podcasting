@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 6.0
 Requires PHP: 5.6
-Stable tag: 2.16.2
+Stable tag: 2.17.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.17.0 =
+* 2022-10-11
+* UPDATE SUMMARY: Compatibility improvements and fixes
+* [UPDATE] Sync to Castos improvements
+* [UPDATE] Feed import improvements
+* [UPDATE] Possibility to import podcast data (cover art, title, description etc) when importing an RSS
+* [FIX] Fixed file upload problem on Posts Post Type Episodes
+* [FIX] Fixed duplicated player meta fields in shortcode [podcast_episode]
+* [FIX] Fixed updating file metadata when locally hosted file is updated
 
 = 2.16.2 =
 * 2022-09-06

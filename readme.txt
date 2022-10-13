@@ -163,7 +163,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 2.17.0 =
 * 2022-10-11
-* UPDATE SUMMARY: Compatibility improvements and fixes
+* UPDATE SUMMARY: Sync and import improvements
 * [UPDATE] Sync to Castos improvements
 * [UPDATE] Feed import improvements
 * [UPDATE] Possibility to import podcast data (cover art, title, description etc) when importing an RSS

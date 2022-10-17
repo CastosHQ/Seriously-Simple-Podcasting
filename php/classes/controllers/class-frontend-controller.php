@@ -608,6 +608,10 @@ class Frontend_Controller {
 
 		global $post;
 
+		if( ! apply_filters( 'ssp_show_excerpt_player', true, $post, $excerpt, $content ) ){
+			return $excerpt;
+		}
+
 		if ( ! is_a( $post, 'WP_Post' ) ) {
 			return $excerpt;
 		}

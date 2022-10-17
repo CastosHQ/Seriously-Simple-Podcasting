@@ -9,7 +9,8 @@ use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
-use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator;
+use SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator;
+use SeriouslySimplePodcasting\Integrations\Woocommerce\WC_Memberships_Integrator;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
@@ -179,7 +180,6 @@ class App_Controller {
 	 */
 	public function __construct() {
 
-
 		if ( ! ssp_is_php_version_ok() ) {
 			return;
 		}
@@ -300,6 +300,9 @@ class App_Controller {
 
 		// Paid Memberships Pro integration
 		Memberpress_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
+
+		// Woocommerce Memberships integration
+		WC_Memberships_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
 	}
 
 	/**

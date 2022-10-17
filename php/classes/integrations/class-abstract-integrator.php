@@ -17,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Paid Memberships Pro controller
  *
- * @author Sergey Zakharchenko
+ * @author Sergiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * @since 2.9.3
  */

@@ -1,11 +1,10 @@
 <?php
 /**
- * MemberPress Integrator.
+ * WooCommerce Memberships Integrator.
  */
 
-namespace SeriouslySimplePodcasting\Integrations\Memberpress;
+namespace SeriouslySimplePodcasting\Integrations\Woocommerce;
 
-use MeprCptModel;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
@@ -25,27 +24,27 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package SeriouslySimplePodcasting
  * @since 2.16.0
  */
-class Memberpress_Integrator extends Abstract_Integrator {
+class WC_Memberships_Integrator extends Abstract_Integrator {
 
 	use Singleton;
 
-	const ADD_LIST_OPTION = 'ssp_memberpress_add_subscribers';
+	const ADD_LIST_OPTION = 'ssp_wcmps_add_subscribers';
 
-	const REVOKE_LIST_OPTION = 'ssp_memberpress_revoke_subscribers';
+	const REVOKE_LIST_OPTION = 'ssp_wcmps_revoke_subscribers';
 
-	const EVENT_BULK_SYNC_SUBSCRIBERS = 'ssp_memberpress_bulk_sync_subscribers';
+	const EVENT_BULK_SYNC_SUBSCRIBERS = 'ssp_wcmps_bulk_sync_subscribers';
 
-	const EVENT_ADD_SUBSCRIBERS = 'ssp_memberpress_add_subscribers';
+	const EVENT_ADD_SUBSCRIBERS = 'ssp_wcmps_add_subscribers';
 
-	const EVENT_REVOKE_SUBSCRIBERS = 'ssp_memberpress_revoke_subscribers';
+	const EVENT_REVOKE_SUBSCRIBERS = 'ssp_wcmps_revoke_subscribers';
 
-	const SINGLE_SYNC_DATA_OPTION = 'ssp_memberpress_single_sync_data';
+	const SINGLE_SYNC_DATA_OPTION = 'ssp_wcmps_single_sync_data';
 
-	const SINGLE_SYNC_EVENT = 'ssp_memberpress_single_sync';
+	const SINGLE_SYNC_EVENT = 'ssp_wcmps_single_sync';
 
 
 	/**
-	 * Class Paid_Memberships_Pro_Integrator constructor.
+	 * Class WC_Memberships_Integrator constructor.
 	 *
 	 * @param Feed_Handler $feed_handler
 	 * @param Castos_Handler $castos_handler
@@ -54,19 +53,23 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 */
 	public function init( $feed_handler, $castos_handler, $logger, $notices_handler ) {
 
-		if ( ! $this->check_dependencies( array( 'MeprUser', 'MeprCptModel', 'MeprProduct', 'MeprDb' ) ) ) {
-			return;
-		}
-
 		$this->feed_handler    = $feed_handler;
 		$this->castos_handler  = $castos_handler;
 		$this->logger          = $logger;
 		$this->notices_handler = $notices_handler;
 
+		add_action( 'plugins_loaded', array( $this, 'late_init' ) );
+	}
+
+	public function late_init(){
+		if ( !  $this->check_dependencies( array( 'WC_Memberships_Loader' ) ) ) {
+			return;
+		}
+
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
 		} else {
-			$integration_enabled = ssp_get_option( 'enable_memberpress_integration' );
+			$integration_enabled = ssp_get_option( 'enable_wcmps_integration' );
 			if ( $integration_enabled ) {
 				$this->protect_private_series();
 			}
@@ -74,7 +77,6 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 		$this->init_subscribers_sync();
 	}
-
 
 	/**
 	 * Inits subscribers sync.
@@ -118,10 +120,10 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	protected function init_bulk_sync_process() {
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
 		add_filter( 'allowed_options', function ( $allowed_options ) {
-			// Option ss_podcasting_is_memberpress_integration is just a marker that PMPro integration settings have been saved.
+			// Option ss_podcasting_is_wcmps_integration is just a marker that integration settings have been saved.
 			// If so, we can do the sync magic.
 			if ( isset( $allowed_options['ss_podcasting'] ) ) {
-				$key = array_search( 'ss_podcasting_is_memberpress_integration', $allowed_options['ss_podcasting'] );
+				$key = array_search( 'ss_podcasting_is_wcmps_integration', $allowed_options['ss_podcasting'] );
 				if ( false !== $key ) {
 					unset( $allowed_options['ss_podcasting'][ $key ] );
 					$this->schedule_bulk_sync_subscribers();
@@ -146,15 +148,15 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * So, we need to listen the members table update.
 	 * */
 	protected function init_single_sync_subscriber() {
-		$this->listen_members_table_update();
+		$this->listen_user_membership_update();
 		$this->listen_single_sync();
 	}
 
 	/**
 	 * Do single sync as the separate event to not interfere with the DB update process.
-	 * @see listen_members_table_update()
-	 *
 	 * @return void
+	 * @see listen_user_membership_update()
+	 *
 	 */
 	protected function listen_single_sync() {
 		add_action( self::SINGLE_SYNC_EVENT, function () {
@@ -197,75 +199,75 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 *
 	 * @return void
 	 */
-	protected function listen_members_table_update(){
-		add_filter( 'query', function ( $query ) {
-
-			// We don't listen to INSERT because on insert they don't setup the memberships, it happens later on UPDATE
-			if ( ! $this->is_update_query( $query ) ) {
-				return $query;
+	protected function listen_user_membership_update() {
+		/**
+		 * @param \WC_Memberships_Membership_Plan $plan
+		 * @param array $user_data {
+		 *     User data.
+		 *
+		 *  @type int $user_id User ID.
+		 *  @type int $user_membership_id User membership ID.
+		 *  @type bool $is_update Is it update or create.
+		 * }
+		 * */
+		add_action( 'wc_memberships_user_membership_saved', function ( $plan, $user_data ) {
+			$user_membership_id = isset( $user_data['user_membership_id'] ) ? $user_data['user_membership_id'] : '';
+			if ( empty( $user_membership_id ) ) {
+				return;
 			}
 
-			/**
-			 * @var \MeprDb $mepr_db
-			 * */
-			$mepr_db = \MeprDb::fetch();
+			$user_membership = $this->get_user_membership( $user_membership_id );
 
-			// Does current query updates members table?
-			if ( false === strpos( $query, $mepr_db->members ) ) {
-				return $query;
+			if ( 'active' === $user_membership->get_status() ) {
+				$this->prepare_single_sync( $user_data['user_id'], $user_membership->get_plan_id(), null );
+			} else {
+				$this->prepare_single_sync( $user_data['user_id'], null, $user_membership->get_plan_id() );
 			}
 
-			if ( ! $user_id = $this->get_user_id_by_query( $query ) ) {
-				$this->logger->log( __METHOD__ . sprintf( ' Could not get user id by query: %s', $user_id ) );
+		}, 10, 2 );
 
-				return $query;
-			}
-
-
-			// And now we can calculate the changes and schedule the sync process.
-			$old_members_data = $mepr_db->get_one_record( $mepr_db->members, array( 'user_id' => $user_id ) );
-
-			$old_memberships = $this->get_memberships( $old_members_data );
-			$new_memberships = $this->get_user_memberships( $user_id );
-
-			if ( $old_memberships === $new_memberships ) {
-				return $query;
-			}
-
-			$revoked_memberships = array_diff( $old_memberships, $new_memberships );
-			$added_memberships   = array_diff( $new_memberships, $old_memberships );
-
-			$single_sync_data             = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
-			$single_sync_data['users'][ $user_id ] = array(
-				'added_memberships'   => $added_memberships,
-				'revoked_memberships' => $revoked_memberships,
-			);
-			$single_sync_data['attempts'] = 0;
-			update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_data, false );
-			$this->schedule_single_sync( 0 );
-
-			return $query;
+		/**
+		 * @param \WC_Memberships_User_Membership $user_membership
+		 * */
+		add_action( 'wc_memberships_user_membership_deleted', function ( $user_membership ) {
+			$this->prepare_single_sync( $user_membership->user_id, null, $user_membership->get_plan_id() );
 		} );
 	}
 
 	/**
-	 * @param string $query
+	 * @param $user_membership_id
 	 *
-	 * @return int|false
+	 * @return \WC_Memberships_User_Membership|null
 	 */
-	protected function get_user_id_by_query( $query ) {
-		preg_match( "/`user_id`='(\d*)/", $query, $matches );
-
-		return ( empty( $matches[1] ) ) ? false : $matches[1];
+	protected function get_user_membership( $user_membership_id ) {
+		return wc_memberships()->get_user_memberships_instance()->get_user_membership( $user_membership_id );
 	}
 
 	/**
-	 * @param string $query
+	 * @param int $user_id
+	 * @param int $added_membership
+	 * @param int $revoked_membership
 	 *
-	 * @return bool
+	 * @return void
 	 */
-	protected function is_update_query( $query ) {
-		return false !== strpos( $query, 'UPDATE' );
+	protected function prepare_single_sync( $user_id, $added_membership, $revoked_membership ) {
+		$single_sync_data = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
+
+		$added_memberships = isset( $single_sync_data['users'][ $user_id ]['added_memberships'] ) ?
+			$single_sync_data['users'][ $user_id ]['added_memberships'] : array();
+
+		$revoked_memberships = isset( $single_sync_data['users'][ $user_id ]['revoked_memberships'] ) ?
+			$single_sync_data['users'][ $user_id ]['revoked_memberships'] : array();
+
+		$single_sync_data['users'][ $user_id ] = array(
+			'added_memberships'   => array_unique( array_merge( $added_memberships, array( $added_membership ) ) ),
+			'revoked_memberships' => array_unique( array_merge( $revoked_memberships, array( $revoked_membership ) ) ),
+		);
+
+		$single_sync_data['attempts'] = 0;
+
+		update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_data, false );
+		$this->schedule_single_sync( 0 );
 	}
 
 	/**
@@ -275,7 +277,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 *
 	 * @return void
 	 */
-	protected function schedule_single_sync( $delay = 5 ){
+	protected function schedule_single_sync( $delay = 5 ) {
 		if ( ! wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) {
 			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::SINGLE_SYNC_EVENT );
 		}
@@ -296,29 +298,12 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	}
 
 	/**
-	 * @param object $member_data
-	 *
-	 * @return array
-	 */
-	protected function get_memberships( $member_data ) {
-		$memberships = isset( $member_data->memberships ) ? $member_data->memberships : '';
-
-		if ( strpos( $memberships, ',' ) ) {
-			$memberships = explode( ',', $memberships );
-		} else {
-			$memberships = array( $memberships );
-		}
-
-		return array_filter( array_map( 'intval', $memberships ) );
-	}
-
-	/**
 	 * Gets users series map.
 	 *
 	 * @return array
 	 */
 	protected function get_users_series_map() {
-		return get_option( 'ss_memberpress_users_series_map', array() );
+		return get_option( 'ss_wcmps_users_series_map', array() );
 	}
 
 
@@ -330,7 +315,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * @return void
 	 */
 	protected function update_users_series_map( $map ) {
-		update_option( 'ss_memberpress_users_series_map', $map, false );
+		update_option( 'ss_wcmps_users_series_map', $map, false );
 	}
 
 	/**
@@ -341,14 +326,26 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	protected function generate_users_series_map() {
 		$map = array();
 
-		$membership_users = $this->get_membership_users();
+		$user_memberships = get_posts(
+			array(
+				'post_type'   => 'wc_user_membership',
+				'numberposts' => - 1,
+				'post_status' => 'wcm-active',
+				'nopaging'    => true,
+			)
+		);
 
-		foreach ( $membership_users as $user ) {
-			$series = array();
-			foreach ( $user['memberships'] as $membership_id ) {
-				$series = array_merge( $series, $this->get_series_ids_by_level( $membership_id ) );
+		foreach ( $user_memberships as $user_membership ) {
+			$user       = get_user_by( 'id', $user_membership->post_author );
+			$membership = get_post( $user_membership->post_parent );
+			if ( ! $user || ! $membership ) {
+				continue;
 			}
-			$map[ $user['ID'] ] = array_unique( $series );
+
+			$podcast_ids = isset( $map[ $user->ID ] ) ? $map[ $user->ID ] : array();
+			$add_podcasts_ids = $this->get_series_ids_by_level( $membership->ID );
+
+			$map[ $user->ID ] = array_unique( array_merge( $podcast_ids, $add_podcasts_ids ) );
 		}
 
 		return $map;
@@ -358,36 +355,8 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	/**
 	 * @return string
 	 */
-	protected function get_successfully_finished_notice(){
-		return __( 'MemberPress data successfully synchronized!', 'seriously-simple-podcasting' );
-	}
-
-
-	/**
-	 * Gets IDs of all users who have any membership level.
-	 *
-	 * @return array
-	 */
-	protected function get_membership_users() {
-
-		$params = array(
-			'status' => 'active',
-		);
-
-		$list_table = \MeprUser::list_table( 'registered', 'DESC', 0, '', 'any', 0, $params );
-
-		if ( empty( $list_table['results'] ) ) {
-			return array();
-		}
-
-		$membership_users = array_map( function ( $user ) {
-			return array(
-				'ID'          => intval( $user->ID ),
-				'memberships' => $this->get_memberships( $user ),
-			);
-		}, $list_table['results'] );
-
-		return $membership_users;
+	protected function get_successfully_finished_notice() {
+		return __( 'WC Memberships data successfully synchronized!', 'seriously-simple-podcasting' );
 	}
 
 
@@ -408,7 +377,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		add_action( 'ssp_before_feed', array( $this, 'protect_feed_access' ) );
 
 		// Protect content.
-		add_filter( 'mepr-last-chance-to-block-content', array( $this, 'protect_content' ), 10, 2 );
+		add_filter( 'ssp_show_excerpt_player', array( $this, 'hide_player_from_excerpt' ), 10, 2 );
 	}
 
 	/**
@@ -437,45 +406,16 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	}
 
 	/**
-	 * This code was partially copied and modified from LLMS_Template_Loader::template_loader()
+	 * For WC Memberships, page content is protected by the plugin itself, so we don't need to protect it.
+	 * The only content which we need to hide, is player on excerpts.
 	 * */
-	public function protect_content( $is_protected, $current_post ) {
+	public function hide_player_from_excerpt( $show, $post ) {
 
-		// We need to protect series and their episodes
-		$current_series = $this->get_current_page_related_series( $current_post );
-
-		if ( empty( $current_series ) ) {
-			return $is_protected;
+		if ( ! current_user_can( 'wc_memberships_view_restricted_post_content', $post->ID ) ) {
+			return false;
 		}
 
-		$protected_series = array();
-
-		// We need to protect only private series
-		foreach ( $current_series as $series ) {
-			if ( $this->is_series_protected_in_castos( $series->term_id ) ) {
-				$protected_series[] = $series;
-			}
-		}
-
-		if ( empty( $protected_series ) ) {
-			return $is_protected;
-		}
-
-		// Now we need to check if current user has access to all protected post series
-		$user = wp_get_current_user();
-
-		if ( $this->is_admin_user( $user ) ) {
-			return $is_protected;
-		}
-
-		foreach ( $protected_series as $series ) {
-			$series_level_ids = $this->get_series_level_ids( $series->term_id );
-			if ( ! $this->has_access( $user, $series_level_ids ) ) {
-				return true;
-			}
-		}
-
-		return $is_protected;
+		return $show;
 	}
 
 
@@ -496,21 +436,17 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			return false;
 		}
 
-		$user_level_ids = $this->get_user_memberships( $user->ID );
+		$user_active_memberships = wc_memberships_get_user_active_memberships( $user->ID );
 
-		return count( $user_level_ids ) && count( array_intersect( $user_level_ids, $required_level_ids ) );
-	}
+		if ( empty( $user_active_memberships ) ) {
+			return false;
+		}
 
+		$user_membership_ids = array_map( function( $user_membership ){
+			return $user_membership->id;
+		}, $user_active_memberships );
 
-	/**
-	 * @param int $user_id
-	 *
-	 * @return array
-	 */
-	protected function get_user_memberships( $user_id ){
-		$member_data = \MeprUser::member_data( $user_id, [ 'memberships' ] );
-
-		return $this->get_memberships( $member_data );
+		return count( $user_membership_ids ) && count( array_intersect( $user_membership_ids, $required_level_ids ) );
 	}
 
 
@@ -522,7 +458,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * @return int[]
 	 */
 	protected function get_series_level_ids( $term_id ) {
-		$levels    = (array) ssp_get_option( sprintf( 'series_%s_memberpress_levels', $term_id ), null );
+		$levels    = (array) ssp_get_option( sprintf( 'series_%s_wcmps_levels', $term_id ), null );
 		$level_ids = array();
 		foreach ( $levels as $level ) {
 			$level_ids[] = (int) str_replace( 'lvl_', '', $level );
@@ -552,7 +488,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		} else {
 			if ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) &&
 			     ( $this->bulk_update_started() || wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) ) {
-				$this->notices_handler->add_flash_notice( __( 'Synchronizing MemberPress data with Castos...', 'seriously-simple-podcasting' ) );
+				$this->notices_handler->add_flash_notice( __( 'Synchronizing WooCommerce Memberships data with Castos...', 'seriously-simple-podcasting' ) );
 			}
 		}
 
@@ -579,21 +515,21 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 */
 	protected function get_integration_settings() {
 		$settings = array(
-			'id'          => 'memberpress',
-			'title'       => __( 'MemberPress', 'seriously-simple-podcasting' ),
+			'id'          => 'wc_memberships',
+			'title'       => __( 'Woocommerce Memberships', 'seriously-simple-podcasting' ),
 			'description' => __( 'Select which Podcast you would like to be available only
-								to Members via MemberPress.', 'seriously-simple-podcasting' ),
+								to Members via Woocommerce Memberships.', 'seriously-simple-podcasting' ),
 			'fields'      => array(
 				array(
-					'id'   => 'is_memberpress_integration',
+					'id'   => 'is_wcmps_integration',
 					'type' => 'hidden',
 				),
 				array(
-					'id'          => 'enable_memberpress_integration',
+					'id'          => 'enable_wcmps_integration',
 					'type'        => 'checkbox',
 					'default'     => '',
 					'label'       => __( 'Enable integration', 'seriously-simple-podcasting' ),
-					'description' => __( 'Enable MemberPress integration', 'seriously-simple-podcasting' ),
+					'description' => __( 'Enable Woocommerce Memberships integration', 'seriously-simple-podcasting' ),
 				),
 			),
 		);
@@ -608,7 +544,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		$levels = $this->get_membership_levels();
 
 		if ( ! $levels ) {
-			$levels_url              = admin_url( 'edit.php?post_type=memberpressproduct' );
+			$levels_url              = admin_url( 'edit.php?post_type=wc_membership_plan' );
 			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up
 										memberships</a> first.', 'seriously-simple-podcasting' ), $levels_url );
 
@@ -618,12 +554,12 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		$checkbox_options = array();
 
 		foreach ( $levels as $level ) {
-			$checkbox_options[ 'lvl_' . $level->ID ] = sprintf( 'Require %s to access', $level->post_title );
+			$checkbox_options[ 'lvl_' . $level->id ] = sprintf( 'Require %s to access', $level->name );
 		}
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(
-				'id'          => sprintf( 'series_%s_memberpress_levels', $series_item->term_id ),
+				'id'          => sprintf( 'series_%s_wcmps_levels', $series_item->term_id ),
 				'label'       => $series_item->name,
 				'type'        => 'select2_multi',
 				'options'     => $checkbox_options,
@@ -645,12 +581,12 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * @return bool
 	 */
 	protected function needs_extended_integration_settings() {
-		if ( ! ssp_get_option( 'enable_memberpress_integration' ) ) {
+		if ( ! ssp_get_option( 'enable_wcmps_integration' ) ) {
 			return false;
 		}
 
-		$is_integration_page   = 'memberpress' === filter_input( INPUT_GET, 'integration' );
-		$is_integration_update = 'memberpress' === filter_input( INPUT_POST, 'ssp_integration' );
+		$is_integration_page   = 'wc_memberships' === filter_input( INPUT_GET, 'integration' );
+		$is_integration_update = 'wc_memberships' === filter_input( INPUT_POST, 'ssp_integration' );
 
 		if ( ! $is_integration_page && ! $is_integration_update ) {
 			return false;
@@ -685,9 +621,9 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	/**
 	 * Gets all possible membership levels.
 	 *
-	 * @return array
+	 * @return \WC_Memberships_Membership_Plan[]
 	 */
 	protected function get_membership_levels() {
-		return MeprCptModel::all( 'MeprProduct' );
+		return wc_memberships_get_membership_plans();
 	}
 }

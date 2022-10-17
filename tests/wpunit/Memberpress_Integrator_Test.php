@@ -1,10 +1,7 @@
 <?php
 
 use Codeception\TestCase\WPTestCase;
-use SeriouslySimplePodcasting\Controllers\Feed_Controller;
-use SeriouslySimplePodcasting\Handlers\Feed_Handler;
-use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator;
-use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator;
 
 class Memberpress_Integrator_Test extends WPTestCase {
 	/**
@@ -21,7 +18,7 @@ class Memberpress_Integrator_Test extends WPTestCase {
 	}
 
 	/**
-	 * @covers \SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator::get_memberships()
+	 * @covers \SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator::get_memberships()
 	 */
 	public function test_get_memberships() {
 

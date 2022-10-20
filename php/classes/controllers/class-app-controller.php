@@ -1144,7 +1144,7 @@ HTML;
 					})})(jQuery);
 				</script>", wp_create_nonce( 'ssp_rated' ) );
 			} else {
-				$footer_text = sprintf( __( '%1$sThank you for publishing with %2$sSeriously Simple Podcasting%3$s.%4$s', 'seriously-simple-podcasting' ), '<span id="footer-thankyou">', '<a href="http://www.seriouslysimplepodcasting.com/" target="_blank">', '</a>', '</span>' );
+				$footer_text = sprintf( __( '%1$sThank you for publishing with %2$sSeriously Simple Podcasting%3$s.%4$s', 'seriously-simple-podcasting' ), '<span id="footer-thankyou">', '<a href="https://castos.com/seriously-simple-podcasting/" target="_blank">', '</a>', '</span>' );
 			}
 
 		}

@@ -6,7 +6,7 @@ When contributing please ensure you follow the guidelines below so that we can k
 
 __Note:__
 
-GitLab is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](http://wordpress.org/support/plugin/seriously-simple-podcasting) instead for general support, but make sure to read through the [documentation](http://www.seriouslysimplepodcasting.com/documentation/) first.
+GitLab is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting/) instead for general support, but make sure to read through the [documentation](https://support.castos.com/) first.
 
 ## Getting Started
 
@@ -37,7 +37,7 @@ Translations for Seriously Simple Podcasting are managed directly on WordPress.o
 
 * [General GitLab documentation](https://docs.gitlab.com/)
 * [GitLab merge request documentation](https://docs.gitlab.com/ee/user/project/merge_requests/)
-* [Seriously Simple Podcasting Docs](http://www.seriouslysimplepodcasting.com/)
+* [Seriously Simple Podcasting Docs](https://castos.com/seriously-simple-podcasting/)
 * [Seriously Simple Podcasting Support](http://wordpress.org/support/plugin/seriously-simple-podcasting)
 
 If you enjoy using Seriously Simple Podcasting and find value in the plugin then please [leave a review](https://wordpress.org/support/view/plugin-reviews/seriously-simple-podcasting?rate=5#postform) to help promote continued development.

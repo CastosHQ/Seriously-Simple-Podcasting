@@ -751,7 +751,7 @@ class Settings_Controller extends Controller {
 			if ( strpos( $sapi_type, 'fcgi' ) !== false ) {
 				$html .= '<br/><div class="update-nag">';
 				$html .= '<p>' . sprintf( __( 'It looks like your server has FastCGI enabled, which will prevent the feed password protection feature from working. You can fix this by following %1$sthis quick guide%2$s.', 'seriously-simple-podcasting' ),
-						'<a href="http://www.seriouslysimplepodcasting.com/documentation/why-does-the-feed-password-protection-feature-not-work/" target="_blank">', '</a>' ) . '</p>';
+						'<a href="https://support.castos.com/article/147-why-wont-the-password-i-set-for-my-rss-feed-in-wordpress-save" target="_blank">', '</a>' ) . '</p>';
 				$html .= '</div>';
 			}
 		}

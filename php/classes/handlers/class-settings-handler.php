@@ -1140,7 +1140,7 @@ class Settings_Handler implements Service {
 				'id'          => 'consume_order',
 				'label'       => __( 'Show Type', 'seriously-simple-podcasting' ),
 				// translators: placeholders are for help document link
-				'description' => sprintf( __( 'The order your podcast episodes will be listed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://www.seriouslysimplepodcasting.com/ios-11-podcast-tags/' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
+				'description' => sprintf( __( 'The order your podcast episodes will be listed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://castos.com/ios-11-podcast-tags/' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 				'type'        => 'select',
 				'options'     => array(
 					''         => __( 'Please Select', 'seriously-simple-podcasting' ),

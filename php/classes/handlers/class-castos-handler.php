@@ -315,15 +315,14 @@ class Castos_Handler implements Service {
 
 		if ( ! isset( $response_object->status ) || ! $response_object->status || empty( $response_object->success ) ) {
 			$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
-			$this->logger->log( sprintf( 'Response: %s', $response_object->message ) );
 			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
 
 			return $this->response;
 		}
 
-		$this->logger->log( 'Pocast episode successfully uploaded to Castos with episode id ' . $response_object->episode->id );
+		$this->logger->log( 'Podcast episode successfully uploaded to Castos with episode id ' . $response_object->episode->id );
 		$this->update_response( 'status', 'success' );
-		$this->update_response( 'message', 'Pocast episode successfully uploaded to Castos' );
+		$this->update_response( 'message', 'Podcast episode successfully uploaded to Castos' );
 		$this->update_response( 'episode_id', $response_object->episode->id );
 
 		return $this->response;
@@ -497,7 +496,7 @@ class Castos_Handler implements Service {
 		}
 
 		$this->update_response( 'status', 'success' );
-		$this->update_response( 'message', 'Pocast episode data successfully uploaded to Castos' );
+		$this->update_response( 'message', 'Podcast episode data successfully uploaded to Castos' );
 
 		return $this->response;
 	}

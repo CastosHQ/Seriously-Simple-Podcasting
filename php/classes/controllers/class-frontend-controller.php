@@ -1145,27 +1145,22 @@ class Frontend_Controller {
 	 *
 	 * @param  string $attachment URL of resource
 	 *
-	 * @return mixed MIME type on success, false on failure
+	 * @return string|false MIME type on success, false on failure
 	 */
 	public function get_attachment_mimetype( $attachment = '' ) {
-		// Let's hash the URL to ensure that we don't get any illegal chars that might break the cache.
 		$key = md5( $attachment );
-		if ( $attachment ) {
-			// Do we have anything in the cache for this?
-			$mime = wp_cache_get( $key, 'mime-type' );
-			if ( $mime === false ) {
-				// Get the ID
-				$id = $this->get_attachment_id_from_url( $attachment );
-				// Get the MIME type
-				$mime = get_post_mime_type( $id );
-				// Set the cache
-				wp_cache_set( $key, $mime, 'mime-type', DAY_IN_SECONDS );
-			}
-
-			return $mime;
+		if ( ! $attachment ) {
+			return false;
 		}
 
-		return false;
+		$mime = wp_cache_get( $key, 'mime-type' );
+		if ( ! $mime ) {
+			$filetype = wp_check_filetype( $attachment );
+			$mime     = isset( $filetype['type'] ) ? $filetype['type'] : false;
+			wp_cache_set( $key, $mime, 'mime-type', DAY_IN_SECONDS );
+		}
+
+		return $mime;
 	}
 
 	/**

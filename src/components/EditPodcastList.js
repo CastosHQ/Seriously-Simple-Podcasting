@@ -18,7 +18,7 @@ class EditPodcastList extends Component {
 
 		const {attributes, setAttributes} = this.props;
 
-		const {featuredImage, featuredImageSize, excerpt, player} = attributes;
+		const {featuredImage, featuredImageSize, excerpt, player, playerBelowExcerpt} = attributes;
 
 
 		const toggleFeaturedImage = () => {
@@ -36,6 +36,12 @@ class EditPodcastList extends Component {
 		const toggleExcerpt = () => {
 			setAttributes({
 				excerpt: !excerpt
+			});
+		}
+
+		const toggleShowPlayerBelowExcerpt = () => {
+			setAttributes({
+				playerBelowExcerpt: !playerBelowExcerpt
 			});
 		}
 
@@ -101,6 +107,19 @@ class EditPodcastList extends Component {
 						/>
 					</PanelRow>
 				</PanelBody>
+				{player && excerpt && <PanelBody key="show-player-below-excerpt" title={__('Show Player Below Excerpt', 'seriously-simple-podcasting')}>
+					<PanelRow>
+						<label htmlFor="player-below-excerpt">
+							{__('Show Player Below Excerpt', 'seriously-simple-podcasting')}
+						</label>
+						<FormToggle
+							id="player-below-excerpt"
+							label={__('Show Player Below Excerpt', 'seriously-simple-podcasting')}
+							checked={playerBelowExcerpt}
+							onChange={toggleShowPlayerBelowExcerpt}
+						/>
+					</PanelRow>
+				</PanelBody>}
 			</InspectorControls>
 		);
 

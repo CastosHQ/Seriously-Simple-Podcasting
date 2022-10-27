@@ -143,6 +143,10 @@ class Castos_Blocks extends Controller {
 						'type'    => 'boolean',
 						'default' => false,
 					),
+					'playerBelowExcerpt' => array(
+						'type'    => 'boolean',
+						'default' => false,
+					),
 				),
 				'render_callback' => array(
 					$this,

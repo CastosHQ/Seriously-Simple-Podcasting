@@ -1389,11 +1389,14 @@ class Frontend_Controller {
 								<?php echo ssp_episode_image( $episode->ID, $attributes['featuredImageSize']); ?>
 							</a>
 						<?php } ?>
-						<?php if ( ! empty( $player ) ) { ?>
+						<?php if ( $player && empty( $attributes['playerBelowExcerpt'] ) ) { ?>
 							<p><?php echo $player; ?></p>
 						<?php } ?>
 						<?php if ( !empty( $attributes['excerpt'] ) ) { ?>
 							<p><?php echo get_the_excerpt(); ?></p>
+						<?php } ?>
+						<?php if ( $player && ! empty( $attributes['playerBelowExcerpt'] ) ) { ?>
+							<p><?php echo $player; ?></p>
 						<?php } ?>
 					</div>
 				</article>

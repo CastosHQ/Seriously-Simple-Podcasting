@@ -147,6 +147,10 @@ registerBlockType('seriously-simple-podcasting/podcast-list', {
 			type: 'boolean',
 			default: false,
 		},
+		playerBelowExcerpt: {
+			type: 'boolean',
+			default: false,
+		}
 	},
 	edit: EditPodcastList
 });

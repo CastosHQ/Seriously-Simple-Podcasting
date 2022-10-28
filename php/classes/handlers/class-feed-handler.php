@@ -452,9 +452,7 @@ class Feed_Handler implements Service {
 		}
 
 		// Here we'll sanitize the image, if it's not valid - it will be just empty string.
-		$image = apply_filters( 'ssp_feed_image', $image, $series_id );
-
-		return $image;
+		return apply_filters( 'ssp_feed_image', $image, $series_id );
 	}
 
 	/**

@@ -21,18 +21,27 @@ class Images_Handler implements Service {
 	 * @return bool
 	 */
 	public function is_feed_image_valid( $image_url ) {
-		$image_id = attachment_url_to_postid( $image_url );
+		$key = md5( $image_url );
+		$valid = wp_cache_get( $key, 'valid' );
 
-		$image_att = $image_id ? wp_get_attachment_image_src( $image_id, 'full' ) : null;
-		$min_size  = apply_filters( 'ssp_episode_min_image_size', self::MIN_FEED_IMAGE_SIZE );
-		$max_size  = apply_filters( 'ssp_episode_min_image_size', self::MAX_FEED_IMAGE_SIZE );
-		if ( empty( $image_att ) ) {
-			return false;
+		if ( false === $valid ) {
+
+			$image_id = attachment_url_to_postid( $image_url );
+
+			$image_att = $image_id ? wp_get_attachment_image_src( $image_id, 'full' ) : null;
+			$min_size  = apply_filters( 'ssp_episode_min_image_size', self::MIN_FEED_IMAGE_SIZE );
+			$max_size  = apply_filters( 'ssp_episode_min_image_size', self::MAX_FEED_IMAGE_SIZE );
+			if ( empty( $image_att ) ) {
+				$valid = false;
+			} else {
+				$width  = isset( $image_att[1] ) ? $image_att[1] : 0;
+				$height = isset( $image_att[2] ) ? $image_att[2] : 0;
+				$valid = $width === $height && $width >= $min_size && $width <= $max_size;
+			}
+			wp_cache_set( $key, $valid, 'valid', WEEK_IN_SECONDS );
 		}
-		$width  = isset( $image_att[1] ) ? $image_att[1] : 0;
-		$height = isset( $image_att[2] ) ? $image_att[2] : 0;
 
-		return $width === $height && $width >= $min_size && $width <= $max_size;
+		return $valid;
 	}
 
 

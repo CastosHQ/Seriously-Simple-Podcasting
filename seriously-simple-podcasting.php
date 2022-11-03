@@ -37,9 +37,6 @@ if ( ! defined( 'SSP_CASTOS_EPISODES_URL' ) ) {
 if ( ! defined( 'SSP_CPT_PODCAST' ) ) {
 	define( 'SSP_CPT_PODCAST', 'podcast' );
 }
-if ( ! defined( 'SSP_DOMAIN' ) ) {
-	define( 'SSP_DOMAIN', 'seriously-simple-podcasting' );
-}
 
 require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 

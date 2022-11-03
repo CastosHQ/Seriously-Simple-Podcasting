@@ -91,7 +91,7 @@ class Onboarding_Controller {
 	 * @param callable $callable
 	 */
 	protected function register_page( $title, $slug, $callable ) {
-		add_submenu_page( '', __( $title, SSP_DOMAIN ), __( $title, SSP_DOMAIN ), Roles_Handler::MANAGE_PODCAST, $slug, $callable );
+		add_submenu_page( '', __( $title, 'seriously-simple-podcasting' ), __( $title, 'seriously-simple-podcasting' ), Roles_Handler::MANAGE_PODCAST, $slug, $callable );
 	}
 
 	public function step_1() {

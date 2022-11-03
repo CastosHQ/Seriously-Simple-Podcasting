@@ -107,6 +107,31 @@ textarea#episode_embed_code {
   margin: 5px 15px 2px;
   padding: 1px 12px; }
 
+.ssp-dynamo {
+  background: #FEF9D7;
+  color: #AF6C09;
+  padding: 8px 16px;
+  margin-top: 10px;
+  display: inline-block;
+  border-radius: 5px;
+  font-weight: bold; }
+  .ssp-dynamo a {
+    background: #FDE669;
+    display: inline-block;
+    padding: 5px 8px 4px 11px;
+    margin-left: 4px;
+    border-radius: 5px;
+    color: #AF6C09;
+    text-decoration: none;
+    transition: .3s;
+    outline: none; }
+    .ssp-dynamo a:hover {
+      opacity: .8; }
+    .ssp-dynamo a:focus {
+      box-shadow: none; }
+  .ssp-dynamo .dashicons {
+    font-size: 1.1em; }
+
 .ssp-onboarding {
   padding: 10px;
   width: 700px;

@@ -1028,7 +1028,8 @@ class Settings_Handler implements Service {
 				'id'          => 'data_image',
 				'label'       => __( 'Cover Image', 'seriously-simple-podcasting' ),
 				'description' => __( 'The podcast cover image must be between 1400x1400px and 3000x3000px in size and either .jpg or .png file format', 'seriously-simple-podcasting' ) .
-				                 '. ' . __( 'Your image should be perfectly square in order for it to display properly in podcasting directories and mobile apps.', 'seriously-simple-podcasting' ),
+				                 '. ' . __( 'Your image should be perfectly square in order for it to display properly in podcasting directories and mobile apps.', 'seriously-simple-podcasting' ) . '<br />' .
+								  '<span class="ssp-dynamo">' . sprintf( __( 'Create a custom cover with our free tool %s' ), '<a target="_blank" href="https://dynamo.castos.com/">Dynamo<span class="dashicons dashicons-external"></span></a>') . '</span>',
 				'type'        => 'image',
 				'default'     => '',
 				'placeholder' => '',

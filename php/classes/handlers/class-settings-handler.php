@@ -1083,7 +1083,7 @@ class Settings_Handler implements Service {
 				'class'       => 'large-text',
 				'fields'      => array(
 					array(
-						'id'          => 'url',
+						'id'          => 'title',
 						'type'        => 'text',
 						'placeholder' => __( 'e.g. Donate to the show', 'seriously-simple-podcasting' ),
 						'class'       => 'large-text',
@@ -1094,7 +1094,7 @@ class Settings_Handler implements Service {
 						),
 					),
 					array(
-						'id'          => 'title',
+						'id'          => 'url',
 						'type'        => 'text',
 						'placeholder' => __( 'e.g. https://buymeacoffee.com', 'seriously-simple-podcasting' ),
 						'class'       => 'large-text',

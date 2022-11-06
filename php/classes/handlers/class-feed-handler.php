@@ -546,6 +546,7 @@ class Feed_Handler implements Service {
 
 	/**
 	 * Gets funding settings
+	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#funding
 	 *
 	 * @param int $series_id
 	 *
@@ -558,6 +559,26 @@ class Feed_Handler implements Service {
 
 		if ( ! isset( $funding ) ) {
 			$funding = get_option( 'ss_podcasting_funding', null );
+		}
+
+		return $funding;
+	}
+
+	/**
+	 * Gets podcast value settings ( recipient wallet address )
+	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#value
+	 *
+	 * @param int $series_id
+	 *
+	 * @return array|null
+	 */
+	public function get_podcast_value( $series_id ) {
+		if ( $series_id ) {
+			$funding = get_option( 'ss_podcasting_podcast_value_' . $series_id, null );
+		}
+
+		if ( ! isset( $funding ) ) {
+			$funding = get_option( 'ss_podcasting_podcast_value', null );
 		}
 
 		return $funding;

@@ -211,6 +211,8 @@ class Feed_Controller {
 
 		$funding = $this->feed_handler->get_funding( $series_id );
 
+		$podcast_value = $this->feed_handler->get_podcast_value( $series_id );
+
 		$guid = $this->feed_handler->get_guid( $podcast_series );
 
 		$pub_date_type = $this->feed_handler->get_pub_date_type( $series_id );

@@ -35,6 +35,13 @@
  * 	@type string $title Link title
  * 	@type string $url Link url
  * }
+ *
+ * @var array $podcast_value {
+ *      Array of link values.
+ *
+ * 	@type string $recipient Recipient wallet address
+ * }
+ *
  * @var string $guid
  * @var int $series_id
  * @var string $pub_date_type
@@ -152,6 +159,12 @@ if ( $stylesheet_url ) {
 
 		if ( $funding && ! empty( $funding['url'] ) && ! empty( $funding['title'] ) ) :
 			?><podcast:funding url="<?php echo esc_attr( $funding['url'] ) ?>"><?php echo esc_html( $funding['title'] ) ?></podcast:funding>
+		<?php endif;
+
+		if ( $podcast_value && ! empty( $podcast_value['recipient'] ) ) :
+		?><podcast:value type="lightning" method="keysend" suggested="0.00000020000">
+			<podcast:valueRecipient name="podcaster" address="<?php echo esc_attr( $podcast_value['recipient'] ) ?>" split="100" type="node"/>
+		</podcast:value>
 		<?php endif;
 
 		if ( $guid ) :

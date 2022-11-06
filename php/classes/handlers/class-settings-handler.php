@@ -1102,6 +1102,20 @@ class Settings_Handler implements Service {
 				),
 			),
 			array(
+				'id'          => 'podcast_value',
+				'label'       => __( 'Value4Value', 'seriously-simple-podcasting' ),
+				'type'        => 'text_multi',
+				'class'       => 'large-text',
+				'fields'      => array(
+					array(
+						'id'          => 'recipient',
+						'type'        => 'text',
+						'placeholder' => __( 'e.g. 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', 'seriously-simple-podcasting' ),
+						'description' => __( 'Enter your wallet address to accept crypto payment from your listeners.', 'seriously-simple-podcasting' ),
+					),
+				),
+			),
+			array(
 				'id'          => 'explicit',
 				'label'       => __( 'Explicit', 'seriously-simple-podcasting' ),
 				// translators: placeholders are for an Apple help document link

@@ -662,6 +662,34 @@ class Castos_Handler implements Service {
 
 
 	/**
+	 * Gets subscriber subscriptions by email.
+	 *
+	 * @param string $email
+	 *
+	 * @return array
+	 */
+	public function get_subscriptions_by_email( $email ) {
+		$this->logger->log( __METHOD__ );
+
+		$cache_key = 'ssp_castos_api_subscriptions_' . $email;
+
+		$subscriptions = wp_cache_get( $cache_key );
+
+		if ( $subscriptions && is_array( $subscriptions ) ) {
+			return $subscriptions;
+		}
+
+		$res = $this->send_request( "api/v2/private-subscribers/email/$email" );
+
+		if ( isset( $res['subscriptions'] ) ) {
+			wp_cache_add( $cache_key, $res['subscriptions'] );
+		}
+
+		return ! empty( $res['subscriptions'] ) ? $res['subscriptions'] : array();
+	}
+
+
+	/**
 	 * Add single podcast subscriber.
 	 *
 	 * @param int $podcast_id

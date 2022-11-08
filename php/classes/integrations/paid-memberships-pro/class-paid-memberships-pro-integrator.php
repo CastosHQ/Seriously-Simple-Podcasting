@@ -302,11 +302,15 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 */
 	protected function get_podcast_feed_url( $podcast_id ) {
 		$current_user = wp_get_current_user();
-		$subscribers  = $this->castos_handler->get_podcast_subscribers( $podcast_id );
+		$subscriptions = $this->castos_handler->get_subscriptions_by_email( $current_user->user_email );
 
-		foreach ( $subscribers as $subscriber ) {
-			if ( 'active' === $subscriber['status'] && $current_user->user_email === $subscriber['email'] ) {
-				return $subscriber['feed_url'];
+		foreach ( $subscriptions as $subscription ) {
+			if (
+				isset( $subscription['status'] ) && 'active' === $subscription['status'] &&
+				isset( $subscription['podcast_id'] ) && $podcast_id === $subscription['podcast_id'] &&
+				isset ( $subscription['feed_url'] )
+			) {
+				return $subscription['feed_url'];
 			}
 		}
 

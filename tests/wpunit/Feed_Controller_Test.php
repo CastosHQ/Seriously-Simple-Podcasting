@@ -59,7 +59,7 @@ class Feed_Controller_Test extends WPTestCase {
 			'<title>WordPress Test</title>',
 			sprintf( '<atom:link href="%s" rel="self" type="application/rss+xml"/>', $site_url ),
 			sprintf( '<link>%s</link>', trailingslashit( site_url() ) ),
-			'<description>Just another WordPress site</description>',
+			'<description>',
 			'<lastBuildDate>',
 			'<language>en-US</language>',
 			'<copyright>&#xA9; 2022 WordPress Test</copyright>',

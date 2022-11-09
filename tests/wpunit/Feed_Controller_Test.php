@@ -65,7 +65,7 @@ class Feed_Controller_Test extends WPTestCase {
 			'<copyright>&#xA9; 2022 WordPress Test</copyright>',
 			'<itunes:subtitle>',
 			'<itunes:author>WordPress Test</itunes:author>',
-			'<itunes:summary>Just another WordPress site</itunes:summary>',
+			'<itunes:summary>',
 			'<itunes:owner>',
 			'<itunes:name>WordPress Test</itunes:name>',
 			'<itunes:email>castostesting@castos.com</itunes:email>',

@@ -22,7 +22,7 @@ class Memberpress_Integrator_Test extends WPTestCase {
 	 */
 	public function test_get_memberships() {
 
-		$integrator = new \ReflectionClass( '\SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Memberpress_Integrator' );
+		$integrator = new \ReflectionClass( '\SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator' );
 
 		$method = $integrator->getMethod( 'get_memberships' );
 		$method->setAccessible( true );

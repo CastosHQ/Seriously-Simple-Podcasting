@@ -63,7 +63,7 @@ class Feed_Controller_Test extends WPTestCase {
 			'<lastBuildDate>',
 			'<language>en-US</language>',
 			'<copyright>&#xA9; 2022 WordPress Test</copyright>',
-			'<itunes:subtitle>Just another WordPress site</itunes:subtitle>',
+			'<itunes:subtitle>',
 			'<itunes:author>WordPress Test</itunes:author>',
 			'<itunes:summary>Just another WordPress site</itunes:summary>',
 			'<itunes:owner>',

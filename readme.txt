@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 6.0
+Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.17.0
+Stable tag: 2.18.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,20 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.18.0 =
+* 2022-11-09
+* UPDATE SUMMARY: WooCommerce Memberships integration, Value 4 Value, minor improvements and fixes
+* [UPDATE] WooCommerce Memberships integration
+* [UPDATE] Feed: Value 4 Value settings
+* [UPDATE] Feed settings: added link to Dynamo tool
+* [UPDATE] Feed speed improvements and cache improvements
+* [UPDATE] Podcast list block: option to show player below excerpt
+* [UPDATE] Feed: updated plugin links
+* [FIX] Fixed possible plugin translation issue
+* [FIX] Fixed mixed up podcast funding values
+* [FIX] Fixed fatal error when $response_object->message is not a string
+* [FIX] Added audible image to Elementor subscribe links block
 
 = 2.17.0 =
 * 2022-10-11

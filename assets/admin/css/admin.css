@@ -116,11 +116,6 @@ textarea#episode_embed_code {
   border-radius: 5px;
   font-weight: bold; }
   .ssp-dynamo a {
-    background: #FDE669;
-    display: inline-block;
-    padding: 5px 8px 4px 11px;
-    margin-left: 4px;
-    border-radius: 5px;
     color: #AF6C09;
     text-decoration: none;
     transition: .3s;
@@ -129,6 +124,13 @@ textarea#episode_embed_code {
       opacity: .8; }
     .ssp-dynamo a:focus {
       box-shadow: none; }
+  .ssp-dynamo .dynamo-button {
+    background: #FDE669;
+    display: inline-block;
+    padding: 5px 8px 4px 11px;
+    margin-left: 4px;
+    border-radius: 5px;
+    color: #AF6C09; }
   .ssp-dynamo .dashicons {
     font-size: 1.1em; }
 

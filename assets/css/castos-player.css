@@ -897,7 +897,7 @@
     border-radius: 4px;
     background: none;
     padding: 1px 4px;
-    width: 32px;
+    width: 33px;
     text-align: center;
     color: #fff;
     border: 1px solid #fff;
@@ -1439,8 +1439,6 @@
 .castos-player .play-btn:focus,
 .castos-player .pause-btn:focus,
 .castos-player .pause-btn:focus,
-.castos-player .player-btn__speed:active,
-.castos-player .player-btn__speed:focus,
 .castos-player .player-btn__volume:active,
 .castos-player .player-btn__volume:focus,
 .castos-player .share-btn:active,

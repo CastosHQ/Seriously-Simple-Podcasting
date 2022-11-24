@@ -115,7 +115,7 @@ docReady(function() {
 		}
 
 		function handleSpeedChange() {
-			let newSpeed = this.dataset.speed < 2 ? (parseFloat(this.dataset.speed) + 0.2).toFixed(1) : 1;
+			let newSpeed = this.dataset.speed < 2 ? (parseFloat(this.dataset.speed) + 0.2).toFixed(1) : 0.4;
 			speedBtn.setAttribute('data-speed', newSpeed);
 			speedBtn.innerHTML = newSpeed + 'x';
 			audio.playbackRate = newSpeed;

@@ -153,7 +153,7 @@ if ( $stylesheet_url ) {
 			<?php endif;
 		endif;
 
-		if ( $locked ) :
+		if ( 'yes' === $locked ) :
 			?><podcast:locked owner="<?php echo esc_html( $owner_email ) ?>"><?php echo esc_html( $locked ) ?></podcast:locked>
 		<?php endif;
 

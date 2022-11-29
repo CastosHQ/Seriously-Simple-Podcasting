@@ -354,6 +354,13 @@ class Episode_Repository {
 			$link = add_query_arg( array( 'ref' => $referrer ), $link );
 		}
 
+		// If there is a media file prefix, lets add it
+		$series_id = ssp_get_episode_series_id( $episode_id );
+		$media_prefix = ssp_get_media_prefix( $series_id );
+		if ( $media_prefix ) {
+			$link = parse_episode_url_with_media_prefix( $link, $media_prefix );
+		}
+
 		return apply_filters( 'ssp_episode_download_link', esc_url( $link ), $episode_id, $file );
 	}
 

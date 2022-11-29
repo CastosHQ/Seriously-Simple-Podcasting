@@ -1073,7 +1073,12 @@ if ( ! function_exists( 'parse_episode_url_with_media_prefix' ) ) {
 		}
 		$url_parts = wp_parse_url( $audio_file_url );
 
-		return $media_prefix . $url_parts['host'] . $url_parts['path'];
+		$new_url = $media_prefix . $url_parts['host'] . $url_parts['path'];
+		if ( isset( $url_parts['query'] ) ) {
+			$new_url .= '?' . $url_parts['query'];
+		}
+
+		return $new_url;
 	}
 }
 
@@ -1550,5 +1555,29 @@ if ( ! function_exists( 'ssp_player' ) ) {
 if ( ! function_exists( 'ssp_episode_image' ) ) {
 	function ssp_episode_image( $episode_id, $size = 'full' ) {
 		return ssp_frontend_controller()->get_image( $episode_id, $size );
+	}
+}
+
+/**
+ * Get SSP episode image.
+ */
+if ( ! function_exists( 'ssp_get_media_prefix' ) ) {
+	/**
+	 * Gets media prefix
+	 *
+	 * @param int $series_id
+	 *
+	 * @return string
+	 */
+	function ssp_get_media_prefix( $series_id ) {
+		if ( $series_id ) {
+			$media_prefix = ssp_get_option( 'media_prefix', '', $series_id );
+		}
+
+		if ( empty( $media_prefix ) ) {
+			$media_prefix = ssp_get_option( 'media_prefix' );
+		}
+
+		return $media_prefix;
 	}
 }

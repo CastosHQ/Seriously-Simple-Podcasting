@@ -1032,7 +1032,7 @@ class Settings_Handler implements Service {
 				                 '. ' . __( 'Your image should be perfectly square in order for it to display properly in podcasting directories and mobile apps.', 'seriously-simple-podcasting' ) . '<br />' .
 				                 '<span class="ssp-dynamo">' .
 				                 sprintf(
-					                 '<a target="_blank" href="https://dynamo.castos.com/?utm_source=WordPress&utm_medium=Plugin&utm_campaign=dashboard&t=%s&s=%s">',
+					                 '<a target="_blank" href="https://dynamo.castos.com/podcast-covers?utm_source=WordPress&utm_medium=Plugin&utm_campaign=dashboard&t=%s&s=%s">',
 					                 rawurlencode( $this->get_current_feed_settings_option_value( 'data_title' ) ),
 					                 rawurlencode( 'With ' . $this->get_current_feed_settings_option_value( 'data_author' ) )
 				                 ) .

@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.18.0
+Stable tag: 2.19.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.19.0 =
+* 2022-11-09
+* UPDATE SUMMARY: Player and RSS feed improvements
+* [UPDATE] Use Media File Prefix in player links
+* [UPDATE] Dynamo: prefill podcast and author name
+* [UPDATE] Player: possibility to slow down the episode speed
+* [UPDATE] RSS feed: do not show podcast:locked tag if it's off
+* [UPDATE] RSS feed: allow h2, h3, h4, h5, label tags
+* [FIX] Player: speed button style fix
 
 = 2.18.0 =
 * 2022-11-09

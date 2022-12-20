@@ -162,7 +162,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 2.19.0 =
-* 2022-11-09
+* 2022-12-06
 * UPDATE SUMMARY: Player and RSS feed improvements
 * [UPDATE] Use Media File Prefix in player links
 * [UPDATE] Dynamo: prefill podcast and author name

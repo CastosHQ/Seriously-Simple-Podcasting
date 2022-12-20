@@ -269,7 +269,9 @@ class Players_Controller {
 		$template_data['current_url'] = home_url( $wp->request );
 		$template_data['player_id']   = $player_id;
 
-		$template_data['player_mode'] = $atts['style'];
+		if ( in_array( $atts['style'], array( 'light', 'dark' ) ) ) {
+			$template_data['player_mode'] = $atts['style'];
+		}
 
 		foreach ( $episodes as $episode ) {
 			$template_data['playlist'][] = $this->episode_repository->get_player_data( $episode->ID );

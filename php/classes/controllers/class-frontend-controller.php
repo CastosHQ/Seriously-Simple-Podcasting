@@ -725,7 +725,7 @@ class Frontend_Controller {
 		$post_types             = $query->get( 'post_type' ) ?: array();
 		$tag_archive_post_types = apply_filters( 'ssp_tag_archive_post_types', array( 'post', SSP_CPT_PODCAST ) );
 
-		$query->set( 'post_type', array_merge( $post_types, (array) $tag_archive_post_types ) );
+		$query->set( 'post_type', array_merge( (array) $post_types, (array) $tag_archive_post_types ) );
 	}
 
 	/**

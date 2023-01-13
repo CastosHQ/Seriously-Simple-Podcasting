@@ -480,17 +480,11 @@ class Feed_Handler implements Service {
 	 * @param int $series_id
 	 *
 	 * @return string
+	 *
+	 * @since 2.20.0 Do not carry over the media prefix to subsequent podcasts
 	 */
 	public function get_media_prefix( $series_id ) {
-		if ( $series_id ) {
-			$media_prefix = get_option( 'ss_podcasting_media_prefix_' . $series_id );
-		}
-
-		if ( empty( $media_prefix ) ) {
-			$media_prefix = get_option( 'ss_podcasting_media_prefix', '' );
-		}
-
-		return $media_prefix;
+		return ssp_get_media_prefix( $series_id );
 	}
 
 	/**

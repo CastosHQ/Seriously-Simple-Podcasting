@@ -1572,16 +1572,9 @@ if ( ! function_exists( 'ssp_get_media_prefix' ) ) {
 	 * @param int $series_id
 	 *
 	 * @return string
+	 * @since 2.20.0 Do not carry over the media prefix to subsequent podcasts
 	 */
 	function ssp_get_media_prefix( $series_id ) {
-		if ( $series_id ) {
-			$media_prefix = ssp_get_option( 'media_prefix', '', $series_id );
-		}
-
-		if ( empty( $media_prefix ) ) {
-			$media_prefix = ssp_get_option( 'media_prefix' );
-		}
-
-		return $media_prefix;
+		return ssp_get_option( 'media_prefix', '', $series_id );
 	}
 }

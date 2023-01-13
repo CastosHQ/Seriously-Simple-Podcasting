@@ -1071,6 +1071,10 @@ if ( ! function_exists( 'parse_episode_url_with_media_prefix' ) ) {
 		if ( empty( $audio_file_url ) ) {
 			return $audio_file_url;
 		}
+		// Prevent redundant media prefixes.
+		if ( false !== strpos( $audio_file_url, $media_prefix ) ) {
+			return $audio_file_url;
+		}
 		$url_parts = wp_parse_url( $audio_file_url );
 
 		$new_url = $media_prefix . $url_parts['host'] . $url_parts['path'];

@@ -253,8 +253,7 @@ class Podcast_Post_Types_Controller {
 				return;
 			}
 
-			// All the main copy plugins use redirection after creating the post and it's meta
-			add_filter( 'wp_redirect', function ( $location ) use ( $post_id ) {
+			$remove_redundant_metas = function ( $post_id ){
 				$exclusions = [
 					'podmotor_file_id',
 					'podmotor_episode_id',
@@ -265,9 +264,20 @@ class Podcast_Post_Types_Controller {
 				foreach ( $exclusions as $exclusion ) {
 					delete_post_meta( $post_id, $exclusion );
 				}
+			};
+
+			// Most of the copy plugins use redirection after creating the post and it's meta
+			add_filter( 'wp_redirect', function ( $location ) use ( $remove_redundant_metas, $post_id ) {
+				$remove_redundant_metas( $post_id );
 
 				return $location;
 			} );
+
+			// This is for Post Duplicator plugin
+			add_action( 'mtphr_post_duplicator_created', function() use ( $remove_redundant_metas, $post_id ) {
+				$remove_redundant_metas( $post_id );
+			} );
+
 		}, 10, 3 );
 	}
 

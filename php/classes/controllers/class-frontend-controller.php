@@ -1039,6 +1039,7 @@ class Frontend_Controller {
 
 				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
 				$file = str_replace( ' ', '%20', $file );
+				$file = str_replace( PHP_EOL, '', $file );
 
 				// Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 				@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );

@@ -8,6 +8,7 @@ use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Renderers\Renderer;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -982,7 +983,7 @@ if ( ! function_exists( 'ssp_check_if_podcast_has_shortcode' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_check_if_podcast_has_player' ) ) {
+if ( ! function_exists( 'ssp_check_if_podcast_has_elementor_player' ) ) {
 	/**
 	 * Checks to see if the episode has the new player WIP
 	 *
@@ -1563,12 +1564,10 @@ if ( ! function_exists( 'ssp_episode_image' ) ) {
 }
 
 /**
- * Get SSP episode image.
+ * Gets media prefix
  */
 if ( ! function_exists( 'ssp_get_media_prefix' ) ) {
 	/**
-	 * Gets media prefix
-	 *
 	 * @param int $series_id
 	 *
 	 * @return string
@@ -1576,5 +1575,58 @@ if ( ! function_exists( 'ssp_get_media_prefix' ) ) {
 	 */
 	function ssp_get_media_prefix( $series_id ) {
 		return ssp_get_option( 'media_prefix', '', $series_id );
+	}
+}
+
+/**
+ * Gets renderer service.
+ */
+if ( ! function_exists( 'ssp_renderer' ) ) {
+	/**
+	 * @return Renderer|Service
+	 */
+	function ssp_renderer() {
+		return ssp_get_service( 'renderer' );
+	}
+}
+
+/**
+ * Gets dynamo button ( in the feed and episode settings ).
+ */
+if ( ! function_exists( 'ssp_dynamo_btn' ) ) {
+	/**
+	 * Gets media prefix
+	 *
+	 * @param string $title
+	 * @param string $subtitle
+	 * @param string $description
+	 *
+	 * @return string
+	 * @since 2.20.0
+	 */
+	function ssp_dynamo_btn( $title, $subtitle, $description ) {
+		return ssp_renderer()->fetch( 'settings/dynamo-btn', compact( 'title', 'subtitle', 'description' ) );
+	}
+}
+
+/**
+ * Gets array of episode podcast terms.
+ */
+if ( ! function_exists( 'ssp_get_episode_podcasts' ) ) {
+	/**
+	 * Gets array of episode podcast terms.
+	 *
+	 * @param $post_id
+	 *
+	 * @return WP_Term[]
+	 */
+	function ssp_get_episode_podcasts( $post_id ) {
+		$series = wp_get_post_terms( $post_id, 'series' );
+
+		if ( is_wp_error( $series ) ) {
+			return [];
+		}
+
+		return $series;
 	}
 }

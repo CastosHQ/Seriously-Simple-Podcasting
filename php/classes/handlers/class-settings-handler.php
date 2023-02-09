@@ -1030,21 +1030,14 @@ class Settings_Handler implements Service {
 				'label'       => __( 'Cover Image', 'seriously-simple-podcasting' ),
 				'description' => __( 'The podcast cover image must be between 1400x1400px and 3000x3000px in size and either .jpg or .png file format', 'seriously-simple-podcasting' ) .
 				                 '. ' . __( 'Your image should be perfectly square in order for it to display properly in podcasting directories and mobile apps.', 'seriously-simple-podcasting' ) . '<br />' .
-				                 '<span class="ssp-dynamo">' .
-				                 sprintf(
-					                 '<a target="_blank" href="https://dynamo.castos.com/podcast-covers?utm_source=WordPress&utm_medium=Plugin&utm_campaign=dashboard&t=%s&s=%s">',
-					                 rawurlencode( $this->get_current_feed_settings_option_value( 'data_title' ) ),
-					                 rawurlencode( 'With ' . $this->get_current_feed_settings_option_value( 'data_author' ) )
-				                 ) .
-				                 sprintf( __( 'Create a custom cover with our free tool %s' ), '<span class="dynamo-button">Dynamo<span class="dashicons dashicons-external"></span></span>' ) .
-				                 '</a></span>',
+				                 ssp_dynamo_btn( $this->get_current_feed_option( 'data_title' ), 'With ' . $this->get_current_feed_option( 'data_author' ), 'Create a custom cover with our free tool %s' ),
 				'type'        => 'image',
 				'default'     => '',
 				'placeholder' => '',
 				'callback'    => 'esc_url_raw',
 			),
 			array(
-				'id'          => 'data_owner_name',
+				'id'          => 'data_owner_name ',
 				'label'       => __( 'Owner name', 'seriously-simple-podcasting' ),
 				'description' => __( 'Podcast owner\'s name.', 'seriously-simple-podcasting' ),
 				'type'        => 'text',
@@ -1282,7 +1275,7 @@ class Settings_Handler implements Service {
 	 *
 	 * @return string
 	 */
-	protected function get_current_feed_settings_option_value ( $option ){
+	protected function get_current_feed_option( $option ) {
 		$podcast_id = $this->get_current_feed_settings_podcast_id();
 
 		return ssp_get_option( $option, '', $podcast_id );

@@ -296,9 +296,20 @@ class CPT_Podcast_Handler implements Service {
 			);
 		}
 
+		$post = get_post();
+		$post_title = $post ? $post->post_title : '';
+		$post_subtitle = '';
+		if ( $post ) {
+			$podcasts = ssp_get_episode_podcasts( $post->ID );
+			if ( isset( $podcasts[0] ) && $podcasts[0] instanceof \WP_Term ) {
+				$post_subtitle = $podcasts[0]->name;
+			}
+		}
+
 		$fields['cover_image'] = array(
 			'name'             => __( 'Episode Image:', 'seriously-simple-podcasting' ),
-			'description'      => __( 'The episode image should be square to display properly in podcasting apps and directories, and should be at least 300x300px in size.', 'seriously-simple-podcasting' ),
+			'description'      => __( 'The episode image should be square to display properly in podcasting apps and directories, and should be at least 300x300px in size.', 'seriously-simple-podcasting' ) .
+			'<br>' . ssp_dynamo_btn( $post_title, $post_subtitle, 'Create an episode image with our free tool %s' ),
 			'type'             => 'image',
 			'default'          => '',
 			'section'          => 'info',

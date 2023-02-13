@@ -754,12 +754,11 @@ class Podcast_Post_Types_Controller {
 	 */
 	public function register_custom_column_headings( $defaults ) {
 		$new_columns = apply_filters( 'ssp_admin_columns_episodes', array(
-			'series' => __( 'Podcast', 'seriously-simple-podcasting' ),
 			'image'  => __( 'Image', 'seriously-simple-podcasting' ),
 		) );
 
 		// remove date column
-		unset( $defaults['date'] );
+		unset( $defaults['comments'] );
 
 		// add new columns before last default one
 		$columns = array_slice( $defaults, 0, - 1 ) + $new_columns + array_slice( $defaults, - 1 );
@@ -777,16 +776,9 @@ class Podcast_Post_Types_Controller {
 	 */
 	public function register_custom_columns( $column_name, $id ) {
 		switch ( $column_name ) {
-
-			case 'series':
-				$terms      = wp_get_post_terms( $id, 'series' );
-				$term_names = wp_list_pluck( $terms, 'name' );
-				echo join( ', ', $term_names );
-				break;
-
 			case 'image':
 				$value = ssp_frontend_controller()->get_image( $id, 40 );
-				echo $value;
+				echo $value ?: '<span aria-hidden="true">—</span>';
 				break;
 
 			default:

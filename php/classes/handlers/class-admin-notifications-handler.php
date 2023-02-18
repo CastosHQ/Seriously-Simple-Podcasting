@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -31,6 +32,7 @@ class Admin_Notifications_Handler implements Service {
 	 * */
 	const NOTICE_API_EPISODE_ERROR = 'api_episode_error';
 	const NOTICE_API_EPISODE_SUCCESS = 'api_episode_success';
+	const NOTICE_NGINX_ERROR = 'nginx_error';
 
 	/**
 	 * Notice types
@@ -57,6 +59,8 @@ class Admin_Notifications_Handler implements Service {
 	 */
 	public function bootstrap() {
 		add_action( 'current_screen', array( $this, 'check_existing_podcasts' ) );
+
+		add_action( 'current_screen', array( $this, 'maybe_show_nginx_error_notice' ) );
 
 		add_action( 'current_screen', array( $this, 'second_line_themes' ) );
 
@@ -85,6 +89,110 @@ class Admin_Notifications_Handler implements Service {
 		add_action( 'admin_notices', array( $this, 'display_flash_notices' ), 12 );
 
 		return $this;
+	}
+
+	/**
+	 * Shows an error notice for sites running on NGINX with the wrong settings for static files.
+	 *
+	 * @return void
+	 */
+	public function maybe_show_nginx_error_notice() {
+
+		if ( ! in_array( get_current_screen()->post_type, ssp_post_types() ) || ! $this->is_nginx() ) {
+			return;
+		}
+
+		$episodes = ssp_get_existing_episodes( 100 );
+
+		if ( empty( $episodes->posts ) ) {
+			return;
+		}
+
+		$episode_repository = $this->get_episode_repository();
+		$enclosure          = '';
+		$self_host          = $this->get_host( site_url() );
+
+		foreach ( $episodes->posts as $episode ) {
+			$current_enclosure = $episode_repository->get_enclosure( $episode->ID );
+
+			if ( $self_host === $this->get_host( $current_enclosure ) ) {
+				$enclosure = $current_enclosure;
+				break;
+			}
+		}
+
+		if ( ! $enclosure ) {
+			return;
+		}
+
+		$response = $this->get_response( $enclosure );
+
+		if ( ! $response || 404 !== $response->get_status() ) {
+			return;
+		}
+
+		$messages          = $this->get_predefined_notices();
+		$notice            = $messages[ self::NOTICE_NGINX_ERROR ];
+
+		$this->add_flash_notice( $notice['msg'], $notice['type'], false );
+	}
+
+	/**
+	 * Checks if current site is running under nginx or not.
+	 *
+	 * @return bool
+	 */
+	protected function is_nginx() {
+		$response = $this->get_response( site_url( '/test.mp3' ) );
+		$server   = $response->get_headers()->offsetGet( 'server' );
+
+		return false !== strpos( $server, 'nginx' );
+	}
+
+	/**
+	 * Gets host (domain) from the url.
+	 *
+	 * @param $url
+	 *
+	 * @return string
+	 */
+	protected function get_host( $url ) {
+		$parsed_url = parse_url( $url );
+
+		return isset( $parsed_url['host'] ) ? $parsed_url['host'] : '';
+	}
+
+	/**
+	 * Gets response from the URL
+	 *
+	 * @param string $url
+	 *
+	 * @return \WP_HTTP_Requests_Response|null
+	 */
+	protected function get_response( $url ) {
+		$res = wp_remote_head( $url );
+
+		if ( ! isset( $res['http_response'] ) || ! $res['http_response'] instanceof \WP_HTTP_Requests_Response ) {
+			return null;
+		}
+
+		$response = $res['http_response'];
+
+		if ( in_array( $response->get_status(), array( 301, 302 ) ) ) {
+			$headers  = $response->get_headers();
+			$location = isset( $headers['location'] ) ? $headers['location'] : '';
+
+			return $location ? $this->get_response( $location ) : $response;
+		}
+
+		return $response;
+	}
+
+	/**
+	 * @return Episode_Repository|Service
+	 */
+	protected function get_episode_repository() {
+		return ssp_app()->get_service( 'episode_repository' );
 	}
 
 	/**
@@ -211,16 +319,16 @@ class Admin_Notifications_Handler implements Service {
 		}
 
 		// check if there is at least one podcast to import
-		$podcast_query = ssp_get_existing_podcasts();
+		$podcast_query = ssp_get_existing_episodes( 1 );
 		if ( $podcast_query->have_posts() ) {
-			add_action( 'admin_notices', array( $this, 'existing_podcasts_notice' ) );
+			add_action( 'admin_notices', array( $this, 'existing_episodes_notice' ) );
 		}
 	}
 
 	/**
 	 * Show 'existing podcast' notice
 	 */
-	public function existing_podcasts_notice() {
+	public function existing_episodes_notice() {
 		$podcast_import_url = add_query_arg( array(
 			'post_type' => $this->token,
 			'page'      => 'podcast_settings',
@@ -706,6 +814,14 @@ class Admin_Notifications_Handler implements Service {
 				'msg'  => __( "An error occurred in syncing this episode to your Castos account. <br>
 								We will keep attempting to sync your episode over the next 24 hours. <br>
 								If you don't see this episode in your Castos account at that time please contact our support team at hello@castos.com", 'seriously-simple-podcasting' ),
+				'type' => self::ERROR,
+			),
+			self::NOTICE_NGINX_ERROR         => array(
+				'msg'  => sprintf( __(
+					"We've detected that your website is using NGINX.
+					In order for Seriously Simple Podcasting to play your episodes, you'll need to reach out to your web host or system administrator and follow the instructions outlined in this <a href='%s'>help document.</a>",
+					'seriously-simple-podcasting'
+				), esc_url( 'https://support.castos.com/article/298-bypass-rules-for-nginx-hosted-websites' ) ),
 				'type' => self::ERROR,
 			),
 		);

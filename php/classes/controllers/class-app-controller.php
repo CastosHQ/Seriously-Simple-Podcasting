@@ -308,12 +308,12 @@ class App_Controller {
 	/**
 	 * Get any registered here services (handlers, helpers)
 	 *
-	 * @return Service
+	 * @return Service|null
 	 * */
 	public function get_service( $id ) {
 		$services = $this->get_available_services();
 
-		return $services[ $id ];
+		return isset( $services[ $id ] ) ? $services[ $id ] : null;
 	}
 
 	/**

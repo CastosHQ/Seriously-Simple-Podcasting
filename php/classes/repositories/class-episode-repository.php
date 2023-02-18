@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Repositories;
 
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
+use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 use WP_Query;
 
@@ -18,7 +19,7 @@ use WP_Query;
  * @package Seriously Simple Podcasting
  * @since 2.4.3
  */
-class Episode_Repository {
+class Episode_Repository implements Service {
 
 	use Useful_Variables;
 

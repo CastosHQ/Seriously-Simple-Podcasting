@@ -674,17 +674,17 @@ if ( ! function_exists( 'ssp_is_connected_to_castos' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_get_existing_podcasts' ) ) {
+if ( ! function_exists( 'ssp_get_existing_episodes' ) ) {
 	/**
 	 * Get all available posts that are registered as podcasts
 	 *
 	 * @return WP_Query
 	 */
-	function ssp_get_existing_podcasts() {
-		$podcast_post_types = ssp_post_types( true );
+	function ssp_get_existing_episodes( $posts_per_page = -1 ) {
+		$podcast_post_types = ssp_post_types();
 		$args               = array(
 			'post_type'      => $podcast_post_types,
-			'posts_per_page' => - 1,
+			'posts_per_page' => $posts_per_page,
 			'post_status'    => 'any',
 			'orderby'        => 'ID',
 			'meta_query'     => array(
@@ -706,9 +706,8 @@ if ( ! function_exists( 'ssp_get_existing_podcasts' ) ) {
 				),
 			),
 		);
-		$podcasts           = new WP_Query( $args );
 
-		return $podcasts;
+		return new WP_Query( $args );
 	}
 } // End if().
 
@@ -718,7 +717,7 @@ if ( ! function_exists( 'ssp_build_podcast_data' ) ) {
 	 *
 	 * @param $podcast_query
 	 *
-	 * @return $podcast_data array
+	 * @return array $podcast_data
 	 */
 	function ssp_build_podcast_data( $podcast_query ) {
 		$podcasts = $podcast_query->get_posts();
@@ -797,7 +796,7 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 		 * Only if we should be importing posts
 		 */
 		if ( 'true' === $podmotor_import_podcasts ) {
-			$podcast_query = ssp_get_existing_podcasts();
+			$podcast_query = ssp_get_existing_episodes();
 
 			/**
 			 * Only if there are posts to import

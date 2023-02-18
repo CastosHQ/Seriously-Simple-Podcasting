@@ -470,7 +470,7 @@ class Rest_Api_Controller {
 	/**
 	 * Adds the Episode player data to the episodes route for the Castos Player block
 	 *
-	 * @return array
+	 * @return array|false
 	 */
 	public function get_episode_player_data( $object, $field_name, $request ) {
 		if ( ! empty( $object['id'] ) ) {

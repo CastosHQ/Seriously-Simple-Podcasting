@@ -97,9 +97,20 @@ class Admin_Notifications_Handler implements Service {
 	 * @return void
 	 */
 	public function maybe_show_nginx_error_notice() {
-		return;
 
 		if ( ! in_array( get_current_screen()->post_type, ssp_post_types() ) || ! $this->is_nginx() ) {
+			return;
+		}
+
+		$nginx_settings_status = get_transient( 'ssp_nginx_settings_status' );
+
+		if ( 'ok' === $nginx_settings_status ) {
+			return;
+		}
+
+		if ( 'error' === $nginx_settings_status ) {
+			$this->show_nginx_error_notice();
+
 			return;
 		}
 
@@ -115,12 +126,24 @@ class Admin_Notifications_Handler implements Service {
 
 		$response = $this->get_response( $link );
 
-		if ( ! $response || 404 !== $response->get_status() ) {
+		if ( ! $response ) {
 			return;
 		}
 
-		$messages          = $this->get_predefined_notices();
-		$notice            = $messages[ self::NOTICE_NGINX_ERROR ];
+		if ( 404 === $response->get_status() ) {
+			set_transient( 'ssp_nginx_settings_status', 'error', 10 * MINUTE_IN_SECONDS );
+			$this->show_nginx_error_notice();
+		} else {
+			set_transient( 'ssp_nginx_settings_status', 'ok', DAY_IN_SECONDS );
+		}
+	}
+
+	/**
+	 * Show error notice if NGINX settings are wrong.
+	 * */
+	protected function show_nginx_error_notice() {
+		$messages = $this->get_predefined_notices();
+		$notice   = $messages[ self::NOTICE_NGINX_ERROR ];
 
 		$this->add_flash_notice( $notice['msg'], $notice['type'], false );
 	}
@@ -131,10 +154,17 @@ class Admin_Notifications_Handler implements Service {
 	 * @return bool
 	 */
 	protected function is_nginx() {
-		$response = $this->get_response( site_url( '/test.mp3' ) );
-		$server   = $response->get_headers()->offsetGet( 'server' );
+		$server_type = get_transient( 'ssp_server_type' );
+		if ( ! $server_type ) {
+			$response = $this->get_response( site_url( '/test.mp3' ) );
+			$server   = $response->get_headers()->offsetGet( 'server' );
 
-		return false !== strpos( $server, 'nginx' );
+			$server_type = false !== strpos( $server, 'nginx' ) ? 'nginx' : $server;
+
+			set_transient( 'ssp_server_type', $server_type, WEEK_IN_SECONDS );
+		}
+
+		return 'nginx' === $server_type;
 	}
 
 	/**

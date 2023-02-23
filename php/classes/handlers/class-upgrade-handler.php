@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 class Upgrade_Handler implements Service {
 
@@ -40,6 +41,59 @@ class Upgrade_Handler implements Service {
 			$this->enable_elementor_template_notice();
 		}
 
+		if ( version_compare( $previous_version, '2.20.0', '<' ) ) {
+			$this->update_enclosures();
+		}
+	}
+
+
+	/**
+	 * Update enclosures.
+	 * Since version 2.20.0, we need to update enclosures to get rid of AWS files.
+	 * */
+	public function update_enclosures() {
+		ignore_user_abort( true );
+		$episode_ids = ssp_episode_ids();
+
+		/**
+		 * @var Episode_Repository $episode_repository
+		 * */
+		$episode_repository = ssp_get_service( 'episode_repository' );
+
+		foreach ( $episode_ids as $episode_id ) {
+			$enclosure = $episode_repository->get_enclosure( $episode_id );
+			$updated   = $this->get_updated_enclosure_url( $enclosure );
+			if ( $enclosure != $updated ) {
+				$episode_repository->set_enclosure( $episode_id, $updated );
+			}
+		}
+	}
+
+
+	/**
+	 * Variants:
+	 * https://seriouslysimplepodcasting.s3.amazonaws.com/One-Sensitive/Intro.m4a -> https://episodes.castos.com/One-Sensitive/Intro.m4a
+	 * https://s3.amazonaws.com/seriouslysimplepodcasting/spotfight/WWE-SmackDown-Review-ABSTURZ-18.10.19.mp3 -> https://episodes.castos.com/spotfight/WWE-SmackDown-Review-ABSTURZ-18.10.19.mp3
+	 * https://s3.us-west-001.backblazeb2.com/seriouslysimplepodcasting/thegatheringpodcast/In-suffering-take-2.mp3 -> https://episodes.castos.com/thegatheringpodcast/In-suffering-take-2.mp3
+	 * https://episodes.seriouslysimplepodcasting.com/djreecepodcast/9PMCheckIn5-22-2017.mp3 -> https://episodes.castos.com/djreecepodcast/9PMCheckIn5-22-2017.mp3
+	 * */
+	public function get_updated_enclosure_url( $enclosure ) {
+
+		$replacements = array(
+			'seriouslysimplepodcasting.s3.amazonaws.com',
+			's3.amazonaws.com/seriouslysimplepodcasting',
+			's3.us-west-001.backblazeb2.com/seriouslysimplepodcasting',
+			'episodes.seriouslysimplepodcasting.com',
+		);
+
+		foreach ( $replacements as $replacement ) {
+			$pos = strpos( $enclosure, $replacement );
+			if ( false !== $pos ) {
+				return substr_replace( $enclosure, 'episodes.castos.com', $pos, strlen( $replacement ) );
+			}
+		}
+
+		return $enclosure;
 	}
 
 	/**

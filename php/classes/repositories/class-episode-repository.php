@@ -381,6 +381,19 @@ class Episode_Repository implements Service {
 		return '';
 	}
 
+	/**
+	 * Set episode enclosure
+	 *
+	 * @param integer $episode_id ID of episode.
+	 *
+	 * @return int|bool  Meta ID if the key didn't exist, true on successful update, false on failure
+	 */
+	public function set_enclosure( $episode_id, $enclosure ) {
+		$meta_key = apply_filters( 'ssp_audio_file_meta_key', 'audio_file' );
+
+		return update_post_meta( $episode_id, $meta_key, $enclosure );
+	}
+
 
 	/**
 	 * Get Album Art for Player

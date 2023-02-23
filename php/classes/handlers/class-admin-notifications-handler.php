@@ -97,35 +97,23 @@ class Admin_Notifications_Handler implements Service {
 	 * @return void
 	 */
 	public function maybe_show_nginx_error_notice() {
+		return;
 
 		if ( ! in_array( get_current_screen()->post_type, ssp_post_types() ) || ! $this->is_nginx() ) {
 			return;
 		}
 
-		$episodes = ssp_get_existing_episodes( 100 );
+		$episode_ids = ssp_episode_ids();
 
-		if ( empty( $episodes->posts ) ) {
+		if ( ! isset( $episode_ids[0] ) ) {
 			return;
 		}
 
-		$episode_repository = $this->get_episode_repository();
-		$enclosure          = '';
-		$self_host          = $this->get_host( site_url() );
+		$id = $episode_ids[0];
 
-		foreach ( $episodes->posts as $episode ) {
-			$current_enclosure = $episode_repository->get_enclosure( $episode->ID );
+		$link = site_url( '/podcast-player/' . $id . '/test-nginx.mp3?ref=test-nginx' );
 
-			if ( $self_host === $this->get_host( $current_enclosure ) ) {
-				$enclosure = $current_enclosure;
-				break;
-			}
-		}
-
-		if ( ! $enclosure ) {
-			return;
-		}
-
-		$response = $this->get_response( $enclosure );
+		$response = $this->get_response( $link );
 
 		if ( ! $response || 404 !== $response->get_status() ) {
 			return;
@@ -186,13 +174,6 @@ class Admin_Notifications_Handler implements Service {
 		}
 
 		return $response;
-	}
-
-	/**
-	 * @return Episode_Repository|Service
-	 */
-	protected function get_episode_repository() {
-		return ssp_app()->get_service( 'episode_repository' );
 	}
 
 	/**
@@ -319,7 +300,7 @@ class Admin_Notifications_Handler implements Service {
 		}
 
 		// check if there is at least one podcast to import
-		$podcast_query = ssp_get_existing_episodes( 1 );
+		$podcast_query = ssp_get_not_synced_episodes( 1 );
 		if ( $podcast_query->have_posts() ) {
 			add_action( 'admin_notices', array( $this, 'existing_episodes_notice' ) );
 		}

@@ -219,7 +219,6 @@ class App_Controller {
 
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
-		// Todo: dependency injection for other controllers as well
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
 		$this->db_migration_controller = DB_Migration_Controller::instance()->init();
@@ -366,7 +365,7 @@ class App_Controller {
 		add_action( 'init', array( $this, 'setup_permastruct' ), 10 );
 
 		// Run any updates required
-		add_action( 'init', array( $this, 'update' ), 11 );
+		add_action( 'init', array( $this, 'maybe_run_plugin_updates' ), 11 );
 
 		// Dismiss the categories update screen
 		add_action( 'init', array( $this, 'dismiss_categories_update' ) ); //todo: can we move it to 'admin_init'?
@@ -378,10 +377,6 @@ class App_Controller {
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
 		if ( is_admin() ) {
-
-			// todo: remove?
-			add_action( 'admin_init', array( $this, 'update_enclosures' ) );
-
 			// process the import form submission
 			add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
@@ -1046,7 +1041,7 @@ HTML;
 	 * Run functions on plugin update/activation
 	 * @return void
 	 */
-	public function update() {
+	public function maybe_run_plugin_updates() {
 
 		$previous_version = get_option( 'ssp_version', '1.0' );
 
@@ -1057,68 +1052,6 @@ HTML;
 
 		update_option( 'ssp_version', $this->version );
 
-	}
-
-	/**
-	 * Update 'enclosure' meta field to 'audio_file' meta field
-	 * Todo: I don't see any place where 'ssp_update_enclosures' query is generated. Is this function obsolete?
-	 *
-	 * @return void
-	 */
-	public function update_enclosures() {
-
-		if ( ! current_user_can( 'manage_podcast' ) ) {
-			return;
-		}
-
-		// Allow forced re-run of update if necessary
-		if ( isset( $_GET['ssp_update_enclosures'] ) ) {
-			delete_option( 'ssp_update_enclosures' );
-		}
-
-		// Check if update has been run
-		$update_run = get_option( 'ssp_update_enclosures', false );
-
-		if ( $update_run ) {
-			return;
-		}
-
-		// Get IDs of all posts with enclosures
-		$args = array(
-			'post_type'      => 'any',
-			'post_status'    => 'any',
-			'posts_per_page' => - 1,
-			'meta_query'     => array(
-				array(
-					'key'     => 'enclosure',
-					'compare' => '!=',
-					'value'   => '',
-				),
-			),
-			'fields'         => 'ids',
-		);
-
-		$posts_with_enclosures = get_posts( $args );
-
-		if ( 0 == count( $posts_with_enclosures ) ) {
-			return;
-		}
-
-		// Add `audio_file` meta field to all posts with enclosures
-		foreach ( (array) $posts_with_enclosures as $post_id ) {
-
-			// Get existing enclosure
-			$enclosure = get_post_meta( $post_id, 'enclosure', true );
-
-			// Add audio_file field
-			if ( $enclosure ) {
-				update_post_meta( $post_id, 'audio_file', $enclosure );
-			}
-
-		}
-
-		// Mark update as having been run
-		update_option( 'ssp_update_enclosures', 'run' );
 	}
 
 	/**

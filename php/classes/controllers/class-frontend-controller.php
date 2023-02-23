@@ -986,8 +986,10 @@ class Frontend_Controller {
 				}
 			}
 
-			// Allow other actions - functions hooked on here must not output any data
-			do_action( 'ssp_file_download', $file, $episode, $referrer );
+			if ( 'test-nginx' !== $_GET['ref'] ) {
+				// Allow other actions - functions hooked on here must not output any data
+				do_action( 'ssp_file_download', $file, $episode, $referrer );
+			}
 
 			// Set necessary headers
 			header( "Pragma: no-cache" );

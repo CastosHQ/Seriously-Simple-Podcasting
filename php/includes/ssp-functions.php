@@ -389,13 +389,13 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 		// If nothing in cache then fetch episodes again and store in cache
 		if ( false === $podcast_episodes ) {
 			$podcast_episodes = get_posts( $args );
-			wp_cache_set( $key, $podcast_episodes, $group, HOUR_IN_SECONDS * 12 );
+			wp_cache_set( $key, $podcast_episodes, $group, HOUR_IN_SECONDS );
 		}
 
 		// Reinstate action for future queries
 		add_action( 'pre_get_posts', array( $ss_podcasting, 'add_all_post_types' ) );
 
-		return $podcast_episodes;
+		return (array) $podcast_episodes;
 	}
 }
 
@@ -428,7 +428,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		}
 
 		// Get all valid podcast post types
-		$podcast_post_types = ssp_post_types( true );
+		$podcast_post_types = ssp_post_types();
 
 		if ( empty( $podcast_post_types ) ) {
 			return array();
@@ -470,6 +470,9 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			return $args;
 		}
 
+		// Todo: investigate if cache works correctly. For example, for different $n
+		// Todo: Also, can it lead to the fatal errors if there are too many $posts?
+		// Todo: Should we remove or improve the cache here?
 		// Do we have anything in the cache here?
 		$key   = 'episodes_' . $series;
 		$group = 'ssp';
@@ -674,13 +677,13 @@ if ( ! function_exists( 'ssp_is_connected_to_castos' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_get_existing_episodes' ) ) {
+if ( ! function_exists( 'ssp_get_not_synced_episodes' ) ) {
 	/**
-	 * Get all available posts that are registered as podcasts
+	 * Get all available posts that are registered as podcasts and not synced to Castos
 	 *
 	 * @return WP_Query
 	 */
-	function ssp_get_existing_episodes( $posts_per_page = -1 ) {
+	function ssp_get_not_synced_episodes( $posts_per_page = -1 ) {
 		$podcast_post_types = ssp_post_types();
 		$args               = array(
 			'post_type'      => $podcast_post_types,
@@ -796,7 +799,7 @@ if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
 		 * Only if we should be importing posts
 		 */
 		if ( 'true' === $podmotor_import_podcasts ) {
-			$podcast_query = ssp_get_existing_episodes();
+			$podcast_query = ssp_get_not_synced_episodes();
 
 			/**
 			 * Only if there are posts to import

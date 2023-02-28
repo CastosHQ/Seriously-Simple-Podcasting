@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SSP_VERSION', '2.20.0-beta' );
+define( 'SSP_VERSION', '2.20.0-beta-test-notice' );
 define( 'SSP_PLUGIN_FILE', __FILE__ );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );

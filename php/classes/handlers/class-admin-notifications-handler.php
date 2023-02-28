@@ -99,16 +99,19 @@ class Admin_Notifications_Handler implements Service {
 	public function maybe_show_nginx_error_notice() {
 
 		if ( ! in_array( get_current_screen()->post_type, ssp_post_types() ) || ! $this->is_nginx() ) {
+			filter_input( INPUT_GET, 'ssp_debug' ) && exit( 'Not nginx!' );
 			return;
 		}
 
 		$nginx_settings_status = get_transient( 'ssp_nginx_settings_status' );
 
 		if ( 'ok' === $nginx_settings_status ) {
+			filter_input( INPUT_GET, 'ssp_debug' ) && exit( 'Nginx status is OK!' );
 			return;
 		}
 
 		if ( 'error' === $nginx_settings_status ) {
+			filter_input( INPUT_GET, 'ssp_debug' ) && exit( 'Nginx status is Error!' );
 			$this->show_nginx_error_notice();
 
 			return;
@@ -117,6 +120,7 @@ class Admin_Notifications_Handler implements Service {
 		$episode_ids = ssp_episode_ids();
 
 		if ( ! isset( $episode_ids[0] ) ) {
+			filter_input( INPUT_GET, 'ssp_debug' ) && exit( 'No episode ID!' );
 			return;
 		}
 

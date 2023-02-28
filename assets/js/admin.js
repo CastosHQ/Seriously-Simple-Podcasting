@@ -212,4 +212,51 @@ jQuery(document).ready(function($) {
 	});
 
 	$('.js-ssp-select2').select2();
+
+	/**
+	* Provides possibility to dynamically change the dynamo URL when the episode title or episode podcast is changed.
+	* */
+	var initDynamoBtn = function () {
+		// Make sure it's an episode page and dynamo btn exists
+		var $dynamo = $('.ssp-dynamo'),
+			editorTitle = $('.wp-block-post-title');
+		if (!$dynamo.length || !editorTitle.length) {
+			return;
+		}
+
+		var $link = $dynamo.find('a'),
+			href = $link.attr('href'),
+			url = new URL(href),
+			changeUrlArg = function (arg, value) {
+				url.searchParams.set(arg, value);
+				url.search = url.searchParams.toString();
+				$link.attr('href', url.toString());
+			}
+
+		$(document).on('keyup', '.wp-block-post-title', function (e) {
+			var title = $(e.target).text();
+
+			if (title) {
+				changeUrlArg('t', title);
+			}
+		});
+
+		$(document).on('change', '.editor-post-taxonomies__hierarchical-terms-list', function (e) {
+			var $target = $(e.target),
+				$parent = $target.closest('.editor-post-taxonomies__hierarchical-terms-list');
+			if ('Podcasts' !== $parent.attr('aria-label')) {
+				return;
+			}
+
+			var subtitle = $parent.find('input:checked').first().closest('div').find('label').text();
+
+			if (!subtitle) {
+				subtitle = $dynamo.data('default-podcast-title');
+			}
+
+			changeUrlArg('s', subtitle)
+		});
+	}
+
+	initDynamoBtn();
 });

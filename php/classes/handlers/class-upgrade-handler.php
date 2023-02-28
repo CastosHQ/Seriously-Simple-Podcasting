@@ -65,6 +65,9 @@ class Upgrade_Handler implements Service {
 			$updated   = $this->get_updated_enclosure_url( $enclosure );
 			if ( $enclosure != $updated ) {
 				$episode_repository->set_enclosure( $episode_id, $updated );
+
+				// Also, update the old enclosure just for consistency
+				update_post_meta( $episode_id, 'enclosure', $enclosure );
 			}
 		}
 	}

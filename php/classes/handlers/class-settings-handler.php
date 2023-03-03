@@ -1037,7 +1037,7 @@ class Settings_Handler implements Service {
 				'callback'    => 'esc_url_raw',
 			),
 			array(
-				'id'          => 'data_owner_name ',
+				'id'          => 'data_owner_name',
 				'label'       => __( 'Owner name', 'seriously-simple-podcasting' ),
 				'description' => __( 'Podcast owner\'s name.', 'seriously-simple-podcasting' ),
 				'type'        => 'text',

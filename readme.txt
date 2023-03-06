@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 6.1
 Requires PHP: 5.6
-Stable tag: 2.19.0
+Stable tag: 2.20.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,18 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.20.0 =
+* 2023-03-06
+* UPDATE SUMMARY: Migration for legacy file URLs, improvements and fixes
+* [UPDATE] Migration for legacy file URLs
+* [UPDATE] Post Duplicator plugin compatibility
+* [UPDATE] Do not carry over the media prefix to subsequent podcasts
+* [UPDATE] Added Dynamo Link to Episode Creation page
+* [UPDATE] Improved podcasts listing page (added publishing dates, removed redundant columns)
+* [UPDATE] Identify that NGINX may be an issue and surface instructions
+* [FIX] Fixed duplicating prefix in RSS feed
+* [FIX] Fixed some PHP warnings
 
 = 2.19.0 =
 * 2022-12-06

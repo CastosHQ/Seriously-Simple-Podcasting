@@ -986,7 +986,7 @@ class Frontend_Controller {
 				}
 			}
 
-			if ( 'test-nginx' !== $_GET['ref'] ) {
+			if ( 'test-nginx' !== $referrer ) {
 				// Allow other actions - functions hooked on here must not output any data
 				do_action( 'ssp_file_download', $file, $episode, $referrer );
 			}

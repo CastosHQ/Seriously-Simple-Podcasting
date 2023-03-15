@@ -3,7 +3,6 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
-use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -157,11 +156,11 @@ class Admin_Notifications_Handler implements Service {
 		$server_type = get_transient( 'ssp_server_type' );
 		if ( ! $server_type ) {
 			$response = $this->get_response( site_url( '/test.mp3' ) );
-			$server   = $response->get_headers()->offsetGet( 'server' );
+			$server   = $response ? $response->get_headers()->offsetGet( 'server' ) : '';
 
 			$server_type = false !== strpos( $server, 'nginx' ) ? 'nginx' : $server;
 
-			set_transient( 'ssp_server_type', $server_type, WEEK_IN_SECONDS );
+			set_transient( 'ssp_server_type', $server_type, DAY_IN_SECONDS );
 		}
 
 		return 'nginx' === $server_type;
@@ -190,7 +189,7 @@ class Admin_Notifications_Handler implements Service {
 	protected function get_response( $url ) {
 		$res = wp_remote_head( $url );
 
-		if ( ! isset( $res['http_response'] ) || ! $res['http_response'] instanceof \WP_HTTP_Requests_Response ) {
+		if ( ! is_array( $res ) || ! isset( $res['http_response'] ) || ! $res['http_response'] instanceof \WP_HTTP_Requests_Response ) {
 			return null;
 		}
 

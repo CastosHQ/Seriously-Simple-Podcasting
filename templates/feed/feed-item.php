@@ -7,7 +7,6 @@
  * @var string $author
  * @var string $description
  * @var string $itunes_subtitle
- * @var string $keywords
  * @var string $itunes_episode_type
  * @var string $itunes_title
  * @var string $itunes_episode_number
@@ -37,10 +36,6 @@
 	<description><![CDATA[<?php echo $description; ?>]]></description>
 	<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
 <?php
-
-	if ( $keywords ) : ?>
-	<itunes:keywords><?php echo $keywords; ?></itunes:keywords>
-<?php endif;
 
 if ( $itunes_episode_type ) : ?>
 	<itunes:episodeType><?php echo $itunes_episode_type; ?></itunes:episodeType>

@@ -35,11 +35,11 @@ class Feed_Controller {
 	 * */
 	protected $feed_handler;
 
-
 	/**
 	 * @var Renderer
 	 * */
 	protected $renderer;
+
 
 	/**
 	 * Admin_Controller constructor.
@@ -140,7 +140,6 @@ class Feed_Controller {
 
 		exit;
 	}
-
 
 	/**
 	 * Loads the feed template.
@@ -324,7 +323,6 @@ class Feed_Controller {
 		$gp_description  = $this->feed_handler->get_feed_item_google_play_description( $description, $post_id );
 		$itunes_subtitle = $this->feed_handler->get_feed_item_itunes_subtitle( $description, $post_id );
 		$pub_date        = $this->feed_handler->get_feed_item_pub_date( $pub_date_type, $post_id );
-		$keywords        = $this->get_feed_item_keywords();
 
 		$itunes_enabled    = get_option( 'ss_podcasting_itunes_fields_enabled' );
 		$is_itunes_enabled = $itunes_enabled && $itunes_enabled == 'on';
@@ -339,7 +337,7 @@ class Feed_Controller {
 		$feed_item_path = apply_filters( 'ssp_feed_item_path', '/feed/feed-item' );
 
 		$args = apply_filters( 'ssp_feed_item_args', compact(
-			'title', 'pub_date', 'author', 'description', 'itunes_subtitle', 'keywords',
+			'title', 'pub_date', 'author', 'description', 'itunes_subtitle',
 			'itunes_episode_type', 'itunes_title', 'itunes_episode_number', 'itunes_season_number',
 			'turbo_post_count', 'enclosure', 'size', 'mime_type', 'turbo_post_count', 'itunes_summary',
 			'episode_image', 'itunes_explicit_flag', 'block_flag', 'duration', 'gp_description',
@@ -350,33 +348,12 @@ class Feed_Controller {
 	}
 
 	/**
-	 * @return string
-	 */
-	protected function get_feed_item_keywords() {
-		$keywords  = '';
-		$post_tags = get_the_tags( get_the_ID() );
-		if ( $post_tags ) {
-			$tags = array();
-			foreach ( $post_tags as $tag ) {
-				$tags[] = $tag->name;
-			}
-			$tags = apply_filters( 'ssp_feed_item_itunes_keyword_tags', $tags, get_the_ID() );
-			if ( ! empty( $tags ) ) {
-				$keywords = implode( ',', $tags );
-			}
-		}
-
-		return $keywords;
-	}
-
-	/**
 	 * Sends RSS content type and charset headers
 	 */
 	public function send_feed_headers() {
 		status_header( 200 );
 		header( 'Content-Type: ' . feed_content_type( SSP_CPT_PODCAST ) . '; charset=' . get_option( 'blog_charset' ), true );
 	}
-
 
 	/**
 	 * Sanitizes the image, if it's not valid - change it to empty string

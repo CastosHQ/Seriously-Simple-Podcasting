@@ -100,8 +100,8 @@ class CPT_Podcast_Handler implements Service {
 
 	protected function get_podcast_args() {
 		$labels = array(
-			'name'                  => _x( 'Podcast', 'post type general name', 'seriously-simple-podcasting' ),
-			'singular_name'         => _x( 'Podcast', 'post type singular name', 'seriously-simple-podcasting' ),
+			'name'                  => _x( 'Episode', 'post type general name', 'seriously-simple-podcasting' ),
+			'singular_name'         => _x( 'Episode', 'post type singular name', 'seriously-simple-podcasting' ),
 			'add_new'               => _x( 'Add New Episode', SSP_CPT_PODCAST, 'seriously-simple-podcasting' ),
 			'add_new_item'          => sprintf( __( 'Add New %s', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),
 			'edit_item'             => sprintf( __( 'Edit %s', 'seriously-simple-podcasting' ), __( 'Episode', 'seriously-simple-podcasting' ) ),

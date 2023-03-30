@@ -393,8 +393,10 @@ class RSS_Import_Handler {
 
 		update_post_meta( $post_id, 'cover_image_id', $image_id );
 
-		$url = wp_get_attachment_url( $image_id );
-		update_post_meta( $post_id, 'cover_image', $url );
+		$local_image_url = wp_get_attachment_url( $image_id );
+		update_post_meta( $post_id, 'cover_image', $local_image_url );
+
+		do_action( 'ssp_rss_import_save_episode_image', $post_id, $image_id, $local_image_url );
 
 		return true;
 	}

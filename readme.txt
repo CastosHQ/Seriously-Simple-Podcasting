@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 6.1
+Tested up to: 6.2
 Requires PHP: 5.6
-Stable tag: 2.20.2
+Stable tag: 2.20.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.20.3 =
+* 2023-03-30
+* UPDATE SUMMARY: Updated the supported WordPress version, minor improvements
+* [UPDATE] Updated the supported WordPress version
+* [UPDATE] Feed: removed deprecated keywords tag
+* [UPDATE] Updated plugin description
+* [UPDATE] Renamed Podcast to Episode when creating new episodes
+* [UPDATE] Removed redundant index.scss file
+* [UPDATE] Use local fonts for Onboarding Wizzard
+* [UPDATE] Possibility for custom actions on save episode image event
 
 = 2.20.2 =
 * 2023-03-15

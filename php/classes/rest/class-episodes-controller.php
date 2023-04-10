@@ -69,6 +69,109 @@ class Episodes_Controller extends WP_REST_Controller {
 				),
 			)
 		);
+
+		/**
+		 * Custom route to update the episode's podmotor_episode_id and audio_file.
+		 * Might be used in future to update other episode properties.
+		 * In future should replace @see update_rest_podcast()
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/episodes/(?P<episode>[\d]+)',
+			array(
+				'methods'             => 'PUT',
+				'callback'            => array( $this, 'update_episode' ),
+				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+			)
+		);
+	}
+
+	/**
+	 * @param $request
+	 *
+	 * @return bool|\WP_Error
+	 */
+	public function update_item_permissions_check( $request ) {
+		try {
+			$request_key = $request->get_header( 'sspauth' );
+			if ( empty( $request_key ) ) {
+				throw new \Exception( 'No Castos API key', 401 );
+			}
+
+			$stored_key = ssp_get_option( 'podmotor_account_api_token' );
+			if ( $request_key !== $stored_key ) {
+				throw new \Exception( 'Castos API key invalid', 401 );
+			}
+
+			return true;
+		} catch ( \Exception $e ) {
+			return new \WP_Error( $e->getCode(), $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Get a collection of items
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_Error|\WP_REST_Response
+	 */
+	public function update_episode( $request ) {
+		try {
+			$this->validate_update_episode_request( $request );
+			$episode_id = $request->get_param( 'episode' );
+			$new_data   = json_decode( $request->get_body(), true );
+
+			update_post_meta( $episode_id, 'podmotor_episode_id', $new_data['file']['id'] );
+			update_post_meta( $episode_id, 'audio_file', $new_data['file']['url'] );
+
+			return rest_ensure_response( array(
+				'id'   => intval( $episode_id ),
+				'file' => array(
+					'id'  => intval( get_post_meta( $episode_id, 'podmotor_episode_id', true ) ),
+					'url' => get_post_meta( $episode_id, 'audio_file', true ),
+				),
+			) );
+		} catch ( \Exception $e ) {
+			return new \WP_Error( $e->getCode(), $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Validates update request
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @throws \Exception
+	 */
+	private function validate_update_episode_request( $request ){
+		$episode_id = $request->get_param( 'episode' );
+
+		if ( ! $episode_id ) {
+			throw new \Exception( 'Empty episode ID', 400 );
+		}
+
+		$episode = get_post( $episode_id );
+
+		if ( ! $episode ) {
+			throw new \Exception( 'Episode not found', 404 );
+		}
+
+		$new_data = json_decode( $request->get_body(), true );
+
+		if ( ! is_array( $new_data ) || ! array_key_exists( 'file', $new_data ) ) {
+			throw new \Exception( 'Empty file', 400 );
+		}
+
+		$file = $new_data['file'];
+
+		if ( ! is_array( $file ) || empty( $file['id'] ) ) {
+			throw new \Exception( 'Empty file ID', 400 );
+		}
+
+		if ( empty( $file['url'] ) ) {
+			throw new \Exception( 'Empty file URL', 400 );
+		}
 	}
 
 	/**

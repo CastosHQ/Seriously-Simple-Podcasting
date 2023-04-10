@@ -1640,3 +1640,19 @@ if ( ! function_exists( 'ssp_get_episode_podcasts' ) ) {
 		return $series;
 	}
 }
+
+/**
+ * Gets array of podcast terms.
+ */
+if ( ! function_exists( 'ssp_get_podcasts' ) ) {
+	/**
+	 * Gets array of podcast terms.
+	 *
+	 * @param bool $hide_empty
+	 *
+	 * @return WP_Term[]
+	 */
+	function ssp_get_podcasts( $hide_empty = false ) {
+		return get_terms( 'series', array( 'hide_empty' => $hide_empty ) );
+	}
+}

@@ -16,16 +16,6 @@ use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 class Rest_Api_Controller {
 
 	/**
-	 * @var $version string Plugin version (semvar)
-	 */
-	private $version;
-
-	/**
-	 * @var $file plugin file
-	 */
-	private $file;
-
-	/**
 	 * Gets the default podcast data
 	 *
 	 * @return array Podcast
@@ -56,13 +46,8 @@ class Rest_Api_Controller {
 
 	/**
 	 * Constructor
-	 *
-	 * @param    string $file Plugin file
-	 * @param    string $version Plugin version
 	 */
-	public function __construct( $file, $version ) {
-		$this->file    = $file;
-		$this->version = $version;
+	public function __construct() {
 
 		// Register custom REST API routes.
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );

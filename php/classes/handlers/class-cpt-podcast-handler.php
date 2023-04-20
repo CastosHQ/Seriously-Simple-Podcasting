@@ -215,7 +215,7 @@ class CPT_Podcast_Handler implements Service {
 			'rewrite'           => array( 'slug' => ssp_series_slug() ),
 			'labels'            => $series_labels,
 			'show_in_rest'      => true,
-			'rest_base'         => 'podcasts',
+			'rest_base'         => 'series',
 			'show_admin_column' => true,
 			'capabilities'      => $this->roles_handler->get_podcast_tax_capabilities(),
 		);

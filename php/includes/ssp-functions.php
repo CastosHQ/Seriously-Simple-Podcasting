@@ -1597,7 +1597,7 @@ if ( ! function_exists( 'ssp_renderer' ) ) {
  */
 if ( ! function_exists( 'ssp_dynamo_btn' ) ) {
 	/**
-	 * Gets media prefix
+	 * Gets dynamo button
 	 *
 	 * @param string $title
 	 * @param string $subtitle
@@ -1616,6 +1616,25 @@ if ( ! function_exists( 'ssp_dynamo_btn' ) ) {
 		}
 
 		return ssp_renderer()->fetch( 'settings/dynamo-btn', compact( 'title', 'subtitle', 'description', 'default_podcast_title' ) );
+	}
+}
+
+
+/**
+ * Print upsell field.
+ */
+if ( ! function_exists( 'ssp_upsell_field' ) ) {
+	/**
+	 * Gets upsell field
+	 *
+	 * @param string $description
+	 * @param array $btn
+	 *
+	 * @return string
+	 * @since 2.21.0
+	 */
+	function ssp_upsell_field( $description, $btn ) {
+		return ssp_renderer()->fetch( 'settings/upsell-field', compact( 'description', 'btn' ) );
 	}
 }
 
@@ -1654,5 +1673,19 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 	 */
 	function ssp_get_podcasts( $hide_empty = false ) {
 		return get_terms( 'series', array( 'hide_empty' => $hide_empty ) );
+	}
+}
+
+/**
+ * Gets SSP Version.
+ */
+if ( ! function_exists( 'ssp_version' ) ) {
+	/**
+	 * Gets SSP Version.
+	 *
+	 * @return string|null
+	 */
+	function ssp_version() {
+		return defined( 'SSP_VERSION' ) ? SSP_VERSION : null;
 	}
 }

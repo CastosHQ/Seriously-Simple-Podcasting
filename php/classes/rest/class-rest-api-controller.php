@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Rest;
 
-use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
@@ -66,11 +65,29 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_episode_data' ) );
 
+		add_filter( 'rest_post_dispatch', array( $this, 'maybe_add_ssp_version' ), 10, 3 );
+
 		$post_types = ssp_post_types( true, false );
 		foreach ( $post_types as $post_type ) {
 			add_filter( 'rest_prepare_' . $post_type, array( $this, 'rest_prepare_excerpt' ), 10, 3 );
 		}
 
+	}
+
+	/**
+	 *
+	 * @param \WP_REST_Response $response
+	 * @param \WP_REST_Server $rest_server
+	 * @param \WP_REST_Request $request
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function maybe_add_ssp_version( $response, $rest_server, $request ) {
+		if ( 0 === strpos( $request->get_route(), '/ssp/' ) ) {
+			$response->header( 'X-SSP-VERSION', ssp_version() );
+		}
+
+		return $response;
 	}
 
 	/**

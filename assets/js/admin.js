@@ -218,9 +218,8 @@ jQuery(document).ready(function($) {
 	* */
 	var initDynamoBtn = function () {
 		// Make sure it's an episode page and dynamo btn exists
-		var $dynamo = $('.ssp-dynamo'),
-			editorTitle = $('.wp-block-post-title');
-		if (!$dynamo.length || !editorTitle.length) {
+		var $dynamo = $('.ssp-dynamo');
+		if (!$dynamo.length) {
 			return;
 		}
 

@@ -1,3 +1,5 @@
+@import "mixins";
+
 #dashboard_right_now a.podcast-count:before, #dashboard_right_now span.podcast-count:before {
 	content: "\f482";
 }
@@ -137,40 +139,126 @@ textarea#episode_embed_code {
 	padding: 1px 12px;
 }
 
-.ssp-dynamo {
-	background: #FEF9D7;
-	color: #AF6C09;
-	padding: 8px 16px;
-	margin-top: 10px;
-	display: inline-block;
-	border-radius: 5px;
-	font-weight: bold;
+.ssp-dynamo,.upsell-field {
+
+	display: flex;
+	flex-direction: row;
+	align-items: center;
+	padding: 0;
+	gap: 8px;
+
+	font-family: 'Inter', sans-serif;
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	color: #64748B;
+
+	&__container {
+		display: flex;
+		justify-content: center;
+		padding: 8px;
+		gap: 16px;
+		background: #F6F7F7;
+		border-radius: 8px;
+		align-items: center;
+
+		@include smaller('md') {
+			padding: 12px;
+		}
+
+		&:before {
+			content: '';
+			background: url('../img/stars.svg');
+			width: 22px;
+			height: 22px;
+
+			@include smaller('md') {
+				display: none;
+			}
+		}
+
+		@include smaller('md') {
+			flex-direction: column;
+		}
+	}
+
+	&__description {
+		align-items: center;
+		display: flex;
+		text-align: justify;
+	}
 
 	a {
-		color: #AF6C09;
 		text-decoration: none;
-		transition: .3s;
 		outline:none;
 
-		&:hover {
-			opacity: .8;
-		}
+		font-family: 'Inter', sans-serif;
+		font-style: normal;
+		font-weight: 700;
+		font-size: 12px;
+		line-height: 16px;
+		color: #3970AC;
 
 		&:focus    {
 			box-shadow: none;
 		}
 	}
 
-	.dynamo-button {
-		background: #FDE669;
-		display: inline-block;
-		padding: 5px 8px 4px 11px;
-		margin-left: 4px;
-		border-radius: 5px;
-		color: #AF6C09;
+	&__btn {
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		padding: 8px 12px;
+		width: 139px;
+		height: 32px;
+
+		background: #F6F7F7;
+		border: 1px solid #3970AC;
+		border-radius: 6px;
+
+		flex: none;
+		order: 2;
+		flex-grow: 0;
+
+		&:hover {
+			background: #f0f0f1;
+			border-color: #0a4b78;
+			color: #0a4b78;
+		}
+
+		@include smaller('md'){
+			width: 100%;
+		}
 	}
 
 	.dashicons {
 		font-size: 1.1em;
+	}
+}
+
+.ssp-dynamo {
+	&__btn {
+		width: 108px;
+		@include smaller('md') {
+			width: 100%;
+		}
+	}
+
+	&__arrow-up {
+		position: relative;
+		left: -10px;
+		&:after {
+			content: '';
+			display: block;
+			background: url("../img/arrow-up.svg");
+			width: 11px;
+			height: 12px;
+			position: absolute;
+			right: -23px;
+			top: 2px;
+			opacity: 0.5;
+		}
 	}
 }

@@ -295,6 +295,14 @@ class CPT_Podcast_Handler implements Service {
 				'section'          => 'info',
 				'meta_description' => __( 'Seriously Simple Hosting file id.', 'seriously-simple-podcasting' ),
 			);
+		} else {
+			$description = __( 'Get lower bandwidth fees, file storage, and better stats when hosting with Castos.', 'seriously-simple-podcasting' );
+			$btn         = array(
+				'title' => 'Try Castos for free',
+				'url'   => 'https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&utm_medium=episode-file-box&utm_campaign=upgrade'
+			);
+
+			$fields['audio_file']['description'] .= ssp_upsell_field( $description, $btn );
 		}
 
 		$post = get_post();
@@ -313,7 +321,7 @@ class CPT_Podcast_Handler implements Service {
 		$fields['cover_image'] = array(
 			'name'             => __( 'Episode Image:', 'seriously-simple-podcasting' ),
 			'description'      => __( 'The episode image should be square to display properly in podcasting apps and directories, and should be at least 300x300px in size.', 'seriously-simple-podcasting' ) .
-			'<br>' . ssp_dynamo_btn( $post_title, $podcast_title, 'Create an episode image with our free tool %s' ),
+			'<br>' . ssp_dynamo_btn( $post_title, $podcast_title, 'Create an episode image with our free tool' ),
 			'type'             => 'image',
 			'default'          => '',
 			'section'          => 'info',

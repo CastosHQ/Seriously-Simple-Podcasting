@@ -278,12 +278,13 @@ class Feed_Controller {
 			$enclosure = $ss_podcasting->get_episode_download_link( $post_id );
 		} else {
 			$enclosure = $audio_file;
-			if ( ! empty( $media_prefix ) ) {
-				$enclosure = parse_episode_url_with_media_prefix( $enclosure, $media_prefix );
-			}
 		}
 
 		$enclosure = apply_filters( 'ssp_feed_item_enclosure', $enclosure, $post_id );
+
+		if ( ! empty( $media_prefix ) ) {
+			$enclosure = parse_episode_url_with_media_prefix( $enclosure, $media_prefix );
+		}
 
 		// If there is no enclosure then go no further
 		if ( ! isset( $enclosure ) || ! $enclosure ) {

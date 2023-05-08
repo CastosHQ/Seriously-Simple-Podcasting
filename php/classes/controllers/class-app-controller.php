@@ -854,14 +854,14 @@ HTML;
 			return;
 		}
 
-		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'admin/css/admin.css' ), array(), $this->version );
+		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'admin/css/admin' . $this->script_suffix . '.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
 
 		// Datepicker
-		wp_register_style( 'jquery-ui-datepicker-wp', esc_url( $this->assets_url . 'css/datepicker.css' ), array(), $this->version );
+		wp_register_style( 'jquery-ui-datepicker-wp', esc_url( $this->assets_url . 'css/datepicker' . $this->script_suffix . '.css' ), array(), $this->version );
 		wp_enqueue_style( 'jquery-ui-datepicker-wp' );
 
-		wp_register_style( 'ssp-select2-css', esc_url( $this->assets_url . 'css/select2.css' ), array(), $this->version );
+		wp_register_style( 'ssp-select2-css', esc_url( $this->assets_url . 'css/select2' . $this->script_suffix . '.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-select2-css' );
 
 		/**
@@ -870,7 +870,7 @@ HTML;
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			global $post;
 			if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
-				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery-peekabar.css' ), array(), $this->version );
+				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery-peekabar'. $this->script_suffix . '.css' ), array(), $this->version );
 				wp_enqueue_style( 'jquery-peekabar' );
 			}
 		}
@@ -882,10 +882,10 @@ HTML;
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
 			//wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
 
-			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness.css' ), array(), $this->version );
+			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness'. $this->script_suffix . '.css' ), array(), $this->version );
 			wp_enqueue_style( 'jquery-ui-smoothness' );
 
-			wp_register_style( 'import-rss', esc_url( $this->assets_url . 'css/import-rss.css' ), array(), $this->version );
+			wp_register_style( 'import-rss', esc_url( $this->assets_url . 'css/import-rss'. $this->script_suffix . '.css' ), array(), $this->version );
 			wp_enqueue_style( 'import-rss' );
 
 		}

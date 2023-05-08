@@ -39,7 +39,7 @@ trait Useful_Variables {
 	 * Init useful plugin variables
 	 */
 	protected function init_useful_variables() {
-		$this->version       = SSP_VERSION;
+		$this->version       = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? time() : SSP_VERSION;
 		$this->file          = SSP_PLUGIN_FILE;
 		$this->dir           = trailingslashit( SSP_PLUGIN_PATH );
 		$this->assets_dir    = trailingslashit( $this->dir ) . 'assets';

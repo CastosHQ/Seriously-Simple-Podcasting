@@ -3,6 +3,7 @@
  */
 import {__} from '@wordpress/i18n';
 import {registerBlockType} from '@wordpress/blocks';
+import { registerPlugin } from '@wordpress/plugins';
 
 import EditPlayer from './components/EditPlayer';
 import AudioPlayer from "./components/AudioPlayer";
@@ -10,7 +11,9 @@ import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
 import EditCastosHTMLPlayer from './components/EditCastosHTMLPlayer';
 import EditPodcastList from "./components/EditPodcastList";
+import PostPublishPanel from "./components/PostPublishPanel";
 import './settingsExtender.js';
+
 
 /**
  * Standard Audio Player Block
@@ -154,3 +157,7 @@ registerBlockType('seriously-simple-podcasting/podcast-list', {
 	},
 	edit: EditPodcastList
 });
+
+registerPlugin( 'post-publish-panel', {
+	render: PostPublishPanel
+} );

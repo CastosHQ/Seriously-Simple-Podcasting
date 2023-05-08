@@ -1,0 +1,106 @@
+@import "mixins";
+
+.ssp-post-publish {
+	&__container {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		padding: 20px 8px 8px;
+		gap: 16px;
+
+		background: $clr_gray_light;
+		border-radius: 8px;
+	}
+
+	&__logos {
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+		gap: 30px;
+		order: 0;
+		flex-grow: 0;
+		box-sizing: border-box;
+
+		> a {
+
+			> span {
+				display: none;
+			}
+
+			&:after {
+				content: '';
+				display: block;
+				width: 19px;
+				height: 18px;
+				background-repeat: no-repeat;
+			}
+		}
+	}
+
+	$logos: (
+		'apple',
+		'amazon',
+		'spotify',
+		'google',
+		'overcast',
+	);
+
+	@each $logo in $logos {
+		&__#{$logo} {
+			&:after {
+				background: url('../img/logos/#{$logo}.svg');
+			}
+		}
+	}
+
+	&__description {
+		font-family: 'Inter', sans-serif;
+		font-style: normal;
+		font-weight: 500;
+		font-size: 14px;
+		line-height: 20px;
+
+		text-align: center;
+
+		/* Blue Gray/600 */
+		color: #475569;
+	}
+
+	&__btn {
+		box-sizing: border-box;
+
+		display: flex;
+		flex-direction: row;
+		justify-content: center;
+		align-items: center;
+
+		a {
+			font-family: 'Inter', sans-serif;
+			font-style: normal;
+			font-weight: 700;
+			font-size: 12px;
+			line-height: 16px;
+			padding: 8px 12px;
+			text-decoration: none;
+
+			color: $clr_blue;
+
+			flex: none;
+			order: 0;
+			flex-grow: 0;
+
+			border: 1px solid $clr_blue;
+			border-radius: 6px;
+
+			width: 100%;
+			text-align: center;
+
+			align-self: stretch;
+
+			&:hover {
+				background: $clr_gray_light - 7;
+			}
+		}
+	}
+}

@@ -720,3 +720,81 @@ textarea#episode_embed_code {
     align-items: center; }
   .ssp-review-notice__button {
     margin-right: 10px; }
+
+.ssp-post-publish__container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px 8px 8px;
+  gap: 16px;
+  background: #F6F7F7;
+  border-radius: 8px; }
+
+.ssp-post-publish__logos {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+  order: 0;
+  flex-grow: 0;
+  box-sizing: border-box; }
+  .ssp-post-publish__logos > a > span {
+    display: none; }
+  .ssp-post-publish__logos > a:after {
+    content: '';
+    display: block;
+    width: 19px;
+    height: 18px;
+    background-repeat: no-repeat; }
+
+.ssp-post-publish__apple:after {
+  background: url("../img/logos/apple.svg"); }
+
+.ssp-post-publish__amazon:after {
+  background: url("../img/logos/amazon.svg"); }
+
+.ssp-post-publish__spotify:after {
+  background: url("../img/logos/spotify.svg"); }
+
+.ssp-post-publish__google:after {
+  background: url("../img/logos/google.svg"); }
+
+.ssp-post-publish__overcast:after {
+  background: url("../img/logos/overcast.svg"); }
+
+.ssp-post-publish__description {
+  font-family: 'Inter', sans-serif;
+  font-style: normal;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 20px;
+  text-align: center;
+  /* Blue Gray/600 */
+  color: #475569; }
+
+.ssp-post-publish__btn {
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center; }
+  .ssp-post-publish__btn a {
+    font-family: 'Inter', sans-serif;
+    font-style: normal;
+    font-weight: 700;
+    font-size: 12px;
+    line-height: 16px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #3970AC;
+    flex: none;
+    order: 0;
+    flex-grow: 0;
+    border: 1px solid #3970AC;
+    border-radius: 6px;
+    width: 100%;
+    text-align: center;
+    align-self: stretch; }
+    .ssp-post-publish__btn a:hover {
+      background: #eff0f0; }

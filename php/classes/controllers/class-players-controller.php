@@ -59,21 +59,20 @@ class Players_Controller {
 	 * @return void
 	 */
 	public function register_player_assets() {
-		$version = SCRIPT_DEBUG ? time() : SSP_VERSION;
 
 		wp_register_script(
 			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player.js' ),
+			esc_url( SSP_PLUGIN_URL . 'assets/js/castos-player'. $this->script_suffix . '.js' ),
 			array(),
-			$version,
+			$this->version,
 			true
 		);
 
 		wp_register_style(
 			'ssp-castos-player',
-			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player.css' ),
+			esc_url( SSP_PLUGIN_URL . 'assets/css/castos-player'. $this->script_suffix . '.css' ),
 			array(),
-			$version
+			$this->version
 		);
 	}
 

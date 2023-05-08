@@ -81,6 +81,10 @@ class Castos_Blocks extends Controller {
 			true
 		);
 
+		wp_localize_script( 'ssp-block-script', 'sspAdmin', array(
+			'sspPostTypes' => ssp_post_types(true, false),
+		) );
+
 		wp_register_style(
 			'ssp-block-style',
 			esc_url( SSP_PLUGIN_URL . 'assets/css/block-editor-styles.css' ),

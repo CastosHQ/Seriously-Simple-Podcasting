@@ -83,6 +83,7 @@ class Castos_Blocks extends Controller {
 
 		wp_localize_script( 'ssp-block-script', 'sspAdmin', array(
 			'sspPostTypes' => ssp_post_types(true, false),
+			'isCastosUser' => ssp_is_connected_to_castos(),
 		) );
 
 		wp_register_style(

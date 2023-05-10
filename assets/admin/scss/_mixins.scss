@@ -1,7 +1,13 @@
 // Colors:
-$clr_gray_light: #F6F7F7;
-$clr_gray_dark: #475569;
-$clr_blue: #3970AC;
+$clr_blue_50: #F6F7F7;
+$clr_blue_400: #3970AC;
+$clr_blue_750: #4B5563; // Do not use it, use $clr_blue_800 instead
+$clr_blue_800: #475569;
+
+$clr_red_200: #FFA5A5;
+$clr_red_400: #DF4E4F;
+
+$clr_white: #FFFFFF;
 
 
 // Breakpoints:

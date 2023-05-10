@@ -44,6 +44,15 @@ $distribute_links = array(
 	),
 );
 
+$benefits = array(
+	__( '**Save cost** with cloud **hosting** for your media files.', 'seriously-simple-podcasting' ),
+	__( 'See **more data** about your listeners with advanced analytics.', 'seriously-simple-podcasting' ),
+	__( 'Send episodes to **YouTube** automatically.', 'seriously-simple-podcasting' ),
+	__( '**Private Podcasts** with a mobile app for your listeners.', 'seriously-simple-podcasting' ),
+	__( 'Create **unlimited podcasts** with **unlimited storage**.', 'seriously-simple-podcasting' ),
+	__( '**Monetize** your show with donations, dynamic ad insertion or subscriptions.', 'seriously-simple-podcasting' ),
+);
+
 ?>
 
 <div class="ssp-onboarding ssp-onboarding-step-4">
@@ -51,59 +60,85 @@ $distribute_links = array(
 
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
-			<h1><?php _e( 'Connect to Castos Hosting & Analytics', 'seriously-simple-podcasting' ); ?></h1>
+			<h1><?php _e( 'Would you like to host with Castos?', 'seriously-simple-podcasting' ); ?></h1>
+			<p><?php _e( 'Not sure why you need a podcast host?', 'seriously-simple-podcasting' ); ?>
+				<a href="https://castos.com/seriously-simple-podcasting/?utm_source=ssp&utm_medium=onboarding&utm_campaign=learn-more">
+					<?php _e( 'Learn Why', 'seriously-simple-podcasting' ); ?><span class="dashicons dashicons-external"></span>
+				</a>
+			</p>
 		</div>
-		<div class="ssp-onboarding-step-4-info js-hosting-step-1">
-			<div class="ssp-onboarding-step-4-info__left">
-				<h2><?php _e( 'Castos gives you the tools to grow your audience.', 'seriously-simple-podcasting' ); ?></h2>
+		<div class="ssp-onboarding-step-4__info js-hosting-step-1">
+			<div class="ssp-onboarding-step-4__sync-img">
+				<img alt="<?php _e( 'Sync between SSP and Castos', 'seriously-simple-podcasting' ) ?>"
+					 src="<?php echo SSP_PLUGIN_URL . '/assets/admin/img/onboarding-sync.svg'; ?>">
+			</div>
+			<div class="ssp-onboarding-step-4__benefits">
+				<h2><?php _e( 'Benefits of connecting SSP to your Castos account', 'seriously-simple-podcasting' ); ?></h2>
+				<ul>
+					<?php foreach ( $benefits as $benefit ) : ?>
+						<?php $benefit = preg_replace('/\*\*(.+)\*\*/sU', '<b>$1</b>', $benefit); ?>
+						<li><?php echo $benefit; ?></li>
+					<?php endforeach; ?>
+				</ul>
+			</div>
+			<div class="ssp-onboarding-step-4__start-trial">
+				<a href="https://app.castos.com/register?utm_source=ssp&utm_medium=onboarding&utm_campaign=hosting">
+					<?php _e( 'Start Free Trial on Castos', 'seriously-simple-podcasting' ) ?>
+					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+						<path d="M21.5 12H3.5M14.5 5L21.5 12L14.5 5ZM21.5 12L14.5 19L21.5 12Z" stroke="#F3C2C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</a>
+			</div>
+			<!--<div class="ssp-onboarding-step-4-info__left">
+				<h2><?php /*_e( 'Castos gives you the tools to grow your audience.', 'seriously-simple-podcasting' ); */?></h2>
 
 				<div class="ssp-onboarding-step-4-info__links">
-					<h4><?php _e( 'Distribute to', 'seriously-simple-podcasting' ); ?></h4>
+					<h4><?php /*_e( 'Distribute to', 'seriously-simple-podcasting' ); */?></h4>
 					<ul>
-						<?php foreach($distribute_links as $link) : ?>
+						<?php /*foreach($distribute_links as $link) : */?>
 							<li>
-								<a href="<?php echo esc_attr($link['url']) ?>" title="<?php echo esc_attr( $link['title'] ) ?>">
-									<?php echo $link['img'] ?>
+								<a href="<?php /*echo esc_attr($link['url']) */?>" title="<?php /*echo esc_attr( $link['title'] ) */?>">
+									<?php /*echo $link['img'] */?>
 								</a>
 							</li>
-						<?php endforeach; ?>
+						<?php /*endforeach; */?>
 					</ul>
 				</div>
 
 				<ul class="ssp-onboarding-step-4-info__usps">
-					<li><?php _e( 'Unlimited storage and podcasts on all plans.', 'seriously-simple-podcasting' ); ?></li>
-					<li><?php _e( 'Advanced analytics.', 'seriously-simple-podcasting' ); ?></li>
-					<li><?php _e( 'YouTube Republishing and Automated Transcriptions.', 'seriously-simple-podcasting' ); ?></li>
-					<li><?php _e( 'Individualized Private Podcasting.', 'seriously-simple-podcasting' ); ?></li>
+					<li><?php /*_e( 'Unlimited storage and podcasts on all plans.', 'seriously-simple-podcasting' ); */?></li>
+					<li><?php /*_e( 'Advanced analytics.', 'seriously-simple-podcasting' ); */?></li>
+					<li><?php /*_e( 'YouTube Republishing and Automated Transcriptions.', 'seriously-simple-podcasting' ); */?></li>
+					<li><?php /*_e( 'Individualized Private Podcasting.', 'seriously-simple-podcasting' ); */?></li>
 				</ul>
 			</div>
 			<div class="ssp-onboarding-step-4-info__right">
 				<a href="#have-account"
 				   class="ssp-onboarding-step-4-info-right__button ssp-onboarding-step-4-info-button">
 					<span class="ssp-onboarding-step-4-info-button__title button-title">
-						<?php _e( 'I have a Castos account', 'seriously-simple-podcasting' ); ?>
+						<?php /*_e( 'I have a Castos account', 'seriously-simple-podcasting' ); */?>
 					</span>
 					<span class="ssp-onboarding-step-4-info-button__description button-description">
-						<?php _e( 'Let’s connect SSP and Castos through our API.', 'seriously-simple-podcasting' ); ?>
+						<?php /*_e( 'Let’s connect SSP and Castos through our API.', 'seriously-simple-podcasting' ); */?>
 					</span>
 				</a>
 				<a href="#start-free-trial" class="ssp-onboarding-step-4-info-right__button ssp-onboarding-step-4-info-button">
 					<span class="ssp-onboarding-step-4-info-button__title button-title">
-						<?php _e( 'Start free trial on Castos', 'seriously-simple-podcasting' ); ?>
+						<?php /*_e( 'Start free trial on Castos', 'seriously-simple-podcasting' ); */?>
 					</span>
 					<span class="ssp-onboarding-step-4-info-button__description button-description">
-						<?php _e( 'No Credit Card Required', 'seriously-simple-podcasting' ); ?>
+						<?php /*_e( 'No Credit Card Required', 'seriously-simple-podcasting' ); */?>
 					</span>
 				</a>
-				<a href="<?php echo $step_urls[ $step_number + 1 ] ?>" class="ssp-onboarding-step-4-info-right__button ssp-onboarding-step-4-info-button">
+				<a href="<?php /*echo $step_urls[ $step_number + 1 ] */?>" class="ssp-onboarding-step-4-info-right__button ssp-onboarding-step-4-info-button">
 					<span class="ssp-onboarding-step-4-info-button__title button-title">
-						<?php _e( 'Skip', 'seriously-simple-podcasting' ); ?>
+						<?php /*_e( 'Skip', 'seriously-simple-podcasting' ); */?>
 					</span>
 					<span class="ssp-onboarding-step-4-info-button__description button-description">
-						<?php _e( 'Not interested right now.', 'seriously-simple-podcasting' ); ?>
+						<?php /*_e( 'Not interested right now.', 'seriously-simple-podcasting' ); */?>
 					</span>
 				</a>
-			</div>
+			</div>-->
 		</div>
 		<div class="js-hosting-step-2" style="display: none">
 			<div class="ssp-onboarding__hosting-steps js-hosting-registration">

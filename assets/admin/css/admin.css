@@ -328,14 +328,19 @@ textarea#episode_embed_code {
     right: 350px; }
   .ssp-onboarding-step-4 .ssp-onboarding__steps::after {
     right: 180px; }
-  .ssp-onboarding-step-4-info {
+  .ssp-onboarding-step-4__info {
     display: flex;
-    padding: 20px 25px 8px; }
-    .ssp-onboarding-step-4-info h2 {
+    flex-direction: column;
+    padding: 14px 75px 28px;
+    color: #475569; }
+    .ssp-onboarding-step-4__info h2 {
       font-size: 22px;
-      line-height: 27px;
-      margin: 0 30px 23px 0; }
-    .ssp-onboarding-step-4-info h4 {
+      font-weight: 600;
+      line-height: 26px;
+      margin: 16px 0;
+      color: #475569;
+      text-align: center; }
+    .ssp-onboarding-step-4__info h4 {
       font-size: 9px;
       color: #64748B;
       line-height: 42px;
@@ -343,19 +348,19 @@ textarea#episode_embed_code {
       text-transform: uppercase;
       margin: 0;
       white-space: nowrap; }
-    .ssp-onboarding-step-4-info__left {
+    .ssp-onboarding-step-4__info__left {
       margin-right: 20px; }
-    .ssp-onboarding-step-4-info__right {
+    .ssp-onboarding-step-4__info__right {
       padding: 5px 3px 0 0; }
-    .ssp-onboarding-step-4-info__usps {
+    .ssp-onboarding-step-4__info__usps {
       margin: 24px 0 0; }
-      .ssp-onboarding-step-4-info__usps li {
+      .ssp-onboarding-step-4__info__usps li {
         font-size: 13px;
         font-weight: 400;
         padding-left: 27px;
         position: relative;
         margin: 20px 0; }
-        .ssp-onboarding-step-4-info__usps li:before {
+        .ssp-onboarding-step-4__info__usps li:before {
           content: '';
           position: absolute;
           left: 0;
@@ -364,7 +369,7 @@ textarea#episode_embed_code {
           width: 14px;
           height: 10px;
           background: url(../img/checkbox-red.svg) no-repeat; }
-    .ssp-onboarding-step-4-info-button {
+    .ssp-onboarding-step-4__info-button {
       display: block;
       background: #f4f7fa;
       padding: 22px 50px 20px 20px;
@@ -376,9 +381,9 @@ textarea#episode_embed_code {
       height: 86px;
       box-sizing: border-box;
       transition: .3s; }
-      .ssp-onboarding-step-4-info-button:hover {
+      .ssp-onboarding-step-4__info-button:hover {
         background: #e7ecf1; }
-      .ssp-onboarding-step-4-info-button:after {
+      .ssp-onboarding-step-4__info-button:after {
         display: block;
         position: absolute;
         content: '';
@@ -387,20 +392,20 @@ textarea#episode_embed_code {
         background: url(../img/hosting-arrow.svg) no-repeat;
         right: 17px;
         top: 35px; }
-      .ssp-onboarding-step-4-info-button__title {
+      .ssp-onboarding-step-4__info-button__title {
         display: block;
         font-size: 18px;
         font-weight: 600;
         color: #475569;
         margin-bottom: 10px; }
-      .ssp-onboarding-step-4-info-button__description {
+      .ssp-onboarding-step-4__info-button__description {
         display: block;
         font-size: 10px;
         font-weight: 400;
-        color: #4B5563; }
-      .ssp-onboarding-step-4-info-button .button-title {
+        color: #475569; }
+      .ssp-onboarding-step-4__info-button .button-title {
         font-weight: 600; }
-    .ssp-onboarding-step-4-info__links {
+    .ssp-onboarding-step-4__info__links {
       display: flex;
       background: #E2E8F0;
       margin-left: -25px;
@@ -409,13 +414,57 @@ textarea#episode_embed_code {
       height: 40px;
       border-radius: 0 20px 20px 0;
       box-sizing: border-box; }
-      .ssp-onboarding-step-4-info__links ul {
+      .ssp-onboarding-step-4__info__links ul {
         display: flex;
         justify-content: space-between;
         width: 100%;
         padding: 0 17px 0 24px; }
-      .ssp-onboarding-step-4-info__links li:hover svg path, .ssp-onboarding-step-4-info__links li:hover svg rect {
+      .ssp-onboarding-step-4__info__links li:hover svg path, .ssp-onboarding-step-4__info__links li:hover svg rect {
         fill: #DF4E4F; }
+  .ssp-onboarding-step-4__sync-img {
+    display: flex;
+    justify-content: center;
+    margin-left: 26px; }
+  .ssp-onboarding-step-4__benefits li {
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 19px;
+    color: #64748B;
+    position: relative;
+    margin-left: 13px; }
+    .ssp-onboarding-step-4__benefits li:before {
+      content: '';
+      display: inline-block;
+      height: 24px;
+      width: 24px;
+      background: url(../img/list-check.svg) no-repeat;
+      position: relative;
+      left: -8px;
+      top: 5px; }
+  .ssp-onboarding-step-4__start-trial {
+    display: flex;
+    justify-content: center; }
+    .ssp-onboarding-step-4__start-trial a {
+      font-weight: 600;
+      font-size: 18px;
+      line-height: 28px;
+      background: #DF4E4F;
+      border: 3px solid #FFA5A5;
+      border-radius: 6px;
+      color: #FFFFFF;
+      text-decoration: none;
+      padding: 16px 20px;
+      margin: 19px 3px;
+      width: 100%;
+      display: inline-block;
+      text-align: center; }
+      .ssp-onboarding-step-4__start-trial a:hover {
+        background: #e95859;
+        transition: 0.2s; }
+    .ssp-onboarding-step-4__start-trial svg {
+      margin-left: 8px;
+      position: relative;
+      top: 4px; }
   .ssp-onboarding-step-5 .ssp-onboarding__steps::after {
     right: 40px; }
   .ssp-onboarding-step-5 .ssp-onboarding__settings-body {
@@ -452,11 +501,25 @@ textarea#episode_embed_code {
     box-shadow: 0 2px 20px -10px rgba(51, 65, 85, 0.38);
     min-height: 400px; }
   .ssp-onboarding__settings-header {
-    height: 80px;
-    border-bottom: 2px solid #F3F4F6; }
+    height: 104px;
+    border-bottom: 2px solid #F3F4F6;
+    text-align: center; }
     .ssp-onboarding__settings-header h1 {
-      text-align: center;
-      line-height: 80px; }
+      line-height: 20px;
+      color: #475569;
+      padding: 27px 0 0;
+      margin-bottom: 0; }
+    .ssp-onboarding__settings-header p, .ssp-onboarding__settings-header a {
+      color: #475569;
+      font-weight: 400; }
+    .ssp-onboarding__settings-header a {
+      padding-left: 8px; }
+    .ssp-onboarding__settings-header .dashicons-external {
+      color: #94A3B8;
+      font-size: 16px;
+      text-decoration: none;
+      position: relative;
+      left: 2px; }
   .ssp-onboarding__settings-body {
     padding: 25px; }
     .ssp-onboarding__settings-body input[type=text], .ssp-onboarding__settings-body textarea {
@@ -598,7 +661,7 @@ textarea#episode_embed_code {
     text-align: left; }
     .ssp-onboarding__links p {
       font-size: 16px;
-      color: #4B5563;
+      color: #475569;
       line-height: 19px;
       font-weight: 400; }
   .ssp-onboarding__links-item {
@@ -624,7 +687,7 @@ textarea#episode_embed_code {
     margin-top: 20px; }
   .ssp-onboarding__hosting-steps {
     display: flex;
-    background: #4B5563;
+    background: #475569;
     padding: 17px 25px 29px;
     justify-content: space-between; }
   .ssp-onboarding__hosting-step {
@@ -696,6 +759,8 @@ textarea#episode_embed_code {
         bottom: 23px;
         left: 50%;
         margin-left: -16px; }
+  .ssp-onboarding .dashicons {
+    font-family: dashicons, 'Inter', sans-serif; }
 
 /* Hide the WP bars */
 .admin_page_ssp-onboarding-1 #adminmenumain, .admin_page_ssp-onboarding-1 #wpadminbar, .admin_page_ssp-onboarding-1 #wpfooter, .admin_page_ssp-onboarding-2 #adminmenumain, .admin_page_ssp-onboarding-2 #wpadminbar, .admin_page_ssp-onboarding-2 #wpfooter, .admin_page_ssp-onboarding-3 #adminmenumain, .admin_page_ssp-onboarding-3 #wpadminbar, .admin_page_ssp-onboarding-3 #wpfooter, .admin_page_ssp-onboarding-4 #adminmenumain, .admin_page_ssp-onboarding-4 #wpadminbar, .admin_page_ssp-onboarding-4 #wpfooter, .admin_page_ssp-onboarding-5 #adminmenumain, .admin_page_ssp-onboarding-5 #wpadminbar, .admin_page_ssp-onboarding-5 #wpfooter {

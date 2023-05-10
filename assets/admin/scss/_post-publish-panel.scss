@@ -8,7 +8,7 @@
 		padding: 20px 8px 8px;
 		gap: 16px;
 
-		background: $clr_gray_light;
+		background: $clr_blue_50;
 		border-radius: 8px;
 	}
 
@@ -84,13 +84,13 @@
 			padding: 8px 12px;
 			text-decoration: none;
 
-			color: $clr_blue;
+			color: $clr_blue_400;
 
 			flex: none;
 			order: 0;
 			flex-grow: 0;
 
-			border: 1px solid $clr_blue;
+			border: 1px solid $clr_blue_400;
 			border-radius: 6px;
 
 			width: 100%;
@@ -99,7 +99,7 @@
 			align-self: stretch;
 
 			&:hover {
-				background: $clr_gray_light - 7;
+				background: $clr_blue_50 - 7;
 			}
 		}
 	}

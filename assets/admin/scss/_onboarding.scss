@@ -59,7 +59,7 @@
 	label {
 		font-size: 12px;
 		font-weight: 400;
-		color: #9CA3AF;
+		color: $clr_gray_400;
 	}
 
 	padding: 10px;
@@ -194,21 +194,24 @@
 		&__info {
 			display: flex;
 			flex-direction: column;
-			padding: 14px 75px 28px;
-			color: $clr_blue_800;
+			padding: 14px 75px 8px;
+			color: $clr_gray_600;
+			position: relative;
+			z-index: 1;
+			background: $clr_white;
 
 			h2 {
 				font-size: 22px;
 				font-weight: 600;
 				line-height: 26px;
 				margin: 16px 0;
-				color: $clr_blue_800;
+				color: $clr_gray_600;
 				text-align: center;
 			}
 
 			h4 {
 				font-size: 9px;
-				color: #64748B;
+				color: $clr_gray_500;
 				line-height: 42px;
 				font-weight: 400;
 				text-transform: uppercase;
@@ -286,7 +289,7 @@
 					display: block;
 					font-size: 10px;
 					font-weight: 400;
-					color: $clr_blue_800;
+					color: $clr_gray_600;
 				}
 
 				.button-title {
@@ -325,6 +328,9 @@
 			display: flex;
 			justify-content: center;
 			margin-left: 26px;
+			a {
+				line-height: 0;
+			}
 		}
 
 		&__benefits {
@@ -332,7 +338,7 @@
 				font-weight: 500;
 				font-size: 14px;
 				line-height: 19px;
-				color: #64748B;
+				color: $clr_gray_500;
 				position: relative;
 				margin-left: 13px;
 
@@ -355,7 +361,7 @@
 			justify-content: center;
 			a {
 				font-weight: 600;
-				font-size: 18px;
+				font-size: 20px;
 				line-height: 28px;
 				background: $clr_red_400;
 				border: 3px solid $clr_red_200;
@@ -363,7 +369,7 @@
 				color: $clr_white;
 				text-decoration: none;
 				padding: 16px 20px;
-				margin: 19px 3px;
+				margin: 17px 3px;
 				width: 100%;
 				display: inline-block;
 				text-align: center;
@@ -375,9 +381,100 @@
 			}
 
 			svg {
-				margin-left: 8px;
+				margin-left: 7px;
 				position: relative;
 				top: 4px;
+				transform: rotate(-45deg);
+			}
+		}
+
+		&__accordion {
+			height: 99px;
+			background: $clr_blue_100;
+			color: $clr_gray_600 - 10;
+			border-radius: 0 0 8px 8px;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			font-weight: 600;
+			font-size: 18px;
+			line-height: 28px;
+			cursor: pointer;
+			position: relative;
+			z-index: 1;
+
+			&:hover {
+				background: $clr_blue_100 + 4;
+				transition: .2s;
+			}
+			span {
+				position: relative;
+				left: -20px;
+				font-weight: 600;
+				font-size: 20px;
+				line-height: 28px;
+				&:before, &:after {
+					position: absolute;
+					content: '';
+					display: block;
+					width: 12px;
+					border-bottom: 2px solid $clr_gray_600;
+					transition: .6s;
+				}
+				&:before {
+					transform: rotate(45deg);
+					right: -27px;
+					bottom: 12px;
+				}
+
+				&:after {
+					transform: rotate(-45deg);
+					right: -35px;
+					bottom: 12px;
+				}
+			}
+
+			&--opened {
+				border-radius: 0;
+				span {
+					&:before {
+						transform: rotate(-45deg);
+					}
+					&:after {
+						transform: rotate(45deg);
+					}
+				}
+			}
+		}
+
+		&__form {
+			position: relative;
+			z-index: 0;
+			visibility: hidden;
+			transition: .6s;
+			margin-top: -444px;
+
+			&--opened {
+				visibility: visible;
+				margin-top: 0;
+			}
+
+		}
+
+		&__skip-step {
+			display: flex;
+			justify-content: center;
+			margin: 40px 0 -20px;;
+			a {
+				font-family: Roboto, sans-serif;
+				font-weight: 400;
+				font-size: 16px;
+				line-height: 19px;
+				text-decoration: none;
+				color: $clr_gray_400;
+				padding: 7px 11px;
+				border: 1px solid $clr_gray_300;
+				border-radius: 6px;
 			}
 		}
 	}
@@ -404,7 +501,7 @@
 			display: block;
 			height: 2px;
 			width: 10px;
-			background: #64748B;
+			background: $clr_gray_500;
 			position: absolute;
 			right: 22px;
 			top: 29px;
@@ -442,12 +539,12 @@
 
 		h1 {
 			line-height: 20px;
-			color: $clr_blue_800;
+			color: $clr_gray_600;
 			padding: 27px 0 0;
 			margin-bottom: 0;
 		}
 		p, a {
-			color: $clr_blue_800;
+			color: $clr_gray_600;
 			font-weight: 400;
 		}
 
@@ -519,7 +616,7 @@
 			}
 
 			&:disabled {
-				background: #9CA3AF;
+				background: $clr_gray_400;
 				color: #D1D5DB;
 				&:after {
 					filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
@@ -667,7 +764,7 @@
 
 		p {
 			font-size: 16px;
-			color: $clr_blue_800;
+			color: $clr_gray_600;
 			line-height: 19px;
 			font-weight: 400;
 		}
@@ -687,9 +784,11 @@
 		text-align: center;
 		margin-top: 40px;
 		a {
-			color: #9CA3AF;
+			color: $clr_gray_400;
 			text-decoration: none;
 			font-size: 16px;
+			font-weight: 400;
+			font-family: Roboto, sans-serif;
 		}
 	}
 
@@ -705,7 +804,7 @@
 
 	&__hosting-steps {
 		display: flex;
-		background: $clr_blue_800;
+		background: $clr_gray_600;
 		padding: 17px 25px 29px;
 		justify-content: space-between;
 	}
@@ -751,7 +850,7 @@
 
 		&--info {
 			text-decoration: none;
-			color: #CBD5E1;
+			color: $clr_gray_300;
 			font-size: 12px;
 			font-weight: 400;
 			position: relative;
@@ -782,7 +881,7 @@
 		cursor: pointer;
 
 		span {
-			color: #9CA3AF;
+			color: $clr_gray_400;
 			font-size: 12px;
 			font-weight: 400;
 			position: relative;

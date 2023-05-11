@@ -6,9 +6,8 @@ jQuery(document).ready(function($) {
 		$fields = $('.js-onboarding-field'),
 		$btn = $('.js-onboarding-btn'),
 		$validateTokenBtn = $('.js-onboarding-validate-token'),
-		$hostingStep1 = $('.js-hosting-step-1'),
-		$hostingStep2 = $('.js-hosting-step-2'),
-		$hostingRegistration = $('.js-hosting-registration'),
+		$hostingStep2 = $('.js-hosting-form'),
+		$accordion = $('.js-accordion'),
 		$dragable = $('.js-onboarding-dragable'),
 		$uploadImageBtn = $('#ss_podcasting_data_image_button'),
 		validateOnboarding = function () {
@@ -24,25 +23,6 @@ jQuery(document).ready(function($) {
 				$btn.removeAttr('disabled');
 			} else {
 				$btn.attr('disabled', 'disabled');
-			}
-		},
-		hostingConnectionSteps = function(){
-			switch(window.location.hash) {
-				case '#have-account':
-					$hostingStep1.hide();
-					$hostingStep2.show();
-					$hostingRegistration.hide();
-					break;
-
-				case '#start-free-trial':
-					$hostingStep1.hide();
-					$hostingStep2.show();
-					$hostingRegistration.show();
-					break;
-
-				default:
-					$hostingStep2.hide();
-					$hostingStep1.show();
 			}
 		},
 		initDeleteImgInfo = function(){
@@ -105,9 +85,16 @@ jQuery(document).ready(function($) {
 			validateOnboarding();
 		},
 		initHostingConnectionSteps = function(){
-			hostingConnectionSteps();
-			$(window).on('hashchange', function(e){
-				hostingConnectionSteps();
+			$accordion.click(function () {
+				let openedClass = 'ssp-onboarding-step-4__accordion--opened',
+					openedFormClass = 'ssp-onboarding-step-4__form--opened';
+				if ($accordion.hasClass(openedClass)) {
+					$accordion.removeClass(openedClass);
+					$hostingStep2.removeClass(openedFormClass);
+				} else {
+					$accordion.addClass(openedClass);
+					$hostingStep2.addClass(openedFormClass);
+				}
 			});
 		},
 		initDragableImage = function () {

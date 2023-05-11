@@ -331,8 +331,11 @@ textarea#episode_embed_code {
   .ssp-onboarding-step-4__info {
     display: flex;
     flex-direction: column;
-    padding: 14px 75px 28px;
-    color: #475569; }
+    padding: 14px 75px 8px;
+    color: #475569;
+    position: relative;
+    z-index: 1;
+    background: #FFFFFF; }
     .ssp-onboarding-step-4__info h2 {
       font-size: 22px;
       font-weight: 600;
@@ -425,6 +428,8 @@ textarea#episode_embed_code {
     display: flex;
     justify-content: center;
     margin-left: 26px; }
+    .ssp-onboarding-step-4__sync-img a {
+      line-height: 0; }
   .ssp-onboarding-step-4__benefits li {
     font-weight: 500;
     font-size: 14px;
@@ -446,7 +451,7 @@ textarea#episode_embed_code {
     justify-content: center; }
     .ssp-onboarding-step-4__start-trial a {
       font-weight: 600;
-      font-size: 18px;
+      font-size: 20px;
       line-height: 28px;
       background: #DF4E4F;
       border: 3px solid #FFA5A5;
@@ -454,7 +459,7 @@ textarea#episode_embed_code {
       color: #FFFFFF;
       text-decoration: none;
       padding: 16px 20px;
-      margin: 19px 3px;
+      margin: 17px 3px;
       width: 100%;
       display: inline-block;
       text-align: center; }
@@ -462,9 +467,77 @@ textarea#episode_embed_code {
         background: #e95859;
         transition: 0.2s; }
     .ssp-onboarding-step-4__start-trial svg {
-      margin-left: 8px;
+      margin-left: 7px;
       position: relative;
-      top: 4px; }
+      top: 4px;
+      transform: rotate(-45deg); }
+  .ssp-onboarding-step-4__accordion {
+    height: 99px;
+    background: #ccd6e2;
+    color: #3d4b5f;
+    border-radius: 0 0 8px 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: 600;
+    font-size: 18px;
+    line-height: 28px;
+    cursor: pointer;
+    position: relative;
+    z-index: 1; }
+    .ssp-onboarding-step-4__accordion:hover {
+      background: #d0dae6;
+      transition: .2s; }
+    .ssp-onboarding-step-4__accordion span {
+      position: relative;
+      left: -20px;
+      font-weight: 600;
+      font-size: 20px;
+      line-height: 28px; }
+      .ssp-onboarding-step-4__accordion span:before, .ssp-onboarding-step-4__accordion span:after {
+        position: absolute;
+        content: '';
+        display: block;
+        width: 12px;
+        border-bottom: 2px solid #475569;
+        transition: .6s; }
+      .ssp-onboarding-step-4__accordion span:before {
+        transform: rotate(45deg);
+        right: -27px;
+        bottom: 12px; }
+      .ssp-onboarding-step-4__accordion span:after {
+        transform: rotate(-45deg);
+        right: -35px;
+        bottom: 12px; }
+    .ssp-onboarding-step-4__accordion--opened {
+      border-radius: 0; }
+      .ssp-onboarding-step-4__accordion--opened span:before {
+        transform: rotate(-45deg); }
+      .ssp-onboarding-step-4__accordion--opened span:after {
+        transform: rotate(45deg); }
+  .ssp-onboarding-step-4__form {
+    position: relative;
+    z-index: 0;
+    visibility: hidden;
+    transition: .6s;
+    margin-top: -444px; }
+    .ssp-onboarding-step-4__form--opened {
+      visibility: visible;
+      margin-top: 0; }
+  .ssp-onboarding-step-4__skip-step {
+    display: flex;
+    justify-content: center;
+    margin: 40px 0 -20px; }
+    .ssp-onboarding-step-4__skip-step a {
+      font-family: Roboto, sans-serif;
+      font-weight: 400;
+      font-size: 16px;
+      line-height: 19px;
+      text-decoration: none;
+      color: #9CA3AF;
+      padding: 7px 11px;
+      border: 1px solid #CBD5E1;
+      border-radius: 6px; }
   .ssp-onboarding-step-5 .ssp-onboarding__steps::after {
     right: 40px; }
   .ssp-onboarding-step-5 .ssp-onboarding__settings-body {
@@ -676,7 +749,9 @@ textarea#episode_embed_code {
     .ssp-onboarding__skip a {
       color: #9CA3AF;
       text-decoration: none;
-      font-size: 16px; }
+      font-size: 16px;
+      font-weight: 400;
+      font-family: Roboto, sans-serif; }
   .ssp-onboarding__skip-button {
     display: inline-block;
     background: #E2E8F0;

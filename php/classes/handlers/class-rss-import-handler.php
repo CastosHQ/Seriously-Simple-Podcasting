@@ -127,7 +127,19 @@ class RSS_Import_Handler {
 	 * Load the xml feed url into the feed_object
 	 */
 	public function load_rss_feed() {
-		$feed_content = file_get_contents( $this->rss_feed );
+		$wp_remote_content = wp_remote_get( $this->rss_feed );
+
+		if ( is_wp_error( $wp_remote_content ) || empty( $wp_remote_content['body'] ) ) {
+			$error = sprintf(
+				'Could not load external feed %s. Please check the feed URL or your server firewall restrictions and try again.',
+				$this->rss_feed
+			);
+
+			throw new \Exception( $error );
+		} else {
+			$feed_content = $wp_remote_content['body'];
+		}
+
 		$this->update_import_data( 'feed_content', $feed_content );
 		$this->feed_object = simplexml_load_string( $feed_content );
 

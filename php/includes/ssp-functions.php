@@ -316,7 +316,7 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 					$template = str_replace( '%%CLASS%%', $class, $template );
 					$template = str_replace( '%%TITLE%%', $title, $template );
 
-					$meta     = $series->count . __( ' episodes', 'seriously-simple-podcasting' );
+					$meta     = sprintf( __( '%s episodes', 'seriously-simple-podcasting' ), $series->count );
 					$template = str_replace( '%%META%%', $meta, $template );
 
 					$html .= $template;

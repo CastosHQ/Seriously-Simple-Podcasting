@@ -67,18 +67,18 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 							<?php _e( 'Sign-up', 'seriously-simple-podcasting' ); ?>
 						</span>
 						<span class="ssp-onboarding__hosting-step--info">
-						 	<?php printf( __( 'Create your account at %s', 'seriously-simple-podcasting' ), '<span>app.castos.com</span>' ); ?>
+							<?php printf( __( 'Create your account at %s', 'seriously-simple-podcasting' ), '<span>Castos</span>' ); ?>
 						</span>
 					</a>
 				</div>
 
 				<div class="ssp-onboarding__hosting-step">
-					<a href="https://app.castos.com/api-details" target="_blank">
+					<a href="https://app.castos.com/account/publish" target="_blank">
 						<span class="ssp-onboarding__hosting-step--header">
 							<?php _e( 'Complete details below', 'seriously-simple-podcasting' ); ?>
 						</span>
 						<span class="ssp-onboarding__hosting-step--info">
-							<?php printf( __( 'Get your API key from %s', 'seriously-simple-podcasting' ), '<span>app.castos.com/api-details</span>' ); ?>
+							<?php printf( __( 'Get your API key from %s', 'seriously-simple-podcasting' ), '<span>Castos</span>' ); ?>
 						</span>
 					</a>
 				</div>

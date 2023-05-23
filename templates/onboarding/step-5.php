@@ -22,10 +22,10 @@
 
 		<div class="ssp-onboarding__submit ssp-onboarding__links">
 			<div class="ssp-onboarding__links-item">
-				<h2><?php _e( 'Join the Castos Academy', 'seriously-simple-podcasting' ); ?></h2>
-				<p><?php _e( 'Your toolkit for for everything from starting out smart to taking your podcast to the next level.', 'seriously-simple-podcasting' ); ?></p>
-				<a target="_blank" href="https://academy.castos.com/?utm_source=WordPress&utm_medium=SSP&utm_campaign=wizard" class="button grey">
-					<span><?php _e( 'Join Now', 'seriously-simple-podcasting' ); ?></span>
+				<h2><?php _e( 'Video Resources', 'seriously-simple-podcasting' ); ?></h2>
+				<p><?php _e( 'Explore the world of podcasting with WordPress, Seriously Simple Podcasting & Castos.', 'seriously-simple-podcasting' ); ?></p>
+				<a target="_blank" href="https://www.youtube.com/playlist?list=PLQX-MHyR9D1X3U5YYXY4HO7goClC8hBQW" class="button grey">
+					<span><?php _e( 'Browse Resources', 'seriously-simple-podcasting' ); ?></span>
 				</a>
 			</div>
 

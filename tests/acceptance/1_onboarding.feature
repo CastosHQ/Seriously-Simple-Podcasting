@@ -31,7 +31,7 @@ Feature: Onboarding Wizard
 		Then I can see that I am on the "Hosting" step of onboarding wizard
 
 		Given I want to "Setup the fourth step of onboarding wizard"
-		When I click "Not interested right now." link
+		When I click "Skip Step" link
 		Then I can see that I am on the "Done!" step of onboarding wizard
 
 		Given I want to "Check that Categories step was setup correctly"

@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 6.2
 Requires PHP: 5.6
-Stable tag: 2.20.3
+Stable tag: 2.21.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.21.0 =
+* 2023-05-24
+* UPDATE SUMMARY: Fixed media prefix regression, improved translation strings, use minified CSS
+* [UPDATE] Improved translation strings
+* [UPDATE] Improved getting remote feed functionality
+* [UPDATE] Minor admin design changes
+* [FIX] Use minified CSS and JS files
+* [FIX] Fixed no media prefix in feed when gist to bypass passthrough URLs is used
 
 = 2.20.3 =
 * 2023-03-30

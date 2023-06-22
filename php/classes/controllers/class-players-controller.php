@@ -234,7 +234,7 @@ class Players_Controller {
 		$subscribe_display = $this->get_subscribe_display( $episode_id, $context, $meta_sep );
 		$meta_display      = $this->get_meta_display( $podcast_display, $subscribe_display, $context );
 
-		return apply_filters('ssp_include_player_meta', $meta_display );
+		return apply_filters( 'ssp_include_player_meta', $meta_display, $episode_id, $context, $meta_sep );
 	}
 
 
@@ -392,6 +392,64 @@ class Players_Controller {
 		$template_data = apply_filters( 'ssp_subscribe_buttons_data', $template_data );
 
 		return $this->renderer->render_deprecated( $template_data, 'players/subscribe-buttons' );
+	}
+
+	/**
+	 * @param string $src_file
+	 * @param int $episode_id
+	 * @param string $player_size
+	 * @param string $context
+	 *
+	 * @return mixed|void
+	 */
+	public function load_media_player( $src_file, $episode_id, $player_size, $context = 'block' ) {
+		// Get episode type and default to audio
+		$type = $this->episode_repository->get_episode_type( $episode_id );
+		if ( ! $type ) {
+			$type = 'audio';
+		}
+
+		// Switch to podcast player URL
+		$src_file = str_replace( 'podcast-download', 'podcast-player', $src_file );
+
+		// Set up parameters for media player
+		$params = array( 'src' => $src_file, 'preload' => 'none' );
+
+
+		/**
+		 * If the media file is of type video
+		 * @todo is this necessary in the case of the HTML5 player?
+		 */
+		if ( 'video' === $type ) {
+			// Use featured image as video poster
+			if ( $episode_id && has_post_thumbnail( $episode_id ) ) {
+				$poster = wp_get_attachment_url( get_post_thumbnail_id( $episode_id ) );
+				if ( $poster ) {
+					$params['poster'] = $poster;
+				}
+			}
+			$player = wp_video_shortcode( $params );
+			// Allow filtering so that alternative players can be used
+			return apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
+		}
+
+		/**
+		 * Check if this player is being loaded via the AMP for WordPress plugin and if so, force the standard player
+		 * https://wordpress.org/plugins/amp/
+		 */
+		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
+			$player_size = 'standard';
+		}
+
+
+		if ( 'standard' === $player_size ) {
+			$player = $this->render_media_player( $episode_id, $context );
+		} else {
+			$player = $this->render_html_player( $episode_id, true, $context );
+		}
+
+		// Allow filtering so that alternative players can be used
+		return apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
 	}
 
 	public function media_player( $id ) {

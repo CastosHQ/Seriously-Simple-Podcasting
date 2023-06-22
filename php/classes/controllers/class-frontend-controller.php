@@ -2,13 +2,12 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
+use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 use stdClass;
 use WP_Query;
 
-use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use WP_Term;
 
 // Exit if accessed directly.
@@ -43,7 +42,6 @@ class Frontend_Controller {
 	 * @var Episode_Repository
 	 * */
 	public $episode_repository;
-
 
 	/**
 	 * @var array
@@ -202,7 +200,7 @@ class Frontend_Controller {
 			return $content;
 		}
 
-		$terms = wp_get_post_terms( $post->ID, CPT_Podcast_Handler::TAXONOMY_SERIES );
+		$terms = wp_get_post_terms( $post->ID, ssp_series_taxonomy() );
 
 		if ( ! is_array( $terms ) ) {
 			return $content;
@@ -497,53 +495,7 @@ class Frontend_Controller {
 	 * @return mixed|void
 	 */
 	public function load_media_player( $src_file, $episode_id, $player_size, $context = 'block' ) {
-		// Get episode type and default to audio
-		$type = $this->episode_repository->get_episode_type( $episode_id );
-		if ( ! $type ) {
-			$type = 'audio';
-		}
-
-		// Switch to podcast player URL
-		$src_file = str_replace( 'podcast-download', 'podcast-player', $src_file );
-
-		// Set up parameters for media player
-		$params = array( 'src' => $src_file, 'preload' => 'none' );
-
-
-		/**
-		 * If the media file is of type video
-		 * @todo is this necessary in the case of the HTML5 player?
-		 */
-		if ( 'video' === $type ) {
-			// Use featured image as video poster
-			if ( $episode_id && has_post_thumbnail( $episode_id ) ) {
-				$poster = wp_get_attachment_url( get_post_thumbnail_id( $episode_id ) );
-				if ( $poster ) {
-					$params['poster'] = $poster;
-				}
-			}
-			$player = wp_video_shortcode( $params );
-			// Allow filtering so that alternative players can be used
-			return apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
-		}
-
-		/**
-		 * Check if this player is being loaded via the AMP for WordPress plugin and if so, force the standard player
-		 * https://wordpress.org/plugins/amp/
-		 */
-		if ( function_exists( 'is_amp_endpoint' ) && is_amp_endpoint() ) {
-			$player_size = 'standard';
-		}
-
-
-		if ( 'standard' === $player_size ) {
-			$player = $this->players_controller->render_media_player( $episode_id, $context );
-		} else {
-			$player = $this->players_controller->render_html_player( $episode_id, true, $context );
-		}
-
-		// Allow filtering so that alternative players can be used
-		return apply_filters( 'ssp_media_player', $player, $src_file, $episode_id );
+		return $this->players_controller->load_media_player( $src_file, $episode_id, $player_size, $context );
 	}
 
 	/**
@@ -1334,110 +1286,5 @@ class Frontend_Controller {
 		$html .= '</div>' . "\n";
 
 		return $html;
-	}
-
-	/**
-	 * Render the HTML content for the podcast list dynamic block
-	 *
-	 * @param array $attributes Block attributes.
-	 *
-	 * @return string
-	 */
-	public function render_podcast_list_dynamic_block( $attributes ) {
-		$player_style             = (string) get_option( 'ss_podcasting_player_style', '' );
-		$paged                    = ( filter_input( INPUT_GET, 'podcast_page' ) ) ?: 1;
-		$podcast_post_types       = ssp_post_types( true );
-		$query_args               = array(
-			'post_status'         => 'publish',
-			'post_type'           => $podcast_post_types,
-			'posts_per_page'      => get_option( 'posts_per_page', 10 ),
-			'ignore_sticky_posts' => true,
-			'paged'               => $paged,
-		);
-		$query_args['meta_query'] = array(
-			array(
-				'key'     => 'audio_file',
-				'compare' => '!=',
-				'value'   => '',
-			),
-		);
-		$query_args               = apply_filters( 'podcast_list_dynamic_block_query_arguments', $query_args );
-		$episodes_query           = new WP_Query( $query_args );
-
-		ob_start();
-		if ( $episodes_query->have_posts() ) {
-			while ( $episodes_query->have_posts() ) {
-				$episodes_query->the_post();
-				$episode = get_post();
-
-				$player = '';
-				if ( !empty( $attributes['player'] ) ) {
-					$file = $this->get_enclosure( $episode->ID );
-					if ( get_option( 'permalink_structure' ) ) {
-						$file = $this->get_episode_download_link( $episode->ID );
-					}
-					$player = $this->load_media_player( $file, $episode->ID, $player_style );
-				}
-				?>
-				<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
-					<h2>
-						<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>">
-							<?php echo the_title(); ?>
-						</a>
-					</h2>
-					<div class="podcast-content">
-						<?php if ( !empty( $attributes['featuredImage'] ) ) { ?>
-							<a class="podcast-image-link" href="<?php echo esc_url( get_permalink() ) ?>"
-							   aria-hidden="true" tabindex="-1">
-								<?php echo ssp_episode_image( $episode->ID, $attributes['featuredImageSize']); ?>
-							</a>
-						<?php } ?>
-						<?php if ( $player && empty( $attributes['playerBelowExcerpt'] ) ) { ?>
-							<p><?php echo $player; ?></p>
-						<?php } ?>
-						<?php if ( !empty( $attributes['excerpt'] ) ) { ?>
-							<p><?php echo get_the_excerpt(); ?></p>
-						<?php } ?>
-						<?php if ( $player && ! empty( $attributes['playerBelowExcerpt'] ) ) { ?>
-							<p><?php echo $player; ?></p>
-						<?php } ?>
-					</div>
-				</article>
-				<?php
-			}
-		}
-		$episode_items = ob_get_clean();
-
-		// We can't use get_next_posts_link() because it doesn't work on single pages.
-		$args = array(
-			'format'    => '?podcast_page=%#%',
-			'total'     => $episodes_query->max_num_pages,
-			'current'   => max( 1, filter_input( INPUT_GET, 'podcast_page' ) ),
-			'prev_text' => __( '&laquo; Newer Episodes' ),
-			'next_text' => __( 'Older Episodes &raquo;' ),
-			'type'      => 'array',
-		);
-
-		$args = apply_filters( 'ssp_podcast_list_paginate_args', $args, $episodes_query );
-
-		$all_links = paginate_links( $args );
-
-		$links = array();
-
-		if ( is_array( $all_links ) ) {
-			foreach ( $all_links as $item ) {
-				if ( strpos( $item, 'class="next' ) || strpos( $item, 'class="prev' ) ) {
-					$links[] = $item;
-				}
-			}
-		}
-
-		$links = apply_filters( 'ssp_podcast_list_paginate_links', $links, $all_links, $episodes_query );
-
-		$episode_items .= implode( "\n", $links );
-
-		wp_reset_postdata();
-
-		return apply_filters( 'podcast_list_dynamic_block_html_content', '<div>' . $episode_items . '</div>' );
 	}
 }

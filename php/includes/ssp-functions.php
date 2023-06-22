@@ -1467,9 +1467,9 @@ if ( ! function_exists( 'ssp_series_slug' ) ) {
 			return $slug;
 		}
 
-		$is_old_customer = wp_count_terms( CPT_Podcast_Handler::TAXONOMY_SERIES );
+		$is_old_customer = wp_count_terms( ssp_series_taxonomy() );
 
-		$slug =  $is_old_customer ? CPT_Podcast_Handler::TAXONOMY_SERIES : CPT_Podcast_Handler::DEFAULT_SERIES_SLUG;
+		$slug =  $is_old_customer ? ssp_series_taxonomy() : CPT_Podcast_Handler::DEFAULT_SERIES_SLUG;
 
 		return apply_filters( 'ssp_series_slug', $slug );
 	}
@@ -1687,5 +1687,19 @@ if ( ! function_exists( 'ssp_version' ) ) {
 	 */
 	function ssp_version() {
 		return defined( 'SSP_VERSION' ) ? SSP_VERSION : null;
+	}
+}
+
+/**
+ * Gets SSP Version.
+ */
+if ( ! function_exists( 'ssp_series_taxonomy' ) ) {
+	/**
+	 * Gets SSP Version.
+	 *
+	 * @return string|null
+	 */
+	function ssp_series_taxonomy() {
+		return apply_filters( 'ssp_series_taxonomy', 'series' );
 	}
 }

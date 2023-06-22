@@ -199,6 +199,11 @@ textarea#episode_embed_code {
     top: 2px;
     opacity: 0.5; }
 
+.ssp-controls .dashicons-info {
+  position: relative;
+  font-size: 16px;
+  top: -3px; }
+
 /* latin-ext */
 @font-face {
   font-family: 'Inter';

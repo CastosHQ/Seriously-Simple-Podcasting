@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
  * SSP Custom Post Type Podcast Handler
@@ -12,6 +13,10 @@ use SeriouslySimplePodcasting\Interfaces\Service;
  */
 class CPT_Podcast_Handler implements Service {
 
+	/**
+	 * @deprecated
+	 * @see ssp_series_taxonomy() instead
+	 * */
 	const TAXONOMY_SERIES = 'series';
 
 	const DEFAULT_SERIES_SLUG = 'podcasts';
@@ -95,7 +100,7 @@ class CPT_Podcast_Handler implements Service {
 	 * @return void
 	 */
 	protected function register_series_taxonomy( $podcast_post_types, $args ) {
-		register_taxonomy( apply_filters( 'ssp_series_taxonomy', self::TAXONOMY_SERIES ), $podcast_post_types, $args );
+		register_taxonomy( ssp_series_taxonomy(), $podcast_post_types, $args );
 	}
 
 	protected function get_podcast_args() {
@@ -220,7 +225,7 @@ class CPT_Podcast_Handler implements Service {
 			'capabilities'      => $this->roles_handler->get_podcast_tax_capabilities(),
 		);
 
-		return apply_filters( 'ssp_register_taxonomy_args', $series_args, self::TAXONOMY_SERIES );
+		return apply_filters( 'ssp_register_taxonomy_args', $series_args, ssp_series_taxonomy() );
 	}
 
 	/**

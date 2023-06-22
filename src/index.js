@@ -133,28 +133,6 @@ registerBlockType('seriously-simple-podcasting/podcast-list', {
 	supports: {
 		multiple: false,
 	},
-	attributes: {
-		featuredImage: {
-			type: 'boolean',
-			default: false,
-		},
-		featuredImageSize: {
-			type: 'string',
-			default: 'full',
-		},
-		excerpt: {
-			type: 'boolean',
-			default: false,
-		},
-		player: {
-			type: 'boolean',
-			default: false,
-		},
-		playerBelowExcerpt: {
-			type: 'boolean',
-			default: false,
-		}
-	},
 	edit: EditPodcastList
 });
 

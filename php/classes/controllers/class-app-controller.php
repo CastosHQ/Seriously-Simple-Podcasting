@@ -280,7 +280,7 @@ class App_Controller {
 		 * Only load Blocks if the WordPress version is newer than 5.0.
 		 */
 		if ( version_compare( $this->get_wp_version(), '5.0', '>=' ) ) {
-			new Castos_Blocks( __FILE__, SSP_VERSION );
+			new Castos_Blocks( $this->admin_notices_handler, $this->episode_repository, $this->players_controller, $this->renderer );
 		}
 
 		// Elementor integration.

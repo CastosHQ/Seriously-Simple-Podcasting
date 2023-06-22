@@ -533,7 +533,7 @@ class Episode_Repository implements Service {
 		if ( $args['podcast_term'] ) {
 			$query['tax_query'] = array(
 				array(
-					'taxonomy' => CPT_Podcast_Handler::TAXONOMY_SERIES,
+					'taxonomy' => ssp_series_taxonomy(),
 					'field'    => 'id',
 					'terms'    => $args['podcast_term'],
 				),

@@ -109,7 +109,7 @@ class Settings_Controller extends Controller {
 
 		// Add settings link to plugins page.
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array( $this, 'add_plugin_links' ) );
-
+		
 		// Load scripts and styles for settings page.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );

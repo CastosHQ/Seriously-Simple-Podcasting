@@ -60,6 +60,8 @@ class Castos_Blocks {
 	 */
 	public function __construct( $admin_notices_handler, $episode_repository, $players_controller, $renderer ) {
 
+		$this->init_useful_variables();
+
 		$this->admin_notices_handler = $admin_notices_handler;
 		$this->episode_repository    = $episode_repository;
 		$this->players_controller    = $players_controller;
@@ -87,20 +89,10 @@ class Castos_Blocks {
 	 * @return string
 	 */
 	public function podcast_list_render_callback( $attributes ) {
-		$player_style       = (string) get_option( 'ss_podcasting_player_style', '' );
-		$paged              = ( filter_input( INPUT_GET, 'podcast_page' ) ) ?: 1;
-
-		$show_title      = boolval( $attributes['showTitle'] );
-		$show_img        = boolval( $attributes['featuredImage'] );
-		$img_size        = $attributes['featuredImageSize'];
-		$is_player_below = boolval( $attributes['playerBelowExcerpt'] );
-		$show_excerpt    = $attributes['excerpt'];
-
-		$episode_items = '';
-		$permalink_structure = get_option( 'permalink_structure' );
+		$paged            = ( filter_input( INPUT_GET, 'podcast_page' ) ) ?: 1;
 		$allowed_order_by = array( 'ID', 'title', 'date', 'recorded' );
 
-		$args = array(
+		$query_args = array(
 			'post_type'      => ssp_post_types(),
 			'podcast_id'     => intval( $attributes['selectedPodcast'] ),
 			'posts_per_page' => intval( $attributes['postsPerPage'] ?: get_option( 'posts_per_page', 10 ) ),
@@ -109,36 +101,32 @@ class Castos_Blocks {
 			'order'          => 'asc' === $attributes['order'] ? 'asc' : 'desc',
 		);
 
-		$episodes_query = $this->get_podcast_list_episodes_query( $args );
-
-		if ( $episodes_query->have_posts() ) {
-			while ( $episodes_query->have_posts() ) {
-				$episodes_query->the_post();
-				$episode = get_post();
-				$permalink = get_permalink();
-
-				$player = '';
-				if ( ! empty( $attributes['player'] ) ) {
-					$file   = $permalink_structure ? $this->episode_repository->get_episode_download_link( $episode->ID ) : $this->episode_repository->get_enclosure( $episode->ID );
-					$player = $this->players_controller->load_media_player( $file, $episode->ID, $player_style );
-				}
-
-				$episode_items .= $this->renderer->fetch(
-					'episodes/block-episodes-list-item',
-					compact( 'episode', 'player', 'show_title', 'show_img', 'img_size', 'is_player_below', 'show_excerpt', 'permalink' )
-				);
-			}
-		} else {
-			$episode_items = __( 'Sorry, episodes not found', 'seriously-simple-podcasting' );
-		}
+		$episodes_query = $this->get_podcast_list_episodes_query( $query_args );
 
 		// We can't use get_next_posts_link() because it doesn't work on single pages.
-		$links         = $this->get_podcast_list_paginate_links( $episodes_query, $paged );
-		$episode_items .= implode( "\n", $links );
+		$paginate = $this->get_podcast_list_paginate_links( $episodes_query, $paged );
 
-		wp_reset_postdata();
+		$args = array(
+			'episode_repository'  => $this->episode_repository,
+			'players_controller'  => $this->players_controller,
+			'permalink_structure' => get_option( 'permalink_structure' ),
+			'show_player'         => boolval( $attributes['player'] ),
+			'player_style'        => get_option( 'ss_podcasting_player_style', '' ),
+			'episodes_query'      => $episodes_query,
+			'paginate'            => $paginate,
+			'show_title'          => boolval( $attributes['showTitle'] ),
+			'show_img'            => boolval( $attributes['featuredImage'] ),
+			'img_size'            => strval( $attributes['featuredImageSize'] ),
+			'is_player_below'     => boolval( $attributes['playerBelowExcerpt'] ),
+			'show_excerpt'        => boolval( $attributes['excerpt'] ),
+			'columns_per_row'     => intval( $attributes['columnsPerRow'] ),
+			'title_size'          => intval( $attributes['titleSize'] ),
+			'title_under_img'     => intval( $attributes['titleUnderImage'] ),
+		);
 
-		return apply_filters( 'podcast_list_dynamic_block_html_content', '<div>' . $episode_items . '</div>' );
+		$podcast_list = $this->renderer->fetch( 'blocks/podcast-list', $args );
+
+		return apply_filters( 'podcast_list_dynamic_block_html_content', $podcast_list );
 	}
 
 	/**
@@ -285,6 +273,25 @@ class Castos_Blocks {
 			)
 		);
 
+		$this->register_podcast_list();
+	}
+
+
+
+	protected function register_podcast_list() {
+
+		wp_register_style( 'ssp-podcast-list', esc_url( $this->assets_url . 'css/blocks/podcast-list' . $this->script_suffix . '.css' ), array(), $this->version );
+
+		add_action( 'admin_enqueue_scripts', function(){
+			wp_enqueue_style( 'ssp-podcast-list' );
+		});
+
+		add_action( 'wp_enqueue_scripts', function () {
+			if ( function_exists( 'has_block' ) && has_block( 'seriously-simple-podcasting/podcast-list' ) ) {
+				wp_enqueue_style( 'ssp-podcast-list' );
+			}
+		} );
+
 		register_block_type(
 			'seriously-simple-podcasting/podcast-list',
 			array(
@@ -297,7 +304,7 @@ class Castos_Blocks {
 					),
 					'featuredImage' => array(
 						'type'    => 'boolean',
-						'default' => false,
+						'default' => true,
 					),
 					'availableImageSizes' => array(
 						'type'    => 'array',
@@ -356,8 +363,10 @@ class Castos_Blocks {
 						'type'    => 'string',
 						'default' => '',
 					),
+					// Use string everywhere instead of number because of the WP bug.
+					// It doesn't show the saved value in the admin after page refresh.
 					'postsPerPage' => array(
-						'type'    => 'number',
+						'type'    => 'string',
 						'default' => 0,
 					),
 					'orderBy' => array(
@@ -367,6 +376,18 @@ class Castos_Blocks {
 					'order' => array(
 						'type'    => 'string',
 						'default' => 'desc'
+					),
+					'columnsPerRow' => array(
+						'type'    => 'string',
+						'default' => 1,
+					),
+					'titleSize' => array(
+						'type'    => 'string',
+						'default' => 16,
+					),
+					'titleUnderImage' => array(
+						'type'    => 'boolean',
+						'default' => false,
 					),
 				),
 				'render_callback' => array(

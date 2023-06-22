@@ -1,0 +1,41 @@
+/* Default vars, might be overwritten in the block */
+:root {
+	--ssp-podcast-list-title-size: 16px;
+	--ssp-podcast-list-article-margin-bottom: 40px;
+	--ssp-podcast-list-gap: 10px;
+	--ssp-podcast-list-cols: 1;
+}
+
+.ssp-podcast-list {
+	&__articles {
+		display: flex;
+		flex-direction: row;
+		flex-wrap: wrap;
+		gap: var(--ssp-podcast-list-gap);
+	}
+
+	&__pagination {
+		display: flex;
+		justify-content: space-between;
+	}
+
+	article {
+		display: flex;
+		flex-direction: column;
+		flex-basis: calc( ( 100% - calc( var(--ssp-podcast-list-gap) *  ( var(--ssp-podcast-list-cols) - 1 ) ) ) / var(--ssp-podcast-list-cols) );
+		margin-bottom: var(--ssp-podcast-list-article-margin-bottom);
+		min-width: 100px;
+
+		h3 {
+			font-size: var(--ssp-podcast-list-title-size);
+		}
+
+		@media (max-width: 1024px) {
+			flex-basis: calc( ( 100% - calc( var(--ssp-podcast-list-gap) *  ( max(2, var(--ssp-podcast-list-cols)) / 2 - 1 ) ) ) / (max(2, var(--ssp-podcast-list-cols)) / 2) );
+		}
+
+		@media (max-width: 480px) {
+			flex-basis: 100%;
+		}
+	}
+}

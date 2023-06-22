@@ -53,7 +53,8 @@ module.exports = function (a) {
 					style: 'expanded',
 				},
 				files: {
-					'assets/admin/css/admin.css' : 'assets/admin/scss/all.scss'
+					'assets/admin/css/admin.css' : 'assets/admin/scss/all.scss',
+					'assets/css/blocks/podcast-list.css' : 'src/scss/podcast-list.scss',
 				}
 			},
 		},
@@ -71,6 +72,13 @@ module.exports = function (a) {
 						cwd: 'assets/css',
 						src: ['*.css', '!*.min.css'],
 						dest: 'assets/css',
+						ext: '.min.css'
+					},
+					{
+						expand: true,
+						cwd: 'assets/css/blocks',
+						src: ['*.css', '!*.min.css'],
+						dest: 'assets/css/blocks',
 						ext: '.min.css'
 					},
 					{

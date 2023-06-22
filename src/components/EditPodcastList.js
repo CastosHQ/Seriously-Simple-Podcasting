@@ -31,6 +31,9 @@ class EditPodcastList extends Component {
 			availableImageSizes,
 			orderBy,
 			order,
+			columnsPerRow,
+			titleSize,
+			titleUnderImage
 		} = attributes;
 
 		const toggleFeaturedImage = () => {
@@ -125,17 +128,6 @@ class EditPodcastList extends Component {
 								onChange={toggleExcerpt}
 							/>
 						</PanelRow>
-						{player && excerpt && <PanelRow>
-							<label htmlFor="ssp-podcast-list-player-below-excerpt">
-								{__('Show Player Below Excerpt', 'seriously-simple-podcasting')}
-							</label>
-							<FormToggle
-								id="ssp-podcast-list-player-below-excerpt"
-								label={__('Show Player Below Excerpt', 'seriously-simple-podcasting')}
-								checked={playerBelowExcerpt}
-								onChange={toggleShowPlayerBelowExcerpt}
-							/>
-						</PanelRow>}
 					</PanelBody>
 
 					<PanelBody key="ssp-podcast-list-query" title={__('Query', 'seriously-simple-podcasting')}>
@@ -164,6 +156,7 @@ class EditPodcastList extends Component {
 							<NumberControl
 								id="ssp-podcast-list-posts-per-page"
 								value={postsPerPage}
+								min={0}
 								onChange={(postsPerPage) => {
 									setAttributes({
 										postsPerPage: postsPerPage
@@ -209,6 +202,66 @@ class EditPodcastList extends Component {
 								}}
 							/>
 						</PanelRow>
+					</PanelBody>
+					<PanelBody key="ssp-podcast-list-style" title={__('Style', 'seriously-simple-podcasting')}>
+						<PanelRow>
+							<label htmlFor="ssp-podcast-list-columns-per-row">
+								{__('Columns per row', 'seriously-simple-podcasting')}
+							</label>
+							<NumberControl
+								id="ssp-podcast-list-columns-per-row"
+								value={columnsPerRow}
+								min={1}
+								max={6}
+								onChange={(columnsPerRow) => {
+									setAttributes({
+										columnsPerRow: columnsPerRow
+									});
+								}}
+							/>
+						</PanelRow>
+						{showTitle && <PanelRow>
+							<label htmlFor="ssp-podcast-list-title-size">
+								{__('Title Size', 'seriously-simple-podcasting')}
+							</label>
+							<NumberControl
+								id="ssp-podcast-list-title-size"
+								value={titleSize}
+								min={8}
+								max={40}
+								onChange={(titleSize) => {
+									setAttributes({
+										titleSize: titleSize
+									});
+								}}
+							/>
+						</PanelRow>}
+						{showTitle && featuredImage && <PanelRow>
+							<label htmlFor="ssp-podcast-list-title-under-image">
+								{__('Show Title Under Image', 'seriously-simple-podcasting')}
+							</label>
+							<FormToggle
+								id="ssp-podcast-list-title-under"
+								label={__('Show Title Under Image', 'seriously-simple-podcasting')}
+								checked={titleUnderImage}
+								onChange={() => {
+									setAttributes({
+										titleUnderImage: !titleUnderImage
+									});
+								}}
+							/>
+						</PanelRow>}
+						{player && excerpt && <PanelRow>
+							<label htmlFor="ssp-podcast-list-player-below-excerpt">
+								{__('Show Player Below Excerpt', 'seriously-simple-podcasting')}
+							</label>
+							<FormToggle
+								id="ssp-podcast-list-player-below-excerpt"
+								label={__('Show Player Below Excerpt', 'seriously-simple-podcasting')}
+								checked={playerBelowExcerpt}
+								onChange={toggleShowPlayerBelowExcerpt}
+							/>
+						</PanelRow>}
 					</PanelBody>
 				</div>
 			</InspectorControls>

@@ -421,7 +421,7 @@ class Episode_Repository implements Service {
 		if ( ! empty( $thumb_id ) ) {
 			$image_data_array = ssp_get_attachment_image_src( $thumb_id, $size );
 			if ( ssp_is_image_square( $image_data_array ) ) {
-				return $image_data_array;
+				return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'cover_image' );
 			}
 		}
 
@@ -437,7 +437,7 @@ class Episode_Repository implements Service {
 		if ( ! empty( $series_image_attachment_id ) ) {
 			$image_data_array = ssp_get_attachment_image_src( $series_image_attachment_id, $size );
 			if ( ssp_is_image_square( $image_data_array ) ) {
-				return $image_data_array;
+				return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'series_image' );
 			}
 		}
 
@@ -452,7 +452,7 @@ class Episode_Repository implements Service {
 			$feed_image_attachment_id = attachment_url_to_postid( $feed_image );
 			$image_data_array         = ssp_get_attachment_image_src( $feed_image_attachment_id, $size );
 			if ( ssp_is_image_square( $image_data_array ) ) {
-				return $image_data_array;
+				return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'series_feed_image' );
 			}
 		}
 
@@ -464,14 +464,16 @@ class Episode_Repository implements Service {
 			$feed_image_attachment_id = attachment_url_to_postid( $feed_image );
 			$image_data_array         = ssp_get_attachment_image_src( $feed_image_attachment_id, $size );
 			if ( ssp_is_image_square( $image_data_array ) ) {
-				return $image_data_array;
+				return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'default_feed_image' );
 			}
 		}
 
 		/**
 		 * Option 5: None of the above passed, return the no-album-art image
 		 */
-		return $this->get_no_album_art_image_array();
+		$image_data_array = $this->get_no_album_art_image_array();
+		return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'no_album_art_image' );
+
 	}
 
 
@@ -485,8 +487,11 @@ class Episode_Repository implements Service {
 		$width  = 300;
 		$height = 300;
 
-		return compact( 'src', 'width', 'height' );
+		$img_data = compact( 'src', 'width', 'height' );
+
+		return apply_filters( 'ssp_no_album_image', $img_data );
 	}
+
 
 	/**
 	 * Gather a list of the last 3 episodes for the Elementor Recent Episodes Widget

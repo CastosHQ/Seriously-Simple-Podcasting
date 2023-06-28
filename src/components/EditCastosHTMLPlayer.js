@@ -27,7 +27,7 @@ class EditCastosHTMLPlayer extends Component {
 
 	componentDidMount() {
 		this._isMounted = true;
-		let fetchPost = 'ssp/v1/episodes?per_page=100&get_additional_options=true';
+		let fetchPost = 'ssp/v1/episodes?per_page=500&get_additional_options=true';
 		apiFetch({path: fetchPost}).then(posts => {
 			let episodes = [];
 

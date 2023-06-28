@@ -530,6 +530,16 @@ class Episodes_Controller extends WP_REST_Controller {
 
 		$params['context']['default'] = 'view';
 
+		$params['per_page'] = array (
+			'description' => 'Maximum number of items to be returned in result set.',
+			'type' => 'integer',
+			'default' => 10,
+			'minimum' => 1,
+			'maximum' => 500,
+			'sanitize_callback' => 'absint',
+			'validate_callback' => 'rest_validate_request_arg',
+		);
+
 		$params['after'] = array(
 			'description'       => __( 'Limit response to resources published after a given ISO8601 compliant date.' ),
 			'type'              => 'string',

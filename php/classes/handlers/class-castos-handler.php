@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use Braintree\Exception;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
@@ -22,6 +21,8 @@ class Castos_Handler implements Service {
 	 * @const int
 	 * */
 	const TIMEOUT = 45;
+
+	const TRANSIENT_PODCASTS = 'ssp_castos_podcasts';
 
 	/**
 	 * @var string
@@ -509,6 +510,13 @@ class Castos_Handler implements Service {
 	 * @return array
 	 */
 	public function update_podcast_data( $podcast_data ) {
+
+		/*$podcasts = $this->get_podcasts();
+
+		foreach ( $podcasts['data']['podcast_list'] as $podcast ) {
+			$episodes = $this->get_podcast_episodes( $podcast['id'] );
+		}*/
+
 		$this->setup_default_response();
 
 		if ( empty( $podcast_data ) ) {
@@ -554,6 +562,24 @@ class Castos_Handler implements Service {
 		$this->update_response( 'message', 'Podcast data successfully uploaded to Castos' );
 
 		return $this->response;
+	}
+
+	/**
+	 * Is used in the new sync flow to update podcast, for example update series_id
+	 *
+	 * @param int $id
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	public function update_podcast( $id, $data ) {
+		$this->logger->log( __METHOD__, compact( 'id', 'data' ) );
+
+		if ( empty( $id ) || ! is_integer( $id ) ) {
+			throw new \Exception( __METHOD__ . ' Wrong podcast ID: ' . print_r( $id, true ) );
+		}
+
+		return $this->send_request( 'api/v2/podcasts/' . $id, $data, 'POST' );
 	}
 
 	/**
@@ -609,7 +635,18 @@ class Castos_Handler implements Service {
 		return $this->response;
 	}
 
+	public function get_podcast_episodes( $castos_podcast_id ) {
+		$endpoint = sprintf( 'api/v2/podcasts/%s/episodes', $castos_podcast_id );
+
+		return $this->send_request( $endpoint );
+	}
+
 	public function get_podcasts() {
+
+		if( $res = get_transient( self::TRANSIENT_PODCASTS ) ){
+			return $res;
+		}
+
 		$this->setup_default_response();
 
 		$api_url = SSP_CASTOS_APP_URL . 'api/v2/podcasts';
@@ -640,6 +677,8 @@ class Castos_Handler implements Service {
 		$podcasts_data = isset( $podcasts['data'] ) ? $podcasts['data'] : array();
 
 		$this->update_response( 'data', $podcasts_data );
+
+		set_transient( self::TRANSIENT_PODCASTS, $this->response, 5 * MINUTE_IN_SECONDS );
 
 		return $this->response;
 	}

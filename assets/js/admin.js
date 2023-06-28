@@ -257,5 +257,42 @@ jQuery(document).ready(function($) {
 		});
 	}
 
+	var initImportPodcast = function () {
+		var $importBtn = $('.js-ssp-import-podcast');
+
+		if (!$importBtn.length) {
+			return;
+		}
+
+		$importBtn.click(function () {
+			var $btn = $(this);
+			$btn.addClass('importing');
+			$btn.attr('disabled', 'disabled');
+
+			$.post(
+				ajaxurl,
+				{
+					'action': 'import_castos_podcast',
+					'_ajax_nonce': $btn.data('nonce'),
+					'id': $btn.data('id'),
+				},
+				function (response) {
+					console.log(response);
+					$btn.removeClass('importing');
+					if(response.data.btn){
+						$btn.html(response.data.btn);
+					}
+
+					if(response.success) {
+						//$btn.html(doneTxt);
+					} else {
+						//$btn.html(failTxt);
+					}
+				}
+			);
+		});
+	}
+
 	initDynamoBtn();
+	initImportPodcast();
 });

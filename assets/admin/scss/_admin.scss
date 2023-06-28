@@ -270,3 +270,41 @@ textarea#episode_embed_code {
 		top: -3px;
 	}
 }
+
+.ssp_import_podcasts {
+	width: 95%;
+	table {
+		display: flex;
+		margin: 20px 0 40px;
+	}
+
+	tbody {
+		flex: 1;
+	}
+	tr {
+		display: flex;
+		justify-content: space-between;
+		margin-bottom: 10px;
+	}
+
+	td:first-child {
+		font-weight: bold;
+	}
+
+	button {
+		min-width: 130px;
+		position: relative;
+		&.importing {
+			&:after {
+				content: '';
+				display: block;
+				width: 21px;
+				height: 21px;
+				background: url(../img/loader.svg) no-repeat;
+				position: absolute;
+				right: -24px;
+				top: 2px;
+			}
+		}
+	}
+}

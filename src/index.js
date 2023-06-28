@@ -127,7 +127,7 @@ registerBlockType('seriously-simple-podcasting/castos-html-player', {
  * Podcast list block
  */
 registerBlockType('seriously-simple-podcasting/podcast-list', {
-	title: __('Podcast List', 'seriously-simple-podcasting'),
+	title: __('Episodes List', 'seriously-simple-podcasting'),
 	icon: 'megaphone',
 	category: 'widgets',
 	supports: {

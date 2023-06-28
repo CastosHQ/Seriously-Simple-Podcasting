@@ -204,6 +204,32 @@ textarea#episode_embed_code {
   font-size: 16px;
   top: -3px; }
 
+.ssp_import_podcasts {
+  width: 95%; }
+  .ssp_import_podcasts table {
+    display: flex;
+    margin: 20px 0 40px; }
+  .ssp_import_podcasts tbody {
+    flex: 1; }
+  .ssp_import_podcasts tr {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px; }
+  .ssp_import_podcasts td:first-child {
+    font-weight: bold; }
+  .ssp_import_podcasts button {
+    min-width: 130px;
+    position: relative; }
+    .ssp_import_podcasts button.importing:after {
+      content: '';
+      display: block;
+      width: 21px;
+      height: 21px;
+      background: url(../img/loader.svg) no-repeat;
+      position: absolute;
+      right: -24px;
+      top: 2px; }
+
 /* latin-ext */
 @font-face {
   font-family: 'Inter';

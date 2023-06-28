@@ -38,6 +38,7 @@ if ( ! defined( 'SSP_CPT_PODCAST' ) ) {
 	define( 'SSP_CPT_PODCAST', 'podcast' );
 }
 
+
 require SSP_PLUGIN_PATH . 'vendor/autoload.php';
 
 require_once SSP_PLUGIN_PATH . 'php/includes/ssp-functions.php';

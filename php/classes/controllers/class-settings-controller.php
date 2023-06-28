@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
@@ -109,7 +110,10 @@ class Settings_Controller extends Controller {
 
 		// Add settings link to plugins page.
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array( $this, 'add_plugin_links' ) );
-		
+
+		// Add settings to Podcasts listing page
+		add_action( ssp_series_taxonomy() . '_pre_add_form', array( $this, 'show_podcast_sync_settings' ) );
+
 		// Load scripts and styles for settings page.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
@@ -121,6 +125,56 @@ class Settings_Controller extends Controller {
 		), 10, 2 );
 
 		$this->generate_dynamic_color_scheme();
+	}
+
+	/**
+	 * Shows import podcasts settings if SSP can see not synced podcasts in Castos
+	 *
+	 * @return void
+	 */
+	public function show_podcast_sync_settings() {
+		$castos_podcasts = $this->get_castos_podcasts();
+		if ( ! $castos_podcasts ) {
+			return;
+		}
+
+		$not_synced_podcasts = array();
+
+		// Check for series_id = 0 for backward compatibility.
+		// First series_id = 0 means it's for the "default" podcast ( episodes not connected to any series ).
+		// All other series = 0 mean that podcast was earlier created on Castos side, and it's not connected to SSP.
+		// For the new podcasts, the default series_id is null.
+		$zero_series_counter = 0;
+		foreach ( $castos_podcasts as $castos_podcast ) {
+			$series_id = $castos_podcast['series_id'];
+			if ( 0 === $series_id ) {
+				$zero_series_counter ++;
+			}
+
+			if ( is_null( $series_id ) || ( 0 == $series_id && $zero_series_counter > 1 ) ) {
+				$not_synced_podcasts[] = $castos_podcast;
+			}
+		}
+
+		if ( $not_synced_podcasts ) {
+			$this->renderer->render( 'settings/import-podcasts', compact( 'not_synced_podcasts' ) );
+		}
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_castos_podcasts() {
+
+		$castos_handler = ssp_app()->get_castos_handler();
+		$podcasts       = $castos_handler->get_podcasts();
+		if ( is_array( $podcasts ) && isset( $podcasts['data']['podcast_list'] ) && $podcasts['data']['podcast_list'] ) {
+			$podcast_list = $podcasts['data']['podcast_list'];
+		} else {
+			$podcast_list = array();
+		}
+
+		return $podcast_list;
 	}
 
 	protected function generate_dynamic_color_scheme() {

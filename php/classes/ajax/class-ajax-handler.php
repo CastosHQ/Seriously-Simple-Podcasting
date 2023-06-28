@@ -5,13 +5,21 @@ namespace SeriouslySimplePodcasting\Ajax;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use WpOrg\Requests\Exception;
 
 class Ajax_Handler {
 
+	protected $logger;
+
 	/**
 	 * Ajax_Handler constructor.
+	 *
+	 * @param Log_Helper $logger
 	 */
-	public function __construct() {
+	public function __construct( $logger ) {
+		$this->logger = $logger;
+
 		$this->bootstrap();
 	}
 
@@ -45,6 +53,77 @@ class Ajax_Handler {
 
 		// Add ajax action to reset external feed options
 		add_action( 'wp_ajax_reset_rss_feed_data', array( $this, 'reset_rss_feed_data' ) );
+
+		// Add ajax action for importing Castos podcasts
+		add_action( 'wp_ajax_import_castos_podcast', array( $this, 'import_castos_podcast' ) );
+	}
+
+	public function import_castos_podcast() {
+		try {
+			$podcast_id = filter_input( INPUT_POST, 'id', FILTER_VALIDATE_INT );
+			if ( ! check_ajax_referer( 'import_castos_podcast_' . $podcast_id, false, false ) ) {
+				throw new \Exception( 'Bad request' );
+			}
+
+			$castos_handler = ssp_app()->get_castos_handler();
+			$podcasts = $castos_handler->get_podcasts();
+			$episodes = $castos_handler->get_podcast_episodes( $podcast_id );
+			if ( empty( $podcasts['data']['podcast_list'] ) || ! isset( $episodes['data'] ) ) {
+				throw new \Exception( 'Could not retrieve podcast data' );
+			}
+
+			foreach ( $podcasts['data']['podcast_list'] as $podcast ) {
+				if ( $podcast_id === $podcast['id'] ) {
+					$podcast_title = $podcast['podcast_title'];
+					break;
+				}
+			}
+
+			if ( empty( $podcast_title ) ) {
+				throw new \Exception( 'Could not import the podcast.' );
+			}
+
+			// Creates term if it doesn't exist, otherwise just gets its data.
+			$term_data = wp_create_term( $podcast_title, ssp_series_taxonomy() );
+
+			if ( isset( $term_data['term_id'] ) && is_numeric( $term_data['term_id'] ) ) {
+				$series_id = intval( $term_data['term_id'] );
+			} else {
+				throw new \Exception( 'Could not create the podcast, please try again later.' );
+			}
+
+			foreach ( $episodes['data'] as $episode ) {
+				$args = array(
+					'post_title'    => wp_strip_all_tags( $episode['post_title'] ),
+//					'post_content'  => $_POST['post_content'], //Todo: Ask for this info
+					'post_status'   => 'publish',
+					'post_type'     => SSP_CPT_PODCAST,
+					'post_category' => array( $podcast_id ),
+					'tax_input' => array(
+						ssp_series_taxonomy() => array( $series_id ),
+					),
+				);
+
+				wp_insert_post( $args );
+			}
+
+			$res = $castos_handler->update_podcast( $podcast_id, array( 'series_id' => $series_id ) );
+
+			if ( empty( $res['success'] ) ) {
+				throw new \Exception( 'Could not fully sync the podcast' );
+			}
+
+			delete_transient( $castos_handler::TRANSIENT_PODCASTS );
+			wp_send_json_success( array( 'btn' => esc_attr__( 'Imported', 'seriously-simple-podcasting' ) ) );
+		} catch ( Exception $e ) {
+			$this->logger->log( __METHOD__ . ': ' . $e->getMessage() );
+			wp_send_json_error(
+				array(
+					'btn' => esc_attr__( 'Failed', 'seriously-simple-podcasting' ),
+					'msg' => $e->getMessage(),
+				)
+			);
+		}
 	}
 
 	/**

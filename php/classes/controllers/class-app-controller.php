@@ -204,7 +204,7 @@ class App_Controller {
 
 		$this->renderer = new Renderer();
 
-		$this->ajax_handler = new Ajax_Handler();
+		$this->ajax_handler = new Ajax_Handler( $this->logger );
 
 		$this->upgrade_handler = new Upgrade_Handler();
 
@@ -329,6 +329,13 @@ class App_Controller {
 		}
 
 		return $services;
+	}
+
+	/**
+	 * @return Castos_Handler
+	 */
+	public function get_castos_handler() {
+		return $this->get_service( 'castos_handler' );
 	}
 
 	/**

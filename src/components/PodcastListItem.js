@@ -8,6 +8,8 @@ import PlayerMeta from "./PlayerMeta";
 
 /**
  * Podcast List Item
+ *
+ * @deprecated We use backend rendering for this block
  */
 class PodcastListItem extends Component {
 	render() {

@@ -77,39 +77,6 @@ class Castos_Handler implements Service {
 	}
 
 	/**
-	 * Takes the raw content from the post object, and runs it through the the_content filters
-	 * Effectively replicates the the_content function, but for a specific podcast
-	 *
-	 * @param \WP_Post $post
-	 *
-	 * @return string|string[]
-	 * @deprecated Since 2.11.0. Use Feed_Handler::get_feed_item_description() instead.
-	 * Todo: remove
-	 */
-	protected function get_rendered_post_content( $post ) {
-		$ss_podcasting = ssp_frontend_controller();
-
-		/**
-		 * Remove the filter that adds our media player to the post_content
-		 */
-		remove_filter( 'the_content', array( $ss_podcasting, 'content_meta_data' ) );
-
-		/**
-		 * Remove the filter that replaces content with
-		 */
-		remove_filter( 'the_content', array( $ss_podcasting, 'show_private_content_message' ), 20 );
-
-		/**
-		 * Get the post content and run it through the rest of the registered 'the_content' filters
-		 */
-		$post_content = apply_filters( 'the_content', $post->post_content );
-		$post_content = str_replace( '<!--more-->', '', $post_content );
-		$post_content = str_replace( ']]>', ']]&gt;', $post_content );
-
-		return $post_content;
-	}
-
-	/**
 	 * Connect to Castos API and validate API credentials
 	 *
 	 * @param string $account_api_token
@@ -179,8 +146,18 @@ class Castos_Handler implements Service {
 		return $this->response;
 	}
 
+	public function trigger_podcast_sync( $series_id ){
+		$this->logger->log( __METHOD__, compact( 'series_id' ) );
+		$endpoint = sprintf( 'api/v2/ssp/podcast-sync/%d', intval( $series_id ) );
+
+		$res = $this->send_request( $endpoint, array(), 'POST' );
+		return $res;
+	}
+
 	/**
 	 * Triggers the podcast import fom the Import settings screen
+	 * @deprecated After the new sync process was made in 2.23.0
+	 * @todo: remove after 3.0.0
 	 */
 	public function trigger_podcast_import() {
 		$this->setup_default_response();
@@ -443,65 +420,6 @@ class Castos_Handler implements Service {
 	}
 
 	/**
-	 * Upload Podcasts episode data to Castos
-	 *
-	 * @param $podcast_data array of post values
-	 *
-	 * @return array
-	 * @deprecated
-	 * @todo invesigate and remove, looks like it's an obsolete function.
-	 */
-	public function upload_podcasts_to_podmotor( $podcast_data ) {
-
-		$this->setup_default_response();
-
-		if ( empty( $podcast_data ) ) {
-			$this->update_response( 'message', 'Invalid Podcast data' );
-
-			return $this->response;
-		}
-
-		$podcast_data_json = wp_json_encode( $podcast_data );
-
-		$api_url = SSP_CASTOS_APP_URL . 'api/import_episodes';
-
-		$post_body = array(
-			'api_token'    => $this->api_token,
-			'podcast_data' => $podcast_data_json,
-		);
-
-		$this->logger->log( $post_body );
-
-		$app_response = wp_remote_post(
-			$api_url,
-			array(
-				'timeout' => 45,
-				'body'    => $post_body,
-			)
-		);
-
-		$this->logger->log( $app_response );
-
-		if ( is_wp_error( $app_response ) ) {
-			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
-
-			return $this->response;
-		}
-
-		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-		if ( 'success' !== $response_object->status ) {
-			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
-
-			return $this->response;
-		}
-
-		$this->update_response( 'status', 'success' );
-		$this->update_response( 'message', 'Podcast episode data successfully uploaded to Castos' );
-
-		return $this->response;
-	}
-
-	/**
 	 * Upload series data to Castos
 	 *
 	 * @param array $podcast_data
@@ -552,59 +470,6 @@ class Castos_Handler implements Service {
 		$this->logger->log( 'Podcast data successfully uploaded to Castos' );
 		$this->update_response( 'status', 'success' );
 		$this->update_response( 'message', 'Podcast data successfully uploaded to Castos' );
-
-		return $this->response;
-	}
-
-	/**
-	 * Creates the podcast import queue with Castos
-	 *
-	 * @return array
-	 * @deprecated
-	 * Todo: invesigate and remove, it looks like this is obsolete function. Endpoint api/insert_queue doesn't exist in Castos.
-	 *
-	 */
-	public function insert_podmotor_queue() {
-
-		$this->setup_default_response();
-
-		$api_url = SSP_CASTOS_APP_URL . 'api/insert_queue';
-		$this->logger->log( $api_url );
-
-		$post_body = array(
-			'api_token'   => $this->api_token,
-			'site_name'   => get_bloginfo( 'name' ),
-			'site_action' => add_query_arg( 'podcast_importer', 'true', trailingslashit( site_url() ) ),
-		);
-		$this->logger->log( $post_body );
-
-		$app_response = wp_remote_post(
-			$api_url,
-			array(
-				'timeout' => 45,
-				'body'    => $post_body,
-			)
-		);
-		$this->logger->log( $app_response );
-
-		if ( is_wp_error( $app_response ) ) {
-			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
-
-			return $this->response;
-		}
-
-		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-		$this->logger->log( $response_object );
-
-		if ( 'success' !== $response_object->status ) {
-			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
-
-			return $this->response;
-		}
-
-		$this->update_response( 'status', $response_object->status );
-		$this->update_response( 'message', $response_object->message );
-		$this->update_response( 'queue_id', $response_object->queue_id );
 
 		return $this->response;
 	}
@@ -861,7 +726,7 @@ class Castos_Handler implements Service {
 			);
 		}
 
-		return $this->send_request( sprintf( 'api/v2/revoke-private-subscribers' ), compact( 'subscribers' ), 'POST' );
+		return $this->send_request( 'api/v2/revoke-private-subscribers', compact( 'subscribers' ), 'POST' );
 	}
 
 
@@ -909,7 +774,12 @@ class Castos_Handler implements Service {
 			return null;
 		}
 
-		return json_decode( wp_remote_retrieve_body( $app_response ), true );
+		$res = json_decode( wp_remote_retrieve_body( $app_response ), true );
+		if ( isset( $app_response['response'] ) && is_array( $app_response['response'] ) ) {
+			$res = array_merge( $app_response['response'], $res );
+		}
+
+		return $res;
 	}
 
 

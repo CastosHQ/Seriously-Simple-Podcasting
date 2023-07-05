@@ -783,53 +783,6 @@ if ( ! function_exists( 'ssp_get_importing_podcasts_count' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_import_existing_podcasts' ) ) {
-	/**
-	 * Imports existing podcasts to Seriously Simple Hosting
-	 *
-	 * @return bool
-	 * @deprecated
-	 * Todo: Investigate and remove. Looks like an obsolete function.
-	 */
-	function import_existing_podcast() {
-
-		$podmotor_import_podcasts = get_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-
-		/**
-		 * Only if we should be importing posts
-		 */
-		if ( 'true' === $podmotor_import_podcasts ) {
-			$podcast_query = ssp_get_not_synced_episodes();
-
-			/**
-			 * Only if there are posts to import
-			 */
-			if ( $podcast_query->have_posts() ) {
-
-				$podcast_data = ssp_build_podcast_data( $podcast_query );
-
-				$castos_handler           = new Castos_Handler();
-				$upload_podcasts_response = $castos_handler->upload_podcasts_to_podmotor( $podcast_data );
-
-				if ( 'success' === $upload_podcasts_response['status'] ) {
-					update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-				}
-			} else {
-				/**
-				 * There are no posts to import, disable import
-				 */
-				update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
-
-				return false;
-			}
-
-			return true;
-		} else {
-			return false;
-		}
-	}
-}
-
 if ( ! function_exists( 'ssp_get_external_rss_being_imported' ) ) {
 	/**
 	 * If an external RSS feed is being imported, return the url
@@ -1672,7 +1625,8 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 	 * @return WP_Term[]
 	 */
 	function ssp_get_podcasts( $hide_empty = false ) {
-		return get_terms( 'series', array( 'hide_empty' => $hide_empty ) );
+		$podcasts = get_terms( 'series', array( 'hide_empty' => $hide_empty ) );
+		return is_array( $podcasts ) ? $podcasts : array();
 	}
 }
 

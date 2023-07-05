@@ -204,6 +204,65 @@ textarea#episode_embed_code {
   font-size: 16px;
   top: -3px; }
 
+.ssp-settings {
+  background: #FFFFFF;
+  margin-top: 28px;
+  border-radius: 4px;
+  border: 1px solid #CBD5E1; }
+  .ssp-settings h2 {
+    border-bottom: 1px solid #CBD5E1;
+    padding: 0 10px 13px 10px; }
+  .ssp-settings table {
+    margin: 10px; }
+    .ssp-settings table input.regular-text {
+      max-width: 90%;
+      background: #F1F5F9; }
+    .ssp-settings table label:not([for=podmotor_disconnect]) {
+      display: block;
+      margin-top: 6px; }
+  .ssp-settings .selection li {
+    margin-bottom: 0; }
+  .ssp-settings .selection input.select2-search__field {
+    margin-top: 0; }
+  .ssp-settings .selection .select2-selection {
+    padding-bottom: 0;
+    background: #F1F5F9;
+    position: relative; }
+    .ssp-settings .selection .select2-selection:after {
+      content: '';
+      display: block;
+      position: absolute;
+      background: url(../img/chevron-up-down.svg) no-repeat;
+      width: 20px;
+      height: 20px;
+      right: 3px;
+      top: 6px; }
+  .ssp-settings .selection li.select2-selection__choice {
+    padding-right: 6px; }
+  .ssp-settings .selection ::-webkit-scrollbar {
+    display: none; }
+  .ssp-settings select[multiple] {
+    width: 25em;
+    max-width: 90%;
+    height: 30px; }
+  .ssp-settings .validate-api-credentials-message {
+    margin-left: 30px; }
+  .ssp-settings .loader {
+    position: relative; }
+    .ssp-settings .loader:after {
+      content: '';
+      display: block;
+      width: 21px;
+      height: 21px;
+      background: url(../img/loader.svg) no-repeat;
+      position: absolute;
+      right: -24px;
+      top: 2px; }
+  .ssp-settings .ssp-sync-msg {
+    margin-left: 20px; }
+    .ssp-settings .ssp-sync-msg.error {
+      color: #f33c3c; }
+
 /* latin-ext */
 @font-face {
   font-family: 'Inter';

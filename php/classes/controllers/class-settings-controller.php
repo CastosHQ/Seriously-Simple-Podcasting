@@ -109,7 +109,7 @@ class Settings_Controller extends Controller {
 
 		// Add settings link to plugins page.
 		add_filter( 'plugin_action_links_' . plugin_basename( $this->file ), array( $this, 'add_plugin_links' ) );
-		
+
 		// Load scripts and styles for settings page.
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ), 10 );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
@@ -268,47 +268,84 @@ class Settings_Controller extends Controller {
 	 */
 	public function register_settings() {
 		if ( 'podcast_settings' !== filter_input( INPUT_GET, 'page' ) &&
-			 'ss_podcasting' !== filter_input( INPUT_POST, 'option_page' ) ) {
+		     'ss_podcasting' !== filter_input( INPUT_POST, 'option_page' ) ) {
 			return;
 		}
 
-		$section = $this->get_settings_section();
-		$data    = $this->get_settings_data( $section );
+		$tab = $this->get_current_tab();
+
+		$data = $this->get_settings_data( $tab );
 
 		if ( ! $data ) {
 			return;
 		}
 
+		if ( isset( $data['sections'] ) ) {
+			foreach ( $data['sections'] as $section_id => $section_data ) {
+				$is_section_valid = true;
+				if ( isset( $section_data['condition_callback'] ) ) {
+					$callback = $section_data['condition_callback'];
+					if ( is_string( $callback ) && function_exists( $callback ) ) {
+						$is_section_valid = call_user_func( $callback );
+					}
+				}
+
+				if ( $is_section_valid ) {
+					$this->register_settings_section( $section_id, $section_data );
+				}
+			}
+
+			return;
+		}
+
 		// Get data for specific feed series.
-		$series_id  = 0;
+		$series_id   = 0;
 		$feed_series = '';
-		$section_title = $data['title'];
-		if ( 'feed-details' === $section ) {
+		if ( 'feed-details' === $tab ) {
 			$feed_series = ( isset( $_REQUEST['feed-series'] ) ? filter_var( $_REQUEST['feed-series'], FILTER_DEFAULT ) : '' );
 			if ( $feed_series && 'default' !== $feed_series ) {
-
-				// Get selected series.
 				$series = get_term_by( 'slug', esc_attr( $feed_series ), 'series' );
-
-				// Store series ID for later use.
 				$series_id = $series->term_id;
 
 				// Append series name to section title.
 				if ( $series ) {
-					$section_title .= ': ' . $series->name;
+					$data['title'] .= ': ' . $series->name;
 				}
 			}
 		}
 
-		// Add section to page.
-		add_settings_section( $section, $section_title, array( $this, 'settings_section' ), 'ss_podcasting' );
+		$this->register_settings_section( $tab, $data, $feed_series, $series_id );
+	}
 
-		if ( empty( $data['fields'] ) ) {
+	/**
+	 * @param string $section_id
+	 * @param array $section_data
+	 * @param string $feed_series
+	 * @param int $series_id
+	 *
+	 * @return void
+	 */
+	protected function register_settings_section( $section_id, $section_data, $feed_series = '', $series_id = 0  ){
+		$section_title = isset( $section_data['title'] ) ? $section_data['title'] : '';
+
+		$section_args = wp_parse_args(
+			$section_data,
+			array(
+				'before_section' => sprintf( '<div class="ssp-settings ssp-settings-%s">', esc_attr( $section_id ) ),
+				'after_section'  => '</div>',
+				'section_class'  => '',
+			)
+		);
+
+		// Add section to page.
+		add_settings_section( $section_id, $section_title, array( $this, 'settings_section' ), 'ss_podcasting', $section_args );
+
+		if ( empty( $section_data['fields'] ) ) {
 			return;
 		}
 
-		foreach ( $data['fields'] as $field ) {
-			$this->register_settings_field( $section, $field, $feed_series, $series_id );
+		foreach ( $section_data['fields'] as $field ) {
+			$this->register_settings_field( $section_id, $field, $feed_series, $series_id );
 		}
 	}
 
@@ -337,7 +374,7 @@ class Settings_Controller extends Controller {
 	/**
 	 * @return string
 	 */
-	protected function get_settings_section(){
+	protected function get_current_tab(){
 		$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_DEFAULT ) : '' );
 		if ( ! $tab ) {
 			$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_DEFAULT ) : '' );
@@ -415,7 +452,7 @@ class Settings_Controller extends Controller {
 		$html = '';
 
 		if ( ! empty( $this->settings[ $section['id'] ]['description'] ) ) {
-			$html = '<p>' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
+			$html .= '<p>' . $this->settings[ $section['id'] ]['description'] . '</p>' . "\n";
 		}
 
 		switch ( $section['id'] ) {
@@ -607,8 +644,10 @@ class Settings_Controller extends Controller {
 					$tab_link = remove_query_arg( 'feed-series', $tab_link );
 				}
 
+				$title = isset( $data['tab_title'] ) ? $data['tab_title'] : $data['title'];
+
 				// Output tab
-				$html .= '<a href="' . esc_url( $tab_link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $data['title'] ) . '</a>' . "\n";
+				$html .= '<a href="' . esc_url( $tab_link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $title ) . '</a>' . "\n";
 
 				++ $c;
 			}
@@ -698,13 +737,6 @@ class Settings_Controller extends Controller {
 	 */
 	protected function show_tab_after_settings( $tab ) {
 		$html = '';
-		if ( isset( $tab ) && 'castos-hosting' === $tab ) {
-			// Validate button
-			$html .= '<p class="submit">' . "\n";
-			$html .= '<input id="validate_api_credentials" type="button" class="button-primary" value="' . esc_attr( __( 'Validate Credentials', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
-			$html .= '<span class="validate-api-credentials-message"></span>' . "\n";
-			$html .= '</p>' . "\n";
-		}
 
 		$disable_save_button_on_tabs = array( 'extensions', 'import' );
 

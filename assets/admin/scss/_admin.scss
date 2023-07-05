@@ -270,3 +270,87 @@ textarea#episode_embed_code {
 		top: -3px;
 	}
 }
+
+
+.ssp-settings {
+	background: $clr_white;
+	margin-top: 28px;
+	border-radius: 4px;
+	border: 1px solid #CBD5E1;
+
+	h2 {
+		border-bottom: 1px solid #CBD5E1;
+		padding: 0 10px 13px 10px;
+	}
+	table {
+		margin: 10px;
+		input.regular-text {
+			max-width: 90%;
+			background: #F1F5F9;
+		}
+
+		label:not([for=podmotor_disconnect]) {
+			display: block;
+			margin-top: 6px;
+		}
+	}
+	.selection {
+		li {
+			margin-bottom: 0;
+		}
+
+		input.select2-search__field {
+			margin-top: 0;
+		}
+
+		.select2-selection {
+			padding-bottom: 0;
+			background: #F1F5F9;
+			position: relative;
+			&:after {
+				content: '';
+				display: block;
+				position: absolute;
+				background: url(../img/chevron-up-down.svg) no-repeat;
+				width: 20px;
+				height: 20px;
+				right: 3px;
+				top: 6px;
+			}
+		}
+		li.select2-selection__choice {
+			padding-right: 6px;
+		}
+
+		::-webkit-scrollbar {
+			display: none;
+		}
+	}
+	select[multiple] {
+		width: 25em;
+		max-width: 90%;
+		height: 30px;
+	}
+	.validate-api-credentials-message {
+		margin-left: 30px;
+	}
+	.loader {
+		position: relative;
+		&:after {
+			content: '';
+			display: block;
+			width: 21px;
+			height: 21px;
+			background: url(../img/loader.svg) no-repeat;
+			position: absolute;
+			right: -24px;
+			top: 2px;
+		}
+	}
+	.ssp-sync-msg {
+		margin-left: 20px;
+		&.error {
+			color: #f33c3c;
+		}
+	}
+}

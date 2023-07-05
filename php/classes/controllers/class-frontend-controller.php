@@ -113,9 +113,6 @@ class Frontend_Controller {
 		// Download podcast episode
 		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
-		// Trigger import podcast process (if active)
-		add_action( 'wp_loaded', array( $this, 'import_existing_podcast_to_podmotor' ) );
-
 		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
 
 		// Handle localisation
@@ -857,29 +854,6 @@ class Frontend_Controller {
 
 		return apply_filters( 'ssp_episode_from_file', $episode, $file );
 
-	}
-
-	/**
-	 * Public action which is triggered from the Seriously Simple Hosting queue
-	 * Imports episodes to Serioulsy Simple Hosting
-	 * @deprecated
-	 * @todo: investigate and remove. Looks like an obsolete function.
-	 */
-	public function import_existing_podcast_to_podmotor(){
-		// this will soon be deprecated
-		$podcast_importer = ( isset( $_GET['podcast_importer'] ) ? filter_var( $_GET['podcast_importer'], FILTER_DEFAULT ) : '' );
-		if (empty($podcast_importer)){
-			$podcast_importer = ( isset( $_GET['ssp_podcast_importer'] ) ? filter_var( $_GET['ssp_podcast_importer'], FILTER_DEFAULT ) : '' );
-		}
-		if ( ! empty( $podcast_importer ) && 'true' == $podcast_importer ) {
-			$continue = import_existing_podcast();
-			if ( $continue ) {
-				$reponse = array( 'continue' => 'false', 'response' => 'Podcast data imported' );
-			} else {
-				$reponse = array( 'continue' => 'true', 'response' => 'An error occurred importing the podcast data' );
-			}
-			wp_send_json( $reponse );
-		}
 	}
 
 	/**

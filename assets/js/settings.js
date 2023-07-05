@@ -11,6 +11,8 @@ jQuery(document).ready(function($) {
 		$parentCategories = $('.js-parent-category'),
 		$validateBtn = $("#validate_api_credentials");
 
+	const { __ } = wp.i18n;
+
 	function disableSubmitButton(){
 		/**
 		 * If either API field is empty, disable the submit button
@@ -40,11 +42,17 @@ jQuery(document).ready(function($) {
 	function validateAPICredentials(){
 		$validateBtn.on("click", function(){
 
-			$(".validate-api-credentials-message").html( "Validating API credentials..." );
-
 			var podmotor_account_email = $("#podmotor_account_email").val(),
 				podmotor_account_api_token = $("#podmotor_account_api_token").val(),
-				nonce = $("#podcast_settings_tab_nonce").val();
+				nonce = $("#podcast_settings_tab_nonce").val(),
+				$msg = $('.validate-api-credentials-message');
+
+			if(!$msg.length){
+				$msg = $('<span class="validate-api-credentials-message"></span>');
+				$validateBtn.parent().append( $msg );
+			}
+
+			$msg.html( "Validating API credentials..." );
 
 			$validateBtn.addClass('loader');
 
@@ -121,14 +129,56 @@ jQuery(document).ready(function($) {
 		}
 	}
 
-	if ($podmotorAccountEmail.length > 0 && $podmotorAccountAPIToken.length > 0) {
-		disableSubmitButton();
-		validateAPICredentials();
-		disconnectCastos();
+	function initCastosAPICredentials() {
+		if ($podmotorAccountEmail.length > 0 && $podmotorAccountAPIToken.length > 0) {
+			disableSubmitButton();
+			validateAPICredentials();
+			disconnectCastos();
+		}
 	}
 
-	if ($parentCategories.length) {
-		$parentCategories.each(filterSubcategoryGroups);
-		$parentCategories.on('change', filterSubcategoryGroups);
+	function initSubcategoryFiltration(){
+		if ($parentCategories.length) {
+			$parentCategories.each(filterSubcategoryGroups);
+			$parentCategories.on('change', filterSubcategoryGroups);
+		}
 	}
+
+	function initCastosSync() {
+		var $syncBtn = $('#trigger_sync'),
+			nonce = $("#podcast_settings_tab_nonce").val();
+		if (!$syncBtn.length) {
+			return false;
+		}
+		$syncBtn.click(function(){
+			$syncBtn.addClass('loader');
+
+			var $msg = $('.ssp-sync-msg');
+
+			if(!$msg.length){
+				$msg = $('<span class="ssp-sync-msg"></span>');
+				$syncBtn.parent().append( $msg );
+			}
+
+			$.ajax({
+				method: "GET",
+				url: ajaxurl,
+				data: {
+					action: "sync_castos",
+					nonce: nonce
+				}
+			})
+				.done(function( response ) {
+					$syncBtn.removeClass('loader');
+
+					$msg.addClass(response.status === 'success' ? 'success' : 'error');
+					$msg.html( response.message );
+				});
+
+		});
+	}
+
+	initCastosAPICredentials();
+	initSubcategoryFiltration();
+	initCastosSync();
 });

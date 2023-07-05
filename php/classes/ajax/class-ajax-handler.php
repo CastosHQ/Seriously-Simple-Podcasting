@@ -9,9 +9,19 @@ use SeriouslySimplePodcasting\Handlers\Options_Handler;
 class Ajax_Handler {
 
 	/**
+	 * @var Castos_Handler $castos_handler
+	 *
+	 * */
+	protected $castos_handler;
+
+	/**
 	 * Ajax_Handler constructor.
+	 *
+	 * @param Castos_Handler $castos_handler
 	 */
-	public function __construct() {
+	public function __construct( $castos_handler ) {
+		$this->castos_handler = $castos_handler;
+
 		$this->bootstrap();
 	}
 
@@ -22,17 +32,8 @@ class Ajax_Handler {
 		// Add ajax action for plugin rating
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 
-		// Insert a new subscribe option to the ss_podcasting_subscribe_options array.
-		add_action( 'wp_ajax_insert_new_subscribe_option', array( $this, 'insert_new_subscribe_option' ) );
-
-		// Deletes a subscribe option from the ss_podcasting_subscribe_options array.
-		add_action( 'wp_ajax_delete_subscribe_option', array( $this, 'delete_subscribe_option' ) );
-
 		// Add ajax action for plugin rating.
 		add_action( 'wp_ajax_validate_castos_credentials', array( $this, 'validate_podmotor_api_credentials' ) );
-
-		// Add ajax action for uploading file data to Castos that has been uploaded already via plupload
-		add_action( 'wp_ajax_ssp_store_podmotor_file', array( $this, 'store_castos_file' ) );
 
 		// Add ajax action for customising episode embed code
 		add_action( 'wp_ajax_update_episode_embed_code', array( $this, 'update_episode_embed_code' ) );
@@ -45,6 +46,9 @@ class Ajax_Handler {
 
 		// Add ajax action to reset external feed options
 		add_action( 'wp_ajax_reset_rss_feed_data', array( $this, 'reset_rss_feed_data' ) );
+
+		// Add ajax action to the Castos sync process
+		add_action( 'wp_ajax_sync_castos', array( $this, 'sync_castos' ) );
 	}
 
 	/**
@@ -59,49 +63,40 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * Insert a new subscribe field option
+	 * Sync podcasts with Castos
 	 */
-	public function insert_new_subscribe_option() {
-		check_ajax_referer( 'ssp_ajax_options_nonce' );
-		if ( ! current_user_can( 'manage_podcast' ) ) {
-			wp_send_json(
-				array(
-					'status'  => 'error',
-					'message' => 'Current user doesn\'t have correct permissions',
-				)
-			);
-			return;
-		}
-		$options_handler   = new Options_Handler();
-		$subscribe_options = $options_handler->insert_subscribe_option();
-		wp_send_json( $subscribe_options );
-	}
+	public function sync_castos() {
+		try {
+			$this->nonce_check('ss_podcasting_castos-hosting');
+			$this->user_capability_check();
 
-	public function delete_subscribe_option() {
-		check_ajax_referer( 'ssp_ajax_options_nonce' );
-		if ( ! current_user_can( 'manage_podcast' ) ) {
-			wp_send_json(
-				array(
-					'status'  => 'error',
-					'message' => 'Current user doesn\'t have correct permissions',
-				)
+			$token = ssp_get_option( 'podmotor_account_api_token' );
+			$email = ssp_get_option( 'podmotor_account_email' );
+
+			if ( empty( $token ) || empty( $email ) ) {
+				throw new \Exception( __( 'Castos arguments not set', 'seriously-simple-podcasting' ) );
+			}
+
+			$response       = $this->castos_handler->trigger_podcast_sync( 2 );
+
+			// Provide possible errors for translation purposes.
+			$errors = array(
+				'Failed to connect to SSP API.'                   => __( 'Failed to connect to SSP API.', 'seriously-simple-podcasting' ),
+				'A sync is already in progress for this podcast.' => __( 'A sync is already in progress for this podcast.', 'seriously-simple-podcasting' ),
 			);
 
-			return;
-		}
-		if ( ! isset( $_POST['option'] ) || ! isset( $_POST['count'] ) ) {
-			wp_send_json(
-				array(
-					'status'  => 'error',
-					'message' => 'POSTed option or count not set',
-				)
-			);
+			if( empty($response['code']) || 200 !== $response['code'] ){
+				$error = isset( $response['error'] ) ? $response['error'] : '';
+				if( $error && array_key_exists( $error, $errors ) ){
+					$error = $errors[ $error ];
+				}
 
-			return;
+				throw new \Exception( $error ?: __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' ) );
+			}
+			wp_send_json( $response );
+		} catch ( \Exception $e ) {
+			$this->send_json_error( $e->getMessage() );
 		}
-		$options_handler   = new Options_Handler();
-		$subscribe_options = $options_handler->delete_subscribe_option( sanitize_text_field( $_POST['option'] ), sanitize_text_field( $_POST['count'] ) );
-		wp_send_json( $subscribe_options );
 	}
 
 	/**
@@ -113,14 +108,13 @@ class Ajax_Handler {
 			$this->user_capability_check();
 
 			if ( ! isset( $_GET['api_token'] ) || ! isset( $_GET['email'] ) ) {
-				throw new \Exception( 'Castos arguments not set' );
+				throw new \Exception( __('Castos arguments not set', 'seriously-simple-podcasting') );
 			}
 
 			$account_api_token = sanitize_text_field( $_GET['api_token'] );
 			$account_email     = sanitize_text_field( $_GET['email'] );
 
-			$castos_handler = new Castos_Handler();
-			$response       = $castos_handler->validate_api_credentials( $account_api_token, $account_email );
+			$response       = $this->castos_handler->validate_api_credentials( $account_api_token, $account_email );
 			wp_send_json( $response );
 		} catch ( \Exception $e ) {
 			$this->send_json_error( $e->getMessage() );

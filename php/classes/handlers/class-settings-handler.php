@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
 /**
@@ -172,73 +173,101 @@ class Settings_Handler implements Service {
 			),
 		);
 
+		$podcasts        = ssp_get_podcasts();
+		$podcast_options = array_combine(
+			array_map( function ( $i ) {
+				return $i->term_id;
+			}, $podcasts ),
+			array_map( function ( $i ) {
+				return $i->name;
+			}, $podcasts )
+		);
 		$settings['castos-hosting'] = array(
-			'title'       => __( 'Hosting', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
-			'fields'      => array(
-				array(
-					'id'          => 'podmotor_account_email',
-					'label'       => __( 'Your email', 'seriously-simple-podcasting' ),
-					'description' => __( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'email@domain.com', 'seriously-simple-podcasting' ),
-					'callback'    => 'esc_email',
-					'class'       => 'regular-text',
+			'title'    => __( 'Hosting', 'seriously-simple-podcasting' ),
+			'sections' => array(
+				'credentials' => array(
+					'title'       => __( 'Podcast Hosting', 'seriously-simple-podcasting' ),
+					'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
+					'fields'      => array(
+						array(
+							'id'          => 'podmotor_account_email',
+							'type'        => 'text',
+							'label'       => __( 'Your email', 'seriously-simple-podcasting' ),
+							'description' => __( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ),
+							'default'     => '',
+							'placeholder' => __( 'email@domain.com', 'seriously-simple-podcasting' ),
+							'callback'    => 'esc_email',
+							'class'       => 'regular-text',
+						),
+						array(
+							'id'          => 'podmotor_account_api_token',
+							'type'        => 'text',
+							'label'       => __( 'Castos API key', 'seriously-simple-podcasting' ),
+							'description' => __( 'Your Castos API key. Available from your Castos account dashboard.', 'seriously-simple-podcasting' ),
+							'default'     => '',
+							'placeholder' => __( 'Enter your api key', 'seriously-simple-podcasting' ),
+							'callback'    => 'sanitize_text_field',
+							'class'       => 'regular-text',
+						),
+						array(
+							'id'    => 'validate_api_credentials',
+							'type'  => 'button',
+							'label' => esc_attr( __( 'Verify Credentials', 'seriously-simple-podcasting' ) ),
+							'class' => 'button-primary',
+						),
+					),
 				),
-				array(
-					'id'          => 'podmotor_account_api_token',
-					'label'       => __( 'Castos API key', 'seriously-simple-podcasting' ),
-					'description' => __( 'Your Castos API key. Available from your Castos account dashboard.', 'seriously-simple-podcasting' ),
-					'type'        => 'text',
-					'default'     => '',
-					'placeholder' => __( 'Enter your api key', 'seriously-simple-podcasting' ),
-					'callback'    => 'sanitize_text_field',
-					'class'       => 'regular-text',
+				'sync'        => array(
+					'condition_callback' => 'ssp_is_connected_to_castos',
+					'title'              => __( 'Sync to Castos', 'seriously-simple-podcasting' ),
+					'no_store'           => true,
+					'description'        => sprintf(
+						__( 'Use this option for a one time sync of your existing WordPress podcast to your Castos account. If you encounter any problems with it, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ),
+						'<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>'
+					),
+					'fields'             => array(
+						array(
+							'id'          => 'podmotor_import',
+							'label'       => __( 'Podcast', 'seriously-simple-podcasting' ),
+							'description' => __( 'Select the podcast you want to sync to your Castos hosting account.', 'seriously-simple-podcasting' ),
+							'type'        => 'select2_multi',
+							'options'     => $podcast_options,
+						),
+						array(
+							'id'    => 'trigger_sync',
+							'type'  => 'button',
+							'label' => esc_attr( __( 'Trigger Sync', 'seriously-simple-podcasting' ) ),
+							'class' => 'button-primary',
+						),
+					),
 				),
-				array(
-					'id'          => 'podmotor_disconnect',
-					'label'       => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
-					'description' => __( 'Disconnect your Castos account.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
-					'default'     => '',
-					'callback'    => 'wp_strip_all_tags',
-					'class'       => 'disconnect-castos',
+				'disconnect'  => array(
+					'condition_callback' => 'ssp_is_connected_to_castos',
+					'title'              => __( 'Danger Zone', 'seriously-simple-podcasting' ),
+					'no_store'           => true,
+					'fields'             => array(
+						array(
+							'id'          => 'podmotor_disconnect',
+							'label'       => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
+							'description' => __( 'Select this if you wish to disconnect your Castos account.', 'seriously-simple-podcasting' ),
+							'type'        => 'checkbox',
+							'default'     => '',
+							'callback'    => 'wp_strip_all_tags',
+							'class'       => 'disconnect-castos',
+						),
+					),
 				),
 			),
 		);
 
-		if ( ! ssp_is_connected_to_castos() ) {
-			foreach ( $settings['castos-hosting']['fields'] as $k => $field ) {
-				if ( 'podmotor_disconnect' === $field['id'] ) {
-					$settings['castos-hosting']['fields'][ $k ]['type'] = 'hidden';
-					break;
-				}
-			}
-		}
-
+		/**
+		 * @see Settings_Controller::render_external_import_form()
+		 * */
 		$settings['import'] = array(
 			'title'       => __( 'Import', 'seriously-simple-podcasting' ),
 			'description' => '',
 			'fields'      => array(),
 		);
-
-		if ( ssp_is_connected_to_castos() ) {
-			if ( ! ssp_get_external_rss_being_imported() ) {
-				$settings['import']['fields']      = array(
-					array(
-						'id'          => 'podmotor_import',
-						'label'       => __( 'Sync to Castos', 'seriously-simple-podcasting' ),
-						'description' => __( 'Sync your podcast to your Castos hosting account.', 'seriously-simple-podcasting' ),
-						'type'        => 'checkbox',
-						'default'     => '',
-						'callback'    => 'wp_strip_all_tags',
-						'class'       => 'import-castos',
-					),
-				);
-				$settings['import']['description'] = sprintf( __( 'Use this option for a one time sync of your existing WordPress podcast to your Castos account. If you encounter any problems with it, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ), '<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>' );
-			}
-		}
 
 		$settings['extensions'] = array(
 			'title'               => __( 'Extensions', 'seriously-simple-podcasting' ),

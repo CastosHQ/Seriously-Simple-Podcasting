@@ -204,8 +204,6 @@ class App_Controller {
 
 		$this->renderer = new Renderer();
 
-		$this->ajax_handler = new Ajax_Handler();
-
 		$this->upgrade_handler = new Upgrade_Handler();
 
 		$this->feed_handler = new Feed_Handler();
@@ -236,6 +234,8 @@ class App_Controller {
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
 		$this->castos_handler = new Castos_Handler();
+
+		$this->ajax_handler = new Ajax_Handler( $this->castos_handler );
 
 		$this->podping_handler = new Podping_Handler( $this->logger );
 

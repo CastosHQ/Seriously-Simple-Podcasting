@@ -59,6 +59,9 @@ class Settings_Renderer implements Service {
 			case 'hidden':
 				$html .= $this->render_hidden_field( $field, $data );
 				break;
+			case 'button':
+				$html .= $this->render_button( $field );
+				break;
 			case 'text_multi':
 				$html .= $this->render_text_multi( $field, $data, $option_name );
 				break;
@@ -114,7 +117,6 @@ class Settings_Renderer implements Service {
 				case 'checkbox_multi':
 				case 'radio':
 				case 'select_multi':
-				case 'select2_multi':
 				case 'color':
 					if ( ! empty( $field['description'] ) ) {
 						$html .= '<br/><span class="description">' . esc_attr( $field['description'] ) . '</span>';
@@ -145,6 +147,16 @@ class Settings_Renderer implements Service {
 		return '<input name="' . esc_attr( $field['id'] ) .
 			   '" type="hidden" id="' . esc_attr( $field['id'] ) .
 			   '" value="' . esc_attr( $data ) . '" />' . "\n";
+	}
+
+	/**
+	 * @param array $field
+	 *
+	 * @return string
+	 */
+	protected function render_button( $field ) {
+		return '<button type="button" id="' . esc_attr( $field['id'] ) .
+			   '" class="' . esc_attr( $field['class'] ) . '" />' . esc_html( $field['label'] ) .  "</button>\n";
 	}
 
 	/**
@@ -367,7 +379,7 @@ class Settings_Renderer implements Service {
 			$html     .= '<option ' . selected( $selected, true, false ) .
 						 ' value="' . esc_attr( $k ) .
 						 '" id="' . esc_attr( $field['id'] . '_' . $k ) .
-						 '" class="' . $this->get_field_class( $field ) . '" /> ' . $v . '</option>';
+						 '" class="' . $this->get_field_class( $field ) . '"> ' . $v . '</option>';
 		}
 		$html .= '</select>';
 

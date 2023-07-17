@@ -187,13 +187,16 @@ jQuery(document).ready(function($) {
 					podcasts: podcasts
 				}
 			}).done(function (response) {
-				$.each(response.data, function (id, status) {
+				var msg = '<div class="sync-overview">' + response.data.msg + '</div>';
+				$.each(response.data.podcasts, function (id, status) {
 					changeStatus($('#podcasts_sync_' + id), status.status, status.title);
+					msg += '<div class="sync-msg">' + status.msg + '</div>';
 				});
 
 				$syncBtn.removeClass('loader');
 				$msg.addClass(response.success ? 'success' : 'error');
-				$msg.html(response.data.msg);
+
+				$msg.html(msg);
 			});
 		});
 	}

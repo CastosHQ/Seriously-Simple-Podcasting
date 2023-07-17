@@ -384,12 +384,12 @@ class Settings_Renderer implements Service {
 			return '<div class="ssp-sync-podcast api-error">' . __( 'Castos API error', 'seriously-simple-podcasting' ) . '</div>';
 		}
 
-		foreach ( $field['options'] as $k => $v ) {
-			$status = $data['statuses'][ $k ];
+		foreach ( $field['options'] as $podcast_id => $v ) {
+			$status = $data['statuses'][ $podcast_id ];
 
-			$checkbox = '<div class="ssp-sync-podcast__checkbox"><label for="' . esc_attr( $field['id'] . '_' . $k ) .
+			$checkbox = '<div class="ssp-sync-podcast__checkbox"><label for="' . esc_attr( $field['id'] . '_' . $podcast_id ) .
 						'"><input type="checkbox" name="' . esc_attr( $option_name ) .
-						'[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) .
+						'[]" value="' . esc_attr( $podcast_id ) . '" id="' . esc_attr( $field['id'] . '_' . $podcast_id ) .
 						'" class="' . esc_attr ( $this->get_field_class( $field ) ) . '" /> ' . $v . '</label></div>';
 			$status = '<div class="ssp-sync-podcast__status js-sync-status' . ' ' . esc_attr( $status['status'] ) . '">' . esc_html( $status['title'] ) . '</div>';
 

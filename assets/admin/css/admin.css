@@ -255,12 +255,14 @@ textarea#episode_embed_code {
       position: absolute;
       right: -24px;
       top: 2px; }
-  .ssp-settings .ssp-sync-msg {
-    margin-left: 20px; }
-    .ssp-settings .ssp-sync-msg.error {
-      color: #DF4E4F; }
-    .ssp-settings .ssp-sync-msg.success {
-      color: #4caf50; }
+  .ssp-settings .ssp-sync-msg .sync-overview {
+    font-size: 16px;
+    display: block;
+    margin: 10px 0; }
+  .ssp-settings .ssp-sync-msg.error .sync-overview {
+    color: #DF4E4F; }
+  .ssp-settings .ssp-sync-msg.success .sync-overview {
+    color: #4caf50; }
 
 .ssp-sync-podcast {
   display: flex;

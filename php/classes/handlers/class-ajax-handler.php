@@ -74,41 +74,43 @@ class Ajax_Handler {
 				'A sync is already in progress for this podcast.' => __( 'A sync is already in progress for this podcast.', 'seriously-simple-podcasting' ),
 			);
 
-			$results = array();
+			$podcast_statuses = array();
 
 			$has_syncing = false;
 			$has_errors = false;
 
 			foreach ( $podcast_ids as $podcast_id ) {
+
+				$podcast_status = array(
+					'podcast' => $this->get_podcast_name( $podcast_id ),
+				);
+
 				$response = $this->castos_handler->trigger_podcast_sync( $podcast_id );
 
-				$status   = array();
-
-				if ( empty( $response['code'] ) || ! in_array( $response['code'], array( 200 ) ) ) {
-					$error = isset( $response['error'] ) ? $response['error'] : '';
-
-					// Try to add translation
-					$error = ( $error && array_key_exists( $error, $msgs_map ) ) ? $msgs_map[ $error ] : $error;
-
-					// If there is no error message, add the default one.
-					$error = $error ?: __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
-
-					$status = array(
-						'msg'    => $error,
-					);
-				}
-
-				if ( 409 === $response['code'] || 200 === $response['code'] ) {
-					$status['status'] = 'syncing';
-					$status['title']  = __( 'Syncing', 'seriously-simple-podcasting' );
-					$has_syncing = true;
+				if ( isset( $response['code'] ) && in_array( $response['code'], array( 200, 409 ) ) ) {
+					$podcast_status['status'] = 'syncing';
+					$podcast_status['title']  = __( 'Syncing', 'seriously-simple-podcasting' );
+					$podcast_status['msg']    = '';
+					$has_syncing              = true;
 				} else {
-					$status['status'] = 'failed';
-					$status['title']  = __( 'Failed', 'seriously-simple-podcasting' );
-					$has_errors = true;
+					$podcast_status['status'] = 'failed';
+					$podcast_status['title']  = __( 'Failed', 'seriously-simple-podcasting' );
+					$has_errors               = true;
 				}
 
-				$results [ $podcast_id ] = $status;
+				$msg = isset( $response['error'] ) ? $response['error'] : '';
+
+				// Try to add translation
+				$msg = ( $msg && array_key_exists( $msg, $msgs_map ) ) ? $msgs_map[ $msg ] : $msg;
+
+				if ( 'failed' === $podcast_status['status'] && empty( $msg ) ) {
+					// If there is no error message, add the default one.
+					$msg = __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
+				}
+
+				$podcast_status['msg'] = $msg ? $podcast_status['podcast'] . ': ' . $msg : '';
+
+				$podcast_statuses [ $podcast_id ] = $podcast_status;
 			}
 
 			$msgs = array(
@@ -117,17 +119,42 @@ class Ajax_Handler {
 				'failed'              => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
 			);
 
-			$results['status'] = ! $has_errors ? 'success' : ( $has_syncing ? 'success_with_errors' : 'failed' );
-			$results['msg'] = $msgs[ $results['status'] ];
+			$results_status = ! $has_errors ? 'success' : ( $has_syncing ? 'success_with_errors' : 'failed' );
 
-			if( 'failed' === $results['status'] ){
-				wp_send_json_error( $results );
-			} else {
+			$results = array(
+				'status'   => $results_status,
+				'msg'      => $msgs[ $results_status ],
+				'podcasts' => $podcast_statuses
+			);
+
+			if( 'success' === $results['status'] ){
 				wp_send_json_success( $results );
+			} else {
+				wp_send_json_error( $results );
 			}
 		} catch ( \Exception $e ) {
 			wp_send_json_error( $e->getMessage() );
 		}
+	}
+
+	/**
+	 * @param int $podcast_id
+	 *
+	 * @return string
+	 */
+	protected function get_podcast_name( $podcast_id ) {
+		// 0 is the default podcast.
+		if ( ! $podcast_id ) {
+			return __( 'Default Podcast', 'seriously-simple-podcasting' );
+		}
+
+		$podcast = ( $podcast_id > 0 ) ? get_term( $podcast_id, 'series' ) : null;
+
+		if ( ! is_wp_error( $podcast ) && isset( $podcast->name ) ) {
+			return $podcast->name;
+		}
+
+		return '';
 	}
 
 	/**

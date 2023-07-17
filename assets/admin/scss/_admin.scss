@@ -342,12 +342,19 @@ textarea#episode_embed_code {
 			top: 2px;
 		}
 	}
+
 	.ssp-sync-msg {
-		margin-left: 20px;
-		&.error {
+		.sync-overview {
+			font-size: 16px;
+			display: block;
+			margin: 10px 0;
+		}
+
+		&.error .sync-overview {
 			color: $clr_red_400;
 		}
-		&.success {
+
+		&.success .sync-overview {
 			color: $clr_green;
 		}
 	}

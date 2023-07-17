@@ -173,8 +173,9 @@ class Settings_Handler implements Service {
 			),
 		);
 
+		$podcast_options[0] = __( 'Default Podcast', 'seriously-simple-podcasting' );
 		$podcasts        = ssp_get_podcasts();
-		$podcast_options = array_combine(
+		$podcast_options += array_combine(
 			array_map( function ( $i ) {
 				return $i->term_id;
 			}, $podcasts ),
@@ -182,6 +183,7 @@ class Settings_Handler implements Service {
 				return $i->name;
 			}, $podcasts )
 		);
+
 		$settings['castos-hosting'] = array(
 			'title'    => __( 'Hosting', 'seriously-simple-podcasting' ),
 			'sections' => array(

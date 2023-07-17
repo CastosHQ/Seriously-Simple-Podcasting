@@ -3,29 +3,29 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
+use SeriouslySimplePodcasting\Handlers\Ajax_Handler;
+use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
+use SeriouslySimplePodcasting\Handlers\Images_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
-use SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator;
-use SeriouslySimplePodcasting\Integrations\Woocommerce\WC_Memberships_Integrator;
-use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
-use SeriouslySimplePodcasting\Handlers\Castos_Handler;
-use SeriouslySimplePodcasting\Handlers\Images_Handler;
-
-use SeriouslySimplePodcasting\Ajax\Ajax_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
-use SeriouslySimplePodcasting\Integrations\LifterLMS\LifterLMS_Integrator;
-use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Paid_Memberships_Pro_Integrator;
-use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
+use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
+use SeriouslySimplePodcasting\Integrations\LifterLMS\LifterLMS_Integrator;
+use SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator;
+use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Paid_Memberships_Pro_Integrator;
+use SeriouslySimplePodcasting\Integrations\Woocommerce\WC_Memberships_Integrator;
+use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
-use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 
@@ -141,9 +141,19 @@ class App_Controller {
 	protected $feed_handler;
 
 	/**
+	 * @var Series_Handler
+	 * */
+	protected $series_handler;
+
+	/**
 	 * @var Renderer
 	 * */
 	protected $renderer;
+
+	/**
+	 * @var Settings_Renderer
+	 * */
+	protected $settings_renderer;
 
 	/**
 	 * @var Castos_Handler
@@ -214,7 +224,6 @@ class App_Controller {
 
 		$this->episode_repository = new Episode_Repository();
 
-
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
@@ -243,9 +252,13 @@ class App_Controller {
 
 		if ( is_admin() ) {
 			$this->admin_notices_handler->bootstrap();
+			$this->settings_renderer = Settings_Renderer::instance();
+			$this->series_handler = new Series_Handler();
 
 			global $ssp_settings, $ssp_options;
-			$ssp_settings = $this->settings_controller = new Settings_Controller( $this->file, SSP_VERSION );
+			$ssp_settings = $this->settings_controller = new Settings_Controller(
+				$this->settings_handler, $this->settings_renderer, $this->renderer, $this->series_handler, $this->castos_handler
+			);
 			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}
 

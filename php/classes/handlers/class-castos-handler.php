@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use Braintree\Exception;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
@@ -740,13 +739,17 @@ class Castos_Handler implements Service {
 	 */
 	protected function send_request( $api_url, $args = array(), $method = 'GET' ) {
 
+		$token = apply_filters( 'ssp_castos_api_token', $this->api_token, $api_url, $args, $method );
+
+		if ( empty( $this->api_token ) ) {
+			throw new \Exception( __( 'Castos arguments not set', 'seriously-simple-podcasting' ) );
+		}
+
 		$this->setup_default_response();
 
 		$api_url = SSP_CASTOS_APP_URL . $api_url;
 
 		$this->logger->log( sprintf( 'Sending %s request to: ', $method ), compact( 'api_url', 'args', 'method' ) );
-
-		$token = apply_filters( 'ssp_castos_api_token', $this->api_token, $api_url, $args, $method );
 
 		// Some endpoints ask for token, some - for api_token. Let's provide both.
 		$default_args = array(

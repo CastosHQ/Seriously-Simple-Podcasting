@@ -1,10 +1,6 @@
 <?php
 
-namespace SeriouslySimplePodcasting\Ajax;
-
-use SeriouslySimplePodcasting\Handlers\Castos_Handler;
-use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
-use SeriouslySimplePodcasting\Handlers\Options_Handler;
+namespace SeriouslySimplePodcasting\Handlers;
 
 class Ajax_Handler {
 
@@ -70,32 +66,67 @@ class Ajax_Handler {
 			$this->nonce_check('ss_podcasting_castos-hosting');
 			$this->user_capability_check();
 
-			$token = ssp_get_option( 'podmotor_account_api_token' );
-			$email = ssp_get_option( 'podmotor_account_email' );
-
-			if ( empty( $token ) || empty( $email ) ) {
-				throw new \Exception( __( 'Castos arguments not set', 'seriously-simple-podcasting' ) );
-			}
-
-			$response       = $this->castos_handler->trigger_podcast_sync( 2 );
+			$podcast_ids = filter_input( INPUT_GET, 'podcasts', FILTER_VALIDATE_INT, FILTER_REQUIRE_ARRAY );
 
 			// Provide possible errors for translation purposes.
-			$errors = array(
+			$msgs_map = array(
 				'Failed to connect to SSP API.'                   => __( 'Failed to connect to SSP API.', 'seriously-simple-podcasting' ),
 				'A sync is already in progress for this podcast.' => __( 'A sync is already in progress for this podcast.', 'seriously-simple-podcasting' ),
 			);
 
-			if( empty($response['code']) || 200 !== $response['code'] ){
-				$error = isset( $response['error'] ) ? $response['error'] : '';
-				if( $error && array_key_exists( $error, $errors ) ){
-					$error = $errors[ $error ];
+			$results = array();
+
+			$has_syncing = false;
+			$has_errors = false;
+
+			foreach ( $podcast_ids as $podcast_id ) {
+				$response = $this->castos_handler->trigger_podcast_sync( $podcast_id );
+
+				$status   = array();
+
+				if ( empty( $response['code'] ) || ! in_array( $response['code'], array( 200 ) ) ) {
+					$error = isset( $response['error'] ) ? $response['error'] : '';
+
+					// Try to add translation
+					$error = ( $error && array_key_exists( $error, $msgs_map ) ) ? $msgs_map[ $error ] : $error;
+
+					// If there is no error message, add the default one.
+					$error = $error ?: __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
+
+					$status = array(
+						'msg'    => $error,
+					);
 				}
 
-				throw new \Exception( $error ?: __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' ) );
+				if ( 409 === $response['code'] || 200 === $response['code'] ) {
+					$status['status'] = 'syncing';
+					$status['title']  = __( 'Syncing', 'seriously-simple-podcasting' );
+					$has_syncing = true;
+				} else {
+					$status['status'] = 'failed';
+					$status['title']  = __( 'Failed', 'seriously-simple-podcasting' );
+					$has_errors = true;
+				}
+
+				$results [ $podcast_id ] = $status;
 			}
-			wp_send_json( $response );
+
+			$msgs = array(
+				'success'             => __( 'Successfully started the sync process', 'seriously-simple-podcasting' ),
+				'success_with_errors' => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
+				'failed'              => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
+			);
+
+			$results['status'] = ! $has_errors ? 'success' : ( $has_syncing ? 'success_with_errors' : 'failed' );
+			$results['msg'] = $msgs[ $results['status'] ];
+
+			if( 'failed' === $results['status'] ){
+				wp_send_json_error( $results );
+			} else {
+				wp_send_json_success( $results );
+			}
 		} catch ( \Exception $e ) {
-			$this->send_json_error( $e->getMessage() );
+			wp_send_json_error( $e->getMessage() );
 		}
 	}
 

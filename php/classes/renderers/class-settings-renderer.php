@@ -104,6 +104,8 @@ class Settings_Renderer implements Service {
 			case 'importing_podcasts':
 				$html .= $this->render_importing_podcasts( $field );
 				break;
+			case 'podcasts_sync':
+				$html .= $this->render_sync_podcasts( $field, $data, $option_name );;
 		}
 
 		if ( ! in_array( $field['type'], array(
@@ -360,6 +362,38 @@ class Settings_Renderer implements Service {
 					 '" id="' . esc_attr( $field['id'] . '_' . $k ) .
 					 '" class="' . $this->get_field_class( $field ) . '" /> ' .
 					 $v . '</label><br/>';
+		}
+
+		return $html;
+	}
+
+	/**
+	 * @param array $field
+	 * @param array $data
+	 * @param string $option_name
+	 *
+	 * @return string
+	 */
+	protected function render_sync_podcasts( $field, $data, $option_name ) {
+		$html = '';
+		if ( empty( $field['options'] ) ) {
+			return $html;
+		}
+
+		if ( empty( $data['statuses'] ) ) {
+			return '<div class="ssp-sync-podcast api-error">' . __( 'Castos API error', 'seriously-simple-podcasting' ) . '</div>';
+		}
+
+		foreach ( $field['options'] as $k => $v ) {
+			$status = $data['statuses'][ $k ];
+
+			$checkbox = '<div class="ssp-sync-podcast__checkbox"><label for="' . esc_attr( $field['id'] . '_' . $k ) .
+						'"><input type="checkbox" name="' . esc_attr( $option_name ) .
+						'[]" value="' . esc_attr( $k ) . '" id="' . esc_attr( $field['id'] . '_' . $k ) .
+						'" class="' . esc_attr ( $this->get_field_class( $field ) ) . '" /> ' . $v . '</label></div>';
+			$status = '<div class="ssp-sync-podcast__status js-sync-status' . ' ' . esc_attr( $status['status'] ) . '">' . esc_html( $status['title'] ) . '</div>';
+
+			$html .= '<div class="ssp-sync-podcast js-sync-podcast">' . $checkbox . $status . '</div>';
 		}
 
 		return $html;

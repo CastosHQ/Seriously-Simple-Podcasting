@@ -217,9 +217,6 @@ textarea#episode_embed_code {
     .ssp-settings table input.regular-text {
       max-width: 90%;
       background: #F1F5F9; }
-    .ssp-settings table label:not([for=podmotor_disconnect]) {
-      display: block;
-      margin-top: 6px; }
   .ssp-settings .selection li {
     margin-bottom: 0; }
   .ssp-settings .selection input.select2-search__field {
@@ -261,7 +258,38 @@ textarea#episode_embed_code {
   .ssp-settings .ssp-sync-msg {
     margin-left: 20px; }
     .ssp-settings .ssp-sync-msg.error {
-      color: #f33c3c; }
+      color: #DF4E4F; }
+    .ssp-settings .ssp-sync-msg.success {
+      color: #4caf50; }
+
+.ssp-sync-podcast {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px; }
+  .ssp-sync-podcast__status {
+    border-radius: 50px;
+    margin-right: 20px;
+    padding: 3px 12px 3px 30px;
+    position: relative;
+    background: #F5F5F5;
+    border: 1px solid var(--blue-200, #9CA3AF); }
+    .ssp-sync-podcast__status:before {
+      content: '';
+      background-image: url(../img/status-none.svg);
+      background-repeat: no-repeat;
+      background-position: center;
+      display: block;
+      position: absolute;
+      left: 2px;
+      top: 0;
+      width: 24px;
+      height: 24px; }
+    .ssp-sync-podcast__status.sending:before {
+      background-image: url(../img/status-sending.svg); }
+    .ssp-sync-podcast__status.synced:before {
+      background-image: url(../img/status-success.svg); }
+    .ssp-sync-podcast__status.failed:before {
+      background-image: url(../img/status-failed.svg); }
 
 /* latin-ext */
 @font-face {

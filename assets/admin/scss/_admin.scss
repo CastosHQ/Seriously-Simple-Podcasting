@@ -288,11 +288,6 @@ textarea#episode_embed_code {
 			max-width: 90%;
 			background: #F1F5F9;
 		}
-
-		label:not([for=podmotor_disconnect]) {
-			display: block;
-			margin-top: 6px;
-		}
 	}
 	.selection {
 		li {
@@ -350,7 +345,50 @@ textarea#episode_embed_code {
 	.ssp-sync-msg {
 		margin-left: 20px;
 		&.error {
-			color: #f33c3c;
+			color: $clr_red_400;
+		}
+		&.success {
+			color: $clr_green;
+		}
+	}
+}
+
+.ssp-sync-podcast {
+	display: flex;
+	justify-content: space-between;
+	margin-bottom: 12px;
+
+	&__status {
+		border-radius: 50px;
+		margin-right: 20px;
+		padding: 3px 12px 3px 30px;
+		position: relative;
+		background: #F5F5F5;
+		border: 1px solid var(--blue-200, #9CA3AF);
+
+		&:before {
+			content: '';
+			background-image: url(../img/status-none.svg);
+			background-repeat: no-repeat;
+			background-position: center;
+			display: block;
+			position: absolute;
+			left: 2px;
+			top: 0;
+			width: 24px;
+			height: 24px;
+		}
+
+		&.sending:before {
+			background-image: url(../img/status-sending.svg);
+		}
+
+		&.synced:before {
+			background-image: url(../img/status-success.svg);
+		}
+
+		&.failed:before {
+			background-image: url(../img/status-failed.svg);
 		}
 	}
 }

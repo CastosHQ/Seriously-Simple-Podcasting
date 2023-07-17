@@ -146,7 +146,16 @@ jQuery(document).ready(function($) {
 
 	function initCastosSync() {
 		var $syncBtn = $('#trigger_sync'),
-			nonce = $("#podcast_settings_tab_nonce").val();
+			nonce = $("#podcast_settings_tab_nonce").val(),
+			syncClass = '.js-sync-podcast';
+			changeStatus = function ($el, status, title = '') {
+				var $statusEl = $el.closest(syncClass).find('.js-sync-status');
+				$statusEl.removeClass('synced').addClass(status);
+				if(title){
+					$statusEl.html(title);
+				}
+			};
+
 		if (!$syncBtn.length) {
 			return false;
 		}
@@ -160,21 +169,32 @@ jQuery(document).ready(function($) {
 				$syncBtn.parent().append( $msg );
 			}
 
+			var $checked = $(syncClass + ' input[type=checkbox]:checked'),
+				podcasts = [];
+
+			$checked.each(function(){
+				podcasts.push($(this).val());
+			});
+
+			changeStatus( $checked, 'sending' );
+
 			$.ajax({
 				method: "GET",
 				url: ajaxurl,
 				data: {
 					action: "sync_castos",
-					nonce: nonce
+					nonce: nonce,
+					podcasts: podcasts
 				}
-			})
-				.done(function( response ) {
-					$syncBtn.removeClass('loader');
-
-					$msg.addClass(response.status === 'success' ? 'success' : 'error');
-					$msg.html( response.message );
+			}).done(function (response) {
+				$.each(response.data, function (id, status) {
+					changeStatus($('#podcasts_sync_' + id), status.status, status.title);
 				});
 
+				$syncBtn.removeClass('loader');
+				$msg.addClass(response.success ? 'success' : 'error');
+				$msg.html(response.data.msg);
+			});
 		});
 	}
 

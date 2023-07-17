@@ -2,11 +2,13 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
  * SSP Settings
@@ -29,7 +31,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.0
  */
-class Settings_Controller extends Controller {
+class Settings_Controller {
+
+	use Useful_Variables;
 
 	const SETTINGS_BASE = 'ss_podcasting_';
 
@@ -59,6 +63,11 @@ class Settings_Controller extends Controller {
 	protected $series_handler;
 
 	/**
+	 * @var Castos_Handler
+	 * */
+	public $castos_handler;
+
+	/**
 	 * @var Renderer
 	 * */
 	protected $renderer;
@@ -72,18 +81,22 @@ class Settings_Controller extends Controller {
 	/**
 	 * Constructor
 	 *
-	 * @param string $file Plugin base file.
-	 * @param string $version Plugin version
+	 * @param Settings_Handler $settings_handler
+	 * @param Settings_Renderer $settings_renderer
+	 * @param Renderer $renderer
+	 * @param Series_Handler $series_handler
+	 * @param Castos_Handler $castos_handler
 	 */
-	public function __construct( $file, $version ) {
-		parent::__construct( $file, $version );
+	public function __construct( $settings_handler, $settings_renderer, $renderer, $series_handler, $castos_handler ) {
+		$this->init_useful_variables();
 
 		$this->settings_base = self::SETTINGS_BASE;
 
-		$this->settings_handler  = new Settings_Handler();
-		$this->series_handler    = new Series_Handler();
-		$this->renderer          = new Renderer();
-		$this->settings_renderer = Settings_Renderer::instance();
+		$this->settings_handler  = $settings_handler;
+		$this->settings_renderer = $settings_renderer;
+		$this->renderer          = $renderer;
+		$this->series_handler    = $series_handler;
+		$this->castos_handler    = $castos_handler;
 
 		$this->register_hooks_and_filters();
 	}
@@ -120,7 +133,62 @@ class Settings_Controller extends Controller {
 			'maybe_disconnect_from_castos'
 		), 10, 2 );
 
+		// Get podcasts sync status for the sync settings
+		add_filter( 'ssp_field_data', array( $this, 'podcasts_sync_status' ), 10, 2 );
+
 		$this->generate_dynamic_color_scheme();
+	}
+
+	public function podcasts_sync_status( $data, $args ) {
+		if ( isset( $args['field']['id'] ) && 'podcasts_sync' === $args['field']['id'] ) {
+
+			// Todo: improve when Castos API is ready
+			$available_statuses = array(
+				'not_synced' => array(
+					'status' => 'not_synced',
+					'title' => __('Not synced', 'seriously-simple-podcasting'),
+				),
+				'in_progress' => array(
+					'status' => 'in_progress',
+					'title' => __('In progress', 'seriously-simple-podcasting'),
+				),
+				'synced' => array(
+					'status' => 'synced',
+					'title' => __('Synced', 'seriously-simple-podcasting'),
+				),
+				'failed' => array(
+					'status' => 'failed',
+					'title' => __('Failed', 'seriously-simple-podcasting'),
+				),
+			);
+
+			$data = (array) $data;
+			$res = $this->castos_handler->get_podcasts();
+			if ( empty( $res['status'] ) || 'success' !== $res['status'] || ! isset( $res['data']['podcast_list'] ) ) {
+				$data['statuses'] = null;
+
+				return $data;
+			}
+
+			$statuses     = array();
+			foreach ( (array)$args['field']['options'] as $series_id => $v ) {
+				$statuses[ $series_id ] = $available_statuses['not_synced'];
+			}
+
+			$castos_podcasts = (array) $res['data']['podcast_list'];
+
+			// Currently we consider Podcast as synced if series ID exists.
+			// When API is ready, we'll use API statuses.
+			foreach ( $castos_podcasts as $podcast ) {
+				if ( isset( $podcast['series_id'] ) && array_key_exists( $podcast['series_id'], $statuses ) ) {
+					$statuses[ $podcast['series_id'] ] = $available_statuses['synced'];
+				}
+			}
+
+			$data['statuses'] = $statuses;
+		}
+
+		return $data;
 	}
 
 	protected function generate_dynamic_color_scheme() {
@@ -512,6 +580,7 @@ class Settings_Controller extends Controller {
 		$data = get_option( $option_name, $default );
 
 		// Get specific series data if applicable
+		// Todo: use ssp_field_data filter instead
 		if ( isset( $args['feed-series'] ) && $args['feed-series'] ) {
 
 			// Set placeholder to default feed option with specified default fallback
@@ -529,6 +598,8 @@ class Settings_Controller extends Controller {
 			// Get series-specific option
 			$data = get_option( $option_name, $default );
 		}
+
+		$data = apply_filters( 'ssp_field_data', $data, $args );
 
 		echo $this->settings_renderer->render_field( $field, $data, $option_name, $default_option_name );
 	}

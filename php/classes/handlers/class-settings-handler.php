@@ -227,10 +227,10 @@ class Settings_Handler implements Service {
 					),
 					'fields'             => array(
 						array(
-							'id'          => 'podmotor_import',
+							'id'          => 'podcasts_sync',
 							'label'       => __( 'Podcast', 'seriously-simple-podcasting' ),
 							'description' => __( 'Select the podcast you want to sync to your Castos hosting account.', 'seriously-simple-podcasting' ),
-							'type'        => 'select2_multi',
+							'type'        => 'podcasts_sync',
 							'options'     => $podcast_options,
 						),
 						array(

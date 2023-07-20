@@ -13,101 +13,6 @@ jQuery(document).ready(function($) {
 
 	const { __ } = wp.i18n;
 
-	function disableSubmitButton(){
-		/**
-		 * If either API field is empty, disable the submit button
-		 */
-		if ( $podmotorAccountEmail.val() === '' || $podmotorAccountAPIToken.val() === ''  ){
-			$("#ssp-settings-submit").prop( "disabled", "disabled" );
-		}
-
-		/**
-		 * If the user changes the email, disable the submit button
-		 */
-		$podmotorAccountEmail.on("change paste keydown keyup", function() {
-			$("#ssp-settings-submit").prop( "disabled", "disabled" );
-		});
-
-		/**
-		 * If the user changes the account api key, disable the submit button
-		 */
-		$podmotorAccountAPIToken.on("change paste keydown keyup", function() {
-			$("#ssp-settings-submit").prop( "disabled", "disabled" );
-		});
-	}
-
-	/**
-	 * Validate the api credentials
-	 */
-	function validateAPICredentials(){
-		$validateBtn.on("click", function(){
-
-			var podmotor_account_email = $("#podmotor_account_email").val(),
-				podmotor_account_api_token = $("#podmotor_account_api_token").val(),
-				nonce = $("#podcast_settings_tab_nonce").val(),
-				$msg = $('.validate-api-credentials-message');
-
-			if(!$msg.length){
-				$msg = $('<span class="validate-api-credentials-message"></span>');
-				$validateBtn.parent().append( $msg );
-			}
-
-			$msg.html( "Validating API credentials..." );
-
-			$validateBtn.addClass('loader');
-
-			$.ajax({
-				method: "GET",
-				url: ajaxurl,
-				data: {
-					action: "validate_castos_credentials",
-					api_token: podmotor_account_api_token,
-					email: podmotor_account_email,
-					nonce: nonce
-				}
-			})
-				.done(function( response ) {
-					$validateBtn.removeClass('loader');
-					if (response.status === 'success') {
-						$(".validate-api-credentials-message").html("Credentials Valid. Please click 'Save Settings' to save Credentials.");
-						$("#ssp-settings-submit").prop("disabled", "");
-						$validateBtn.val('Valid Credentials');
-						$validateBtn.addClass('valid');
-					} else {
-						$validateBtn.addClass('invalid');
-						$(".validate-api-credentials-message").html(response.message);
-					}
-					$validateBtn.trigger('validated');
-				});
-
-		});
-	}
-
-	/**
-	 * Disconnect Castos checkbox on change, renders a confirmation message to the user.
-	 */
-	function disconnectCastos(){
-		$('#podmotor_disconnect').on('change', function (event) {
-			var $checkbox = $(this);
-
-			// if the change is to uncheck the checkbox
-			if (!$checkbox.is(':checked')) {
-				return;
-			}
-
-			var $message = 'If you disconnect from Castos hosting you will no longer be able to upload media files to the Castos hosting platform. If you’re no longer a Castos customer your media files may no longer be available to your listeners.';
-			var user_input = confirm($message);
-			if (user_input !== true) {
-				// Ensures this code runs AFTER the browser handles click however it wants.
-				setTimeout(function() {
-					$checkbox.removeAttr('checked');
-				}, 0);
-				event.preventDefault();
-				event.stopPropagation();
-			}
-		});
-	}
-
 	/**
 	 * Show only options related to parent category
 	 */
@@ -130,6 +35,98 @@ jQuery(document).ready(function($) {
 	}
 
 	function initCastosAPICredentials() {
+		var disableSubmitButton = function () {
+				/**
+				 * If either API field is empty, disable the submit button
+				 */
+				if ($podmotorAccountEmail.val() === '' || $podmotorAccountAPIToken.val() === '') {
+					$("#ssp-settings-submit").prop("disabled", "disabled");
+				}
+
+				/**
+				 * If the user changes the email, disable the submit button
+				 */
+				$podmotorAccountEmail.on("change paste keydown keyup", function () {
+					$("#ssp-settings-submit").prop("disabled", "disabled");
+				});
+
+				/**
+				 * If the user changes the account api key, disable the submit button
+				 */
+				$podmotorAccountAPIToken.on("change paste keydown keyup", function () {
+					$("#ssp-settings-submit").prop("disabled", "disabled");
+				});
+			},
+			/**
+			 * Validate the api credentials
+			 */
+			validateAPICredentials = function () {
+				$validateBtn.on("click", function () {
+
+					var podmotor_account_email = $("#podmotor_account_email").val(),
+						podmotor_account_api_token = $("#podmotor_account_api_token").val(),
+						nonce = $("#podcast_settings_tab_nonce").val(),
+						$msg = $('.validate-api-credentials-message');
+
+					if (!$msg.length) {
+						$msg = $('<span class="validate-api-credentials-message"></span>');
+						$validateBtn.parent().append($msg);
+					}
+
+					$msg.html("Validating API credentials...");
+
+					$validateBtn.addClass('loader');
+
+					$.ajax({
+						method: "GET",
+						url: ajaxurl,
+						data: {
+							action: "validate_castos_credentials",
+							api_token: podmotor_account_api_token,
+							email: podmotor_account_email,
+							nonce: nonce
+						}
+					})
+						.done(function (response) {
+							$validateBtn.removeClass('loader');
+							if (response.status === 'success') {
+								$(".validate-api-credentials-message").html("Credentials Valid. Please click 'Save Settings' to save Credentials.");
+								$("#ssp-settings-submit").prop("disabled", "");
+								$validateBtn.val('Valid Credentials');
+								$validateBtn.addClass('valid');
+							} else {
+								$validateBtn.addClass('invalid');
+								$(".validate-api-credentials-message").html(response.message);
+							}
+							$validateBtn.trigger('validated');
+						});
+				});
+			},
+			/**
+			 * Disconnect Castos checkbox on change, renders a confirmation message to the user.
+			 */
+			disconnectCastos = function () {
+				$('#podmotor_disconnect').on('change', function (event) {
+					var $checkbox = $(this);
+
+					// if the change is to uncheck the checkbox
+					if (!$checkbox.is(':checked')) {
+						return;
+					}
+
+					var $message = 'If you disconnect from Castos hosting you will no longer be able to upload media files to the Castos hosting platform. If you’re no longer a Castos customer your media files may no longer be available to your listeners.';
+					var user_input = confirm($message);
+					if (user_input !== true) {
+						// Ensures this code runs AFTER the browser handles click however it wants.
+						setTimeout(function () {
+							$checkbox.removeAttr('checked');
+						}, 0);
+						event.preventDefault();
+						event.stopPropagation();
+					}
+				});
+			}
+
 		if ($podmotorAccountEmail.length > 0 && $podmotorAccountAPIToken.length > 0) {
 			disableSubmitButton();
 			validateAPICredentials();
@@ -147,36 +144,48 @@ jQuery(document).ready(function($) {
 	function initCastosSync() {
 		var $syncBtn = $('#trigger_sync'),
 			nonce = $("#podcast_settings_tab_nonce").val(),
-			syncClass = '.js-sync-podcast';
+			syncClass = '.js-sync-podcast',
 			changeStatus = function ($el, status, title = '') {
 				var $statusEl = $el.closest(syncClass).find('.js-sync-status');
-				$statusEl.removeClass('synced').addClass(status);
+				$statusEl.removeClass('success', 'none', 'sending', 'failed').addClass(status);
 				if(title){
-					$statusEl.html(title);
+					$statusEl.find('span').html(title);
 				}
-			};
+			},
+			getCheckedPodcasts = function(){
+				return $(syncClass + ' input[type=checkbox]:checked');
+			},
+			getPodcastCheckboxes = function(){
+				return $(syncClass + ' input[type=checkbox]');
+			},
+			updateSyncBtn = function(){
+				$syncBtn.prop('disabled', getCheckedPodcasts().length === 0);
+			}
 
 		if (!$syncBtn.length) {
 			return false;
 		}
+		updateSyncBtn();
+
+		getPodcastCheckboxes().change(function(){
+			updateSyncBtn();
+		});
+
 		$syncBtn.click(function(){
 			$syncBtn.addClass('loader');
 
-			var $msg = $('.ssp-sync-msg');
-
-			if(!$msg.length){
-				$msg = $('<span class="ssp-sync-msg"></span>');
-				$syncBtn.parent().append( $msg );
-			}
-
-			var $checked = $(syncClass + ' input[type=checkbox]:checked'),
+			var $msg = $('.ssp-sync-msg'),
+				$checked = getCheckedPodcasts(),
 				podcasts = [];
 
-			$checked.each(function(){
+			if (!$msg.length) {
+				$msg = $('<span class="ssp-sync-msg"></span>');
+				$syncBtn.parent().append($msg);
+			}
+
+			$checked.each(function () {
 				podcasts.push($(this).val());
 			});
-
-			changeStatus( $checked, 'sending' );
 
 			$.ajax({
 				method: "GET",

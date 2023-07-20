@@ -344,8 +344,9 @@ textarea#episode_embed_code {
 	}
 
 	.ssp-sync-msg {
+		font-size: 12px;
 		.sync-overview {
-			font-size: 16px;
+			font-size: 14px;
 			display: block;
 			margin: 10px 0;
 		}
@@ -364,37 +365,82 @@ textarea#episode_embed_code {
 	display: flex;
 	justify-content: space-between;
 	margin-bottom: 12px;
+}
 
-	&__status {
-		border-radius: 50px;
-		margin-right: 20px;
-		padding: 3px 12px 3px 30px;
-		position: relative;
-		background: #F5F5F5;
-		border: 1px solid var(--blue-200, #9CA3AF);
 
+.ssp-sync-label {
+	border-radius: 50px;
+	margin-right: 20px;
+	padding: 3px 12px 3px 30px;
+	position: relative;
+	background: #F5F5F5;
+	border: 1px solid var(--blue-200, #9CA3AF);
+	font-family: Inter, sans-serif;
+	font-size: 12px;
+	font-weight: 500;
+	display: inline-block;
+	white-space: nowrap;
+	color: $clr_gray_400;
+	line-height: initial;
+
+	a {
+		position: absolute;
+		width: 100%;
+		left: 0;
+		right: 0;
+		top: 0;
+		bottom: 0;
+	}
+
+	&:before {
+		content: '';
+		background-repeat: no-repeat;
+		background-position: center;
+		display: block;
+		position: absolute;
+		left: 2px;
+		top: -2px;
+		width: 24px;
+		height: 24px;
+	}
+
+	&.none {
+		color: $clr_gray_400;
+		padding-left: 26px;
 		&:before {
-			content: '';
 			background-image: url(../img/status-none.svg);
-			background-repeat: no-repeat;
-			background-position: center;
-			display: block;
-			position: absolute;
-			left: 2px;
 			top: 0;
-			width: 24px;
-			height: 24px;
+			left: 4px;
+			width: 20px;
+			height: 20px;
+			background-size: cover;
 		}
+	}
 
-		&.sending:before {
+	&.sending {
+		border: 1px solid var(--blue-200, #BFDFFE);
+		background: var(--blue-100, #DBECFE);
+		color: #1C51CF;
+		&:before {
 			background-image: url(../img/status-sending.svg);
 		}
+	}
 
-		&.synced:before {
+	&.success {
+		border: 1px solid var(--emerald-200, #A7F3D0);
+		background: var(--emerald-100, #D1FAE5);
+		color: #047857;
+		&:before {
 			background-image: url(../img/status-success.svg);
 		}
+	}
 
-		&.failed:before {
+	&.failed {
+		border: 1px solid var(--yellow-200, #FDEFA0);
+		background: var(--yellow-100, #FEF8D7);
+		color: #AF6A09;
+
+		&:before {
 			background-image: url(../img/status-failed.svg);
 		}
 	}

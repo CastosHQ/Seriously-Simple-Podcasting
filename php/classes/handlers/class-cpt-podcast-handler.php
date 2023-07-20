@@ -21,6 +21,7 @@ class CPT_Podcast_Handler implements Service {
 
 	const DEFAULT_SERIES_SLUG = 'podcasts';
 
+
 	protected $roles_handler;
 
 	/**
@@ -39,8 +40,6 @@ class CPT_Podcast_Handler implements Service {
 	 */
 	public function register_post_type() {
 		register_post_type( SSP_CPT_PODCAST, $this->get_podcast_args() );
-
-		$this->register_taxonomies();
 		$this->register_meta();
 	}
 
@@ -48,7 +47,7 @@ class CPT_Podcast_Handler implements Service {
 	 * Register taxonomies
 	 * @return void
 	 */
-	protected function register_taxonomies() {
+	public function register_taxonomies() {
 		$podcast_post_types = ssp_post_types( true );
 
 		$args = $this->get_series_args();

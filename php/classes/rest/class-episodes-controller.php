@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Rest;
 
+use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
 use WP_REST_Controller;
 use WP_REST_Posts_Controller;
 use WP_REST_Server;
@@ -133,11 +134,14 @@ class Episodes_Controller extends WP_REST_Controller {
 			// In case of the error update sync information to show it to user.
 			// Todo: display this error message to users
 			if ( $new_data['error'] ) {
-				update_post_meta( $episode_id, 'ssp_sync_episode_error', $new_data['error'] );
+				update_post_meta( $episode_id, PPT_Controller::META_SYNC_ERROR, $new_data['error'] );
 			} else {
 				// Successful sync, remove the possible previous error.
-				delete_post_meta( $episode_id, 'ssp_sync_episode_error' );
+				delete_post_meta( $episode_id, PPT_Controller::META_SYNC_ERROR );
 			}
+
+			// Update file URL (meta key defaults to 'audio_file').
+			$audio_file_meta_key = apply_filters( 'ssp_audio_file_meta_key', 'audio_file' );
 
 			// Update the file data.
 			if ( ! empty( $new_data['file']['id'] ) && ! empty( $new_data['file']['url'] ) ) {
@@ -145,11 +149,9 @@ class Episodes_Controller extends WP_REST_Controller {
 				// Update Castos file ID.
 				update_post_meta( $episode_id, 'podmotor_file_id', $new_data['file']['id'] );
 
-				// Update file URL (meta key defaults to 'audio_file').
-				$audio_file_meta_key = apply_filters( 'ssp_audio_file_meta_key', 'audio_file' );
 				update_post_meta( $episode_id, $audio_file_meta_key, $new_data['file']['url'] );
 
-				// Also, update legacy 'enclosure' field which is the same as 'audio_file' just for consistency
+				// Also, update 'enclosure' field for easy moving from/to other plugins
 				update_post_meta( $episode_id, 'enclosure', $new_data['file']['url'] );
 			}
 
@@ -157,6 +159,12 @@ class Episodes_Controller extends WP_REST_Controller {
 			if ( ! empty( $new_data['episode']['id'] ) ) {
 				update_post_meta( $episode_id, 'podmotor_episode_id', $new_data['episode']['id'] );
 			}
+
+			$full_success = ! empty( $new_data['file']['id'] ) && ! empty( $new_data['file']['url'] ) && ! empty( $new_data['episode']['id'] );
+
+			$sync_status = $full_success ? PPT_Controller::SYNC_STATUS_SUCCESS : PPT_Controller::SYNC_STATUS_FAILED;
+
+			update_post_meta( $episode_id, 'sync_status', $sync_status );
 
 			return rest_ensure_response( array(
 				'id'   => intval( $episode_id ),

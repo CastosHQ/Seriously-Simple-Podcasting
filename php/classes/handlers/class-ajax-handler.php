@@ -2,6 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
+
 class Ajax_Handler {
 
 	/**
@@ -81,45 +83,49 @@ class Ajax_Handler {
 
 			foreach ( $podcast_ids as $podcast_id ) {
 
-				$podcast_status = array(
-					'podcast' => $this->get_podcast_name( $podcast_id ),
-				);
+				$podcast_status = array();
 
 				$response = $this->castos_handler->trigger_podcast_sync( $podcast_id );
 
+				do_action( 'ssp_triggered_podcast_sync', $podcast_id, $response );
+
 				if ( isset( $response['code'] ) && in_array( $response['code'], array( 200, 409 ) ) ) {
-					$podcast_status['status'] = 'syncing';
-					$podcast_status['title']  = __( 'Syncing', 'seriously-simple-podcasting' );
-					$podcast_status['msg']    = '';
+					$podcast_status['status'] = PPT_Controller::SYNC_STATUS_SENDING;
+					$podcast_status['title']  = __( 'Sending', 'seriously-simple-podcasting' );
 					$has_syncing              = true;
 				} else {
-					$podcast_status['status'] = 'failed';
+					$podcast_status['status'] = PPT_Controller::SYNC_STATUS_FAILED;
 					$podcast_status['title']  = __( 'Failed', 'seriously-simple-podcasting' );
 					$has_errors               = true;
 				}
 
 				$msg = isset( $response['error'] ) ? $response['error'] : '';
 
-				// Try to add translation
+				// Try to translate the response message.
 				$msg = ( $msg && array_key_exists( $msg, $msgs_map ) ) ? $msgs_map[ $msg ] : $msg;
 
-				if ( 'failed' === $podcast_status['status'] && empty( $msg ) ) {
-					// If there is no error message, add the default one.
+				// If there is an error but got no error message, add the default one.
+				if ( PPT_Controller::SYNC_STATUS_FAILED === $podcast_status['status'] && empty( $msg ) ) {
 					$msg = __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
 				}
 
-				$podcast_status['msg'] = $msg ? $podcast_status['podcast'] . ': ' . $msg : '';
+				$msg_template = _x('%s: %s', 'podcast-sync-error-message','seriously-simple-podcasting');
+
+				$podcast_status['msg'] = $msg ? sprintf( $msg_template, $this->get_podcast_name( $podcast_id ), $msg ) : '';
 
 				$podcast_statuses [ $podcast_id ] = $podcast_status;
 			}
 
+			// We use SYNC_STATUS_ constants for both episode sync statuses and podcast sync statuses. Might be changed in the future.
 			$msgs = array(
-				'success'             => __( 'Successfully started the sync process', 'seriously-simple-podcasting' ),
-				'success_with_errors' => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
-				'failed'              => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
+				PPT_Controller::SYNC_STATUS_SUCCESS             => __( 'Successfully started the sync process', 'seriously-simple-podcasting' ),
+				PPT_Controller::SYNC_STATUS_SUCCESS_WITH_ERRORS => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
+				PPT_Controller::SYNC_STATUS_FAILED              => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
 			);
 
-			$results_status = ! $has_errors ? 'success' : ( $has_syncing ? 'success_with_errors' : 'failed' );
+			$results_status = ! $has_errors ?
+				PPT_Controller::SYNC_STATUS_SUCCESS :
+				( $has_syncing ? PPT_Controller::SYNC_STATUS_SUCCESS_WITH_ERRORS : PPT_Controller::SYNC_STATUS_FAILED );
 
 			$results = array(
 				'status'   => $results_status,
@@ -127,7 +133,7 @@ class Ajax_Handler {
 				'podcasts' => $podcast_statuses
 			);
 
-			if( 'success' === $results['status'] ){
+			if( PPT_Controller::SYNC_STATUS_SUCCESS === $results['status'] ){
 				wp_send_json_success( $results );
 			} else {
 				wp_send_json_error( $results );
@@ -154,7 +160,7 @@ class Ajax_Handler {
 			return $podcast->name;
 		}
 
-		return '';
+		return __( 'Error', 'seriously-simple-podcasting' );
 	}
 
 	/**

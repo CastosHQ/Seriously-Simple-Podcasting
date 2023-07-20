@@ -8,7 +8,9 @@ use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
+use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
 
 /**
  * SSP Settings
@@ -77,6 +79,11 @@ class Settings_Controller {
 	 * */
 	protected $settings_renderer;
 
+	/**
+	 * @var Episode_Repository
+	 * */
+	protected $episode_repository;
+
 
 	/**
 	 * Constructor
@@ -86,17 +93,19 @@ class Settings_Controller {
 	 * @param Renderer $renderer
 	 * @param Series_Handler $series_handler
 	 * @param Castos_Handler $castos_handler
+	 * @param Episode_Repository $episode_repository
 	 */
-	public function __construct( $settings_handler, $settings_renderer, $renderer, $series_handler, $castos_handler ) {
+	public function __construct( $settings_handler, $settings_renderer, $renderer, $series_handler, $castos_handler, $episode_repository ) {
 		$this->init_useful_variables();
 
 		$this->settings_base = self::SETTINGS_BASE;
 
-		$this->settings_handler  = $settings_handler;
-		$this->settings_renderer = $settings_renderer;
-		$this->renderer          = $renderer;
-		$this->series_handler    = $series_handler;
-		$this->castos_handler    = $castos_handler;
+		$this->settings_handler   = $settings_handler;
+		$this->settings_renderer  = $settings_renderer;
+		$this->renderer           = $renderer;
+		$this->series_handler     = $series_handler;
+		$this->castos_handler     = $castos_handler;
+		$this->episode_repository = $episode_repository;
 
 		$this->register_hooks_and_filters();
 	}
@@ -133,32 +142,46 @@ class Settings_Controller {
 			'maybe_disconnect_from_castos'
 		), 10, 2 );
 
-		// Get podcasts sync status for the sync settings
-		add_filter( 'ssp_field_data', array( $this, 'podcasts_sync_status' ), 10, 2 );
+		// Add podcasts sync status to the sync settings
+		add_filter( 'ssp_field_data', array( $this, 'add_podcasts_sync_status' ), 10, 2 );
 
 		$this->generate_dynamic_color_scheme();
 	}
 
-	public function podcasts_sync_status( $data, $args ) {
+	/**
+	 * @param $data
+	 * @param $args
+	 *
+	 * @return array
+	 */
+	public function add_podcasts_sync_status( $data, $args ) {
 		if ( isset( $args['field']['id'] ) && 'podcasts_sync' === $args['field']['id'] ) {
-
-			// Todo: improve when Castos API is ready
-			$available_statuses = array(
-				'not_synced' => array(
-					'status' => 'not_synced',
-					'title' => __('Not synced', 'seriously-simple-podcasting'),
+			$available_statuses_data = array(
+				PPT_Controller::SYNC_STATUS_NONE                => array(
+					'status' => PPT_Controller::SYNC_STATUS_NONE,
+					'class'  => PPT_Controller::SYNC_STATUS_NONE,
+					'title'  => __( 'Not synced', 'seriously-simple-podcasting' ),
 				),
-				'in_progress' => array(
-					'status' => 'in_progress',
-					'title' => __('In progress', 'seriously-simple-podcasting'),
+				PPT_Controller::SYNC_STATUS_SENDING             => array(
+					'status' => PPT_Controller::SYNC_STATUS_SENDING,
+					'class'  => PPT_Controller::SYNC_STATUS_SENDING,
+					'title'  => __( 'Sending', 'seriously-simple-podcasting' ),
 				),
-				'synced' => array(
-					'status' => 'synced',
-					'title' => __('Synced', 'seriously-simple-podcasting'),
+				PPT_Controller::SYNC_STATUS_SUCCESS             => array(
+					'status' => PPT_Controller::SYNC_STATUS_SUCCESS,
+					'class'  => PPT_Controller::SYNC_STATUS_SUCCESS,
+					'title'  => __( 'Success', 'seriously-simple-podcasting' ),
 				),
-				'failed' => array(
-					'status' => 'failed',
-					'title' => __('Failed', 'seriously-simple-podcasting'),
+				PPT_Controller::SYNC_STATUS_SUCCESS_WITH_ERRORS => array(
+					'status'  => PPT_Controller::SYNC_STATUS_SUCCESS_WITH_ERRORS,
+					'class'   => PPT_Controller::SYNC_STATUS_FAILED,
+					'title'   => __( 'Completed', 'seriously-simple-podcasting' ),
+					'tooltip' => __( 'Completed with errors', 'seriously-simple-podcasting' ),
+				),
+				PPT_Controller::SYNC_STATUS_FAILED              => array(
+					'status' => PPT_Controller::SYNC_STATUS_FAILED,
+					'class'  => PPT_Controller::SYNC_STATUS_FAILED,
+					'title'  => __( 'Failed', 'seriously-simple-podcasting' ),
 				),
 			);
 
@@ -170,25 +193,73 @@ class Settings_Controller {
 				return $data;
 			}
 
+			// First, prepare all SSP podcasts with a "none" status, and after, update them with the data retrieved from Castos.
 			$statuses     = array();
-			foreach ( (array)$args['field']['options'] as $series_id => $v ) {
-				$statuses[ $series_id ] = $available_statuses['not_synced'];
+			foreach ( (array) $args['field']['options'] as $series_id => $v ) {
+				$statuses[ $series_id ] = $available_statuses_data[ PPT_Controller::SYNC_STATUS_NONE ];
 			}
 
 			$castos_podcasts = (array) $res['data']['podcast_list'];
 
-			// Currently we consider Podcast as synced if series ID exists.
-			// When API is ready, we'll use API statuses.
+			// Update statuses with the data retrieved from Castos.
 			foreach ( $castos_podcasts as $podcast ) {
-				if ( isset( $podcast['series_id'] ) && array_key_exists( $podcast['series_id'], $statuses ) ) {
-					$statuses[ $podcast['series_id'] ] = $available_statuses['synced'];
+				if ( ! isset( $podcast['series_id'] ) || ! array_key_exists( $podcast['series_id'], $statuses ) ) {
+					continue;
 				}
+
+				$status = $this->get_podcast_sync_status( $podcast );
+
+				// If status is none, let's try to guess the sync status
+				if( PPT_Controller::SYNC_STATUS_NONE === $status ){
+					$status = $this->guess_podcast_sync_status( $podcast );
+				}
+
+				$statuses[ $podcast['series_id'] ] = $available_statuses_data[ $status ];
 			}
 
 			$data['statuses'] = $statuses;
 		}
 
 		return $data;
+	}
+
+	/**
+	 * @param array $podcast
+	 *
+	 * @return string
+	 */
+	protected function guess_podcast_sync_status( $podcast ) {
+		$episodes = $this->episode_repository->get_podcast_episodes( $podcast['series_id'], 10 );
+
+		foreach ( $episodes as $episode ) {
+			$episode_id = get_post_meta( $episode->ID, 'podmotor_episode_id', true );
+			if ( ! $episode_id ) {
+				return PPT_Controller::SYNC_STATUS_NONE;
+			}
+		}
+
+		return PPT_Controller::SYNC_STATUS_SUCCESS;
+	}
+
+	/**
+	 * @param array $castos_podcast
+	 *
+	 * @return string
+	 */
+	protected function get_podcast_sync_status( $castos_podcast ) {
+		$map    = array(
+			'none'                  => PPT_Controller::SYNC_STATUS_NONE,
+			'in_progress'           => PPT_Controller::SYNC_STATUS_SENDING,
+			'completed'             => PPT_Controller::SYNC_STATUS_SUCCESS,
+			'completed_with_errors' => PPT_Controller::SYNC_STATUS_SUCCESS_WITH_ERRORS,
+			'failed'                => PPT_Controller::SYNC_STATUS_FAILED,
+		);
+		$status = PPT_Controller::SYNC_STATUS_NONE;
+		if ( isset( $castos_podcast['ssp_import_status'] ) && array_key_exists( $castos_podcast['ssp_import_status'], $map ) ) {
+			$status = $map[ $castos_podcast['ssp_import_status'] ];
+		}
+
+		return $status;
 	}
 
 	protected function generate_dynamic_color_scheme() {

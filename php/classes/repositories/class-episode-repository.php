@@ -163,6 +163,46 @@ class Episode_Repository implements Service {
 	}
 
 	/**
+	 * @param int $podcast_id
+	 *
+	 * @return \WP_Post[]
+	 */
+	public function get_podcast_episodes( $podcast_id, $max = -1 ) {
+		// Get all podcast post types
+		$podcast_post_types = ssp_post_types();
+
+		// Set up query arguments for fetching podcast episodes
+		$query_args = array(
+			'post_status'    => 'publish',
+			'post_type'      => $podcast_post_types,
+			'posts_per_page' => $max,
+			/*'tax_query'      => array(
+				array(
+					'taxonomy' => ssp_series_taxonomy(),
+					'field'    => 'term_id',
+					'terms'    => $podcast_id,
+				),
+			),*/
+		);
+
+		$tax_query = ( 0 === $podcast_id ) ?
+			array(
+				'taxonomy' => ssp_series_taxonomy(),
+				'operator' => 'NOT EXISTS'
+			) :
+			array(
+				'taxonomy' => ssp_series_taxonomy(),
+				'field'    => 'term_id',
+				'terms'    => $podcast_id,
+			);
+		$query_args['tax_query'][] = $tax_query;
+
+
+		// Fetch all episodes for display
+		return get_posts( $query_args );
+	}
+
+	/**
 	 * @param $episode_id
 	 *
 	 * @return false|mixed|void

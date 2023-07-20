@@ -26,6 +26,15 @@ class Podcast_Post_Types_Controller {
 
 	use Useful_Variables;
 
+	const META_SYNC_STATUS = 'sync_status';
+	const META_SYNC_ERROR = 'ssp_sync_episode_error';
+	const SYNC_STATUS_SUCCESS = 'success';
+	const SYNC_STATUS_SUCCESS_WITH_ERRORS = 'success_with_errors';
+	const SYNC_STATUS_FAILED = 'failed';
+	const SYNC_STATUS_SENDING = 'sending';
+	const SYNC_STATUS_NONE = 'none';
+
+
 	/**
 	 * @var CPT_Podcast_Handler
 	 */
@@ -106,11 +115,11 @@ class Podcast_Post_Types_Controller {
 		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 
 		// Episodes list table.
-		add_filter( 'manage_edit-' . $this->token . '_columns', array(
-			$this,
-			'register_custom_column_headings',
-		), 10, 1 );
-		add_action( 'manage_posts_custom_column', array( $this, 'register_custom_columns' ), 10, 2 );
+		add_filter( 'manage_edit-' . $this->token . '_columns', array( $this, 'register_custom_column_headings' ), 20, 2 );
+		add_action( 'manage_posts_custom_column', array( $this, 'manage_custom_columns' ), 10, 2 );
+
+		// Change the podcast episode statuses to sending after the sync has been triggered.
+		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_episodes_status' ), 10, 2 );
 	}
 
 
@@ -121,6 +130,21 @@ class Podcast_Post_Types_Controller {
 	 */
 	public function register_post_type() {
 		$this->cpt_podcast_handler->register_post_type();
+		$this->cpt_podcast_handler->register_taxonomies();
+	}
+
+	/**
+	 * @param int $podcast_id
+	 * @param array $response
+	 */
+	public function update_podcast_episodes_status( $podcast_id, $response ) {
+		if( isset( $response['code'] ) && 200 === $response['code'] ){
+			$episodes = $this->episode_repository->get_podcast_episodes( $podcast_id );
+
+			foreach ( $episodes as $episode ) {
+				update_post_meta( $episode->ID, self::META_SYNC_STATUS, self::SYNC_STATUS_SENDING );
+			}
+		}
 	}
 
 	/**
@@ -753,15 +777,28 @@ class Podcast_Post_Types_Controller {
 	 * @return array           Modified columns
 	 */
 	public function register_custom_column_headings( $defaults ) {
-		$new_columns = apply_filters( 'ssp_admin_columns_episodes', array(
-			'image'  => __( 'Image', 'seriously-simple-podcasting' ),
-		) );
 
-		// remove date column
-		unset( $defaults['comments'] );
+		$columns_to_add = array();
+
+		if ( ssp_is_connected_to_castos() ) {
+			$columns_to_add['ssp_sync_status'] = __( 'Sync Status', 'seriously-simple-podcasting' );
+		}
+
+		$columns_to_add['ssp_cover'] = __( 'Cover', 'seriously-simple-podcasting' );
+
+		$columns_to_add = apply_filters( 'ssp_admin_columns_episodes', $columns_to_add );
+
+		$columns_to_unset = apply_filters( 'ssp_remove_admin_columns_episodes', array( 'comments' ) );
+
+		// remove columns
+		foreach ( $columns_to_unset as $column ) {
+			if ( isset( $defaults[ $column ] ) ) {
+				unset( $defaults[ $column ] );
+			}
+		}
 
 		// add new columns before last default one
-		$columns = array_slice( $defaults, 0, - 1 ) + $new_columns + array_slice( $defaults, - 1 );
+		$columns = array_slice( $defaults, 0, 1 ) + $columns_to_add + array_slice( $defaults, 1 );
 
 		return $columns;
 	}
@@ -770,21 +807,84 @@ class Podcast_Post_Types_Controller {
 	 * Display column data in podcast list table
 	 *
 	 * @param string $column_name Name of current column
-	 * @param integer $id ID of episode
+	 * @param integer $post_id ID of episode
 	 *
 	 * @return void
 	 */
-	public function register_custom_columns( $column_name, $id ) {
+	public function manage_custom_columns( $column_name, $post_id ) {
+		if ( 0 !== strpos( $column_name, 'ssp_' ) ) {
+			return;
+		}
+
 		switch ( $column_name ) {
-			case 'image':
-				$value = ssp_frontend_controller()->get_image( $id, 40 );
-				echo $value ?: '<span aria-hidden="true">—</span>';
+			case 'ssp_cover':
+				$value = ssp_episode_image( $post_id, 40 );
+				$value = $value ?: '<span aria-hidden="true">—</span>';
+				break;
+
+			case 'ssp_sync_status':
+				$status = $this->get_episode_sync_status( $post_id );
+				$error = self::SYNC_STATUS_FAILED === $status ? get_post_meta( $post_id, self::META_SYNC_ERROR, true ) : '';
+				$value = $this->get_episode_sync_label( $status, '', $error );
 				break;
 
 			default:
+				$value = '';
 				break;
-
 		}
+		echo apply_filters( 'ssp_custom_column_value', $value, $column_name, $post_id );
+	}
+
+	/**
+	 * @param string $status
+	 * @param string $title
+	 * @param string $tooltip
+	 *
+	 * @return string
+	 */
+	protected function get_episode_sync_label( $status, $title = '', $tooltip = '' ) {
+		$statuses = $this->get_available_sync_statuses();
+		$status   = array_key_exists( $status, $statuses ) ? $status : self::SYNC_STATUS_NONE;
+		$classes  = $status;
+		$title    = $title ?: $statuses[ $status ];
+
+		$label = ssp_renderer()->fetch( 'settings/sync-label', compact( 'classes', 'title', 'tooltip' ) );
+
+		return apply_filters( 'ssp_episode_sync_label', $label, $status, $title );
+	}
+
+	/**
+	 *
+	 * @param int $post_id
+	 *
+	 * @return string
+	 */
+	public function get_episode_sync_status( $post_id ) {
+		$status = get_post_meta( $post_id, self::META_SYNC_STATUS, true );
+
+		// If there is a status let's return it.
+		if ( $status && array_key_exists( $status, $this->get_available_sync_statuses() ) ) {
+			return $status;
+		}
+
+		$file_id   = get_post_meta( $post_id, 'podmotor_file_id' );
+		$castos_episode_id = get_post_meta( $post_id, 'podmotor_episode_id' );
+
+		return ( $file_id && $castos_episode_id ) ? self::SYNC_STATUS_SUCCESS : self::SYNC_STATUS_NONE;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_available_sync_statuses(){
+		$statuses = array(
+			self::SYNC_STATUS_SUCCESS => __( 'Success', 'seriously-simple-podcasting' ),
+			self::SYNC_STATUS_FAILED  => __( 'Failed', 'seriously-simple-podcasting' ),
+			self::SYNC_STATUS_SENDING => __( 'Sending', 'seriously-simple-podcasting' ),
+			self::SYNC_STATUS_NONE    => __( 'Not synced', 'seriously-simple-podcasting' ),
+		);
+
+		return apply_filters( 'ssp_available_sync_statuses', $statuses );
 	}
 
 	/**

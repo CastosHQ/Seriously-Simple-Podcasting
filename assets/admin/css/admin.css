@@ -255,42 +255,80 @@ textarea#episode_embed_code {
       position: absolute;
       right: -24px;
       top: 2px; }
-  .ssp-settings .ssp-sync-msg .sync-overview {
-    font-size: 16px;
-    display: block;
-    margin: 10px 0; }
-  .ssp-settings .ssp-sync-msg.error .sync-overview {
-    color: #DF4E4F; }
-  .ssp-settings .ssp-sync-msg.success .sync-overview {
-    color: #4caf50; }
+  .ssp-settings .ssp-sync-msg {
+    font-size: 12px; }
+    .ssp-settings .ssp-sync-msg .sync-overview {
+      font-size: 14px;
+      display: block;
+      margin: 10px 0; }
+    .ssp-settings .ssp-sync-msg.error .sync-overview {
+      color: #DF4E4F; }
+    .ssp-settings .ssp-sync-msg.success .sync-overview {
+      color: #4caf50; }
 
 .ssp-sync-podcast {
   display: flex;
   justify-content: space-between;
   margin-bottom: 12px; }
-  .ssp-sync-podcast__status {
-    border-radius: 50px;
-    margin-right: 20px;
-    padding: 3px 12px 3px 30px;
-    position: relative;
-    background: #F5F5F5;
-    border: 1px solid var(--blue-200, #9CA3AF); }
-    .ssp-sync-podcast__status:before {
-      content: '';
+
+.ssp-sync-label {
+  border-radius: 50px;
+  margin-right: 20px;
+  padding: 3px 12px 3px 30px;
+  position: relative;
+  background: #F5F5F5;
+  border: 1px solid var(--blue-200, #9CA3AF);
+  font-family: Inter, sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  display: inline-block;
+  white-space: nowrap;
+  color: #9CA3AF;
+  line-height: initial; }
+  .ssp-sync-label a {
+    position: absolute;
+    width: 100%;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0; }
+  .ssp-sync-label:before {
+    content: '';
+    background-repeat: no-repeat;
+    background-position: center;
+    display: block;
+    position: absolute;
+    left: 2px;
+    top: -2px;
+    width: 24px;
+    height: 24px; }
+  .ssp-sync-label.none {
+    color: #9CA3AF;
+    padding-left: 26px; }
+    .ssp-sync-label.none:before {
       background-image: url(../img/status-none.svg);
-      background-repeat: no-repeat;
-      background-position: center;
-      display: block;
-      position: absolute;
-      left: 2px;
       top: 0;
-      width: 24px;
-      height: 24px; }
-    .ssp-sync-podcast__status.sending:before {
+      left: 4px;
+      width: 20px;
+      height: 20px;
+      background-size: cover; }
+  .ssp-sync-label.sending {
+    border: 1px solid var(--blue-200, #BFDFFE);
+    background: var(--blue-100, #DBECFE);
+    color: #1C51CF; }
+    .ssp-sync-label.sending:before {
       background-image: url(../img/status-sending.svg); }
-    .ssp-sync-podcast__status.synced:before {
+  .ssp-sync-label.success {
+    border: 1px solid var(--emerald-200, #A7F3D0);
+    background: var(--emerald-100, #D1FAE5);
+    color: #047857; }
+    .ssp-sync-label.success:before {
       background-image: url(../img/status-success.svg); }
-    .ssp-sync-podcast__status.failed:before {
+  .ssp-sync-label.failed {
+    border: 1px solid var(--yellow-200, #FDEFA0);
+    background: var(--yellow-100, #FEF8D7);
+    color: #AF6A09; }
+    .ssp-sync-label.failed:before {
       background-image: url(../img/status-failed.svg); }
 
 /* latin-ext */

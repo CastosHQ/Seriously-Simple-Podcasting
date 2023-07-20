@@ -1657,3 +1657,17 @@ if ( ! function_exists( 'ssp_series_taxonomy' ) ) {
 		return apply_filters( 'ssp_series_taxonomy', 'series' );
 	}
 }
+
+/**
+ * Gets SSP Version.
+ */
+if ( ! function_exists( 'ssp_renderer' ) ) {
+	/**
+	 * Gets SSP Version.
+	 *
+	 * @return Renderer|Service
+	 */
+	function ssp_renderer() {
+		return ssp_app()->get_service('renderer');
+	}
+}

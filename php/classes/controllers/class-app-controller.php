@@ -147,6 +147,7 @@ class App_Controller {
 
 	/**
 	 * @var Renderer
+	 * @see ssp_renderer()
 	 * */
 	protected $renderer;
 
@@ -257,7 +258,8 @@ class App_Controller {
 
 			global $ssp_settings, $ssp_options;
 			$ssp_settings = $this->settings_controller = new Settings_Controller(
-				$this->settings_handler, $this->settings_renderer, $this->renderer, $this->series_handler, $this->castos_handler
+				$this->settings_handler, $this->settings_renderer, $this->renderer,
+				$this->series_handler, $this->castos_handler, $this->episode_repository
 			);
 			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}

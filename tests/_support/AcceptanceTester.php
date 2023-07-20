@@ -275,7 +275,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	 * @Then I can see that :arg1 tab is active
 	 */
 	public function iCanSeeTabIsActive( $arg1 ) {
-		$this->see( $arg1, '#main-settings a.nav-tab-active' );
+		$this->see( $arg1, '#ssp-main-settings a.nav-tab-active' );
 	}
 
 	/**

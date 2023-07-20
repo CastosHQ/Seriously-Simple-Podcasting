@@ -334,12 +334,6 @@ class Settings_Controller {
 			$this,
 			'settings_page',
 		) );
-
-		/* @todo Add Back In When Doing New Analytics Pages */
-		/* add_submenu_page( 'edit.php?post_type=podcast', __( 'Analytics', 'seriously-simple-podcasting' ), __( 'Analytics', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings&view=analytics', array(
-			 $this,
-			 'settings_page',
-		 ) );*/
 	}
 
 	/**
@@ -372,16 +366,8 @@ class Settings_Controller {
 			wp_enqueue_media();
 		}
 
-		// // @todo add back for analytics launch
-		// wp_enqueue_script( 'jquery-ui-datepicker' );
-		// wp_register_style( 'jquery-ui', 'http://ajax.googleapis.com/ajax/libs/jqueryui/1.8/themes/base/jquery-ui.css' );
-		// wp_enqueue_style( 'jquery-ui' );
-
 		wp_enqueue_style( 'wp-color-picker' );
 		wp_enqueue_script( 'wp-color-picker' );
-
-		// wp_enqueue_script( 'plotly', 'https://cdn.plot.ly/plotly-latest.min.js', SSP_VERSION, true );
-
 	}
 
 	/**
@@ -464,20 +450,20 @@ class Settings_Controller {
 	 *
 	 * @return void
 	 */
-	protected function register_settings_section( $section_id, $section_data, $feed_series = '', $series_id = 0  ){
+	protected function register_settings_section( $section_id, $section_data, $feed_series = '', $series_id = 0 ) {
 		$section_title = isset( $section_data['title'] ) ? $section_data['title'] : '';
 
-		$section_args = wp_parse_args(
-			$section_data,
-			array(
-				'before_section' => sprintf( '<div class="ssp-settings ssp-settings-%s">', esc_attr( $section_id ) ),
-				'after_section'  => '</div>',
-				'section_class'  => '',
-			)
-		);
+		$default_section_args = $section_data['fields'] ? array(
+			'before_section' => sprintf( '<div class="ssp-settings ssp-settings-%s">', esc_attr( $section_id ) ),
+			'after_section'  => '</div><!--ssp-settings section-->',
+			'section_class'  => '',
+		) : array();
+
+		// Override default args with args from settings if they exist.
+		$args = array_merge( $default_section_args, array_intersect_key( $section_data, $default_section_args ) );
 
 		// Add section to page.
-		add_settings_section( $section_id, $section_title, array( $this, 'settings_section' ), 'ss_podcasting', $section_args );
+		add_settings_section( $section_id, $section_title, array( $this, 'settings_section' ), 'ss_podcasting', $args );
 
 		if ( empty( $section_data['fields'] ) ) {
 			return;
@@ -615,6 +601,15 @@ class Settings_Controller {
 				}
 				break;
 
+			case 'import':
+				if ( ssp_get_external_rss_being_imported() ) {
+					$progress = RSS_Import_Handler::get_import_data( 'import_progress', 0 );
+					$html     .= $this->render_external_import_process( $progress );
+				} else {
+					$html .= $this->render_external_import_form();
+				}
+				break;
+
 			case 'extensions':
 				$html .= $this->render_seriously_simple_extensions();
 				break;
@@ -698,18 +693,21 @@ class Settings_Controller {
 
 		$q_args = $this->get_query_args();
 
-		$html = '<div class="wrap" id="podcast_settings">' . "\n";
+		$html = '<div class="wrap" id="ssp-settings-page">' . "\n";
 
 		$html .= '<h1>' . __( 'Podcast Settings', 'seriously-simple-podcasting' ) . '</h1>' . "\n";
 
 		$tab = empty( $q_args['tab'] ) ? 'general' : $q_args['tab'];
 
 		$html .= $this->show_page_messages();
-		$html .= '<div id="main-settings">' . "\n";
+		$html .= '<div id="ssp-main-settings">' . "\n";
 		$html .= $this->show_page_tabs();
 		$html .= $this->show_tab_before_settings( $tab );
 		$html .= $this->show_tab_settings( $tab );
 		$html .= $this->show_tab_after_settings( $tab );
+		$html .= '</div><!--ssp-main-settings-->' . "\n";
+		$html .= $this->render_seriously_simple_sidebar();
+		$html .= '</div><!--ssp-settings-page-->' . "\n";
 
 		echo $html;
 	}
@@ -890,30 +888,7 @@ class Settings_Controller {
 			$html .= '</p>' . "\n";
 		}
 
-		if ( 'import' === $tab ) {
-			if ( ssp_get_external_rss_being_imported() ) {
-				$progress = RSS_Import_Handler::get_import_data( 'import_progress', 0 );
-				$html     .= $this->render_external_import_process( $progress );
-			} else {
-				// Custom submits for Imports
-				if ( ssp_is_connected_to_castos() ) {
-					$html .= '<p class="submit">' . "\n";
-					$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-					$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Trigger sync', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
-					$html .= '</p>' . "\n";
-				}
-
-				$html .= $this->render_external_import_form();
-			}
-		}
-
 		$html .= '</form>' . "\n";
-
-		$html .= '</div>' . "\n";
-
-		$html .= $this->render_seriously_simple_sidebar();
-
-		$html .= '</div>' . "\n";
 
 		return apply_filters( sprintf( 'ssp_settings_show_tab_%s_after_settings', $tab ), $html );
 	}

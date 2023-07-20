@@ -268,7 +268,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	 * @When I click tab :arg1
 	 */
 	public function iClickTabArg( $arg1 ) {
-		$this->click( $arg1, '#main-settings a.nav-tab' );
+		$this->click( $arg1, '#ssp-main-settings a.nav-tab' );
 	}
 
 	/**

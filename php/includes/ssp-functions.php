@@ -1671,3 +1671,19 @@ if ( ! function_exists( 'ssp_renderer' ) ) {
 		return ssp_app()->get_service('renderer');
 	}
 }
+
+if( ! function_exists('ssp_config') ){
+	/**
+	 * @param string $name
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	function ssp_config( $name, $args = array() ) {
+		$args   = extract( $args );
+		$name   = trim( $name, '/' );
+		$config = require SSP_PLUGIN_PATH . '/php/config/' . $name . '.php';
+
+		return apply_filters( 'ssp_config', $config, $name );
+	}
+}

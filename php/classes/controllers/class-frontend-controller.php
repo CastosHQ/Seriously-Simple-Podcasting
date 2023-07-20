@@ -895,7 +895,7 @@ class Frontend_Controller {
 			}
 
 			// Ensure that $file is a valid URL
-			$is_url = 0 === strpos( $file, 'http' );
+			$is_url = boolval( filter_var( $file, FILTER_VALIDATE_URL ) );
 
 			// Exit if no file is found
 			if ( ! $is_url ) {
@@ -967,7 +967,8 @@ class Frontend_Controller {
 
 				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
 				$file = str_replace( ' ', '%20', $file );
-				$file = str_replace( PHP_EOL, '', $file );
+
+				$file = preg_replace( [ '/[\r\n]{2,}/', '/[\r]/', '/[\n]/', PHP_EOL ], '', trim( $file ) );
 
 				// Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 				@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );

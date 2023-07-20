@@ -217,31 +217,6 @@ textarea#episode_embed_code {
     .ssp-settings table input.regular-text {
       max-width: 90%;
       background: #F1F5F9; }
-  .ssp-settings .selection li {
-    margin-bottom: 0; }
-  .ssp-settings .selection input.select2-search__field {
-    margin-top: 0; }
-  .ssp-settings .selection .select2-selection {
-    padding-bottom: 0;
-    background: #F1F5F9;
-    position: relative; }
-    .ssp-settings .selection .select2-selection:after {
-      content: '';
-      display: block;
-      position: absolute;
-      background: url(../img/chevron-up-down.svg) no-repeat;
-      width: 20px;
-      height: 20px;
-      right: 3px;
-      top: 6px; }
-  .ssp-settings .selection li.select2-selection__choice {
-    padding-right: 6px; }
-  .ssp-settings .selection ::-webkit-scrollbar {
-    display: none; }
-  .ssp-settings select[multiple] {
-    width: 25em;
-    max-width: 90%;
-    height: 30px; }
   .ssp-settings .validate-api-credentials-message {
     margin-left: 30px; }
   .ssp-settings .loader {

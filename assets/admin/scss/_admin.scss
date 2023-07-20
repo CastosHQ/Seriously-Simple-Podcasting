@@ -282,6 +282,7 @@ textarea#episode_embed_code {
 		border-bottom: 1px solid #CBD5E1;
 		padding: 0 10px 13px 10px;
 	}
+	
 	table {
 		margin: 10px;
 		input.regular-text {
@@ -289,46 +290,11 @@ textarea#episode_embed_code {
 			background: #F1F5F9;
 		}
 	}
-	.selection {
-		li {
-			margin-bottom: 0;
-		}
 
-		input.select2-search__field {
-			margin-top: 0;
-		}
-
-		.select2-selection {
-			padding-bottom: 0;
-			background: #F1F5F9;
-			position: relative;
-			&:after {
-				content: '';
-				display: block;
-				position: absolute;
-				background: url(../img/chevron-up-down.svg) no-repeat;
-				width: 20px;
-				height: 20px;
-				right: 3px;
-				top: 6px;
-			}
-		}
-		li.select2-selection__choice {
-			padding-right: 6px;
-		}
-
-		::-webkit-scrollbar {
-			display: none;
-		}
-	}
-	select[multiple] {
-		width: 25em;
-		max-width: 90%;
-		height: 30px;
-	}
 	.validate-api-credentials-message {
 		margin-left: 30px;
 	}
+
 	.loader {
 		position: relative;
 		&:after {

@@ -274,7 +274,7 @@ class Episode_Repository implements Service {
 					$id = $post->ID;
 				}
 
-				if ( 'Auto Draft' === $post->post_title ) {
+				if ( $post && 'Auto Draft' === $post->post_title ) {
 					$post->post_title = __( 'Current Episode', 'seriously-simple-podcasting' );
 				}
 			}

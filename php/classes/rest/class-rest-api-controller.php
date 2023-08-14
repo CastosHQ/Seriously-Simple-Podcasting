@@ -100,7 +100,8 @@ class Rest_Api_Controller {
 	 * @return mixed
 	 */
 	public function rest_prepare_excerpt( $response, $post, $request ) {
-		if ( 'excerpt' === $response->data['excerpt']['rendered'] ) {
+		if ( $response && isset( $response->data['excerpt']['rendered'] ) &&
+		     'excerpt' === $response->data['excerpt']['rendered'] ) {
 			$response->data['excerpt']['rendered'] = get_the_excerpt();
 		}
 

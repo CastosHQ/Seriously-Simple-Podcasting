@@ -773,7 +773,7 @@ class Podcast_Post_Types_Controller {
 		$columns_to_add = array();
 
 		if ( ssp_is_connected_to_castos() ) {
-			$columns_to_add['ssp_sync_status'] = __( 'Sync Status', 'seriously-simple-podcasting' );
+			$columns_to_add['ssp_sync_status'] = __( 'Sync', 'seriously-simple-podcasting' );
 		}
 
 		$columns_to_add['ssp_cover'] = __( 'Cover', 'seriously-simple-podcasting' );
@@ -817,7 +817,7 @@ class Podcast_Post_Types_Controller {
 			case 'ssp_sync_status':
 				$status = $this->get_episode_sync_status( $post_id );
 				$error = Episode_Repository::SYNC_STATUS_FAILED === $status ?
-					get_post_meta( $post_id, Episode_Repository::META_SYNC_ERROR, true ) : '';
+					$this->episode_repository->get_episode_sync_error( $post_id ) : '';
 				$value = $this->get_episode_sync_label( $status, '', $error );
 				break;
 

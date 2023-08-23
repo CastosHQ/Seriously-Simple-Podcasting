@@ -364,6 +364,15 @@ class Episode_Repository implements Service {
 
 	/**
 	 * @param $episode_id
+	 *
+	 * @return bool|int
+	 */
+	public function get_episode_sync_error( $episode_id ){
+		return get_post_meta( $episode_id, self::META_SYNC_ERROR, true );
+	}
+
+	/**
+	 * @param $episode_id
 	 * @param $error
 	 *
 	 * @return bool|int

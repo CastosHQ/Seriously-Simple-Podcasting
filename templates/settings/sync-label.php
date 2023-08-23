@@ -7,9 +7,13 @@
  * @var string $title
  * @var string $link
  * */
+
+$status = sprintf( __( 'Sync Status: %s', 'seriously-simple-podcasting' ), $title );
+if ( $tooltip ) {
+	$status .= PHP_EOL . $tooltip;
+}
 ?>
-<div class="ssp-sync-label <?php echo esc_attr( $classes ) ?>" title="<?php echo $tooltip ?>">
-	<span><?php echo esc_html( $title ) ?></span>
+<div class="ssp-sync-label <?php echo esc_attr( $classes ) ?>" title="<?php echo esc_html( $status ) ?>">
 	<?php if ( ! empty( $link ) ) : ?>
 		<a href="<?php echo esc_attr( $link ) ?>"></a>
 	<?php endif ?>

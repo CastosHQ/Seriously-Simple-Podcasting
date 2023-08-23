@@ -137,7 +137,7 @@ class Settings_Controller {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
 
 		// Trigger the disconnect action
-		add_action( 'update_option_' . $this->settings_base . 'podmotor_disconnect', array(
+		add_filter( 'pre_update_option_' . $this->settings_base . 'podmotor_disconnect', array(
 			$this,
 			'maybe_disconnect_from_castos'
 		), 10, 2 );
@@ -1011,14 +1011,15 @@ class Settings_Controller {
 	 * Disconnects a user from the Castos Hosting service by deleting their API keys
 	 * Triggered by the update_option_ss_podcasting_podmotor_disconnect action hook
 	 */
-	public function maybe_disconnect_from_castos( $old_value, $new_value ) {
-		if ( 'on' !== $new_value ) {
-			return;
+	public function maybe_disconnect_from_castos( $new_value ) {
+		if ( 'on' === $new_value ) {
+			delete_option( $this->settings_base . 'podmotor_account_email' );
+			delete_option( $this->settings_base . 'podmotor_account_api_token' );
+			delete_option( $this->settings_base . 'podmotor_account_id' );
+			delete_option( $this->settings_base . 'podmotor_disconnect' );
 		}
-		delete_option( $this->settings_base . 'podmotor_account_email' );
-		delete_option( $this->settings_base . 'podmotor_account_api_token' );
-		delete_option( $this->settings_base . 'podmotor_account_id' );
-		delete_option( $this->settings_base . 'podmotor_disconnect' );
+
+		return null;
 	}
 
 

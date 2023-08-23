@@ -2,10 +2,30 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Entities\Failed_Sync_Episode;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 class Upgrade_Handler implements Service {
+
+	/**
+	 * @var Episode_Repository $episode_repository
+	 * */
+	protected $episode_repository;
+
+	/**
+	 * @var Castos_Handler $castos_handler
+	 * */
+	protected $castos_handler;
+
+	/**
+	 * @param Episode_Repository $episode_repository
+	 * @param Castos_Handler $castos_handler
+	 */
+	public function __construct( $episode_repository, $castos_handler ) {
+		$this->episode_repository = $episode_repository;
+		$this->castos_handler = $castos_handler;
+	}
 
 	/**
 	 * Main upgrade method, called from admin controller
@@ -44,6 +64,111 @@ class Upgrade_Handler implements Service {
 		if ( version_compare( $previous_version, '2.20.0', '<' ) ) {
 			$this->update_enclosures();
 		}
+
+		if ( version_compare( $previous_version, '2.23.0', '<' ) ) {
+			$this->schedule_fixing_episodes_sync();
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	public function run_upgrade_actions() {
+		add_action( 'ssp_fix_episodes_sync', array( $this, 'fix_episodes_sync' ) );
+	}
+
+	/**
+	 * Update enclosures.
+	 * Since version 2.20.0, we need to update enclosures to get rid of AWS files.
+	 * */
+	public function schedule_fixing_episodes_sync() {
+		ignore_user_abort( true );
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+		$episodes = $this->episode_repository->get_failed_sync_episodes();
+
+		if ( is_array( $episodes ) && $episodes ) {
+			$this->episode_repository->update_failed_sync_episodes_option( $episodes );
+			$this->set_episodes_status( $episodes, Episode_Repository::SYNC_STATUS_SYNCING );
+			$this->schedule_fix_episodes_sync_event();
+		}
+	}
+
+	/**
+	 * @param Failed_Sync_Episode[] $episodes
+	 * @param string $status
+	 *
+	 * @return void
+	 */
+	protected function set_episodes_status( $episodes, $status ) {
+		foreach ( $episodes as $episode ) {
+			$this->episode_repository->update_episode_sync_status( $episode->post_id, $status );
+		}
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function schedule_fix_episodes_sync_event() {
+		if ( ! wp_next_scheduled( 'ssp_fix_episodes_sync' ) ) {
+			wp_schedule_event( time(), 'ssp_five_minutes', 'ssp_fix_episodes_sync' );
+		}
+	}
+
+
+	/**
+	 * @see self::schedule_fixing_episodes_sync()
+	 * */
+	public function fix_episodes_sync() {
+		if ( $episodes = $this->episode_repository->get_failed_sync_episodes_option() ) {
+			$this->schedule_fix_episodes_sync_event();
+		}
+
+		for ( $i = 0; $episodes && $i < 4; $i ++ ) {
+			$episode = $episodes[ $i ];
+			unset( $episodes[ $i ] );
+
+			$file_data = $this->castos_handler->get_file_data( $episode->audio_file );
+
+			$file_data_esists    = $file_data->episode_id && $file_data->id;
+			$episode_id_conflict = $episode->podmotor_episode_id && $episode->podmotor_episode_id != $file_data->episode_id;
+
+			// Ensure episode data is full and episode does not have episode ID that is different from file data
+			if ( ! $file_data_esists || $episode_id_conflict ) {
+				$this->episode_repository->update_episode_sync_status( $episode->post_id, Episode_Repository::SYNC_STATUS_FAILED );
+				if ( ! $file_data_esists ) {
+					$error = __( 'Could not get file data by file URL. Please try to reupload the file.', 'serously-simple-podcasting' );
+				} elseif ( $episode_id_conflict ) {
+					$error = __( 'Current file does not belong to the provided Castos Episode. Please try to reupload the file.', 'serously-simple-podcasting' );
+				}
+				if ( ! empty( $error ) ) {
+					$this->episode_repository->update_episode_sync_error( $episode->post_id, $error );
+				}
+				continue;
+			}
+
+			// Make sure no other episodes has such episode ID or file ID yet
+			$by_episode_id = $this->episode_repository->get_by_podmotor_episode_id( $file_data->episode_id );
+			if ( count( $by_episode_id ) > 1 || ( $by_episode_id && $episode->post_id != $by_episode_id[0] ) ) {
+				$error = __( 'Current Castos Episode ID already exists! Please remove this episode and create the new one.', 'serously-simple-podcasting' );
+				$this->episode_repository->update_episode_sync_error( $episode->post_id, $error );
+				continue;
+			}
+
+			$by_file_id = $this->episode_repository->get_by_podmotor_file_id( $file_data->id );
+			if ( count( $by_file_id ) > 1 || ( $by_file_id && $episode->post_id != $by_file_id[0] ) ) {
+				$error = __( 'Current File ID already exists! Please try to reupload the file.', 'serously-simple-podcasting' );
+				$this->episode_repository->update_episode_sync_error( $episode->post_id, $error );
+				continue;
+			}
+
+			update_post_meta( $episode->post_id, 'podmotor_episode_id', $file_data->episode_id );
+			update_post_meta( $episode->post_id, 'podmotor_file_id', $file_data->episode_id );
+			$this->episode_repository->update_episode_sync_status( $episode->post_id, Episode_Repository::SYNC_STATUS_SUCCESS );
+		}
+
+		$this->episode_repository->update_failed_sync_episodes_option( array_values( $episodes ) );
 	}
 
 

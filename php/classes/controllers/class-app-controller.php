@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Entities\Failed_Sync_Episode;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
@@ -101,6 +102,11 @@ class App_Controller {
 	 * @var Review_Controller
 	 * */
 	public $review_controller;
+
+	/**
+	 * @var Rest_Api_Controller $rest_controller
+	 * */
+	public $rest_controller;
 
 
 	// Handlers.
@@ -215,8 +221,6 @@ class App_Controller {
 
 		$this->renderer = new Renderer();
 
-		$this->upgrade_handler = new Upgrade_Handler();
-
 		$this->feed_handler = new Feed_Handler();
 
 		$this->settings_handler = new Settings_Handler();
@@ -224,6 +228,10 @@ class App_Controller {
 		$this->options_handler = new Options_Handler();
 
 		$this->episode_repository = new Episode_Repository();
+
+		$this->castos_handler = new Castos_Handler();
+
+		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler );
 
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
@@ -237,13 +245,11 @@ class App_Controller {
 
 		$this->logger = new Log_Helper();
 
-		$this->cron_controller = new Cron_Controller();
-
 		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version  );
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
-		$this->castos_handler = new Castos_Handler();
+		$this->cron_controller = new Cron_Controller( $this->castos_handler, $this->episode_repository, $this->upgrade_handler );
 
 		$this->ajax_handler = new Ajax_Handler( $this->castos_handler );
 
@@ -365,8 +371,7 @@ class App_Controller {
 
 		// Only load WP REST API Endpoints if the WordPress version is newer than 4.7.
 		if ( version_compare( $wp_version, '4.7', '>=' ) ) {
-			global $ssp_wp_rest_api;
-			$ssp_wp_rest_api = new Rest_Api_Controller();
+			$this->rest_controller = new Rest_Api_Controller( $this->episode_repository );
 		}
 	}
 
@@ -1060,13 +1065,13 @@ HTML;
 
 		$previous_version = get_option( 'ssp_version', '1.0' );
 
-		$this->upgrade_handler->run_upgrades( $previous_version );
+		if ( $previous_version != SSP_VERSION ) {
+			// always just check if the directory is ok
+			ssp_get_upload_directory( false );
 
-		// always just check if the directory is ok
-		ssp_get_upload_directory( false );
-
-		update_option( 'ssp_version', $this->version );
-
+			update_option( 'ssp_version', SSP_VERSION );
+			$this->upgrade_handler->run_upgrades( $previous_version );
+		}
 	}
 
 	/**
@@ -1109,12 +1114,10 @@ HTML;
 	 * @return void
 	 */
 	public function invalidate_cache( $id, $post ) {
-
 		if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
 			wp_cache_delete( 'episodes', 'ssp' );
 			wp_cache_delete( 'episode_ids', 'ssp' );
 		}
-
 	}
 
 	/**

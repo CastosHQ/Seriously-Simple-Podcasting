@@ -26,14 +26,6 @@ class Podcast_Post_Types_Controller {
 
 	use Useful_Variables;
 
-	const META_SYNC_STATUS = 'sync_status';
-	const META_SYNC_ERROR = 'ssp_sync_episode_error';
-	const SYNC_STATUS_SUCCESS = 'success';
-	const SYNC_STATUS_SUCCESS_WITH_ERRORS = 'success_with_errors';
-	const SYNC_STATUS_FAILED = 'failed';
-	const SYNC_STATUS_SENDING = 'sending';
-	const SYNC_STATUS_NONE = 'none';
-
 
 	/**
 	 * @var CPT_Podcast_Handler
@@ -142,7 +134,7 @@ class Podcast_Post_Types_Controller {
 			$episodes = $this->episode_repository->get_podcast_episodes( $podcast_id );
 
 			foreach ( $episodes as $episode ) {
-				update_post_meta( $episode->ID, self::META_SYNC_STATUS, self::SYNC_STATUS_SENDING );
+				$this->episode_repository->update_episode_sync_status( $episode->ID, Episode_Repository::SYNC_STATUS_SYNCING );
 			}
 		}
 	}
@@ -824,7 +816,8 @@ class Podcast_Post_Types_Controller {
 
 			case 'ssp_sync_status':
 				$status = $this->get_episode_sync_status( $post_id );
-				$error = self::SYNC_STATUS_FAILED === $status ? get_post_meta( $post_id, self::META_SYNC_ERROR, true ) : '';
+				$error = Episode_Repository::SYNC_STATUS_FAILED === $status ?
+					get_post_meta( $post_id, Episode_Repository::META_SYNC_ERROR, true ) : '';
 				$value = $this->get_episode_sync_label( $status, '', $error );
 				break;
 
@@ -844,7 +837,7 @@ class Podcast_Post_Types_Controller {
 	 */
 	protected function get_episode_sync_label( $status, $title = '', $tooltip = '' ) {
 		$statuses = $this->get_available_sync_statuses();
-		$status   = array_key_exists( $status, $statuses ) ? $status : self::SYNC_STATUS_NONE;
+		$status   = array_key_exists( $status, $statuses ) ? $status : Episode_Repository::SYNC_STATUS_NONE;
 		$classes  = $status;
 		$title    = $title ?: $statuses[ $status ];
 
@@ -860,17 +853,22 @@ class Podcast_Post_Types_Controller {
 	 * @return string
 	 */
 	public function get_episode_sync_status( $post_id ) {
-		$status = get_post_meta( $post_id, self::META_SYNC_STATUS, true );
-
-		// If there is a status let's return it.
-		if ( $status && array_key_exists( $status, $this->get_available_sync_statuses() ) ) {
-			return $status;
-		}
-
+		$status = $this->episode_repository->get_episode_sync_status( $post_id );
 		$file_id   = get_post_meta( $post_id, 'podmotor_file_id' );
 		$castos_episode_id = get_post_meta( $post_id, 'podmotor_episode_id' );
 
-		return ( $file_id && $castos_episode_id ) ? self::SYNC_STATUS_SUCCESS : self::SYNC_STATUS_NONE;
+		// If there is a status let's return it.
+		if ( $status && array_key_exists( $status, $this->get_available_sync_statuses() ) ) {
+			if( Episode_Repository::SYNC_STATUS_SUCCESS === $status && ( ! $file_id || ! $castos_episode_id ) ){
+				$status = Episode_Repository::SYNC_STATUS_NONE;
+			}
+			return $status;
+		}
+
+		// Otherwise just guess the status
+		return ( $file_id && $castos_episode_id ) ?
+			Episode_Repository::SYNC_STATUS_SUCCESS :
+			Episode_Repository::SYNC_STATUS_NONE;
 	}
 
 	/**
@@ -878,10 +876,10 @@ class Podcast_Post_Types_Controller {
 	 */
 	public function get_available_sync_statuses(){
 		$statuses = array(
-			self::SYNC_STATUS_SUCCESS => __( 'Success', 'seriously-simple-podcasting' ),
-			self::SYNC_STATUS_FAILED  => __( 'Failed', 'seriously-simple-podcasting' ),
-			self::SYNC_STATUS_SENDING => __( 'Sending', 'seriously-simple-podcasting' ),
-			self::SYNC_STATUS_NONE    => __( 'Not synced', 'seriously-simple-podcasting' ),
+			Episode_Repository::SYNC_STATUS_SUCCESS => __( 'Success', 'seriously-simple-podcasting' ),
+			Episode_Repository::SYNC_STATUS_FAILED  => __( 'Failed', 'seriously-simple-podcasting' ),
+			Episode_Repository::SYNC_STATUS_SYNCING => __( 'Syncing', 'seriously-simple-podcasting' ),
+			Episode_Repository::SYNC_STATUS_NONE    => __( 'Not synced', 'seriously-simple-podcasting' ),
 		);
 
 		return apply_filters( 'ssp_available_sync_statuses', $statuses );

@@ -2,6 +2,10 @@
 
 namespace SeriouslySimplePodcasting\Repositories;
 
+use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
+use SeriouslySimplePodcasting\Entities\Broken_File_Id_Episode;
+use SeriouslySimplePodcasting\Entities\Broken_File_Ids;
+use SeriouslySimplePodcasting\Entities\Failed_Sync_Episode;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Interfaces\Service;
@@ -23,8 +27,25 @@ class Episode_Repository implements Service {
 
 	use Useful_Variables;
 
+	const META_SYNC_STATUS = 'sync_status';
+	const META_SYNC_ERROR = 'ssp_sync_episode_error';
+	const SYNC_STATUS_SUCCESS = 'success';
+	const SYNC_STATUS_SUCCESS_WITH_ERRORS = 'success_with_errors';
+	const SYNC_STATUS_FAILED = 'failed';
+	const SYNC_STATUS_SYNCING = 'syncing';
+	const SYNC_STATUS_NONE = 'none';
+
+
+	/**
+	 * @var \wpdb $db
+	 * */
+	protected $db;
+
 	public function __construct() {
 		$this->init_useful_variables();
+
+		global $wpdb;
+		$this->db = $wpdb;
 	}
 
 	/**
@@ -47,6 +68,117 @@ class Episode_Repository implements Service {
 		}
 
 		return $series_id;
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_scheduled_episodes() {
+		$args = array(
+			'post_type'  => ssp_post_types(),
+			'orderby'    => 'ID',
+			'order'      => 'ASC',
+			'meta_query' => array(
+				array(
+					'key'   => 'podmotor_schedule_upload',
+					'value' => 1,
+				),
+			),
+		);
+
+		$query = new \WP_Query( $args );
+
+		return $query->get_posts();
+	}
+
+	/**
+	 * @param int $id
+	 *
+	 * @return int[]
+	 */
+	public function get_by_podmotor_episode_id( $id ) {
+		$query = "SELECT pm.post_id
+					FROM {$this->db->postmeta} AS pm
+					WHERE pm.meta_key = 'podmotor_episode_id' AND pm.meta_value = %d
+					GROUP BY pm.post_id";
+		$query = $this->db->prepare( $query, $id );
+
+		$post_ids = $this->db->get_col( $query );
+		return is_array( $post_ids ) ? array_filter( array_map( 'intval', $post_ids ) ) : array();
+	}
+
+	/**
+	 * @param int $id
+	 *
+	 * @return int[]
+	 */
+	public function get_by_podmotor_file_id( $id ) {
+		$query = "SELECT pm.post_id
+					FROM {$this->db->postmeta} AS pm
+					WHERE pm.meta_key = 'podmotor_file_id' AND pm.meta_value = %d
+					GROUP BY pm.post_id";
+		$query = $this->db->prepare( $query, $id );
+
+		$post_ids = $this->db->get_col( $query );
+
+		return is_array( $post_ids ) ? array_filter( array_map( 'intval', $post_ids ) ) : array();
+	}
+
+	/**
+	 * @param Failed_Sync_Episode[] $episodes
+	 *
+	 * @return void
+	 */
+	public function update_failed_sync_episodes_option( $episodes ) {
+		update_option( 'ssp_failed_sync_episodes', $episodes, false );
+	}
+
+	/**
+	 * @return Failed_Sync_Episode[]
+	 */
+	public function get_failed_sync_episodes_option() {
+		return get_option( 'ssp_failed_sync_episodes', array() );
+	}
+
+
+	/**
+	 * @return Failed_Sync_Episode[]
+	 */
+	public function get_failed_sync_episodes() {
+		$episode_ids = ssp_episode_ids();
+
+		if ( empty( $episode_ids ) ) {
+			return array();
+		}
+
+		$episode_ids = implode( ',', $episode_ids );
+		$domain = parse_url( $this->site_url, PHP_URL_HOST );
+
+		$query = "SELECT pm.post_id,
+       					pm.meta_value AS `audio_file`,
+       					pm2.meta_value AS `podmotor_file_id`,
+       					pm3.meta_value AS `podmotor_episode_id`
+					FROM {$this->db->postmeta} AS pm
+         			LEFT JOIN {$this->db->postmeta} as pm2 ON pm.post_id = pm2.post_id AND pm2.meta_key = 'podmotor_file_id'
+         			LEFT JOIN {$this->db->postmeta} as pm3 ON pm.post_id = pm3.post_id AND pm3.meta_key = 'podmotor_episode_id'
+					WHERE pm.post_id IN ( $episode_ids ) AND pm.meta_key = 'audio_file'
+					GROUP BY pm.post_id, podmotor_file_id
+					HAVING audio_file > '' AND audio_file NOT LIKE '%$domain%' AND
+					       ( podmotor_file_id IS NULL OR podmotor_file_id = '' OR
+					       podmotor_episode_id IS NULL OR podmotor_episode_id = '' )
+					ORDER BY pm.post_id";
+
+		$res = $this->db->get_results( $query );
+
+		if ( ! is_array( $res ) ) {
+			return array();
+		}
+
+		foreach ( $res as $k => $item ) {
+			$res[ $k ] = new Failed_Sync_Episode( $item );
+		}
+
+		return $res;
 	}
 
 	/**
@@ -200,6 +332,53 @@ class Episode_Repository implements Service {
 
 		// Fetch all episodes for display
 		return get_posts( $query_args );
+	}
+
+	/**
+	 * @param int $episode_id
+	 *
+	 * @return mixed
+	 */
+	public function get_episode_sync_status( $episode_id ) {
+		return get_post_meta( $episode_id, self::META_SYNC_STATUS, true );
+	}
+
+	/**
+	 * @param int $episode_id
+	 * @param string $status
+	 *
+	 * @return bool|int
+	 */
+	public function update_episode_sync_status( $episode_id, $status ) {
+		return update_post_meta( $episode_id, self::META_SYNC_STATUS, $status );
+	}
+
+	/**
+	 * @param int $episode_id
+	 *
+	 * @return bool
+	 */
+	public function delete_episode_sync_status( $episode_id ) {
+		return delete_post_meta( $episode_id, self::META_SYNC_STATUS );
+	}
+
+	/**
+	 * @param $episode_id
+	 * @param $error
+	 *
+	 * @return bool|int
+	 */
+	public function update_episode_sync_error( $episode_id, $error ){
+		return update_post_meta( $episode_id, self::META_SYNC_ERROR, $error );
+	}
+
+	/**
+	 * @param $episode_id
+	 *
+	 * @return bool|int
+	 */
+	public function delete_episode_sync_error( $episode_id ){
+		return delete_post_meta( $episode_id, self::META_SYNC_ERROR );
 	}
 
 	/**
@@ -415,7 +594,8 @@ class Episode_Repository implements Service {
 	public function get_enclosure( $episode_id = 0 ) {
 
 		if ( $episode_id ) {
-			return apply_filters( 'ssp_episode_enclosure', get_post_meta( $episode_id, apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ), true ), $episode_id );
+			$file = get_post_meta( $episode_id, apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ), true );
+			return apply_filters( 'ssp_episode_enclosure', $file, $episode_id );
 		}
 
 		return '';

@@ -350,7 +350,7 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 
 	/**
 	 * Get post IDs of all podcast episodes for all post types
-	 * @return array
+	 * @return int[]
 	 * @since  1.8.2
 	 */
 	function ssp_episode_ids() {

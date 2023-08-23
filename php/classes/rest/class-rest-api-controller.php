@@ -15,6 +15,11 @@ use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 class Rest_Api_Controller {
 
 	/**
+	 * @var Episode_Repository $episode_repository
+	 * */
+	protected $episode_repository;
+
+	/**
 	 * Gets the default podcast data
 	 *
 	 * @return array Podcast
@@ -45,8 +50,13 @@ class Rest_Api_Controller {
 
 	/**
 	 * Constructor
+	 *
+	 * @param Episode_Repository $episode_repository
 	 */
-	public function __construct() {
+	public function __construct( $episode_repository ) {
+
+		$this->episode_repository = $episode_repository;
+
 
 		// Register custom REST API routes.
 		add_action( 'rest_api_init', array( $this, 'register_rest_routes' ) );
@@ -139,12 +149,6 @@ class Rest_Api_Controller {
 		);
 
 		/**
-		 * Setting up custom route for episodes
-		 */
-		$controller = new Episodes_Controller();
-		$controller->register_routes();
-
-		/**
 		 * Setting up custom route for the wp_audio_shortcode for a podcast
 		 */
 		register_rest_route(
@@ -157,6 +161,11 @@ class Rest_Api_Controller {
 			)
 		);
 
+		/**
+		 * Setting up custom route for episodes
+		 */
+		$controller = new Episodes_Rest_Controller( $this->episode_repository );
+		$controller->register_routes();
 	}
 
 	/**
@@ -219,8 +228,7 @@ class Rest_Api_Controller {
 	 */
 	public function get_episode_audio_player() {
 		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_DEFAULT ) : '' );
-		global $ss_podcasting;
-		$file   = $ss_podcasting->episode_controller->get_episode_player_link( $podcast_id );
+		$file   = $this->episode_repository->get_episode_player_link( $podcast_id );
 		$params = array( 'src' => $file, 'preload' => 'none' );
 
 		return array(
@@ -390,9 +398,8 @@ class Rest_Api_Controller {
 	 */
 	public function get_rest_player_image( $object, $field_name, $request ) {
 		if ( ! empty( $object['id'] ) ) {
-			$episode_id         = $object['id'];
-			global $ss_podcasting;
-			$album_art          = $ss_podcasting->episode_controller->get_album_art( $episode_id );
+			$episode_id = $object['id'];
+			$album_art  = $this->episode_repository->get_album_art( $episode_id );
 
 			return $album_art['src'];
 		}
@@ -408,17 +415,14 @@ class Rest_Api_Controller {
 	 * @param $field_name
 	 * @param $request
 	 *
-	 * return bool|string
+	 * return tring
 	 */
 	public function get_rest_audio_download_link( $object, $field_name, $request ) {
 		if ( ! empty( $object['meta']['audio_file'] ) ) {
-			global $ss_podcasting;
-			$download_link      = $ss_podcasting->episode_controller->get_episode_download_link( $object['id'] );
-
-			return $download_link;
+			return $this->episode_repository->get_episode_download_link( $object['id'] );
 		}
 
-		return false;
+		return '';
 	}
 
 	/**
@@ -429,17 +433,14 @@ class Rest_Api_Controller {
 	 * @param $field_name
 	 * @param $request
 	 *
-	 * @return bool
+	 * @return string
 	 */
 	public function get_rest_audio_player_link( $object, $field_name, $request ) {
 		if ( ! empty( $object['meta']['audio_file'] ) ) {
-			global $ss_podcasting;
-			$player_link      = $ss_podcasting->episode_controller->get_episode_player_link( $object['id'] );
-
-			return $player_link;
+			return $this->episode_repository->get_episode_player_link( $object['id'] );
 		}
 
-		return false;
+		return '';
 	}
 
 	/**
@@ -461,8 +462,7 @@ class Rest_Api_Controller {
 			if ( 'standard' !== $player_style ) {
 				return;
 			}
-			global $ss_podcasting;
-			$file   = $ss_podcasting->episode_controller->get_episode_player_link( $object['id'] );
+			$file   = $this->episode_repository->get_episode_player_link( $object['id'] );
 			$params = array( 'src' => $file, 'preload' => 'none' );
 			return wp_audio_shortcode( $params );
 		}

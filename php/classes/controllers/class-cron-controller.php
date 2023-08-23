@@ -3,7 +3,9 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -16,9 +18,61 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @package Seriously Simple Podcasting
  */
 class Cron_Controller {
-	public function __construct() {
-		add_action( 'ssp_cron_hook', array( $this, 'upload_scheduled_episodes' ) );
+
+	/**
+	 * @var Castos_Handler $castos_handler
+	 * */
+	protected $castos_handler;
+
+	/**
+	 * @var Episode_Repository $episodes_respository
+	 * */
+	protected $episodes_respository;
+
+	/**
+	 * @var Upgrade_Handler $upgrade_handler
+	 * */
+	protected $upgrade_handler;
+
+	/**
+	 * @param Castos_Handler $castos_handler
+	 * @param Episode_Repository $episodes_respository
+	 * @param Upgrade_Handler $upgrade_handler
+	 */
+	public function __construct( $castos_handler, $episodes_respository, $upgrade_handler ) {
+
+		$this->castos_handler = $castos_handler;
+		$this->episodes_respository = $episodes_respository;
+		$this->upgrade_handler = $upgrade_handler;
+
 		add_action( 'admin_init', array( $this, 'schedule_events' ) );
+		add_filter( 'cron_schedules', array( $this, 'add_cron_intervals' ) );
+
+		$this->run_actions();
+	}
+
+	/**
+	 * @return void
+	 */
+	protected function run_actions(){
+		add_action( 'ssp_cron_hook', array( $this, 'upload_scheduled_episodes' ) );
+		$this->upgrade_handler->run_upgrade_actions();
+	}
+
+	/**
+	 * @param array $schedules
+	 *
+	 * @return array
+	 */
+	public function add_cron_intervals( $schedules ) {
+		if ( empty( $schedules['ssp_five_minutes'] ) ) {
+			$schedules['ssp_five_minutes'] = array(
+				'interval' => 5 * MINUTE_IN_SECONDS,
+				'display'  => __( 'SSP every five minutes' ),
+			);
+		}
+
+		return $schedules;
 	}
 
 	public function schedule_events() {
@@ -31,10 +85,9 @@ class Cron_Controller {
 	 * @return int Number of uploaded episodes
 	 */
 	public function upload_scheduled_episodes() {
-		$castos_handler = new Castos_Handler();
 		$uploaded = 0;
-		foreach ( $this->get_scheduled_episodes() as $episode ) {
-			$response = $castos_handler->upload_episode_to_castos( $episode );
+		foreach ( $this->episodes_respository->get_scheduled_episodes() as $episode ) {
+			$response = $this->castos_handler->upload_episode_to_castos( $episode );
 
 			if ( 'success' === $response['status'] ) {
 				delete_post_meta( $episode->ID, 'podmotor_schedule_upload' );
@@ -48,27 +101,5 @@ class Cron_Controller {
 		}
 
 		return $uploaded;
-	}
-
-
-	/**
-	 * @return array
-	 */
-	protected function get_scheduled_episodes() {
-		$args = array(
-			'post_type'  => ssp_post_types(),
-			'orderby'    => 'ID',
-			'order'      => 'ASC',
-			'meta_query' => array(
-				array(
-					'key'   => 'podmotor_schedule_upload',
-					'value' => 1,
-				),
-			),
-		);
-
-		$query = new \WP_Query( $args );
-
-		return $query->get_posts();
 	}
 }

@@ -287,11 +287,11 @@ textarea#episode_embed_code {
       width: 20px;
       height: 20px;
       background-size: cover; }
-  .ssp-sync-label.sending {
+  .ssp-sync-label.syncing {
     border: 1px solid var(--blue-200, #BFDFFE);
     background: var(--blue-100, #DBECFE);
     color: #1C51CF; }
-    .ssp-sync-label.sending:before {
+    .ssp-sync-label.syncing:before {
       background-image: url(../img/status-sending.svg); }
   .ssp-sync-label.success {
     border: 1px solid var(--emerald-200, #A7F3D0);

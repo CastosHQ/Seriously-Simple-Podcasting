@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Entities\API_File_Data;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
@@ -145,11 +146,12 @@ class Castos_Handler implements Service {
 		return $this->response;
 	}
 
-	public function trigger_podcast_sync( $series_id ){
+	public function trigger_podcast_sync( $series_id ) {
 		$this->logger->log( __METHOD__, compact( 'series_id' ) );
 		$endpoint = sprintf( 'api/v2/ssp/podcast-sync/%d', intval( $series_id ) );
 
 		$res = $this->send_request( $endpoint, array(), 'POST' );
+
 		return $res;
 	}
 
@@ -307,12 +309,13 @@ class Castos_Handler implements Service {
 
 	/**
 	 * Get episode content.
-	 * @since 2.11.0
 	 *
 	 * @param int $episode_id
 	 * @param int $series_id
 	 *
 	 * @return string
+	 * @since 2.11.0
+	 *
 	 */
 	public function get_episode_content( $episode_id, $series_id ) {
 		$is_excerpt_mode = $this->feed_handler->is_excerpt_mode( $series_id );
@@ -371,6 +374,22 @@ class Castos_Handler implements Service {
 		$height = $image[2];
 
 		return ( $width === $height ) && $width >= self::MIN_IMG_SIZE;
+	}
+
+	/**
+	 * @param string $url
+	 *
+	 * @return API_File_Data
+	 * @throws \Exception
+	 */
+	public function get_file_data( $url ) {
+		$this->logger->log( __METHOD__ );
+
+		$url = esc_url_raw( $url );
+
+		$res = $this->send_request( sprintf( 'api/v2/ssp/files?file_path=%s', $url ) );
+
+		return new API_File_Data( $res );
 	}
 
 
@@ -607,8 +626,9 @@ class Castos_Handler implements Service {
 	 * @param array $subscribers {
 	 *  array(
 	 *     Subscriber data
-	 *     @type string $email User email.
-	 *     @type string $name  User name.
+	 *
+	 * @type string $email User email.
+	 * @type string $name User name.
 	 *  )
 	 * }
 	 *
@@ -735,7 +755,7 @@ class Castos_Handler implements Service {
 	 * @param string $api_url
 	 * @param array $args
 	 *
-	 * @return array|null Response object or the default errors array.
+	 * @return array Response object or the default errors array.
 	 */
 	protected function send_request( $api_url, $args = array(), $method = 'GET' ) {
 
@@ -777,7 +797,7 @@ class Castos_Handler implements Service {
 			return null;
 		}
 
-		$res = json_decode( wp_remote_retrieve_body( $app_response ), true );
+		$res = (array) json_decode( wp_remote_retrieve_body( $app_response ), true );
 		if ( isset( $app_response['response'] ) && is_array( $app_response['response'] ) ) {
 			$res = array_merge( $app_response['response'], $res );
 		}

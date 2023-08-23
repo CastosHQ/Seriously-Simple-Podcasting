@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Rest;
 
 use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use WP_REST_Controller;
 use WP_REST_Posts_Controller;
 use WP_REST_Server;
@@ -29,13 +30,23 @@ use WP_Query;
 /**
  * Class Episodes_Controller
  */
-class Episodes_Controller extends WP_REST_Controller {
+class Episodes_Rest_Controller extends WP_REST_Controller {
 
 	public $namespace;
 	public $rest_base;
 	public $post_types;
 
-	public function __construct() {
+	/**
+	 * @var Episode_Repository $episode_repository
+	 * */
+	protected $episode_repository;
+
+	/**
+	 * @param Episode_Repository $episode_repository
+	 */
+	public function __construct( $episode_repository ) {
+		$this->episode_repository = $episode_repository;
+
 		$this->namespace  = 'ssp/v1';
 		$this->rest_base  = '/episodes';
 		$this->post_types = ssp_post_types();
@@ -132,12 +143,11 @@ class Episodes_Controller extends WP_REST_Controller {
 			$new_data   = $request->get_json_params();
 
 			// In case of the error update sync information to show it to user.
-			// Todo: display this error message to users
-			if ( $new_data['error'] ) {
-				update_post_meta( $episode_id, PPT_Controller::META_SYNC_ERROR, $new_data['error'] );
+			if ( ! empty( $new_data['error'] ) ) {
+				$this->episode_repository->update_episode_sync_error( $episode_id, $new_data['error'] );
 			} else {
 				// Successful sync, remove the possible previous error.
-				delete_post_meta( $episode_id, PPT_Controller::META_SYNC_ERROR );
+				$this->episode_repository->delete_episode_sync_error( $episode_id );
 			}
 
 			// Update file URL (meta key defaults to 'audio_file').
@@ -162,7 +172,7 @@ class Episodes_Controller extends WP_REST_Controller {
 
 			$full_success = ! empty( $new_data['file']['id'] ) && ! empty( $new_data['file']['url'] ) && ! empty( $new_data['episode']['id'] );
 
-			$sync_status = $full_success ? PPT_Controller::SYNC_STATUS_SUCCESS : PPT_Controller::SYNC_STATUS_FAILED;
+			$sync_status = $full_success ? Episode_Repository::SYNC_STATUS_SUCCESS : Episode_Repository::SYNC_STATUS_FAILED;
 
 			update_post_meta( $episode_id, 'sync_status', $sync_status );
 

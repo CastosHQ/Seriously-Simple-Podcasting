@@ -13,7 +13,7 @@ $tooltip = sprintf( __( 'Sync status: %s', 'seriously-simple-podcasting' ), $sta
 if ( $status->error ) {
 	$tooltip .= PHP_EOL . $status->error;
 }
-$classes = ! empty( $classes ) ?: $status->status;
+$classes = ! empty( $classes ) ? $classes : $status->status;
 if ( ! empty( $is_full_label ) ) {
 	$classes .= ' ssp-full-label';
 }

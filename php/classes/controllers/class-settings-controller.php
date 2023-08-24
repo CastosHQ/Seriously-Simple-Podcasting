@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
@@ -10,7 +11,6 @@ use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
-use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
 
 /**
  * SSP Settings
@@ -156,35 +156,6 @@ class Settings_Controller {
 	 */
 	public function add_podcasts_sync_status( $data, $args ) {
 		if ( isset( $args['field']['id'] ) && 'podcasts_sync' === $args['field']['id'] ) {
-			$available_statuses_data = array(
-				Episode_Repository::SYNC_STATUS_NONE                => array(
-					'status' => Episode_Repository::SYNC_STATUS_NONE,
-					'class'  => Episode_Repository::SYNC_STATUS_NONE,
-					'title'  => __( 'Not synced', 'seriously-simple-podcasting' ),
-				),
-				Episode_Repository::SYNC_STATUS_SYNCING => array(
-					'status' => Episode_Repository::SYNC_STATUS_SYNCING,
-					'class'  => Episode_Repository::SYNC_STATUS_SYNCING,
-					'title'  => __( 'Syncing', 'seriously-simple-podcasting' ),
-				),
-				Episode_Repository::SYNC_STATUS_SUCCESS             => array(
-					'status' => Episode_Repository::SYNC_STATUS_SUCCESS,
-					'class'  => Episode_Repository::SYNC_STATUS_SUCCESS,
-					'title'  => __( 'Success', 'seriously-simple-podcasting' ),
-				),
-				Episode_Repository::SYNC_STATUS_SUCCESS_WITH_ERRORS => array(
-					'status'  => Episode_Repository::SYNC_STATUS_SUCCESS_WITH_ERRORS,
-					'class'   => Episode_Repository::SYNC_STATUS_FAILED,
-					'title'   => __( 'Completed', 'seriously-simple-podcasting' ),
-					'tooltip' => __( 'Completed with errors', 'seriously-simple-podcasting' ),
-				),
-				Episode_Repository::SYNC_STATUS_FAILED              => array(
-					'status' => Episode_Repository::SYNC_STATUS_FAILED,
-					'class'  => Episode_Repository::SYNC_STATUS_FAILED,
-					'title'  => __( 'Failed', 'seriously-simple-podcasting' ),
-				),
-			);
-
 			$data = (array) $data;
 			$res = $this->castos_handler->get_podcasts();
 			if ( empty( $res['status'] ) || 'success' !== $res['status'] || ! isset( $res['data']['podcast_list'] ) ) {
@@ -196,7 +167,7 @@ class Settings_Controller {
 			// First, prepare all SSP podcasts with a "none" status, and after, update them with the data retrieved from Castos.
 			$statuses     = array();
 			foreach ( (array) $args['field']['options'] as $series_id => $v ) {
-				$statuses[ $series_id ] = $available_statuses_data[ Episode_Repository::SYNC_STATUS_NONE ];
+				$statuses[ $series_id ] = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
 			}
 
 			$castos_podcasts = (array) $res['data']['podcast_list'];
@@ -210,11 +181,11 @@ class Settings_Controller {
 				$status = $this->get_podcast_sync_status( $podcast );
 
 				// If status is none, let's try to guess the sync status
-				if( Episode_Repository::SYNC_STATUS_NONE === $status ){
+				if( Sync_Status::SYNC_STATUS_NONE === $status->status ){
 					$status = $this->guess_podcast_sync_status( $podcast );
 				}
 
-				$statuses[ $podcast['series_id'] ] = $available_statuses_data[ $status ];
+				$statuses[ $podcast['series_id'] ] = $status;
 			}
 
 			$data['statuses'] = $statuses;
@@ -226,7 +197,7 @@ class Settings_Controller {
 	/**
 	 * @param array $podcast
 	 *
-	 * @return string
+	 * @return Sync_Status
 	 */
 	protected function guess_podcast_sync_status( $podcast ) {
 		$episodes = $this->episode_repository->get_podcast_episodes( $podcast['series_id'], 10 );
@@ -234,29 +205,29 @@ class Settings_Controller {
 		foreach ( $episodes as $episode ) {
 			$episode_id = get_post_meta( $episode->ID, 'podmotor_episode_id', true );
 			if ( ! $episode_id ) {
-				return Episode_Repository::SYNC_STATUS_NONE;
+				return new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
 			}
 		}
 
-		return Episode_Repository::SYNC_STATUS_SUCCESS;
+		return new Sync_Status( Sync_Status::SYNC_STATUS_SUCCESS );
 	}
 
 	/**
 	 * @param array $castos_podcast
 	 *
-	 * @return string
+	 * @return Sync_Status
 	 */
 	protected function get_podcast_sync_status( $castos_podcast ) {
 		$map    = array(
-			'none'                  => Episode_Repository::SYNC_STATUS_NONE,
-			'in_progress'           => Episode_Repository::SYNC_STATUS_SYNCING,
-			'completed'             => Episode_Repository::SYNC_STATUS_SUCCESS,
-			'completed_with_errors' => Episode_Repository::SYNC_STATUS_SUCCESS_WITH_ERRORS,
-			'failed'                => Episode_Repository::SYNC_STATUS_FAILED,
+			'none'                  => Sync_Status::SYNC_STATUS_NONE,
+			'in_progress'           => Sync_Status::SYNC_STATUS_SYNCING,
+			'completed'             => Sync_Status::SYNC_STATUS_SUCCESS,
+			'completed_with_errors' => Sync_Status::SYNC_STATUS_SUCCESS_WITH_ERRORS,
+			'failed'                => Sync_Status::SYNC_STATUS_FAILED,
 		);
-		$status = Episode_Repository::SYNC_STATUS_NONE;
+		$status = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
 		if ( isset( $castos_podcast['ssp_import_status'] ) && array_key_exists( $castos_podcast['ssp_import_status'], $map ) ) {
-			$status = $map[ $castos_podcast['ssp_import_status'] ];
+			$status = new Sync_Status( $map[ $castos_podcast['ssp_import_status'] ] );
 		}
 
 		return $status;

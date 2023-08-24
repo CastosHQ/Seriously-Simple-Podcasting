@@ -2,7 +2,9 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
@@ -267,6 +269,16 @@ class CPT_Podcast_Handler implements Service {
 	public function custom_fields() {
 		$is_itunes_fields_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
 		$fields                   = array();
+		$is_connected_to_castos = ssp_is_connected_to_castos();
+
+		if ( $is_connected_to_castos ) {
+			$fields['sync_status'] = array(
+				'name'             => __( 'Sync status:', 'seriously-simple-podcasting' ),
+				'type'             => 'sync_status',
+				'default'          => Sync_Status::SYNC_STATUS_NONE,
+				'section'          => 'info',
+			);
+		}
 
 		$fields['episode_type'] = array(
 			'name'             => __( 'Episode type:', 'seriously-simple-podcasting' ),
@@ -292,7 +304,7 @@ class CPT_Podcast_Handler implements Service {
 		);
 
 		//
-		if ( ssp_is_connected_to_castos() ) {
+		if ( $is_connected_to_castos ) {
 			$fields['podmotor_file_id'] = array(
 				'type'             => 'hidden',
 				'default'          => '',
@@ -357,7 +369,7 @@ class CPT_Podcast_Handler implements Service {
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 
-		if ( ssp_is_connected_to_castos() ) {
+		if ( $is_connected_to_castos ) {
 			$fields['filesize_raw'] = array(
 				'type'             => 'hidden',
 				'default'          => '',

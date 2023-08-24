@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract Entity.
+ * Failed_Sync_Episode Entity.
  *
  * @package SeriouslySimplePodcasting
  * */
@@ -8,8 +8,7 @@
 namespace SeriouslySimplePodcasting\Entities;
 
 /**
- * Class Entity.
- * Abstract entity class.
+ * Class Failed_Sync_Episode.
  * @since 2.23.0
  */
 class Failed_Sync_Episode extends Abstract_Entity {

@@ -337,7 +337,7 @@ textarea#episode_embed_code {
 
 .ssp-sync-label {
 	border-radius: 50px;
-	margin-right: 20px;
+	margin-right: 5px;
 	position: relative;
 	background: #F5F5F5;
 	border: 1px solid $clr_blue_100;
@@ -350,6 +350,12 @@ textarea#episode_embed_code {
 	line-height: initial;
 	width: 25px;
 	height: 25px;
+
+	&.ssp-full-label {
+		width: initial;
+		padding: 0 10px 0 27px;
+		line-height: 23px;
+	}
 
 	a {
 		position: absolute;
@@ -394,7 +400,7 @@ textarea#episode_embed_code {
 		background: var(--emerald-100, #D1FAE5);
 		color: #047857;
 		&:before {
-			left: 4px;
+			left: 5px;
 			top: 4px;
 			width: 16px;
 			height: 16px;
@@ -405,6 +411,7 @@ textarea#episode_embed_code {
 	&.failed {
 		background: var(--yellow-100, #FEF8D7);
 		color: #AF6A09;
+		border: 1px solid #e2cccc;
 
 		&:before {
 			left: 4px;
@@ -414,4 +421,20 @@ textarea#episode_embed_code {
 			background-image: url(../img/status-failed.svg);
 		}
 	}
+}
+
+.ssp-episode-sync-status {
+	margin-bottom: 20px;
+	&__data {
+		margin-top: 10px;
+	}
+}
+
+.column-ssp_sync_status, .widefat th.column-ssp_sync_status {
+	width: 50px;
+	text-align: center;
+}
+
+.column-ssp_cover {
+	width: 80px;
 }

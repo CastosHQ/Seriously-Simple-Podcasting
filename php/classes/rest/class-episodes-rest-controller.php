@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Rest;
 
 use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use WP_REST_Controller;
 use WP_REST_Posts_Controller;
@@ -172,9 +173,9 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 			$full_success = ! empty( $new_data['file']['id'] ) && ! empty( $new_data['file']['url'] ) && ! empty( $new_data['episode']['id'] );
 
-			$sync_status = $full_success ? Episode_Repository::SYNC_STATUS_SUCCESS : Episode_Repository::SYNC_STATUS_FAILED;
+			$sync_status = $full_success ? Sync_Status::SYNC_STATUS_SUCCESS : Sync_Status::SYNC_STATUS_FAILED;
 
-			update_post_meta( $episode_id, 'sync_status', $sync_status );
+			$this->episode_repository->update_episode_sync_status_option( $episode_id, $sync_status );
 
 			return rest_ensure_response( array(
 				'id'   => intval( $episode_id ),

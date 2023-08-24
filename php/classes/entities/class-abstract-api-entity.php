@@ -1,6 +1,6 @@
 <?php
 /**
- * Abstract Entity.
+ * Abstract API Entity.
  *
  * @package SeriouslySimplePodcasting
  * */
@@ -8,8 +8,8 @@
 namespace SeriouslySimplePodcasting\Entities;
 
 /**
- * Class Entity.
- * Abstract entity class.
+ * Class Abstract_API_Entity.
+ * Abstract API entity class.
  * @since 2.23.0
  */
 abstract class Abstract_API_Entity extends Abstract_Entity {

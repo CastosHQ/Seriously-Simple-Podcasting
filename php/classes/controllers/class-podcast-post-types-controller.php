@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
@@ -134,7 +135,7 @@ class Podcast_Post_Types_Controller {
 			$episodes = $this->episode_repository->get_podcast_episodes( $podcast_id );
 
 			foreach ( $episodes as $episode ) {
-				$this->episode_repository->update_episode_sync_status( $episode->ID, Episode_Repository::SYNC_STATUS_SYNCING );
+				$this->episode_repository->update_episode_sync_status_option( $episode->ID, Sync_Status::SYNC_STATUS_SYNCING );
 			}
 		}
 	}
@@ -486,6 +487,8 @@ class Podcast_Post_Types_Controller {
 	 * @param \WP_Post $post
 	 *
 	 * @return void
+	 *
+	 * Todo: use renderer for all the fields
 	 */
 	public function meta_box_content( $post ) {
 
@@ -493,13 +496,12 @@ class Podcast_Post_Types_Controller {
 
 		$field_data = $this->custom_fields();
 
-		$html = '';
-
-		$html .= '<input type="hidden" name="seriouslysimple_' . $this->token . '_nonce" id="seriouslysimple_' . $this->token . '_nonce" value="' . wp_create_nonce( plugin_basename( $this->dir ) ) . '" />';
+		$html = '<input type="hidden" name="seriouslysimple_' . $this->token . '_nonce" id="seriouslysimple_' . $this->token . '_nonce" value="' . wp_create_nonce( plugin_basename( $this->dir ) ) . '" />';
 
 		if ( 0 < count( $field_data ) ) {
 
 			$html .= '<input id="seriouslysimple_post_id" type="hidden" value="' . $post_id . '" />';
+			$renderer = ssp_renderer();
 
 			foreach ( $field_data as $k => $v ) {
 				$data  = $v['default'];
@@ -519,6 +521,11 @@ class Podcast_Post_Types_Controller {
 				}
 
 				switch ( $v['type'] ) {
+					case 'sync_status':
+						$status = $this->episode_repository->get_episode_sync_status( $post_id );
+						$html .= $renderer->fetch( 'metafields/sync-status', compact( 'status' ) );
+						break;
+
 					case 'file':
 						$upload_button = '<input type="button" class="button" id="upload_' . esc_attr( $k ) . '_button" value="' . __( 'Upload File', 'seriously-simple-podcasting' ) . '" data-uploader_title="' . __( 'Choose a file', 'seriously-simple-podcasting' ) . '" data-uploader_button_text="' . __( 'Insert podcast file', 'seriously-simple-podcasting' ) . '" />';
 
@@ -552,20 +559,17 @@ class Podcast_Post_Types_Controller {
 									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
 								</p>' . "\n";
 						break;
+
 					case 'image':
-						$html .= '<p>
-									<span class="ssp-episode-details-label">' . wp_kses_post( $v['name'] ) . '</span><br/>
-									<img id="' . esc_attr( $k ) . '_preview" src="' . esc_attr( $data ) . '" style="max-width:200px;height:auto;margin:20px 0;" />
-									<br/>
-									<input id="' . esc_attr( $k ) . '_button" type="button" class="button" value="' . __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />
-									<input id="' . esc_attr( $k ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />
-									<input id="' . esc_attr( $k ) . '" type="hidden" name="' . esc_attr( $k ) . '" value="' . esc_attr( $data ) . '"/>
-									<br/>
-									<span class="description">' . wp_kses_post( $v['description'] ) . '</span>
-								<p/>' . "\n";
+						$label = $v['name'];
+						$description = $v['description'];
+
+						$html .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'data', 'k' ) );
+
 						break;
+
 					case 'checkbox':
-						$html .= '<p><input name="' . esc_attr( $k ) . '" type="checkbox" class="' . esc_attr( $class ) . '" id="' . esc_attr( $k ) . '" ' . checked( 'on', $data, false ) . ' /> <label for="' . esc_attr( $k ) . '"><span>' . wp_kses_post( $v['description'] ) . '</span></label></p>' . "\n";
+						$html .= $renderer->fetch( 'metafields/checkbox', compact( 'k', 'v', 'class', 'data' ) );
 						break;
 
 					case 'radio':
@@ -710,12 +714,14 @@ class Podcast_Post_Types_Controller {
 
 			// if uploading was scheduled before, lets unschedule it
 			delete_post_meta( $id, 'podmotor_schedule_upload' );
+			$this->episode_repository->update_episode_sync_status_option( $post->ID, Sync_Status::SYNC_STATUS_SUCCESS );
 		} else {
 			// schedule uploading with a cronjob
 			update_post_meta( $id, 'podmotor_schedule_upload', true );
 			$this->admin_notices_handler->add_predefined_flash_notice(
 				Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
 			);
+			$this->episode_repository->update_episode_sync_status_option( $post->ID, Sync_Status::SYNC_STATUS_FAILED );
 		}
 	}
 
@@ -815,10 +821,9 @@ class Podcast_Post_Types_Controller {
 				break;
 
 			case 'ssp_sync_status':
-				$status = $this->get_episode_sync_status( $post_id );
-				$error = Episode_Repository::SYNC_STATUS_FAILED === $status ?
-					$this->episode_repository->get_episode_sync_error( $post_id ) : '';
-				$value = $this->get_episode_sync_label( $status, '', $error );
+				$status = $this->episode_repository->get_episode_sync_status( $post_id );
+				$link   = get_edit_post_link( $post_id );
+				$value  = ssp_renderer()->fetch( 'settings/sync-label', compact( 'status', 'link' ) );
 				break;
 
 			default:
@@ -826,63 +831,6 @@ class Podcast_Post_Types_Controller {
 				break;
 		}
 		echo apply_filters( 'ssp_custom_column_value', $value, $column_name, $post_id );
-	}
-
-	/**
-	 * @param string $status
-	 * @param string $title
-	 * @param string $tooltip
-	 *
-	 * @return string
-	 */
-	protected function get_episode_sync_label( $status, $title = '', $tooltip = '' ) {
-		$statuses = $this->get_available_sync_statuses();
-		$status   = array_key_exists( $status, $statuses ) ? $status : Episode_Repository::SYNC_STATUS_NONE;
-		$classes  = $status;
-		$title    = $title ?: $statuses[ $status ];
-
-		$label = ssp_renderer()->fetch( 'settings/sync-label', compact( 'classes', 'title', 'tooltip' ) );
-
-		return apply_filters( 'ssp_episode_sync_label', $label, $status, $title );
-	}
-
-	/**
-	 *
-	 * @param int $post_id
-	 *
-	 * @return string
-	 */
-	public function get_episode_sync_status( $post_id ) {
-		$status = $this->episode_repository->get_episode_sync_status( $post_id );
-		$file_id   = get_post_meta( $post_id, 'podmotor_file_id' );
-		$castos_episode_id = get_post_meta( $post_id, 'podmotor_episode_id' );
-
-		// If there is a status let's return it.
-		if ( $status && array_key_exists( $status, $this->get_available_sync_statuses() ) ) {
-			if( Episode_Repository::SYNC_STATUS_SUCCESS === $status && ( ! $file_id || ! $castos_episode_id ) ){
-				$status = Episode_Repository::SYNC_STATUS_NONE;
-			}
-			return $status;
-		}
-
-		// Otherwise just guess the status
-		return ( $file_id && $castos_episode_id ) ?
-			Episode_Repository::SYNC_STATUS_SUCCESS :
-			Episode_Repository::SYNC_STATUS_NONE;
-	}
-
-	/**
-	 * @return array
-	 */
-	public function get_available_sync_statuses(){
-		$statuses = array(
-			Episode_Repository::SYNC_STATUS_SUCCESS => __( 'Success', 'seriously-simple-podcasting' ),
-			Episode_Repository::SYNC_STATUS_FAILED  => __( 'Failed', 'seriously-simple-podcasting' ),
-			Episode_Repository::SYNC_STATUS_SYNCING => __( 'Syncing', 'seriously-simple-podcasting' ),
-			Episode_Repository::SYNC_STATUS_NONE    => __( 'Not synced', 'seriously-simple-podcasting' ),
-		);
-
-		return apply_filters( 'ssp_available_sync_statuses', $statuses );
 	}
 
 	/**

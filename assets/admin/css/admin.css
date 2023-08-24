@@ -248,7 +248,7 @@ textarea#episode_embed_code {
 
 .ssp-sync-label {
   border-radius: 50px;
-  margin-right: 20px;
+  margin-right: 5px;
   position: relative;
   background: #F5F5F5;
   border: 1px solid #ccd6e2;
@@ -261,6 +261,10 @@ textarea#episode_embed_code {
   line-height: initial;
   width: 25px;
   height: 25px; }
+  .ssp-sync-label.ssp-full-label {
+    width: initial;
+    padding: 0 10px 0 27px;
+    line-height: 23px; }
   .ssp-sync-label a {
     position: absolute;
     width: 100%;
@@ -294,20 +298,33 @@ textarea#episode_embed_code {
     background: var(--emerald-100, #D1FAE5);
     color: #047857; }
     .ssp-sync-label.success:before {
-      left: 4px;
+      left: 5px;
       top: 4px;
       width: 16px;
       height: 16px;
       background-image: url(../img/status-success.svg); }
   .ssp-sync-label.failed {
     background: var(--yellow-100, #FEF8D7);
-    color: #AF6A09; }
+    color: #AF6A09;
+    border: 1px solid #e2cccc; }
     .ssp-sync-label.failed:before {
       left: 4px;
       top: 4px;
       width: 17px;
       height: 16px;
       background-image: url(../img/status-failed.svg); }
+
+.ssp-episode-sync-status {
+  margin-bottom: 20px; }
+  .ssp-episode-sync-status__data {
+    margin-top: 10px; }
+
+.column-ssp_sync_status, .widefat th.column-ssp_sync_status {
+  width: 50px;
+  text-align: center; }
+
+.column-ssp_cover {
+  width: 80px; }
 
 /* latin-ext */
 @font-face {

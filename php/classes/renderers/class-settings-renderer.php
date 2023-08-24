@@ -6,6 +6,7 @@
 namespace SeriouslySimplePodcasting\Renderers;
 
 // Exit if accessed directly.
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Singleton;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
@@ -386,27 +387,24 @@ class Settings_Renderer implements Service {
 
 		foreach ( $field['options'] as $podcast_id => $v ) {
 			$status = $data['statuses'][ $podcast_id ];
+			/**
+			 * @var Sync_Status $status
+			 * */
 			$link = '';
 			if ( $podcast_id ) {
 				$podcast = get_term_by( 'term_id', $podcast_id, 'series' );
 				$link    = admin_url( sprintf( 'edit.php?series=%s&post_type=%s', $podcast->slug, $this->token ) );
 			}
 
-			$class = isset( $status['class'] ) ? $status['class'] : '';
-
 			$checkbox = '<div class="ssp-sync-podcast__checkbox"><label for="' . esc_attr( $field['id'] . '_' . $podcast_id ) .
 						'"><input type="checkbox" name="' . esc_attr( $option_name ) .
 						'[]" value="' . esc_attr( $podcast_id ) . '" id="' . esc_attr( $field['id'] . '_' . $podcast_id ) .
 						'" class="' . esc_attr ( $this->get_field_class( $field ) ) . '" /> ' . $v . '</label></div>';
 
-			$args = array(
-				'title'   => $status['title'],
-				'classes' => 'js-sync-status ' . $class,
-				'link'    => $link,
-				'tooltip' => isset ( $status['tooltip'] ) ? $status['tooltip'] : '',
-			);
 
-			$label = ssp_renderer()->fetch( 'settings/sync-label', $args );
+			$classes = 'js-sync-status ' . $status->status;
+			$is_full_label = true;
+			$label = ssp_renderer()->fetch( 'settings/sync-label', compact('status', 'classes', 'link', 'is_full_label') );
 
 			$html .= '<div class="ssp-sync-podcast js-sync-podcast">' . $checkbox . $label . '</div>';
 		}

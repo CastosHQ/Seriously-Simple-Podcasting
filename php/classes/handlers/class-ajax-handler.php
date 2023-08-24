@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 class Ajax_Handler {
@@ -91,11 +92,11 @@ class Ajax_Handler {
 				do_action( 'ssp_triggered_podcast_sync', $podcast_id, $response );
 
 				if ( isset( $response['code'] ) && in_array( $response['code'], array( 200, 409 ) ) ) {
-					$podcast_status['status'] = Episode_Repository::SYNC_STATUS_SYNCING;
+					$podcast_status['status'] = Sync_Status::SYNC_STATUS_SYNCING;
 					$podcast_status['title']  = __( 'Syncing', 'seriously-simple-podcasting' );
 					$has_syncing              = true;
 				} else {
-					$podcast_status['status'] = Episode_Repository::SYNC_STATUS_FAILED;
+					$podcast_status['status'] = Sync_Status::SYNC_STATUS_FAILED;
 					$podcast_status['title']  = __( 'Failed', 'seriously-simple-podcasting' );
 					$has_errors               = true;
 				}
@@ -106,7 +107,7 @@ class Ajax_Handler {
 				$msg = ( $msg && array_key_exists( $msg, $msgs_map ) ) ? $msgs_map[ $msg ] : $msg;
 
 				// If there is an error but got no error message, add the default one.
-				if ( Episode_Repository::SYNC_STATUS_FAILED === $podcast_status['status'] && empty( $msg ) ) {
+				if ( Sync_Status::SYNC_STATUS_FAILED === $podcast_status['status'] && empty( $msg ) ) {
 					$msg = __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
 				}
 
@@ -119,14 +120,14 @@ class Ajax_Handler {
 
 			// We use SYNC_STATUS_ constants for both episode sync statuses and podcast sync statuses. Might be changed in the future.
 			$msgs = array(
-				Episode_Repository::SYNC_STATUS_SUCCESS             => __( 'Successfully started the sync process', 'seriously-simple-podcasting' ),
-				Episode_Repository::SYNC_STATUS_SUCCESS_WITH_ERRORS => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
-				Episode_Repository::SYNC_STATUS_FAILED              => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
+				Sync_Status::SYNC_STATUS_SUCCESS             => __( 'Successfully started the sync process', 'seriously-simple-podcasting' ),
+				Sync_Status::SYNC_STATUS_SUCCESS_WITH_ERRORS => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
+				Sync_Status::SYNC_STATUS_FAILED              => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
 			);
 
 			$results_status = ! $has_errors ?
-				Episode_Repository::SYNC_STATUS_SUCCESS :
-				( $has_syncing ? Episode_Repository::SYNC_STATUS_SUCCESS_WITH_ERRORS : Episode_Repository::SYNC_STATUS_FAILED );
+				Sync_Status::SYNC_STATUS_SUCCESS :
+				( $has_syncing ? Sync_Status::SYNC_STATUS_SUCCESS_WITH_ERRORS : Sync_Status::SYNC_STATUS_FAILED );
 
 			$results = array(
 				'status'   => $results_status,
@@ -134,7 +135,7 @@ class Ajax_Handler {
 				'podcasts' => $podcast_statuses
 			);
 
-			if( Episode_Repository::SYNC_STATUS_SUCCESS === $results['status'] ){
+			if( Sync_Status::SYNC_STATUS_SUCCESS === $results['status'] ){
 				wp_send_json_success( $results );
 			} else {
 				wp_send_json_error( $results );

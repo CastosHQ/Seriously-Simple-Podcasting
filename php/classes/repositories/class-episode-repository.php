@@ -2,11 +2,8 @@
 
 namespace SeriouslySimplePodcasting\Repositories;
 
-use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
-use SeriouslySimplePodcasting\Entities\Broken_File_Id_Episode;
-use SeriouslySimplePodcasting\Entities\Broken_File_Ids;
 use SeriouslySimplePodcasting\Entities\Failed_Sync_Episode;
-use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
@@ -29,12 +26,6 @@ class Episode_Repository implements Service {
 
 	const META_SYNC_STATUS = 'sync_status';
 	const META_SYNC_ERROR = 'ssp_sync_episode_error';
-	const SYNC_STATUS_SUCCESS = 'success';
-	const SYNC_STATUS_SUCCESS_WITH_ERRORS = 'success_with_errors';
-	const SYNC_STATUS_FAILED = 'failed';
-	const SYNC_STATUS_SYNCING = 'syncing';
-	const SYNC_STATUS_NONE = 'none';
-
 
 	/**
 	 * @var \wpdb $db
@@ -71,7 +62,7 @@ class Episode_Repository implements Service {
 	}
 
 	/**
-	 * @return array
+	 * @return \WP_Post[]
 	 */
 	public function get_scheduled_episodes() {
 		$args = array(
@@ -104,6 +95,7 @@ class Episode_Repository implements Service {
 		$query = $this->db->prepare( $query, $id );
 
 		$post_ids = $this->db->get_col( $query );
+
 		return is_array( $post_ids ) ? array_filter( array_map( 'intval', $post_ids ) ) : array();
 	}
 
@@ -152,7 +144,7 @@ class Episode_Repository implements Service {
 		}
 
 		$episode_ids = implode( ',', $episode_ids );
-		$domain = parse_url( $this->site_url, PHP_URL_HOST );
+		$domain      = parse_url( $this->site_url, PHP_URL_HOST );
 
 		$query = "SELECT pm.post_id,
        					pm.meta_value AS `audio_file`,
@@ -299,7 +291,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return \WP_Post[]
 	 */
-	public function get_podcast_episodes( $podcast_id, $max = -1 ) {
+	public function get_podcast_episodes( $podcast_id, $max = - 1 ) {
 		// Get all podcast post types
 		$podcast_post_types = ssp_post_types();
 
@@ -317,7 +309,7 @@ class Episode_Repository implements Service {
 			),*/
 		);
 
-		$tax_query = ( 0 === $podcast_id ) ?
+		$tax_query                 = ( 0 === $podcast_id ) ?
 			array(
 				'taxonomy' => ssp_series_taxonomy(),
 				'operator' => 'NOT EXISTS'
@@ -335,11 +327,88 @@ class Episode_Repository implements Service {
 	}
 
 	/**
+	 *
+	 * @param int $post_id
+	 *
+	 * @return Sync_Status
+	 */
+	public function get_episode_sync_status( $post_id ) {
+		$status            = $this->get_episode_sync_status_option( $post_id );
+		$file_id           = $this->get_podmotor_file_id( $post_id );
+		$castos_episode_id = $this->get_podmotor_episode_id( $post_id );
+
+		// If there is a status let's return it.
+		if ( $status && array_key_exists( $status, Sync_Status::get_available_sync_statuses() ) ) {
+			if ( Sync_Status::SYNC_STATUS_SUCCESS === $status && ( ! $file_id || ! $castos_episode_id ) ) {
+				$status = Sync_Status::SYNC_STATUS_NONE;
+			}
+
+			return $this->maybe_add_error( $post_id, new Sync_Status( $status ) );
+		}
+
+		// Otherwise just guess the status
+		return ( $file_id && $castos_episode_id ) ?
+			new Sync_Status( Sync_Status::SYNC_STATUS_SUCCESS ) :
+			new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
+	}
+
+	/**
+	 * @param int $post_id
+	 * @param Sync_Status $status
+	 *
+	 * @return Sync_Status
+	 */
+	protected function maybe_add_error( $post_id, $status ){
+		$error = Sync_Status::SYNC_STATUS_FAILED === $status->status ?
+			$this->get_episode_sync_error( $post_id ) : '';
+		$status->error = $error;
+		return $status;
+	}
+
+	/**
+	 * @param Sync_Status $status
+	 *
+	 * @return string
+	 */
+	public function get_episode_sync_label( $status ) {
+		return ssp_renderer()->fetch( 'settings/sync-label', compact( 'status' ) );
+	}
+
+	/**
+	 * @param string $title
+	 * @param string $message
+	 * @param string $error
+	 *
+	 * @return Sync_Status
+	 */
+	protected function sync_status( $title, $message, $error ) {
+		return new Sync_Status( compact( 'title', 'message', 'error' ) );
+	}
+
+	/**
+	 * @param int $post_id
+	 *
+	 * @return string
+	 */
+	public function get_podmotor_file_id( $post_id ) {
+		return get_post_meta( $post_id, 'podmotor_file_id', true );
+	}
+
+	/**
+	 * @param int $post_id
+	 *
+	 * @return string
+	 */
+	public function get_podmotor_episode_id( $post_id ) {
+		return get_post_meta( $post_id, 'podmotor_episode_id', true );
+	}
+
+	/**
 	 * @param int $episode_id
 	 *
 	 * @return mixed
 	 */
-	public function get_episode_sync_status( $episode_id ) {
+	public function get_episode_sync_status_option( $episode_id ) {
 		return get_post_meta( $episode_id, self::META_SYNC_STATUS, true );
 	}
 
@@ -349,7 +418,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return bool|int
 	 */
-	public function update_episode_sync_status( $episode_id, $status ) {
+	public function update_episode_sync_status_option( $episode_id, $status ) {
 		return update_post_meta( $episode_id, self::META_SYNC_STATUS, $status );
 	}
 
@@ -358,7 +427,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return bool
 	 */
-	public function delete_episode_sync_status( $episode_id ) {
+	public function delete_episode_sync_status_option( $episode_id ) {
 		return delete_post_meta( $episode_id, self::META_SYNC_STATUS );
 	}
 
@@ -367,7 +436,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return bool|int
 	 */
-	public function get_episode_sync_error( $episode_id ){
+	public function get_episode_sync_error( $episode_id ) {
 		return get_post_meta( $episode_id, self::META_SYNC_ERROR, true );
 	}
 
@@ -377,7 +446,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return bool|int
 	 */
-	public function update_episode_sync_error( $episode_id, $error ){
+	public function update_episode_sync_error( $episode_id, $error ) {
 		return update_post_meta( $episode_id, self::META_SYNC_ERROR, $error );
 	}
 
@@ -386,7 +455,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return bool|int
 	 */
-	public function delete_episode_sync_error( $episode_id ){
+	public function delete_episode_sync_error( $episode_id ) {
 		return delete_post_meta( $episode_id, self::META_SYNC_ERROR );
 	}
 
@@ -453,7 +522,7 @@ class Episode_Repository implements Service {
 			if ( '0' == $id || '' === $id ) {
 				global $post;
 
-				$allowed_post_types = array_merge( ssp_post_types(), array('auto_draft') );
+				$allowed_post_types = array_merge( ssp_post_types(), array( 'auto_draft' ) );
 
 				if ( empty( $post ) || ! in_array( $post->post_type, $allowed_post_types ) ) {
 					// Possibly it's a page, or a Gutenberg template editor
@@ -483,16 +552,16 @@ class Episode_Repository implements Service {
 			 * Get the episode (post) object
 			 * If the id passed is empty or 0, get_post will return the current post
 			 */
-			$episode               = isset( $post ) ? $post : get_post( $id );
-			$current_post          = $current_post ?: $episode;
-			$episode_duration      = get_post_meta( $id, 'duration', true );
-			$current_url           = get_post_permalink( $current_post->ID );
-			$audio_file            = $this->get_episode_player_link( $id );
-			$album_art             = $this->get_album_art( $id, 'thumbnail' );
-			$podcast_title         = $this->get_podcast_title( $id );
-			$feed_url              = $this->get_feed_url( $id );
-			$embed_code            = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );
-			$subscribe_links       = $options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
+			$episode          = isset( $post ) ? $post : get_post( $id );
+			$current_post     = $current_post ?: $episode;
+			$episode_duration = get_post_meta( $id, 'duration', true );
+			$current_url      = get_post_permalink( $current_post->ID );
+			$audio_file       = $this->get_episode_player_link( $id );
+			$album_art        = $this->get_album_art( $id, 'thumbnail' );
+			$podcast_title    = $this->get_podcast_title( $id );
+			$feed_url         = $this->get_feed_url( $id );
+			$embed_code       = preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $current_post ) );
+			$subscribe_links  = $options_handler->get_subscribe_urls( $id, 'subscribe_buttons' );
 
 			// set any other info
 			$template_data = array(
@@ -516,7 +585,7 @@ class Episode_Repository implements Service {
 			);
 
 			return apply_filters( 'ssp_html_player_data', $template_data );
-		} catch( \Exception $e ){
+		} catch ( \Exception $e ) {
 			return apply_filters( 'ssp_html_player_data', array() );
 		}
 
@@ -584,7 +653,7 @@ class Episode_Repository implements Service {
 		}
 
 		// If there is a media file prefix, lets add it
-		$series_id = ssp_get_episode_series_id( $episode_id );
+		$series_id    = ssp_get_episode_series_id( $episode_id );
 		$media_prefix = ssp_get_media_prefix( $series_id );
 		if ( $media_prefix ) {
 			$link = parse_episode_url_with_media_prefix( $link, $media_prefix );
@@ -604,6 +673,7 @@ class Episode_Repository implements Service {
 
 		if ( $episode_id ) {
 			$file = get_post_meta( $episode_id, apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ), true );
+
 			return apply_filters( 'ssp_episode_enclosure', $file, $episode_id );
 		}
 
@@ -657,7 +727,7 @@ class Episode_Repository implements Service {
 		/**
 		 * Option 2: if the episode belongs to a series, which has an image that is square, then use that
 		 */
-		$series_id  = $this->get_episode_series_id( $episode_id );
+		$series_id = $this->get_episode_series_id( $episode_id );
 
 		if ( $series_id ) {
 			$series_image_attachment_id = get_term_meta( $series_id, $this->token . '_series_image_settings', true );
@@ -701,6 +771,7 @@ class Episode_Repository implements Service {
 		 * Option 5: None of the above passed, return the no-album-art image
 		 */
 		$image_data_array = $this->get_no_album_art_image_array();
+
 		return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'no_album_art_image' );
 
 	}
@@ -728,11 +799,11 @@ class Episode_Repository implements Service {
 	 * @param array $args {
 	 *     Optional. Array or string of Query parameters.
 	 *
-	 *     @type int    $episodes_number Number of episodes. Default: 3.
-	 *     @type string $episode_types   Episode types. Variants: all_podcast_types, podcast. Default: podcast.
-	 *     @type string $order_by        Order by field. Variants: published, recorded. Default: published.
-	 *     @type string $podcast_term    Fetch episodes from the specified podcast.
-	 *     @type int $paged              Page number.
+	 * @type int $episodes_number Number of episodes. Default: 3.
+	 * @type string $episode_types Episode types. Variants: all_podcast_types, podcast. Default: podcast.
+	 * @type string $order_by Order by field. Variants: published, recorded. Default: published.
+	 * @type string $podcast_term Fetch episodes from the specified podcast.
+	 * @type int $paged Page number.
 	 * }
 	 *
 	 * @return WP_Query
@@ -779,18 +850,20 @@ class Episode_Repository implements Service {
 
 	/**
 	 * Get the type of podcast episode (audio or video)
-	 * @param  int $episode_id ID of episode
+	 *
+	 * @param int $episode_id ID of episode
+	 *
 	 * @return string  The type of the episode (audio|video).
 	 */
 	public function get_episode_type( $episode_id = 0 ) {
 
-		if( ! $episode_id ) {
+		if ( ! $episode_id ) {
 			return false;
 		}
 
-		$type = get_post_meta( $episode_id , 'episode_type' , true );
+		$type = get_post_meta( $episode_id, 'episode_type', true );
 
-		if( ! $type ) {
+		if ( ! $type ) {
 			$type = 'audio';
 		}
 
@@ -800,7 +873,9 @@ class Episode_Repository implements Service {
 
 	/**
 	 * Get size of media file
-	 * @param  string  $file File name & path
+	 *
+	 * @param string $file File name & path
+	 *
 	 * @return boolean       File size on success, boolean false on failure
 	 */
 	public function get_file_size( $file = '' ) {
@@ -829,7 +904,7 @@ class Episode_Repository implements Service {
 			$raw = $formatted = '';
 
 			if ( $data ) {
-				$raw = $data['filesize'];
+				$raw       = $data['filesize'];
 				$formatted = $this->format_bytes( $raw );
 			} else {
 
@@ -837,7 +912,7 @@ class Episode_Repository implements Service {
 				$data = wp_remote_head( $file, array( 'timeout' => 10, 'redirection' => 5 ) );
 
 				if ( ! is_wp_error( $data ) && is_array( $data ) && isset( $data['headers']['content-length'] ) ) {
-					$raw = $data['headers']['content-length'];
+					$raw       = $data['headers']['content-length'];
 					$formatted = $this->format_bytes( $raw );
 				}
 			}
@@ -845,7 +920,7 @@ class Episode_Repository implements Service {
 			if ( $raw || $formatted ) {
 
 				$size = array(
-					'raw' => $raw,
+					'raw'       => $raw,
 					'formatted' => $formatted
 				);
 
@@ -859,7 +934,9 @@ class Episode_Repository implements Service {
 
 	/**
 	 * Get duration of audio file
-	 * @param  string $file File name & path
+	 *
+	 * @param string $file File name & path
+	 *
 	 * @return mixed        File duration on success, boolean false on failure
 	 */
 	public function get_file_duration( $file ) {
@@ -907,17 +984,19 @@ class Episode_Repository implements Service {
 
 	/**
 	 * Format filesize for display
-	 * @param  int $size      Raw file size
-	 * @param  int $precision Level of precision for formatting
+	 *
+	 * @param int $size Raw file size
+	 * @param int $precision Level of precision for formatting
+	 *
 	 * @return int|false          Formatted file size on success, false on failure
 	 */
-	protected function format_bytes( $size , $precision = 2 ) {
+	protected function format_bytes( $size, $precision = 2 ) {
 
 		if ( $size ) {
 
-			$base = log ( $size ) / log( 1024 );
-			$suffixes = array( '' , 'k' , 'M' , 'G' , 'T' );
-			$formatted_size = round( pow( 1024 , $base - floor( $base ) ) , $precision ) . $suffixes[ floor( $base ) ];
+			$base           = log( $size ) / log( 1024 );
+			$suffixes       = array( '', 'k', 'M', 'G', 'T' );
+			$formatted_size = round( pow( 1024, $base - floor( $base ) ), $precision ) . $suffixes[ floor( $base ) ];
 
 			return apply_filters( 'ssp_file_size_formatted', $formatted_size, $size );
 		}
@@ -929,7 +1008,8 @@ class Episode_Repository implements Service {
 	 * Returns a local file path for the given file URL if it's local. Otherwise
 	 * returns the original URL
 	 *
-	 * @param    string    file
+	 * @param string    file
+	 *
 	 * @return   string    file or local file path
 	 */
 	public function get_local_file_path( $url ) {
@@ -951,8 +1031,8 @@ class Episode_Repository implements Service {
 			end( $url_chunks );
 		}
 
-		$site_root = implode('/', $root_chunks);
-		$site_url  = implode('/', $url_chunks);
+		$site_root = implode( '/', $root_chunks );
+		$site_url  = implode( '/', $url_chunks );
 
 		// Make sure that $site_url and $url both use https
 		if ( 'https:' === $url_chunks[0] ) {

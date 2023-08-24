@@ -404,6 +404,41 @@ class Episode_Repository implements Service {
 	}
 
 	/**
+	 * @param int $post_id
+	 *
+	 * @return bool
+	 */
+	public function delete_podmotor_episode_id( $post_id ) {
+		return delete_post_meta( $post_id, 'podmotor_episode_id' );
+	}
+
+	/**
+	 * @param int $post_id
+	 *
+	 * @return bool
+	 */
+	public function delete_podmotor_file_id( $post_id ) {
+		return delete_post_meta( $post_id, 'podmotor_file_id' );
+	}
+
+	/**
+	 * @param int $post_id
+	 *
+	 * @return bool
+	 */
+	public function delete_audio_file( $post_id ) {
+		$meta_key = apply_filters( 'ssp_audio_file_meta_key', 'audio_file' );
+		$res1     = delete_post_meta( $post_id, $meta_key );
+		$res2     = delete_post_meta( $post_id, 'enclosure' );
+		delete_post_meta( $post_id, 'duration' );
+		delete_post_meta( $post_id, 'filesize' );
+		delete_post_meta( $post_id, 'filesize_raw' );
+		delete_post_meta( $post_id, 'date_recorded' );
+
+		return $res1 || $res2;
+	}
+
+	/**
 	 * @param int $episode_id
 	 *
 	 * @return mixed

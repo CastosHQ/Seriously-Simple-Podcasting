@@ -396,11 +396,11 @@ class Castos_Handler implements Service {
 	/**
 	 * Delete a post from Castos when it's trashed in WordPress
 	 *
-	 * @param $post
+	 * @param \WP_Post $post
 	 *
 	 * @return bool
 	 */
-	public function delete_podcast( $post ) {
+	public function delete_episode( $post ) {
 		$this->setup_default_response();
 
 		if ( empty( $post ) ) {
@@ -432,7 +432,7 @@ class Castos_Handler implements Service {
 			)
 		);
 
-		$this->logger->log( 'Delete Podcast api_response', $api_response );
+		$this->logger->log( 'Delete Episode api_response', $api_response );
 
 		return true;
 	}

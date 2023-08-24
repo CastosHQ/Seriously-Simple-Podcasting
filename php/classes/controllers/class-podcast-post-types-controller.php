@@ -102,6 +102,7 @@ class Podcast_Post_Types_Controller {
 
 		// Delete podcast from Castos
 		add_action( 'trashed_post', array( $this, 'delete_post' ), 11, 1 );
+		add_action( 'untrash_post', array( $this, 'untrash_post' ), 11, 1 );
 
 		// Episode edit screen.
 		add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -247,17 +248,16 @@ class Podcast_Post_Types_Controller {
 			return;
 		}
 
+		$this->episode_repository->delete_podmotor_file_id( $post_id );
+		$this->episode_repository->delete_podmotor_episode_id( $post_id );
+		$this->episode_repository->delete_audio_file( $post_id );
+
 		/**
 		 * Don't trigger this if we're not connected to Podcast Motor
 		 */
-		if ( ! ssp_is_connected_to_castos() ) {
-			return;
+		if ( ssp_is_connected_to_castos() ) {
+			$this->castos_handler->delete_episode( $post );
 		}
-
-		$this->castos_handler->delete_podcast( $post );
-
-		delete_post_meta( $post_id, 'podmotor_file_id' );
-		delete_post_meta( $post_id, 'podmotor_episode_id' );
 	}
 
 

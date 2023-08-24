@@ -126,7 +126,9 @@ class Upgrade_Handler implements Service {
 			$this->schedule_fix_episodes_sync_event();
 		}
 
-		for ( $i = 0; $episodes && $i < 4; $i ++ ) {
+		$max_episodes = 20;
+
+		for ( $i = 0; $episodes && $i < $max_episodes; $i ++ ) {
 			$episode = $episodes[ $i ];
 			unset( $episodes[ $i ] );
 

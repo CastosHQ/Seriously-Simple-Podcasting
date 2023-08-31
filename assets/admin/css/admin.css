@@ -326,6 +326,12 @@ textarea#episode_embed_code {
 .column-ssp_cover {
   width: 80px; }
 
+.ssp-external-feed-message h3 {
+  color: #4caf50; }
+
+.ssp-external-feed-message.import-error h3 {
+  color: #DF4E4F; }
+
 /* latin-ext */
 @font-face {
   font-family: 'Inter';

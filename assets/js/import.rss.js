@@ -76,8 +76,8 @@ jQuery(document).ready(function ($) {
 		ssp_external_feed_status.html(log_html);
 	}
 
-	function show_success_message() {
-		$('.ssp-ssp-external-feed-message').html('Import completed successfully !').css('color', 'green');
+	function show_success_message($msg) {
+		$('.ssp-external-feed-message').removeClass('import-error').html($msg);
 	}
 
 	/**
@@ -119,7 +119,7 @@ jQuery(document).ready(function ($) {
 				stop_handling_progress_bar();
 				update_progress_log(response.episodes);
 				update_progress_bar(100, 'green');
-				show_success_message();
+				show_success_message(response.message);
 				ssp_reset_external_feed();
 			} else {
 				import_feed();
@@ -169,7 +169,7 @@ jQuery(document).ready(function ($) {
 	}
 
 	function show_cancelled_message() {
-		$('.ssp-ssp-external-feed-message').html('Import cancelled !').css('color', 'red');
+		$('.ssp-external-feed-message').addClass('import-error').html('<h3>Import cancelled!</h3>');
 	}
 
 	/**

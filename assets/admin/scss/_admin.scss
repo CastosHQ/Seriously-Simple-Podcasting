@@ -438,3 +438,13 @@ textarea#episode_embed_code {
 .column-ssp_cover {
 	width: 80px;
 }
+
+.ssp-external-feed-message {
+	h3 {
+		color: $clr_green;
+	}
+
+	&.import-error h3 {
+		color: $clr_red_400;
+	}
+}

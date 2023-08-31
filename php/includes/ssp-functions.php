@@ -1693,3 +1693,18 @@ if( ! function_exists('ssp_config') ){
 		return apply_filters( 'ssp_config', $config, $name );
 	}
 }
+
+if( ! function_exists('ssp_get_tab_url') ){
+	/**
+	 * @param string $tab
+	 *
+	 * @return string
+	 */
+	function ssp_get_tab_url( $tab ) {
+		return add_query_arg( array(
+			'post_type' => SSP_CPT_PODCAST,
+			'page'      => 'podcast_settings',
+			'tab'       => $tab
+		), admin_url( 'edit.php' ) );
+	}
+}

@@ -185,7 +185,15 @@ class RSS_Import_Handler {
 				$this->create_episode( $item );
 			}
 
-			return $this->create_response( 'RSS Feed successfully imported', true );
+			$msg = '<h3>' . __( 'RSS Feed successfully imported.', 'seriously-simple-podcasting' ) . '</h3>';
+
+			if ( ssp_is_connected_to_castos() ) {
+				$msg .= '<p>' . sprintf(
+						__( 'To complete the sync of your podcast(s) to your Castos account, navigate to the <a href="%s">Hosting</a> tab',
+							'seriously-simple-podcasting' ), ssp_get_tab_url( 'castos-hosting' ) ) . '</p>';
+			}
+
+			return $this->create_response( $msg, true );
 		} catch ( \Exception $e ) {
 			$this->logger->log( __METHOD__ . ' Error: ' . $e->getMessage() );
 

@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Entities\Failed_Sync_Episode;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Ajax_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
@@ -48,6 +47,11 @@ class App_Controller {
 	use Useful_Variables;
 
 	// Controllers.
+	/**
+	 * @var Assets_Controller $assets_controller
+	 * */
+	public $assets_controller;
+
 	/**
 	 * @var Onboarding_Controller
 	 */
@@ -257,6 +261,8 @@ class App_Controller {
 
 		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
 
+		$this->assets_controller = new Assets_Controller();
+
 		if ( is_admin() ) {
 			$this->admin_notices_handler->bootstrap();
 			$this->settings_renderer = Settings_Renderer::instance();
@@ -399,10 +405,6 @@ class App_Controller {
 		if ( is_admin() ) {
 			// process the import form submission
 			add_action( 'admin_init', array( $this, 'submit_import_form' ) );
-
-			// Admin JS & CSS.
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ), 10, 1 );
-			add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ), 10, 1 );
 
 			// Series list table.
 			add_filter( 'manage_edit-series_columns', array( $this, 'edit_series_columns' ) );
@@ -863,127 +865,6 @@ HTML;
 		$plugin_meta['addons'] = '<a href="https://castos.com/add-ons/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019" target="_blank">' . __( 'Add-ons', 'seriously-simple-podcasting' ) . '</a>';
 		$plugin_meta['review'] = '<a href="https://wordpress.org/support/view/plugin-reviews/' . $plugin_data['slug'] . '?rate=5#postform" target="_blank">' . __( 'Write a review', 'seriously-simple-podcasting' ) . '</a>';
 		return $plugin_meta;
-	}
-
-	/**
-	 * Load admin CSS
-	 * @return void
-	 */
-	public function enqueue_admin_styles( $hook ) {
-		if ( ! $this->need_admin_scripts( $hook ) ) {
-			return;
-		}
-
-		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'admin/css/admin' . $this->script_suffix . '.css' ), array(), $this->version );
-		wp_enqueue_style( 'ssp-admin' );
-
-		// Datepicker
-		wp_register_style( 'jquery-ui-datepicker-wp', esc_url( $this->assets_url . 'css/datepicker' . $this->script_suffix . '.css' ), array(), $this->version );
-		wp_enqueue_style( 'jquery-ui-datepicker-wp' );
-
-		wp_register_style( 'ssp-select2-css', esc_url( $this->assets_url . 'css/select2' . $this->script_suffix . '.css' ), array(), $this->version );
-		wp_enqueue_style( 'ssp-select2-css' );
-
-		/**
-		 * Only load the peekabar styles when adding/editing podcasts
-		 */
-		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
-			global $post;
-			if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
-				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery-peekabar'. $this->script_suffix . '.css' ), array(), $this->version );
-				wp_enqueue_style( 'jquery-peekabar' );
-			}
-		}
-
-		/**
-		 * Only load the jquery-ui CSS when the import settings screen is loaded
-		 * @todo load this locally perhaps? and only the progress bar stuff?
-		 */
-		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
-			//wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
-
-			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness'. $this->script_suffix . '.css' ), array(), $this->version );
-			wp_enqueue_style( 'jquery-ui-smoothness' );
-
-			wp_register_style( 'import-rss', esc_url( $this->assets_url . 'css/import-rss'. $this->script_suffix . '.css' ), array(), $this->version );
-			wp_enqueue_style( 'import-rss' );
-
-		}
-	}
-
-	protected function need_admin_scripts( $hook ) {
-		return 'post.php' === $hook ||
-			   'post-new.php' === $hook ||
-			   strpos( $hook, 'ssp-onboarding' ) ||
-			   $this->is_ssp_admin_page() ||
-			   ( 'term.php' === $hook && Series_Handler::TAXONOMY === filter_input( INPUT_GET, 'taxonomy' ) );
-	}
-
-	/**
-	 * Checks if it's an SSP admin page or not
-	 *
-	 * @return bool
-	 */
-	protected function is_ssp_admin_page() {
-		return SSP_CPT_PODCAST === filter_input( INPUT_GET, 'post_type' );
-	}
-
-	/**
-	 * Load admin JS
-	 * @return void
-	 */
-	public function enqueue_admin_scripts( $hook ) {
-
-		if ( ! $this->need_admin_scripts( $hook ) ) {
-			return;
-		}
-
-		wp_register_script( 'ssp-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array(
-			'jquery',
-			'jquery-ui-core',
-			'jquery-ui-datepicker'
-		), $this->version );
-		wp_enqueue_script( 'ssp-admin' );
-
-		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
-		wp_enqueue_script( 'ssp-settings' );
-
-		wp_register_script( 'ssp-select2-js', esc_url( $this->assets_url . 'js/select2' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
-		wp_enqueue_script( 'ssp-select2-js' );
-
-		// Only enqueue the WordPress Media Library picker for adding and editing SSP tags/terms post types.
-		if ( 'edit-tags.php' === $hook || 'term.php' === $hook ) {
-			if ( 'series' === $_REQUEST['taxonomy'] ) {
-				wp_enqueue_media();
-			}
-		}
-
-		/**
-		 * Only load the upload scripts when adding/editing posts/podcasts
-		 */
-		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
-			global $post;
-			if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
-				wp_enqueue_script( 'plupload-all' );
-				$upload_credentials = ssp_setup_upload_credentials();
-				wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );
-				wp_localize_script( 'ssp-fileupload', 'upload_credentials', $upload_credentials );
-				wp_enqueue_script( 'ssp-fileupload' );
-				wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
-				wp_enqueue_script( 'jquery-peekabar' );
-			}
-		}
-
-		/**
-		 * Only load the import js when the import settings screen is loaded
-		 */
-		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
-			wp_register_script( 'ssp-import-rss', esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ), array(
-				'jquery',
-				'jquery-ui-progressbar'
-			), $this->version );
-			wp_enqueue_script( 'ssp-import-rss' );
-		}
 	}
 
 	/**

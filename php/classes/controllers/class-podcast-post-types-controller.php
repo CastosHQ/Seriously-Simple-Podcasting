@@ -108,11 +108,18 @@ class Podcast_Post_Types_Controller {
 		add_filter( 'post_updated_messages', array( $this, 'updated_messages' ) );
 
 		// Episodes list table.
-		add_filter( 'manage_edit-' . $this->token . '_columns', array( $this, 'register_custom_column_headings' ), 20, 2 );
-		add_action( 'manage_posts_custom_column', array( $this, 'manage_custom_columns' ), 10, 2 );
+		add_action( 'admin_init', array( $this, 'add_custom_columns' ) );
 
 		// Change the podcast episode statuses to sending after the sync has been triggered.
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_episodes_status' ), 10, 2 );
+	}
+
+	public function add_custom_columns(){
+		$ssp_post_types = ssp_post_types();
+		foreach ( $ssp_post_types as $post_type ) {
+			add_filter( 'manage_edit-' . $post_type . '_columns', array( $this, 'register_custom_column_headings' ), 20, 2 );
+		}
+		add_action( 'manage_posts_custom_column', array( $this, 'manage_custom_columns' ), 10, 2 );
 	}
 
 

@@ -73,9 +73,6 @@ class Frontend_Controller {
 	 */
 	public function register_hooks_and_filters() {
 
-		// Register HTML5 player scripts and styles
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_html5_player_assets' ) );
-
 		// Add meta data to start of podcast content
 		$locations = get_option( 'ss_podcasting_player_locations', array( 'content' ) );
 
@@ -253,21 +250,6 @@ class Frontend_Controller {
 	public function get_ajax_playlist_items() {
 		$items = $this->players_controller->get_ajax_playlist_items();
 		wp_send_json_success( $items );
-	}
-
-	/**
-	 * Used to load the HTML5 player scripts and styles
-	 * Only load this if the HTML5 player is enabled in the plugin
-	 * Additionally, if we're rendering a post or page which includes a player block, enqueue the player assets
-	 */
-	public function register_html5_player_assets() {
-		/**
-		 * If we're rendering a SSP Block, which includes the HTML5 player, also enqueue the player scripts
-		 */
-		if ( has_block( 'seriously-simple-podcasting/castos-player' ) || has_block( 'seriously-simple-podcasting/podcast-list' ) ) {
-			wp_enqueue_script( 'ssp-castos-player' );
-			wp_enqueue_style( 'ssp-castos-player' );
-		}
 	}
 
 	/**

@@ -94,7 +94,7 @@ class Podcast_Post_Types_Controller {
 		add_action( 'save_post', array( $this, 'invalidate_cache' ), 10, 2 );
 
 		// Update podcast details to Castos when a post is updated or saved
-		add_action( 'save_post', array( $this, 'update_podcast_details' ), 20, 2 );
+		add_action( 'save_post', array( $this, 'sync_episode' ), 20, 2 );
 
 		// Notify Podping if new episode has been published, or if new series is assigned to the episode
 		add_action( 'wp_after_insert_post', array( $this, 'notify_podping' ), 10, 4 );
@@ -102,7 +102,6 @@ class Podcast_Post_Types_Controller {
 
 		// Delete podcast from Castos
 		add_action( 'trashed_post', array( $this, 'delete_post' ), 11, 1 );
-		add_action( 'untrash_post', array( $this, 'untrash_post' ), 11, 1 );
 
 		// Episode edit screen.
 		add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -244,17 +243,13 @@ class Podcast_Post_Types_Controller {
 		/**
 		 * Only trigger this when the post type is podcast
 		 */
-		if ( ! in_array( $post->post_type, ssp_post_types( true ), true ) ) {
+		if ( ! in_array( $post->post_type, ssp_post_types(), true ) ) {
 			return;
 		}
 
-		$this->episode_repository->delete_podmotor_file_id( $post_id );
-		$this->episode_repository->delete_podmotor_episode_id( $post_id );
+		$this->episode_repository->delete_sync_info( $post_id );
 		$this->episode_repository->delete_audio_file( $post_id );
 
-		/**
-		 * Don't trigger this if we're not connected to Podcast Motor
-		 */
 		if ( ssp_is_connected_to_castos() ) {
 			$this->castos_handler->delete_episode( $post );
 		}
@@ -666,7 +661,7 @@ class Podcast_Post_Types_Controller {
 	 * @param int $id
 	 * @param \WP_Post $post
 	 */
-	public function update_podcast_details( $id, $post ) {
+	public function sync_episode( $id, $post ) {
 		/**
 		 * Don't trigger this if we're not connected to Castos
 		 */
@@ -715,6 +710,7 @@ class Podcast_Post_Types_Controller {
 			// if uploading was scheduled before, lets unschedule it
 			delete_post_meta( $id, 'podmotor_schedule_upload' );
 			$this->episode_repository->update_episode_sync_status_option( $post->ID, Sync_Status::SYNC_STATUS_SUCCESS );
+			$this->episode_repository->delete_sync_error( $post->ID );
 		} else {
 			// schedule uploading with a cronjob
 			update_post_meta( $id, 'podmotor_schedule_upload', true );

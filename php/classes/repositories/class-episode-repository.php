@@ -358,10 +358,11 @@ class Episode_Repository implements Service {
 	 *
 	 * @return Sync_Status
 	 */
-	protected function maybe_add_error( $post_id, $status ){
-		$error = Sync_Status::SYNC_STATUS_FAILED === $status->status ?
+	protected function maybe_add_error( $post_id, $status ) {
+		$error         = Sync_Status::SYNC_STATUS_FAILED === $status->status ?
 			$this->get_episode_sync_error( $post_id ) : '';
 		$status->error = $error;
+
 		return $status;
 	}
 
@@ -419,6 +420,26 @@ class Episode_Repository implements Service {
 	 */
 	public function delete_podmotor_file_id( $post_id ) {
 		return delete_post_meta( $post_id, 'podmotor_file_id' );
+	}
+
+	/**
+	 * @param int $post_id
+	 *
+	 * @return bool
+	 */
+	public function delete_sync_error( $post_id ) {
+		return delete_post_meta( $post_id, self::META_SYNC_ERROR );
+	}
+
+	/**
+	 * @param int $post_id
+	 *
+	 * @return void
+	 */
+	public function delete_sync_info( $post_id ) {
+		$this->delete_podmotor_file_id( $post_id );
+		$this->delete_podmotor_episode_id( $post_id );
+		$this->delete_sync_error( $post_id );
 	}
 
 	/**

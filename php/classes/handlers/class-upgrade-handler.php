@@ -168,7 +168,9 @@ class Upgrade_Handler implements Service {
 
 			update_post_meta( $episode->post_id, 'podmotor_episode_id', $file_data->episode_id );
 			update_post_meta( $episode->post_id, 'podmotor_file_id', $file_data->episode_id );
+
 			$this->episode_repository->update_episode_sync_status_option( $episode->post_id, Sync_Status::SYNC_STATUS_SUCCESS );
+			$this->episode_repository->delete_sync_error( $episode->post_id );
 		}
 
 		$this->episode_repository->update_failed_sync_episodes_option( array_values( $episodes ) );

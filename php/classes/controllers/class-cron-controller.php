@@ -93,6 +93,7 @@ class Cron_Controller {
 			if ( 'success' === $response['status'] ) {
 				delete_post_meta( $episode->ID, 'podmotor_schedule_upload' );
 				$this->episodes_respository->update_episode_sync_status_option( $episode->ID, Sync_Status::SYNC_STATUS_SUCCESS );
+				$this->episodes_respository->delete_episode_sync_error( $episode->ID );
 				$uploaded++;
 			}
 		}

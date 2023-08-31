@@ -339,18 +339,18 @@ class Admin_Notifications_Handler implements Service {
 	 * Show 'existing podcast' notice
 	 */
 	public function existing_episodes_notice() {
-		$podcast_import_url = add_query_arg( array(
+		$hosting_tab_url = add_query_arg( array(
 			'post_type' => $this->token,
 			'page'      => 'podcast_settings',
-			'tab'       => 'import'
+			'tab'       => 'castos-hosting'
 		) );
 		$ignore_message_url = add_query_arg( array(
 			'podcast_import_action' => 'ignore',
 			'nonce'                 => wp_create_nonce( 'podcast_import_action' ),
 		) );
 		$message            = '';
-		$message            .= '<p>You\'ve connected to your Castos account and you have existing podcasts that can be imported.</p>';
-		$message            .= '<p>You can <a href="' . $podcast_import_url . '">import your existing podcasts to Castos.</a></p>';
+		$message            .= '<p>You\'ve connected to your Castos account and you have existing podcasts that can be synced.</p>';
+		$message            .= '<p>You can <a href="' . $hosting_tab_url . '">sync your existing podcasts to Castos.</a></p>';
 		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
 		?>
 		<div class="notice notice-info">

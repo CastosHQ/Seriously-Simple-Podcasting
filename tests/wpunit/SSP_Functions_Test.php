@@ -34,7 +34,7 @@ class SSP_Functions_Test extends WPTestCase {
 		$out = ob_get_flush();
 
 		$this->assertStringContainsString( '<div class="notice notice-warning">', $out );
-		$this->assertStringContainsString( 'You are using the Seriously Simple Podcasting beta, connected to', $out );
+		$this->assertStringContainsString( 'You are using the Seriously Simple Podcasting beta', $out );
 	}
 
 	/**

@@ -23,11 +23,11 @@ if ( ! function_exists( 'ssp_beta_notice' ) ) {
 	 * @return void
 	 */
 	function ssp_beta_notice() {
-		$beta_notice = __( 'You are using the Seriously Simple Podcasting beta, connected to ', 'seriously-simple-podcasting' );
+		$beta_notice = __( 'You are using the Seriously Simple Podcasting beta ( %1$s ), connected to %2$s', 'seriously-simple-podcasting' );
 		?>
 		<div class="notice notice-warning">
 			<p>
-				<strong><?php echo $beta_notice . SSP_CASTOS_APP_URL; ?></strong>.
+				<strong><?php echo sprintf( $beta_notice, SSP_VERSION, SSP_CASTOS_APP_URL ); ?></strong>.
 			</p>
 		</div>
 		<?php

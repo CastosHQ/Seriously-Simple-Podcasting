@@ -101,7 +101,7 @@ class Podcast_Post_Types_Controller {
 		add_action( 'added_term_relationship', array( $this, 'notify_podping_on_series_added' ), 10, 3 );
 
 		// Delete podcast from Castos
-		add_action( 'trashed_post', array( $this, 'delete_post' ), 11, 1 );
+		add_action( 'trashed_post', array( $this, 'delete_post' ), 11 );
 
 		// Episode edit screen.
 		add_filter( 'enter_title_here', array( $this, 'enter_title_here' ) );
@@ -142,7 +142,7 @@ class Podcast_Post_Types_Controller {
 			$episodes = $this->episode_repository->get_podcast_episodes( $podcast_id );
 
 			foreach ( $episodes as $episode ) {
-				$this->episode_repository->update_episode_sync_status_option( $episode->ID, Sync_Status::SYNC_STATUS_SYNCING );
+				$this->episode_repository->update_episode_sync_status( $episode->ID, Sync_Status::SYNC_STATUS_SYNCING );
 			}
 		}
 	}
@@ -247,19 +247,16 @@ class Podcast_Post_Types_Controller {
 	public function delete_post( $post_id ) {
 		$post = get_post( $post_id );
 
-		/**
-		 * Only trigger this when the post type is podcast
-		 */
 		if ( ! in_array( $post->post_type, ssp_post_types(), true ) ) {
 			return;
 		}
 
-		$this->episode_repository->delete_sync_info( $post_id );
-		$this->episode_repository->delete_audio_file( $post_id );
-
 		if ( ssp_is_connected_to_castos() ) {
 			$this->castos_handler->delete_episode( $post );
 		}
+
+		$this->episode_repository->delete_sync_info( $post_id );
+		$this->episode_repository->delete_audio_file( $post_id );
 	}
 
 
@@ -322,7 +319,7 @@ class Podcast_Post_Types_Controller {
 	 * @param integer $post_id ID of post
 	 * @param \WP_Post $post
 	 *
-	 * @return mixed
+	 * @return bool
 	 */
 	public function meta_box_save( $post_id, $post ) {
 
@@ -425,7 +422,7 @@ class Podcast_Post_Types_Controller {
 		$podcast_post_types = ssp_post_types( true );
 
 		// Post type check
-		if ( ! in_array( $post->post_type, $podcast_post_types ) ) {
+		if (  ( 'trash' === $post->post_status ) || ! in_array( $post->post_type, $podcast_post_types ) ) {
 			return false;
 		}
 
@@ -716,7 +713,7 @@ class Podcast_Post_Types_Controller {
 
 			// if uploading was scheduled before, lets unschedule it
 			delete_post_meta( $id, 'podmotor_schedule_upload' );
-			$this->episode_repository->update_episode_sync_status_option( $post->ID, Sync_Status::SYNC_STATUS_SUCCESS );
+			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_SUCCESS );
 			$this->episode_repository->delete_sync_error( $post->ID );
 		} else {
 			// schedule uploading with a cronjob
@@ -724,7 +721,7 @@ class Podcast_Post_Types_Controller {
 			$this->admin_notices_handler->add_predefined_flash_notice(
 				Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
 			);
-			$this->episode_repository->update_episode_sync_status_option( $post->ID, Sync_Status::SYNC_STATUS_FAILED );
+			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_FAILED );
 		}
 	}
 

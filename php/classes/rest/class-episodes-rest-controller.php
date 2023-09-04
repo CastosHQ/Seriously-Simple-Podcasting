@@ -175,7 +175,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 			$sync_status = $full_success ? Sync_Status::SYNC_STATUS_SUCCESS : Sync_Status::SYNC_STATUS_FAILED;
 
-			$this->episode_repository->update_episode_sync_status_option( $episode_id, $sync_status );
+			$this->episode_repository->update_episode_sync_status( $episode_id, $sync_status );
 
 			return rest_ensure_response( array(
 				'id'   => intval( $episode_id ),

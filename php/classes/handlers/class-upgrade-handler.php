@@ -104,7 +104,7 @@ class Upgrade_Handler implements Service {
 	 */
 	protected function set_episodes_status( $episodes, $status ) {
 		foreach ( $episodes as $episode ) {
-			$this->episode_repository->update_episode_sync_status_option( $episode->post_id, $status );
+			$this->episode_repository->update_episode_sync_status( $episode->post_id, $status );
 		}
 	}
 
@@ -139,7 +139,7 @@ class Upgrade_Handler implements Service {
 
 			// Ensure episode data is full and episode does not have episode ID that is different from file data
 			if ( ! $file_data_esists || $episode_id_conflict ) {
-				$this->episode_repository->update_episode_sync_status_option( $episode->post_id, Sync_Status::SYNC_STATUS_FAILED );
+				$this->episode_repository->update_episode_sync_status( $episode->post_id, Sync_Status::SYNC_STATUS_FAILED );
 				if ( ! $file_data_esists ) {
 					$error = __( 'Could not get file data by the file URL. Please try to reupload the file.', 'serously-simple-podcasting' );
 				} elseif ( $episode_id_conflict ) {
@@ -169,7 +169,7 @@ class Upgrade_Handler implements Service {
 			update_post_meta( $episode->post_id, 'podmotor_episode_id', $file_data->episode_id );
 			update_post_meta( $episode->post_id, 'podmotor_file_id', $file_data->episode_id );
 
-			$this->episode_repository->update_episode_sync_status_option( $episode->post_id, Sync_Status::SYNC_STATUS_SUCCESS );
+			$this->episode_repository->update_episode_sync_status( $episode->post_id, Sync_Status::SYNC_STATUS_SUCCESS );
 			$this->episode_repository->delete_sync_error( $episode->post_id );
 		}
 

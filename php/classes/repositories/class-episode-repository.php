@@ -439,6 +439,7 @@ class Episode_Repository implements Service {
 	public function delete_sync_info( $post_id ) {
 		$this->delete_podmotor_file_id( $post_id );
 		$this->delete_podmotor_episode_id( $post_id );
+		$this->delete_episode_sync_status( $post_id );
 		$this->delete_sync_error( $post_id );
 	}
 
@@ -474,7 +475,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return bool|int
 	 */
-	public function update_episode_sync_status_option( $episode_id, $status ) {
+	public function update_episode_sync_status( $episode_id, $status ) {
 		return update_post_meta( $episode_id, self::META_SYNC_STATUS, $status );
 	}
 
@@ -483,7 +484,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return bool
 	 */
-	public function delete_episode_sync_status_option( $episode_id ) {
+	public function delete_episode_sync_status( $episode_id ) {
 		return delete_post_meta( $episode_id, self::META_SYNC_STATUS );
 	}
 

@@ -182,7 +182,7 @@ class Feed_Controller {
 
 		$is_explicit = $this->feed_handler->is_explicit( $series_id );
 
-		$itunes_explicit = $is_explicit ? 'yes' : 'clean';
+		$itunes_explicit = $is_explicit ? 'true' : 'false';
 
 		$googleplay_explicit = $is_explicit ? 'Yes' : 'No';
 

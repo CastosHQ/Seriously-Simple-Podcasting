@@ -64,14 +64,15 @@ final class Elementor_Widgets {
 		$this->template_importer = new Elementor_Template_Importer();
 		$this->settings_extender = new Settings_Extender();
 
-		add_action( 'elementor/widgets/widgets_registered', [ $this, 'init_widgets' ] );
+		add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
 	}
 
 	public function init_widgets() {
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Media_Player_Widget() );
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Html_Player_Widget() );
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Subscribe_Buttons_Widget() );
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Recent_Episodes_Widget() );
-		\Elementor\Plugin::instance()->widgets_manager->register_widget_type( new Elementor_Episode_List_Widget() );
+		$manager = \Elementor\Plugin::instance()->widgets_manager;
+		$manager->register( new Elementor_Media_Player_Widget() );
+		$manager->register( new Elementor_Html_Player_Widget() );
+		$manager->register( new Elementor_Subscribe_Buttons_Widget() );
+		$manager->register( new Elementor_Recent_Episodes_Widget() );
+		$manager->register( new Elementor_Episode_List_Widget() );
 	}
 }

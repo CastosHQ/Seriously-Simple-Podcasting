@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Traits\URL_Helper;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -19,12 +20,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Admin_Notifications_Handler implements Service {
 
+	use URL_Helper;
+
 	public $token;
 
 	/**
 	 * Transient key to store flash notices
 	 * */
-	const NOTICES_KEY = 'castos_notices';
+	const NOTICES_KEY = 'ssp_notices';
 
 	/**
 	 * Predefined notices
@@ -32,6 +35,7 @@ class Admin_Notifications_Handler implements Service {
 	const NOTICE_API_EPISODE_ERROR = 'api_episode_error';
 	const NOTICE_API_EPISODE_SUCCESS = 'api_episode_success';
 	const NOTICE_NGINX_ERROR = 'nginx_error';
+	const NOTICE_IS_SYNCING = 'is_syncing';
 
 	/**
 	 * Notice types
@@ -207,12 +211,13 @@ class Admin_Notifications_Handler implements Service {
 
 	/**
 	 * Add a predefined flash notice
-	 * @see NOTICE_API_EPISODE_ERROR
-	 * @see NOTICE_API_EPISODE_SUCCESS
 	 *
 	 * @param string $notice Predefined notice
 	 *
 	 * @return bool If the notice is added or not
+	 * @see NOTICE_API_EPISODE_ERROR
+	 * @see NOTICE_API_EPISODE_SUCCESS
+	 *
 	 */
 	public function add_predefined_flash_notice( $notice ) {
 		$messages = $this->get_predefined_notices();
@@ -230,11 +235,36 @@ class Admin_Notifications_Handler implements Service {
 	}
 
 	/**
+	 * Add a predefined flash notice
+	 *
+	 * @param string $notice Predefined notice
+	 *
+	 * @return bool If the notice is added or not
+	 * @see NOTICE_API_EPISODE_ERROR
+	 * @see NOTICE_API_EPISODE_SUCCESS
+	 *
+	 */
+	public function remove_predefined_flash_notice( $notice ) {
+		$messages = $this->get_predefined_notices();
+
+		if ( isset( $messages[ $notice ] ) ) {
+			$this->remove_flash_notice (
+				$messages[ $notice ]['msg']
+			);
+
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Add a flash notice
 	 *
 	 * @param string $notice our notice message
 	 * @param string $type This can be "info", "warning", "error" or "success", "warning" as default
 	 * @param boolean $dismissible set this to TRUE to add is-dismissible functionality to your notice
+	 *
 	 * @return void
 	 */
 	public function add_flash_notice( $notice = "", $type = "warning", $dismissible = true ) {
@@ -245,19 +275,50 @@ class Admin_Notifications_Handler implements Service {
 
 		$dismissible_text = ( $dismissible ) ? "is-dismissible" : "";
 
-		array_push( $notices, array(
+		$notices[ $this->get_notice_hash( $notice ) ] = array(
 			"notice"      => $notice,
 			"type"        => $type,
 			"dismissible" => $dismissible_text
-		) );
+		);
 
-		set_transient( self::NOTICES_KEY, $notices, 10 );
+		set_transient( self::NOTICES_KEY, $notices, DAY_IN_SECONDS );
+	}
+
+	/**
+	 * @param string $notice
+	 *
+	 * @return string
+	 */
+	public function get_notice_hash( $notice ) {
+		return md5( serialize( $notice ) );
+	}
+
+	/**
+	 * Remove flash notice
+	 *
+	 * @param string $notice notice message
+	 *
+	 * @return void
+	 */
+	public function remove_flash_notice( $notice = "" ) {
+		$notices = get_transient( self::NOTICES_KEY );
+		$hash = $this->get_notice_hash( $notice );
+
+		if( is_array( $notices ) && array_key_exists( $hash, $notices ) ){
+			unset( $notices[ $hash ] );
+		}
+
+		set_transient( self::NOTICES_KEY, $notices, DAY_IN_SECONDS );
 	}
 
 	/**
 	 * Prints flash notices
 	 */
 	public function display_flash_notices() {
+		if ( ! $this->is_ssp_post_page() && ! $this->is_ssp_admin_page() ) {
+			return;
+		}
+
 		$notices = get_transient( self::NOTICES_KEY );
 
 		if ( ! is_array( $notices ) ) {
@@ -280,12 +341,12 @@ class Admin_Notifications_Handler implements Service {
 	/**
 	 * Admin notice for the add series page
 	 */
-	public function show_series_helper_text(){
+	public function show_series_helper_text() {
 		$text = '
 		A new Podcast will create an entirely new Podcast Feed. <br>
 		Only do this if you want to have multiple shows within your WordPress site. <br>
 		If you just want to organize episodes within the same feed we suggest using Tags.';
-		echo sprintf('<div class="notice series-notice notice-warning"><p>%s</p></div>', $text);
+		echo sprintf( '<div class="notice series-notice notice-warning"><p>%s</p></div>', $text );
 	}
 
 
@@ -339,15 +400,15 @@ class Admin_Notifications_Handler implements Service {
 	 * Show 'existing podcast' notice
 	 */
 	public function existing_episodes_notice() {
-		$hosting_tab_url = ssp_get_tab_url( 'castos-hosting' );
+		$hosting_tab_url    = ssp_get_tab_url( 'castos-hosting' );
 		$ignore_message_url = add_query_arg( array(
 			'podcast_import_action' => 'ignore',
 			'nonce'                 => wp_create_nonce( 'podcast_import_action' ),
 		) );
-		$message = '';
-		$message .= '<p>You\'ve connected to your Castos account, and you have existing podcasts that can be synced.</p>';
-		$message .= '<p>You can <a href="' . $hosting_tab_url . '">sync your existing podcasts to Castos now.</a></p>';
-		$message .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
+		$message            = '';
+		$message            .= '<p>You\'ve connected to your Castos account, and you have existing podcasts that can be synced.</p>';
+		$message            .= '<p>You can <a href="' . $hosting_tab_url . '">sync your existing podcasts to Castos now.</a></p>';
+		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
 		?>
 		<div class="notice notice-info">
 			<p><?php _e( $message, 'seriousy-simple-podcasting' ); ?></p>
@@ -387,7 +448,7 @@ class Admin_Notifications_Handler implements Service {
 		);
 		$revalidate_api_credentials_link = sprintf(
 			wp_kses(
-				// translators: Placeholder is the url to trigger the action
+			// translators: Placeholder is the url to trigger the action
 				__( 'In order to ensure that your WordPress site continues to connect to Castos, please click <a href="%s">this link</a> to re-validate your API credentials.', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
@@ -469,7 +530,7 @@ class Admin_Notifications_Handler implements Service {
 		) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
 			$castos_handler = new Castos_Handler();
-			$reponse          = $castos_handler->insert_podmotor_queue();
+			$reponse        = $castos_handler->insert_podmotor_queue();
 			if ( 'success' === $reponse['status'] ) {
 				update_option( 'ss_podcasting_podmotor_queue_id', $reponse['queue_id'] );
 			}
@@ -555,10 +616,10 @@ class Admin_Notifications_Handler implements Service {
 			'nonce'                         => wp_create_nonce( 'dismiss_categories_update' ),
 		) );
 
-		$message            = __( 'Seriously Simple Podcasting\'s feed categories have been updated.', 'seriously-simple-podcasting' );
-		$feed_settings_link = sprintf(
+		$message             = __( 'Seriously Simple Podcasting\'s feed categories have been updated.', 'seriously-simple-podcasting' );
+		$feed_settings_link  = sprintf(
 			wp_kses(
-				// translators: Placeholder is the url to the Feed details
+			// translators: Placeholder is the url to the Feed details
 				__( 'Please check your <a href="%s">Feed details</a>  to update your categories.', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
@@ -570,7 +631,7 @@ class Admin_Notifications_Handler implements Service {
 		);
 		$ignore_message_link = sprintf(
 			wp_kses(
-				// translators: Placeholder is the url to dismiss the message
+			// translators: Placeholder is the url to dismiss the message
 				__( 'Alternatively you can <a href="%s">dismiss this message</a>.', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
@@ -624,7 +685,7 @@ class Admin_Notifications_Handler implements Service {
 
 		$second_line_themes_link = sprintf(
 			wp_kses(
-				// translators: Placeholder is the url to Second Line Themes
+			// translators: Placeholder is the url to Second Line Themes
 				__( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out  <a href="%s" target="_blank">Second Line Themes.</a> ', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
@@ -679,6 +740,7 @@ class Admin_Notifications_Handler implements Service {
 		$page = ( isset( $_GET['page'] ) ? sanitize_text_field( $_GET['page'] ) : '' );
 		if ( 'podcast_options' === $page ) {
 			add_action( 'admin_notices', array( $this, 'show_distribution_links_upgrade_notice' ) );
+
 			return;
 		}
 		add_action( 'admin_notices', array( $this, 'show_distribution_links_update_notice' ) );
@@ -690,7 +752,7 @@ class Admin_Notifications_Handler implements Service {
 	public function show_distribution_links_update_notice() {
 		$distribution_links_update = sprintf(
 			wp_kses(
-				// translators: Placeholder is the url to the Plugin Options
+			// translators: Placeholder is the url to the Plugin Options
 				__( 'Seriously Simple Podcasting has updated the process of managing your Subscribe/Distribution links, and needs to perform a data upgrade. Please visit the <a href="%s">Plugin Options</a> to perform this upgrade.', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
@@ -712,10 +774,10 @@ class Admin_Notifications_Handler implements Service {
 	 * Show the Distrubution Links Upgrade notice, prompting the user to trigger the upgrade, as well as download a copy of their current settings
 	 */
 	public function show_distribution_links_upgrade_notice() {
-		$distribution_backup_url = add_query_arg( '_wpnonce', wp_create_nonce( 'export_options' ), admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_options&export_options=true' ) );
-		$distribution_backup = sprintf(
+		$distribution_backup_url  = add_query_arg( '_wpnonce', wp_create_nonce( 'export_options' ), admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_options&export_options=true' ) );
+		$distribution_backup      = sprintf(
 			wp_kses(
-				// translators: Placeholder is the url to download the current options
+			// translators: Placeholder is the url to download the current options
 				__( 'Seriously Simple Podcasting has updated the process of managing your Subscribe/Distribution links, we recommend you download your current subscribe links by using <a href="%s">this link</a>.', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
@@ -727,9 +789,9 @@ class Admin_Notifications_Handler implements Service {
 			$distribution_backup_url //esc_url( admin_url( 'edit.php?post_type=podcast&page=podcast_options&export_options=true' ) )
 		);
 		$distribution_upgrade_url = add_query_arg( '_wpnonce', wp_create_nonce( 'upgrade_options' ), admin_url( 'edit.php?post_type=podcast&page=podcast_options&upgrade_options=true' ) );
-		$distribution_upgrade = sprintf(
+		$distribution_upgrade     = sprintf(
 			wp_kses(
-				// translators: Placeholders are the url to run the upgrade, and the url to the relevant help document
+			// translators: Placeholders are the url to run the upgrade, and the url to the relevant help document
 				__( 'Once you have downloaded your subscribe links, you can run the upgrade by clicking <a href="%1$s">this link</a>. You can read more about this upgrade <a href="%2$s">here</a>', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
@@ -784,7 +846,7 @@ class Admin_Notifications_Handler implements Service {
 			esc_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings&tab=extensions' ) )
 		);
 
-		$ignore_message_url = add_query_arg( array( 'ssp_disable_elementor_template_notice' => 'true' ) );
+		$ignore_message_url  = add_query_arg( array( 'ssp_disable_elementor_template_notice' => 'true' ) );
 		$ignore_message_link = sprintf(
 			wp_kses(
 			// translators: Placeholder is the url to dismiss the message
@@ -830,9 +892,15 @@ class Admin_Notifications_Handler implements Service {
 				), esc_url( 'https://support.castos.com/article/298-bypass-rules-for-nginx-hosted-websites' ) ),
 				'type' => self::ERROR,
 			),
+			self::NOTICE_IS_SYNCING          => array(
+				'msg'  => __(
+					"Seriously Simple Podcasting is updating episode data to your Castos account. You can refresh this page to view the updated status in a few minutes.",
+				),
+				'type' => self::INFO,
+			),
 		);
 
-		return apply_filters( 'castos_predefined_notices', $notices );
+		return apply_filters( 'ssp_predefined_notices', $notices );
 	}
 
 }

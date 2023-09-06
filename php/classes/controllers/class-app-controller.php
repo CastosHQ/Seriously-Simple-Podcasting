@@ -266,7 +266,7 @@ class App_Controller {
 		if ( is_admin() ) {
 			$this->admin_notices_handler->bootstrap();
 			$this->settings_renderer = Settings_Renderer::instance();
-			$this->series_handler = new Series_Handler();
+			$this->series_handler = new Series_Handler( $this->admin_notices_handler );
 
 			global $ssp_settings, $ssp_options;
 			$ssp_settings = $this->settings_controller = new Settings_Controller(

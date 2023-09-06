@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Trait Elementor_Widget_Helper.
  *
- * @author Sergey Zakharchenko
+ * @author Sergiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * @since 2.14.0
  */

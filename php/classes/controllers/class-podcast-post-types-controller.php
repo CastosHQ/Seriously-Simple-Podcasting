@@ -142,7 +142,10 @@ class Podcast_Post_Types_Controller {
 			$episodes = $this->episode_repository->get_podcast_episodes( $podcast_id );
 
 			foreach ( $episodes as $episode ) {
-				$this->episode_repository->update_episode_sync_status( $episode->ID, Sync_Status::SYNC_STATUS_SYNCING );
+				$this->episode_repository->update_episode_sync_status(
+					$episode->ID,
+					Sync_Status::SYNC_STATUS_SYNCING
+				);
 			}
 		}
 	}

@@ -89,8 +89,6 @@ class Ajax_Handler {
 
 				$response = $this->castos_handler->trigger_podcast_sync( $podcast_id );
 
-				do_action( 'ssp_triggered_podcast_sync', $podcast_id, $response );
-
 				if ( isset( $response['code'] ) && in_array( $response['code'], array( 200, 409 ) ) ) {
 					$podcast_status['status'] = Sync_Status::SYNC_STATUS_SYNCING;
 					$podcast_status['title']  = __( 'Syncing', 'seriously-simple-podcasting' );
@@ -100,6 +98,8 @@ class Ajax_Handler {
 					$podcast_status['title']  = __( 'Failed', 'seriously-simple-podcasting' );
 					$has_errors               = true;
 				}
+
+				do_action( 'ssp_triggered_podcast_sync', $podcast_id, $response, $podcast_status['status'] );
 
 				$msg = isset( $response['error'] ) ? $response['error'] : '';
 

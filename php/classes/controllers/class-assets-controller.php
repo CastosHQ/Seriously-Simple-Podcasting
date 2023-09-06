@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
+use SeriouslySimplePodcasting\Traits\URL_Helper;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 // Exit if accessed directly.
@@ -18,6 +19,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Assets_Controller {
 
 	use Useful_Variables;
+	use URL_Helper;
 
 
 	public function __construct() {
@@ -162,14 +164,5 @@ class Assets_Controller {
 		       $this->is_ssp_admin_page() ||
 		       ( in_array( 'post', $ssp ) && 'edit.php' === $hook ) ||
 		       ( 'term.php' === $hook && Series_Handler::TAXONOMY === filter_input( INPUT_GET, 'taxonomy' ) );
-	}
-
-	/**
-	 * Checks if it's an SSP admin page or not
-	 *
-	 * @return bool
-	 */
-	protected function is_ssp_admin_page() {
-		return SSP_CPT_PODCAST === filter_input( INPUT_GET, 'post_type' );
 	}
 }

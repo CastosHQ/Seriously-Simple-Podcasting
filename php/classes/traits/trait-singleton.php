@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Singleton Trait
  *
- * @author Sergey Zakharchenko
+ * @author Sergiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * @since 2.9.3
  */

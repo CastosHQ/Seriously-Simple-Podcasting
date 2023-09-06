@@ -13,10 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Singleton Trait
  * Moved this code from the parent Controller class.
  *
- * Todo:
- * Now we can easily get rid of passing $file and $variable parameters in each controller class.
- *
- * @author Sergey Zakharchenko
+ * @author Sergiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * @since 2.9.3
  */

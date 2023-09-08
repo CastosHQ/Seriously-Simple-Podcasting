@@ -111,7 +111,7 @@ class Ajax_Handler {
 					$msg = __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
 				}
 
-				$msg_template = _x('%s: %s', 'podcast-sync-error-message','seriously-simple-podcasting');
+				$msg_template = _x( '%s: %s', 'podcast-sync-error-message', 'seriously-simple-podcasting' );
 
 				$podcast_status['msg'] = $msg ? sprintf( $msg_template, $this->get_podcast_name( $podcast_id ), $msg ) : '';
 
@@ -120,7 +120,10 @@ class Ajax_Handler {
 
 			// We use SYNC_STATUS_ constants for both episode sync statuses and podcast sync statuses. Might be changed in the future.
 			$msgs = array(
-				Sync_Status::SYNC_STATUS_SUCCESS             => __( 'Successfully started the sync process', 'seriously-simple-podcasting' ),
+				Sync_Status::SYNC_STATUS_SUCCESS             => __(
+					'Seriously Simple Podcasting is updating episode data to your Castos account. You can refresh this page to view the updated status in a few minutes.',
+					'seriously-simple-podcasting'
+				),
 				Sync_Status::SYNC_STATUS_SUCCESS_WITH_ERRORS => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
 				Sync_Status::SYNC_STATUS_FAILED              => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
 			);
@@ -135,7 +138,7 @@ class Ajax_Handler {
 				'podcasts' => $podcast_statuses
 			);
 
-			if( Sync_Status::SYNC_STATUS_SUCCESS === $results['status'] ){
+			if ( Sync_Status::SYNC_STATUS_SUCCESS === $results['status'] ) {
 				wp_send_json_success( $results );
 			} else {
 				wp_send_json_error( $results );

@@ -35,7 +35,6 @@ class Admin_Notifications_Handler implements Service {
 	const NOTICE_API_EPISODE_ERROR = 'api_episode_error';
 	const NOTICE_API_EPISODE_SUCCESS = 'api_episode_success';
 	const NOTICE_NGINX_ERROR = 'nginx_error';
-	const NOTICE_IS_SYNCING = 'is_syncing';
 
 	/**
 	 * Notice types
@@ -891,12 +890,6 @@ class Admin_Notifications_Handler implements Service {
 					'seriously-simple-podcasting'
 				), esc_url( 'https://support.castos.com/article/298-bypass-rules-for-nginx-hosted-websites' ) ),
 				'type' => self::ERROR,
-			),
-			self::NOTICE_IS_SYNCING          => array(
-				'msg'  => __(
-					"Seriously Simple Podcasting is updating episode data to your Castos account. You can refresh this page to view the updated status in a few minutes.",
-				),
-				'type' => self::INFO,
 			),
 		);
 

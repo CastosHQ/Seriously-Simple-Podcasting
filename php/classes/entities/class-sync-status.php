@@ -14,8 +14,8 @@ namespace SeriouslySimplePodcasting\Entities;
  */
 class Sync_Status extends Abstract_Entity {
 
-	const SYNC_STATUS_SUCCESS = 'success';
-	const SYNC_STATUS_SUCCESS_WITH_ERRORS = 'success_with_errors';
+	const SYNC_STATUS_SYNCED = 'synced';
+	const SYNC_STATUS_SYNCED_WITH_ERRORS = 'synced_with_errors';
 	const SYNC_STATUS_FAILED = 'failed';
 	const SYNC_STATUS_SYNCING = 'syncing';
 	const SYNC_STATUS_NONE = 'none';
@@ -55,9 +55,9 @@ class Sync_Status extends Abstract_Entity {
 	 */
 	public static function get_available_sync_statuses() {
 		$statuses = array(
-			self::SYNC_STATUS_SUCCESS => array(
-				'status'  => self::SYNC_STATUS_SUCCESS,
-				'title'   => __( 'Success', 'seriously-simple-podcasting' ),
+			self::SYNC_STATUS_SYNCED => array(
+				'status'  => self::SYNC_STATUS_SYNCED,
+				'title'   => __( 'Synced', 'seriously-simple-podcasting' ),
 				'message' => __( 'Sync with Castos complete.', 'seriously-simple-podcasting' ),
 			),
 			self::SYNC_STATUS_FAILED  => array(
@@ -75,8 +75,8 @@ class Sync_Status extends Abstract_Entity {
 				'title'   => __( 'Not synced', 'seriously-simple-podcasting' ),
 				'message' => __( 'Not synced yet', 'seriously-simple-podcasting' ),
 			),
-			self::SYNC_STATUS_SUCCESS_WITH_ERRORS => array(
-				'status'  => self::SYNC_STATUS_SUCCESS_WITH_ERRORS,
+			self::SYNC_STATUS_SYNCED_WITH_ERRORS => array(
+				'status'  => self::SYNC_STATUS_SYNCED_WITH_ERRORS,
 				'title'   => __( 'Completed', 'seriously-simple-podcasting' ),
 				'message' => __( 'Completed with errors.', 'seriously-simple-podcasting' ),
 			),

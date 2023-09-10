@@ -716,7 +716,7 @@ class Podcast_Post_Types_Controller {
 
 			// if uploading was scheduled before, lets unschedule it
 			delete_post_meta( $id, 'podmotor_schedule_upload' );
-			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_SUCCESS );
+			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_SYNCED );
 			$this->episode_repository->delete_sync_error( $post->ID );
 		} else {
 			// schedule uploading with a cronjob

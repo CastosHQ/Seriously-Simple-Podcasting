@@ -173,7 +173,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 			$full_success = ! empty( $new_data['file']['id'] ) && ! empty( $new_data['file']['url'] ) && ! empty( $new_data['episode']['id'] );
 
-			$sync_status = $full_success ? Sync_Status::SYNC_STATUS_SUCCESS : Sync_Status::SYNC_STATUS_FAILED;
+			$sync_status = $full_success ? Sync_Status::SYNC_STATUS_SYNCED : Sync_Status::SYNC_STATUS_FAILED;
 
 			$this->episode_repository->update_episode_sync_status( $episode_id, $sync_status );
 

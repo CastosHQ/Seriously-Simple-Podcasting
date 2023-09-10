@@ -339,7 +339,7 @@ class Episode_Repository implements Service {
 
 		// If there is a status let's return it.
 		if ( $status && array_key_exists( $status, Sync_Status::get_available_sync_statuses() ) ) {
-			if ( Sync_Status::SYNC_STATUS_SUCCESS === $status && ( ! $file_id || ! $castos_episode_id ) ) {
+			if ( Sync_Status::SYNC_STATUS_SYNCED === $status && ( ! $file_id || ! $castos_episode_id ) ) {
 				$status = Sync_Status::SYNC_STATUS_NONE;
 			}
 
@@ -348,7 +348,7 @@ class Episode_Repository implements Service {
 
 		// Otherwise just guess the status
 		return ( $file_id && $castos_episode_id ) ?
-			new Sync_Status( Sync_Status::SYNC_STATUS_SUCCESS ) :
+			new Sync_Status( Sync_Status::SYNC_STATUS_SYNCED ) :
 			new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
 	}
 

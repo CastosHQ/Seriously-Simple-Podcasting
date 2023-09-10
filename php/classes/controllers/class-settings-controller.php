@@ -209,7 +209,7 @@ class Settings_Controller {
 			}
 		}
 
-		return new Sync_Status( Sync_Status::SYNC_STATUS_SUCCESS );
+		return new Sync_Status( Sync_Status::SYNC_STATUS_SYNCED );
 	}
 
 	/**
@@ -221,8 +221,8 @@ class Settings_Controller {
 		$map    = array(
 			'none'                  => Sync_Status::SYNC_STATUS_NONE,
 			'in_progress'           => Sync_Status::SYNC_STATUS_SYNCING,
-			'completed'             => Sync_Status::SYNC_STATUS_SUCCESS,
-			'completed_with_errors' => Sync_Status::SYNC_STATUS_SUCCESS_WITH_ERRORS,
+			'completed'             => Sync_Status::SYNC_STATUS_SYNCED,
+			'completed_with_errors' => Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS,
 			'failed'                => Sync_Status::SYNC_STATUS_FAILED,
 		);
 		$status = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );

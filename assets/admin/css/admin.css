@@ -303,11 +303,11 @@ textarea#episode_embed_code {
       width: 16px;
       height: 16px;
       background-image: url(../img/status-success.svg); }
-  .ssp-sync-label.failed {
+  .ssp-sync-label.failed, .ssp-sync-label.synced_with_errors {
     background: var(--yellow-100, #FEF8D7);
     color: #AF6A09;
     border: 1px solid #e2cccc; }
-    .ssp-sync-label.failed:before {
+    .ssp-sync-label.failed:before, .ssp-sync-label.synced_with_errors:before {
       left: 4px;
       top: 4px;
       width: 17px;

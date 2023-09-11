@@ -16,6 +16,7 @@ if ( $status->error ) {
 $classes = ! empty( $classes ) ? $classes : $status->status;
 if ( ! empty( $is_full_label ) ) {
 	$classes .= ' ssp-full-label';
+	$tooltip .= PHP_EOL . $status->message;
 }
 ?>
 <div class="ssp-sync-label <?php echo esc_attr( $classes ) ?>" title="<?php echo esc_html( $tooltip ) ?>">

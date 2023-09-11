@@ -73,7 +73,7 @@ class Sync_Status extends Abstract_Entity {
 			self::SYNC_STATUS_NONE                => array(
 				'status'  => self::SYNC_STATUS_NONE,
 				'title'   => __( 'Not synced', 'seriously-simple-podcasting' ),
-				'message' => __( 'Not synced yet', 'seriously-simple-podcasting' ),
+				'message' => __( 'Not synced yet.', 'seriously-simple-podcasting' ),
 			),
 			self::SYNC_STATUS_SYNCED_WITH_ERRORS => array(
 				'status'  => self::SYNC_STATUS_SYNCED_WITH_ERRORS,

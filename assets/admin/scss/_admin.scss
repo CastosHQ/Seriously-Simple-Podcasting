@@ -408,7 +408,7 @@ textarea#episode_embed_code {
 		}
 	}
 
-	&.failed {
+	&.failed, &.synced_with_errors {
 		background: var(--yellow-100, #FEF8D7);
 		color: #AF6A09;
 		border: 1px solid #e2cccc;

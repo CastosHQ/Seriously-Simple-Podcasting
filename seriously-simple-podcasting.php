@@ -1,14 +1,14 @@
 <?php
 /**
  * Plugin Name: Seriously Simple Podcasting
- * Version: 2.22.0
+ * Version: 2.22.1
  * Plugin URI: https://castos.com/seriously-simple-podcasting/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Description: Podcasting the way it's meant to be. No mess, no fuss - just you and your content taking over the world.
  * Author: Castos
  * Author URI: https://castos.com/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019
  * Requires PHP: 5.6
  * Requires at least: 4.4
- * Tested up to: 6.2
+ * Tested up to: 6.3
  *
  * Text Domain: seriously-simple-podcasting
  *
@@ -23,7 +23,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'SSP_VERSION', '2.22.0' );
+define( 'SSP_VERSION', '2.22.1' );
 define( 'SSP_PLUGIN_FILE', __FILE__ );
 define( 'SSP_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 define( 'SSP_PLUGIN_PATH', plugin_dir_path( __FILE__ ) );

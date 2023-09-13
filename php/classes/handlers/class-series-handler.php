@@ -27,6 +27,7 @@ class Series_Handler implements Service {
 		$this->notices_handler = $notices_handler;
 		$taxonomy = self::TAXONOMY;
 		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
+		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_sync_status' ), 10, 3 );
 	}
 
 	/**
@@ -91,6 +92,18 @@ class Series_Handler implements Service {
 		}
 
 		return true;
+	}
+
+	/**
+	 * @param int $podcast_id
+	 * @param array $response
+	 * @param string $status
+	 *
+	 * @return void
+	 */
+	public function update_podcast_sync_status( $podcast_id, $response, $status ) {
+
+		$this->update_sync_status( $podcast_id, $status );
 	}
 
 	/**

@@ -63,7 +63,7 @@ class Sync_Status extends Abstract_Entity {
 			self::SYNC_STATUS_FAILED  => array(
 				'status'  => self::SYNC_STATUS_FAILED,
 				'title'   => __( 'Failed', 'seriously-simple-podcasting' ),
-				'message' => __( 'Episode did not sync with Castos.', 'seriously-simple-podcasting' ),
+				'message' => __( 'Could not sync with Castos.', 'seriously-simple-podcasting' ),
 			),
 			self::SYNC_STATUS_SYNCING => array(
 				'status'  => self::SYNC_STATUS_SYNCING,

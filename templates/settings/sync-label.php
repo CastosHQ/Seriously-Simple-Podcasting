@@ -21,7 +21,7 @@ if ( ! empty( $is_full_label ) ) {
 ?>
 <div class="ssp-sync-label <?php echo esc_attr( $classes ) ?>" title="<?php echo esc_html( $tooltip ) ?>">
 	<?php if ( ! empty( $is_full_label ) ): ?>
-		<?php echo esc_html( $status->title ) ?>
+	<span><?php echo esc_html( $status->title ) ?></span>
 	<?php endif ?>
 	<?php if ( ! empty( $link ) ) : ?>
 		<a href="<?php echo esc_attr( $link ) ?>"></a>

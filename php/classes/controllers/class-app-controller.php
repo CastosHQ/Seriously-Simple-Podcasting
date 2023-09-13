@@ -262,11 +262,11 @@ class App_Controller {
 		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
 
 		$this->assets_controller = new Assets_Controller();
+		$this->series_handler = new Series_Handler( $this->admin_notices_handler );
 
 		if ( is_admin() ) {
 			$this->admin_notices_handler->bootstrap();
 			$this->settings_renderer = Settings_Renderer::instance();
-			$this->series_handler = new Series_Handler( $this->admin_notices_handler );
 
 			global $ssp_settings, $ssp_options;
 			$ssp_settings = $this->settings_controller = new Settings_Controller(
@@ -283,7 +283,8 @@ class App_Controller {
 			$this->castos_handler,
 			$this->admin_notices_handler,
 			$this->podping_handler,
-			$this->episode_repository
+			$this->episode_repository,
+			$this->series_handler
 		);
 
 		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );

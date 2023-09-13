@@ -7,6 +7,7 @@ use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
+use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -54,22 +55,32 @@ class Podcast_Post_Types_Controller {
 	protected $episode_repository;
 
 	/**
+	 * @var Series_Handler
+	 */
+	protected $series_handler;
+
+	/**
 	 * @param CPT_Podcast_Handler $cpt_podcast_handler
 	 * @param Castos_Handler $castos_handler
 	 * @param Admin_Notifications_Handler $admin_notices_handler
+	 * @param Podping_Handler $podping_handler
+	 * @param Episode_Repository $episode_repository
+	 * @param Series_Handler $series_handler
 	 */
 	public function __construct(
 		$cpt_podcast_handler,
 		$castos_handler,
 		$admin_notices_handler,
 		$podping_handler,
-		$episode_repository
+		$episode_repository,
+		$series_handler
 	) {
 		$this->cpt_podcast_handler   = $cpt_podcast_handler;
 		$this->castos_handler        = $castos_handler;
 		$this->admin_notices_handler = $admin_notices_handler;
 		$this->podping_handler       = $podping_handler;
 		$this->episode_repository    = $episode_repository;
+		$this->series_handler        = $series_handler;
 
 		$this->init_useful_variables();
 		$this->register_hooks_and_filters();
@@ -112,6 +123,8 @@ class Podcast_Post_Types_Controller {
 
 		// Change the podcast episode statuses to sending after the sync has been triggered.
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_episodes_status' ), 10, 2 );
+
+		add_action( 'ssp_check_episode_sync_status', array( $this, 'maybe_update_sync_status' ), 10, 2 );
 	}
 
 	public function add_custom_columns(){
@@ -131,6 +144,35 @@ class Podcast_Post_Types_Controller {
 	public function register_post_type() {
 		$this->cpt_podcast_handler->register_post_type();
 		$this->cpt_podcast_handler->register_taxonomies();
+	}
+
+	/**
+	 * @param int $episode_id
+	 * @param string $episode_status
+	 *
+	 * @return void
+	 * @throws \Exception
+	 */
+	public function maybe_update_sync_status( $episode_id, $episode_status ) {
+		$series_id      = ssp_get_episode_series_id( $episode_id );
+		$podcast_status = $this->series_handler->get_sync_status( $series_id );
+		$syncing        = Sync_Status::SYNC_STATUS_SYNCING;
+
+		// First, let's check if the podcast is still syncing and maybe update the status
+		if ( $syncing === $podcast_status ) {
+			$sync_status = $this->castos_handler->get_podcast_sync_status( $series_id );
+			if ( $syncing != $sync_status->status ) {
+				$podcast_status = $sync_status->status;
+				$this->series_handler->update_sync_status( $series_id, $podcast_status );
+			}
+		}
+
+		if ( $syncing == $episode_status && $podcast_status && $syncing != $podcast_status ) {
+			// If the podcast status is synced_with_errors, and episode status is syncing, it's failed.
+			$new_episode_status = Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS === $podcast_status ?
+				Sync_Status::SYNC_STATUS_FAILED : $podcast_status;
+			$this->episode_repository->update_episode_sync_status( $episode_id, $new_episode_status );
+		}
 	}
 
 	/**

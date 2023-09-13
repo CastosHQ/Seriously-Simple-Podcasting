@@ -143,7 +143,7 @@ class Settings_Controller {
 		), 10, 2 );
 
 		// Add podcasts sync status to the sync settings
-		add_filter( 'ssp_field_data', array( $this, 'add_podcasts_sync_status' ), 10, 2 );
+		add_filter( 'ssp_field_data', array( $this, 'provide_podcasts_sync_status' ), 10, 2 );
 
 		$this->generate_dynamic_color_scheme();
 	}
@@ -153,8 +153,9 @@ class Settings_Controller {
 	 * @param $args
 	 *
 	 * @return array
+	 * @throws \Exception
 	 */
-	public function add_podcasts_sync_status( $data, $args ) {
+	public function provide_podcasts_sync_status( $data, $args ) {
 		if ( isset( $args['field']['id'] ) && 'podcasts_sync' === $args['field']['id'] ) {
 			$data = (array) $data;
 			$res = $this->castos_handler->get_podcasts();
@@ -178,7 +179,7 @@ class Settings_Controller {
 					continue;
 				}
 
-				$status = $this->get_podcast_sync_status( $podcast );
+				$status = $this->castos_handler->retrieve_sync_status_by_podcast_data( $podcast );
 
 				// If status is none, let's try to guess the sync status
 				if( Sync_Status::SYNC_STATUS_NONE === $status->status ){
@@ -210,27 +211,6 @@ class Settings_Controller {
 		}
 
 		return new Sync_Status( Sync_Status::SYNC_STATUS_SYNCED );
-	}
-
-	/**
-	 * @param array $castos_podcast
-	 *
-	 * @return Sync_Status
-	 */
-	protected function get_podcast_sync_status( $castos_podcast ) {
-		$map    = array(
-			'none'                  => Sync_Status::SYNC_STATUS_NONE,
-			'in_progress'           => Sync_Status::SYNC_STATUS_SYNCING,
-			'completed'             => Sync_Status::SYNC_STATUS_SYNCED,
-			'completed_with_errors' => Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS,
-			'failed'                => Sync_Status::SYNC_STATUS_FAILED,
-		);
-		$status = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
-		if ( isset( $castos_podcast['ssp_import_status'] ) && array_key_exists( $castos_podcast['ssp_import_status'], $map ) ) {
-			$status = new Sync_Status( $map[ $castos_podcast['ssp_import_status'] ] );
-		}
-
-		return $status;
 	}
 
 	protected function generate_dynamic_color_scheme() {

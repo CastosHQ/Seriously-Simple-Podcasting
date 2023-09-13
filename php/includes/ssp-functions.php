@@ -7,6 +7,7 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
+use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 
@@ -985,9 +986,9 @@ if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
 	 */
 	function ssp_get_episode_series_id( $episode_id ) {
 		$series_id = 0;
-		$series    = wp_get_post_terms( $episode_id, 'series' );
+		$series    = wp_get_post_terms( $episode_id, Series_Handler::TAXONOMY );
 
-		if ( empty( $series ) ) {
+		if ( empty( $series ) || is_wp_error( $series ) ) {
 			return $series_id;
 		}
 		$series_ids = wp_list_pluck( $series, 'term_id' );

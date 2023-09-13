@@ -39,27 +39,6 @@ class Episode_Repository implements Service {
 		$this->db = $wpdb;
 	}
 
-	/**
-	 * Return a series id for an episode
-	 *
-	 * @param $id
-	 *
-	 * @return int
-	 * @todo check if there is a global function for this, and use it.
-	 */
-	public function get_series_id( $id ) {
-		$series_id = 0;
-		$series    = get_the_terms( $id, 'series' );
-
-		/**
-		 * In some instances, this could return a WP_Error object
-		 */
-		if ( ! is_wp_error( $series ) && $series ) {
-			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : 0;
-		}
-
-		return $series_id;
-	}
 
 	/**
 	 * @return \WP_Post[]
@@ -183,8 +162,8 @@ class Episode_Repository implements Service {
 	 */
 	public function get_feed_url( $id ) {
 		$feed_series = 'default';
-		$series_id   = $this->get_series_id( $id );
-		if ( ! empty( $series_id ) ) {
+		$series_id   = $this->get_episode_series_id( $id );
+		if ( $series_id ) {
 			$series      = get_term_by( 'id', $series_id, 'series' );
 			$feed_series = $series->slug;
 		}
@@ -218,17 +197,7 @@ class Episode_Repository implements Service {
 	 * @return int|null
 	 */
 	public function get_episode_series_id( $episode_id ) {
-		$series_id = null;
-		$series    = get_the_terms( $episode_id, 'series' );
-
-		/**
-		 * In some instances, this could return a WP_Error object
-		 */
-		if ( ! is_wp_error( $series ) && $series ) {
-			$series_id = ( isset( $series[0] ) ) ? $series[0]->term_id : null;
-		}
-
-		return $series_id;
+		return ssp_get_episode_series_id( $episode_id );
 	}
 
 	/**
@@ -336,6 +305,11 @@ class Episode_Repository implements Service {
 		$status            = $this->get_episode_sync_status_option( $post_id );
 		$file_id           = $this->get_podmotor_file_id( $post_id );
 		$castos_episode_id = $this->get_podmotor_episode_id( $post_id );
+
+		if( Sync_Status::SYNC_STATUS_SYNCING === $status ){
+			do_action( 'ssp_check_episode_sync_status', $post_id, $status );
+			$status = $this->get_episode_sync_status_option( $post_id );
+		}
 
 		// If there is a status let's return it.
 		if ( $status && array_key_exists( $status, Sync_Status::get_available_sync_statuses() ) ) {

@@ -147,7 +147,7 @@ jQuery(document).ready(function($) {
 			syncClass = '.js-sync-podcast',
 			changeStatus = function ($el, status, title = '') {
 				var $statusEl = $el.closest(syncClass).find('.js-sync-status');
-				$statusEl.removeClass('success none sending failed').addClass(status);
+				$statusEl.removeClass('synced_with_errors success none sending failed').addClass(status);
 				if(title){
 					$statusEl.find('span').html(title);
 				}

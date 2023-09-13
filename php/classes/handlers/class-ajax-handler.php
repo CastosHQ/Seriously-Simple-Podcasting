@@ -120,7 +120,7 @@ class Ajax_Handler {
 
 			// We use SYNC_STATUS_ constants for both episode sync statuses and podcast sync statuses. Might be changed in the future.
 			$msgs = array(
-				Sync_Status::SYNC_STATUS_SYNCED             => __(
+				Sync_Status::SYNC_STATUS_SYNCING             => __(
 					'Seriously Simple Podcasting is updating episode data to your Castos account. You can refresh this page to view the updated status in a few minutes.',
 					'seriously-simple-podcasting'
 				),
@@ -129,7 +129,7 @@ class Ajax_Handler {
 			);
 
 			$results_status = ! $has_errors ?
-				Sync_Status::SYNC_STATUS_SYNCED :
+				Sync_Status::SYNC_STATUS_SYNCING :
 				( $has_syncing ? Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS : Sync_Status::SYNC_STATUS_FAILED );
 
 			$results = array(
@@ -138,7 +138,7 @@ class Ajax_Handler {
 				'podcasts' => $podcast_statuses
 			);
 
-			if ( Sync_Status::SYNC_STATUS_SYNCED === $results['status'] ) {
+			if ( Sync_Status::SYNC_STATUS_SYNCING === $results['status'] ) {
 				wp_send_json_success( $results );
 			} else {
 				wp_send_json_error( $results );

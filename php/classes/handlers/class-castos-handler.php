@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Entities\API_File_Data;
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
@@ -46,6 +47,18 @@ class Castos_Handler implements Service {
 	 * @var Feed_Handler
 	 * */
 	protected $feed_handler;
+
+
+	/**
+	 * @var Sync_Status[] $cached_podcast_statuses
+	 * */
+	protected $cached_podcast_statuses;
+
+	/**
+	 * @var array $cached_podcasts_response
+	 * */
+	protected $cached_podcasts_response;
+
 
 	/**
 	 * Castos_Handler constructor.
@@ -493,6 +506,10 @@ class Castos_Handler implements Service {
 	}
 
 	public function get_podcasts() {
+		if ( $this->cached_podcasts_response ) {
+			return $this->cached_podcasts_response;
+		}
+
 		$this->setup_default_response();
 
 		$api_url = SSP_CASTOS_APP_URL . 'api/v2/podcasts';
@@ -524,7 +541,57 @@ class Castos_Handler implements Service {
 
 		$this->update_response( 'data', $podcasts_data );
 
+		$this->cached_podcasts_response = $this->response;
+
 		return $this->response;
+	}
+
+	/**
+	 * @param $series_id
+	 *
+	 * @return Sync_Status
+	 * @throws \Exception
+	 */
+	public function get_podcast_sync_status( $series_id ) {
+		if ( ! empty( $this->cached_podcast_statuses[ $series_id ] ) ) {
+			return $this->cached_podcast_statuses[ $series_id ];
+		}
+		$status = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
+		$res    = $this->get_podcasts();
+		if ( ! empty( $res['data']['podcast_list'] ) ) {
+			foreach ( $res['data']['podcast_list'] as $podcast ) {
+				if ( isset( $podcast['series_id'] ) && $podcast['series_id'] === $series_id ) {
+					$status = $this->retrieve_sync_status_by_podcast_data( $podcast );
+					break;
+				}
+			}
+		}
+		$this->cached_podcast_statuses[ $series_id ] = $status;
+
+		return $status;
+	}
+
+
+	/**
+	 * @param array $castos_podcast
+	 *
+	 * @return Sync_Status
+	 * @throws \Exception
+	 */
+	public function retrieve_sync_status_by_podcast_data( $castos_podcast ) {
+		$map    = array(
+			'none'                  => Sync_Status::SYNC_STATUS_NONE,
+			'in_progress'           => Sync_Status::SYNC_STATUS_SYNCING,
+			'completed'             => Sync_Status::SYNC_STATUS_SYNCED,
+			'completed_with_errors' => Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS,
+			'failed'                => Sync_Status::SYNC_STATUS_FAILED,
+		);
+		$status = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
+		if ( isset( $castos_podcast['ssp_import_status'] ) && array_key_exists( $castos_podcast['ssp_import_status'], $map ) ) {
+			$status = new Sync_Status( $map[ $castos_podcast['ssp_import_status'] ] );
+		}
+
+		return $status;
 	}
 
 

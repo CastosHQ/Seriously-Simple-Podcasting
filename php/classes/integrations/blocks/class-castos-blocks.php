@@ -220,10 +220,16 @@ class Castos_Blocks {
 	 */
 	public function register_castos_blocks() {
 
+		$dependencies = $this->asset_file['dependencies'];
+
+		// Dependency wp-edit-post is needed only for PostPublishPanel block, and it leads to a warning on widgets page.
+		// So, we can safely remove it since it's automatically included on post edit pages.
+		$dependencies = array_diff( $dependencies, array( 'wp-edit-post' ) );
+
 		wp_register_script(
 			'ssp-block-script',
 			esc_url( SSP_PLUGIN_URL . 'build/index.js' ),
-			$this->asset_file['dependencies'],
+			$dependencies,
 			$this->asset_file['version'],
 			true
 		);

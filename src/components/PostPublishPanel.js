@@ -4,9 +4,15 @@ import { __ } from '@wordpress/i18n';
 
 class PostPublishPanel extends Component {
 	render() {
-		let sspPostTypes = sspAdmin.sspPostTypes, // Todo: investigate how to get rid of a global variable here
+		const sspPostTypes = sspAdmin.sspPostTypes, // Todo: investigate how to get rid of a global variable here
 			isCastosUser = sspAdmin.isCastosUser,
-			currentPostType = wp.data.select('core/editor').getCurrentPostType();
+			editor = wp.data.select('core/editor');
+
+		if (!editor) {
+			return;
+		}
+
+		const currentPostType = editor.getCurrentPostType();
 
 		if (!sspPostTypes instanceof Array || !sspPostTypes.includes(currentPostType) || isCastosUser) {
 			return;

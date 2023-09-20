@@ -159,12 +159,10 @@ class Podcast_Post_Types_Controller {
 		$syncing        = Sync_Status::SYNC_STATUS_SYNCING;
 
 		// First, let's check if the podcast is still syncing and maybe update the status
-		if ( $syncing === $podcast_status ) {
+		if ( $syncing === $podcast_status || ! $podcast_status ) {
 			$sync_status = $this->castos_handler->get_podcast_sync_status( $series_id );
-			if ( $syncing != $sync_status->status ) {
-				$podcast_status = $sync_status->status;
-				$this->series_handler->update_sync_status( $series_id, $podcast_status );
-			}
+			$podcast_status = $sync_status->status;
+			$this->series_handler->update_sync_status( $series_id, $podcast_status );
 		}
 
 		if ( $syncing == $episode_status && $podcast_status && $syncing != $podcast_status ) {
@@ -180,7 +178,7 @@ class Podcast_Post_Types_Controller {
 	 * @param array $response
 	 */
 	public function update_podcast_episodes_status( $podcast_id, $response ) {
-		if( isset( $response['code'] ) && 200 === $response['code'] ){
+		if ( isset( $response['code'] ) && 200 === $response['code'] ) {
 			$episodes = $this->episode_repository->get_podcast_episodes( $podcast_id );
 
 			foreach ( $episodes as $episode ) {

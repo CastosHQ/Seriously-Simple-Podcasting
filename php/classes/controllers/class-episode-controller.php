@@ -14,7 +14,7 @@ use WP_Query;
  *
  * @deprecated Almost all episode-related functions now in Episode_Repository or Frontend_Controller.
  * So lets just get rid of this class.
- * @todo: move functions to Episode_Repository, rest - to Frontend Controller
+ * @todo: move functions to Episode_Repository, rest - to Podcast Post Types Controller
  */
 class Episode_Controller {
 

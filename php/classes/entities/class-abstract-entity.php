@@ -1,16 +1,21 @@
 <?php
+
 /**
  * Abstract Entity.
  *
  * @package SeriouslySimplePodcasting
+ * @since 2.23.0
  * */
 
 namespace SeriouslySimplePodcasting\Entities;
 
+// Exit if accessed directly.
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
 /**
- * Class Entity.
  * Abstract entity class.
- * @since 2.23.0
  */
 abstract class Abstract_Entity {
     /**
@@ -54,6 +59,4 @@ abstract class Abstract_Entity {
 
         return $val;
     }
-
 }
-

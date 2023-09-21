@@ -46,7 +46,7 @@ class Log_Helper {
 	/**
 	 * Simple Logging function
 	 *
-	 * @param $message string debug message
+	 * @param $message mixed debug message
 	 * @param $data mixed debug data
 	 *
 	 * @return bool

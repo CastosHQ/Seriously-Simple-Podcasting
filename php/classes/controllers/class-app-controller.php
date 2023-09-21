@@ -112,6 +112,11 @@ class App_Controller {
 	 * */
 	public $rest_controller;
 
+	/**
+	 * @var Ads_Controller
+	 * */
+	public $ads_controller;
+
 
 	// Handlers.
 
@@ -288,6 +293,8 @@ class App_Controller {
 		);
 
 		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );
+
+		$this->ads_controller = new Ads_Controller( $this->castos_handler );
 
 
 		// todo: further refactoring - get rid of global here
@@ -665,7 +672,7 @@ HTML;
 			return;
 		}
 		// push the series to Castos as a Podcast
-		$series_data              = $this->castos_handler->get_series_data_for_castos( $term_id );
+		$series_data              = $this->castos_handler->generate_series_data_for_castos( $term_id );
 		$series_data['series_id'] = $term_id;
 		$this->castos_handler->update_podcast_data( $series_data );
 	}

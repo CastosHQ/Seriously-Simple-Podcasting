@@ -1014,7 +1014,7 @@ if ( ! function_exists( 'get_series_data_for_castos' ) ) {
 		 * */
 		$castos_handler = ssp_get_service( 'castos_handler' );
 
-		return $castos_handler->get_series_data_for_castos( $series_id );
+		return $castos_handler->generate_series_data_for_castos( $series_id );
 	}
 }
 

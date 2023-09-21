@@ -397,7 +397,7 @@ $subcategory_options = array(
 	),
 );
 
-$feed_details_fields = array(
+$feed_fields = array(
 	array(
 		'id'          => 'data_title',
 		'label'       => __( 'Title', 'seriously-simple-podcasting' ),
@@ -557,11 +557,11 @@ $feed_details_fields = array(
 		'callback'    => 'wp_strip_all_tags',
 	),
 	array(
-		'id'          => 'funding',
-		'label'       => __( 'Podcast funding', 'seriously-simple-podcasting' ),
-		'type'        => 'text_multi',
-		'class'       => 'large-text',
-		'fields'      => array(
+		'id'     => 'funding',
+		'label'  => __( 'Podcast funding', 'seriously-simple-podcasting' ),
+		'type'   => 'text_multi',
+		'class'  => 'large-text',
+		'fields' => array(
 			array(
 				'id'          => 'title',
 				'type'        => 'text',
@@ -582,11 +582,11 @@ $feed_details_fields = array(
 		),
 	),
 	array(
-		'id'          => 'podcast_value',
-		'label'       => __( 'Value4Value', 'seriously-simple-podcasting' ),
-		'type'        => 'text_multi',
-		'class'       => 'large-text',
-		'fields'      => array(
+		'id'     => 'podcast_value',
+		'label'  => __( 'Value4Value', 'seriously-simple-podcasting' ),
+		'type'   => 'text_multi',
+		'class'  => 'large-text',
+		'fields' => array(
 			array(
 				'id'          => 'recipient',
 				'type'        => 'text',
@@ -713,14 +713,14 @@ $feed_details_fields = array(
 );
 
 $private_podcast = array(
-	'id'          => 'is_podcast_private',
-	'label'       => __( 'Set Podcast To Private', 'seriously-simple-podcasting' ),
-	'type'        => 'radio',
-	'options'     => array(
+	'id'      => 'is_podcast_private',
+	'label'   => __( 'Set Podcast To Private', 'seriously-simple-podcasting' ),
+	'type'    => 'radio',
+	'options' => array(
 		'yes' => __( 'Yes', 'seriously-simple-podcasting' ),
 		'no'  => __( 'No', 'seriously-simple-podcasting' ),
 	),
-	'default'     => 'no',
+	'default' => 'no',
 );
 
 if ( ! ssp_is_connected_to_castos() ) {
@@ -740,6 +740,6 @@ if ( ! empty( $private_unavailable_descr ) ) {
 	$private_podcast['id'] = 'is_podcast_private_unavailable';
 }
 
-$feed_details_fields[] = $private_podcast;
+$feed_fields[] = $private_podcast;
 
-return $feed_details_fields;
+return apply_filters( 'ssp_feed_fields', $feed_fields );

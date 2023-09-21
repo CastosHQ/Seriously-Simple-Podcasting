@@ -2,8 +2,10 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+
 use SeriouslySimplePodcasting\Entities\API_File_Data;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
+use SeriouslySimplePodcasting\Entities\Episode_Ads;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
@@ -640,19 +642,46 @@ class Castos_Handler implements Service {
 
 
 	/**
+	 * @param $episode_id
+	 *
+	 * @return Episode_Ads
+	 * @throws \Exception
+	 */
+	public function get_episode_ads( $episode_id ) {
+		$this->logger->log( __METHOD__ );
+
+		$cache_key = 'ssp_castos_api_episode_ads_' . $episode_id;
+
+		$ads = wp_cache_get( $cache_key );
+
+		if ( $ads ) {
+			return $ads;
+		}
+
+		$res = $this->send_request( sprintf( 'api/v2/ssp/episodes/%d/file', $episode_id ) );
+
+		$ads = new Episode_Ads( $res );
+
+		wp_cache_add( $cache_key, $ads );
+
+		return $ads;
+	}
+
+
+	/**
 	 * Add single podcast subscriber.
 	 *
 	 * @param int $podcast_id
 	 * @param string $email
 	 * @param string $name
 	 *
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public function add_podcast_subscriber( $podcast_id, $email, $name ) {
 		$this->logger->log( __METHOD__, compact( 'podcast_id', 'email', 'name' ) );
 
 		if ( empty( $podcast_id ) || empty( $email ) ) {
-			throw new Exception( __METHOD__ . ': Wrong arguments!' );
+			throw new \Exception( __METHOD__ . ': Wrong arguments!' );
 		}
 
 		return $this->send_request( 'api/v2/private-subscribers', compact( 'podcast_id', 'email', 'name' ), 'POST' );
@@ -778,7 +807,7 @@ class Castos_Handler implements Service {
 						'podcast_id' => $podcast_id,
 					);
 				}
-				$res = $this->send_request( sprintf( 'api/v2/revoke-private-subscribers' ), compact( 'subscribers' ), 'POST' );
+				$res = $this->send_request( 'api/v2/revoke-private-subscribers', compact( 'subscribers' ), 'POST' );
 
 				if ( ! empty( $res['success'] ) ) {
 					$count += count( $subscribers );
@@ -864,7 +893,9 @@ class Castos_Handler implements Service {
 			return null;
 		}
 
-		$res = (array) json_decode( wp_remote_retrieve_body( $app_response ), true );
+		$res = json_decode( wp_remote_retrieve_body( $app_response ), true );
+		$res = is_array( $res ) ? $res : array();
+
 		if ( isset( $app_response['response'] ) && is_array( $app_response['response'] ) ) {
 			$res = array_merge( $app_response['response'], $res );
 		}
@@ -880,7 +911,7 @@ class Castos_Handler implements Service {
 	 *
 	 * @return array
 	 */
-	public function get_series_data_for_castos( $series_id ) {
+	public function generate_series_data_for_castos( $series_id ) {
 
 		$podcast = array();
 

@@ -44,6 +44,7 @@ class Rest_Api_Controller {
 		$podcast['category2']       = ssp_get_feed_category_output( 2, $series_id );
 		$podcast['category3']       = ssp_get_feed_category_output( 3, $series_id );
 		$podcast['guid']            = get_option( 'ss_podcasting_data_guid', '' );
+		$podcast['ads_enabled']     = 'on' === ssp_get_option( 'enable_ads', 'off' );
 
 		return $podcast;
 	}
@@ -181,6 +182,7 @@ class Rest_Api_Controller {
 
 	/**
 	 * Updates a podcast after a Castos import
+	 * @deprecated
 	 *
 	 * @return array
 	 */

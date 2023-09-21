@@ -1114,6 +1114,18 @@ class Settings_Handler implements Service {
 						'placeholder' => __( 'e.g. 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', 'seriously-simple-podcasting' ),
 						'description' => __( 'Enter your wallet address to accept crypto payment from your listeners.', 'seriously-simple-podcasting' ),
 					),
+					array(
+						'id'          => 'recipient_custom_key',
+						'type'        => 'text',
+						'placeholder' => __( 'e.g. 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', 'seriously-simple-podcasting' ),
+						'description' => __( 'Enter your custom key for the wallet address.', 'seriously-simple-podcasting' ),
+					),
+					array(
+						'id'          => 'recipient_custom_value',
+						'type'        => 'text',
+						'placeholder' => __( 'e.g. 1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa', 'seriously-simple-podcasting' ),
+						'description' => __( 'Enter your custom value for the wallet address.', 'seriously-simple-podcasting' ),
+					),
 				),
 			),
 			array(

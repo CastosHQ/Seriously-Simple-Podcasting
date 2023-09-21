@@ -163,7 +163,7 @@ if ( $stylesheet_url ) {
 
 		if ( $podcast_value && ! empty( $podcast_value['recipient'] ) ) :
 		?><podcast:value type="lightning" method="keysend" suggested="0.00000020000">
-			<podcast:valueRecipient name="podcaster" address="<?php echo esc_attr( $podcast_value['recipient'] ) ?>" split="100" type="node"/>
+			<podcast:valueRecipient name="podcaster" address="<?php echo esc_attr( $podcast_value['recipient'] ) ?>" split="100" type="node" customKey="<?php echo esc_attr( $podcast_value['recipient_custom_key'] ) ?>" customValue="<?php echo esc_attr( $podcast_value['recipient_custom_value'] ) ?>"/>
 		</podcast:value>
 		<?php endif;
 

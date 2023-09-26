@@ -296,10 +296,23 @@ class Episode_Repository implements Service {
 	}
 
 	/**
+	 * @param $post_id
+	 *
+	 * @return Sync_Status
+	 */
+	public function check_episode_sync_status( $post_id ) {
+		$sync_status = $this->get_episode_sync_status( $post_id );
+		$this->update_episode_sync_status( $post_id, $sync_status->status );
+
+		return $sync_status;
+	}
+
+	/**
 	 *
 	 * @param int $post_id
 	 *
 	 * @return Sync_Status
+	 * @throws \Exception
 	 */
 	public function get_episode_sync_status( $post_id ) {
 		$status            = $this->get_episode_sync_status_option( $post_id );

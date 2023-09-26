@@ -864,7 +864,7 @@ class Podcast_Post_Types_Controller {
 				break;
 
 			case 'ssp_sync_status':
-				$status = $this->episode_repository->get_episode_sync_status( $post_id );
+				$status = $this->episode_repository->check_episode_sync_status( $post_id );
 				$link   = get_edit_post_link( $post_id );
 				$value  = ssp_renderer()->fetch( 'settings/sync-label', compact( 'status', 'link' ) );
 				break;

@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 4.4
 Tested up to: 6.3
 Requires PHP: 5.6
-Stable tag: 2.22.1
+Stable tag: 2.23.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.23.0 =
+* 2023-10-02
+* UPDATE SUMMARY: Improved the Castos sync process
+* [UPDATE] Improved the Castos sync process
+* [UPDATE] Settings style improvements
+* [UPDATE] Delete audio file data when the episode is trashed
+* [UPDATE] Updated itunes:explicit tag values
+* [UPDATE] Code refactoring
+* [FIX] Fixed WP assets conflict on widgets page
 
 = 2.22.1 =
 * 2023-09-13

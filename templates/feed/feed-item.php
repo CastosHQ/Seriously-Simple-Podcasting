@@ -209,7 +209,7 @@ $title = esc_html( get_the_title_rss() );
 	<pubDate><?php echo $pub_date; ?></pubDate>
 	<dc:creator><![CDATA[<?php echo $author; ?>]]></dc:creator>
 	<guid isPermaLink="false"><?php the_guid(); ?></guid>
-	<description><![CDATA[<?php echo $description; ?>]]></description>
+	<description><![CDATA[ <?php echo '<img src="' . esc_url( $episode_image ) . '" />'; ?> <?php echo $description; ?>]]></description>
 	<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
 	<?php if ( $keywords ) : ?>
 		<itunes:keywords><?php echo $keywords; ?></itunes:keywords>
@@ -236,10 +236,6 @@ $title = esc_html( get_the_title_rss() );
 	<?php } ?>
 	<?php if ( $episode_image ) { ?>
 		<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
-		<image>
-			<url><?php echo esc_url( $episode_image ); ?></url>
-			<title><?php echo esc_attr( $title ); ?></title>
-		</image>
 	<?php } ?>
 	<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
 	<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>

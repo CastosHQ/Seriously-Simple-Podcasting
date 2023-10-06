@@ -316,10 +316,10 @@ class Feed_Controller extends Controller {
 		}
 		$explicit_option = apply_filters( 'ssp_feed_explicit', $explicit_option, $series_id );
 		if ( $explicit_option && 'on' === $explicit_option ) {
-			$itunes_explicit     = 'yes';
+			$itunes_explicit     = 'true';
 			$googleplay_explicit = 'Yes';
 		} else {
-			$itunes_explicit     = 'clean';
+			$itunes_explicit     = 'false';
 			$googleplay_explicit = 'No';
 		}
 

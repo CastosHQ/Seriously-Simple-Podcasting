@@ -58,7 +58,7 @@ if ( $stylesheet_url ) {
 	<channel>
 		<title><?php echo esc_html( $title ); ?></title>
 		<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml"/>
-		<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $ss_podcasting->home_url, $podcast_series ) ) ?></link>
+		<link><?php echo $feed_link ?></link>
 		<description><?php echo esc_html( $description ); ?></description>
 		<lastBuildDate><?php echo esc_html( mysql2date( 'D, d M Y H:i:s +0000', get_lastpostmodified( 'GMT' ), false ) ); ?></lastBuildDate>
 		<language><?php echo esc_html( $language ); ?></language>
@@ -86,7 +86,7 @@ if ( $stylesheet_url ) {
 			<image>
 				<url><?php echo esc_url( $image ); ?></url>
 				<title><?php echo esc_html( $title ); ?></title>
-				<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $ss_podcasting->home_url, $podcast_series ) ) ?></link>
+				<link><?php echo $feed_link ?></link>
 			</image>
 		<?php }
 		if ( isset( $category1['category'] ) && $category1['category'] ) { ?>

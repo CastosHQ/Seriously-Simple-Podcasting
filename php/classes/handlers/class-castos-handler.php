@@ -5,7 +5,7 @@ namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Entities\API_File_Data;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
-use SeriouslySimplePodcasting\Entities\Episode_Ads;
+use SeriouslySimplePodcasting\Entities\Episode_File_Data;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
@@ -644,10 +644,10 @@ class Castos_Handler implements Service {
 	/**
 	 * @param $episode_id
 	 *
-	 * @return Episode_Ads
+	 * @return Episode_File_Data
 	 * @throws \Exception
 	 */
-	public function get_episode_ads( $episode_id ) {
+	public function get_episode_file_data( $episode_id ) {
 		$this->logger->log( __METHOD__ );
 
 		$cache_key = 'ssp_castos_api_episode_ads_' . $episode_id;
@@ -660,7 +660,7 @@ class Castos_Handler implements Service {
 
 		$res = $this->send_request( sprintf( 'api/v2/ssp/episodes/%d/file', $episode_id ) );
 
-		$ads = new Episode_Ads( $res );
+		$ads = new Episode_File_Data( $res );
 
 		wp_cache_add( $cache_key, $ads );
 

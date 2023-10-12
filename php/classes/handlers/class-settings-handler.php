@@ -205,7 +205,7 @@ class Settings_Handler implements Service {
 	 * @return string
 	 */
 	protected function get_current_feed_option( $option ) {
-		$podcast_id = $this->get_current_feed_settings_podcast_id();
+		$podcast_id = $this->get_current_feed_series_id();
 
 		return ssp_get_option( $option, '', $podcast_id );
 	}
@@ -215,7 +215,7 @@ class Settings_Handler implements Service {
 	 *
 	 * @return int
 	 */
-	protected function get_current_feed_settings_podcast_id() {
+	protected function get_current_feed_series_id() {
 		$podcast_slug = filter_input( INPUT_GET, 'feed-series' );
 		if ( ! $podcast_slug ) {
 			return 0;

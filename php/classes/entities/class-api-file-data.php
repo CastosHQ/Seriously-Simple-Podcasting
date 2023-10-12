@@ -9,7 +9,7 @@ namespace SeriouslySimplePodcasting\Entities;
 
 /**
  * Class API_File_Data.
- * @since 2.23.0
+ * @since 2.24.0
  */
 class API_File_Data extends Abstract_API_Entity {
 

@@ -298,10 +298,10 @@ class Feed_Controller {
 		$ep_explicit   = $this->feed_handler->get_feed_item_explicit_flag( $post_id );
 
 		if ( $ep_explicit && $ep_explicit == 'on' ) {
-			$itunes_explicit_flag     = 'yes';
+			$itunes_explicit_flag     = 'true';
 			$googleplay_explicit_flag = 'Yes';
 		} else {
-			$itunes_explicit_flag     = 'clean';
+			$itunes_explicit_flag     = 'false';
 			$googleplay_explicit_flag = 'No';
 		}
 

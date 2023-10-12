@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * SSP Onboarding Controller
  *
- * @author      Sergey Zakharchenko
+ * @author      Serhiy Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       5.7.0

@@ -10,7 +10,7 @@ use WP_Query;
  * SSP Feed Handler
  *
  * @package Seriously Simple Podcasting
- * @author Sergey Zakharchenko, Jonathan Bossenger
+ * @author Serhiy Zakharchenko, Jonathan Bossenger
  * @since 2.8.2
  */
 class Feed_Handler implements Service {

@@ -37,7 +37,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Main plugin class
  *
- * @author      Hugh Lashbrooke, Sergey Zakharchenko
+ * @author      Hugh Lashbrooke, Serhiy Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.0

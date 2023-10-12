@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Checks if the plugin needs to run a database migration after the plugin updates
  *
  * @package Seriously Simple Podcasting
- * @author Sergey Zakharchenko
+ * @author Serhiy Zakharchenko
  * @since 2.9.3
  */
 class DB_Migration_Controller {

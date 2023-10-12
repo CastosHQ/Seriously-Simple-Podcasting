@@ -12,7 +12,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Seriously Simple Podcasting Podcast Playlist Shortcode
  *
- * @author     Hugh Lashbrooke, Sergey Zakharchenko
+ * @author     Hugh Lashbrooke, Serhiy Zakharchenko
  * @package    SeriouslySimplePodcasting
  * @category   SeriouslySimplePodcasting/Shortcodes
  * @since      1.15.0

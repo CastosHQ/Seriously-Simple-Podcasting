@@ -14,7 +14,7 @@ use SeriouslySimplePodcasting\Interfaces\Service;
  * for named-based UUIDs are exactly the same. This is a pure
  * PHP implementation.
  *
- * @author Andrew Moore, Sergey Zakharchenko
+ * @author Andrew Moore, Serhiy Zakharchenko
  * @link http://www.php.net/manual/en/function.uniqid.php#94959
  * @package Seriously Simple Podcasting
  */

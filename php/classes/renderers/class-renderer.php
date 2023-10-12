@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @author Sergey Zakharchenko
+ * @author Serhiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * */
 class Renderer implements Service {

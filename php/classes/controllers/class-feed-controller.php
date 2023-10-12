@@ -14,7 +14,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Feed Controller Class
  *
- * @author      Jonathan Bossenger, Sergey Zakharchenko
+ * @author      Jonathan Bossenger, Serhiy Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       1.20.7

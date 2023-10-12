@@ -10,7 +10,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Seriously Simple Podcasting Podcast Playlist Widget
  *
- * @author    Hugh Lashbrooke, Sergey Zakharchenko
+ * @author    Hugh Lashbrooke, Serhiy Zakharchenko
  * @package   SeriouslySimplePodcasting
  * @category  SeriouslySimplePodcasting/Widgets
  * @since     1.9.0

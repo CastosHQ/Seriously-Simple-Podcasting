@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Shortcodes Controller
  *
- * @author      Sergey Zakharchenko
+ * @author      Serhiy Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.10.0

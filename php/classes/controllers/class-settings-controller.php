@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  *
  * Handles plugin settings page
  *
- * @author      Hugh Lashbrooke, Sergey Zakharchenko
+ * @author      Hugh Lashbrooke, Serhiy Zakharchenko
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.0

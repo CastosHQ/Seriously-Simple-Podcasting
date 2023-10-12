@@ -16,7 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * @author Sergey Zakharchenko
+ * @author Serhiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * */
 class Settings_Renderer implements Service {

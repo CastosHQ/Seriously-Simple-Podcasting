@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Seriously Simple Podcasting Abstract Widget Class
  *
- * @author    Sergey Zakharchenko
+ * @author    Serhiy Zakharchenko
  * @package   SeriouslySimplePodcasting
  * @category  SeriouslySimplePodcasting/Widgets
  * @since     2.7.4

@@ -15,7 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Schema controller
  *
- * @author      Sergey Zakharchenko
+ * @author      Serhiy Zakharchenko
  * @package     SeriouslySimplePodcasting/Controllers
  * @since       2.7.3
  */

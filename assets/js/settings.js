@@ -1,7 +1,7 @@
 /**
  * SSP settings functions
  * Created by Jonathan Bossenger on 2017/01/20.
- * Updated by Sergey Zakharchenko from 2021
+ * Updated by Serhiy Zakharchenko from 2021
  */
 
 jQuery(document).ready(function($) {

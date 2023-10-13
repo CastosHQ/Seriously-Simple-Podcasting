@@ -16,6 +16,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Abstract entity class.
+ * @since 2.23.0
+ * @author Serhiy Zakharchenko
  */
 abstract class Abstract_Entity {
     /**

@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Entities\Episode_File_Data;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 
 // Exit if accessed directly.
@@ -18,6 +19,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Ads_Controller {
 
+	const ENABLE_ADS_OPTION = 'enable_ads';
+
 	/**
 	 * @var Castos_Handler $castos_handler
 	 * */
@@ -28,10 +31,28 @@ class Ads_Controller {
 
 		add_action( 'ssp_feed_fields', array( $this, 'maybe_show_ads_settings' ) );
 		add_filter( 'ssp_episode_enclosure', array( $this, 'maybe_use_ads' ), 10, 2 );
+		add_action( 'ssp_check_ads', array( $this, 'check_ads_settings' ) );
 	}
 
 	/**
-	 * Show ads settings if SSP is connected to Castos
+	 * Check ads settings by WP Cron once a day.
+	 * */
+	public function check_ads_settings(){
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
+		$podcasts = $this->castos_handler->get_podcast_items();
+		foreach ( $podcasts as $podcast ) {
+			if( ! $podcast->ads_enabled && $this->is_series_ads_enabled( $podcast->series_id ) ){
+				$this->disable_series_ads( $podcast->series_id );
+			}
+		}
+	}
+
+
+	/**
+	 * Show ads settings if SSP is connected to Castos.
 	 *
 	 * @param $fields
 	 *
@@ -119,12 +140,11 @@ class Ads_Controller {
 		}
 
 		// Check that Ads are enabled for this podcast.
-		if ( ! $this->is_ads_enabled( $episode_id ) ) {
+		if ( ! $this->is_episode_ads_enabled( $episode_id ) ) {
 			return $enclosure;
 		}
 
-		// Ensure that ads are enabled for the current episode in Castos.
-		$file_data = $this->castos_handler->get_episode_file_data( $episode_id );
+		$file_data = $this->get_episode_file_data($episode_id);
 
 		if ( ! $file_data->success || ! $file_data->ads_enabled ) {
 			return $enclosure;
@@ -134,16 +154,60 @@ class Ads_Controller {
 	}
 
 	/**
+	 * @param int $episode_id
+	 *
+	 * @return Episode_File_Data
+	 * @throws \Exception
+	 */
+	protected function get_episode_file_data( $episode_id ) {
+		$transient = 'ssp_episode_ads_file_' . $episode_id;
+
+		$file_data = get_transient( $transient );
+
+		if ( $file_data ) {
+			return $file_data;
+		}
+
+		// Ensure that ads are enabled for the current episode in Castos.
+		$castos_episode_id = get_post_meta( $episode_id, 'podmotor_episode_id', true );
+		$file_data         = $this->castos_handler->get_episode_file_data( $castos_episode_id );
+		set_transient( $transient, $file_data, DAY_IN_SECONDS );
+
+		return $file_data;
+	}
+
+	/**
 	 * Checks if ads enabled for current episode podcast
 	 *
 	 * @param int $episode_id
 	 *
 	 * @return bool
 	 */
-	protected function is_ads_enabled( $episode_id ) {
-		$podcast_id = $this->get_episode_podcast_id( $episode_id );
+	protected function is_episode_ads_enabled( $episode_id ) {
+		$series_id = $this->get_episode_series_id( $episode_id );
 
-		return (bool) ssp_get_option( 'enable_ads', false, $podcast_id );
+		return $this->is_series_ads_enabled( $series_id );
+	}
+
+	/**
+	 * Checks if ads enabled for series
+	 *
+	 * @param int $series_id
+	 *
+	 * @return bool
+	 */
+	protected function is_series_ads_enabled( $series_id ) {
+		return (bool) ssp_get_option( self::ENABLE_ADS_OPTION, false, $series_id );
+	}
+
+
+	/**
+	 * @param int $series_id
+	 *
+	 * @return bool
+	 */
+	protected function disable_series_ads( $series_id ){
+		return ssp_update_option( self::ENABLE_ADS_OPTION, '', $series_id );
 	}
 
 	/**
@@ -153,7 +217,7 @@ class Ads_Controller {
 	 *
 	 * @return int
 	 */
-	protected function get_episode_podcast_id( $episode_id ){
+	protected function get_episode_series_id( $episode_id ){
 		$episode_podcasts = ssp_get_episode_podcasts( $episode_id );
 		return ! empty( $episode_podcasts[0] ) ? $episode_podcasts[0]->term_id : 0;
 	}

@@ -23,4 +23,17 @@ class Episode_File_Data extends Abstract_API_Entity {
 	 * */
 	public $ads_enabled;
 
+	/**
+	 * @param array $properties
+	 */
+	public function __construct( $properties ) {
+		parent::__construct( $properties );
+
+		if ( isset( $properties['podcast.ads_enabled'] ) ) {
+			$this->ads_enabled = $properties['podcast.ads_enabled'];
+		}
+
+		$this->success = isset( $properties['code'] ) && ( 200 === $properties['code'] );
+	}
+
 }

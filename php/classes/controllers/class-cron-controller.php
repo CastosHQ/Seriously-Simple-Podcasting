@@ -80,6 +80,9 @@ class Cron_Controller {
 		if ( ! wp_next_scheduled( 'ssp_cron_hook' ) ) {
 			wp_schedule_event( time(), 'hourly', 'ssp_cron_hook' );
 		}
+		if( ! wp_next_scheduled('ssp_check_ads') ){
+			wp_schedule_event( time(), 'daily', 'ssp_check_ads' );
+		}
 	}
 
 	/**

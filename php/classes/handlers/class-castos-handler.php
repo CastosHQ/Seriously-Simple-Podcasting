@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Handlers;
 
 
 use SeriouslySimplePodcasting\Entities\API_File_Data;
+use SeriouslySimplePodcasting\Entities\API_Podcast;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Entities\Episode_File_Data;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
@@ -507,6 +508,23 @@ class Castos_Handler implements Service {
 		return $this->response;
 	}
 
+
+	/**
+	 * @return API_Podcast[]
+	 */
+	public function get_podcast_items(){
+		$podcasts              = $this->get_podcasts();
+		$items = array();
+		if( ! isset( $podcasts['data']['podcast_list'] ) || !is_array($podcasts['data']['podcast_list']) ) {
+			return $items;
+		}
+
+		foreach ( $podcasts['data']['podcast_list'] as $data ) {
+			$items[] = new API_Podcast( $data );
+		}
+		return $items;
+	}
+
 	public function get_podcasts() {
 		if ( $this->cached_podcasts_response ) {
 			return $this->cached_podcasts_response;
@@ -642,29 +660,29 @@ class Castos_Handler implements Service {
 
 
 	/**
-	 * @param $episode_id
+	 * @param $castos_episode_id
 	 *
 	 * @return Episode_File_Data
 	 * @throws \Exception
 	 */
-	public function get_episode_file_data( $episode_id ) {
+	public function get_episode_file_data( $castos_episode_id ) {
 		$this->logger->log( __METHOD__ );
 
-		$cache_key = 'ssp_castos_api_episode_ads_' . $episode_id;
+		$cache_key = 'ssp_castos_api_episode_ads_' . $castos_episode_id;
 
-		$ads = wp_cache_get( $cache_key );
+		$file_data = wp_cache_get( $cache_key );
 
-		if ( $ads ) {
-			return $ads;
+		if ( $file_data ) {
+			return $file_data;
 		}
 
-		$res = $this->send_request( sprintf( 'api/v2/ssp/episodes/%d/file', $episode_id ) );
+		$res = $this->send_request( sprintf( 'api/v2/ssp/episodes/%d/file', $castos_episode_id ) );
 
-		$ads = new Episode_File_Data( $res );
+		$file_data = new Episode_File_Data( $res );
 
-		wp_cache_add( $cache_key, $ads );
+		wp_cache_add( $cache_key, $file_data, '', MINUTE_IN_SECONDS );
 
-		return $ads;
+		return $file_data;
 	}
 
 

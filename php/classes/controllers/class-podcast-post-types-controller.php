@@ -759,8 +759,11 @@ class Podcast_Post_Types_Controller {
 			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_SYNCED );
 			$this->episode_repository->delete_sync_error( $post->ID );
 		} else {
-			// schedule uploading with a cronjob
-			update_post_meta( $id, 'podmotor_schedule_upload', true );
+			// Schedule uploading with a cronjob.1
+			// If it's 404, something wrong with the file ID. We don't try to reupload it since result will be the same.
+			if ( 404 != $response['code'] ) {
+				update_post_meta( $id, 'podmotor_schedule_upload', true );
+			}
 			$this->admin_notices_handler->add_predefined_flash_notice(
 				Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
 			);

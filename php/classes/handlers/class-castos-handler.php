@@ -241,7 +241,7 @@ class Castos_Handler implements Service {
 
 		$api_url             = SSP_CASTOS_APP_URL . 'api/v2/posts/create';
 		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
-		if ( ! empty( $podmotor_episode_id ) ) {
+		if ( $podmotor_episode_id ) {
 			$api_url = SSP_CASTOS_APP_URL . 'api/v2/posts/update';
 		}
 
@@ -293,6 +293,10 @@ class Castos_Handler implements Service {
 		);
 
 		$app_response = wp_remote_post( $api_url, $options );
+
+		if ( isset( $app_response['response']['code'] ) ) {
+			$this->update_response( 'code', intval( $app_response['response']['code'] ) );
+		}
 
 		$this->logger->log( 'Upload Podcast app_response', $app_response );
 

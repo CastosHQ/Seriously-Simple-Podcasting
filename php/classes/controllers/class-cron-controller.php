@@ -90,6 +90,7 @@ class Cron_Controller {
 	 */
 	public function upload_scheduled_episodes() {
 		$uploaded = 0;
+		$logger = new Log_Helper();
 		foreach ( $this->episodes_respository->get_scheduled_episodes() as $episode ) {
 			$response = $this->castos_handler->upload_episode_to_castos( $episode );
 
@@ -99,10 +100,14 @@ class Cron_Controller {
 				$this->episodes_respository->delete_episode_sync_error( $episode->ID );
 				$uploaded++;
 			}
+
+			if ( 404 == $response['code'] ) {
+				delete_post_meta( $episode->ID, 'podmotor_schedule_upload' );
+				$logger->log( sprintf( 'Cron: could not upload episode %d', $episode->ID ) );
+			}
 		}
 
 		if ( $uploaded ) {
-			$logger = new Log_Helper();
 			$logger->log( 'Cron: uploaded scheduled episodes', $uploaded );
 		}
 

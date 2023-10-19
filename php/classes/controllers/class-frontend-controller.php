@@ -863,26 +863,14 @@ class Frontend_Controller {
 				return;
 			}
 
-			// Do we have newlines?
-			$parts = false;
-			if( is_string( $episode ) ) {
-				$parts = explode( "\n", $episode );
+			$file = $this->get_enclosure( $episode_id );
+			if ( false !== strpos( $file, "\n" ) ) {
+				$parts = explode( "\n", $file );
+				$file  = $parts[0];
 			}
 
-			if ( $parts && is_array( $parts ) && count( $parts ) > 1 ) {
-				$file = $parts[0];
-			} else {
-				// Get audio file for download
-				$file = $this->get_enclosure( $episode_id );
-			}
 
-			// Ensure that $file is a valid URL
-			$is_url = boolval( filter_var( $file, FILTER_VALIDATE_URL ) );
-
-			// Exit if no file is found
-			if ( ! $is_url ) {
-				$this->send_404();
-			}
+			$this->validate_file( $file );
 
 			// Get file referrer
 			$referrer = '';
@@ -955,6 +943,10 @@ class Frontend_Controller {
 				@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
 			} else {
 
+				// Dynamically change the file URL, for example, for Ads
+				$file = apply_filters( 'ssp_enclosure_redirect', $file, $episode_id, $referrer );
+				$this->validate_file( $file );
+
 				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
 				$file = str_replace( ' ', '%20', $file );
 
@@ -965,6 +957,21 @@ class Frontend_Controller {
 			// Exit to prevent other processes running later on
 			exit;
 
+		}
+	}
+
+	/**
+	 * @param string $file
+	 *
+	 * @return void
+	 */
+	protected function validate_file( $file ) {
+		// Ensure that $file is a URL
+		$is_url = is_string( $file ) && ( 0 === strpos( $file, 'http' ) );
+
+		// Exit if file is not URL
+		if ( ! $is_url ) {
+			$this->send_404();
 		}
 	}
 

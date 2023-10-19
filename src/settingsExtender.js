@@ -22,12 +22,14 @@ const enabledBlocks = [
 	'core/table',
 	'core/verse',
 	'core/columns',
+	'core/group',
 	'core/block',
 	'create-block/castos-transcript',
 ];
 
 const feedHiddenByDefaultBlocks = [
 	'create-block/castos-transcript',
+	'core/group'
 ];
 
 const addAttributes = ( settings, name ) => {

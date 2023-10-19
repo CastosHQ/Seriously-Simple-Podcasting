@@ -1165,7 +1165,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 		 * */
 		if ( $blocks and is_array( $blocks ) ) {
 			$content = '';
-			$allowed_blocks = [
+			$allowed_blocks = array(
 				null,
 				'core/freeform',
 				'core/heading',
@@ -1179,15 +1179,27 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 				'core/table',
 				'core/verse',
 				'core/columns',
+				'core/group',
 				'core/block',
 				'create-block/castos-transcript',
-			];
+			);
 
 			$allowed_blocks = apply_filters( 'ssp_feed_item_content_allowed_blocks', $allowed_blocks );
+
+			$hidden_by_default = apply_filters( 'ssp_hidden_by_default_blocks', array(
+				'core/group', // For backward compatibility, group block should be hidden
+				'create-block/castos-transcript',
+			) );
 
 			foreach ( $blocks as $block ) {
 				$is_allowed = in_array( $block['blockName'], $allowed_blocks ) &&
 							  ( ! isset( $block['attrs']['hideFromFeed'] ) || true !== $block['attrs']['hideFromFeed'] );
+
+				// Check for hidden by default blocks
+				if ( $is_allowed && in_array( $block['blockName'], $hidden_by_default ) &&
+					 ! isset( $block['attrs']['hideFromFeed'] ) ) {
+					$is_allowed = false;
+				}
 
 				if ( ! $is_allowed ) {
 					continue;

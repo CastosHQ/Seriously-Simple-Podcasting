@@ -30,7 +30,7 @@ class Ads_Controller {
 		$this->castos_handler = $castos_handler;
 
 		add_action( 'ssp_feed_fields', array( $this, 'maybe_show_ads_settings' ) );
-		add_filter( 'ssp_enclosure_redirect', array( $this, 'maybe_use_ads' ), 10, 2 );
+		add_filter( 'ssp_enclosure_url', array( $this, 'maybe_use_ads' ), 10, 2 );
 		add_action( 'ssp_check_ads', array( $this, 'check_ads_settings' ) );
 	}
 

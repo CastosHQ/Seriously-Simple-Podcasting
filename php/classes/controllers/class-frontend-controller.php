@@ -893,8 +893,14 @@ class Frontend_Controller {
 			header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
 			header( "Robots: none" );
 
+			$original_file = $file;
+
+			// Dynamically change the file URL. Is used internally for Ads.
+			$file = apply_filters( 'ssp_enclosure_url', $file, $episode_id, $referrer );
+			$this->validate_file( $file );
+
 			// Check file referrer
-			if( 'download' == $referrer ) {
+			if( 'download' == $referrer && $file == $original_file ) {
 
 				// Set size of file
 				// Do we have anything in Cache/DB?
@@ -942,10 +948,6 @@ class Frontend_Controller {
 				// Use ssp_readfile_chunked() if allowed on the server or simply access file directly
 				@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
 			} else {
-
-				// Dynamically change the file URL, for example, for Ads
-				$file = apply_filters( 'ssp_enclosure_redirect', $file, $episode_id, $referrer );
-				$this->validate_file( $file );
 
 				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
 				$file = str_replace( ' ', '%20', $file );

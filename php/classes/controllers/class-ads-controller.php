@@ -59,24 +59,43 @@ class Ads_Controller {
 	 * @return mixed
 	 */
 	public function maybe_show_ads_settings( $fields ) {
+
+		$show_ads = array(
+			'id'    => 'enable_ads',
+			'label' => 'Enable Castos Ads',
+			'type'  => 'info',
+		);
+
 		if ( ! ssp_is_connected_to_castos() ) {
+			$show_ads['description'] = sprintf(
+				__( 'Monetize your podcast today when you partner with Castos for podcast hosting. <a target="_blank" href="%s">Learn more.</a>',
+					'seriously-simple-podcasting' ),
+				'https://castos.com/advertising/'
+			);
+
+			$fields['show_ads'] = $show_ads;
+
 			return $fields;
 		}
 
-		$show_ads = array(
-			'id'          => 'enable_ads',
-			'label'       => 'Enable Ads',
-			'description' => __( 'Enable Ads', 'seriously-simple-podcasting' ),
+		if ( ! $this->is_ads_enabled_in_castos() ) {
+			$show_ads['description'] = sprintf(
+				__( 'Enable Ads in your Castos account first to get set up. <a target="_blank" href="%s">Learn more.</a>',
+					'seriously-simple-podcasting' ),
+				'https://support.castos.com/article/300-enable-castos-ads'
+			);
+
+			$fields['show_ads'] = $show_ads;
+
+			return $fields;
+		}
+
+		$show_ads = array_merge( $show_ads, array(
+			'description' => __( 'Enable Castos Ads.', 'seriously-simple-podcasting' ),
 			'type'        => 'checkbox',
 			'default'     => 'off',
 			'callback'    => 'wp_strip_all_tags',
-		);
-
-
-		if ( ! $this->is_ads_enabled_in_castos() ) {
-			$show_ads['type'] = 'info';
-			$show_ads['description'] = __( 'Enable Ads in your Castos account first to get set up', 'seriously-simple-podcasting' );
-		}
+		) );
 
 		$fields['show_ads'] = $show_ads;
 

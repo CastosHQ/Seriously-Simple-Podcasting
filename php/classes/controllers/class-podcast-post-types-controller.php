@@ -144,7 +144,7 @@ class Podcast_Post_Types_Controller {
 	 */
 	public function register_post_type() {
 		$this->cpt_podcast_handler->register_post_type();
-		$this->cpt_podcast_handler->register_taxonomies();
+		$this->series_handler->register_taxonomy();
 	}
 
 	/**

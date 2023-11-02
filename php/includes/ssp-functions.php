@@ -986,7 +986,7 @@ if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
 	 */
 	function ssp_get_episode_series_id( $episode_id ) {
 		$series_id = 0;
-		$series    = wp_get_post_terms( $episode_id, Series_Handler::TAXONOMY );
+		$series    = wp_get_post_terms( $episode_id, ssp_series_taxonomy() );
 
 		if ( empty( $series ) || is_wp_error( $series ) ) {
 			return $series_id;

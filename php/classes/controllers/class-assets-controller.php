@@ -163,6 +163,6 @@ class Assets_Controller {
 		       strpos( $hook, 'ssp-onboarding' ) ||
 		       $this->is_ssp_admin_page() ||
 		       ( in_array( 'post', $ssp ) && 'edit.php' === $hook ) ||
-		       ( 'term.php' === $hook && Series_Handler::TAXONOMY === filter_input( INPUT_GET, 'taxonomy' ) );
+		       ( 'term.php' === $hook && ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) );
 	}
 }

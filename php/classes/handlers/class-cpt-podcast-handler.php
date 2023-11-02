@@ -4,8 +4,6 @@ namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Interfaces\Service;
-use SeriouslySimplePodcasting\Repositories\Episode_Repository;
-use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
  * SSP Custom Post Type Podcast Handler

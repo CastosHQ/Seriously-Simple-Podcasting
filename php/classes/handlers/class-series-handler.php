@@ -14,18 +14,22 @@ class Series_Handler implements Service {
 	const META_SYNC_STATUS = 'sync_status';
 
 	/**
-	 * @var Admin_Notifications_Handler $notices_handler
+	 * @var Admin_Notifications_Handler
 	 * */
 	protected $notices_handler;
 
 	/**
-	 * @param $notices_handler
+	 * @var Roles_Handler
+	 * */
+	protected $roles_handler;
+
+	/**
+	 * @param Admin_Notifications_Handler $notices_handler
+	 * @param Roles_Handler $roles_handler
 	 */
-	public function __construct( $notices_handler ) {
+	public function __construct( $notices_handler, $roles_handler ) {
 		$this->notices_handler = $notices_handler;
-		$taxonomy = ssp_series_taxonomy();
-		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
-		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_sync_status' ), 10, 3 );
+		$this->roles_handler   = $roles_handler;
 	}
 
 	/**
@@ -33,7 +37,7 @@ class Series_Handler implements Service {
 	 * @return void
 	 */
 	public function register_taxonomy() {
-		$podcast_post_types = ssp_post_types( true );
+		$podcast_post_types = ssp_post_types();
 
 		$args = $this->get_series_args();
 		$this->register_series_taxonomy( $podcast_post_types, $args );
@@ -159,26 +163,6 @@ class Series_Handler implements Service {
 		register_taxonomy( ssp_series_taxonomy(), $podcast_post_types, $args );
 	}
 
-	/**
-	 * @param array $actions
-	 * @param \WP_Term $term
-	 *
-	 * @return array
-	 */
-	public function add_term_actions( $actions, $term ) {
-
-		$link = '<a href="%s">' . __( 'Edit&nbsp;Feed&nbsp;Details', 'seriously-simple-podcasting' ) . '</a>';
-		$link = sprintf( $link, sprintf(
-			'edit.php?post_type=%s&page=podcast_settings&tab=feed-details&feed-series=%s',
-			SSP_CPT_PODCAST,
-			$term->slug
-		) );
-
-		$actions['edit_feed_details'] = $link;
-
-		return $actions;
-	}
-
 	public function maybe_save_series() {
 		if ( ! isset( $_GET['page'] ) || 'podcast_settings' !== $_GET['page'] ) {
 			return false;
@@ -221,18 +205,6 @@ class Series_Handler implements Service {
 		}
 
 		return true;
-	}
-
-	/**
-	 * @param int $podcast_id
-	 * @param array $response
-	 * @param string $status
-	 *
-	 * @return void
-	 */
-	public function update_podcast_sync_status( $podcast_id, $response, $status ) {
-
-		$this->update_sync_status( $podcast_id, $status );
 	}
 
 	/**

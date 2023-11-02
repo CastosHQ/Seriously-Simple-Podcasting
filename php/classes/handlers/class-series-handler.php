@@ -11,8 +11,6 @@ use SeriouslySimplePodcasting\Interfaces\Service;
  */
 class Series_Handler implements Service {
 
-	const TAXONOMY = 'series';
-
 	const META_SYNC_STATUS = 'sync_status';
 
 	/**
@@ -25,9 +23,140 @@ class Series_Handler implements Service {
 	 */
 	public function __construct( $notices_handler ) {
 		$this->notices_handler = $notices_handler;
-		$taxonomy = self::TAXONOMY;
+		$taxonomy = ssp_series_taxonomy();
 		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_sync_status' ), 10, 3 );
+	}
+
+	/**
+	 * Register taxonomies
+	 * @return void
+	 */
+	public function register_taxonomy() {
+		$podcast_post_types = ssp_post_types( true );
+
+		$args = $this->get_series_args();
+		$this->register_series_taxonomy( $podcast_post_types, $args );
+		$this->listen_updating_series_slug( $podcast_post_types, $args );
+
+		// Add Tags to podcast post type
+		if ( apply_filters( 'ssp_use_post_tags', true ) ) {
+			register_taxonomy_for_object_type( 'post_tag', SSP_CPT_PODCAST );
+		} else {
+			/**
+			 * Uses post tags by default. Alternative option added in as some users
+			 * want to filter by podcast tags only
+			 */
+			$args = $this->get_podcast_tags_args();
+			register_taxonomy( apply_filters( 'ssp_podcast_tags_taxonomy', 'podcast_tags' ), $podcast_post_types, $args );
+		}
+	}
+
+	protected function get_podcast_tags_args() {
+		$labels = array(
+			'name'                       => __( 'Tags', 'seriously-simple-podcasting' ),
+			'singular_name'              => __( 'Tag', 'seriously-simple-podcasting' ),
+			'search_items'               => __( 'Search Tags', 'seriously-simple-podcasting' ),
+			'popular_items'              => __( 'Popular Tags', 'seriously-simple-podcasting' ),
+			'all_items'                  => __( 'All Tags', 'seriously-simple-podcasting' ),
+			'parent_item'                => null,
+			'parent_item_colon'          => null,
+			'edit_item'                  => __( 'Edit Tag', 'seriously-simple-podcasting' ),
+			'update_item'                => __( 'Update Tag', 'seriously-simple-podcasting' ),
+			'add_new_item'               => __( 'Add New Tag', 'seriously-simple-podcasting' ),
+			'new_item_name'              => __( 'New Tag Name', 'seriously-simple-podcasting' ),
+			'separate_items_with_commas' => __( 'Separate tags with commas', 'seriously-simple-podcasting' ),
+			'add_or_remove_items'        => __( 'Add or remove tags', 'seriously-simple-podcasting' ),
+			'choose_from_most_used'      => __( 'Choose from the most used tags', 'seriously-simple-podcasting' ),
+			'not_found'                  => __( 'No tags found.', 'seriously-simple-podcasting' ),
+			'menu_name'                  => __( 'Tags', 'seriously-simple-podcasting' ),
+		);
+
+		$args = array(
+			'hierarchical'          => false,
+			'labels'                => $labels,
+			'show_ui'               => true,
+			'show_admin_column'     => true,
+			'update_count_callback' => '_update_post_term_count',
+			'query_var'             => true,
+			'rewrite'               => array( 'slug' => 'podcast_tags' ),
+			'capabilities'          => $this->roles_handler->get_podcast_tax_capabilities(),
+		);
+
+		return apply_filters( 'ssp_register_taxonomy_args', $args, 'podcast_tags' );
+	}
+
+
+	protected function get_series_args() {
+		$series_labels = array(
+			'name'                       => __( 'Podcasts', 'seriously-simple-podcasting' ),
+			'singular_name'              => __( 'Podcast', 'seriously-simple-podcasting' ),
+			'search_items'               => __( 'Search Podcasts', 'seriously-simple-podcasting' ),
+			'all_items'                  => __( 'All Podcasts', 'seriously-simple-podcasting' ),
+			'parent_item'                => __( 'Parent Podcast', 'seriously-simple-podcasting' ),
+			'parent_item_colon'          => __( 'Parent Podcast:', 'seriously-simple-podcasting' ),
+			'edit_item'                  => __( 'Edit Podcast', 'seriously-simple-podcasting' ),
+			'update_item'                => __( 'Update Podcast', 'seriously-simple-podcasting' ),
+			'add_new_item'               => __( 'Add New Podcast', 'seriously-simple-podcasting' ),
+			'new_item_name'              => __( 'New Podcast Name', 'seriously-simple-podcasting' ),
+			'menu_name'                  => __( 'All Podcasts', 'seriously-simple-podcasting' ),
+			'view_item'                  => __( 'View Podcast', 'seriously-simple-podcasting' ),
+			'popular_items'              => __( 'Popular Podcasts', 'seriously-simple-podcasting' ),
+			'separate_items_with_commas' => __( 'Separate podcasts with commas', 'seriously-simple-podcasting' ),
+			'add_or_remove_items'        => __( 'Add or remove Podcasts', 'seriously-simple-podcasting' ),
+			'choose_from_most_used'      => __( 'Choose from the most used Podcasts', 'seriously-simple-podcasting' ),
+			'not_found'                  => __( 'No Podcasts Found', 'seriously-simple-podcasting' ),
+			'items_list_navigation'      => __( 'Podcasts list navigation', 'seriously-simple-podcasting' ),
+			'items_list'                 => __( 'Podcasts list', 'seriously-simple-podcasting' ),
+		);
+
+		$series_args = array(
+			'public'            => true,
+			'hierarchical'      => true,
+			'rewrite'           => array( 'slug' => ssp_series_slug() ),
+			'labels'            => $series_labels,
+			'show_in_rest'      => true,
+			'rest_base'         => 'series',
+			'show_admin_column' => true,
+			'capabilities'      => $this->roles_handler->get_podcast_tax_capabilities(),
+		);
+
+		return apply_filters( 'ssp_register_taxonomy_args', $series_args, ssp_series_taxonomy() );
+	}
+
+	/**
+	 * @param array $podcast_post_types
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	protected function listen_updating_series_slug( $podcast_post_types, $args ) {
+		add_filter( 'pre_update_option_ss_podcasting_series_slug', function ( $slug ) use ( $podcast_post_types, $args ) {
+			$forbidden = array(
+				'podcast',
+				'category'
+			);
+
+			$slug = empty( $slug ) || in_array( $slug, $forbidden ) ? ssp_series_slug() : $slug;
+
+			$args['rewrite']['slug'] = $slug;
+
+			// Reregister series taxonomy with the new slug and flush rewrite rules after that.
+			$this->register_series_taxonomy( $podcast_post_types, $args );
+			flush_rewrite_rules();
+
+			return $slug;
+		} );
+	}
+
+	/**
+	 * @param array $podcast_post_types
+	 * @param array $args
+	 *
+	 * @return void
+	 */
+	protected function register_series_taxonomy( $podcast_post_types, $args ) {
+		register_taxonomy( ssp_series_taxonomy(), $podcast_post_types, $args );
 	}
 
 	/**

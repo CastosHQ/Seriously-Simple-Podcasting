@@ -98,6 +98,11 @@ class App_Controller {
 	public $podcast_post_types_controller;
 
 	/**
+	 * @var Series_Controller
+	 * */
+	public $series_controller;
+
+	/**
 	 * @var Settings_Controller
 	 * */
 	public $settings_controller;
@@ -254,7 +259,7 @@ class App_Controller {
 
 		$this->logger = new Log_Helper();
 
-		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version  );
+		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version );
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
@@ -267,7 +272,8 @@ class App_Controller {
 		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
 
 		$this->assets_controller = new Assets_Controller();
-		$this->series_handler = new Series_Handler( $this->admin_notices_handler );
+
+		$this->series_handler    = new Series_Handler( $this->admin_notices_handler, $this->roles_handler );
 
 		if ( is_admin() ) {
 			$this->admin_notices_handler->bootstrap();
@@ -291,6 +297,8 @@ class App_Controller {
 			$this->episode_repository,
 			$this->series_handler
 		);
+
+		$this->series_controller = new Series_Controller( $this->series_handler );
 
 		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );
 

@@ -305,6 +305,9 @@ class CPT_Podcast_Handler implements Service {
 
 		//
 		if ( $is_connected_to_castos ) {
+			$fields['castos_file_data'] = array(
+				'type' => 'hidden',
+			);
 			$fields['podmotor_file_id'] = array(
 				'type'             => 'hidden',
 				'default'          => '',

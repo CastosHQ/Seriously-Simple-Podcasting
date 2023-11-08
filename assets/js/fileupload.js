@@ -144,7 +144,8 @@ jQuery( document ).ready( function ( $ ) {
 			notificationBar( 'Uploading file to Castos Hosting Complete.' );
 			var response = JSON.parse(result.response);
 			if ( response.status === 200 ) {
-				var file = response.file;
+				var file = response.file,
+					fileName = up.files[0].name;
 				/**
 				 * @todo sanitize file name ???
 				 */
@@ -154,6 +155,11 @@ jQuery( document ).ready( function ( $ ) {
 				$( "#duration" ).val( file.file_duration );
 				$( '#upload_audio_file' ).val( file.file_path );
 				$( '.peek-a-bar' ).fadeOut( 5000 );
+				$('#castos_file_data').val(JSON.stringify({
+					path: file.file_path,
+					name: fileName
+				}));
+				$('#castos_file_name').html( fileName );
 			}
 		} );
 

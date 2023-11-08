@@ -544,7 +544,7 @@ class Podcast_Post_Types_Controller {
 			$renderer = ssp_renderer();
 
 			foreach ( $field_data as $k => $v ) {
-				$data  = $v['default'];
+				$data  = isset( $v['default'] ) ? $v['default'] : '';
 				$saved = get_post_meta( $post_id, $k, true );
 				if ( $saved ) {
 					$data = $saved;
@@ -571,7 +571,11 @@ class Podcast_Post_Types_Controller {
 
 					case 'episode_file':
 						$is_castos = ssp_is_connected_to_castos();
-						$html .= $renderer->fetch( 'metafields/episode_file', compact( 'k', 'v', 'data', 'is_castos' ) );
+						$file_data = json_decode( get_post_meta( $post_id, 'castos_file_data', true ) );
+						$html .= $renderer->fetch(
+							'metafields/episode_file',
+							compact( 'k', 'v', 'data', 'is_castos', 'file_data' )
+						);
 						break;
 
 					case 'image':

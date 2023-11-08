@@ -4,12 +4,16 @@
  * @var array $v
  * @var string $data
  * @var bool $is_castos
+ * @var array $file_data
  * */
 ?>
 
-<p>
-<label class="ssp-episode-details-label" for="<?php echo esc_attr( $k ) ?>"><?php
-  echo wp_kses_post( $v['name'] ) ?></label>
+<div>
+ <div>
+	 <br><label class="ssp-episode-details-label" for="<?php echo esc_attr( $k ) ?>"><?php
+		 echo wp_kses_post( $v['name'] ) ?></label><br><br>
+ </div>
+
 
 <?php if ( $is_castos ) : ?>
 	<div id="ssp_upload_notification"><?php
@@ -17,20 +21,32 @@
 	'seriously-simple-podcasting' ) ?></div>
 <?php endif ?>
 
-<input name="<?php echo esc_attr( $k ) ?>" type="text" id="upload_<?php
-  echo esc_attr( $k ) ?>" value="<?php echo esc_attr( $data ) ?>" />
+<div>
+	<input name="<?php echo esc_attr( $k ) ?>" type="text" id="upload_<?php
+	  echo esc_attr( $k ) ?>" value="<?php echo esc_attr( $data ) ?>" />
 
-<?php if ( $is_castos ) : ?>
-  <div id="ssp_upload_container" style="display: inline;">
-	  <button class="button" id="ssp_select_file" href="javascript:"><?php
-		  _e( 'Select file', 'seriously-simple-podcasting' ) ?></button>
-  </div>
-<?php else : ?>
-	<input type="button" class="button" id="upload_<?php echo esc_attr( $k ) ?>_button" value="<?php
-	_e( 'Upload File', 'seriously-simple-podcasting' ) ?>" data-uploader_title="<?php
-	_e( 'Choose a file', 'seriously-simple-podcasting' ) ?>" data-uploader_button_text="<?php
-	_e( 'Insert podcast file', 'seriously-simple-podcasting' ) ?>" />
-<?php endif ?>
-<br>
-<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span>
-</p>
+	<?php if ( $is_castos ) : ?>
+	  <div id="ssp_upload_container" style="display: inline;">
+		  <button class="button" id="ssp_select_file" href="javascript:"><?php
+			  _e( 'Select file', 'seriously-simple-podcasting' ) ?></button>
+	  </div>
+	<?php else : ?>
+		<input type="button" class="button" id="upload_<?php echo esc_attr( $k ) ?>_button" value="<?php
+		_e( 'Upload File', 'seriously-simple-podcasting' ) ?>" data-uploader_title="<?php
+		_e( 'Choose a file', 'seriously-simple-podcasting' ) ?>" data-uploader_button_text="<?php
+		_e( 'Insert podcast file', 'seriously-simple-podcasting' ) ?>" />
+	<?php endif ?>
+</div>
+
+<?php if( $file_data and $file_data->path === $data ) : ?>
+   <div>
+	   <br>
+	   <span class="ssp-episode-details-label"><?php _e( 'File name:', 'seriously-simple-podcasting' ) ?></span>
+	   <span id="castos_file_name"><?php echo esc_html( $file_data->name ) ?></span>
+	   <br>
+	   <br>
+   </div>
+<?php endif; ?>
+
+<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span><br><br>
+</div>

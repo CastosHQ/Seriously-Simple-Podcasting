@@ -638,6 +638,7 @@ class Episode_Repository implements Service {
 
 	protected function format_post_date( $post_date, $format = 'M j, Y' ) {
 		$timestamp = strtotime( $post_date );
+		$format    = apply_filters( 'ssp_date_format', $format );
 
 		return date( $format, $timestamp );
 	}

@@ -146,7 +146,7 @@ if ( $stylesheet_url ) {
 		if ( 'off' === $turbo ) :
 			?><googleplay:author><![CDATA[<?php echo esc_html( $author ); ?>]]></googleplay:author>
 			<googleplay:email><?php echo esc_html( $owner_email ); ?></googleplay:email>
-			<googleplay:description><?php echo esc_html( $podcast_description ); ?></googleplay:description>
+			<googleplay:description><?php echo esc_html( $description ); ?></googleplay:description>
 			<googleplay:explicit><?php echo esc_html( $googleplay_explicit ); ?></googleplay:explicit>
 			<?php if ( $image ) :
 			?><googleplay:image href="<?php echo esc_url( $image ); ?>"></googleplay:image>
@@ -162,19 +162,23 @@ if ( $stylesheet_url ) {
 		<?php endif;
 
 		if ( $podcast_value && ! empty( $podcast_value['recipient'] ) ) :
+			$name = empty( $podcast_value['name'] ) ? 'podcaster' : $podcast_value['name'];
 		?><podcast:value type="lightning" method="keysend" suggested="0.00000020000">
-			<podcast:valueRecipient name="podcaster" address="<?php echo esc_attr( $podcast_value['recipient'] ) ?>" split="100" type="node" customKey="<?php echo esc_attr( $podcast_value['recipient_custom_key'] ) ?>" customValue="<?php echo esc_attr( $podcast_value['recipient_custom_value'] ) ?>"/>
-		</podcast:value>
+			<?php if ( empty( $podcast_value['custom_key'] ) || empty( $podcast_value['custom_value'] ) ) :
+			?><podcast:valueRecipient name="<?php echo esc_attr( $name ) ?>" address="<?php echo esc_attr( $podcast_value['recipient'] ) ?>" split="100" type="node" />
+			<?php else :
+			?><podcast:valueRecipient name="<?php echo esc_attr( $name ) ?>" address="<?php echo esc_attr( $podcast_value['recipient'] ) ?>" split="100" type="node" customKey="<?php
+			echo esc_attr( $podcast_value['custom_key'] ) ?>" customValue="<?php echo esc_attr( $podcast_value['custom_value'] ) ?>" />
+		<?php    endif
+		?></podcast:value>
 		<?php endif;
 
 		if ( $guid ) :
 		?><podcast:guid><?php echo esc_attr( $guid ) ?></podcast:guid>
-		<?php endif;
-		?>
+		<?php endif; ?>
 
 		<!-- podcast_generator="SSP by Castos/<?php echo SSP_VERSION ?>" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->
 		<?php
-
 
 		// Prevent WP core from outputting an <image> element
 		remove_action( 'rss2_head', 'rss2_site_icon' );

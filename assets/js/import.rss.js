@@ -90,7 +90,7 @@ jQuery(document).ready(function ($) {
 
 	function handle_progress_bar() {
 		isProgressBarActive = true;
-		timer = setInterval(update_external_feed_progress_bar, 2000);
+		timer = setInterval(update_external_feed_progress_bar, 10000);
 	}
 
 	function stop_handling_progress_bar() {

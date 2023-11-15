@@ -42,7 +42,7 @@
 
 <div <?php echo ( ! $file_data->path || $file_data->path !== $data ) ? 'style="display:none"' : '' ?>>
 	<br>
-	<span class="ssp-episode-details-label"><?php _e( 'File name:', 'seriously-simple-podcasting' ) ?></span>
+	<span class="ssp-episode-details-label"><?php _e( 'Original Filename:', 'seriously-simple-podcasting' ) ?></span>
 	<span id="castos_file_name"><?php echo esc_html( $file_data->name ) ?></span>
 	<br>
 	<br>

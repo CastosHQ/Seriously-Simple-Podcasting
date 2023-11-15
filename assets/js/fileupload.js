@@ -56,6 +56,10 @@ jQuery( document ).ready( function ( $ ) {
 	 * If the upload_credentials object isn't available
 	 */
 	if ( typeof upload_credentials != "undefined" ) {
+		initUploader();
+	}
+
+	function initUploader(){
 		/**
 		 * Creates instance of plupload
 		 * @type {module:plupload.Uploader}
@@ -146,9 +150,7 @@ jQuery( document ).ready( function ( $ ) {
 			if ( response.status === 200 ) {
 				var file = response.file,
 					fileName = up.files[0].name;
-				/**
-				 * @todo sanitize file name ???
-				 */
+
 				$( "#podmotor_file_id" ).val( file.id );
 				$( "#filesize_raw" ).val( file.file_size );
 				$( "#filesize" ).val( plupload.formatSize( file.file_size ) );
@@ -159,8 +161,9 @@ jQuery( document ).ready( function ( $ ) {
 					path: file.file_path,
 					name: fileName
 				}));
-				$('#castos_file_name').html( fileName );
+				$('#castos_file_name').html( fileName ).parent().show();
 			}
+			uploader.splice();
 		} );
 
 		/**
@@ -169,6 +172,5 @@ jQuery( document ).ready( function ( $ ) {
 		uploader.bind( 'UploadComplete', function ( up, files ) {
 			$( '.peek-a-bar' ).fadeOut( 5000 );
 		} );
-
 	}
 });

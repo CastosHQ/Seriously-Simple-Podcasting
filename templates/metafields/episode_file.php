@@ -4,7 +4,7 @@
  * @var array $v
  * @var string $data
  * @var bool $is_castos
- * @var array $file_data
+ * @var \SeriouslySimplePodcasting\Entities\Castos_File_Data $file_data
  * */
 ?>
 
@@ -38,15 +38,14 @@
 	<?php endif ?>
 </div>
 
-<?php if( $file_data and $file_data->path === $data ) : ?>
-   <div>
-	   <br>
-	   <span class="ssp-episode-details-label"><?php _e( 'File name:', 'seriously-simple-podcasting' ) ?></span>
-	   <span id="castos_file_name"><?php echo esc_html( $file_data->name ) ?></span>
-	   <br>
-	   <br>
-   </div>
-<?php endif; ?>
+<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span>
 
-<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span><br><br>
+<div <?php echo ( ! $file_data->path || $file_data->path !== $data ) ? 'style="display:none"' : '' ?>>
+	<br>
+	<span class="ssp-episode-details-label"><?php _e( 'File name:', 'seriously-simple-podcasting' ) ?></span>
+	<span id="castos_file_name"><?php echo esc_html( $file_data->name ) ?></span>
+	<br>
+	<br>
+</div>
+
 </div>

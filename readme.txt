@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
 Requires at least: 4.4
-Tested up to: 6.3
-Requires PHP: 5.6
-Stable tag: 2.24.0
+Tested up to: 6.4
+Requires PHP: 7.4
+Stable tag: 2.25.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.25.0 =
+* 2023-11-16
+* UPDATE SUMMARY: Save and display original Castos file name, V4V improvements, minor enhancements
+* [UPDATE] Save and display original Castos file name
+* [UPDATE] V4V: custom value and key
+* [UPDATE] Added the date formatting filter
+* [UPDATE] Refactoring: moved metabox fields to separate templates
+* [FIX] Feed: fixed <googleplay:description> tag
 
 = 2.24.0 =
 * 2023-10-24

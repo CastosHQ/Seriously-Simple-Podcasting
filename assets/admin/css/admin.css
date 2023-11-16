@@ -332,6 +332,11 @@ textarea#episode_embed_code {
 .ssp-external-feed-message.import-error h3 {
   color: #DF4E4F; }
 
+.episode-file-description__filename {
+  font-weight: bold;
+  display: inline-block;
+  margin: 5px 0 10px; }
+
 /* latin-ext */
 @font-face {
   font-family: 'Inter';

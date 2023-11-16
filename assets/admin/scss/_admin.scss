@@ -448,3 +448,11 @@ textarea#episode_embed_code {
 		color: $clr_red_400;
 	}
 }
+
+.episode-file-description {
+	&__filename {
+		font-weight: bold;
+		display: inline-block;
+		margin: 5px 0 10px;
+	}
+}

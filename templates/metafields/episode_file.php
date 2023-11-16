@@ -38,14 +38,13 @@
 	<?php endif ?>
 </div>
 
-<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span>
+<div class="episode-file-description">
+	<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span>
 
-<div <?php echo ( ! $file_data->path || $file_data->path !== $data ) ? 'style="display:none"' : '' ?>>
-	<br>
-	<span class="ssp-episode-details-label"><?php _e( 'Original Filename:', 'seriously-simple-podcasting' ) ?></span>
-	<span id="castos_file_name"><?php echo esc_html( $file_data->name ) ?></span>
-	<br>
-	<br>
+	<div class="episode-file-description__filename" <?php echo ( ! $file_data->path || $file_data->path !== $data ) ? 'style="display:none"' : '' ?>>
+		<span class="ssp-episode-details-label"><?php _e( 'Original Filename:', 'seriously-simple-podcasting' ) ?></span>
+		<span id="castos_file_name"><?php echo esc_html( $file_data->name ) ?></span>
+	</div>
 </div>
 
 </div>

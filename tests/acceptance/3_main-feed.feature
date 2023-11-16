@@ -51,7 +51,7 @@ Feature: Login
 		And I can see in source "<itunes:category text=\"Management\"></itunes:category>"
 		And I can see in source "<googleplay:author><![CDATA[My WordPress]]></googleplay:author>"
 		And I can see in source "<googleplay:email>craig@castos.com</googleplay:email>"
-		And I can see in source "<googleplay:description></googleplay:description>"
+		And I can see in source "<googleplay:description>This show is to test some SSP functionality</googleplay:description>"
 		And I can see in source "<googleplay:explicit>No</googleplay:explicit>"
 		And I can see in source "<podcast:locked owner=\"craig@castos.com\">yes</podcast:locked>"
 		And I can see in source "<podcast:guid>1333b77e-cb43-5e4d-89cc-251ae4b9d53c</podcast:guid>"

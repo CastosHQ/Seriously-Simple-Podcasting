@@ -73,7 +73,10 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		$this->init_subscribers_sync();
-		$this->init_investigation();
+
+		add_action( 'init', function () {
+			$this->init_investigation();
+		}, 99 );
 	}
 
 	public function init_investigation() {

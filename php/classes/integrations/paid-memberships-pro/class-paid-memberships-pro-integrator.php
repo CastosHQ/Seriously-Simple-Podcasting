@@ -73,6 +73,48 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		$this->init_subscribers_sync();
+		$this->init_investigation();
+	}
+
+	public function init_investigation() {
+		if ( filter_input( INPUT_GET, 'castos_debug_old_map' ) ) {
+			print_r( $this->get_users_series_map() );
+			exit();
+		}
+
+		if ( filter_input( INPUT_GET, 'castos_debug_new_map' ) ) {
+			print_r( $this->generate_users_series_map() );
+			exit();
+		}
+
+		if ( filter_input( INPUT_GET, 'castos_debug_change_list' ) ) {
+			$old_map = $this->get_users_series_map();
+			$new_map = $this->generate_users_series_map();
+
+			$list_to_add    = array();
+			$list_to_revoke = array();
+
+			foreach ( $new_map as $user_id => $new_series ) {
+				$old_series = isset( $old_map[ $user_id ] ) ? $old_map[ $user_id ] : array();
+
+				$add_series = array_diff( $new_series, $old_series );
+				foreach ( $add_series as $series_id ) {
+					$list_to_add[ $series_id ][] = $user_id;
+				}
+
+				$revoke_series = array_diff( $old_series, $new_series );
+				foreach ( $revoke_series as $series_id ) {
+					$list_to_revoke[ $series_id ][] = $user_id;
+				}
+			}
+
+			$list_to_add    = array_map( 'array_unique', $list_to_add );
+			$list_to_revoke = array_map( 'array_unique', $list_to_revoke );
+
+			print_r( $list_to_add );
+			print_r( $list_to_revoke );
+			exit();
+		}
 	}
 
 

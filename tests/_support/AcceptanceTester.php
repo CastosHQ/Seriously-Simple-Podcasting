@@ -95,6 +95,15 @@ class AcceptanceTester extends \Codeception\Actor {
 		$this->see( $arg1 );
 	}
 
+
+	/**
+	 * @Then I can not see :arg1
+	 * @Then I can not see :arg1 text
+	 */
+	public function iCanNotSee( $arg1 ) {
+		$this->dontSee( $arg1 );
+	}
+
 	/**
 	 * @Given I can see SSP plugin is deactivated
 	 */
@@ -215,6 +224,11 @@ class AcceptanceTester extends \Codeception\Actor {
 			'Episode file'                      => '#upload_audio_file',
 			'File size'                         => '#filesize',
 			'Date recorded'                     => '#date_recorded_display',
+			'Enable iTunes fields'              => '#itunes_fields_enabled',
+			'iTunes Episode Number'             => '#itunes_episode_number',
+			'iTunes Episode Title'              => '#itunes_title',
+			'iTunes Season Number'              => '#itunes_season_number',
+			'iTunes Episode Type'               => '#itunes_episode_type',
 		);
 	}
 

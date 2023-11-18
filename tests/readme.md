@@ -38,6 +38,10 @@ https://codeception.com/07-24-2013/testing-wordpress-plugins.html
 `vendor/bin/codecept run acceptance --steps`
 `vendor/bin/codecept run acceptance settings-general.feature --steps`
 
+### Enable .feature hinting in PHPStorm:
+File -> Settings -> PHP -> Test Frameworks -> Add -> Behat Local
+Specify Path to Behat executable: {plugin_path}/vendor/behat
+
 ### Debugging:
 `codecept_debug($myVar);`
 `vendor/bin/codecept run --debug acceptance --steps`

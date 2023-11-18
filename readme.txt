@@ -1,7 +1,7 @@
 === Seriously Simple Podcasting ===
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, media, stitcher, google play, playlist
-Requires at least: 4.4
+Requires at least: 5.3
 Tested up to: 6.4
 Requires PHP: 7.4
 Stable tag: 2.25.1

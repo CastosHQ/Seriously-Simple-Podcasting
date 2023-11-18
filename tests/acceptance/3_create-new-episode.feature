@@ -26,14 +26,30 @@ Feature: Create new episode
 		And I can see "Mark this episode as explicit."
 		And I can see "Block this episode from appearing in the iTunes & Google Play podcast libraries."
 
+		And I can see "iTunes Episode Number:"
+		And I can see "The iTunes Episode Number. Leave Blank If None."
+		And I can see "The iTunes Episode Title. NO Podcast / Show Number Should Be Included."
+		And I can see "iTunes Season Number:"
+		And I can see "The iTunes Season Number. Leave Blank If None."
+		And I can see "iTunes Episode Type:"
+
 		When I fill the "Episode title" with "Test episode"
 		And I fill the "Episode content" with "Test episode content"
 		And I fill the "Episode file" with "https://episodes.castos.com/podcasthacker/d21a1b7a-531f-48f1-b4c0-8b8add2bccfe-file-example.mp3"
+		And I fill the "iTunes Episode Number" with "123"
+		And I fill the "iTunes Episode Title" with "234"
+		And I fill the "iTunes Season Number" with "345"
+		And I select the "iTunes Episode Type" as "Full: For Normal Episodes"
+
 		And I save the episode
 		Then I can see "Episode published."
 		And I can see "View episode."
 		And I can see field "File size" contains "1.04M"
 		And I can see field "Date recorded" contains current date in format "j F, Y"
+		And I can see field "iTunes Episode Number" contains "123"
+		And I can see field "iTunes Episode Title" contains "234"
+		And I can see field "iTunes Season Number" contains "345"
+		And I can see field "iTunes Episode Type" contains "Full: For Normal Episodes"
 
 		When I click "View episode" link
 		Then I can see "Test episode"

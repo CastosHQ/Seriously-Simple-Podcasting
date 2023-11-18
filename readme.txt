@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 5.3
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 2.25.1
+Stable tag: 2.25.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 2.25.2 =
+* 2023-11-18
+* UPDATE SUMMARY: Fixed missing iTunes Field labels
+* [FIX] Fixed missing iTunes Field labels
 
 = 2.25.1 =
 * 2023-11-16

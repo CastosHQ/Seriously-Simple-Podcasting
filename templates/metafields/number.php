@@ -7,11 +7,11 @@
  * */
 ?>
 <p>
-	<label class="ssp-episode-details-label" for="<?php esc_attr( $k ) ?>">
-		<?php wp_kses_post( $v['name'] ) ?></label>
+	<label class="ssp-episode-details-label" for="<?php echo esc_attr( $k ) ?>">
+		<?php echo wp_kses_post( $v['name'] ) ?></label>
 	<br/>
-	<input name="<?php esc_attr( $k ) ?>" type="number" min="0" id="<?php
+	<input name="<?php echo esc_attr( $k ) ?>" type="number" min="0" id="<?php
       echo esc_attr( $k ) ?>" class="<?php echo esc_attr( $class ) ?>" value="<?php echo esc_attr( $data ) ?>" />
 	<br/>
-	<span class="description"><?php wp_kses_post( $v['description'] ) ?></span>
+	<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span>
 </p>

@@ -24,12 +24,19 @@ class Series_Handler implements Service {
 	protected $roles_handler;
 
 	/**
+	 * @var Castos_Handler
+	 * */
+	protected $castos_handler;
+
+	/**
 	 * @param Admin_Notifications_Handler $notices_handler
 	 * @param Roles_Handler $roles_handler
+	 * @param Castos_Handler $castos_handler
 	 */
-	public function __construct( $notices_handler, $roles_handler ) {
+	public function __construct( $notices_handler, $roles_handler, $castos_handler ) {
 		$this->notices_handler = $notices_handler;
 		$this->roles_handler   = $roles_handler;
+		$this->castos_handler = $castos_handler;
 	}
 
 	/**
@@ -224,5 +231,31 @@ class Series_Handler implements Service {
 	 */
 	public function get_sync_status( $podcast_id ) {
 		return get_term_meta( $podcast_id, self::META_SYNC_STATUS, true );
+	}
+
+	public function enable_primary_series(){
+		if( $id = $this->create_primary_series() ) {
+			$this->castos_handler->update_default_series_id( $id );
+
+		}
+	}
+
+	/**
+	 * @return int|null
+	 */
+	protected function create_primary_series() {
+		$id = ssp_get_option( 'primary_series' );
+		if ( $id ) {
+			return $id;
+		}
+		$title = ssp_get_option( 'data_title' );
+		$res   = wp_insert_term( esc_html( $title ), ssp_series_taxonomy() );
+		if ( is_wp_error( $res ) || empty( $res['term_id'] ) ) {
+			return null;
+		}
+
+		$id = $res['term_id'];
+
+		return ssp_add_option( 'primary_series', $id ) ? $id : null;
 	}
 }

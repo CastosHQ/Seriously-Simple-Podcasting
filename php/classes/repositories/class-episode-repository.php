@@ -269,16 +269,9 @@ class Episode_Repository implements Service {
 			'post_status'    => 'publish',
 			'post_type'      => $podcast_post_types,
 			'posts_per_page' => $max,
-			/*'tax_query'      => array(
-				array(
-					'taxonomy' => ssp_series_taxonomy(),
-					'field'    => 'term_id',
-					'terms'    => $podcast_id,
-				),
-			),*/
 		);
 
-		$tax_query                 = ( 0 === $podcast_id ) ?
+		$tax_query = ( 0 === $podcast_id ) ?
 			array(
 				'taxonomy' => ssp_series_taxonomy(),
 				'operator' => 'NOT EXISTS'

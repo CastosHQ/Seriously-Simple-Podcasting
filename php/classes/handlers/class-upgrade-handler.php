@@ -20,12 +20,18 @@ class Upgrade_Handler implements Service {
 	protected $castos_handler;
 
 	/**
+	 * @var Series_Handler $series_handler
+	 * */
+	protected $series_handler;
+
+	/**
 	 * @param Episode_Repository $episode_repository
 	 * @param Castos_Handler $castos_handler
 	 */
-	public function __construct( $episode_repository, $castos_handler ) {
+	public function __construct( $episode_repository, $castos_handler, $series_handler ) {
 		$this->episode_repository = $episode_repository;
 		$this->castos_handler = $castos_handler;
+		$this->series_handler = $series_handler;
 	}
 
 	/**
@@ -69,6 +75,14 @@ class Upgrade_Handler implements Service {
 		if ( version_compare( $previous_version, '2.23.0', '<' ) ) {
 			$this->schedule_fixing_episodes_sync();
 		}
+
+		if ( version_compare( $previous_version, '3.0.0', '<' ) ) {
+			$this->enable_primary_series();
+		}
+	}
+
+	public function enable_primary_series() {
+		$this->series_handler->enable_primary_series();
 	}
 
 	/**

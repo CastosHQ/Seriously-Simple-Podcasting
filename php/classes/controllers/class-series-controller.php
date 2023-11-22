@@ -43,6 +43,13 @@ class Series_Controller {
 	}
 
 	/**
+	 * @return void
+	 */
+	public function enable_primary_series() {
+		$this->series_handler->enable_primary_series();
+	}
+
+	/**
 	 * @param array $actions
 	 * @param \WP_Term $term
 	 *

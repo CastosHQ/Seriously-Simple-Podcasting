@@ -571,6 +571,13 @@ class Castos_Handler implements Service {
 	}
 
 	/**
+	 * @ToDo Realise
+	 * */
+	public function update_default_series_id( $id ) {
+
+	}
+
+	/**
 	 * @param $series_id
 	 *
 	 * @return Sync_Status

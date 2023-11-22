@@ -245,8 +245,6 @@ class App_Controller {
 
 		$this->castos_handler = new Castos_Handler();
 
-		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler );
-
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
@@ -263,8 +261,6 @@ class App_Controller {
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
-		$this->cron_controller = new Cron_Controller( $this->castos_handler, $this->episode_repository, $this->upgrade_handler );
-
 		$this->ajax_handler = new Ajax_Handler( $this->castos_handler );
 
 		$this->podping_handler = new Podping_Handler( $this->logger );
@@ -273,7 +269,11 @@ class App_Controller {
 
 		$this->assets_controller = new Assets_Controller();
 
-		$this->series_handler    = new Series_Handler( $this->admin_notices_handler, $this->roles_handler );
+		$this->series_handler    = new Series_Handler( $this->admin_notices_handler, $this->roles_handler, $this->castos_handler );
+
+		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler, $this->series_handler );
+
+		$this->cron_controller = new Cron_Controller( $this->castos_handler, $this->episode_repository, $this->upgrade_handler );
 
 		if ( is_admin() ) {
 			$this->admin_notices_handler->bootstrap();
@@ -406,19 +406,21 @@ class App_Controller {
 		// Setup custom permalink structures.
 		add_action( 'init', array( $this, 'setup_permastruct' ), 10 );
 
-		// Run any updates required
-		add_action( 'init', array( $this, 'maybe_run_plugin_updates' ), 11 );
-
-		// Dismiss the categories update screen
-		add_action( 'init', array( $this, 'dismiss_categories_update' ) ); //todo: can we move it to 'admin_init'?
-
-		// Dismiss the categories update screen
-		add_action( 'init', array( $this, 'disable_elementor_template_notice' ) );
 
 		// Hide WP SEO footer text for podcast RSS feed.
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
 		if ( is_admin() ) {
+
+			// Run any updates required
+			add_action( 'admin_init', array( $this, 'maybe_run_plugin_updates' ), 11 );
+
+			// Dismiss the categories update screen
+			add_action( 'admin_init', array( $this, 'dismiss_categories_update' ) );
+
+			// Dismiss the categories update screen
+			add_action( 'admin_init', array( $this, 'disable_elementor_template_notice' ) );
+
 			// process the import form submission
 			add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
@@ -937,8 +939,11 @@ HTML;
 	public function activate() {
 		// Setup all custom URL rules
 		$this->podcast_post_types_controller->register_post_type();
+		$this->series_controller->register_taxonomy();
 		// Setup feed
 		$this->feed_controller->add_feed();
+		// Setup the Primary Podcast
+		$this->series_controller->enable_primary_series();
 		// Setup permalink structure
 		$this->setup_permastruct();
 		// Flush permalinks

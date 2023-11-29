@@ -234,9 +234,32 @@ class Series_Handler implements Service {
 	}
 
 	public function enable_primary_series(){
-		if( $id = $this->create_primary_series() ) {
-			$this->castos_handler->update_default_series_id( $id );
+		if( $series_id = $this->create_primary_series() ) {
+			$this->castos_handler->update_default_series_id( $series_id );
+			$this->assign_orphan_episodes( $series_id );
+		}
+	}
 
+	/**
+	 * @param int $series_id
+	 *
+	 * @return void
+	 */
+	protected function assign_orphan_episodes( $series_id ) {
+		$series_terms = get_terms(
+			array(
+				'taxonomy'   => ssp_series_taxonomy(),
+				'hide_empty' => false,
+				'fields'     => 'ids',
+			)
+		);
+
+		$args            = ssp_episodes( - 1, '', true, '', $series_terms );
+		$args['fields']  = 'ids';
+		$orphan_episodes = get_posts( $args );
+
+		foreach ( $orphan_episodes as $post_id ) {
+			wp_set_post_terms( $post_id, array( $series_id ), ssp_series_taxonomy(), true );
 		}
 	}
 

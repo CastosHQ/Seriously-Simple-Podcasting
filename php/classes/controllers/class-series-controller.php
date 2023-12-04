@@ -32,6 +32,7 @@ class Series_Controller {
 		add_action( 'init', array( $this, 'register_taxonomy' ), 11 );
 		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_sync_status' ), 10, 3 );
+		add_filter('term_name', array($this, 'update_default_series_name'), 10, 2);
 	}
 
 
@@ -47,6 +48,24 @@ class Series_Controller {
 	 */
 	public function enable_primary_series() {
 		$this->series_handler->enable_primary_series();
+	}
+
+	/**
+	 * @param string $name
+	 * @param \WP_Term $tag
+	 *
+	 * @return string
+	 */
+	public function update_default_series_name( $name, $tag ) {
+		if ( ! is_object( $tag ) || $tag->taxonomy != ssp_series_taxonomy() ) {
+			return $name;
+		}
+
+		if ( $tag->term_id == ssp_get_default_series_id() ) {
+			return sprintf( '%s (%s)', $name, 'default' );
+		}
+
+		return $name;
 	}
 
 	/**

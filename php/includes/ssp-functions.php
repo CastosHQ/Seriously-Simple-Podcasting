@@ -1307,7 +1307,7 @@ if ( ! function_exists( 'ssp_get_option' ) ) {
 	 * @param string $default
 	 * @param int $series_id
 	 *
-	 * @return string
+	 * @return string|null
 	 * @since 2.9.3
 	 */
 	function ssp_get_option( $option, $default = '', $series_id = '' ) {
@@ -1719,5 +1719,16 @@ if( ! function_exists('ssp_get_tab_url') ){
 			'page'      => 'podcast_settings',
 			'tab'       => $tab
 		), admin_url( 'edit.php' ) );
+	}
+}
+
+
+if( ! function_exists('ssp_get_default_series_id') ){
+	/**
+	 *
+	 * @return string|null
+	 */
+	function ssp_get_default_series_id() {
+		return ssp_get_option( 'primary_series' );
 	}
 }

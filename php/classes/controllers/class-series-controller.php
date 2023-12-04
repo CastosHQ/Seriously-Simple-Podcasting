@@ -32,7 +32,35 @@ class Series_Controller {
 		add_action( 'init', array( $this, 'register_taxonomy' ), 11 );
 		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_sync_status' ), 10, 3 );
-		add_filter('term_name', array($this, 'update_default_series_name'), 10, 2);
+		add_filter( 'term_name', array( $this, 'update_default_series_name' ), 10, 2 );
+		$this->prevent_deleting_default_series();
+
+	}
+
+	public function prevent_deleting_default_series() {
+		add_filter( ssp_series_taxonomy() . '_row_actions', array( $this, 'disable_deleting_default' ), 10, 2 );
+		add_action( 'pre_delete_term', array( $this, 'prevent_term_deletion' ), 10, 2 );
+	}
+
+	/**
+	 * @param int $term_id
+	 * @param string $taxonomy
+	 *
+	 * @return void
+	 */
+	public function prevent_term_deletion( $term_id, $taxonomy ) {
+		if ( $taxonomy != ssp_series_taxonomy() ) {
+			return;
+		}
+		if ( $term_id == ssp_get_default_series_id() ) {
+			if ( isset( $_POST['action'] ) && 'delete-tag' === $_POST['action'] ) {
+				$error = - 1; // it's an ajax action, just return -1
+			} else {
+				$error = new \WP_Error ();
+				$error->add( 1, __( '<h2>You cannot delete the default podcast!', 'seriously-simple-podcasting' ) );
+			}
+			wp_die( $error );
+		}
 	}
 
 
@@ -66,6 +94,24 @@ class Series_Controller {
 		}
 
 		return $name;
+	}
+
+	/**
+	 * @param $actions
+	 * @param $tag
+	 *
+	 * @return mixed
+	 */
+	public function disable_deleting_default( $actions, $tag ) {
+		if ( ! is_object( $tag ) || $tag->term_id != ssp_get_default_series_id() ) {
+			return $actions;
+		}
+
+		$title = __( "You can't delete the default podcast", 'seriously-simple-podcasting' );
+
+		$actions['delete'] = '<span title="' . $title .'">' . __( 'Delete', 'seriously-simple-podcasting' ) . '</span>';
+
+		return $actions;
 	}
 
 	/**

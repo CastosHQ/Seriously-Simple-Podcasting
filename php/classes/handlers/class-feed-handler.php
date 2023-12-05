@@ -210,7 +210,8 @@ class Feed_Handler implements Service {
 	 */
 	public function get_excluded_series( $series_id ) {
 		$exclude_series = array();
-		if ( $series_id ) {
+
+		if ( $series_id && $series_id != ssp_get_default_series_id() ) {
 			return $exclude_series;
 		}
 
@@ -221,7 +222,12 @@ class Feed_Handler implements Service {
 			)
 		);
 
+		$default_series_id = ssp_get_default_series_id();
+
 		foreach ( $series as $feed ) {
+			if ( $default_series_id == $feed->term_id ) {
+				continue;
+			}
 			$exclude_feed_option = get_option( 'ss_podcasting_exclude_feed_' . $feed->term_id, 'off' );
 			if ( 'on' === $exclude_feed_option ) {
 				$exclude_series[] = $feed->slug;

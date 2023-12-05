@@ -444,7 +444,11 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			'post__in'            => $episode_ids,
 		);
 
-		if ( $series ) {
+		$default_series = get_term_by( 'id', ssp_get_default_series_id(), ssp_series_taxonomy() );
+
+		$is_default_series = $series && $default_series &&  $series == $default_series->slug;
+
+		if ( $series && ! $is_default_series ) {
 			$args['tax_query'] = array(
 				array(
 					'taxonomy' => 'series',
@@ -1726,9 +1730,9 @@ if( ! function_exists('ssp_get_tab_url') ){
 if( ! function_exists('ssp_get_default_series_id') ){
 	/**
 	 *
-	 * @return string|null
+	 * @return int
 	 */
 	function ssp_get_default_series_id() {
-		return ssp_get_option( 'primary_series' );
+		return intval( ssp_get_option( 'primary_series' ) );
 	}
 }

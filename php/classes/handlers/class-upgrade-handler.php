@@ -77,12 +77,12 @@ class Upgrade_Handler implements Service {
 		}
 
 		if ( version_compare( $previous_version, '3.0.0', '<' ) ) {
-			$this->enable_primary_series();
+			$this->enable_default_series();
 		}
 	}
 
-	public function enable_primary_series() {
-		$this->series_handler->enable_primary_series();
+	public function enable_default_series() {
+		$this->series_handler->enable_default_series();
 	}
 
 	/**

@@ -1752,6 +1752,6 @@ if( ! function_exists('ssp_get_default_series_id') ){
 	 * @return int
 	 */
 	function ssp_get_default_series_id() {
-		return intval( ssp_get_option( 'primary_series' ) );
+		return intval( ssp_get_option( 'default_series' ) );
 	}
 }

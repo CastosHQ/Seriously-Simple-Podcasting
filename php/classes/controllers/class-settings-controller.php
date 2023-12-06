@@ -593,28 +593,30 @@ class Settings_Controller {
 
 		$default_option_name = $option_name;
 
-		// Get option value
-		$data = get_option( $option_name, $default );
-
 		// Get specific series data if applicable
-		// Todo: use ssp_field_data filter instead
+		// Since version 3.0, we use the Default Series settings, that should replace the default feed settings
 		if ( isset( $args['feed-series'] ) && $args['feed-series'] ) {
+			// Get series-specific option
+			$option_name .= '_' . $args['feed-series'];
+			$data = get_option( $option_name, $default );
 
-			// Set placeholder to default feed option with specified default fallback
-			if ( $data ) {
-				$field['placeholder'] = $data;
+			if ( ! $data && in_array( $field['type'], array( 'checkbox', 'select', 'image' ), true ) ) {
+				// Let's try to get data from the default series settings
+				$default_series_id = ssp_get_default_series_id();
+				if ( $args['feed-series'] != $default_series_id ) {
+					$data = get_option( $default_option_name . '_' . $default_series_id );
+				}
 
-				if ( in_array( $field['type'], array( 'checkbox', 'select', 'image' ), true ) ) {
-					$default = $data;
+				// Last try - get from the old default feed settings
+				if ( ! $data ) {
+					$data = get_option( $default_option_name );
 				}
 			}
-
-			// Append series ID to option name
-			$option_name .= '_' . $args['feed-series'];
-
-			// Get series-specific option
+		} else {
+			// Get option value
 			$data = get_option( $option_name, $default );
 		}
+
 
 		$data = apply_filters( 'ssp_field_data', $data, $args );
 
@@ -869,8 +871,18 @@ class Settings_Controller {
 
 		$html = '';
 
+		$default_series_id = ssp_get_default_series_id();
+
+		// First should always go the default series
+		$series = array(
+			get_term_by( 'id', $default_series_id, ssp_series_taxonomy() ),
+		);
+
 		// Series submenu for feed details
-		$series = get_terms( 'series', array( 'hide_empty' => false ) );
+		$series = array_merge( $series, get_terms( ssp_series_taxonomy(), array(
+			'hide_empty' => false,
+			'exclude'    => array( $default_series_id ),
+		) ) );
 
 		if ( empty( $series ) ) {
 			return $html;

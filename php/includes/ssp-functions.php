@@ -558,24 +558,43 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 			$level = '';
 		}
 
-		$category = get_option( 'ss_podcasting_data_category' . $level, '' );
+		$default_series_id = ssp_get_default_series_id();
+
 		if ( $series_id ) {
-			$series_category = get_option( 'ss_podcasting_data_category' . $level . '_' . $series_id, 'no-category' );
-			if ( 'no-category' !== $series_category ) {
-				$category = $series_category;
+			// Try to get the series category
+			$category = get_option( 'ss_podcasting_data_category' . $level . '_' . $series_id, 'no-category' );
+
+			// Try to get the default series category if series category was not setup yet
+			if ( 'no-category' === $category ) {
+				$category = get_option( 'ss_podcasting_data_category' . $level . '_' . $default_series_id, 'no-category' );
 			}
-		}
-		if ( ! $category ) {
-			$category    = '';
+
+			// Try to get category from the default feed settings (old variant, just for the backwards compatibility)
+			if ( 'no-category' === $category ) {
+				$category = get_option( 'ss_podcasting_data_category' . $level, '' );
+			}
+
 			$subcategory = '';
-		} else {
-			$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level, '' );
-			if ( $series_id ) {
-				$series_subcategory = get_option( 'ss_podcasting_data_subcategory' . $level . '_' . $series_id, 'no-subcategory' );
-				if ( 'no-subcategory' !== $series_subcategory ) {
-					$subcategory = $series_subcategory;
-				}
+
+			// Try to get the series subcategory
+			if ( $category ) {
+				$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level . '_' . $series_id, 'no-subcategory' );
 			}
+
+			// Try to get the default series category if series category was not setup yet
+			if ( 'no-subcategory' === $subcategory ) {
+				$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level . '_' . $default_series_id, 'no-subcategory' );
+			}
+
+			// Try to get category from the default feed settings (old variant, just for the backwards compatibility)
+			if ( 'no-subcategory' === $subcategory ) {
+				$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level, '' );
+			}
+
+		} else {
+			// If there is no series ID, it's a deprecated default feed settings, which are not used anymore
+			$category = get_option( 'ss_podcasting_data_category' . $level, '' );
+			$subcategory = $category ? get_option( 'ss_podcasting_data_subcategory' . $level, '' ) : '';
 		}
 
 		return apply_filters(

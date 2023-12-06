@@ -44,7 +44,7 @@ class Settings_Renderer implements Service {
 	 *
 	 * @return string
 	 * @since 2.9.3 Moved this function from the settings_controller.
-	 * @since 2.15.0 Splitted into multiple render functions
+	 * @since 2.15.0 Split into multiple render functions
 	 */
 	public function render_field( $field, $data, $option_name, $default_option_name = '' ) {
 

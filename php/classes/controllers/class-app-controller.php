@@ -943,7 +943,7 @@ HTML;
 		// Setup feed
 		$this->feed_controller->add_feed();
 		// Setup the Primary Podcast
-		$this->series_controller->enable_primary_series();
+		$this->series_controller->enable_default_series();
 		// Setup permalink structure
 		$this->setup_permastruct();
 		// Flush permalinks

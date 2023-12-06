@@ -233,8 +233,8 @@ class Series_Handler implements Service {
 		return get_term_meta( $podcast_id, self::META_SYNC_STATUS, true );
 	}
 
-	public function enable_primary_series(){
-		if( $series_id = $this->create_primary_series() ) {
+	public function enable_default_series(){
+		if( $series_id = $this->create_default_series() ) {
 			$this->castos_handler->update_default_series_id( $series_id );
 			$this->assign_orphan_episodes( $series_id );
 		}
@@ -266,8 +266,8 @@ class Series_Handler implements Service {
 	/**
 	 * @return int|null
 	 */
-	protected function create_primary_series() {
-		$id = ssp_get_option( 'primary_series' );
+	protected function create_default_series() {
+		$id = ssp_get_option( 'default_series' );
 		if ( $id ) {
 			return $id;
 		}
@@ -282,6 +282,6 @@ class Series_Handler implements Service {
 		// The exclude feed option is created automatically on insert, and is 'on' by default, so we need to disable it.
 		ssp_update_option( 'exclude_feed', 'off', $id );
 
-		return ssp_add_option( 'primary_series', $id ) ? $id : null;
+		return ssp_add_option( 'default_series', $id ) ? $id : null;
 	}
 }

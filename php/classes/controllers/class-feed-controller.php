@@ -156,7 +156,7 @@ class Feed_Controller {
 
 		// Since version 3.0.0, we redirect the default feed to the default series feed
 		if ( ! $podcast_series ) {
-			$default_series_id = ssp_get_option( 'primary_series' );
+			$default_series_id = ssp_get_option( 'default_series' );
 			if ( $default_series_id ) {
 				$term = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
 				if ( $term ) {

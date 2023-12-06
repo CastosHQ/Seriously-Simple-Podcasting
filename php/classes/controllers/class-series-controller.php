@@ -74,8 +74,8 @@ class Series_Controller {
 	/**
 	 * @return void
 	 */
-	public function enable_primary_series() {
-		$this->series_handler->enable_primary_series();
+	public function enable_default_series() {
+		$this->series_handler->enable_default_series();
 	}
 
 	/**

@@ -733,8 +733,12 @@ class Settings_Controller {
 					$tab_link = remove_query_arg( 'settings-updated', $tab_link );
 				}
 
-				if ( isset( $_GET['feed-series'] ) ) {
-					$tab_link = remove_query_arg( 'feed-series', $tab_link );
+				if ( 'feed-details' === $section ) {
+					$default_series_id = ssp_get_default_series_id();
+					$default_series    = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
+					$tab_link          = add_query_arg( 'feed-series', $default_series->slug, $tab_link );
+				} else {
+					$tab_link          = remove_query_arg( 'feed-series', $tab_link );
 				}
 
 				$title = isset( $data['tab_title'] ) ? $data['tab_title'] : $data['title'];
@@ -889,22 +893,24 @@ class Settings_Controller {
 		}
 
 		$current_series = $this->get_current_series();
-		$series_class   = 'default' === $current_series ? 'current' : '';
 
 		$html .= '<div class="feed-series-list-container">' . "\n";
 		$html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'seriously-simple-podcasting' ) . '"></span>' . "\n";
 
 		$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
-		$html .= '<li><a href="' . add_query_arg( array(
+		/*$html .= '<li><a href="' . add_query_arg( array(
 				'feed-series'      => 'default',
 				'settings-updated' => false
-			) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'seriously-simple-podcasting' ) . '</a></li>';
+			) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'seriously-simple-podcasting' ) . '</a></li>';*/
 
-		foreach ( $series as $s ) {
+		foreach ( $series as $k => $s ) {
 			$series_class = $current_series === $s->slug ? 'current' : '';
 
 			$html .= '<li>' . "\n";
-			$html .= ' | <a href="' . esc_url( add_query_arg( array(
+			if( 0 !== $k ){
+				$html .= ' | ';
+			}
+			$html .= '<a href="' . esc_url( add_query_arg( array(
 					'feed-series'      => $s->slug,
 					'settings-updated' => false
 				) ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
@@ -961,7 +967,7 @@ class Settings_Controller {
 	 * @return string
 	 */
 	protected function get_current_parameter( $param ) {
-		$current = 'default';
+		$current = '';
 
 		if ( ! empty( $_GET[ $param ] ) ) {
 			$current = esc_attr( $_GET[ $param ] );

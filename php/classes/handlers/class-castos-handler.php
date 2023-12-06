@@ -1070,8 +1070,8 @@ class Castos_Handler implements Service {
 		$podcast['itunes_category1'] = $itunes_category1['category'];
 		$podcast['itunes_category2'] = $itunes_category2['category'];
 		$podcast['itunes_category3'] = $itunes_category3['category'];
-		$podcast['itunes']           = ssp_get_option( 'itunes_url', '', $series_id );
-		$podcast['google_play']      = ssp_get_option( 'google_play_url', '', $series_id );
+		$podcast['itunes']           = ssp_get_option('apple_podcasts_url', '', $series_id);
+		$podcast['google_podcasts']  = ssp_get_option('google_podcasts_url', '', $series_id); 
 		$guid                        = ssp_get_option( 'data_guid', '', $series_id );
 
 		if ( $guid ) {

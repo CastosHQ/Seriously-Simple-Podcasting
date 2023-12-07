@@ -558,9 +558,9 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 			$level = '';
 		}
 
-		$default_series_id = ssp_get_default_series_id();
-
 		if ( $series_id ) {
+			$default_series_id = ssp_get_default_series_id();
+
 			// Try to get the series category
 			$category = get_option( 'ss_podcasting_data_category' . $level . '_' . $series_id, 'no-category' );
 

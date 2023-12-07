@@ -387,7 +387,7 @@ class Feed_Handler implements Service {
 		}
 
 		if ( empty( $owner_email ) ) {
-			$owner_email = get_option( 'ss_podcasting_data_owner_email', get_bloginfo( 'admin_email' ) );
+			$owner_email = get_option( 'ss_podcasting_data_owner_email', '' );
 		}
 
 		return apply_filters( 'ssp_feed_owner_email', $owner_email, $series_id );

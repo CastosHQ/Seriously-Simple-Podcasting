@@ -570,12 +570,46 @@ class Castos_Handler implements Service {
 		return $this->response;
 	}
 
-	/**
-	 * @ToDo Realise
-	 * */
-	public function update_default_series_id( $id ) {
 
+	/**
+	 * @param int $series_id
+	 *
+	 * @return array|null
+	 * @throws \Exception
+	 */
+	public function update_default_series_id( $series_id ) {
+
+		$podcast = $this->get_podcast_by_series( 0 );
+		if ( ! $podcast ) {
+			return null;
+		}
+
+		$api_url = 'api/v2/podcasts/' . $podcast->id;
+
+		$args = array(
+			'series_id' => $series_id,
+		);
+
+		return $this->send_request( $api_url, $args, 'POST' );
 	}
+
+	/**
+	 * @param $series_id
+	 *
+	 * @return API_Podcast|null
+	 */
+	public function get_podcast_by_series( $series_id ) {
+		$podcasts = $this->get_podcast_items();
+
+		foreach ( $podcasts as $podcast ) {
+			if( $series_id === $podcast->series_id){
+				return $podcast;
+			}
+		}
+
+		return null;
+	}
+
 
 	/**
 	 * @param $series_id

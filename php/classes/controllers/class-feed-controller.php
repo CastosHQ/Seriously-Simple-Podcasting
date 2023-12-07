@@ -154,17 +154,8 @@ class Feed_Controller {
 
 		$podcast_series = $this->feed_handler->get_podcast_series();
 
-		// Since version 3.0.0, we redirect the default feed to the default series feed
 		if ( ! $podcast_series ) {
-			$default_series_id = ssp_get_option( 'default_series' );
-			if ( $default_series_id ) {
-				$term = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
-				if ( $term ) {
-					$url = ssp_get_feed_url( $term->slug );
-					wp_redirect( $url );
-					exit();
-				}
-			}
+			$this->feed_handler->redirect_default_feed();
 		}
 
 		$series_id = $this->feed_handler->get_series_id( $podcast_series );

@@ -102,6 +102,22 @@ class Feed_Handler implements Service {
 	}
 
 	/**
+	 * Redirect the default feed to the default series feed
+	 * @since 3.0.0
+	 * */
+	public function redirect_default_feed(){
+		$default_series_id = ssp_get_option( 'default_series' );
+		if ( $default_series_id ) {
+			$term = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
+			if ( $term ) {
+				$url = ssp_get_feed_url( $term->slug );
+				wp_redirect( $url );
+				exit();
+			}
+		}
+	}
+
+	/**
 	 * Get series id
 	 *
 	 * @param string $podcast_series
@@ -250,6 +266,10 @@ class Feed_Handler implements Service {
 		}
 
 		if ( empty( $title ) ) {
+			$title = get_option( 'ss_podcasting_data_title_' . ssp_get_default_series_id(), '' );
+		}
+
+		if ( empty( $title ) ) {
 			$title = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
 		}
 
@@ -266,6 +286,10 @@ class Feed_Handler implements Service {
 	public function get_podcast_description( $series_id ) {
 		if ( $series_id ) {
 			$description = get_option( 'ss_podcasting_data_description_' . $series_id, '' );
+		}
+
+		if ( empty( $description ) ) {
+			$description = get_option( 'ss_podcasting_data_description_' . ssp_get_default_series_id(), '' );
 		}
 
 		if ( empty( $description ) ) {
@@ -290,6 +314,10 @@ class Feed_Handler implements Service {
 		}
 
 		if ( empty( $language ) ) {
+			$language = get_option( 'ss_podcasting_data_language_' . ssp_get_default_series_id(), '' );
+		}
+
+		if ( empty( $language ) ) {
 			$language = get_option( 'ss_podcasting_data_language', get_bloginfo( 'language' ) );
 		}
 
@@ -307,6 +335,10 @@ class Feed_Handler implements Service {
 	public function get_podcast_copyright( $series_id ) {
 		if ( $series_id ) {
 			$copyright = get_option( 'ss_podcasting_data_copyright_' . $series_id, '' );
+		}
+
+		if ( empty( $copyright ) ) {
+			$copyright = get_option( 'ss_podcasting_data_copyright_' . ssp_get_default_series_id(), '' );
 		}
 
 		if ( empty( $copyright ) ) {
@@ -329,6 +361,10 @@ class Feed_Handler implements Service {
 		}
 
 		if ( empty( $subtitle ) ) {
+			$subtitle = get_option( 'ss_podcasting_data_subtitle_' . ssp_get_default_series_id(), '' );
+		}
+
+		if ( empty( $subtitle ) ) {
 			$subtitle = get_option( 'ss_podcasting_data_subtitle', get_bloginfo( 'description' ) );
 		}
 
@@ -348,6 +384,10 @@ class Feed_Handler implements Service {
 		}
 
 		if ( empty( $author ) ) {
+			$author = get_option( 'ss_podcasting_data_author_' . ssp_get_default_series_id(), '' );
+		}
+
+		if ( empty( $author ) ) {
 			$author = get_option( 'ss_podcasting_data_author', get_bloginfo( 'name' ) );
 		}
 
@@ -364,6 +404,10 @@ class Feed_Handler implements Service {
 	public function get_podcast_owner_name( $series_id ) {
 		if ( $series_id ) {
 			$owner_name = get_option( 'ss_podcasting_data_owner_name_' . $series_id, '' );
+		}
+
+		if ( empty( $owner_name ) ) {
+			$owner_name = get_option( 'ss_podcasting_data_owner_name_' . ssp_get_default_series_id(), '' );
 		}
 
 		if ( empty( $owner_name ) ) {
@@ -387,6 +431,10 @@ class Feed_Handler implements Service {
 		}
 
 		if ( empty( $owner_email ) ) {
+			$owner_email = get_option( 'ss_podcasting_data_owner_email_' . ssp_get_default_series_id(), '' );
+		}
+
+		if ( empty( $owner_email ) ) {
 			$owner_email = get_option( 'ss_podcasting_data_owner_email', '' );
 		}
 
@@ -403,6 +451,10 @@ class Feed_Handler implements Service {
 	public function is_explicit( $series_id ) {
 		if ( $series_id ) {
 			$explicit_option = get_option( 'ss_podcasting_explicit_' . $series_id, null );
+		}
+
+		if ( ! isset( $explicit_option ) ) {
+			$explicit_option = get_option( 'ss_podcasting_explicit_' . ssp_get_default_series_id(), null );
 		}
 
 		if ( ! isset( $explicit_option ) ) {
@@ -427,6 +479,10 @@ class Feed_Handler implements Service {
 		}
 
 		if ( ! isset( $complete_option ) ) {
+			$complete_option = get_option( 'ss_podcasting_complete_' . ssp_get_default_series_id(), null );
+		}
+
+		if ( ! isset( $complete_option ) ) {
 			$complete_option = get_option( 'ss_podcasting_complete', '' );
 		}
 
@@ -446,14 +502,15 @@ class Feed_Handler implements Service {
 	public function get_feed_image( $series_id ) {
 		// If it's series feed, try first to show its own image.
 		if ( $series_id ) {
-			$series_image = get_option( 'ss_podcasting_data_image_' . $series_id, 'no-image' );
-			if ( $series_image && 'no-image' !== $series_image ) {
-				$image = $series_image;
-			}
+			$image = get_option( 'ss_podcasting_data_image_' . $series_id, null );
+		}
+
+		if ( ! isset( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
+			$image = get_option( 'ss_podcasting_data_image_' . ssp_get_default_series_id(), null );
 		}
 
 		// If couldn't show the series image, or if it's default feed, lets show the default cover image.
-		if ( empty( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
+		if ( ! isset( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
 			$image = get_option( 'ss_podcasting_data_image', '' );
 		}
 
@@ -471,6 +528,10 @@ class Feed_Handler implements Service {
 	public function get_turbo( $series_id ) {
 		if ( $series_id ) {
 			$turbo = get_option( 'ss_podcasting_turbocharge_feed_' . $series_id, null );
+		}
+
+		if ( ! isset( $turbo ) ) {
+			$turbo = get_option( 'ss_podcasting_turbocharge_feed_' . ssp_get_default_series_id(), null );
 		}
 
 		if ( ! isset( $turbo ) ) {
@@ -501,11 +562,8 @@ class Feed_Handler implements Service {
 	 * @return bool
 	 */
 	public function is_excerpt_mode( $series_id ) {
-		if ( $series_id ) {
-			$description_mode = get_option( 'ss_podcasting_episode_description_' . $series_id );
-		} else {
-			$description_mode = get_option( 'ss_podcasting_episode_description', 'excerpt' );
-		}
+
+		$description_mode = ssp_get_option( 'episode_description', 'excerpt', $series_id );
 
 		return 'excerpt' === $description_mode;
 	}
@@ -533,13 +591,7 @@ class Feed_Handler implements Service {
 	 * @return string Yes|No
 	 */
 	public function get_locked( $series_id ) {
-		if ( $series_id ) {
-			$locked = get_option( 'ss_podcasting_locked_' . $series_id, 'on' );
-		}
-
-		if ( ! isset( $locked ) ) {
-			$locked = get_option( 'ss_podcasting_locked', 'on' );
-		}
+		$locked = ssp_get_option( 'locked', 'on', $series_id );
 
 		return 'on' === $locked ? 'yes' : 'no';
 	}
@@ -555,9 +607,7 @@ class Feed_Handler implements Service {
 	public function get_funding( $series_id ) {
 		if ( $series_id ) {
 			$funding = get_option( 'ss_podcasting_funding_' . $series_id, null );
-		}
-
-		if ( ! isset( $funding ) ) {
+		} else {
 			$funding = get_option( 'ss_podcasting_funding', null );
 		}
 
@@ -574,14 +624,12 @@ class Feed_Handler implements Service {
 	 */
 	public function get_podcast_value( $series_id ) {
 		if ( $series_id ) {
-			$funding = get_option( 'ss_podcasting_podcast_value_' . $series_id, null );
+			$value = get_option( 'ss_podcasting_podcast_value_' . $series_id, null );
+		} else {
+			$value = get_option( 'ss_podcasting_podcast_value', null );
 		}
 
-		if ( ! isset( $funding ) ) {
-			$funding = get_option( 'ss_podcasting_podcast_value', null );
-		}
-
-		return $funding;
+		return $value;
 	}
 
 	/**
@@ -621,9 +669,7 @@ class Feed_Handler implements Service {
 	 * @return string Either 'published' or 'recorded'
 	 */
 	public function get_pub_date_type( $series_id ) {
-		$pub_date_type_option = $series_id ? 'ss_podcasting_publish_date_' . $series_id : 'ss_podcasting_publish_date';
-
-		return get_option( $pub_date_type_option, 'published' );
+		return ssp_get_option( 'publish_date', 'published', $series_id );
 	}
 
 	/**

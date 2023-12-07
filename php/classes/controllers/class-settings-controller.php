@@ -910,10 +910,13 @@ class Settings_Controller {
 			if( 0 !== $k ){
 				$html .= ' | ';
 			}
+
+			$name = ( 0 === $k ) ? __( 'Default feed', 'seriously-simple-podcasting' ) : $s->name;
+
 			$html .= '<a href="' . esc_url( add_query_arg( array(
 					'feed-series'      => $s->slug,
 					'settings-updated' => false
-				) ) ) . '" class="' . $series_class . '">' . $s->name . '</a>' . "\n";
+				) ) ) . '" class="' . $series_class . '">' . $name . '</a>' . "\n";
 			$html .= '</li>' . "\n";
 		}
 

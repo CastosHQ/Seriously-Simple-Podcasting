@@ -269,7 +269,10 @@ class Series_Handler implements Service {
 	protected function create_default_series() {
 		$id = ssp_get_option( 'default_series' );
 		if ( $id ) {
-			return $id;
+			$term = get_term_by( 'id', $id, ssp_series_taxonomy() );
+			if ( $term ) {
+				return $id;
+			}
 		}
 		$title = ssp_get_option( 'data_title' );
 		$res   = wp_insert_term( esc_html( $title ), ssp_series_taxonomy() );

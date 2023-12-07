@@ -681,6 +681,17 @@ HTML;
 		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
+
+		$default_series_id = ssp_get_default_series_id();
+		if ( ! $default_series_id ) {
+			/**
+			 * It means we're creating the default series now,
+			 * and we should update the default Podcast series ID instead of creating the new one.
+			 * @see Castos_Handler::update_default_series_id()
+			 * */
+			return;
+		}
+
 		// push the series to Castos as a Podcast
 		$series_data              = $this->castos_handler->generate_series_data_for_castos( $term_id );
 		$series_data['series_id'] = $term_id;

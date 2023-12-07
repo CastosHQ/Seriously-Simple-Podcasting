@@ -446,7 +446,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 
 		$default_series = get_term_by( 'id', ssp_get_default_series_id(), ssp_series_taxonomy() );
 
-		$is_default_series = $series && $default_series &&  $series == $default_series->slug;
+		$is_default_series = $series && $default_series && ( $series == $default_series->slug );
 
 		if ( $series && ! $is_default_series ) {
 			$args['tax_query'] = array(

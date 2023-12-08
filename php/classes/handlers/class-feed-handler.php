@@ -85,7 +85,7 @@ class Feed_Handler implements Service {
 	 *
 	 * @return string
 	 */
-	public function get_podcast_series() {
+	public function get_series_slug() {
 		global $wp_query;
 
 		$podcast_series = '';

@@ -384,12 +384,12 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	 * Protects access to private feeds.
 	 * */
 	public function protect_feed_access() {
-		$series_slug = $this->feed_handler->get_podcast_series();
+		$series_slug = $this->feed_handler->get_series_slug();
 		if ( empty( $series_slug ) ) {
 			return;
 		}
 
-		$series = get_term_by( 'slug', $this->feed_handler->get_podcast_series(), 'series' );
+		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), 'series' );
 
 		$has_access         = true;
 		$required_level_ids = $this->get_series_level_ids( $series->term_id );

@@ -369,7 +369,7 @@ HTML;
 	public function insert_update_series_meta( $term_id, $tt_id ) {
 		$series_settings = SSP_CPT_PODCAST . '_series_image_settings';
 		$prev_media_id   = get_term_meta( $term_id, $series_settings, true );
-		$media_id        = sanitize_title( $_POST[ $series_settings ] );
+		$media_id        = isset( $_POST[ $series_settings ] ) ? sanitize_title( $_POST[ $series_settings ] ) : $prev_media_id;
 		update_term_meta( $term_id, $series_settings, $media_id, $prev_media_id );
 	}
 

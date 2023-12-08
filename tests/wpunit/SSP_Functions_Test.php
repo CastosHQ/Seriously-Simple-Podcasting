@@ -197,7 +197,8 @@ class SSP_Functions_Test extends WPTestCase {
 
 		$series_number = 3;
 
-		$this->factory()->category->create_many( $series_number, [
+		// Create one less because default series should be created automatically on plugin activation
+		$this->factory()->category->create_many( $series_number - 1, [
 			'taxonomy' => 'series',
 		] );
 
@@ -206,14 +207,14 @@ class SSP_Functions_Test extends WPTestCase {
 			'hide_empty' => false,
 		) );
 
+		// +1 because there is a default Series already
 		$this->assertCount( $series_number, $terms );
 
-		for ( $i = 0; $i < $series_number; $i ++ ) {
-			$term    = $terms[ $i ];
+		foreach ( $terms as $term ) {
 			$post_id = $this->factory()->post->create( array(
 				'post_type'     => SSP_CPT_PODCAST,
 				'post_status'   => 'publish',
-				'post_category' => $term->term_id,
+				'post_category' => array( $term->term_id ),
 			) );
 
 			wp_set_post_terms( $post_id, $term->term_id, 'series' );
@@ -227,15 +228,14 @@ class SSP_Functions_Test extends WPTestCase {
 		$count = 0;
 		foreach ( $series as $item ) {
 			if ( is_object( $item ) ) {
-				$this->assertObjectHasAttribute( 'title', $item );
-				$this->assertObjectHasAttribute( 'url', $item );
-				$this->assertObjectHasAttribute( 'count', $item );
+				$this->assertObjectHasProperty( 'title', $item );
+				$this->assertObjectHasProperty( 'url', $item );
+				$this->assertObjectHasProperty( 'count', $item );
 				$count ++;
 			}
 		}
 
 		$this->assertEquals( $series_number, $count );
-
 	}
 
 }

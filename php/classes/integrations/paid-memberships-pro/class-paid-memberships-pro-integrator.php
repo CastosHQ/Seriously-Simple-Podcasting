@@ -321,11 +321,11 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Protects access to private feeds.
 	 * */
 	public function protect_feed_access() {
-		$series_slug = $this->feed_handler->get_podcast_series();
+		$series_slug = $this->feed_handler->get_series_slug();
 		if ( empty( $series_slug ) ) {
 			return;
 		}
-		$series = get_term_by( 'slug', $this->feed_handler->get_podcast_series(), 'series' );
+		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), 'series' );
 
 		$series_levels = $this->get_series_level_ids( $series->term_id );
 		$has_access    = $this->has_access( wp_get_current_user(), $series_levels );

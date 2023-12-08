@@ -380,12 +380,12 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	 * Protects access to private feeds.
 	 * */
 	public function protect_feed_access() {
-		$series_slug = $this->feed_handler->get_podcast_series();
+		$series_slug = $this->feed_handler->get_series_slug();
 		if ( empty( $series_slug ) ) {
 			return;
 		}
 
-		$series = get_term_by( 'slug', $this->feed_handler->get_podcast_series(), 'series' );
+		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), 'series' );
 
 		// Do not protect unprotected series
 		if ( ! $this->is_series_protected_in_castos( $series->term_id ) ) {

@@ -38,7 +38,9 @@ class Feed_Controller_Test extends WPTestCase {
 
 		$feed_controller = new Feed_Controller( new Feed_Handler(), new Renderer() );
 
-		$feed = $feed_controller->get_podcast_feed();
+		$series_id = ssp_get_default_series_id();
+
+		$feed = $feed_controller->get_podcast_feed( $series_id );
 		$site_url = site_url();
 		global $wp_version;
 
@@ -58,7 +60,7 @@ class Feed_Controller_Test extends WPTestCase {
 			'<channel>',
 			'<title>WordPress Test</title>',
 			sprintf( '<atom:link href="%s" rel="self" type="application/rss+xml"/>', $site_url ),
-			sprintf( '<link>%s</link>', trailingslashit( site_url() ) ),
+			sprintf( '<link>%s</link>', get_term_link( $series_id, ssp_series_taxonomy() ) ),
 			'<description>',
 			'<lastBuildDate>',
 			'<language>en-US</language>',
@@ -68,13 +70,10 @@ class Feed_Controller_Test extends WPTestCase {
 			'<itunes:summary>',
 			'<itunes:owner>',
 			'<itunes:name>WordPress Test</itunes:name>',
-			'<itunes:email>castostesting@castos.com</itunes:email>',
 			'<itunes:explicit>false</itunes:explicit>',
 			'<googleplay:author><![CDATA[WordPress Test]]></googleplay:author>',
-			'<googleplay:email>castostesting@castos.com</googleplay:email>',
 			'<googleplay:description></googleplay:description>',
 			'<googleplay:explicit>No</googleplay:explicit>',
-			'<podcast:locked owner="castostesting@castos.com">yes</podcast:locked>',
 			'<podcast:guid>',
 			sprintf('<!-- podcast_generator="SSP by Castos/%s" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->', SSP_VERSION),
 			sprintf('<generator>https://wordpress.org/?v=%s</generator>', $wp_version),

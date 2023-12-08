@@ -1462,9 +1462,9 @@ if ( ! function_exists( 'ssp_series_slug' ) ) {
 			return $slug;
 		}
 
-		$is_old_customer = wp_count_terms( ssp_series_taxonomy() );
+		$is_existing_user = count( ssp_episodes() ) > 0;
 
-		$slug =  $is_old_customer ? ssp_series_taxonomy() : CPT_Podcast_Handler::DEFAULT_SERIES_SLUG;
+		$slug = $is_existing_user ? ssp_series_taxonomy() : CPT_Podcast_Handler::DEFAULT_SERIES_SLUG;
 
 		return apply_filters( 'ssp_series_slug', $slug );
 	}

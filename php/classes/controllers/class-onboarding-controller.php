@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 // Exit if accessed directly.
+use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
@@ -223,6 +224,7 @@ class Onboarding_Controller {
 
 		if( 1 === $step_number ){
 			$this->update_default_series_name( $default_series_id );
+			ssp_add_option( 'series_slug', CPT_Podcast_Handler::DEFAULT_SERIES_SLUG );
 		}
 	}
 

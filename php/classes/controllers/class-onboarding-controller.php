@@ -7,6 +7,7 @@ use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
+use WP_Error;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -209,13 +210,35 @@ class Onboarding_Controller {
 		if ( ! wp_verify_nonce( $nonce, 'ssp_onboarding_' . $step_number ) ) {
 			return;
 		}
-		$series_id = ( 4 === $step_number ) ? 0 : ssp_get_default_series_id();
+
+		$default_series_id = ssp_get_default_series_id();
+
+		$series_id = ( 4 === $step_number ) ? 0 : $default_series_id;
 		foreach ( $this->get_step_fields( $step_number ) as $field_id ) {
 			$val = filter_input( INPUT_POST, $field_id );
 			if ( $val ) {
 				ssp_update_option( $field_id, $val, $series_id );
 			}
 		}
+
+		if( 1 === $step_number ){
+			$this->update_default_series_name( $default_series_id );
+		}
+	}
+
+	/**
+	 * @param int $series_id
+	 *
+	 * @return array|WP_Error
+	 */
+	protected function update_default_series_name( $series_id ) {
+		$series = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
+		$name   = ssp_get_option( 'data_title', get_bloginfo('name'), $series_id );
+		$slug   = wp_unique_term_slug( sanitize_title( $name ), $series );
+		return wp_update_term( $series_id, ssp_series_taxonomy(), array(
+			'name' => $name,
+			'slug' => $slug,
+		) );
 	}
 
 	/**

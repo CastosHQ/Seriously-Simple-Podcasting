@@ -70,7 +70,16 @@ class Castos_Handler implements Service {
 	public function __construct() {
 		$this->feed_handler = new Feed_Handler();
 		$this->logger       = new Log_Helper();
-		$this->api_token    = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+	}
+
+	/**
+	 * @return string
+	 */
+	protected function api_token(){
+		if ( ! isset( $this->api_token ) ) {
+			$this->api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+		}
+		return $this->api_token;
 	}
 
 	/**
@@ -184,7 +193,7 @@ class Castos_Handler implements Service {
 		$this->logger->log( $api_url );
 
 		$post_body = array(
-			'api_token' => $this->api_token,
+			'api_token' => $this->api_token(),
 		);
 		$this->logger->log( $post_body );
 
@@ -249,7 +258,7 @@ class Castos_Handler implements Service {
 		$series_id = ssp_get_episode_series_id( $post->ID );
 
 		$post_body = array(
-			'token'          => $this->api_token,
+			'token'          => $this->api_token(),
 			'post_id'        => $post->ID,
 			'post_title'     => $post->post_title,
 			'post_content'   => $this->get_episode_content( $post->ID, $series_id ),
@@ -440,7 +449,7 @@ class Castos_Handler implements Service {
 		$api_url = SSP_CASTOS_APP_URL . 'api/v2/posts/delete';
 
 		$post_body = array(
-			'token' => $this->api_token,
+			'token' => $this->api_token(),
 			'id'    => $episode_id,
 		);
 
@@ -479,7 +488,7 @@ class Castos_Handler implements Service {
 
 		$this->logger->log( 'API URL', $api_url );
 
-		$podcast_data['token'] = $this->api_token;
+		$podcast_data['token'] = $this->api_token();
 
 		$app_response = wp_remote_post(
 			$api_url,
@@ -544,7 +553,7 @@ class Castos_Handler implements Service {
 		$api_payload = array(
 			'timeout' => 45,
 			'body'    => array(
-				'token'        => $this->api_token,
+				'token'        => $this->api_token(),
 				'show_details' => true,
 			),
 		);
@@ -920,9 +929,9 @@ class Castos_Handler implements Service {
 	 */
 	protected function send_request( $api_url, $args = array(), $method = 'GET' ) {
 
-		$token = apply_filters( 'ssp_castos_api_token', $this->api_token, $api_url, $args, $method );
+		$token = apply_filters( 'ssp_castos_api_token', $this->api_token(), $api_url, $args, $method );
 
-		if ( empty( $this->api_token ) ) {
+		if ( empty( $this->api_token() ) ) {
 			throw new Exception( __( 'Castos arguments not set', 'seriously-simple-podcasting' ) );
 		}
 

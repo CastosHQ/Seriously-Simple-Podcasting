@@ -1667,7 +1667,7 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 	 * @return WP_Term[]
 	 */
 	function ssp_get_podcasts( $hide_empty = false ) {
-		$podcasts = get_terms( 'series', array( 'hide_empty' => $hide_empty ) );
+		$podcasts = get_terms( ssp_series_taxonomy(), array( 'hide_empty' => $hide_empty ) );
 		return is_array( $podcasts ) ? $podcasts : array();
 	}
 }

@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 
+use Exception;
 use SeriouslySimplePodcasting\Entities\API_File_Data;
 use SeriouslySimplePodcasting\Entities\API_Podcast;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
@@ -400,7 +401,7 @@ class Castos_Handler implements Service {
 	 * @param string $url
 	 *
 	 * @return API_File_Data
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function get_file_data( $url ) {
 		$this->logger->log( __METHOD__ );
@@ -575,7 +576,7 @@ class Castos_Handler implements Service {
 	 * @param int $series_id
 	 *
 	 * @return array|null
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function update_default_series_id( $series_id ) {
 
@@ -615,7 +616,7 @@ class Castos_Handler implements Service {
 	 * @param $series_id
 	 *
 	 * @return Sync_Status
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function get_podcast_sync_status( $series_id ) {
 		if ( ! empty( $this->cached_podcast_statuses[ $series_id ] ) ) {
@@ -641,7 +642,7 @@ class Castos_Handler implements Service {
 	 * @param array $castos_podcast
 	 *
 	 * @return Sync_Status
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function retrieve_sync_status_by_podcast_data( $castos_podcast ) {
 		$map    = array(
@@ -666,6 +667,7 @@ class Castos_Handler implements Service {
 	 * @param int $podcast_id
 	 *
 	 * @return array
+	 * @throws Exception
 	 */
 	public function get_podcast_subscribers( $podcast_id ) {
 		$this->logger->log( __METHOD__ );
@@ -708,7 +710,7 @@ class Castos_Handler implements Service {
 	 * @param $castos_episode_id
 	 *
 	 * @return Episode_File_Data
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function get_episode_file_data( $castos_episode_id ) {
 		$this->logger->log( __METHOD__ );
@@ -738,13 +740,13 @@ class Castos_Handler implements Service {
 	 * @param string $email
 	 * @param string $name
 	 *
-	 * @throws \Exception
+	 * @throws Exception
 	 */
 	public function add_podcast_subscriber( $podcast_id, $email, $name ) {
 		$this->logger->log( __METHOD__, compact( 'podcast_id', 'email', 'name' ) );
 
 		if ( empty( $podcast_id ) || empty( $email ) ) {
-			throw new \Exception( __METHOD__ . ': Wrong arguments!' );
+			throw new Exception( __METHOD__ . ': Wrong arguments!' );
 		}
 
 		return $this->send_request( 'api/v2/private-subscribers', compact( 'podcast_id', 'email', 'name' ), 'POST' );
@@ -921,7 +923,7 @@ class Castos_Handler implements Service {
 		$token = apply_filters( 'ssp_castos_api_token', $this->api_token, $api_url, $args, $method );
 
 		if ( empty( $this->api_token ) ) {
-			throw new \Exception( __( 'Castos arguments not set', 'seriously-simple-podcasting' ) );
+			throw new Exception( __( 'Castos arguments not set', 'seriously-simple-podcasting' ) );
 		}
 
 		$this->setup_default_response();

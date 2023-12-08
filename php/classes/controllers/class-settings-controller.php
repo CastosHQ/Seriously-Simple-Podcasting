@@ -120,9 +120,6 @@ class Settings_Controller {
 		//Todo: Can we use pre_update_option_ss_podcasting_data_title action instead?
 		add_action( 'admin_init', array( $this, 'maybe_feed_saved' ), 11 );
 
-		// Exclude series feed from the default feed
-		add_action( 'create_series', array( $this, 'exclude_feed_from_default' ) );
-
 		// Register podcast settings.
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 
@@ -258,16 +255,6 @@ class Settings_Controller {
 	 */
 	public function maybe_feed_saved() {
 		$this->series_handler->maybe_save_series();
-	}
-
-	/**
-	 * Adding it here, and not via default settings for the backward compatibility.
-	 * So if users have their old series included in the default feed, it should not affect them.
-	 * */
-	public function exclude_feed_from_default( $term_id ) {
-		$option_name = 'ss_podcasting_exclude_feed_' . $term_id;
-
-		update_option( $option_name, 'on' );
 	}
 
 	/**

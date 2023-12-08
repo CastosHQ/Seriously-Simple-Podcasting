@@ -54,6 +54,7 @@ class Series_Controller {
 		add_filter( 'term_name', array( $this, 'update_default_series_name' ), 10, 2 );
 
 		add_action( 'created_series', array( $this, 'save_series_meta' ), 10, 2 );
+		add_action( 'add_option_ss_podcasting_podmotor_account_api_token', array( $this, 'sync_series' ) );
 
 		// Series list table.
 		add_filter( 'manage_edit-series_columns', array( $this, 'edit_series_columns' ) );
@@ -68,6 +69,18 @@ class Series_Controller {
 
 		$this->prevent_deleting_default_series();
 
+	}
+
+	public function sync_series() {
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+		$terms = ssp_get_podcasts();
+		foreach ( $terms as $term ) {
+			$series_data              = $this->castos_handler->generate_series_data_for_castos( $term->term_id );
+			$series_data['series_id'] = $term->term_id;
+			$this->castos_handler->update_podcast_data( $series_data );
+		}
 	}
 
 	/**

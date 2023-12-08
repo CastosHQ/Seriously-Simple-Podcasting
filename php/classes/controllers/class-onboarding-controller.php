@@ -59,7 +59,7 @@ class Onboarding_Controller {
 		if ( $plugin !== plugin_basename( $this->file ) ) {
 			return;
 		}
-		$title = $this->get_field( 'data_title' );
+		$title = ssp_get_option( 'data_title', '', ssp_get_default_series_id() );
 		if ( ! $title ) {
 			wp_redirect( admin_url( sprintf( 'admin.php?page=%s-1', self::ONBOARDING_BASE_SLUG ) ) );
 			exit();
@@ -158,9 +158,10 @@ class Onboarding_Controller {
 			$step_urls[ $page_number ] = $this->get_step_url( $page_number );
 		}
 		$data['step_urls'] = $step_urls;
+		$series_id = ( 4 === $step_number ) ? 0 : ssp_get_default_series_id();
 
 		foreach ( $this->get_step_fields( $step_number ) as $field_name ) {
-			$data[ $field_name ] = $this->get_field( $field_name );
+			$data[ $field_name ] = ssp_get_option( $field_name, '', $series_id );
 		}
 
 		return $data;
@@ -206,12 +207,13 @@ class Onboarding_Controller {
 	protected function save_step( $step_number ) {
 		$nonce = filter_input( INPUT_POST, 'nonce' );
 		if ( ! wp_verify_nonce( $nonce, 'ssp_onboarding_' . $step_number ) ) {
-			return false;
+			return;
 		}
+		$series_id = ( 4 === $step_number ) ? 0 : ssp_get_default_series_id();
 		foreach ( $this->get_step_fields( $step_number ) as $field_id ) {
 			$val = filter_input( INPUT_POST, $field_id );
 			if ( $val ) {
-				$this->set_field( $field_id, $val );
+				ssp_update_option( $field_id, $val, $series_id );
 			}
 		}
 	}
@@ -223,25 +225,6 @@ class Onboarding_Controller {
 	 */
 	protected function get_page_slug( $page_number ) {
 		return sprintf( '%s-%d', self::ONBOARDING_BASE_SLUG, $page_number );
-	}
-
-	/**
-	 * @param $field_id
-	 *
-	 * @return false|mixed|void
-	 */
-	protected function get_field( $field_id ) {
-		return $this->settings_handler->get_field( $field_id );
-	}
-
-	/**
-	 * @param $field_id
-	 * @param $value
-	 *
-	 * @return bool
-	 */
-	protected function set_field( $field_id, $value ) {
-		return $this->settings_handler->set_field( $field_id, $value );
 	}
 
 	/**

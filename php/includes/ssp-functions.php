@@ -1333,7 +1333,7 @@ if ( ! function_exists( 'ssp_get_option' ) ) {
 	 * @return string|null
 	 * @since 2.9.3
 	 */
-	function ssp_get_option( $option, $default = '', $series_id = '' ) {
+	function ssp_get_option( $option, $default = '', $series_id = 0 ) {
 		$option = Settings_Controller::SETTINGS_BASE . $option;
 
 		// Maybe append series ID to option name.

@@ -331,30 +331,4 @@ class Settings_Handler implements Service {
 
 		return $subscribe_field_options;
 	}
-
-	/**
-	 * Get the field option
-	 *
-	 * @param $field_id
-	 * @param bool $default
-	 *
-	 * @return false|mixed|void
-	 * @since 5.7.0
-	 */
-	public function get_field( $field_id, $default = false ) {
-		return get_option( 'ss_podcasting_' . $field_id, $default );
-	}
-
-	/**
-	 * Set the field option
-	 *
-	 * @param string $field_id
-	 * @param string $value
-	 *
-	 * @return bool
-	 * @since 5.7.0
-	 */
-	public function set_field( $field_id, $value ) {
-		return update_option( 'ss_podcasting_' . $field_id, $value );
-	}
 }

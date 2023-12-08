@@ -274,7 +274,8 @@ class Series_Handler implements Service {
 				return $id;
 			}
 		}
-		$title = ssp_get_option( 'data_title' );
+		$title = ssp_get_option( 'data_title', get_bloginfo( 'name' ) );
+		$title = $title ?: __( 'The First Podcast', 'seriously-simple-podcasting' );
 		$res   = wp_insert_term( esc_html( $title ), ssp_series_taxonomy() );
 		if ( is_wp_error( $res ) || empty( $res['term_id'] ) ) {
 			return null;

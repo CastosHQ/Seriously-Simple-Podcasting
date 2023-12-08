@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Controllers\Series_Controller;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
 /**
@@ -283,7 +284,16 @@ class Series_Handler implements Service {
 
 		$id = $res['term_id'];
 
-		// The exclude feed option is created automatically on insert, and is 'on' by default, so we need to disable it.
+		/**
+		 * When Series is created, the data_title is updated automatically. Remove it to start the onboarding.
+		 * @see Series_Controller::save_series_data_to_feed()
+		 * */
+		ssp_update_option( 'data_title', '', $id );
+
+		/**
+		 * The exclude_feed option is created automatically, and is 'on' by default, so we need to disable it.
+		 * @see Series_Controller::exclude_feed_from_default()
+		 * */
 		ssp_update_option( 'exclude_feed', 'off', $id );
 
 		return ssp_add_option( 'default_series', $id ) ? $id : null;

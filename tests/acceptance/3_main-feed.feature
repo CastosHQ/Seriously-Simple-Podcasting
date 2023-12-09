@@ -14,8 +14,10 @@ Feature: Login
 	Scenario: Check the main feed
 		When I click "Podcast" submenu "Settings"
 		And I click tab "Feed details"
+		Then I can see "Feed details: Automated test show"
+		Then I can see "Edit Podcast Settings"
 		And I click "View feed" link
-		Then I can see that current url is "/feed/podcast/"
+		Then I can see that current url is "/feed/podcast/automated-test-show"
 
 
 		# Check XML elements
@@ -33,28 +35,26 @@ Feature: Login
 		And I can see in source "xmlns:podcast=\"https://podcastindex.org/namespace/1.0\""
 		And I can see in source "<channel>"
 		And I can see in source "<title>Automated test show</title>"
-		And I can see in source "<atom:link href=\"{{base_url}}/feed/podcast/\" rel=\"self\" type=\"application/rss+xml\"/>"
-		And I can see in source "<link>{{base_url}}/</link>"
+		And I can see in source "<atom:link href=\"{{base_url}}/feed/podcast/automated-test-show/\" rel=\"self\" type=\"application/rss+xml\"/>"
+		And I can see in source "<link>{{base_url}}/podcasts/automated-test-show/</link>"
 		And I can see in source "<description>This show is to test some SSP functionality</description>"
 		And I can see in source "<lastBuildDate>"
 		And I can see in source "<language>en-GB</language>"
-		And I can see in source "<copyright>&#xA9; 2023 My WordPress</copyright>"
+		And I can see in source "<copyright>© 2023 My WordPress</copyright>"
 		And I can see in source "<itunes:subtitle>Just another WordPress site</itunes:subtitle>"
 		And I can see in source "<itunes:author>My WordPress</itunes:author>"
 		And I can see in source "<itunes:summary>This show is to test some SSP functionality</itunes:summary>"
 		And I can see in source "<itunes:owner>"
 		And I can see in source "<itunes:name>My WordPress</itunes:name>"
-		And I can see in source "<itunes:email>craig@castos.com</itunes:email>"
 		And I can see in source "</itunes:owner>"
 		And I can see in source "<itunes:explicit>false</itunes:explicit>"
 		And I can see in source "<itunes:category text=\"Business\">"
 		And I can see in source "<itunes:category text=\"Management\"></itunes:category>"
 		And I can see in source "<googleplay:author><![CDATA[My WordPress]]></googleplay:author>"
-		And I can see in source "<googleplay:email>craig@castos.com</googleplay:email>"
 		And I can see in source "<googleplay:description>This show is to test some SSP functionality</googleplay:description>"
 		And I can see in source "<googleplay:explicit>No</googleplay:explicit>"
-		And I can see in source "<podcast:locked owner=\"craig@castos.com\">yes</podcast:locked>"
-		And I can see in source "<podcast:guid>1333b77e-cb43-5e4d-89cc-251ae4b9d53c</podcast:guid>"
+		And I can see in source "<podcast:locked>yes</podcast:locked>"
+		And I can see in source "<podcast:guid>46b62e05-d2d5-50be-b221-16022d2fa807</podcast:guid>"
 
 
 		# Check items

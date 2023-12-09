@@ -24,8 +24,6 @@ modules:
     config:
       PhpBrowser:
         url: '%SITE_URL%'
-        adminUsername: 'dev'
-        adminPassword: '123'
         adminPath: '%SITE_URL%/wp-admin'
 
 step_decorators: ~

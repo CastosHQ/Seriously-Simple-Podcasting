@@ -462,7 +462,7 @@ class Podcast_Post_Types_Controller {
 	 * @return bool
 	 */
 	public function save_podcast_action_check( $post ){
-		$podcast_post_types = ssp_post_types( true );
+		$podcast_post_types = ssp_post_types();
 
 		// Post type check
 		if (  ( 'trash' === $post->post_status ) || ! in_array( $post->post_type, $podcast_post_types ) ) {
@@ -652,17 +652,14 @@ class Podcast_Post_Types_Controller {
 		}
 
 		/**
-		 * Don't trigger this when the post is trashed
-		 */
-		if ( 'trash' === $post->post_status ) {
-			return;
-		}
-
-		/**
 		 * Only trigger this if the post is published or scheduled
 		 */
 		$disallowed_statuses = array( 'draft', 'pending', 'private', 'trash', 'auto-draft' );
 		if ( in_array( $post->post_status, $disallowed_statuses, true ) ) {
+			return;
+		}
+
+		if ( empty( $post->ID ) || empty( $post->post_title ) ) {
 			return;
 		}
 

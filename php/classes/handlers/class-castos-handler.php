@@ -223,7 +223,7 @@ class Castos_Handler implements Service {
 	 * Upload Podcast episode data to Seriously Simple Hosting
 	 * Should only happen once the file has been uploaded to Seriously Simple Hosting Storage
 	 *
-	 * @param $post
+	 * @param \WP_Post $post
 	 *
 	 * @return array
 	 */
@@ -231,7 +231,7 @@ class Castos_Handler implements Service {
 
 		$this->setup_default_response();
 
-		if ( empty( $post ) ) {
+		if ( empty( $post ) || empty( $post->ID ) || empty( $post->post_title ) ) {
 			$this->update_response( 'message', 'Invalid Podcast data' );
 			$this->logger->log( 'Invalid Podcast data when uploading podcast data' );
 

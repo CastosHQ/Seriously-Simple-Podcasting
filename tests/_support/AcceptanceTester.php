@@ -95,6 +95,24 @@ class AcceptanceTester extends \Codeception\Actor {
 		$this->see( $arg1 );
 	}
 
+	/**
+	 * @Then I can see that checkbox for :arg1 label is checked
+	 */
+	public function iCanSeeThatCheckboxForLabelIsChecked( $arg1 ) {
+		$xpath = "//th[text()='$arg1']/../td/input";
+
+		$this->seeCheckboxIsChecked(['xpath' => $xpath]);
+	}
+
+	/**
+	 * @Then I don't see that checkbox for :arg1 label is checked
+	 * @Then I can not see that checkbox for :arg1 label is checked
+	 */
+	public function iDontSeeThatCheckboxForLabelIsChecked( $arg1 ) {
+		$xpath = "//th[text()='$arg1']/../td/input";
+
+		$this->dontSeeCheckboxIsChecked(['xpath' => $xpath]);
+	}
 
 	/**
 	 * @Then I can not see :arg1
@@ -112,10 +130,25 @@ class AcceptanceTester extends \Codeception\Actor {
 	}
 
 	/**
+	 * @Given I can see SST plugin is deactivated
+	 */
+	public function iCanSeeSSTIsDeactivated() {
+		$this->see( 'Activate', '#activate-seriously-simple-transcripts' );
+	}
+
+	/**
 	 * @When I activate the SSP plugin
 	 */
 	public function iActivateTheSSPPlugin() {
 		$this->click( '#activate-seriously-simple-podcasting' );
+		$this->wait( 1 );
+	}
+
+	/**
+	 * @When I activate the SST plugin
+	 */
+	public function iActivateTheSSTPlugin() {
+		$this->click( '#activate-seriously-simple-transcripts' );
 		$this->wait( 1 );
 	}
 
@@ -302,6 +335,30 @@ class AcceptanceTester extends \Codeception\Actor {
 
 		$this->checkOption( $map[ $arg1 ] );
 	}
+
+	/**
+	 * @When I check checkbox with :arg1 label
+	 */
+	public function iCheckCheckboxWithLabel( $arg1 ) {
+		$xpath = "//th[text()='$arg1']/../td/input";
+
+		$elementId = $this->grabAttributeFrom(['xpath' => $xpath], 'id');
+
+		$this->checkOption( '#' . $elementId );
+	}
+
+
+	/**
+	 * @When I uncheck checkbox with :arg1 label
+	 */
+	public function iUncheckCheckboxWithLabel( $arg1 ) {
+		$xpath = "//th[text()='$arg1']/../td/input";
+
+		$elementId = $this->grabAttributeFrom(['xpath' => $xpath], 'id');
+
+		$this->uncheckOption( '#' . $elementId );
+	}
+
 
 	/**
 	 * @Then I can see that :arg1 submenu exists in :arg2

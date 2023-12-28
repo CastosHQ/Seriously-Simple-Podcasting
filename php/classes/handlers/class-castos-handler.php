@@ -459,6 +459,9 @@ class Castos_Handler implements Service {
 				'method'  => 'DELETE',
 				'timeout' => 45,
 				'body'    => $post_body,
+				'headers' => array(
+					'X-SSP-VERSION' => ssp_version(),
+				),
 			)
 		);
 
@@ -495,6 +498,9 @@ class Castos_Handler implements Service {
 			array(
 				'timeout' => 45,
 				'body'    => $podcast_data,
+				'headers' => array(
+					'X-SSP-VERSION' => ssp_version(),
+				),
 			)
 		);
 
@@ -555,6 +561,9 @@ class Castos_Handler implements Service {
 			'body'    => array(
 				'token'        => $this->api_token(),
 				'show_details' => true,
+			),
+			'headers' => array(
+				'X-SSP-VERSION' => ssp_version(),
 			),
 		);
 
@@ -955,6 +964,9 @@ class Castos_Handler implements Service {
 				'timeout' => self::TIMEOUT,
 				'method'  => $method,
 				'body'    => $body,
+				'headers' => array(
+					'X-SSP-VERSION' => ssp_version(),
+				),
 			)
 		);
 

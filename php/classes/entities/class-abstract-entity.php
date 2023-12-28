@@ -54,6 +54,7 @@ abstract class Abstract_Entity {
 
     protected function guess_property_type( $val ) {
         if ( is_numeric( $val ) ) {
+			$val = strval( $val );
             $val = ( false === strpos( '.', $val ) || false === strpos( ',', $val ) ) ?
                 intval( $val ) :
                 floatval( $val );

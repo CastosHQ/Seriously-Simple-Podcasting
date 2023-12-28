@@ -268,34 +268,70 @@ class Series_Handler implements Service {
 	 * @return int|null
 	 */
 	protected function create_default_series() {
-		$id = ssp_get_option( 'default_series' );
-		if ( $id ) {
-			$term = get_term_by( 'id', $id, ssp_series_taxonomy() );
+		$series_id = ssp_get_option( 'default_series' );
+		if ( $series_id ) {
+			$term = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
 			if ( $term ) {
-				return $id;
+				return $series_id;
 			}
 		}
-		$title = ssp_get_option( 'data_title', get_bloginfo( 'name' ) );
+		$old_default_title = ssp_get_option( 'data_title' );
+		$title = $old_default_title ?: get_bloginfo( 'name' );
 		$title = $title ?: __( 'The First Podcast', 'seriously-simple-podcasting' );
-		$res   = wp_insert_term( esc_html( $title ), ssp_series_taxonomy() );
+		$res = wp_insert_term( esc_html( $title ), ssp_series_taxonomy() );
 		if ( is_wp_error( $res ) || empty( $res['term_id'] ) ) {
 			return null;
 		}
 
-		$id = $res['term_id'];
+		$series_id = $res['term_id'];
 
 		/**
-		 * When Series is created, the data_title is updated automatically. Remove it to start the onboarding.
+		 * When Series is created, the data_title is updated automatically.
+		 * To start the onboarding for the new users, data_title should be empty.
+		 * So, update the Default Series data_title with the old default title.
 		 * @see Series_Controller::save_series_data_to_feed()
 		 * */
-		ssp_update_option( 'data_title', '', $id );
+		ssp_update_option( 'data_title', $old_default_title, $series_id );
 
 		/**
-		 * The exclude_feed option is created automatically, and is 'on' by default, so we need to disable it.
-		 * @see Series_Controller::exclude_feed_from_default()
+		 * Propagate all the default feed settings to the default series
 		 * */
-		ssp_update_option( 'exclude_feed', 'off', $id );
+		if ( $old_default_title ) {
+			$excluded_fields = array( 'data_title' );
+			$this->copy_default_series_settings( $series_id, $excluded_fields );
+		}
 
-		return ssp_add_option( 'default_series', $id ) ? $id : null;
+		return ssp_add_option( 'default_series', $series_id ) ? $series_id : null;
+	}
+
+	/**
+	 * @param int $series_id
+	 * @param array $exclude
+	 *
+	 * @return void
+	 */
+	protected function copy_default_series_settings( $series_id, $exclude = array() ) {
+		$title  = '';
+		$author = ssp_get_option( 'data_author' );
+
+		$feed_details_fields = ssp_config( 'settings/feed', compact( 'title', 'author' ) );
+
+		foreach ( $feed_details_fields as $feed_details_field ) {
+			$id = $feed_details_field['id'];
+			if ( in_array( $id, $exclude ) ) {
+				continue;
+			}
+
+			$value = ssp_get_option( $id );
+			ssp_update_option( $id, $value, $series_id );
+		}
+
+		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
+
+		foreach ( $subscribe_options as $option_key ) {
+			$field_id = $option_key . '_url';
+			$value    = ssp_get_option( $field_id );
+			ssp_update_option( $field_id, $value, $series_id );
+		}
 	}
 }

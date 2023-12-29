@@ -251,9 +251,11 @@ class Series_Handler implements Service {
 			array(
 				'taxonomy'   => ssp_series_taxonomy(),
 				'hide_empty' => false,
-				'fields'     => 'ids',
+				'fields'     => 'all',
 			)
 		);
+
+		$series_terms = array_column( $series_terms, 'slug' );
 
 		$args            = ssp_episodes( - 1, '', true, '', $series_terms );
 		$args['fields']  = 'ids';

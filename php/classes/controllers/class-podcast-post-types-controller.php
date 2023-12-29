@@ -108,6 +108,9 @@ class Podcast_Post_Types_Controller {
 		// Update podcast details to Castos when a post is updated or saved
 		add_action( 'save_post', array( $this, 'sync_episode' ), 20, 2 );
 
+		// Assign default series if no series was specified
+		add_action( 'save_post', array( $this, 'maybe_assign_default_series' ), 20 );
+
 		// Notify Podping if new episode has been published, or if new series is assigned to the episode
 		add_action( 'wp_after_insert_post', array( $this, 'notify_podping' ), 10, 4 );
 		add_action( 'added_term_relationship', array( $this, 'notify_podping_on_series_added' ), 10, 3 );
@@ -353,6 +356,22 @@ class Podcast_Post_Types_Controller {
 		// Add meta box to each post type
 		foreach ( (array) $podcast_post_types as $post_type ) {
 			add_action( 'add_meta_boxes_' . $post_type, array( $this, 'meta_box_setup' ), 10, 1 );
+		}
+	}
+
+	/**
+	 * @param int $post_id
+	 *
+	 * @return void
+	 */
+	public function maybe_assign_default_series( $post_id ) {
+		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
+			return;
+		}
+		$series_id = ssp_get_episode_series_id( $post_id );
+		if ( ! $series_id ) {
+			$default_series_id = ssp_get_default_series_id();
+			wp_set_object_terms( $post_id, array( $default_series_id ), ssp_series_taxonomy() );
 		}
 	}
 

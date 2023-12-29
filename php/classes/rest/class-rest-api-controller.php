@@ -78,11 +78,26 @@ class Rest_Api_Controller {
 
 		add_filter( 'rest_post_dispatch', array( $this, 'maybe_add_ssp_version' ), 10, 3 );
 
+		add_action( 'rest_prepare_' . SSP_CPT_PODCAST, array( $this, 'default_series_response' ) );
+
 		$post_types = ssp_post_types( true, false );
 		foreach ( $post_types as $post_type ) {
 			add_filter( 'rest_prepare_' . $post_type, array( $this, 'rest_prepare_excerpt' ), 10, 3 );
 		}
 
+	}
+
+	/**
+	 * @param \WP_REST_Response $data
+	 *
+	 * @return mixed
+	 */
+	public function default_series_response( $data ) {
+		if ( empty( $data->data['series'] ) ) {
+			$data->data['series'][] = ssp_get_default_series_id();
+		}
+
+		return $data;
 	}
 
 	/**

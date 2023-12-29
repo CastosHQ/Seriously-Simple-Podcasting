@@ -84,7 +84,7 @@ class Players_Controller_Test extends WPTestCase {
 			'<div class="player-panel-row">',
 
 			'RSS Feed',
-			sprintf( '<input value="%s/?feed=podcast" class="input-rss input-rss-%s" title="RSS Feed URL" readonly />', $site_url, $episode_id ),
+			sprintf( '<input value="%s/?feed=podcast&podcast_series=wordpress-test" class="input-rss input-rss-%s" title="RSS Feed URL" readonly />', $site_url, $episode_id ),
 
 			sprintf( '<button class="copy-rss copy-rss-%s" title="Copy RSS Feed URL"></button>', $episode_id ),
 

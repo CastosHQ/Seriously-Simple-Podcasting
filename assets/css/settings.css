@@ -36,6 +36,11 @@
     overflow: hidden;
 }
 
+#ssp-sidebar .sidebar-content.castos-connected {
+	border: none;
+	background: none;
+}
+
 #ssp-sidebar .sidebar-content h3 {
     color: #6c25d0;
     margin: -20px -20px 0 -20px;

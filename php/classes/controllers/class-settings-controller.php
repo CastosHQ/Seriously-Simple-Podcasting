@@ -981,13 +981,18 @@ class Settings_Controller {
 		return null;
 	}
 
-
+	/**
+	 * @return string
+	 */
 	public function render_seriously_simple_sidebar() {
 		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-		ob_start();
-		include $this->template_path . DIRECTORY_SEPARATOR . 'settings-sidebar.php';
+		$link      = 'https://castos.com/1ksubs?utm_source=WordPress&utm_medium=Settings&utm_campaign=Banner';
+		$is_connected = ssp_is_connected_to_castos();
+		$img = $is_connected ?
+			'<a href="' . $link . '" target="_blank"><img src="' . $image_dir . 'castos-connected-banner.jpg"></a>' :
+			'<img src="' . $image_dir . 'castos-plugin-settings-banner.jpg">';
 
-		return ob_get_clean();
+		return $this->renderer->fetch( 'settings-sidebar', compact( 'img', 'is_connected' ) );
 	}
 
 	public function render_seriously_simple_extensions() {

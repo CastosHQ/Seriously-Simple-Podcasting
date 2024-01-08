@@ -1081,14 +1081,6 @@ class Settings_Controller {
 				'thickbox'    => true,
 				'description' => __( 'The Genesis compatibility add-on for Seriously Simple Podcasting gives you full support for the Genesis theme framework. It adds support to the podcast post type for the features that Genesis requires. If you are using Genesis and Seriously Simple Podcasting together then this plugin will make your website look and work much more smoothly.', 'seriously-simple-podcasting' ),
 			),
-			'second-line'          => array(
-				'title'       => __( 'Second Line Themes', 'seriously-simple-podcasting' ),
-				'image'       => $image_dir . 'second-line-themes.png',
-				'url'         => 'https://secondlinethemes.com/?utm_source=ssp-settings',
-				'description' => __( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out SecondLineThemes!', 'seriously-simple-podcasting' ),
-				'new_window'  => true,
-				'button_text' => __( 'Get Second Line Themes', 'seriously-simple-podcasting' ),
-			),
 			'paid-memberships-pro' => array(
 				'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
 				'image'       => $image_dir . 'pmpro.jpg',

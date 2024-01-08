@@ -1180,8 +1180,9 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 			return '';
 		}
 
-		$content = $post->post_content;
-		$blocks  = parse_blocks( $content );
+		$content      = $post->post_content;
+		$is_gutenberg = false !== strpos( $content, '<!-- wp:' );
+		$blocks       = $is_gutenberg ? parse_blocks( $content ) : array();
 
 		/**
 		 * The same as in @see excerpt_remove_blocks() plus 'core/block',

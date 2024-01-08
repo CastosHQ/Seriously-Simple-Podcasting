@@ -277,10 +277,16 @@ class Series_Handler implements Service {
 				return $series_id;
 			}
 		}
+		$taxonomy          = ssp_series_taxonomy();
 		$old_default_title = ssp_get_option( 'data_title' );
-		$title = $old_default_title ?: get_bloginfo( 'name' );
-		$title = $title ?: __( 'The First Podcast', 'seriously-simple-podcasting' );
-		$res = wp_insert_term( esc_html( $title ), ssp_series_taxonomy() );
+		$title             = $old_default_title ?: get_bloginfo( 'name' );
+		$title             = $title ?: __( 'The First Podcast', 'seriously-simple-podcasting' );
+		$slug              = sanitize_title( $title );
+		$term              = get_term_by( 'slug', $slug, $taxonomy );
+		if ( $term ) {
+			$slug = 'default-podcast';
+		}
+		$res = wp_insert_term( esc_html( $title ), $taxonomy, compact( 'slug' ) );
 		if ( is_wp_error( $res ) || empty( $res['term_id'] ) ) {
 			return null;
 		}

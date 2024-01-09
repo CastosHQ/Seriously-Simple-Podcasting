@@ -368,6 +368,16 @@ class Podcast_Post_Types_Controller {
 		if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) {
 			return;
 		}
+		$post = get_post( $post_id );
+		if ( ! in_array( $post->post_type, ssp_post_types() ) ) {
+			return;
+		} elseif ( $post->post_type != SSP_CPT_PODCAST ) {
+			// If it's a not a podcast post, make sure it has the enclosure file.
+			if ( ! $this->episode_repository->get_enclosure( $post_id ) ) {
+				return;
+			}
+		}
+
 		$series_id = ssp_get_episode_series_id( $post_id );
 		if ( ! $series_id ) {
 			$default_series_id = ssp_get_default_series_id();

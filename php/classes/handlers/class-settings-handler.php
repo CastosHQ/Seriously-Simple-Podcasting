@@ -296,24 +296,22 @@ class Settings_Handler implements Service {
 			return $subscribe_field_options;
 		}
 
+		$series_id = 0;
+
 		if ( isset( $_GET['feed-series'] ) && 'default' !== $_GET['feed-series'] ) {
 			$feed_series_slug = sanitize_text_field( $_GET['feed-series'] );
 			$series           = get_term_by( 'slug', $feed_series_slug, 'series' );
-			$series_id        = $series->ID;
+			$series_id        = $series->term_id;
 		}
 
 		foreach ( $subscribe_options as $option_key ) {
-			if ( isset( $available_subscribe_options[ $option_key ] ) ) {
-				if ( isset( $series_id ) ) {
-					$field_id = $option_key . '_url_' . $series_id;
-					$value    = get_option( 'ss_podcasting_' . $field_id );
-				} else {
-					$field_id = $option_key . '_url';
-					$value    = get_option( 'ss_podcasting_' . $field_id );
-				}
-			} else {
+			if ( ! isset( $available_subscribe_options[ $option_key ] ) ) {
 				continue;
 			}
+
+			$field_id = $series_id ? $option_key . '_url_' . $series_id : $option_key . '_url';
+			$value = ssp_get_option( $option_key . '_url', '', $series_id );
+
 			$subscribe_field_options[] = array(
 				'id'          => $field_id,
 				// translators: %s: Service title eg iTunes

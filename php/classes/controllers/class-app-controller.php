@@ -210,12 +210,7 @@ class App_Controller {
 	 * Admin_Controller constructor.
 	 */
 	public function __construct() {
-
-		if ( ! ssp_is_php_version_ok() ) {
-			return;
-		}
-
-		if ( ! ssp_is_vendor_ok() ) {
+		if ( ! $this->check() ) {
 			return;
 		}
 
@@ -223,6 +218,25 @@ class App_Controller {
 
 		$this->init_useful_variables();
 		$this->bootstrap();
+	}
+
+	/**
+	 * @return bool
+	 */
+	protected function check() {
+		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] === 'heartbeat' ) {
+			return false;
+		}
+
+		if ( ! ssp_is_php_version_ok() ) {
+			return false;
+		}
+
+		if ( ! ssp_is_vendor_ok() ) {
+			return false;
+		}
+
+		return true;
 	}
 
 	/**

@@ -152,17 +152,11 @@ class Options_Handler implements Service {
 			if ( ! isset( $this->available_subscribe_options[ $option_key ] ) ) {
 				continue;
 			}
-			// get the main feed url
-			$url = get_option( 'ss_podcasting_' . $option_key . '_url', '' );
-			// if we're in a series, and the series has a url for this option
-			if ( is_array( $terms ) && isset( $terms[0] ) ) {
-				$series_url = get_option( 'ss_podcasting_' . $option_key . '_url_' . $terms[0]->term_id, '' );
 
-				if ( $series_url ) {
-					$url = $series_url;
-				}
-			}
-			$icon                           = str_replace( '_', '-', $option_key );
+			$series_id = is_array( $terms ) && isset( $terms[0] ) ? $terms[0]->term_id : 0;
+
+			$url  = ssp_get_option( $option_key . '_url', '', $series_id );
+			$icon = str_replace( '_', '-', $option_key );
 
 			$subscribe_array[ $option_key ] = array(
 				'key'   => $option_key,

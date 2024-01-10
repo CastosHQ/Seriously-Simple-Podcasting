@@ -862,18 +862,7 @@ class Settings_Controller {
 
 		$html = '';
 
-		$default_series_id = ssp_get_default_series_id();
-
-		// First should always go the default series
-		$series = array(
-			get_term_by( 'id', $default_series_id, ssp_series_taxonomy() ),
-		);
-
-		// Series submenu for feed details
-		$series = array_merge( $series, get_terms( ssp_series_taxonomy(), array(
-			'hide_empty' => false,
-			'exclude'    => array( $default_series_id ),
-		) ) );
+		$series = $this->series_handler->get_feed_details_series();
 
 		if ( empty( $series ) ) {
 			return $html;
@@ -885,10 +874,6 @@ class Settings_Controller {
 		$html .= '<span id="feed-series-toggle" class="series-open" title="' . __( 'Toggle series list display', 'seriously-simple-podcasting' ) . '"></span>' . "\n";
 
 		$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
-		/*$html .= '<li><a href="' . add_query_arg( array(
-				'feed-series'      => 'default',
-				'settings-updated' => false
-			) ) . '" class="' . $series_class . '">' . __( 'Default feed', 'seriously-simple-podcasting' ) . '</a></li>';*/
 
 		foreach ( $series as $k => $s ) {
 			$series_class = $current_series === $s->slug ? 'current' : '';
@@ -898,7 +883,7 @@ class Settings_Controller {
 				$html .= ' | ';
 			}
 
-			$name = ( 0 === $k ) ? __( 'Default feed', 'seriously-simple-podcasting' ) : $s->name;
+			$name = 0 === $k ? $this->series_handler->default_series_name( $s->name ) : $s->name;
 
 			$html .= '<a href="' . esc_url( add_query_arg( array(
 					'feed-series'      => $s->slug,

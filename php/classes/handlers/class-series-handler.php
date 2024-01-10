@@ -234,6 +234,26 @@ class Series_Handler implements Service {
 		return get_term_meta( $podcast_id, self::META_SYNC_STATUS, true );
 	}
 
+	/**
+	 * Gets an array of series for the feed details settings.
+	 *
+	 * @return \WP_Term[]
+	 */
+	public function get_feed_details_series(){
+		$default_series_id = ssp_get_default_series_id();
+
+		// First should always go the default series
+		$series = array(
+			get_term_by( 'id', $default_series_id, ssp_series_taxonomy() ),
+		);
+
+		// Series submenu for feed details
+		return array_merge( $series, get_terms( ssp_series_taxonomy(), array(
+			'hide_empty' => false,
+			'exclude'    => array( $default_series_id ),
+		) ) );
+	}
+
 	public function enable_default_series() {
 		if ( $series_id = $this->create_default_series() ) {
 			$this->castos_handler->update_default_series_id( $series_id );

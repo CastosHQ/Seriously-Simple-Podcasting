@@ -279,6 +279,12 @@ textarea#episode_embed_code {
 	border: 1px solid #CBD5E1;
 	padding: 0 10px;
 
+	input {
+		&::placeholder {
+			color: $clr_gray_400;
+		}
+	}
+
 	h2 {
 		border-bottom: 1px solid #CBD5E1;
 		padding: 15px 10px 12px;

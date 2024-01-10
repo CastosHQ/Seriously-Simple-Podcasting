@@ -210,6 +210,8 @@ textarea#episode_embed_code {
   border-radius: 4px;
   border: 1px solid #CBD5E1;
   padding: 0 10px; }
+  .ssp-settings input::placeholder {
+    color: #9CA3AF; }
   .ssp-settings h2 {
     border-bottom: 1px solid #CBD5E1;
     padding: 15px 10px 12px;

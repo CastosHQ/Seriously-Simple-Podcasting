@@ -234,11 +234,20 @@ class Series_Handler implements Service {
 		return get_term_meta( $podcast_id, self::META_SYNC_STATUS, true );
 	}
 
-	public function enable_default_series(){
-		if( $series_id = $this->create_default_series() ) {
+	public function enable_default_series() {
+		if ( $series_id = $this->create_default_series() ) {
 			$this->castos_handler->update_default_series_id( $series_id );
 			$this->assign_orphan_episodes( $series_id );
 		}
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @return string
+	 */
+	public function default_series_name( $name ) {
+		return sprintf( '%1$s (%2$s)', $name, __( 'default', 'seriously-simple-podcasting' ) );
 	}
 
 	/**

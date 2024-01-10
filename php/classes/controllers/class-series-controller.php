@@ -6,6 +6,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 // Exit if accessed directly.
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
+use SeriouslySimplePodcasting\Handlers\Series_Walker;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -67,8 +68,25 @@ class Series_Controller {
 		// Exclude series feed from the default feed
 		add_action( 'create_series', array( $this, 'exclude_feed_from_default' ) );
 
+		// Show default series name in the series checklist
+		add_filter( 'wp_terms_checklist_args', array( $this, 'change_default_series_name' ) );
+
 		$this->prevent_deleting_default_series();
 
+	}
+
+	/**
+	 * @param array $args
+	 *
+	 * @return array
+	 */
+	public function change_default_series_name( $args ) {
+		if ( empty( $args['taxonomy'] ) || ssp_series_taxonomy() != $args['taxonomy'] ) {
+			return $args;
+		}
+		$args['walker'] = new Series_Walker( $this->series_handler );
+
+		return $args;
 	}
 
 	public function sync_series() {
@@ -426,7 +444,7 @@ HTML;
 		}
 
 		if ( $tag->term_id == ssp_get_default_series_id() ) {
-			return sprintf( '%s (%s)', $name, 'default' );
+			return $this->series_handler->default_series_name( $name );
 		}
 
 		return $name;

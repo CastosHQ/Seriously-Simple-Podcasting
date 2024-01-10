@@ -426,17 +426,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_owner_email( $series_id ) {
-		if ( $series_id ) {
-			$owner_email = get_option( 'ss_podcasting_data_owner_email_' . $series_id, '' );
-		}
-
-		if ( empty( $owner_email ) ) {
-			$owner_email = get_option( 'ss_podcasting_data_owner_email_' . ssp_get_default_series_id(), '' );
-		}
-
-		if ( empty( $owner_email ) ) {
-			$owner_email = get_option( 'ss_podcasting_data_owner_email', '' );
-		}
+		$owner_email = ssp_get_option( 'data_owner_email', '', $series_id );
 
 		return apply_filters( 'ssp_feed_owner_email', $owner_email, $series_id );
 	}

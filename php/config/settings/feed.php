@@ -528,7 +528,7 @@ $feed_fields = array(
 	array(
 		'id'          => 'data_owner_email',
 		'label'       => __( 'Owner email address', 'seriously-simple-podcasting' ),
-		'description' => __( 'Podcast owner\'s email address.', 'seriously-simple-podcasting' ),
+		'description' => __( 'Podcast owner\'s email address (leave blank to omit from RSS feed).', 'seriously-simple-podcasting' ),
 		'type'        => 'text',
 		'default'     => get_bloginfo( 'admin_email' ),
 		'placeholder' => get_bloginfo( 'admin_email' ),

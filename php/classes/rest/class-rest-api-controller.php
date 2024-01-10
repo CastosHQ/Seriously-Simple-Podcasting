@@ -36,7 +36,7 @@ class Rest_Api_Controller {
 		$podcast['subtitle']        = get_option( 'ss_podcasting_data_subtitle', get_bloginfo( 'description' ) );
 		$podcast['author']          = get_option( 'ss_podcasting_data_author', get_bloginfo( 'name' ) );
 		$podcast['owner_name']      = get_option( 'ss_podcasting_data_owner_name', get_bloginfo( 'name' ) );
-		$podcast['owner_email']     = get_option( 'ss_podcasting_data_owner_email', get_bloginfo( 'admin_email' ) );
+		$podcast['owner_email']     = get_option( 'ss_podcasting_data_owner_email', '' );
 		$podcast['explicit_option'] = get_option( 'ss_podcasting_explicit', '' );
 		$podcast['complete_option'] = get_option( 'ss_podcasting_complete', '' );
 		$podcast['image']           = get_option( 'ss_podcasting_data_image', '' );

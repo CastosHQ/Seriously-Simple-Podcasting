@@ -1036,12 +1036,7 @@ class Castos_Handler implements Service {
 		$podcast['podcast_owner'] = $owner_name;
 
 		// Podcast owner email address
-		$owner_email        = ssp_get_option( 'data_owner_email', get_bloginfo( 'admin_email' ) );
-		$series_owner_email = ssp_get_option( 'data_owner_email', '', $series_id );
-		if ( $series_owner_email ) {
-			$owner_email = $series_owner_email;
-		}
-		$podcast['owner_email'] = $owner_email;
+		$podcast['owner_email'] = ssp_get_option( 'data_owner_email', '', $series_id );
 
 		// Podcast explicit setting
 		$explicit_option = ssp_get_option( 'ss_podcasting_explicit', '', $series_id );

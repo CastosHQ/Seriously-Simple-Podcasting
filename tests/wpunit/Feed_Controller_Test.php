@@ -2,8 +2,6 @@
 
 use Codeception\TestCase\WPTestCase;
 use SeriouslySimplePodcasting\Controllers\Feed_Controller;
-use SeriouslySimplePodcasting\Handlers\Feed_Handler;
-use SeriouslySimplePodcasting\Renderers\Renderer;
 
 class Feed_Controller_Test extends WPTestCase {
 	/**
@@ -36,7 +34,7 @@ class Feed_Controller_Test extends WPTestCase {
 
 		$excerpt = get_the_excerpt( $episode_id );
 
-		$feed_controller = new Feed_Controller( new Feed_Handler(), new Renderer() );
+		$feed_controller = $this->get_feed_controller();
 
 		$series_id = ssp_get_default_series_id();
 
@@ -64,7 +62,7 @@ class Feed_Controller_Test extends WPTestCase {
 			'<description>',
 			'<lastBuildDate>',
 			'<language>en-US</language>',
-			'<copyright>&#xA9; 2023 WordPress Test</copyright>',
+			'<copyright>&#xA9; 2024 WordPress Test</copyright>',
 			'<itunes:subtitle>',
 			'<itunes:author>WordPress Test</itunes:author>',
 			'<itunes:summary>',
@@ -104,5 +102,18 @@ class Feed_Controller_Test extends WPTestCase {
 		foreach ( $test_parts as $test_part ) {
 			$this->assertStringContainsString( $test_part, $feed );
 		}
+	}
+
+	/**
+	 * @return Feed_Controller
+	 */
+	protected function get_feed_controller(){
+		$ssp_app = new ReflectionClass('SeriouslySimplePodcasting\Controllers\App_Controller');
+
+		$property = $ssp_app->getProperty('feed_controller');
+
+		$property->setAccessible(true);
+
+		return $property->getValue( ssp_app() );
 	}
 }

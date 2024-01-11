@@ -158,10 +158,7 @@ class Series_Controller {
 			<td>
 				<table style="border: 1px solid #ccc; width: 100%; padding: 0 10px;">
 					<?php foreach ( $feed_fields as $field ) :
-						$value = ssp_get_option( $field['id'], '', $term->term_id );
-						if ( ! $value ) {
-							$value = ssp_get_option( $field['id'] );
-						}
+						$value = $this->series_handler->get_feed_option( $field, $term->term_id );
 						if ( ! $value || ! is_string( $value ) ) {
 							continue;
 						}

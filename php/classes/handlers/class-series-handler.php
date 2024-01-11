@@ -273,17 +273,16 @@ class Series_Handler implements Service {
 	 *
 	 * Since version 3.0, we use the Default Series settings, that should replace the default feed settings
 	 *
-	 * @since 3.0.0
-	 *
-	 * @param array $args
+	 * @param array $field
+	 * @param int $series_id
 	 *
 	 * @return string
+	 * @since 3.0.0
+	 *
 	 */
-	public function get_feed_option( $args ) {
-		$field     = $args['field'];
-		$option    = $field['id'];
-		$series_id = $args['feed-series'];
-		$no_value  = 'ssp_no_value';
+	public function get_feed_option( $field, $series_id ) {
+		$option   = $field['id'];
+		$no_value = 'ssp_no_value';
 
 		$data = ssp_get_option( $option, $no_value, $series_id );
 

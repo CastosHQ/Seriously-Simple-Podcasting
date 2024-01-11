@@ -572,13 +572,13 @@ class Settings_Controller {
 	 */
 	public function display_field( $args ) {
 
-		$field            = $args['field'];
-		$option_name      = $default_option_name = $this->settings_base . $field['id'];
-		$is_feed_settings = isset( $args['feed-series'] ) && $args['feed-series'];
+		$field         = $args['field'];
+		$option_name   = $default_option_name = $this->settings_base . $field['id'];
+		$is_feed_field = isset( $args['feed-series'] ) && $args['feed-series'];
 
-		if ( $is_feed_settings ) {
+		if ( $is_feed_field ) {
 			$option_name .= '_' . $args['feed-series'];
-			$data = $this->series_handler->get_feed_option( $args );
+			$data        = $this->series_handler->get_feed_option( $args['field'], $args['feed-series'] );
 		} else {
 			$data = get_option( $option_name, isset( $field['default'] ) ? $field['default'] : '' );
 		}

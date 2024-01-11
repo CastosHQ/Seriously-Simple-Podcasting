@@ -249,6 +249,8 @@ class App_Controller {
 
 		$this->renderer = new Renderer();
 
+		$this->logger = new Log_Helper();
+
 		$this->feed_handler = new Feed_Handler();
 
 		$this->settings_handler = new Settings_Handler();
@@ -257,7 +259,7 @@ class App_Controller {
 
 		$this->episode_repository = new Episode_Repository();
 
-		$this->castos_handler = new Castos_Handler();
+		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger );
 
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
@@ -268,8 +270,6 @@ class App_Controller {
 		$this->roles_handler = new Roles_Handler();
 
 		$this->cpt_podcast_handler = new CPT_Podcast_Handler( $this->roles_handler );
-
-		$this->logger = new Log_Helper();
 
 		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version );
 

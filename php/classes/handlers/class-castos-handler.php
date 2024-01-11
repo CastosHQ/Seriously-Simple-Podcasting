@@ -66,10 +66,13 @@ class Castos_Handler implements Service {
 
 	/**
 	 * Castos_Handler constructor.
+	 *
+	 * @param Feed_Handler $feed_handler
+	 * @param Log_Helper $log_helper
 	 */
-	public function __construct() {
-		$this->feed_handler = new Feed_Handler();
-		$this->logger       = new Log_Helper();
+	public function __construct( $feed_handler, $log_helper ) {
+		$this->feed_handler = $feed_handler;
+		$this->logger       = $log_helper;
 	}
 
 	/**

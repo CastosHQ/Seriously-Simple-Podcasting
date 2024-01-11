@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Controllers\Series_Controller;
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
  * SSP Series Handler
@@ -11,6 +12,8 @@ use SeriouslySimplePodcasting\Interfaces\Service;
  * @package Seriously Simple Podcasting
  */
 class Series_Handler implements Service {
+
+	use Useful_Variables;
 
 	const META_SYNC_STATUS = 'sync_status';
 
@@ -30,6 +33,11 @@ class Series_Handler implements Service {
 	protected $castos_handler;
 
 	/**
+	 * @var int $default_series_id
+	 * */
+	protected $default_series_id;
+
+	/**
 	 * @param Admin_Notifications_Handler $notices_handler
 	 * @param Roles_Handler $roles_handler
 	 * @param Castos_Handler $castos_handler
@@ -38,6 +46,8 @@ class Series_Handler implements Service {
 		$this->notices_handler = $notices_handler;
 		$this->roles_handler   = $roles_handler;
 		$this->castos_handler = $castos_handler;
+
+		$this->init_useful_variables();
 	}
 
 	/**
@@ -205,8 +215,7 @@ class Series_Handler implements Service {
 			$series_data['series_id'] = $series->term_id;
 		}
 
-		$castos_handler = new Castos_Handler();
-		$response       = $castos_handler->update_podcast_data( $series_data );
+		$response = $this->castos_handler->update_podcast_data( $series_data );
 
 		if ( 'success' !== $response['status'] ) {
 			return false;
@@ -240,17 +249,15 @@ class Series_Handler implements Service {
 	 * @return \WP_Term[]
 	 */
 	public function get_feed_details_series(){
-		$default_series_id = ssp_get_default_series_id();
-
 		// First should always go the default series
 		$series = array(
-			get_term_by( 'id', $default_series_id, ssp_series_taxonomy() ),
+			get_term_by( 'id', $this->default_series_id(), ssp_series_taxonomy() ),
 		);
 
 		// Series submenu for feed details
 		return array_merge( $series, get_terms( ssp_series_taxonomy(), array(
 			'hide_empty' => false,
-			'exclude'    => array( $default_series_id ),
+			'exclude'    => array( $this->default_series_id() ),
 		) ) );
 	}
 
@@ -259,6 +266,53 @@ class Series_Handler implements Service {
 			$this->castos_handler->update_default_series_id( $series_id );
 			$this->assign_orphan_episodes( $series_id );
 		}
+	}
+
+	/**
+	 * Gets the feed option, if it's empty, tries to get options from the default feed in some cases.
+	 *
+	 * Since version 3.0, we use the Default Series settings, that should replace the default feed settings
+	 *
+	 * @since 3.0.0
+	 *
+	 * @param array $args
+	 *
+	 * @return string
+	 */
+	public function get_feed_option( $args ) {
+		$field     = $args['field'];
+		$option    = $field['id'];
+		$series_id = $args['feed-series'];
+		$no_value  = 'ssp_no_value';
+
+		$data = ssp_get_option( $option, $no_value, $series_id );
+
+		// For empty values, propagate some settings from the default feed
+		if ( $no_value === $data ) {
+			$propagate = in_array( $field['type'], array( 'checkbox', 'select', 'image' ), true );
+			$default_series_id = $this->default_series_id();
+
+			if ( $propagate && ( $series_id != $default_series_id ) ) {
+				$data = ssp_get_option( $option, $no_value, $default_series_id );
+			}
+		}
+
+		if ( $no_value === $data ) {
+			$data = isset( $field['default'] ) ? $field['default'] : '';
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function default_series_id() {
+		if ( ! isset( $this->default_series_id ) ) {
+			$this->default_series_id = ssp_get_default_series_id();
+		}
+
+		return $this->default_series_id;
 	}
 
 	/**

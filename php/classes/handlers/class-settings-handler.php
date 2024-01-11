@@ -76,7 +76,11 @@ class Settings_Handler implements Service {
 		// translators: placeholders are simply html tags to break up the content.
 		return array(
 			'title'       => __( 'Feed details', 'seriously-simple-podcasting' ),
-			'description' => sprintf( __( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe.%1$sAll of these fields are optional, but it is recommended that you fill in as many of them as possible. Blank fields will use the assigned defaults in the feed.%2$s', 'seriously-simple-podcasting' ), '<br/><em>', '</em>' ),
+			'description' => sprintf(
+				__( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe. %1$sIt is recommended that you fill in as many fields as possible (that apply to your podcast), however, some fields are required to satisfy Podcast RSS validation requirements.%2$s%3$sTo learn more about Podcast RSS Feed requirements, %4$sclick here%5$s.', 'seriously-simple-podcasting' ),
+				'<br/><em>', '</em>', '<br/>',
+				'<a target="_blank" href="https://support.castos.com/article/196-podcast-rss-feed-requirements">', '</a>'
+			),
 			'fields'      => $this->get_feed_fields(),
 		);
 	}
@@ -188,10 +192,18 @@ class Settings_Handler implements Service {
 	 * @return array
 	 */
 	public function get_feed_fields() {
-		$title  = $this->get_current_feed_option( 'data_title' );
-		$author = $this->get_current_feed_option( 'data_author' );
+		$title            = $this->get_current_feed_option( 'data_title' );
+		$author           = $this->get_current_feed_option( 'data_author' );
+		$site_title       = get_bloginfo( 'name' );
+		$site_description = get_bloginfo( 'description' );
+		$categories       = ssp_config( 'settings/feed-categories' );
+		$subcategories    = ssp_config( 'settings/feed-subcategories' );
+		$language         = get_bloginfo( 'language' );
 
-		$feed_details_fields     = ssp_config( 'settings/feed', compact( 'title', 'author' ) );
+		$feed_details_fields = ssp_config(
+			'settings/feed',
+			compact( 'title', 'author', 'site_title', 'site_description', 'categories', 'subcategories', 'language' )
+		);
 		$subscribe_options_array = $this->get_subscribe_field_options();
 
 		return array_merge( $feed_details_fields, $subscribe_options_array );

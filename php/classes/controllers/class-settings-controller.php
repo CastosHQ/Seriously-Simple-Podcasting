@@ -572,38 +572,16 @@ class Settings_Controller {
 	 */
 	public function display_field( $args ) {
 
-		$field = $args['field'];
+		$field            = $args['field'];
+		$option_name      = $default_option_name = $this->settings_base . $field['id'];
+		$is_feed_settings = isset( $args['feed-series'] ) && $args['feed-series'];
 
-		$option_name = $this->settings_base . $field['id'];
-
-		$default = isset( $field['default'] ) ? $field['default'] : '';
-
-		$default_option_name = $option_name;
-
-		// Get specific series data if applicable
-		// Since version 3.0, we use the Default Series settings, that should replace the default feed settings
-		if ( isset( $args['feed-series'] ) && $args['feed-series'] ) {
-			// Get series-specific option
+		if ( $is_feed_settings ) {
 			$option_name .= '_' . $args['feed-series'];
-			$data = get_option( $option_name, $default );
-
-			if ( ! $data && in_array( $field['type'], array( 'checkbox', 'select', 'image' ), true ) ) {
-				// Let's try to get data from the default series settings
-				$default_series_id = ssp_get_default_series_id();
-				if ( $args['feed-series'] != $default_series_id ) {
-					$data = get_option( $default_option_name . '_' . $default_series_id );
-				}
-
-				// Last try - get from the old default feed settings
-				if ( ! $data ) {
-					$data = get_option( $default_option_name );
-				}
-			}
+			$data = $this->series_handler->get_feed_option( $args );
 		} else {
-			// Get option value
-			$data = get_option( $option_name, $default );
+			$data = get_option( $option_name, isset( $field['default'] ) ? $field['default'] : '' );
 		}
-
 
 		$data = apply_filters( 'ssp_field_data', $data, $args );
 

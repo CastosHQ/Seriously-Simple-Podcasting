@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\URL_Helper;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,8 +22,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Admin_Notifications_Handler implements Service {
 
 	use URL_Helper;
-
-	public $token;
+	use Useful_Variables;
 
 	/**
 	 * Transient key to store flash notices
@@ -46,12 +46,19 @@ class Admin_Notifications_Handler implements Service {
 	const SUCCESS = 'success';
 
 	/**
+	 * @var Castos_Handler $castos_handler
+	 * */
+	protected $castos_handler;
+
+	/**
 	 * Admin_Notifications_Handler constructor.
 	 *
-	 * @param $token
+	 * @param Castos_Handler $castos_handler
 	 */
-	public function __construct( $token ) {
-		$this->token = $token;
+	public function __construct( $castos_handler ) {
+		$this->init_useful_variables();
+
+		$this->castos_handler = $castos_handler;
 
 		return $this;
 	}
@@ -69,8 +76,6 @@ class Admin_Notifications_Handler implements Service {
 		add_action( 'admin_init', array( $this, 'revalidate_api_credentials' ) );
 
 		add_action( 'admin_init', array( $this, 'show_revalidate_api_credentials_for_20' ) );
-
-		add_action( 'admin_init', array( $this, 'start_importing_existing_podcasts' ) );
 
 		// Check if a valid permalink structure is set and show a message
 		add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
@@ -482,8 +487,7 @@ class Admin_Notifications_Handler implements Service {
 		}
 		$account_email     = get_option( 'ss_podcasting_podmotor_account_email', '' );
 		$account_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		$castos_handler    = new Castos_Handler();
-		$response          = $castos_handler->validate_api_credentials( $account_api_token, $account_email );
+		$response          = $this->castos_handler->validate_api_credentials( $account_api_token, $account_email );
 		if ( 'success' === $response['status'] ) {
 			// Reset the details because they are cleared on validation
 			update_option( 'ss_podcasting_podmotor_account_email', $account_email );
@@ -514,39 +518,6 @@ class Admin_Notifications_Handler implements Service {
 		?>
 		<div class="notice notice-error is-dismissible">
 			<p><?php echo $message; ?></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Setup podcast import
-	 * Todo: couldn't find the place where podcast_import_action=start is generated. Does it work?
-	 */
-	public function start_importing_existing_podcasts() {
-		if ( isset( $_GET['podcast_import_action'] ) &&
-			 'start' == $_GET['podcast_import_action'] &&
-			 current_user_can( 'manage_podcast' )
-		) {
-			update_option( 'ss_podcasting_podmotor_import_podcasts', 'true' );
-			$castos_handler = new Castos_Handler();
-			$reponse        = $castos_handler->insert_podmotor_queue();
-			if ( 'success' === $reponse['status'] ) {
-				update_option( 'ss_podcasting_podmotor_queue_id', $reponse['queue_id'] );
-			}
-			add_action( 'admin_notices', array( $this, 'importing_podcasts_notice' ) );
-		}
-	}
-
-	/**
-	 * Show 'importing podcasts' notice
-	 */
-	public function importing_podcasts_notice() {
-		$message = '';
-		$message .= '<p>We\'re importing your podcast episodes and media files to Castos now. Check your email for an update when this process is finished</p>';
-		$message .= '<p>The import process takes place as a background task, so you may dismiss this message.</p>';
-		?>
-		<div class="notice notice-info is-dismissible">
-			<p><?php _e( $message, 'ssp' ); ?></p>
 		</div>
 		<?php
 	}

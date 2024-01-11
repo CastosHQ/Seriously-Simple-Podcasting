@@ -2,400 +2,12 @@
 /**
  * @var string $title
  * @var string $author
+ * @var string $site_title
+ * @var string $site_description
+ * @var array $categories
+ * @var array $subcategories
+ * @var array $language
  * */
-
-// Set up available category options.
-$category_options = array(
-	''                        => __( '-- None --', 'seriously-simple-podcasting' ),
-	'Arts'                    => __( 'Arts', 'seriously-simple-podcasting' ),
-	'Business'                => __( 'Business', 'seriously-simple-podcasting' ),
-	'Comedy'                  => __( 'Comedy', 'seriously-simple-podcasting' ),
-	'Education'               => __( 'Education', 'seriously-simple-podcasting' ),
-	'Fiction'                 => __( 'Fiction', 'seriously-simple-podcasting' ),
-	'Government'              => __( 'Government', 'seriously-simple-podcasting' ),
-	'History'                 => __( 'History', 'seriously-simple-podcasting' ),
-	'Health & Fitness'        => __( 'Health & Fitness', 'seriously-simple-podcasting' ),
-	'Kids & Family'           => __( 'Kids & Family', 'seriously-simple-podcasting' ),
-	'Leisure'                 => __( 'Leisure', 'seriously-simple-podcasting' ),
-	'Music'                   => __( 'Music', 'seriously-simple-podcasting' ),
-	'News'                    => __( 'News', 'seriously-simple-podcasting' ),
-	'Religion & Spirituality' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-	'Science'                 => __( 'Science', 'seriously-simple-podcasting' ),
-	'Society & Culture'       => __( 'Society & Culture', 'seriously-simple-podcasting' ),
-	'Sports'                  => __( 'Sports', 'seriously-simple-podcasting' ),
-	'Technology'              => __( 'Technology', 'seriously-simple-podcasting' ),
-	'True Crime'              => __( 'True Crime', 'seriously-simple-podcasting' ),
-	'TV & Film'               => __( 'TV & Film', 'seriously-simple-podcasting' ),
-);
-
-// Set up available sub-category options.
-$subcategory_options = array(
-	''                   => __( '-- None --', 'seriously-simple-podcasting' ),
-	'Books'              => array(
-		'label' => __( 'Books', 'seriously-simple-podcasting' ),
-		'group' => __( 'Arts', 'seriously-simple-podcasting' ),
-	),
-	'Design'             => array(
-		'label' => __( 'Design', 'seriously-simple-podcasting' ),
-		'group' => __( 'Arts', 'seriously-simple-podcasting' ),
-	),
-	'Fashion & Beauty'   => array(
-		'label' => __( 'Fashion & Beauty', 'seriously-simple-podcasting' ),
-		'group' => __( 'Arts', 'seriously-simple-podcasting' ),
-	),
-	'Food'               => array(
-		'label' => __( 'Food', 'seriously-simple-podcasting' ),
-		'group' => __( 'Arts', 'seriously-simple-podcasting' ),
-	),
-	'Performing Arts'    => array(
-		'label' => __( 'Performing Arts', 'seriously-simple-podcasting' ),
-		'group' => __( 'Arts', 'seriously-simple-podcasting' ),
-	),
-	'Visual Arts'        => array(
-		'label' => __( 'Visual Arts', 'seriously-simple-podcasting' ),
-		'group' => __( 'Arts', 'seriously-simple-podcasting' ),
-	),
-	'Careers'            => array(
-		'label' => __( 'Careers', 'seriously-simple-podcasting' ),
-		'group' => __( 'Business', 'seriously-simple-podcasting' ),
-	),
-	'Entrepreneurship'   => array(
-		'label' => __( 'Entrepreneurship', 'seriously-simple-podcasting' ),
-		'group' => __( 'Business', 'seriously-simple-podcasting' ),
-	),
-	'Investing'          => array(
-		'label' => __( 'Investing', 'seriously-simple-podcasting' ),
-		'group' => __( 'Business', 'seriously-simple-podcasting' ),
-	),
-	'Management'         => array(
-		'label' => __( 'Management', 'seriously-simple-podcasting' ),
-		'group' => __( 'Business', 'seriously-simple-podcasting' ),
-	),
-	'Marketing'          => array(
-		'label' => __( 'Marketing', 'seriously-simple-podcasting' ),
-		'group' => __( 'Business', 'seriously-simple-podcasting' ),
-	),
-	'Non-Profit'         => array(
-		'label' => __( 'Non-Profit', 'seriously-simple-podcasting' ),
-		'group' => __( 'Business', 'seriously-simple-podcasting' ),
-	),
-	'Comedy Interviews'  => array(
-		'label' => __( 'Comedy Interviews', 'seriously-simple-podcasting' ),
-		'group' => __( 'Comedy', 'seriously-simple-podcasting' ),
-	),
-	'Improv'             => array(
-		'label' => __( 'Improv', 'seriously-simple-podcasting' ),
-		'group' => __( 'Comedy', 'seriously-simple-podcasting' ),
-	),
-	'Stand-Up'           => array(
-		'label' => __( 'Stand-Up', 'seriously-simple-podcasting' ),
-		'group' => __( 'Comedy', 'seriously-simple-podcasting' ),
-	),
-	'Courses'            => array(
-		'label' => __( 'Courses', 'seriously-simple-podcasting' ),
-		'group' => __( 'Education', 'seriously-simple-podcasting' ),
-	),
-	'How To'             => array(
-		'label' => __( 'How To', 'seriously-simple-podcasting' ),
-		'group' => __( 'Education', 'seriously-simple-podcasting' ),
-	),
-	'Language Learning'  => array(
-		'label' => __( 'Language Learning', 'seriously-simple-podcasting' ),
-		'group' => __( 'Education', 'seriously-simple-podcasting' ),
-	),
-	'Self-Improvement'   => array(
-		'label' => __( 'Self-Improvement', 'seriously-simple-podcasting' ),
-		'group' => __( 'Education', 'seriously-simple-podcasting' ),
-	),
-	'Comedy Fiction'     => array(
-		'label' => __( 'Comedy Fiction', 'seriously-simple-podcasting' ),
-		'group' => __( 'Fiction', 'seriously-simple-podcasting' ),
-	),
-	'Drama'              => array(
-		'label' => __( 'Drama', 'seriously-simple-podcasting' ),
-		'group' => __( 'Fiction', 'seriously-simple-podcasting' ),
-	),
-	'Science Fiction'    => array(
-		'label' => __( 'Science Fiction', 'seriously-simple-podcasting' ),
-		'group' => __( 'Fiction', 'seriously-simple-podcasting' ),
-	),
-	'Alternative Health' => array(
-		'label' => __( 'Alternative Health', 'seriously-simple-podcasting' ),
-		'group' => __( 'Health & Fitness', 'seriously-simple-podcasting' ),
-	),
-	'Fitness'            => array(
-		'label' => __( 'Fitness', 'seriously-simple-podcasting' ),
-		'group' => __( 'Health & Fitness', 'seriously-simple-podcasting' ),
-	),
-	'Medicine'           => array(
-		'label' => __( 'Medicine', 'seriously-simple-podcasting' ),
-		'group' => __( 'Health & Fitness', 'seriously-simple-podcasting' ),
-	),
-	'Mental Health'      => array(
-		'label' => __( 'Mental Health', 'seriously-simple-podcasting' ),
-		'group' => __( 'Health & Fitness', 'seriously-simple-podcasting' ),
-	),
-	'Nutrition'          => array(
-		'label' => __( 'Nutrition', 'seriously-simple-podcasting' ),
-		'group' => __( 'Health & Fitness', 'seriously-simple-podcasting' ),
-	),
-	'Sexuality'          => array(
-		'label' => __( 'Sexuality', 'seriously-simple-podcasting' ),
-		'group' => __( 'Health & Fitness', 'seriously-simple-podcasting' ),
-	),
-	'Education for Kids' => array(
-		'label' => __( 'Education for Kids', 'seriously-simple-podcasting' ),
-		'group' => __( 'Kids & Family', 'seriously-simple-podcasting' ),
-	),
-	'Parenting'          => array(
-		'label' => __( 'Parenting', 'seriously-simple-podcasting' ),
-		'group' => __( 'Kids & Family', 'seriously-simple-podcasting' ),
-	),
-	'Pets & Animals'     => array(
-		'label' => __( 'Pets & Animals', 'seriously-simple-podcasting' ),
-		'group' => __( 'Kids & Family', 'seriously-simple-podcasting' ),
-	),
-	'Stories for Kids'   => array(
-		'label' => __( 'Stories for Kids', 'seriously-simple-podcasting' ),
-		'group' => __( 'Kids & Family', 'seriously-simple-podcasting' ),
-	),
-	'Animation & Manga'  => array(
-		'label' => __( 'Animation & Manga', 'seriously-simple-podcasting' ),
-		'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
-	),
-	'Automotive'         => array(
-		'label' => __( 'Automotive', 'seriously-simple-podcasting' ),
-		'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
-	),
-	'Aviation'           => array(
-		'label' => __( 'Aviation', 'seriously-simple-podcasting' ),
-		'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
-	),
-	'Crafts'             => array(
-		'label' => __( 'Crafts', 'seriously-simple-podcasting' ),
-		'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
-	),
-	'Games'              => array(
-		'label' => __( 'Games', 'seriously-simple-podcasting' ),
-		'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
-	),
-	'Hobbies'            => array(
-		'label' => __( 'Hobbies', 'seriously-simple-podcasting' ),
-		'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
-	),
-	'Home & Garden'      => array(
-		'label' => __( 'Home & Garden', 'seriously-simple-podcasting' ),
-		'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
-	),
-	'Video Games'        => array(
-		'label' => __( 'Video Games', 'seriously-simple-podcasting' ),
-		'group' => __( 'Leisure', 'seriously-simple-podcasting' ),
-	),
-	'Music Commentary'   => array(
-		'label' => __( 'Music Commentary', 'seriously-simple-podcasting' ),
-		'group' => __( 'Music', 'seriously-simple-podcasting' ),
-	),
-	'Music History'      => array(
-		'label' => __( 'Music History', 'seriously-simple-podcasting' ),
-		'group' => __( 'Music', 'seriously-simple-podcasting' ),
-	),
-	'Music Interviews'   => array(
-		'label' => __( 'Music Interviews', 'seriously-simple-podcasting' ),
-		'group' => __( 'Music', 'seriously-simple-podcasting' ),
-	),
-	'Business News'      => array(
-		'label' => __( 'Business News', 'seriously-simple-podcasting' ),
-		'group' => __( 'News', 'seriously-simple-podcasting' ),
-	),
-	'Daily News'         => array(
-		'label' => __( 'Daily News', 'seriously-simple-podcasting' ),
-		'group' => __( 'News', 'seriously-simple-podcasting' ),
-	),
-	'Entertainment News' => array(
-		'label' => __( 'Entertainment News', 'seriously-simple-podcasting' ),
-		'group' => __( 'News', 'seriously-simple-podcasting' ),
-	),
-	'News Commentary'    => array(
-		'label' => __( 'News Commentary', 'seriously-simple-podcasting' ),
-		'group' => __( 'News', 'seriously-simple-podcasting' ),
-	),
-	'Politics'           => array(
-		'label' => __( 'Politics', 'seriously-simple-podcasting' ),
-		'group' => __( 'News', 'seriously-simple-podcasting' ),
-	),
-	'Sports News'        => array(
-		'label' => __( 'Sports News ', 'seriously-simple-podcasting' ),
-		'group' => __( 'News', 'seriously-simple-podcasting' ),
-	),
-	'Tech News'          => array(
-		'label' => __( 'Tech News', 'seriously-simple-podcasting' ),
-		'group' => __( 'News', 'seriously-simple-podcasting' ),
-	),
-	'Buddhism'           => array(
-		'label' => __( 'Buddhism', 'seriously-simple-podcasting' ),
-		'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-	),
-	'Christianity'       => array(
-		'label' => __( 'Christianity', 'seriously-simple-podcasting' ),
-		'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-	),
-	'Hinduism'           => array(
-		'label' => __( 'Hinduism', 'seriously-simple-podcasting' ),
-		'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-	),
-	'Islam'              => array(
-		'label' => __( 'Islam', 'seriously-simple-podcasting' ),
-		'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-	),
-	'Judaism'            => array(
-		'label' => __( 'Judaism', 'seriously-simple-podcasting' ),
-		'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-	),
-	'Religion'           => array(
-		'label' => __( 'Religion', 'seriously-simple-podcasting' ),
-		'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-	),
-	'Spirituality'       => array(
-		'label' => __( 'Spirituality', 'seriously-simple-podcasting' ),
-		'group' => __( 'Religion & Spirituality', 'seriously-simple-podcasting' ),
-	),
-	'Astronomy'          => array(
-		'label' => __( 'Astronomy', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Chemistry'          => array(
-		'label' => __( 'Chemistry', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Earth Sciences'     => array(
-		'label' => __( 'Earth Sciences', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Life Sciences'      => array(
-		'label' => __( 'Life Sciences', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Mathematics'        => array(
-		'label' => __( 'Mathematics', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Natural Sciences'   => array(
-		'label' => __( 'Natural Sciences', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Nature'             => array(
-		'label' => __( 'Nature', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Physics'            => array(
-		'label' => __( 'Physics', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Social Sciences'    => array(
-		'label' => __( 'Social Sciences', 'seriously-simple-podcasting' ),
-		'group' => __( 'Science', 'seriously-simple-podcasting' ),
-	),
-	'Documentary'        => array(
-		'label' => __( 'Documentary', 'seriously-simple-podcasting' ),
-		'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ),
-	),
-	'Personal Journals'  => array(
-		'label' => __( 'Personal Journals', 'seriously-simple-podcasting' ),
-		'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ),
-	),
-	'Philosophy'         => array(
-		'label' => __( 'Philosophy', 'seriously-simple-podcasting' ),
-		'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ),
-	),
-	'Places & Travel'    => array(
-		'label' => __( 'Places & Travel', 'seriously-simple-podcasting' ),
-		'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ),
-	),
-	'Relationships'      => array(
-		'label' => __( 'Relationships', 'seriously-simple-podcasting' ),
-		'group' => __( 'Society & Culture', 'seriously-simple-podcasting' ),
-	),
-	'Baseball'           => array(
-		'label' => __( 'Baseball', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Basketball'         => array(
-		'label' => __( 'Basketball', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Cricket'            => array(
-		'label' => __( 'Cricket', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Fantasy Sports'     => array(
-		'label' => __( 'Fantasy Sports ', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Football'           => array(
-		'label' => __( 'Football', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Golf'               => array(
-		'label' => __( 'Golf', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Hockey'             => array(
-		'label' => __( 'Hockey', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Rugby'              => array(
-		'label' => __( 'Rugby', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Running'            => array(
-		'label' => __( 'Running', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Soccer'             => array(
-		'label' => __( 'Soccer', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Swimming'           => array(
-		'label' => __( 'Swimming', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Tennis'             => array(
-		'label' => __( 'Tennis', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Volleyball'         => array(
-		'label' => __( 'Volleyball', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Wilderness'         => array(
-		'label' => __( 'Wilderness', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'Wrestling'          => array(
-		'label' => __( 'Wrestling', 'seriously-simple-podcasting' ),
-		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
-	),
-	'After Shows'        => array(
-		'label' => __( 'After Shows', 'seriously-simple-podcasting' ),
-		'group' => __( 'TV & Film', 'seriously-simple-podcasting' ),
-	),
-	'Film History'       => array(
-		'label' => __( 'Film History', 'seriously-simple-podcasting' ),
-		'group' => __( 'TV & Film', 'seriously-simple-podcasting' ),
-	),
-	'Film Interviews'    => array(
-		'label' => __( 'Film Interviews', 'seriously-simple-podcasting' ),
-		'group' => __( 'TV & Film', 'seriously-simple-podcasting' ),
-	),
-	'Film Reviews'       => array(
-		'label' => __( 'Film Reviews', 'seriously-simple-podcasting' ),
-		'group' => __( 'TV & Film', 'seriously-simple-podcasting' ),
-	),
-	'TV Reviews'         => array(
-		'label' => __( 'TV Reviews', 'seriously-simple-podcasting' ),
-		'group' => __( 'TV & Film', 'seriously-simple-podcasting' ),
-	),
-);
 
 $feed_fields = array(
 	array(
@@ -403,8 +15,8 @@ $feed_fields = array(
 		'label'       => __( 'Title', 'seriously-simple-podcasting' ),
 		'description' => __( 'Your podcast title.', 'seriously-simple-podcasting' ),
 		'type'        => 'text',
-		'default'     => get_bloginfo( 'name' ),
-		'placeholder' => get_bloginfo( 'name' ),
+		'default'     => $site_title,
+		'placeholder' => $site_title,
 		'class'       => 'large-text',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -413,8 +25,8 @@ $feed_fields = array(
 		'label'       => __( 'Subtitle', 'seriously-simple-podcasting' ),
 		'description' => __( 'Your podcast subtitle.', 'seriously-simple-podcasting' ),
 		'type'        => 'text',
-		'default'     => get_bloginfo( 'description' ),
-		'placeholder' => get_bloginfo( 'description' ),
+		'default'     => $site_description,
+		'placeholder' => $site_description,
 		'class'       => 'large-text',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -423,8 +35,8 @@ $feed_fields = array(
 		'label'       => __( 'Host', 'seriously-simple-podcasting' ),
 		'description' => __( 'Your podcast host.', 'seriously-simple-podcasting' ),
 		'type'        => 'text',
-		'default'     => get_bloginfo( 'name' ),
-		'placeholder' => get_bloginfo( 'name' ),
+		'default'     => $site_title,
+		'placeholder' => '',
 		'class'       => 'large-text',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -433,7 +45,7 @@ $feed_fields = array(
 		'label'       => __( 'Primary Category', 'seriously-simple-podcasting' ),
 		'description' => __( 'Your podcast\'s primary category.', 'seriously-simple-podcasting' ),
 		'type'        => 'select',
-		'options'     => $category_options,
+		'options'     => $categories,
 		'default'     => '',
 		'class'       => 'js-parent-category',
 		'data'        => array(
@@ -446,7 +58,7 @@ $feed_fields = array(
 		'label'       => __( 'Primary Sub-Category', 'seriously-simple-podcasting' ),
 		'description' => __( 'Your podcast\'s primary sub-category (if available) - must be a sub-category of the primary category selected above.', 'seriously-simple-podcasting' ),
 		'type'        => 'select',
-		'options'     => $subcategory_options,
+		'options'     => $subcategories,
 		'default'     => '',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -459,7 +71,7 @@ $feed_fields = array(
 		'data'        => array(
 			'subcategory' => 'data_subcategory2',
 		),
-		'options'     => $category_options,
+		'options'     => $categories,
 		'default'     => '',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -468,7 +80,7 @@ $feed_fields = array(
 		'label'       => __( 'Secondary Sub-Category', 'seriously-simple-podcasting' ),
 		'description' => __( 'Your podcast\'s secondary sub-category (if available) - must be a sub-category of the secondary category selected above.', 'seriously-simple-podcasting' ),
 		'type'        => 'select',
-		'options'     => $subcategory_options,
+		'options'     => $subcategories,
 		'default'     => '',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -481,7 +93,7 @@ $feed_fields = array(
 		'data'        => array(
 			'subcategory' => 'data_subcategory3',
 		),
-		'options'     => $category_options,
+		'options'     => $categories,
 		'default'     => '',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -490,7 +102,7 @@ $feed_fields = array(
 		'label'       => __( 'Tertiary Sub-Category', 'seriously-simple-podcasting' ),
 		'description' => __( 'Your podcast\'s tertiary sub-category (if available) - must be a sub-category of the tertiary category selected above.', 'seriously-simple-podcasting' ),
 		'type'        => 'select',
-		'options'     => $subcategory_options,
+		'options'     => $subcategories,
 		'default'     => '',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -499,8 +111,8 @@ $feed_fields = array(
 		'label'       => __( 'Description/Summary', 'seriously-simple-podcasting' ),
 		'description' => __( 'A description/summary of your podcast - no HTML allowed.', 'seriously-simple-podcasting' ),
 		'type'        => 'textarea',
-		'default'     => get_bloginfo( 'description' ),
-		'placeholder' => get_bloginfo( 'description' ),
+		'default'     => $site_description,
+		'placeholder' => $site_description,
 		'callback'    => 'wp_strip_all_tags',
 		'class'       => 'large-text',
 	),
@@ -520,8 +132,8 @@ $feed_fields = array(
 		'label'       => __( 'Owner name', 'seriously-simple-podcasting' ),
 		'description' => __( 'Podcast owner\'s name.', 'seriously-simple-podcasting' ),
 		'type'        => 'text',
-		'default'     => get_bloginfo( 'name' ),
-		'placeholder' => get_bloginfo( 'name' ),
+		'default'     => $site_title,
+		'placeholder' => $site_title,
 		'class'       => 'large-text',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -530,8 +142,8 @@ $feed_fields = array(
 		'label'       => __( 'Owner email address', 'seriously-simple-podcasting' ),
 		'description' => __( 'Podcast owner\'s email address (leave blank to omit from RSS feed).', 'seriously-simple-podcasting' ),
 		'type'        => 'text',
-		'default'     => get_bloginfo( 'admin_email' ),
-		'placeholder' => get_bloginfo( 'admin_email' ),
+		'default'     => '',
+		'placeholder' => 'email@gmail.com ',
 		'class'       => 'large-text',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -541,8 +153,8 @@ $feed_fields = array(
 		// translators: placeholders are for a link to the ISO standards
 		'description' => sprintf( __( 'Your podcast\'s language in %1$sISO-639-1 format%2$s.', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'http://www.loc.gov/standards/iso639-2/php/code_list.php' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
 		'type'        => 'text',
-		'default'     => get_bloginfo( 'language' ),
-		'placeholder' => get_bloginfo( 'language' ),
+		'default'     => $language,
+		'placeholder' => $language,
 		'class'       => 'all-options',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -551,8 +163,8 @@ $feed_fields = array(
 		'label'       => __( 'Copyright', 'seriously-simple-podcasting' ),
 		'description' => __( 'Copyright line for your podcast.', 'seriously-simple-podcasting' ),
 		'type'        => 'text',
-		'default'     => '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
-		'placeholder' => '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ),
+		'default'     => '&#xA9; ' . date( 'Y' ) . ' ' . $site_title,
+		'placeholder' => '&#xA9; ' . date( 'Y' ) . ' ' . $site_title,
 		'class'       => 'large-text',
 		'callback'    => 'wp_strip_all_tags',
 	),
@@ -568,7 +180,7 @@ $feed_fields = array(
 				'placeholder' => __( 'e.g. Donate to the show', 'seriously-simple-podcasting' ),
 				'class'       => 'large-text',
 				'description' => sprintf(
-					'<a href="%s">%s</a>',
+					'<a target="_blank" href="%s">%s</a>',
 					'https://support.castos.com/article/236-podcast-20-funding-tag-in-seriously-simple-podcasting',
 					__( 'Learn More', 'seriously-simple-podcasting' )
 				),
@@ -617,7 +229,10 @@ $feed_fields = array(
 		'id'          => 'explicit',
 		'label'       => __( 'Explicit', 'seriously-simple-podcasting' ),
 		// translators: placeholders are for an Apple help document link
-		'description' => sprintf( __( 'To mark this podcast as an explicit podcast, check this box. Explicit content rules can be found %s.', 'seriously-simple-podcasting' ), '<a href="https://discussions.apple.com/thread/1079151">here</a>' ),
+		'description' => sprintf(
+			__( 'To mark this podcast as an explicit podcast, check this box. Explicit content rules can be found %1$shere%2$s.', 'seriously-simple-podcasting' ),
+			'<a target="_blank" href="https://discussions.apple.com/thread/1079151">', '</a>'
+		),
 		'type'        => 'checkbox',
 		'default'     => '',
 		'callback'    => 'wp_strip_all_tags',

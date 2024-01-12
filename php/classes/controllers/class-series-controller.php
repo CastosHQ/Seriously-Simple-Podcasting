@@ -55,6 +55,8 @@ class Series_Controller {
 		add_filter( 'term_name', array( $this, 'update_default_series_name' ), 10, 2 );
 
 		add_action( 'created_series', array( $this, 'save_series_meta' ), 10, 2 );
+		add_action( 'edited_series', array( $this, 'save_series_meta' ), 10, 2 );
+
 		add_action( 'add_option_ss_podcasting_podmotor_account_api_token', array( $this, 'sync_series' ) );
 
 		// Series list table.

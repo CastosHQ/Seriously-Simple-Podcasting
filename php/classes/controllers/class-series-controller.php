@@ -41,8 +41,8 @@ class Series_Controller {
 	private $settings_handler;
 
 	public function __construct( $series_handler, $castos_handler, $settings_handler ) {
-		$this->series_handler = $series_handler;
-		$this->castos_handler = $castos_handler;
+		$this->series_handler   = $series_handler;
+		$this->castos_handler   = $castos_handler;
 		$this->settings_handler = $settings_handler;
 
 		$this->init_useful_variables();
@@ -166,46 +166,26 @@ class Series_Controller {
 		$upload_btn_text  = __( 'Choose podcast image', 'seriously-simple-podcasting' );
 		$upload_btn_value = __( 'Add Image', 'seriously-simple-podcasting' );
 		$upload_btn_title = __( 'Choose an image file', 'seriously-simple-podcasting' );
-		$series_img_desc  = __( "Set an image as the artwork for the podcast page. No image will be set if not provided.", 'seriously-simple-podcasting' );
-		$series_img_form_label = <<<HTML
-<label>{$series_img_title}</label>
-HTML;
+		$series_img_desc  = __(
+			'Set an image as the artwork for the podcast page. No image will be set if not provided.',
+			'seriously-simple-podcasting'
+		);
 
-		$series_img_form_fields = <<<HTML
-<img id="{$taxonomy}_image_preview" data-src="{$default_image}" src="$src" width="{$image_width}" height="{$image_height}" />
-<div>
-	<input type="hidden" id="{$taxonomy}_image_id" name="{$series_settings}" value="{$media_id}" />
-	<button id="{$taxonomy}_upload_image_button" class="button" data-uploader_title="{$upload_btn_title}" data-uploader_button_text="{$upload_btn_text}"><span class="dashicons dashicons-format-image"></span> {$upload_btn_value}</button>
-	<button id="{$taxonomy}_remove_image_button" class="button">&times;</button>
-</div>
-<p class="description">{$series_img_desc}</p>
-HTML;
+		$upload_image = ssp_renderer()->fetch( 'settings/podcast-upload-image', compact(
+			'series_img_title', 'taxonomy', 'default_image', 'src', 'image_width', 'image_height', 'series_settings',
+			'media_id', 'upload_btn_title', 'upload_btn_text', 'upload_btn_value', 'series_img_desc'
+		) );
 
-		if ( $mode == 'CREATE' ) {
-			echo <<<HTML
-<div class="form-field term-upload-wrap">
-	{$series_img_form_label}
-	{$series_img_form_fields}
-</div>
-HTML;
-		} else if ( $mode == 'UPDATE' ) {
-			echo <<<HTML
-<tr class="form-field term-upload-wrap">
-	<th scope="row">{$series_img_form_label}</th>
-	<td>
-		{$series_img_form_fields}
-	</td>
-</tr>
-HTML;
-		}
+		$mode = 'create' === strtolower( $mode ) ? 'create' : 'update';
+		ssp_renderer()->render( "settings/podcast-image-$mode", compact( 'series_img_title', 'upload_image' ) );
 	}
 
 	/**
-	 * @since 2.7.3
-	 *
 	 * @param \WP_Term $term
 	 *
 	 * @return int|null
+	 * @since 2.7.3
+	 *
 	 */
 	public function get_series_image_id( $term = null ) {
 		if ( empty( $term ) ) {
@@ -216,11 +196,11 @@ HTML;
 	}
 
 	/**
-	 * @since 2.7.3
-	 *
 	 * @param \WP_Term $term
 	 *
 	 * @return int|null
+	 * @since 2.7.3
+	 *
 	 */
 	public function get_series_image_src( $term ) {
 		return ssp_get_podcast_image_src( $term );
@@ -229,7 +209,7 @@ HTML;
 	/**
 	 * Register columns for series list table
 	 *
-	 * @param  array $columns Default columns
+	 * @param array $columns Default columns
 	 *
 	 * @return array          Modified columns
 	 */
@@ -241,7 +221,7 @@ HTML;
 		$columns['series_image']    = __( 'Podcast Image', 'seriously-simple-podcasting' );
 		$columns['series_feed_url'] = __( 'Podcast feed URL', 'seriously-simple-podcasting' );
 		$columns['posts']           = __( 'Episodes', 'seriously-simple-podcasting' );
-		$columns = apply_filters( 'ssp_admin_columns_series', $columns );
+		$columns                    = apply_filters( 'ssp_admin_columns_series', $columns );
 
 		return $columns;
 	}
@@ -266,9 +246,9 @@ HTML;
 				$column_data = '<a href="' . esc_attr( $feed_url ) . '" target="_blank">' . esc_html( $feed_url ) . '</a>';
 				break;
 			case 'series_image':
-				$series = get_term( $term_id, 'series' );
-				$source = $this->get_series_image_src( $series );
-				$column_data      = <<<HTML
+				$series      = get_term( $term_id, 'series' );
+				$source      = $this->get_series_image_src( $series );
+				$column_data = <<<HTML
 <img id="{$series->name}_image_preview" src="{$source}" width="auto" height="auto" style="max-width:50px;" />
 HTML;
 				break;
@@ -279,13 +259,13 @@ HTML;
 
 
 	/**
-	 * @since 2.7.3
-	 *
 	 * @param \WP_Term $term
 	 *
 	 * @return string
+	 * @since 2.7.3
+	 *
 	 */
-	public function get_series_feed_url( $term ){
+	public function get_series_feed_url( $term ) {
 		$series_slug = $term->slug;
 
 		if ( get_option( 'permalink_structure' ) ) {
@@ -431,7 +411,7 @@ HTML;
 
 		$title = __( "You can't delete the default podcast", 'seriously-simple-podcasting' );
 
-		$actions['delete'] = '<span title="' . $title .'">' . __( 'Delete', 'seriously-simple-podcasting' ) . '</span>';
+		$actions['delete'] = '<span title="' . $title . '">' . __( 'Delete', 'seriously-simple-podcasting' ) . '</span>';
 
 		return $actions;
 	}

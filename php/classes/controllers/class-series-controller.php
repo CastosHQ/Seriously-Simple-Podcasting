@@ -130,8 +130,6 @@ class Series_Controller {
 	 * @param \WP_Term $term
 	 *
 	 * @return void
-	 *
-	 * Todo: get rid of HTML
 	 */
 	protected function show_feed_info( $term ) {
 		$edit_feed_url = sprintf(
@@ -142,39 +140,12 @@ class Series_Controller {
 		$edit_feed_url = admin_url( $edit_feed_url );
 
 		$feed_fields = $this->settings_handler->get_feed_fields();
+		$series_handler = $this->series_handler;
 
-		?>
-		<tr class="form-field term-upload-wrap">
-			<th scope="row">
-				<label><?php echo __( 'Podcast Feed Details', 'seriously-simple-podcasting' ) ?></label>
-				<p><a class="view-feed-link" href="<?php echo esc_url( $edit_feed_url ) ?>">
-						<span class="dashicons dashicons-edit"></span>
-						<?php echo __( 'Edit Feed Settings', 'seriously-simple-podcasting' ) ?></a></p>
-				<p><a class="view-feed-link" href="<?php echo esc_url( ssp_get_feed_url( $term->slug ) ); ?>" target="_blank">
-						<span class="dashicons dashicons-rss"></span>
-						<?php echo __( 'View feed', 'seriously-simple-podcasting' ) ?>
-					</a></p>
-			</th>
-			<td>
-				<table style="border: 1px solid #ccc; width: 100%; padding: 0 10px;">
-					<?php foreach ( $feed_fields as $field ) :
-						$value = $this->series_handler->get_feed_option( $field, $term->term_id );
-						if ( ! $value || ! is_string( $value ) ) {
-							continue;
-						}
-						if ( 'image' === $field['type'] ) {
-							$value = sprintf('<img src="%s" style="width: 100px;">', $value );
-						}
-						?>
-						<tr>
-							<th><?php echo $field['label']; ?>:</th>
-							<td><?php echo $value; ?></td>
-						</tr>
-					<?php endforeach; ?>
-				</table>
-			</td>
-		</tr>
-		<?php
+		ssp_renderer()->render(
+			'settings/podcast-feed-details',
+			compact( 'edit_feed_url', 'term', 'series_handler', 'feed_fields' )
+		);
 	}
 
 	/**

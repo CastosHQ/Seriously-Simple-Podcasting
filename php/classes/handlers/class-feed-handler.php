@@ -22,6 +22,11 @@ class Feed_Handler implements Service {
 	const PODCAST_NAMESPACE_UUID = 'ead4c236-bf58-58c6-a2c6-a6b28d128cb6';
 
 	/**
+	 * @var Settings_Handler
+	 * */
+	protected $settings_handler;
+
+	/**
 	 * @var Renderer
 	 * */
 	protected $renderer;
@@ -30,8 +35,9 @@ class Feed_Handler implements Service {
 	/**
 	 * Feed_Handler constructor.
 	 */
-	public function __construct() {
-		$this->renderer = new Renderer();
+	public function __construct( $settings_handler, $renderer ) {
+		$this->settings_handler = $settings_handler;
+		$this->renderer = $renderer;
 	}
 
 	/**
@@ -253,6 +259,7 @@ class Feed_Handler implements Service {
 		return $exclude_series;
 	}
 
+
 	/**
 	 * Gets podcast title
 	 *
@@ -261,17 +268,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_title( $series_id ) {
-		if ( $series_id ) {
-			$title = get_option( 'ss_podcasting_data_title_' . $series_id, '' );
-		}
-
-		if ( empty( $title ) ) {
-			$title = get_option( 'ss_podcasting_data_title_' . ssp_get_default_series_id(), '' );
-		}
-
-		if ( empty( $title ) ) {
-			$title = get_option( 'ss_podcasting_data_title', get_bloginfo( 'name' ) );
-		}
+		$title = $this->settings_handler->get_feed_option( 'data_title', $series_id );
 
 		return apply_filters( 'ssp_feed_title', $title, $series_id );
 	}
@@ -284,17 +281,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_description( $series_id ) {
-		if ( $series_id ) {
-			$description = get_option( 'ss_podcasting_data_description_' . $series_id, '' );
-		}
-
-		if ( empty( $description ) ) {
-			$description = get_option( 'ss_podcasting_data_description_' . ssp_get_default_series_id(), '' );
-		}
-
-		if ( empty( $description ) ) {
-			$description = get_option( 'ss_podcasting_data_description', get_bloginfo( 'description' ) );
-		}
+		$description = $this->settings_handler->get_feed_option( 'data_description', $series_id );
 
 		$podcast_description = mb_substr( strip_tags( $description ), 0, 3999 );
 
@@ -309,17 +296,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_language( $series_id ) {
-		if ( $series_id ) {
-			$language = get_option( 'ss_podcasting_data_language_' . $series_id, '' );
-		}
-
-		if ( empty( $language ) ) {
-			$language = get_option( 'ss_podcasting_data_language_' . ssp_get_default_series_id(), '' );
-		}
-
-		if ( empty( $language ) ) {
-			$language = get_option( 'ss_podcasting_data_language', get_bloginfo( 'language' ) );
-		}
+		$language = $this->settings_handler->get_feed_option( 'data_language', $series_id );
 
 		return apply_filters( 'ssp_feed_language', $language, $series_id );
 	}
@@ -333,17 +310,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_copyright( $series_id ) {
-		if ( $series_id ) {
-			$copyright = get_option( 'ss_podcasting_data_copyright_' . $series_id, '' );
-		}
-
-		if ( empty( $copyright ) ) {
-			$copyright = get_option( 'ss_podcasting_data_copyright_' . ssp_get_default_series_id(), '' );
-		}
-
-		if ( empty( $copyright ) ) {
-			$copyright = get_option( 'ss_podcasting_data_copyright', '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ) );
-		}
+		$copyright = $this->settings_handler->get_feed_option( 'data_copyright', $series_id );
 
 		return apply_filters( 'ssp_feed_copyright', $copyright, $series_id );
 	}
@@ -356,17 +323,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_subtitle( $series_id ) {
-		if ( $series_id ) {
-			$subtitle = get_option( 'ss_podcasting_data_subtitle_' . $series_id, '' );
-		}
-
-		if ( empty( $subtitle ) ) {
-			$subtitle = get_option( 'ss_podcasting_data_subtitle_' . ssp_get_default_series_id(), '' );
-		}
-
-		if ( empty( $subtitle ) ) {
-			$subtitle = get_option( 'ss_podcasting_data_subtitle', get_bloginfo( 'description' ) );
-		}
+		$subtitle = $this->settings_handler->get_feed_option( 'data_subtitle', $series_id );
 
 		return apply_filters( 'ssp_feed_subtitle', $subtitle, $series_id );
 	}
@@ -379,17 +336,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_author( $series_id ) {
-		if ( $series_id ) {
-			$author = get_option( 'ss_podcasting_data_author_' . $series_id, '' );
-		}
-
-		if ( empty( $author ) ) {
-			$author = get_option( 'ss_podcasting_data_author_' . ssp_get_default_series_id(), '' );
-		}
-
-		if ( empty( $author ) ) {
-			$author = get_option( 'ss_podcasting_data_author', get_bloginfo( 'name' ) );
-		}
+		$author = $this->settings_handler->get_feed_option( 'data_author', $series_id );
 
 		return apply_filters( 'ssp_feed_author', $author, $series_id );
 	}
@@ -402,21 +349,10 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_owner_name( $series_id ) {
-		if ( $series_id ) {
-			$owner_name = get_option( 'ss_podcasting_data_owner_name_' . $series_id, '' );
-		}
-
-		if ( empty( $owner_name ) ) {
-			$owner_name = get_option( 'ss_podcasting_data_owner_name_' . ssp_get_default_series_id(), '' );
-		}
-
-		if ( empty( $owner_name ) ) {
-			$owner_name = get_option( 'ss_podcasting_data_owner_name', get_bloginfo( 'name' ) );
-		}
+		$owner_name = $this->settings_handler->get_feed_option( 'data_owner_name', $series_id );
 
 		return apply_filters( 'ssp_feed_owner_name', $owner_name, $series_id );
 	}
-
 
 	/**
 	 * Gets podcast owner email
@@ -426,7 +362,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_owner_email( $series_id ) {
-		$owner_email = ssp_get_option( 'data_owner_email', '', $series_id );
+		$owner_email = $this->settings_handler->get_feed_option( 'data_owner_email', $series_id );
 
 		return apply_filters( 'ssp_feed_owner_email', $owner_email, $series_id );
 	}
@@ -439,17 +375,7 @@ class Feed_Handler implements Service {
 	 * @return bool
 	 */
 	public function is_explicit( $series_id ) {
-		if ( $series_id ) {
-			$explicit_option = get_option( 'ss_podcasting_explicit_' . $series_id, null );
-		}
-
-		if ( ! isset( $explicit_option ) ) {
-			$explicit_option = get_option( 'ss_podcasting_explicit_' . ssp_get_default_series_id(), null );
-		}
-
-		if ( ! isset( $explicit_option ) ) {
-			$explicit_option = get_option( 'ss_podcasting_explicit', '' );
-		}
+		$explicit_option = $this->settings_handler->get_feed_option( 'explicit', $series_id );
 
 		$explicit_option = apply_filters( 'ssp_feed_explicit', $explicit_option, $series_id );
 
@@ -464,17 +390,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_complete( $series_id ) {
-		if ( $series_id ) {
-			$complete_option = get_option( 'ss_podcasting_complete_' . $series_id, null );
-		}
-
-		if ( ! isset( $complete_option ) ) {
-			$complete_option = get_option( 'ss_podcasting_complete_' . ssp_get_default_series_id(), null );
-		}
-
-		if ( ! isset( $complete_option ) ) {
-			$complete_option = get_option( 'ss_podcasting_complete', '' );
-		}
+		$complete_option = $this->settings_handler->get_feed_option( 'complete', $series_id );
 
 		$complete_option = apply_filters( 'ssp_feed_complete', $complete_option, $series_id );
 
@@ -490,19 +406,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_feed_image( $series_id ) {
-		// If it's series feed, try first to show its own image.
-		if ( $series_id ) {
-			$image = get_option( 'ss_podcasting_data_image_' . $series_id, null );
-		}
-
-		if ( ! isset( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
-			$image = get_option( 'ss_podcasting_data_image_' . ssp_get_default_series_id(), null );
-		}
-
-		// If couldn't show the series image, or if it's default feed, lets show the default cover image.
-		if ( ! isset( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
-			$image = get_option( 'ss_podcasting_data_image', '' );
-		}
+		$image = $this->settings_handler->get_feed_option( 'data_image', $series_id );
 
 		// Here we'll sanitize the image, if it's not valid - it will be just empty string.
 		return apply_filters( 'ssp_feed_image', $image, $series_id );

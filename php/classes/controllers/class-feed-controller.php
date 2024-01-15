@@ -40,11 +40,11 @@ class Feed_Controller {
 	 * */
 	protected $renderer;
 
-
 	/**
 	 * Admin_Controller constructor.
 	 *
 	 * @param Feed_Handler $feed_handler
+	 * @param Renderer $renderer
 	 */
 	public function __construct( $feed_handler, $renderer ) {
 		$this->init_useful_variables();

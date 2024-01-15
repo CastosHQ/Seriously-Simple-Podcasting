@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
@@ -577,8 +578,9 @@ class Settings_Controller {
 		$is_feed_field = isset( $args['feed-series'] ) && $args['feed-series'];
 
 		if ( $is_feed_field ) {
-			$option_name .= '_' . $args['feed-series'];
-			$data        = $this->series_handler->get_feed_option( $args['field'], $args['feed-series'] );
+			$series_id   = $args['feed-series'];
+			$option_name .= '_' . $series_id;
+			$data = $this->settings_handler->get_feed_option( $field, $series_id );
 		} else {
 			$data = get_option( $option_name, isset( $field['default'] ) ? $field['default'] : '' );
 		}

@@ -142,11 +142,11 @@ class Series_Controller {
 		$edit_feed_url = admin_url( $edit_feed_url );
 
 		$feed_fields = $this->settings_handler->get_feed_fields();
-		$series_handler = $this->series_handler;
+		$settings_handler = $this->settings_handler;
 
 		ssp_renderer()->render(
 			'settings/podcast-feed-details',
-			compact( 'edit_feed_url', 'term', 'series_handler', 'feed_fields' )
+			compact( 'edit_feed_url', 'term', 'settings_handler', 'feed_fields' )
 		);
 	}
 

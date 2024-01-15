@@ -12,6 +12,16 @@ use SeriouslySimplePodcasting\Interfaces\Service;
 class Settings_Handler implements Service {
 
 	/**
+	 * @var array
+	 * */
+	protected $feed_fields;
+
+	/**
+	 * @var int
+	 * */
+	protected $default_series_id;
+
+	/**
 	 * Build settings fields
 	 *
 	 * @return array Fields to be displayed on settings page.
@@ -189,9 +199,113 @@ class Settings_Handler implements Service {
 	}
 
 	/**
+	 * @param string $id
+	 *
+	 * @return array|null
+	 */
+	public function get_field_by_id( $id ) {
+		$feed_fields = $this->get_feed_fields();
+
+		foreach ( $feed_fields as $feed_field ) {
+			if ( $id === $feed_field['id'] ) {
+				return $feed_field;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * Gets the feed option, if it's empty, tries to get options from the default feed in some cases.
+	 *
+	 * Since version 3.0, we use the Default Series settings, that should replace the default feed settings
+	 *
+	 * @param string|array $field
+	 * @param int $series_id
+	 *
+	 * @return string|null
+	 * @since 3.0.0
+	 *
+	 */
+	public function get_feed_option( $field, $series_id ) {
+
+		if ( is_string( $field ) ) {
+			$field = $this->get_field_by_id( $field );
+		}
+
+		$option = $field['id'];
+
+		if ( 'data_image' === $option ) {
+			return $this->get_feed_image( $series_id );
+		}
+
+		$data = ssp_get_option( $option, null, $series_id );
+
+		// For empty values, propagate some settings from the default feed
+		if ( ! isset( $data ) ) {
+			$propagate         = in_array( $field['type'], array( 'checkbox', 'select' ), true );
+			$default_series_id = $this->default_series_id();
+
+			if ( $propagate && ( $series_id != $default_series_id ) ) {
+				$data = ssp_get_option( $option, null, $default_series_id );
+			}
+		}
+
+		if ( ! isset( $data ) ) {
+			$data = isset( $field['default'] ) ? $field['default'] : '';
+		}
+
+		return $data;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function default_series_id() {
+		if ( ! isset( $this->default_series_id ) ) {
+			$this->default_series_id = ssp_get_default_series_id();
+		}
+
+		return $this->default_series_id;
+	}
+
+	/**
+	 * @param int $series_id
+	 *
+	 * @return string
+	 */
+	public function get_feed_image( $series_id ){
+		// If it's series feed, try to use its own feed image.
+		if ( $series_id ) {
+			$image = ssp_get_option( 'data_image', null, $series_id );
+		}
+
+		// If couldn't show the series feed image, try to use the series taxonomy image
+		if ( ! isset( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
+			$image = ssp_get_podcast_image_src( get_term_by( 'id', $series_id, ssp_series_taxonomy() ), 'full' );
+		}
+
+		// If couldn't show the series image, try to use the default series cover image.
+		if ( ! isset( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
+			$image = ssp_get_option( 'data_image', null, ssp_get_default_series_id() );
+		}
+
+		if ( ! isset( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
+			$image = '';
+		}
+
+		return $image;
+	}
+
+
+	/**
 	 * @return array
 	 */
 	public function get_feed_fields() {
+		if ( $this->feed_fields ) {
+			return $this->feed_fields;
+		}
+
 		$podcast_id       = $this->get_current_series_id();
 		$title            = ssp_get_option( 'data_title', '', $podcast_id );
 		$author           = ssp_get_option( 'data_author', '', $podcast_id );
@@ -205,9 +319,12 @@ class Settings_Handler implements Service {
 			'settings/feed',
 			compact( 'title', 'author', 'site_title', 'site_description', 'categories', 'subcategories', 'language' )
 		);
+
 		$subscribe_options_array = $this->get_subscribe_field_options( $podcast_id );
 
-		return array_merge( $feed_details_fields, $subscribe_options_array );
+		$this->feed_fields = array_merge( $feed_details_fields, $subscribe_options_array );
+
+		return $this->feed_fields;
 	}
 
 	/**

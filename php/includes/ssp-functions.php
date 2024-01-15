@@ -7,7 +7,6 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
-use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 
@@ -1478,11 +1477,12 @@ if ( ! function_exists( 'ssp_series_slug' ) ) {
 if ( ! function_exists( 'ssp_get_podcast_image_src' ) ) {
 	/**
 	 *
-	 * @param \WP_Term $term
+	 * @param WP_Term $term
+	 * @param string $size
 	 *
 	 * @return int|null
 	 */
-	function ssp_get_podcast_image_src( $term ) {
+	function ssp_get_podcast_image_src( $term, $size = 'thumbnail' ) {
 
 		if ( ! empty( $term->term_id ) ) {
 			$media_id = get_term_meta( $term->term_id, SSP_CPT_PODCAST . '_series_image_settings', true );
@@ -1494,10 +1494,7 @@ if ( ! function_exists( 'ssp_get_podcast_image_src' ) ) {
 			return $default_image;
 		}
 
-		$image_width  = "auto";
-		$image_height = "auto";
-
-		$src = wp_get_attachment_image_src( $media_id, array( $image_width, $image_height ) );
+		$src = wp_get_attachment_image_src( $media_id, $size );
 
 		return ! empty( $src[0] ) ? $src[0] : $default_image;
 	}

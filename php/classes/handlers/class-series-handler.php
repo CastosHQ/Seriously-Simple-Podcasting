@@ -33,6 +33,11 @@ class Series_Handler implements Service {
 	protected $castos_handler;
 
 	/**
+	 * @var Feed_Handler
+	 * */
+	protected $feed_handler;
+
+	/**
 	 * @var int $default_series_id
 	 * */
 	protected $default_series_id;
@@ -45,7 +50,7 @@ class Series_Handler implements Service {
 	public function __construct( $notices_handler, $roles_handler, $castos_handler ) {
 		$this->notices_handler = $notices_handler;
 		$this->roles_handler   = $roles_handler;
-		$this->castos_handler = $castos_handler;
+		$this->castos_handler  = $castos_handler;
 
 		$this->init_useful_variables();
 	}
@@ -266,41 +271,6 @@ class Series_Handler implements Service {
 			$this->castos_handler->update_default_series_id( $series_id );
 			$this->assign_orphan_episodes( $series_id );
 		}
-	}
-
-	/**
-	 * Gets the feed option, if it's empty, tries to get options from the default feed in some cases.
-	 *
-	 * Since version 3.0, we use the Default Series settings, that should replace the default feed settings
-	 *
-	 * @param array $field
-	 * @param int $series_id
-	 *
-	 * @return string
-	 * @since 3.0.0
-	 *
-	 */
-	public function get_feed_option( $field, $series_id ) {
-		$option   = $field['id'];
-		$no_value = 'ssp_no_value';
-
-		$data = ssp_get_option( $option, $no_value, $series_id );
-
-		// For empty values, propagate some settings from the default feed
-		if ( $no_value === $data ) {
-			$propagate = in_array( $field['type'], array( 'checkbox', 'select', 'image' ), true );
-			$default_series_id = $this->default_series_id();
-
-			if ( $propagate && ( $series_id != $default_series_id ) ) {
-				$data = ssp_get_option( $option, $no_value, $default_series_id );
-			}
-		}
-
-		if ( $no_value === $data ) {
-			$data = isset( $field['default'] ) ? $field['default'] : '';
-		}
-
-		return $data;
 	}
 
 	/**

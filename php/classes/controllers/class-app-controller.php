@@ -251,17 +251,15 @@ class App_Controller {
 
 		$this->logger = new Log_Helper();
 
-		$this->feed_handler = new Feed_Handler();
-
 		$this->settings_handler = new Settings_Handler();
+
+		$this->feed_handler = new Feed_Handler( $this->settings_handler, $this->renderer );
 
 		$this->options_handler = new Options_Handler();
 
 		$this->episode_repository = new Episode_Repository();
 
 		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger );
-
-		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
@@ -286,6 +284,8 @@ class App_Controller {
 		$this->series_handler    = new Series_Handler( $this->admin_notices_handler, $this->roles_handler, $this->castos_handler );
 
 		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler, $this->series_handler );
+
+		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
 
 		$this->cron_controller = new Cron_Controller( $this->castos_handler, $this->episode_repository, $this->upgrade_handler );
 

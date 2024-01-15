@@ -1,8 +1,10 @@
 <?php
 /**
+ * @see \SeriouslySimplePodcasting\Controllers\Series_Controller::show_feed_info()
+ *
  * @var string $edit_feed_url
  * @var WP_Term $term
- * @var \SeriouslySimplePodcasting\Handlers\Series_Handler $series_handler
+ * @var \SeriouslySimplePodcasting\Handlers\Settings_Handler $settings_handler
  * @var array $feed_fields
  * */
 ?>
@@ -19,9 +21,9 @@
 	</th>
 	<td>
 		<table style="border: 1px solid #ccc; width: 100%; padding: 0 10px;">
-			<?php foreach ( $feed_fields as $field ) : ?>
+			<?php foreach ( $settings_handler->get_feed_fields() as $field ) : ?>
 				<?php
-				$value = $series_handler->get_feed_option( $field, $term->term_id );
+				$value = $settings_handler->get_feed_option( $field, $term->term_id );
 				if ( ! $value || ! is_string( $value ) ) {
 					continue;
 				}

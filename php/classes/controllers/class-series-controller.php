@@ -53,6 +53,7 @@ class Series_Controller {
 		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_sync_status' ), 10, 3 );
 		add_filter( 'term_name', array( $this, 'update_default_series_name' ), 10, 2 );
+		add_filter( 'post_column_taxonomy_links', array( $this, 'update_column_default_series_name' ), 10, 3 );
 
 		add_action( 'created_series', array( $this, 'save_series_meta' ), 10, 2 );
 		add_action( 'edited_series', array( $this, 'save_series_meta' ), 10, 2 );
@@ -383,6 +384,8 @@ HTML;
 	}
 
 	/**
+	 * Changes the default series name in the terms list (All Podcasts page)
+	 *
 	 * @param string $name
 	 * @param \WP_Term $tag
 	 *
@@ -393,11 +396,37 @@ HTML;
 			return $name;
 		}
 
-		if ( $tag->term_id == ssp_get_default_series_id() ) {
+		if ( $tag->term_id == $this->series_handler->default_series_id() ) {
 			return $this->series_handler->default_series_name( $name );
 		}
 
 		return $name;
+	}
+
+	/**
+	 * Changes the default series name in the post columns (All Episodes page, Podcasts column)
+	 *
+	 * @param array $term_links
+	 * @param string $taxonomy
+	 * @param \WP_Term[] $terms
+	 */
+	public function update_column_default_series_name( $term_links, $taxonomy, $terms ) {
+		if ( ssp_series_taxonomy() !== $taxonomy || ! $term_links ) {
+			return $term_links;
+		}
+
+		foreach ( $terms as $k => $term ) {
+			if ( $this->series_handler->default_series_id() === $term->term_id ) {
+				$term_links[ $k ] = str_replace(
+					$term->name,
+					$this->series_handler->default_series_name( $term->name ),
+					$term_links[ $k ]
+				);
+				break;
+			}
+		}
+
+		return $term_links;
 	}
 
 	/**

@@ -222,12 +222,12 @@ class Settings_Handler implements Service {
 	 *
 	 * @param string|array $field
 	 * @param int $series_id
+	 * @param string $default
 	 *
 	 * @return string|null
 	 * @since 3.0.0
-	 *
 	 */
-	public function get_feed_option( $field, $series_id ) {
+	public function get_feed_option( $field, $series_id, $default = '' ) {
 
 		if ( is_string( $field ) ) {
 			$field = $this->get_field_by_id( $field );
@@ -252,7 +252,7 @@ class Settings_Handler implements Service {
 		}
 
 		if ( ! isset( $data ) ) {
-			$data = isset( $field['default'] ) ? $field['default'] : '';
+			$data = isset( $field['default'] ) ? $field['default'] : $default;
 		}
 
 		return $data;

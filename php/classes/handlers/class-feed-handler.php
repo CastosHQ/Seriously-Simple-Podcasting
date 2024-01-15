@@ -104,7 +104,7 @@ class Feed_Handler implements Service {
 			$podcast_series = esc_attr( $_GET['podcast_series'] );
 		}
 
-		return $podcast_series;
+		return untrailingslashit( $podcast_series );
 	}
 
 	/**
@@ -268,7 +268,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_title( $series_id ) {
-		$title = $this->settings_handler->get_feed_option( 'data_title', $series_id );
+		$title = $this->settings_handler->get_feed_option( 'data_title', $series_id, get_bloginfo('name') );
 
 		return apply_filters( 'ssp_feed_title', $title, $series_id );
 	}
@@ -281,7 +281,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_description( $series_id ) {
-		$description = $this->settings_handler->get_feed_option( 'data_description', $series_id );
+		$description = $this->settings_handler->get_feed_option( 'data_description', $series_id, get_bloginfo( 'description' ) );
 
 		$podcast_description = mb_substr( strip_tags( $description ), 0, 3999 );
 
@@ -296,7 +296,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_language( $series_id ) {
-		$language = $this->settings_handler->get_feed_option( 'data_language', $series_id );
+		$language = $this->settings_handler->get_feed_option( 'data_language', $series_id, get_bloginfo( 'language' ) );
 
 		return apply_filters( 'ssp_feed_language', $language, $series_id );
 	}
@@ -310,7 +310,8 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_copyright( $series_id ) {
-		$copyright = $this->settings_handler->get_feed_option( 'data_copyright', $series_id );
+		$default   = date( 'Y' ) . ' ' . get_bloginfo( 'name' );
+		$copyright = $this->settings_handler->get_feed_option( 'data_copyright', $series_id, $default );
 
 		return apply_filters( 'ssp_feed_copyright', $copyright, $series_id );
 	}
@@ -323,7 +324,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_subtitle( $series_id ) {
-		$subtitle = $this->settings_handler->get_feed_option( 'data_subtitle', $series_id );
+		$subtitle = $this->settings_handler->get_feed_option( 'data_subtitle', $series_id, get_bloginfo( 'description' ) );
 
 		return apply_filters( 'ssp_feed_subtitle', $subtitle, $series_id );
 	}
@@ -336,7 +337,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_author( $series_id ) {
-		$author = $this->settings_handler->get_feed_option( 'data_author', $series_id );
+		$author = $this->settings_handler->get_feed_option( 'data_author', $series_id, get_bloginfo( 'name' ) );
 
 		return apply_filters( 'ssp_feed_author', $author, $series_id );
 	}
@@ -349,7 +350,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_owner_name( $series_id ) {
-		$owner_name = $this->settings_handler->get_feed_option( 'data_owner_name', $series_id );
+		$owner_name = $this->settings_handler->get_feed_option( 'data_owner_name', $series_id, get_bloginfo( 'name' ) );
 
 		return apply_filters( 'ssp_feed_owner_name', $owner_name, $series_id );
 	}
@@ -786,7 +787,7 @@ class Feed_Handler implements Service {
 	/**
 	 * @param $post_id
 	 *
-	 * @return mixed|void
+	 * @return string
 	 */
 	public function get_feed_item_explicit_flag( $post_id ) {
 		$ep_explicit = get_post_meta( $post_id, 'explicit', true );

@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Controllers\Series_Controller;
+use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -345,32 +346,23 @@ class Series_Handler implements Service {
 
 		$series_id = $res['term_id'];
 
-		/**
-		 * When Series is created, the data_title is updated automatically.
-		 * To start the onboarding for the new users, data_title should be empty.
-		 * So, update the Default Series data_title with the old default title.
-		 * @see Series_Controller::save_series_data_to_feed()
-		 * */
-		ssp_update_option( 'data_title', $old_default_title, $series_id );
-
-		/**
-		 * Propagate all the default feed settings to the default series
-		 * */
 		if ( $old_default_title ) {
-			$excluded_fields = array( 'data_title' );
-			$this->copy_default_series_settings( $series_id, $excluded_fields );
+			// Copy them only for existing users
+			$this->copy_default_series_settings( $series_id );
 		}
 
 		return ssp_add_option( 'default_series', $series_id ) ? $series_id : null;
 	}
 
 	/**
+	 * Copy the default Feed settings
+	 *
+	 *
 	 * @param int $series_id
-	 * @param array $exclude
 	 *
 	 * @return void
 	 */
-	protected function copy_default_series_settings( $series_id, $exclude = array() ) {
+	protected function copy_default_series_settings( $series_id ) {
 		$title  = '';
 		$author = ssp_get_option( 'data_author' );
 
@@ -378,11 +370,8 @@ class Series_Handler implements Service {
 
 		foreach ( $feed_details_fields as $feed_details_field ) {
 			$id = $feed_details_field['id'];
-			if ( in_array( $id, $exclude ) ) {
-				continue;
-			}
-
 			$value = ssp_get_option( $id );
+
 			ssp_update_option( $id, $value, $series_id );
 		}
 

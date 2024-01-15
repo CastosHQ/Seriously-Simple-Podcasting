@@ -1004,74 +1004,15 @@ class Castos_Handler implements Service {
 
 		$podcast = array();
 
-		// Podcast title
-		$title = ssp_get_option( 'data_title', get_bloginfo( 'name' ) );
-
-		$series_title = ssp_get_option( 'data_title', '', $series_id );
-		if ( $series_title ) {
-			$title = $series_title;
-		}
-		$podcast['podcast_title'] = $title;
-
-		// Podcast description
-		$description        = ssp_get_option( 'data_description', get_bloginfo( 'description' ) );
-		$series_description = ssp_get_option( 'data_description', '', $series_id );
-		if ( $series_description ) {
-			$description = $series_description;
-		}
-		$podcast_description            = mb_substr( wp_strip_all_tags( $description ), 0, 3999 );
-		$podcast['podcast_description'] = $podcast_description;
-
-		// Podcast author
-		$author        = ssp_get_option( 'data_author', get_bloginfo( 'name' ) );
-		$series_author = ssp_get_option( 'data_author', '', $series_id );
-		if ( $series_author ) {
-			$author = $series_author;
-		}
-		$podcast['author_name'] = $author;
-
-		// Podcast owner name
-		$owner_name        = ssp_get_option( 'data_owner_name', get_bloginfo( 'name' ) );
-		$series_owner_name = ssp_get_option( 'data_owner_name', '', $series_id );
-		if ( $series_owner_name ) {
-			$owner_name = $series_owner_name;
-		}
-		$podcast['podcast_owner'] = $owner_name;
-
-		// Podcast owner email address
-		$podcast['owner_email'] = ssp_get_option( 'data_owner_email', '', $series_id );
-
-		// Podcast explicit setting
-		$explicit_option = ssp_get_option( 'ss_podcasting_explicit', '', $series_id );
-		if ( 'on' === $explicit_option ) {
-			$podcast['explicit'] = 1;
-		} else {
-			$podcast['explicit'] = 0;
-		}
-
-		// Podcast language
-		$language        = ssp_get_option( 'data_language', get_bloginfo( 'language' ) );
-		$series_language = ssp_get_option( 'data_language', '', $series_id );
-		if ( $series_language ) {
-			$language = $series_language;
-		}
-		$podcast['language'] = $language;
-
-		// Podcast cover image
-		$image        = ssp_get_option( 'data_image' );
-		$series_image = ssp_get_option( 'data_image', 'no-image', $series_id );
-		if ( 'no-image' !== $series_image ) {
-			$image = $series_image;
-		}
-		$podcast['cover_image'] = $image;
-
-		// Podcast copyright string
-		$copyright        = ssp_get_option( 'data_copyright', '&#xA9; ' . date( 'Y' ) . ' ' . get_bloginfo( 'name' ) );
-		$series_copyright = ssp_get_option( 'data_copyright', '', $series_id );
-		if ( $series_copyright ) {
-			$copyright = $series_copyright;
-		}
-		$podcast['copyright'] = $copyright;
+		$podcast['podcast_title']       = $this->feed_handler->get_podcast_title( $series_id );
+		$podcast['podcast_description'] = $this->feed_handler->get_podcast_description( $series_id );
+		$podcast['author_name']         = $this->feed_handler->get_podcast_author( $series_id );
+		$podcast['podcast_owner']       = $this->feed_handler->get_podcast_owner_name( $series_id );
+		$podcast['owner_email']         = $this->feed_handler->get_podcast_owner_email( $series_id );
+		$podcast['explicit']            = 'on' == $this->feed_handler->get_feed_item_explicit_flag( $series_id ) ? 1 : 0;
+		$podcast['language']            = $this->feed_handler->get_podcast_language( $series_id );
+		$podcast['cover_image']         = $this->feed_handler->get_feed_image( $series_id );
+		$podcast['copyright']           = $this->feed_handler->get_podcast_copyright( $series_id );
 
 		// Podcast Categories
 		$itunes_category1            = ssp_get_feed_category_output( 1, $series_id );

@@ -1600,7 +1600,7 @@ if ( ! function_exists( 'ssp_dynamo_btn' ) ) {
 	 * @since 2.20.0
 	 */
 	function ssp_dynamo_btn( $title, $subtitle, $description ) {
-		$default_podcast_title = ssp_get_option( 'data_title' );
+		$default_podcast_title = ssp_get_option( 'data_title', ssp_get_default_series_id() );
 		if ( ! $title ) {
 			$title = __( 'My new episode', 'seriously-simple-podcasting' );
 		}

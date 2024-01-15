@@ -292,7 +292,7 @@ HTML;
 	 */
 	public function save_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
-		$this->save_series_data_to_feed( $term_id );
+		$this->save_series_data_to_castos( $term_id );
 	}
 
 	/**
@@ -300,27 +300,16 @@ HTML;
 	 *
 	 * @param $term_id
 	 */
-	public function save_series_data_to_feed( $term_id ) {
-		$term                    = get_term( $term_id );
-		$title_option_name       = 'ss_podcasting_data_title_' . $term_id;
-		$subtitle_option_name    = 'ss_podcasting_data_subtitle_' . $term_id;
-		$description_option_name = 'ss_podcasting_data_description_' . $term_id;
-		if ( ! empty( $term->name ) ) {
-			update_option( $title_option_name, $term->name );
-		}
-		if ( ! empty( $term->description ) ) {
-			update_option( $subtitle_option_name, $term->description );
-			update_option( $description_option_name, $term->description );
-		}
+	public function save_series_data_to_castos( $term_id ) {
 		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 
-		$default_series_id = ssp_get_default_series_id();
+		$default_series_id = $this->series_handler->default_series_id();
 		if ( ! $default_series_id ) {
 			/**
 			 * It means we're creating the default series now,
-			 * and we should update the default Podcast series ID instead of creating the new one.
+			 * and we'll update the default Podcast series ID instead of creating the new one.
 			 * @see Castos_Handler::update_default_series_id()
 			 * */
 			return;

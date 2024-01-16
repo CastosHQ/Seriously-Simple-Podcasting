@@ -4,13 +4,17 @@ namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use Elementor\Controls_Manager;
 use Elementor\Widget_Base;
-use SeriouslySimplePodcasting\Controllers\Episode_Controller;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Elementor_Widget_Helper;
 
 class Elementor_Episode_List_Widget extends Widget_Base {
 
 	use Elementor_Widget_Helper;
+
+	/**
+	 * @var Episode_Repository
+	 * */
+	protected $episode_repository;
 
 	public function get_name() {
 		return 'Episode List';
@@ -83,7 +87,7 @@ class Elementor_Episode_List_Widget extends Widget_Base {
 
 		$query_args = array_intersect_key( $settings, array_flip( $supported_args ) );
 
-		$episode_repository = new Episode_Repository();
+		$episode_repository = $this->episode_repository();
 
 		$data = array(
 			'player'               => ssp_frontend_controller()->players_controller,

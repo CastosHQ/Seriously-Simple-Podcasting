@@ -257,7 +257,7 @@ class App_Controller {
 
 		$this->options_handler = new Options_Handler();
 
-		$this->episode_repository = new Episode_Repository();
+		$this->episode_repository = new Episode_Repository( $this->feed_handler );
 
 		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger );
 
@@ -267,7 +267,7 @@ class App_Controller {
 
 		$this->roles_handler = new Roles_Handler();
 
-		$this->cpt_podcast_handler = new CPT_Podcast_Handler( $this->roles_handler );
+		$this->cpt_podcast_handler = new CPT_Podcast_Handler( $this->roles_handler, $this->feed_handler );
 
 		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version );
 
@@ -342,7 +342,7 @@ class App_Controller {
 
 		// Elementor integration.
 		if ( ssp_is_elementor_ok() ) {
-			new Elementor_Widgets();
+			new Elementor_Widgets( $this->episode_repository );
 		}
 
 		// Yoast Schema integration.

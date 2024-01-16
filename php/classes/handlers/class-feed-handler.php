@@ -268,7 +268,7 @@ class Feed_Handler implements Service {
 	 * @return string
 	 */
 	public function get_podcast_title( $series_id ) {
-		$title = $this->settings_handler->get_feed_option( 'data_title', $series_id, get_bloginfo('name') );
+		$title = $this->settings_handler->get_feed_option( 'data_title', $series_id );
 
 		return apply_filters( 'ssp_feed_title', $title, $series_id );
 	}

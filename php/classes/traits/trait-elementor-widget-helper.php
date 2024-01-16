@@ -6,6 +6,7 @@ namespace SeriouslySimplePodcasting\Traits;
 
 use Elementor\Controls_Manager;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -21,7 +22,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 trait Elementor_Widget_Helper {
 
 	protected $select_podcast_settings;
+
+	/**
+	 * @var Renderer
+	 * */
 	protected $renderer;
+
+	/**
+	 * @var Episode_Repository $episode_repository
+	 * */
+	protected $episode_repository;
 
 	protected function get_select_podcast_settings() {
 		if ( $this->select_podcast_settings ) {
@@ -140,5 +150,16 @@ trait Elementor_Widget_Helper {
 		}
 
 		return $this->renderer;
+	}
+
+	/**
+	 * @return Episode_Repository
+	 */
+	protected function episode_repository() {
+		if ( ! isset( $this->episode_repository ) ) {
+			$this->episode_repository = ssp_get_service( 'episode_repository' );
+		}
+
+		return $this->episode_repository;
 	}
 }

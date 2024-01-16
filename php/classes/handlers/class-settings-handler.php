@@ -239,6 +239,10 @@ class Settings_Handler implements Service {
 			return $this->get_feed_image( $series_id );
 		}
 
+		if ( 'data_title' === $option ) {
+			return $this->get_feed_title( $series_id );
+		}
+
 		$data = ssp_get_option( $option, null, $series_id );
 
 		// For empty values, propagate some settings from the default feed
@@ -267,6 +271,26 @@ class Settings_Handler implements Service {
 		}
 
 		return $this->default_series_id;
+	}
+
+	/**
+	 * @param int $series_id
+	 *
+	 * @return string
+	 */
+	public function get_feed_title( $series_id ) {
+		$title = ssp_get_option( 'data_title', '', $series_id );
+		if ( ! $title ) {
+			$term = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
+			if ( ! empty( $term->name ) ) {
+				$title = $term->name;
+			}
+		}
+		if ( ! $title ) {
+			$title = get_bloginfo( 'name' );
+		}
+
+		return $title;
 	}
 
 	/**

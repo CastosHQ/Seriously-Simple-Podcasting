@@ -26,7 +26,7 @@ class Players_Controller_Test extends WPTestCase {
 	public function test_player_controller_html_player_method() {
 		$renderer = new Renderer();
 		$options_handler = new Options_Handler();
-		$episode_repository = new Episode_Repository();
+		$episode_repository = $this->episode_repository();
 
 		$this->players_controller = new Players_Controller($renderer, $options_handler, $episode_repository);
 		$episode_id               = $this->factory->post->create(
@@ -120,5 +120,12 @@ class Players_Controller_Test extends WPTestCase {
 		foreach ( $player_parts as $player_part ) {
 			$this->assertStringContainsString( $player_part, $html_player_content );
 		}
+	}
+
+	/**
+	 * @return Episode_Repository
+	 */
+	protected function episode_repository() {
+		return ssp_get_service( 'episode_repository' );
 	}
 }

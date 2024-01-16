@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use Couchbase\Role;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
@@ -16,15 +17,25 @@ class CPT_Podcast_Handler implements Service {
 	const DEFAULT_SERIES_SLUG = 'podcasts';
 
 
+	/**
+	 * @var Roles_Handler
+	 * */
 	protected $roles_handler;
+
+	/**
+	 * @var Feed_Handler
+	 * */
+	protected $feed_handler;
 
 	/**
 	 * CPT_Podcast_Handler constructor.
 	 *
 	 * @param Roles_Handler $roles_handler
+	 * @param Feed_Handler $feed_handler
 	 */
-	public function __construct( $roles_handler ) {
+	public function __construct( $roles_handler, $feed_handler ) {
 		$this->roles_handler = $roles_handler;
+		$this->feed_handler  = $feed_handler;
 	}
 
 	/**
@@ -188,16 +199,15 @@ class CPT_Podcast_Handler implements Service {
 
 		$post = get_post();
 		$post_title = $post ? $post->post_title : '';
+		$podcast_title = '';
 		if ( $post ) {
 			$podcasts = ssp_get_episode_podcasts( $post->ID );
 			if ( isset( $podcasts[0] ) && $podcasts[0] instanceof \WP_Term ) {
-				$podcast_title = $podcasts[0]->name;
+				$podcast_title = $this->feed_handler->get_podcast_title( $podcasts[0]->term_id );
 			}
 		}
 
-		if ( empty( $podcast_title ) ) {
-			$podcast_title = ssp_get_option( 'data_title' );
-		}
+		$podcast_title = $podcast_title ?: get_bloginfo( 'name' );
 
 		$fields['cover_image'] = array(
 			'name'             => __( 'Episode Image:', 'seriously-simple-podcasting' ),

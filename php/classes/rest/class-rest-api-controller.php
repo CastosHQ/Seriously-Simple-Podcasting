@@ -495,12 +495,11 @@ class Rest_Api_Controller {
 	public function get_episode_player_data( $object, $field_name, $request ) {
 		if ( ! empty( $object['id'] ) ) {
 			$options_handler    = new Options_Handler();
-			$episode_repository = new Episode_Repository();
 			$episode_id         = $object['id'];
 			$player_data        = array(
 				'playerMode'    => get_option( 'ss_podcasting_player_mode', 'dark' ),
 				'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
-				'rssFeedUrl'    => $episode_repository->get_feed_url( $episode_id ),
+				'rssFeedUrl'    => $this->episode_repository->get_feed_url( $episode_id ),
 				'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
 			);
 

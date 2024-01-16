@@ -5,8 +5,6 @@ namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 use Elementor\Controls_Manager;
 use Elementor\Plugin as ElementorPlugin;
 use Elementor\Widget_Base;
-use SeriouslySimplePodcasting\Renderers\Renderer;
-use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Elementor_Widget_Helper;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -170,7 +168,7 @@ class Elementor_Recent_Episodes_Widget extends Widget_Base {
 		$template_data = $this->get_settings_for_display();
 
 		$this->enqueue_style();
-		$episode_repository        = new Episode_Repository();
+		$episode_repository        = $this->episode_repository();
 		$template_data['episodes'] = $episode_repository->get_episodes_query( $template_data )->get_posts();
 		$template_data             = apply_filters( 'recent_episodes_template_data', $template_data );
 

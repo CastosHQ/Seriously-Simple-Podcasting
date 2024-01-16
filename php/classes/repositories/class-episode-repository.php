@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Repositories;
 
 use SeriouslySimplePodcasting\Entities\Failed_Sync_Episode;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
+use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
@@ -28,12 +29,18 @@ class Episode_Repository implements Service {
 	const META_SYNC_ERROR = 'ssp_sync_episode_error';
 
 	/**
+	 * @var Feed_Handler $feed_handler
+	 * */
+	protected $feed_handler;
+
+	/**
 	 * @var \wpdb $db
 	 * */
 	protected $db;
 
-	public function __construct() {
+	public function __construct( $feed_handler ) {
 		$this->init_useful_variables();
+		$this->feed_handler = $feed_handler;
 
 		global $wpdb;
 		$this->db = $wpdb;
@@ -504,15 +511,7 @@ class Episode_Repository implements Service {
 	public function get_podcast_title( $episode_id ) {
 		$series_id = $this->get_episode_series_id( $episode_id );
 
-		if ( $series_id ) {
-			$title = get_option( 'ss_podcasting_data_title_' . $series_id );
-		}
-
-		if ( empty( $title ) ) {
-			$title = get_option( 'ss_podcasting_data_title' );
-		}
-
-		return $title;
+		return $this->feed_handler->get_podcast_title( $series_id );
 	}
 
 

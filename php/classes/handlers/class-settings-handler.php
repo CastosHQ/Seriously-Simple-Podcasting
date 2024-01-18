@@ -323,14 +323,16 @@ class Settings_Handler implements Service {
 
 
 	/**
+	 * @param int|null $podcast_id
+	 *
 	 * @return array
 	 */
-	public function get_feed_fields() {
+	public function get_feed_fields( $podcast_id = null ) {
 		if ( $this->feed_fields ) {
 			return $this->feed_fields;
 		}
 
-		$podcast_id       = $this->get_current_series_id();
+		$podcast_id       = $podcast_id ?: $this->get_current_series_id();
 		$title            = ssp_get_option( 'data_title', '', $podcast_id );
 		$author           = ssp_get_option( 'data_author', '', $podcast_id );
 		$site_title       = get_bloginfo( 'name' );

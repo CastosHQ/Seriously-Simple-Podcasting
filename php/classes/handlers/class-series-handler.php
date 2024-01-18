@@ -2,8 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use SeriouslySimplePodcasting\Controllers\Series_Controller;
-use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -39,6 +37,11 @@ class Series_Handler implements Service {
 	protected $feed_handler;
 
 	/**
+	 * @var Settings_Handler
+	 * */
+	protected $settings_handler;
+
+	/**
 	 * @var int $default_series_id
 	 * */
 	protected $default_series_id;
@@ -47,11 +50,13 @@ class Series_Handler implements Service {
 	 * @param Admin_Notifications_Handler $notices_handler
 	 * @param Roles_Handler $roles_handler
 	 * @param Castos_Handler $castos_handler
+	 * @param Settings_Handler $settings_handler
 	 */
-	public function __construct( $notices_handler, $roles_handler, $castos_handler ) {
-		$this->notices_handler = $notices_handler;
-		$this->roles_handler   = $roles_handler;
-		$this->castos_handler  = $castos_handler;
+	public function __construct( $notices_handler, $roles_handler, $castos_handler, $settings_handler ) {
+		$this->notices_handler  = $notices_handler;
+		$this->roles_handler    = $roles_handler;
+		$this->castos_handler   = $castos_handler;
+		$this->settings_handler = $settings_handler;
 
 		$this->init_useful_variables();
 	}
@@ -363,10 +368,8 @@ class Series_Handler implements Service {
 	 * @return void
 	 */
 	protected function copy_default_series_settings( $series_id ) {
-		$title  = '';
-		$author = ssp_get_option( 'data_author' );
 
-		$feed_details_fields = ssp_config( 'settings/feed', compact( 'title', 'author' ) );
+		$feed_details_fields = $this->settings_handler->get_feed_fields( $series_id );
 
 		foreach ( $feed_details_fields as $feed_details_field ) {
 			$id = $feed_details_field['id'];

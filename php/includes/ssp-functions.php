@@ -1003,11 +1003,12 @@ if ( ! function_exists( 'ssp_get_episode_series_id' ) ) {
 	 *
 	 *
 	 * @param $episode_id
+	 * @param int|null $default
 	 *
 	 * @return int
 	 */
-	function ssp_get_episode_series_id( $episode_id ) {
-		$series_id = ssp_get_default_series_id();
+	function ssp_get_episode_series_id( $episode_id, $default = null ) {
+		$series_id = isset( $default ) ? intval( $default ) : ssp_get_default_series_id();
 		$series    = wp_get_post_terms( $episode_id, ssp_series_taxonomy() );
 
 		if ( empty( $series ) || is_wp_error( $series ) ) {

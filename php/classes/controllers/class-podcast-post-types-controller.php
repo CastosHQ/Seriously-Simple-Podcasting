@@ -378,7 +378,7 @@ class Podcast_Post_Types_Controller {
 			}
 		}
 
-		$series_id = ssp_get_episode_series_id( $post_id );
+		$series_id = ssp_get_episode_series_id( $post_id, 0 );
 		if ( ! $series_id ) {
 			$default_series_id = ssp_get_default_series_id();
 			wp_set_object_terms( $post_id, array( $default_series_id ), ssp_series_taxonomy() );

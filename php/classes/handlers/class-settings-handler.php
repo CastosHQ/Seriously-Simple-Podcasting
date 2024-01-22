@@ -247,8 +247,11 @@ class Settings_Handler implements Service {
 
 		// For empty values, propagate some settings from the default feed
 		if ( ! isset( $data ) ) {
-			$propagate         = in_array( $field['type'], array( 'checkbox', 'select' ), true );
-			$default_series_id = $this->default_series_id();
+			$propagate_exclusions = array( 'exclude_feed', 'redirect_feed' );
+			$propagated_types     = array( 'checkbox', 'select' );
+			$propagate            = in_array( $field['type'], $propagated_types, true ) &&
+			                        ! in_array( $field['id'], $propagate_exclusions, true );
+			$default_series_id    = $this->default_series_id();
 
 			if ( $propagate && ( $series_id != $default_series_id ) ) {
 				$data = ssp_get_option( $option, null, $default_series_id );

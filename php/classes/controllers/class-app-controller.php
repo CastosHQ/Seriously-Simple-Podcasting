@@ -407,7 +407,7 @@ class App_Controller {
 
 		// Only load WP REST API Endpoints if the WordPress version is newer than 4.7.
 		if ( version_compare( $wp_version, '4.7', '>=' ) ) {
-			$this->rest_controller = new Rest_Api_Controller( $this->episode_repository );
+			$this->rest_controller = new Rest_Api_Controller( $this->episode_repository, $this->series_handler );
 		}
 	}
 

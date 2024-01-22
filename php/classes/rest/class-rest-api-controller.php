@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Rest;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
+use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 /**
@@ -18,6 +19,11 @@ class Rest_Api_Controller {
 	 * @var Episode_Repository $episode_repository
 	 * */
 	protected $episode_repository;
+
+	/**
+	 * @var Series_Handler
+	 * */
+	protected $series_handler;
 
 	/**
 	 * Gets the default podcast data
@@ -54,9 +60,10 @@ class Rest_Api_Controller {
 	 *
 	 * @param Episode_Repository $episode_repository
 	 */
-	public function __construct( $episode_repository ) {
+	public function __construct( $episode_repository, $series_handler ) {
 
 		$this->episode_repository = $episode_repository;
+		$this->series_handler = $series_handler;
 
 
 		// Register custom REST API routes.
@@ -85,19 +92,38 @@ class Rest_Api_Controller {
 			add_filter( 'rest_prepare_' . $post_type, array( $this, 'rest_prepare_excerpt' ), 10, 3 );
 		}
 
+		$series_taxonomy = ssp_series_taxonomy();
+
+		add_filter( "rest_prepare_{$series_taxonomy}", array( $this, 'change_default_series_title' ), 10, 2 );
 	}
 
 	/**
-	 * @param \WP_REST_Response $data
 	 *
-	 * @return mixed
+	 * @param \WP_REST_Response $response
+	 * @param \WP_Term $item
+	 *
+	 * @return \WP_REST_Response
 	 */
-	public function default_series_response( $data ) {
-		if ( empty( $data->data['series'] ) ) {
-			$data->data['series'][] = ssp_get_default_series_id();
+	public function change_default_series_title( $response, $item ) {
+		if ( ssp_get_default_series_id() === $item->term_id ) {
+			$item->name             = $this->series_handler->default_series_name( $item->name );
+			$response->data['name'] = $item->name;
 		}
 
-		return $data;
+		return $response;
+	}
+
+	/**
+	 * @param \WP_REST_Response $response
+	 *
+	 * @return \WP_REST_Response
+	 */
+	public function default_series_response( $response ) {
+		if ( empty( $response->data['series'] ) ) {
+			$response->data['series'][] = ssp_get_default_series_id();
+		}
+
+		return $response;
 	}
 
 	/**

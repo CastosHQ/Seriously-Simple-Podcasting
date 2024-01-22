@@ -33,8 +33,4 @@ Feature: SSP Plugin Extensions Settings
 		And I can see "The Genesis compatibility add-on for Seriously Simple Podcasting gives you full support"
 		And I can see link with title "Get this Extension" and url "/wp-admin/plugin-install.php?tab=plugin-information&plugin=seriously-simple-podcasting-genesis-support&TB_iframe=true&width=772&height=859"
 
-		And I can see "Second Line Themes"
-		And I can see "Looking for a dedicated podcast theme to use with Seriously Simple Podcasting?"
-		And I can see link with title "Get Second Line Themes" and url "https://secondlinethemes.com/?utm_source=ssp-settings"
-
 		And I can see that discount widget exists

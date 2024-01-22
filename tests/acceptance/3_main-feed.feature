@@ -40,7 +40,7 @@ Feature: Login
 		And I can see in source "<description>This show is to test some SSP functionality</description>"
 		And I can see in source "<lastBuildDate>"
 		And I can see in source "<language>en-GB</language>"
-		And I can see in source "<copyright>&#xA9; 2023 My WordPress</copyright>"
+		And I can see in source "<copyright>&#xA9; 2024 My WordPress</copyright>"
 		And I can see in source "<itunes:subtitle>Just another WordPress site</itunes:subtitle>"
 		And I can see in source "<itunes:author>My WordPress</itunes:author>"
 		And I can see in source "<itunes:summary>This show is to test some SSP functionality</itunes:summary>"

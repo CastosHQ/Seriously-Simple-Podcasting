@@ -7,6 +7,7 @@
  * @var array $categories
  * @var array $subcategories
  * @var array $language
+ * @var bool $is_default
  * */
 
 $feed_fields = array(
@@ -304,7 +305,7 @@ $feed_fields = array(
 		'label'       => __( 'Exclude podcast from default feed', 'seriously-simple-podcasting' ),
 		// translators: placeholders are html anchor tags to support document
 		'description' => sprintf( __( 'When enabled, this will exclude any episodes in this podcast feed from the default feed. %1$sMore details here.%2$s', 'seriously-simple-podcasting' ), '<a href="' . esc_url( 'https://support.castos.com/article/67-include-series-episodes-in-the-default-feed' ) . '" target="' . wp_strip_all_tags( '_blank' ) . '">', '</a>' ),
-		'type'        => 'checkbox',
+		'type'        => $is_default ? 'hidden' : 'checkbox',
 		'default'     => '',
 		'callback'    => 'wp_strip_all_tags',
 	),

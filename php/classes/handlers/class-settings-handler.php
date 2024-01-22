@@ -340,10 +340,11 @@ class Settings_Handler implements Service {
 		$categories       = ssp_config( 'settings/feed-categories' );
 		$subcategories    = ssp_config( 'settings/feed-subcategories' );
 		$language         = get_bloginfo( 'language' );
+		$is_default       = $podcast_id === $this->default_series_id();
 
 		$feed_details_fields = ssp_config(
 			'settings/feed',
-			compact( 'title', 'author', 'site_title', 'site_description', 'categories', 'subcategories', 'language' )
+			compact( 'title', 'author', 'site_title', 'site_description', 'categories', 'subcategories', 'language', 'is_default' )
 		);
 
 		$subscribe_options_array = $this->get_subscribe_field_options( $podcast_id );

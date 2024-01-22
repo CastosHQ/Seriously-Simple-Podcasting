@@ -296,7 +296,7 @@ class Series_Handler implements Service {
 	 * @return string
 	 */
 	public function default_series_name( $name ) {
-		return sprintf( '%1$s (%2$s)', $name, __( 'default', 'seriously-simple-podcasting' ) );
+		return ssp_get_default_series_name( $name );
 	}
 
 	/**

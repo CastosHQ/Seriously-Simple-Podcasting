@@ -1754,3 +1754,14 @@ if( ! function_exists('ssp_get_default_series_id') ){
 		return intval( ssp_get_option( 'default_series' ) );
 	}
 }
+
+if ( ! function_exists( 'ssp_get_default_series_name' ) ) {
+	/**
+	 * @param string $name
+	 *
+	 * @return string
+	 */
+	function ssp_get_default_series_name( $name ) {
+		return sprintf( '%1$s (%2$s)', $name, __( 'default', 'seriously-simple-podcasting' ) );
+	}
+}

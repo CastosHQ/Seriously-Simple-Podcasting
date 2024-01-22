@@ -45,13 +45,16 @@ trait Elementor_Widget_Helper {
 		);
 
 		$series_options = array(
-			0 => 'Default',
+			0 => __( 'All podcasts', 'seriously-simple-podcasting' ),
 		);
+
+		$default_series_id = ssp_get_default_series_id();
 
 		if ( ! empty( $series ) ) {
 			foreach ( $series as $term ) {
 				if ( is_object( $term ) ) {
-					$series_options[ $term->term_id ] = $term->name;
+					$term_name = ( $default_series_id === $term->term_id ) ? $term->name : ssp_get_default_series_name( $term->name );
+					$series_options[ $term->term_id ] = $term_name;
 				}
 			}
 		}

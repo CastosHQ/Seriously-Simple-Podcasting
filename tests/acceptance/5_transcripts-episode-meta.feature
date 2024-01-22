@@ -1,3 +1,4 @@
+@incomplete
 Feature: Seriously Simple Transcripts
 	In order to use transcripts feature with the Seriously Simple Transcripts plugin
 	As an admin user

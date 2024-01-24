@@ -71,8 +71,6 @@ class Admin_Notifications_Handler implements Service {
 
 		add_action( 'current_screen', array( $this, 'maybe_show_nginx_error_notice' ) );
 
-		add_action( 'current_screen', array( $this, 'second_line_themes' ) );
-
 		add_action( 'admin_init', array( $this, 'revalidate_api_credentials' ) );
 
 		add_action( 'admin_init', array( $this, 'show_revalidate_api_credentials_for_20' ) );
@@ -620,59 +618,6 @@ class Admin_Notifications_Handler implements Service {
 		<?php
 	}
 
-	/**
-	 * If the plugin has just been activated, show the Second Line Themes notice.
-	 */
-	public function second_line_themes() {
-		/**
-		 * Only show this notice on the All Episodes page and on the Themes page
-		 */
-		$current_screen  = get_current_screen();
-		$allowed_screens = array( 'themes', 'edit-podcast' );
-		if ( ! in_array( $current_screen->id, $allowed_screens, true ) ) {
-			return;
-		}
-
-		/**
-		 * Only show this notice once on either the themes page or the podcast list page
-		 */
-		$viewed_option = get_option( 'ss_podcasting_second_line_themes_' . $current_screen->id, 'false' );
-		if ( 'true' === $viewed_option ) {
-			return;
-		}
-		/**
-		 * Set the viewed option, so this notice won't appear again on this page
-		 */
-		update_option( 'ss_podcasting_second_line_themes_' . $current_screen->id, 'true' );
-
-		add_action( 'admin_notices', array( $this, 'second_line_themes_notice' ) );
-	}
-
-	/**
-	 * Show Second Line Themes notice
-	 */
-	public function second_line_themes_notice() {
-
-		$second_line_themes_link = sprintf(
-			wp_kses(
-			// translators: Placeholder is the url to Second Line Themes
-				__( 'Looking for a dedicated podcast theme to use with Seriously Simple Podcasting? Check out  <a href="%s" target="_blank">Second Line Themes.</a> ', 'seriously-simple-podcasting' ),
-				array(
-					'a' => array(
-						'href'   => array(),
-						'target' => true,
-					),
-				)
-			),
-			esc_url( 'https://secondlinethemes.com/?utm_source=ssp-notice' )
-		);
-
-		?>
-		<div class="notice notice-info is-dismissible">
-			<p><?php echo $second_line_themes_link; // phpcs:ignore ?></p>
-		</div>
-		<?php
-	}
 
 	/**
 	 * Adds the Distribution Links update notice to admin_notices

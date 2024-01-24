@@ -53,7 +53,7 @@ trait Elementor_Widget_Helper {
 		if ( ! empty( $series ) ) {
 			foreach ( $series as $term ) {
 				if ( is_object( $term ) ) {
-					$term_name = ( $default_series_id === $term->term_id ) ? $term->name : ssp_get_default_series_name( $term->name );
+					$term_name = ( $default_series_id === $term->term_id ) ? ssp_get_default_series_name( $term->name ): $term->name;
 					$series_options[ $term->term_id ] = $term_name;
 				}
 			}

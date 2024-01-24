@@ -33,7 +33,7 @@ trait Elementor_Widget_Helper {
 	 * */
 	protected $episode_repository;
 
-	protected function get_select_podcast_settings() {
+	protected function get_select_podcast_settings( $show_all_podcasts = true ) {
 		if ( $this->select_podcast_settings ) {
 			return $this->select_podcast_settings;
 		}
@@ -44,9 +44,9 @@ trait Elementor_Widget_Helper {
 			)
 		);
 
-		$series_options = array(
+		$series_options = $show_all_podcasts ? array(
 			0 => __( 'All podcasts', 'seriously-simple-podcasting' ),
-		);
+		) : array();
 
 		$default_series_id = ssp_get_default_series_id();
 
@@ -59,14 +59,12 @@ trait Elementor_Widget_Helper {
 			}
 		}
 
-		$series_options_ids = array_keys( $series_options );
-
 		$this->select_podcast_settings = array(
 			'label'    => __( 'Select Podcast', 'seriously-simple-podcasting' ),
 			'type'     => Controls_Manager::SELECT2,
 			'options'  => $series_options,
 			'multiple' => false,
-			'default'  => array_shift( $series_options_ids )
+			'default'  => $default_series_id
 		);
 
 		return $this->select_podcast_settings;

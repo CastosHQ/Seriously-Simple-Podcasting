@@ -60,7 +60,7 @@ class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
 			]
 		);
 
-		$this->add_control( 'show_elements', $this->get_select_podcast_settings() );
+		$this->add_control( 'show_elements', $this->get_select_podcast_settings( false ) );
 
 		$this->end_controls_section();
 	}
@@ -86,10 +86,7 @@ class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
 			$episode_id = $posts[0]->ID;
 		}
 
-		global $ss_podcasting;
-		$player = $ss_podcasting->players_controller;
-
-		echo $player->render_subscribe_buttons( $episode_id );
+		echo ssp_app()->players_controller->render_subscribe_buttons( $episode_id );
 	}
 
 	/**

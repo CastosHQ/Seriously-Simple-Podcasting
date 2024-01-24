@@ -423,7 +423,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			return $episode_ids;
 		}
 
-		if ( empty( $episode_ids ) ) {
+		if ( empty( $episode_ids ) && ! $return_args ) {
 			return array();
 		}
 

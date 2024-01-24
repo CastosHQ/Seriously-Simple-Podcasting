@@ -100,7 +100,7 @@ class Players_Controller {
 
 		$episode_repository = ssp_episode_controller()->episode_repository;
 
-		$episodes = $episode_repository->get_playlist_episodes( array_merge( $atts, compact( 'page' ) ) );
+		$episodes = $episode_repository->get_episodes( array_merge( $atts, compact( 'page' ) ) );
 		$items    = array();
 
 		$allowed_keys = array(
@@ -509,7 +509,7 @@ class Players_Controller {
 	 * @deprecated Use Episode_Repository::get_playlist_episodes()
 	 */
 	public function get_playlist_episodes( $atts ) {
-		return $this->episode_controller()->episode_repository->get_playlist_episodes( $atts );
+		return $this->episode_controller()->episode_repository->get_episodes( $atts );
 	}
 
 	/**

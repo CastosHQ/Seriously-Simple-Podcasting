@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
@@ -42,6 +43,11 @@ class Series_Handler implements Service {
 	protected $settings_handler;
 
 	/**
+	 * @var Episode_Repository
+	 * */
+	protected $episode_repository;
+
+	/**
 	 * @var int $default_series_id
 	 * */
 	protected $default_series_id;
@@ -51,12 +57,14 @@ class Series_Handler implements Service {
 	 * @param Roles_Handler $roles_handler
 	 * @param Castos_Handler $castos_handler
 	 * @param Settings_Handler $settings_handler
+	 * @param Episode_Repository $episode_repository
 	 */
-	public function __construct( $notices_handler, $roles_handler, $castos_handler, $settings_handler ) {
+	public function __construct( $notices_handler, $roles_handler, $castos_handler, $settings_handler, $episode_repository ) {
 		$this->notices_handler  = $notices_handler;
 		$this->roles_handler    = $roles_handler;
 		$this->castos_handler   = $castos_handler;
 		$this->settings_handler = $settings_handler;
+		$this->episode_repository = $episode_repository;
 
 		$this->init_useful_variables();
 	}
@@ -305,21 +313,9 @@ class Series_Handler implements Service {
 	 * @return void
 	 */
 	protected function assign_orphan_episodes( $series_id ) {
-		$series_terms = get_terms(
-			array(
-				'taxonomy'   => ssp_series_taxonomy(),
-				'hide_empty' => false,
-				'fields'     => 'all',
-			)
-		);
+		$orphan_episode_ids = $this->episode_repository->get_orphan_episode_ids();
 
-		$series_terms = array_column( $series_terms, 'slug' );
-
-		$args            = ssp_episodes( - 1, '', true, '', $series_terms );
-		$args['fields']  = 'ids';
-		$orphan_episodes = get_posts( $args );
-
-		foreach ( $orphan_episodes as $post_id ) {
+		foreach ( $orphan_episode_ids as $post_id ) {
 			wp_set_post_terms( $post_id, array( $series_id ), ssp_series_taxonomy(), true );
 		}
 	}

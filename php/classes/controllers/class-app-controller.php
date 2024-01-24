@@ -281,7 +281,7 @@ class App_Controller {
 
 		$this->assets_controller = new Assets_Controller();
 
-		$this->series_handler    = new Series_Handler( $this->admin_notices_handler, $this->roles_handler, $this->castos_handler, $this->settings_handler );
+		$this->series_handler    = new Series_Handler( $this->admin_notices_handler, $this->roles_handler, $this->castos_handler, $this->settings_handler, $this->episode_repository );
 
 		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler, $this->series_handler );
 

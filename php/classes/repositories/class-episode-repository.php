@@ -212,7 +212,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return int[]|\WP_Post[]
 	 */
-	public function get_playlist_episodes( $atts ) {
+	public function get_episodes( $atts ) {
 		// Get all podcast post types
 		$podcast_post_types = ssp_post_types( true );
 
@@ -260,6 +260,17 @@ class Episode_Repository implements Service {
 
 		// Fetch all episodes for display
 		return get_posts( $query_args );
+	}
+
+	/**
+	 * @param array $atts
+	 * @depreacted
+	 * @use self::get_episodes() instead
+	 *
+	 * @return int[]|\WP_Post[]
+	 */
+	public function get_playlist_episodes( $atts ) {
+		return $this->get_episodes( $atts );
 	}
 
 	/**
@@ -883,6 +894,26 @@ class Episode_Repository implements Service {
 		}
 
 		return new WP_Query( $query );
+	}
+
+	/**
+	 * @return int[]
+	 */
+	public function get_orphan_episode_ids() {
+		$series_terms = get_terms(
+			array(
+				'taxonomy'   => ssp_series_taxonomy(),
+				'hide_empty' => false,
+				'fields'     => 'all',
+			)
+		);
+
+		$series_terms = array_column( $series_terms, 'slug' );
+
+		$args           = ssp_episodes( - 1, '', true, '', $series_terms );
+		$args['fields'] = 'ids';
+
+		return get_posts( $args );
 	}
 
 	/**

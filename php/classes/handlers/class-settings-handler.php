@@ -139,9 +139,25 @@ class Settings_Handler implements Service {
 	 * @return array
 	 */
 	public function get_hosting_settings() {
-		$podcast_options[0] = __( 'Default Podcast', 'seriously-simple-podcasting' );
+		$podcast_options = $this->get_podcasts_list();
+
+		return ssp_config( 'settings/hosting', compact( 'podcast_options' ) );
+	}
+
+	/**
+	 * @return array|false
+	 */
+	protected function get_podcasts_list() {
+		$default_podcast_id = $this->default_series_id();
 		$podcasts           = ssp_get_podcasts();
-		$podcast_options    += array_combine(
+		foreach ( $podcasts as $podcast ) {
+			if ( $default_podcast_id === $podcast->term_id ) {
+				$podcast->name = ssp_get_default_series_name( $podcast->name );
+				break;
+			}
+		}
+
+		return array_combine(
 			array_map( function ( $i ) {
 				return $i->term_id;
 			}, $podcasts ),
@@ -149,8 +165,6 @@ class Settings_Handler implements Service {
 				return $i->name;
 			}, $podcasts )
 		);
-
-		return ssp_config( 'settings/hosting', compact( 'podcast_options' ) );
 	}
 
 	/**

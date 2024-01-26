@@ -396,11 +396,6 @@ class Options_Controller extends Controller {
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '_delete" type="button" class="button" value="' . __( 'Remove image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 				$html .= '<input id="' . esc_attr( $default_option_name ) . '" type="hidden" name="' . esc_attr( $option_name ) . '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
 				break;
-			case 'feed_link':
-				// Set feed URL based on site's permalink structure
-				$url = ssp_get_feed_url();
-				$html .= '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>';
-				break;
 			case 'feed_link_series':
 				// Set feed URL based on site's permalink structure
 				$url = ssp_get_feed_url( 'podcast-slug' );

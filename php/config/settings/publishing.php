@@ -16,16 +16,9 @@ return array(
 		),
 		array(
 			'id'          => 'feed_link',
-			'label'       => __( 'Complete feed', 'seriously-simple-podcasting' ),
+			'label'       => __( 'Your RSS feeds', 'seriously-simple-podcasting' ),
 			'description' => '',
 			'type'        => 'feed_link',
-			'callback'    => 'esc_url_raw',
-		),
-		array(
-			'id'          => 'feed_link_series',
-			'label'       => __( 'Feed for a specific podcast', 'seriously-simple-podcasting' ),
-			'description' => '',
-			'type'        => 'feed_link_series',
 			'callback'    => 'esc_url_raw',
 		),
 		array(

@@ -551,9 +551,16 @@ class Settings_Renderer implements Service {
 	 */
 	protected function render_feed_link() {
 		// Set feed URL based on site's permalink structure
-		$url = ssp_get_feed_url();
+		$links = '';
+		$default_podcast_id = ssp_get_default_series_id();
+		foreach ( ssp_get_podcasts() as $podcast ) {
+			$url   = ssp_get_feed_url( $podcast->slug );
+			$link = '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>' . '<br />';
+			$name = ( $podcast->term_id === $default_podcast_id ) ? ssp_get_default_series_name( $podcast->name ) : $podcast->name;
+			$links .= sprintf(__('%1$s: %2$s', 'seriously-simple-podcasting'), $name, $link );
+		}
 
-		return '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>';
+		return $links;
 	}
 
 	protected function render_feed_link_series() {

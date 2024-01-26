@@ -737,14 +737,13 @@ class Frontend_Controller {
 	 * Gets podcast query
 	 * @param  mixed $args Arguments to be passed to the query.
 	 * @return mixed       Array if true, boolean if false.
-	 * Todo: refactoring
+	 * Todo: refactoring, move out from the frontend controller
 	 * @see ss_get_podcast()
 	 */
 	public function get_podcast( $args = '' ) {
 		$defaults = array(
-			'title' => '',
+			'title'   => '',
 			'content' => 'series',
-			'series' => ''
 		);
 
 		$args = apply_filters( 'ssp_get_podcast_args', wp_parse_args( $args, $defaults ) );
@@ -752,15 +751,17 @@ class Frontend_Controller {
 		$query = array();
 
 		if ( 'episodes' == $args['content'] ) {
-
 			// Get selected series
-			$podcast_series = '';
-			if ( isset( $args['series'] ) && $args['series'] ) {
+			if ( empty( $args['series'] ) ) {
+				$default_series_id = ssp_get_default_series_id();
+				$default_series    = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
+				$podcast_series    = isset( $default_series->slug ) ? $default_series->slug : '';
+			} else {
 				$podcast_series = $args['series'];
 			}
 
 			// Get query args
-			$query_args = apply_filters( 'ssp_get_podcast_query_args', ssp_episodes( -1, $podcast_series, true, '' ) );
+			$query_args = apply_filters( 'ssp_get_podcast_query_args', ssp_episodes( -1, $podcast_series, true ) );
 
 			// The Query
 			$query = get_posts( $query_args );

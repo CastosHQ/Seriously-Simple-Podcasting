@@ -443,27 +443,21 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			'post__in'            => $episode_ids,
 		);
 
-		$default_series = get_term_by( 'id', ssp_get_default_series_id(), ssp_series_taxonomy() );
-
-		$is_default_series = $series && $default_series && ( $series == $default_series->slug );
-
-		if ( $series && ! $is_default_series ) {
-			$args['tax_query'] = array(
-				array(
-					'taxonomy' => 'series',
-					'field'    => 'slug',
-					'terms'    => esc_attr( $series ),
-				),
-			);
-		}
-
-		if ( ! empty( $exclude_series ) ) {
+		if ( $exclude_series ) {
 			$args['tax_query'] = array(
 				array(
 					'taxonomy' => 'series',
 					'field'    => 'slug',
 					'terms'    => $exclude_series,
 					'operator' => 'NOT IN',
+				),
+			);
+		} elseif ( $series ) {
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => 'series',
+					'field'    => 'slug',
+					'terms'    => esc_attr( $series ),
 				),
 			);
 		}

@@ -752,13 +752,7 @@ class Frontend_Controller {
 
 		if ( 'episodes' == $args['content'] ) {
 			// Get selected series
-			if ( empty( $args['series'] ) ) {
-				$default_series_id = ssp_get_default_series_id();
-				$default_series    = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
-				$podcast_series    = isset( $default_series->slug ) ? $default_series->slug : '';
-			} else {
-				$podcast_series = $args['series'];
-			}
+			$podcast_series = empty( $args['series'] ) ? null : $args['series'];
 
 			// Get query args
 			$query_args = apply_filters( 'ssp_get_podcast_query_args', ssp_episodes( -1, $podcast_series, true ) );

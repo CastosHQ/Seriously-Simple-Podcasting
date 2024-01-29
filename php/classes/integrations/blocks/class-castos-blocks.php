@@ -93,7 +93,7 @@ class Castos_Blocks {
 
 		$query_args = array(
 			'post_type'      => ssp_post_types(),
-			'podcast_id'     => intval( $attributes['selectedPodcast'] ),
+			'podcast_id'     => ( '' === $attributes['selectedPodcast'] ) ? -1 : intval( $attributes['selectedPodcast'] ),
 			'posts_per_page' => intval( $attributes['postsPerPage'] ?: get_option( 'posts_per_page', 10 ) ),
 			'paged'          => $paged,
 			'orderby'        => in_array( $attributes['orderBy'], $allowed_order_by ) ? $attributes['orderBy'] : 'date',
@@ -153,6 +153,11 @@ class Castos_Blocks {
 		);
 
 		$query_args = wp_parse_args( $args, $defaults );
+
+		// Fix for the new Default Series, now 0 becomes default series ID
+		if ( ! $query_args['podcast_id'] ) {
+			$query_args['podcast_id'] = ssp_get_default_series_id();
+		}
 
 		// -1 stands for all episodes ( option "-- All --" )
 		if ( - 1 !== $query_args['podcast_id'] ) {

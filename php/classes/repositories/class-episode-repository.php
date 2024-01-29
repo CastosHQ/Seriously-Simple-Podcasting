@@ -1111,4 +1111,41 @@ class Episode_Repository implements Service {
 
 		return $file;
 	}
+
+
+	/**
+	 * Get episode from audio file
+	 * @param  string $file File name & path
+	 * @return object       Episode post object
+	 */
+	public function get_episode_from_file( $file = '' ) {
+		global $post;
+
+		$episode = false;
+
+		if ( $file != '' ) {
+
+			$post_types = ssp_post_types( true );
+
+			$args = array(
+				'post_type' => $post_types,
+				'post_status' => 'publish',
+				'posts_per_page' => 1,
+				'meta_key' => 'audio_file',
+				'meta_value' => $file
+			);
+
+			$qry = new WP_Query( $args );
+
+			if ( $qry->have_posts() ) {
+				while ( $qry->have_posts() ) { $qry->the_post();
+					$episode = $post;
+					break;
+				}
+			}
+		}
+
+		return apply_filters( 'ssp_episode_from_file', $episode, $file );
+
+	}
 }

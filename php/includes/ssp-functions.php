@@ -205,7 +205,60 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 	 * @since  1.0.0
 	 */
 	function ss_get_podcast( $args = '' ) {
-		return ssp_frontend_controller()->get_podcast( $args );
+		$defaults = array(
+			'title'   => '',
+			'content' => 'series',
+		);
+
+		$args = apply_filters( 'ssp_get_podcast_args', wp_parse_args( $args, $defaults ) );
+
+		$query = array();
+
+		if ( 'episodes' == $args['content'] ) {
+			// Get selected series
+			$podcast_series = empty( $args['series'] ) ? null : $args['series'];
+
+			// Get query args
+			$query_args = apply_filters( 'ssp_get_podcast_query_args', ssp_episodes( -1, $podcast_series, true ) );
+
+			// The Query
+			$query = get_posts( $query_args );
+
+			// The Display
+			if ( ! is_wp_error( $query ) && is_array( $query ) && count( $query ) > 0 ) {
+				foreach ( $query as $k => $v ) {
+					// Get the URL
+					$query[$k]->url = get_permalink( $v->ID );
+				}
+			} else {
+				$query = false;
+			}
+
+		} else {
+
+			$terms = get_terms( 'series' );
+
+			if ( count( $terms ) > 0) {
+
+				foreach ( $terms as $term ) {
+					$query[ $term->term_id ] = new stdClass();
+					$query[ $term->term_id ]->title = $term->name;
+					$query[ $term->term_id ]->url = get_term_link( $term );
+
+					$query_args = apply_filters( 'ssp_get_podcast_series_query_args', ssp_episodes( -1, $term->slug, true, '' ) );
+
+					$posts = get_posts( $query_args );
+
+					$count = count( $posts );
+					$query[ $term->term_id ]->count = $count;
+				}
+			}
+
+		}
+
+		$query['content'] = $args['content'];
+
+		return $query;
 	}
 }
 

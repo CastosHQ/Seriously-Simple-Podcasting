@@ -16,7 +16,6 @@ Feature: SSP Plugin Publishing Settings
 		And I can see "If you are syndicating your podcast using a third-party service"
 		And I can see "Your RSS feeds"
 		And I can see "/feed/podcast"
-		And I can see "/feed/podcast/podcast-slug"
 		And I can see "Podcast page"
 		And I can see "/podcast"
 		And I can see that discount widget exists

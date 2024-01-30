@@ -921,7 +921,7 @@ class Settings_Controller {
 	 * @return string
 	 */
 	protected function get_current_parameter( $param ) {
-		$current = '';
+		$current = 'default';
 
 		if ( ! empty( $_GET[ $param ] ) ) {
 			$current = esc_attr( $_GET[ $param ] );

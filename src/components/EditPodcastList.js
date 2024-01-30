@@ -26,15 +26,20 @@ class EditPodcastList extends Component {
 			player,
 			playerBelowExcerpt,
 			availablePodcasts,
-			selectedPodcast,
 			postsPerPage,
 			availableImageSizes,
 			orderBy,
 			order,
 			columnsPerRow,
 			titleSize,
-			titleUnderImage
+			titleUnderImage,
+			defaultPodcastId,
 		} = attributes;
+
+		let {selectedPodcast} = attributes;
+
+		// In version 3.0.0 default 0 was changed to the real Podcast(Series) term
+		selectedPodcast = '0' === selectedPodcast ? defaultPodcastId : selectedPodcast;
 
 		const toggleFeaturedImage = () => {
 			setAttributes({

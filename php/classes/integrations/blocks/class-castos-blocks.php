@@ -160,7 +160,7 @@ class Castos_Blocks {
 		}
 
 		// -1 stands for all episodes ( option "-- All --" )
-		if ( - 1 !== $query_args['podcast_id'] ) {
+		if ( - 1 != $query_args['podcast_id'] ) {
 			$tax_query = array(
 				'taxonomy' => ssp_series_taxonomy(),
 			);
@@ -302,6 +302,8 @@ class Castos_Blocks {
 			}
 		} );
 
+		$default_series_id = ssp_get_default_series_id();
+
 		register_block_type(
 			'seriously-simple-podcasting/podcast-list',
 			array(
@@ -357,21 +359,24 @@ class Castos_Blocks {
 									'label' => __( '-- All --', 'seriously-simple-podcasting' ),
 									'value' => - 1,
 								),
-								array(
-									'label' => __( 'Default', 'seriously-simple-podcasting' ),
-									'value' => 0,
-								),
 							),
-							array_map( function ( $item ) {
+							array_map( function ( $item ) use ( $default_series_id ) {
+								$label = $default_series_id === $item->term_id ?
+									     ssp_get_default_series_name( $item->name ) :
+									     $item->name;
 								return array(
-									'label' => $item->name,
+									'label' => $label,
 									'value' => $item->term_id,
 								);
 							}, ssp_get_podcasts() ) ),
 					),
 					'selectedPodcast' => array(
 						'type'    => 'string',
-						'default' => '',
+						'default' => '-1',
+					),
+					'defaultPodcastId' => array(
+						'type'    => 'string',
+						'default' => $default_series_id,
 					),
 					// Use string everywhere instead of number because of the WP bug.
 					// It doesn't show the saved value in the admin after page refresh.

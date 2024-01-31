@@ -55,6 +55,20 @@ class Onboarding_Controller {
 		add_action( 'admin_menu', array( $this, 'register_pages' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 		add_action( 'activated_plugin', array( $this, 'maybe_start_onboarding' ) );
+		add_action( 'admin_init', array( $this, 'fix_deprecated_warning' ) );
+	}
+
+	/**
+	 * Fix PHP deprecated warning for new WordPress installations on the first onboarding step.
+	 * */
+	public function fix_deprecated_warning() {
+		$page = filter_input(INPUT_GET, 'page');
+		if ( $page && ( false !== strpos( $page, self::ONBOARDING_BASE_SLUG ) ) ) {
+			global $title;
+			if ( ! isset( $title ) ) {
+				$title = '';
+			}
+		}
 	}
 
 	public function maybe_start_onboarding( $plugin ) {

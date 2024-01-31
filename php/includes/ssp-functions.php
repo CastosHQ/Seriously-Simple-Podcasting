@@ -1809,6 +1809,9 @@ if ( ! function_exists( 'ssp_get_default_series_name' ) ) {
 	 * @return string
 	 */
 	function ssp_get_default_series_name( $name ) {
-		return sprintf( '%1$s (%2$s)', $name, __( 'default', 'seriously-simple-podcasting' ) );
+		return sprintf(
+			__( '%s (default)', 'seriously-simple-podcasting' ),
+			$name
+		);
 	}
 }

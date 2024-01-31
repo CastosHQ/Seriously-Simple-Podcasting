@@ -331,28 +331,61 @@ class Series_Handler implements Service {
 				return $series_id;
 			}
 		}
-		$taxonomy          = ssp_series_taxonomy();
+
 		$old_default_title = ssp_get_option( 'data_title' );
 		$title             = $old_default_title ?: get_bloginfo( 'name' );
 		$title             = $title ?: __( 'The First Podcast', 'seriously-simple-podcasting' );
-		$slug              = sanitize_title( $title );
-		$term              = get_term_by( 'slug', $slug, $taxonomy );
+		$series_id         = $this->create_default_series_term( $title );
+
+		if ( $series_id ) {
+			// Copy settings only for existing users
+			if ( $old_default_title ) {
+				$this->copy_default_series_settings( $series_id );
+			}
+
+			ssp_add_option( 'default_series', $series_id );
+		}
+
+		return $series_id;
+	}
+
+	/**
+	 * @param $title
+	 *
+	 * @return int|null
+	 */
+	protected function create_default_series_term( $title ) {
+		$slug     = sanitize_title( $title );
+		$taxonomy = ssp_series_taxonomy();
+		$res      = wp_insert_term( esc_html( $title ), $taxonomy, compact( 'slug' ) );
+
+		if ( ! $this->is_insert_term_error( $res ) ) {
+			return $res['term_id'];
+		}
+
+		$slug = 'default-podcast';
+		$res  = wp_insert_term( esc_html( $title ), $taxonomy, compact( 'slug' ) );
+
+		if ( ! $this->is_insert_term_error( $res ) ) {
+			return $res['term_id'];
+		}
+
+		// Edge case - both terms exist or unexpected error.
+		$term = get_term_by( 'slug', $slug, $taxonomy );
 		if ( $term ) {
-			$slug = 'default-podcast';
-		}
-		$res = wp_insert_term( esc_html( $title ), $taxonomy, compact( 'slug' ) );
-		if ( is_wp_error( $res ) || empty( $res['term_id'] ) ) {
-			return null;
+			return $term->term_id;
 		}
 
-		$series_id = $res['term_id'];
+		return null;
+	}
 
-		if ( $old_default_title ) {
-			// Copy them only for existing users
-			$this->copy_default_series_settings( $series_id );
-		}
-
-		return ssp_add_option( 'default_series', $series_id ) ? $series_id : null;
+	/**
+	 * @param array|\WP_Error $res
+	 *
+	 * @return bool
+	 */
+	protected function is_insert_term_error( $res ) {
+		return is_wp_error( $res ) || empty( $res['term_id'] );
 	}
 
 	/**

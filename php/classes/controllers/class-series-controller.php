@@ -52,8 +52,6 @@ class Series_Controller {
 		add_action( 'init', array( $this, 'register_taxonomy' ), 11 );
 		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_sync_status' ), 10, 3 );
-		add_filter( 'term_name', array( $this, 'update_default_series_name' ), 10, 2 );
-		add_filter( 'post_column_taxonomy_links', array( $this, 'update_column_default_series_name' ), 10, 3 );
 
 		add_action( 'created_series', array( $this, 'save_series_meta' ), 10, 2 );
 		add_action( 'edited_series', array( $this, 'save_series_meta' ), 10, 2 );
@@ -71,19 +69,25 @@ class Series_Controller {
 		// Exclude series feed from the default feed
 		add_action( 'create_series', array( $this, 'exclude_feed_from_default' ) );
 
-		// Show default series name in the series checklist
-		add_filter( 'wp_terms_checklist_args', array( $this, 'change_default_series_name' ) );
+		$this->handle_default_series();
+	}
+
+	private function handle_default_series(){
+		add_filter( 'term_name', array( $this, 'change_default_series_name' ), 10, 2 );
+		add_filter( 'post_column_taxonomy_links', array( $this, 'change_column_default_series_name' ), 10, 3 );
+		add_filter( 'wp_terms_checklist_args', array( $this, 'change_checklist_default_series_name' ) );
 
 		$this->prevent_deleting_default_series();
-
 	}
 
 	/**
+	 * Changes the default series name in the series checklist
+	 *
 	 * @param array $args
 	 *
 	 * @return array
 	 */
-	public function change_default_series_name( $args ) {
+	public function change_checklist_default_series_name( $args ) {
 		if ( empty( $args['taxonomy'] ) || ssp_series_taxonomy() != $args['taxonomy'] ) {
 			return $args;
 		}
@@ -153,8 +157,6 @@ class Series_Controller {
 
 	/**
 	 * Series Image Uploader metabox for add/edit.
-	 *
-	 * Todo: get rid of HTML
 	 */
 	public function series_image_uploader( $taxonomy, $mode = 'CREATE', $term = null ) {
 		$series_settings = $this->token . '_series_image_settings';
@@ -380,7 +382,7 @@ HTML;
 	 *
 	 * @return string
 	 */
-	public function update_default_series_name( $name, $tag ) {
+	public function change_default_series_name( $name, $tag ) {
 		if ( ! is_object( $tag ) || $tag->taxonomy != ssp_series_taxonomy() ) {
 			return $name;
 		}
@@ -393,13 +395,13 @@ HTML;
 	}
 
 	/**
-	 * Changes the default series name in the post columns (All Episodes page, Podcasts column)
+	 * Changes the default series name in the post columns (All Episodes -> Podcasts)
 	 *
 	 * @param array $term_links
 	 * @param string $taxonomy
 	 * @param \WP_Term[] $terms
 	 */
-	public function update_column_default_series_name( $term_links, $taxonomy, $terms ) {
+	public function change_column_default_series_name( $term_links, $taxonomy, $terms ) {
 		if ( ssp_series_taxonomy() !== $taxonomy || ! $term_links ) {
 			return $term_links;
 		}

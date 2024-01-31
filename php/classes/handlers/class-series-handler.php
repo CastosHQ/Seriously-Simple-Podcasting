@@ -343,7 +343,7 @@ class Series_Handler implements Service {
 				$this->copy_default_series_settings( $series_id );
 			}
 
-			ssp_add_option( 'default_series', $series_id );
+			ssp_update_option( 'default_series', $series_id );
 		}
 
 		return $series_id;

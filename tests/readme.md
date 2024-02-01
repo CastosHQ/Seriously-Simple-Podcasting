@@ -49,6 +49,7 @@ Specify Path to Behat executable: {plugin_path}/vendor/behat
 ### Run unit tests:
 `vendor/bin/codecept run wpunit`
 `vendor/bin/codecept run --debug wpunit`
+`vendor/bin/codecept run tests/wpunit/Castos_Integration_Test`
 
 
 ## BDD

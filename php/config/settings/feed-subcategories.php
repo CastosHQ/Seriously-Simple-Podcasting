@@ -196,7 +196,7 @@ return array(
 		'group' => __( 'News', 'seriously-simple-podcasting' ),
 	),
 	'Sports News'        => array(
-		'label' => __( 'Sports News ', 'seriously-simple-podcasting' ),
+		'label' => __( 'Sports News', 'seriously-simple-podcasting' ),
 		'group' => __( 'News', 'seriously-simple-podcasting' ),
 	),
 	'Tech News'          => array(
@@ -300,7 +300,7 @@ return array(
 		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
 	),
 	'Fantasy Sports'     => array(
-		'label' => __( 'Fantasy Sports ', 'seriously-simple-podcasting' ),
+		'label' => __( 'Fantasy Sports', 'seriously-simple-podcasting' ),
 		'group' => __( 'Sports', 'seriously-simple-podcasting' ),
 	),
 	'Football'           => array(

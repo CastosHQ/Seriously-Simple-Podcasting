@@ -793,4 +793,18 @@ class Feed_Handler implements Service {
 		$ep_explicit = get_post_meta( $post_id, 'explicit', true );
 		return apply_filters( 'ssp_feed_item_explicit', $ep_explicit, $post_id );
 	}
+
+	/**
+	 * @param string $category
+	 * @param string $subcategory
+	 *
+	 * @return string
+	 */
+	public function get_castos_category_name( $category, $subcategory ) {
+		if ( $category && $subcategory ) {
+			$category .= ': ' . $subcategory;
+		}
+
+		return $category;
+	}
 }

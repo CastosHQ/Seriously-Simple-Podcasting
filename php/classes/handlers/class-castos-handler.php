@@ -496,6 +496,8 @@ class Castos_Handler implements Service {
 
 		$podcast_data['token'] = $this->api_token();
 
+		unset( $podcast_data['cover_image'] );
+
 		$app_response = wp_remote_post(
 			$api_url,
 			array(
@@ -1015,12 +1017,9 @@ class Castos_Handler implements Service {
 		$podcast['copyright']           = $this->feed_handler->get_podcast_copyright( $series_id );
 
 		// Podcast Categories
-		$itunes_category1            = ssp_get_feed_category_output( 1, $series_id );
-		$itunes_category2            = ssp_get_feed_category_output( 2, $series_id );
-		$itunes_category3            = ssp_get_feed_category_output( 3, $series_id );
-		$podcast['itunes_category1'] = $itunes_category1['category'];
-		$podcast['itunes_category2'] = $itunes_category2['category'];
-		$podcast['itunes_category3'] = $itunes_category3['category'];
+		$podcast['itunes_category1'] = $this->get_castos_category( 1, $series_id );
+		$podcast['itunes_category2'] = $this->get_castos_category( 2, $series_id );
+		$podcast['itunes_category3'] = $this->get_castos_category( 3, $series_id );
 		$podcast['itunes']           = ssp_get_option( 'itunes_url', '', $series_id );
 		$podcast['google_play']      = ssp_get_option( 'google_play_url', '', $series_id );
 		$guid                        = ssp_get_option( 'data_guid', '', $series_id );
@@ -1035,5 +1034,17 @@ class Castos_Handler implements Service {
 		}
 
 		return $podcast;
+	}
+
+	/**
+	 * @param int $number
+	 * @param int $series_id
+	 *
+	 * @return string
+	 */
+	private function get_castos_category( $number, $series_id ) {
+		$output = ssp_get_feed_category_output( $number, $series_id );
+
+		return $this->feed_handler->get_castos_category_name( $output['category'], $output['subcategory'] );
 	}
 }

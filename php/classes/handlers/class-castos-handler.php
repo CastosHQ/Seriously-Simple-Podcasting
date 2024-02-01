@@ -496,8 +496,6 @@ class Castos_Handler implements Service {
 
 		$podcast_data['token'] = $this->api_token();
 
-		unset( $podcast_data['cover_image'] );
-
 		$app_response = wp_remote_post(
 			$api_url,
 			array(

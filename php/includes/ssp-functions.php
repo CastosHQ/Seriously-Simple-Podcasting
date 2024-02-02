@@ -505,7 +505,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 					'operator' => 'NOT IN',
 				),
 			);
-		} elseif ( $series ) {
+		} elseif ( $series && $series != ssp_get_default_series_slug() ) {
 			$args['tax_query'] = array(
 				array(
 					'taxonomy' => 'series',
@@ -1799,6 +1799,33 @@ if( ! function_exists('ssp_get_default_series_id') ){
 	 */
 	function ssp_get_default_series_id() {
 		return intval( ssp_get_option( 'default_series' ) );
+	}
+}
+
+if( ! function_exists('ssp_get_default_series') ){
+	/**
+	 *
+	 * @return WP_Term|null
+	 */
+	function ssp_get_default_series() {
+		$series_id = ssp_get_default_series_id();
+		if ( $series_id ) {
+			$series = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
+		}
+
+		return empty( $series ) ? null : $series;
+	}
+}
+
+if( ! function_exists('ssp_get_default_series_slug') ){
+	/**
+	 *
+	 * @return string
+	 */
+	function ssp_get_default_series_slug() {
+		$series = ssp_get_default_series();
+
+		return $series ? $series->slug : '';
 	}
 }
 

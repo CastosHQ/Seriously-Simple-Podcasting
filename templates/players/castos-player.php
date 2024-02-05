@@ -44,7 +44,7 @@
 						<button title="<?php _e( 'Pause', 'seriously-simple-podcasting' ) ?>" class="pause-btn hide">
 							<span class="screen-reader-text"><?php _e( 'Pause Episode', 'seriously-simple-podcasting' ) ?></span>
 						</button>
-						<img src="<?php echo SSP_PLUGIN_URL ?>assets/css/images/player/images/icon-loader.svg" class="ssp-loader hide"/>
+						<img src="<?php echo SSP_PLUGIN_URL ?>assets/css/images/player/images/icon-loader.svg" alt="<?php _e( 'Loading', 'seriously-simple-podcasting' ) ?>" class="ssp-loader hide"/>
 					</div>
 					<div>
 						<audio preload="none" class="clip clip-<?php echo $episode_id ?>">

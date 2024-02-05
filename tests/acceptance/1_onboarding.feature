@@ -56,7 +56,14 @@ Feature: Onboarding Wizard
 		Then I can see "Podcast Settings"
 		When I click tab "Feed details"
 		Then I can see that "Feed details" tab is active
+		And I can see "Automated test show (default)"
 		And I can see field "Feed details Title" contains "Automated test show"
 		And I can see field "Feed details Description/Summary" contains "This show is to test some SSP functionality"
 		Then I can see "Business" selected as "Feed details Primary Category"
 		And I can see "Management" selected as "Feed details Primary Sub-Category"
+
+		Given I want to "Check that onboarding changed the default podcast name"
+		When I go to the "/wp-admin/edit-tags.php?taxonomy=series&post_type=podcast"
+		Then I can see "Automated test show (default)"
+		And I can see "automated-test-show"
+		And I can see "/feed/podcast/automated-test-show"

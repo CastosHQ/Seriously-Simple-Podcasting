@@ -62,6 +62,22 @@ class AcceptanceTester extends \Codeception\Actor {
 		$this->amOnPage( '/wp-admin/plugins.php' );
 	}
 
+	/**
+	 * @When I go to the :arg1
+	 */
+	public function iGoToThe($arg1)
+	{
+		$this->amOnPage($arg1);
+	}
+
+	/**
+	 * @When I can see that I am on :arg1
+	 */
+	public function iCanSeeThatIAmOn($arg1)
+	{
+		throw new \PHPUnit\Framework\IncompleteTestError("Step `I can see that I am on :arg1` is not defined");
+	}
+
 
 	// Gherkin functions.
 

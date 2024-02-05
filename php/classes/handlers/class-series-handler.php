@@ -401,10 +401,12 @@ class Series_Handler implements Service {
 		$feed_details_fields = $this->settings_handler->get_feed_fields( $series_id );
 
 		foreach ( $feed_details_fields as $feed_details_field ) {
-			$id = $feed_details_field['id'];
-			$value = ssp_get_option( $id );
+			$id    = $feed_details_field['id'];
+			$value = ssp_get_option( $id, null );
 
-			ssp_update_option( $id, $value, $series_id );
+			if ( isset( $value ) ) {
+				ssp_update_option( $id, $value, $series_id );
+			}
 		}
 
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );

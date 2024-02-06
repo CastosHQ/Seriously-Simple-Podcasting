@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Traits\Useful_Variables;
 use WP_Query;
 
 /**
@@ -14,6 +15,8 @@ use WP_Query;
  * @since 2.8.2
  */
 class Feed_Handler implements Service {
+
+	use Useful_Variables;
 
 	/**
 	 * Unique "podcast" namespace UUID
@@ -38,6 +41,7 @@ class Feed_Handler implements Service {
 	public function __construct( $settings_handler, $renderer ) {
 		$this->settings_handler = $settings_handler;
 		$this->renderer = $renderer;
+		$this->init_useful_variables();
 	}
 
 	/**
@@ -199,6 +203,19 @@ class Feed_Handler implements Service {
 		$title          = esc_html( $this->get_podcast_title( $series_id ) );
 		$args           = apply_filters( 'ssp_feed_no_access_args', compact( 'stylesheet_url', 'title', 'description' ) );
 		$path           = apply_filters( 'ssp_feed_no_access_path', 'feed/feed-no-access' );
+
+		$this->renderer->render( $path, $args );
+		exit;
+	}
+
+	public function render_feed_404() {
+		header( 'HTTP/1.0 404 Not Found' );
+
+		$stylesheet_url = $this->get_stylesheet_url();
+		$title          = apply_filters( 'ssp_feed_404_title', __( 'Podcast feed does not exist', 'seriously-simple-podcasting' ) );
+		$description    = apply_filters( 'ssp_feed_404_description', __( 'Please check the podcast feed URL', 'seriously-simple-podcasting' ) );
+		$args           = apply_filters( 'ssp_feed_404_args', compact( 'stylesheet_url', 'title', 'description' ) );
+		$path           = apply_filters( 'ssp_feed_404_path', 'feed/feed-no-access' );
 
 		$this->renderer->render( $path, $args );
 		exit;
@@ -473,9 +490,7 @@ class Feed_Handler implements Service {
 			return '';
 		}
 
-		global $ss_podcasting;
-
-		return apply_filters( 'ssp_rss_stylesheet', $ss_podcasting->template_url . 'feed-stylesheet.xsl' );
+		return apply_filters( 'ssp_rss_stylesheet', $this->template_url . 'feed-stylesheet.xsl' );
 	}
 
 	/**

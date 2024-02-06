@@ -164,6 +164,10 @@ class Feed_Controller {
 			$this->feed_handler->redirect_default_feed();
 		}
 
+		if ( ! $series_id ) {
+			$this->feed_handler->render_feed_404();
+		}
+
 		$this->feed_handler->maybe_redirect_to_the_new_feed( $series_id );
 
 		$this->feed_handler->maybe_protect_unauthorized_access( $series_id );

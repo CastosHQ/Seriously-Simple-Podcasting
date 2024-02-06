@@ -51,7 +51,7 @@ class Players_Controller_Test extends WPTestCase {
 			'<span class="screen-reader-text">Play Episode</span>',
 			'<button title="Pause" class="pause-btn hide">',
 			'<span class="screen-reader-text">Pause Episode</span>',
-			'/wp-content/plugins/seriously-simple-podcasting/assets/css/images/player/images/icon-loader.svg" class="ssp-loader hide"/>',
+			'/wp-content/plugins/seriously-simple-podcasting/assets/css/images/player/images/icon-loader.svg" alt="Loading" class="ssp-loader hide"/>',
 			sprintf( '<audio preload="none" class="clip clip-%s">', $episode_id ),
 			'<div class="ssp-progress" role="progressbar" title="Seek">',
 			'<span class="progress__filled"></span>',

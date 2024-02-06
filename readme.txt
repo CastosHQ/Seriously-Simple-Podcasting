@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 5.3
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 2.25.3
+Stable tag: 3.0.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,21 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.0.0 =
+* 2024-02-06
+* UPDATE SUMMARY: Use Default Podcast term as the default feed and other improvements
+* [UPDATE] Use Default Podcast term as the default feed
+* [UPDATE] Show settings banner for Castos users
+* [UPDATE] Made settings placeholders less visible to avoid confusion with values
+* [UPDATE] Removed Second Line theme extension
+* [UPDATE] Improved synchronization with Castos
+* [UPDATE] Added alt text to the player loader image
+* [UPDATE] 404 page for the not existing podcast feeds
+* [UPDATE] Code refactoring
+* [FIX] Fixed lost description formatting in Classic Editor
+* [FIX] Do not use admin email as the default email in feeds
+
 
 = 2.25.3 =
 * 2023-12-01

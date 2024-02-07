@@ -9,6 +9,7 @@ use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Repositories\Series_Repository;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -1531,20 +1532,7 @@ if ( ! function_exists( 'ssp_get_podcast_image_src' ) ) {
 	 * @return int|null
 	 */
 	function ssp_get_podcast_image_src( $term, $size = 'thumbnail' ) {
-
-		if ( ! empty( $term->term_id ) ) {
-			$media_id = get_term_meta( $term->term_id, SSP_CPT_PODCAST . '_series_image_settings', true );
-		}
-
-		$default_image = esc_url( SSP_PLUGIN_URL . 'assets/images/no-image.png' );
-
-		if ( empty( $media_id ) ) {
-			return $default_image;
-		}
-
-		$src = wp_get_attachment_image_src( $media_id, $size );
-
-		return ! empty( $src[0] ) ? $src[0] : $default_image;
+		return ssp_series_repository()->get_image_src( $term, $size );
 	}
 }
 
@@ -1840,5 +1828,14 @@ if ( ! function_exists( 'ssp_get_default_series_name' ) ) {
 			__( '%s (default)', 'seriously-simple-podcasting' ),
 			$name
 		);
+	}
+}
+
+if( ! function_exists('ssp_series_repository') ){
+	/**
+	 * @return Series_Repository
+	 */
+	function ssp_series_repository() {
+		return Series_Repository::instance();
 	}
 }

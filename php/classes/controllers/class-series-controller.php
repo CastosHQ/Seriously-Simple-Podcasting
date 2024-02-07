@@ -8,6 +8,7 @@ use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Walker;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
+use SeriouslySimplePodcasting\Repositories\Series_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -40,10 +41,16 @@ class Series_Controller {
 	 * */
 	private $settings_handler;
 
+	/**
+	 * @var Series_Repository
+	 * */
+	private $series_repository;
+
 	public function __construct( $series_handler, $castos_handler, $settings_handler ) {
 		$this->series_handler   = $series_handler;
 		$this->castos_handler   = $castos_handler;
 		$this->settings_handler = $settings_handler;
+		$this->series_repository = ssp_series_repository();
 
 		$this->init_useful_variables();
 
@@ -203,12 +210,12 @@ class Series_Controller {
 	/**
 	 * @param \WP_Term $term
 	 *
-	 * @return int|null
+	 * @return string
 	 * @since 2.7.3
 	 *
 	 */
 	public function get_series_image_src( $term ) {
-		return ssp_get_podcast_image_src( $term );
+		return $this->series_repository->get_image_src( $term );
 	}
 
 	/**
@@ -271,22 +278,7 @@ HTML;
 	 *
 	 */
 	public function get_series_feed_url( $term ) {
-		$series_slug = $term->slug;
-
-		if ( get_option( 'permalink_structure' ) ) {
-			$feed_slug = apply_filters( 'ssp_feed_slug', $this->token );
-			$feed_url  = $this->home_url . 'feed/' . $feed_slug . '/' . $series_slug;
-		} else {
-			$feed_url = add_query_arg(
-				array(
-					'feed'           => $this->token,
-					'podcast_series' => $series_slug,
-				),
-				$this->home_url
-			);
-		}
-
-		return $feed_url;
+		return $this->series_repository->get_feed_url( $term );
 	}
 
 	/**

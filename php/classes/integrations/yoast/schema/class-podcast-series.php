@@ -31,7 +31,7 @@ class PodcastSeries extends Abstract_Schema_Piece {
 	 * @return array $data The PodcastSeries schema.
 	 */
 	public function generate() {
-		global $ssp_app;
+		$series_repository = ssp_series_repository();
 
 		/**
 		 * @var \WP_Term
@@ -45,10 +45,10 @@ class PodcastSeries extends Abstract_Schema_Piece {
 		$schema = array(
 			"@type"   => "PodcastSeries",
 			"@id"     => $this->context->canonical . '#/schema/podcastSeries',
-			"image"   => $ssp_app->get_series_image_src( $series ),
+			"image"   => $series_repository->get_image_src( $series ),
 			"url"     => $this->context->canonical,
 			"name"    => $this->context->title,
-			"webFeed" => $ssp_app->get_series_feed_url( $series ),
+			"webFeed" => $series_repository->get_feed_url( $series ),
 		);
 
 		if ( $description ) {

@@ -17,6 +17,13 @@ Feature: Login
 
 		Given I want to "Be redirected from the old default feed URL to the term-based URL"
 		When I go to the "/feed/podcast"
-		Then I can see that current url is "/feed/podcast/my-wordpress"
+		Then I can see "My WordPress"
+		And I can see "Just another WordPress site"
+		When I go to the "/feed/podcast/my-wordpress"
+		Then I can see "My WordPress"
+		And I can see "Just another WordPress site"
+		When I go to the "/feed/podcast/not-existing-podcast"
+		Then I can see "My WordPress"
+		And I can see "Just another WordPress site"
 		Then I am on the plugins page
 		And I deactivate the SSP plugin

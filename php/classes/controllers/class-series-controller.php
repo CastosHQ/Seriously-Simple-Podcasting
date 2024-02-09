@@ -92,28 +92,31 @@ class Series_Controller {
 		$this->handle_default_series();
 	}
 
-	private function handle_default_series(){
+	private function handle_default_series() {
 		add_filter( 'term_name', array( $this, 'change_default_series_name' ), 10, 2 );
 		add_filter( 'post_column_taxonomy_links', array( $this, 'change_column_default_series_name' ), 10, 3 );
 		add_filter( 'wp_terms_checklist_args', array( $this, 'change_checklist_default_series_name' ) );
+		add_action( 'admin_init', array( $this, 'check_default_series_existence' ), 20 );
 
-		$this->check_default_series_existence();
 		$this->prevent_deleting_default_series();
 	}
 
 	/**
 	 *
 	 * */
-	private function check_default_series_existence(){
-		if ( ! $this->series_handler->default_series_id() ) {
-			$notice = sprintf(
-				__( 'The Default Podcast was not found! <br />
+	public function check_default_series_existence() {
+		if ( ! ssp_get_default_series_id() ) {
+			$this->enable_default_series();
+			if ( ! ssp_get_default_series_id() ) {
+				$notice = sprintf(
+					__( 'The Default Podcast was not found! <br />
 			Please try to disable and then re-enable the Seriously Simple Podcasting plugin. <br />
 			If this message persists, kindly reach out to us via the <a target="_blank" href="%s">plugin forum</a> for further assistance.',
-				'seriously-simple-podcasting' ),
-				'https://wordpress.org/support/plugin/seriously-simple-podcasting/'
-			);
-			$this->notice_handler->add_flash_notice( $notice );
+						'seriously-simple-podcasting' ),
+					'https://wordpress.org/support/plugin/seriously-simple-podcasting/'
+				);
+				$this->notice_handler->add_flash_notice( $notice );
+			}
 		}
 	}
 

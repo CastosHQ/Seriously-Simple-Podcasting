@@ -141,10 +141,6 @@ class Feed_Handler implements Service {
 			$series_id = $series->term_id;
 		}
 
-		if ( ! $series_id ) {
-			$series_id = ssp_get_default_series_id();
-		}
-
 		return $series_id;
 	}
 

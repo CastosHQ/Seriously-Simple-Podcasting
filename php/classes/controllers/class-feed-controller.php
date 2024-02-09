@@ -160,6 +160,10 @@ class Feed_Controller {
 			$series_id = $this->feed_handler->get_series_id( $series_slug );
 		}
 
+		if ( ! $series_slug || ! $series_id ) {
+			$this->feed_handler->redirect_default_feed();
+		}
+
 		$this->feed_handler->maybe_redirect_to_the_new_feed( $series_id );
 
 		$this->feed_handler->maybe_protect_unauthorized_access( $series_id );

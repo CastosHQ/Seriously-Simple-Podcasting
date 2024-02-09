@@ -165,7 +165,7 @@ class Feed_Controller {
 		}
 
 		if ( $series_slug && ! $series_id ) {
-			$this->feed_handler->render_feed_404();
+			$series_id = ssp_get_default_series_id();
 		}
 
 		$this->feed_handler->maybe_redirect_to_the_new_feed( $series_id );
@@ -232,7 +232,7 @@ class Feed_Controller {
 
 		$qry = $this->feed_handler->get_feed_query( $series_slug, $exclude_series, $pub_date_type );
 
-		$feed_link = $this->feed_handler->get_feed_link( $series_slug );
+		$feed_link = $this->feed_handler->get_feed_link( $series_id );
 
 		$home_url = $this->home_url;
 

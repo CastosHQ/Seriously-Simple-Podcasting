@@ -282,7 +282,9 @@ class Series_Handler implements Service {
 
 	public function enable_default_series() {
 		if ( $series_id = $this->create_default_series() ) {
-			$this->castos_handler->update_default_series_id( $series_id );
+			if ( ssp_is_connected_to_castos() ) {
+				$this->castos_handler->update_default_series_id( $series_id );
+			}
 			$this->assign_orphan_episodes( $series_id );
 		}
 	}
@@ -370,10 +372,18 @@ class Series_Handler implements Service {
 			return $res['term_id'];
 		}
 
-		// Edge case - both terms exist or unexpected error.
+		// Another try - maybe the 'default-podcast' series already exists.
 		$term = get_term_by( 'slug', $slug, $taxonomy );
 		if ( $term ) {
 			return $term->term_id;
+		}
+
+		// Last try - generate random slug
+		$slug = wp_generate_password( 12, false );
+		$res  = wp_insert_term( esc_html( $title ), $taxonomy, compact( 'slug' ) );
+
+		if ( ! $this->is_insert_term_error( $res ) ) {
+			return $res['term_id'];
 		}
 
 		return null;

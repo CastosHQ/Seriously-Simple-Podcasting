@@ -617,8 +617,12 @@ class Feed_Handler implements Service {
 	 *
 	 * @return string
 	 */
-	public function get_feed_link( $podcast_series ) {
-		$link = $podcast_series ? get_term_link( $podcast_series, 'series' ) : trailingslashit( home_url() );
+	public function get_feed_link( $podcast_id ) {
+		$link = get_term_link( $podcast_id, ssp_series_taxonomy() );
+
+		if ( is_wp_error( $link ) || ! $link ) {
+			$link = trailingslashit( home_url() );
+		}
 
 		return apply_filters( 'ssp_feed_channel_link_tag', $link );
 	}

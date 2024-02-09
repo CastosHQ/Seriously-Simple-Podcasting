@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 5.3
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 3.0.1
+Stable tag: 3.0.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.0.2 =
+2024-02-09
+UPDATE SUMMARY: Redirect non-existing feed URLs to the default feed
+[FIX] Redirect non-existing feed URLs to the default feed
+[FIX] Automatically create the default Podcast if it was not created during a previous plugin update
 
 = 3.0.1 =
 * 2024-02-07

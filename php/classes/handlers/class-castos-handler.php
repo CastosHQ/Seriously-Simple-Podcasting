@@ -139,7 +139,7 @@ class Castos_Handler implements Service {
 			'body'    => array(
 				'api_token' => $account_api_token,
 				'email'     => $account_email,
-				'website'   => get_site_url(),
+				'website'   => get_home_url(),
 			),
 		);
 

@@ -166,6 +166,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 UPDATE SUMMARY: Redirect non-existing feed URLs to the default feed
 [FIX] Redirect non-existing feed URLs to the default feed
 [FIX] Automatically create the default Podcast if it was not created during a previous plugin update
+[FIX] Fixed Castos sync for the Bedrock architecture
 
 = 3.0.1 =
 * 2024-02-07

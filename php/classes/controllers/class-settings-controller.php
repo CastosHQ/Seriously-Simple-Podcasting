@@ -700,11 +700,12 @@ class Settings_Controller {
 				}
 
 				if ( 'feed-details' === $section ) {
-					$default_series_id = ssp_get_default_series_id();
-					$default_series    = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
-					$tab_link          = add_query_arg( 'feed-series', $default_series->slug, $tab_link );
+					$default_series_id   = ssp_get_default_series_id();
+					$default_series      = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
+					$default_series_slug = $default_series ? $default_series->slug : 'default';
+					$tab_link            = add_query_arg( 'feed-series', $default_series_slug, $tab_link );
 				} else {
-					$tab_link          = remove_query_arg( 'feed-series', $tab_link );
+					$tab_link = remove_query_arg( 'feed-series', $tab_link );
 				}
 
 				$title = isset( $data['tab_title'] ) ? $data['tab_title'] : $data['title'];
@@ -855,17 +856,20 @@ class Settings_Controller {
 		$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
 
 		foreach ( $series as $k => $s ) {
-			$series_class = $current_series === $s->slug ? 'current' : '';
+			$slug = $s ? $s->slug : 'default';
+			$series_class = $current_series === $slug ? 'current' : '';
 
 			$html .= '<li>' . "\n";
 			if( 0 !== $k ){
 				$html .= ' | ';
 			}
 
-			$name = 0 === $k ? $this->series_handler->default_series_name( $s->name ) : $s->name;
+			$podcast_name = $s ? $s->name : 'Default';
+
+			$name = 0 === $k ? $this->series_handler->default_series_name( $podcast_name ) : $podcast_name;
 
 			$html .= '<a href="' . esc_url( add_query_arg( array(
-					'feed-series'      => $s->slug,
+					'feed-series'      => $s ? $s->slug : 'default',
 					'settings-updated' => false
 				) ) ) . '" class="' . $series_class . '">' . $name . '</a>' . "\n";
 			$html .= '</li>' . "\n";

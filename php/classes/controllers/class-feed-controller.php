@@ -164,7 +164,7 @@ class Feed_Controller {
 			$this->feed_handler->redirect_default_feed();
 		}
 
-		if ( ! $series_id ) {
+		if ( $series_slug && ! $series_id ) {
 			$this->feed_handler->render_feed_404();
 		}
 

@@ -312,7 +312,7 @@ class App_Controller {
 			$this->series_handler
 		);
 
-		$this->series_controller = new Series_Controller( $this->series_handler, $this->castos_handler, $this->settings_handler );
+		$this->series_controller = new Series_Controller( $this->series_handler, $this->castos_handler, $this->settings_handler, $this->admin_notices_handler );
 
 		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );
 

@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 
 // Exit if accessed directly.
+use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Walker;
@@ -42,14 +43,26 @@ class Series_Controller {
 	private $settings_handler;
 
 	/**
+	 * @var Admin_Notifications_Handler
+	 * */
+	private $notice_handler;
+
+	/**
 	 * @var Series_Repository
 	 * */
 	private $series_repository;
 
-	public function __construct( $series_handler, $castos_handler, $settings_handler ) {
-		$this->series_handler   = $series_handler;
-		$this->castos_handler   = $castos_handler;
-		$this->settings_handler = $settings_handler;
+	/**
+	 * @param Series_Handler $series_handler
+	 * @param Castos_Handler $castos_handler
+	 * @param Settings_Handler $settings_handler
+	 * @param Admin_Notifications_Handler $notice_handler
+	 */
+	public function __construct( $series_handler, $castos_handler, $settings_handler, $notice_handler ) {
+		$this->series_handler    = $series_handler;
+		$this->castos_handler    = $castos_handler;
+		$this->settings_handler  = $settings_handler;
+		$this->notice_handler    = $notice_handler;
 		$this->series_repository = ssp_series_repository();
 
 		$this->init_useful_variables();
@@ -84,7 +97,24 @@ class Series_Controller {
 		add_filter( 'post_column_taxonomy_links', array( $this, 'change_column_default_series_name' ), 10, 3 );
 		add_filter( 'wp_terms_checklist_args', array( $this, 'change_checklist_default_series_name' ) );
 
+		$this->check_default_series_existence();
 		$this->prevent_deleting_default_series();
+	}
+
+	/**
+	 *
+	 * */
+	private function check_default_series_existence(){
+		if ( ! $this->series_handler->default_series_id() ) {
+			$notice = sprintf(
+				__( 'The Default Podcast was not found! <br />
+			Please try to disable and then re-enable the Seriously Simple Podcasting plugin. <br />
+			If this message persists, kindly reach out to us via the <a target="_blank" href="%s">plugin forum</a> for further assistance.',
+				'seriously-simple-podcasting' ),
+				'https://wordpress.org/support/plugin/seriously-simple-podcasting/'
+			);
+			$this->notice_handler->add_flash_notice( $notice );
+		}
 	}
 
 	/**

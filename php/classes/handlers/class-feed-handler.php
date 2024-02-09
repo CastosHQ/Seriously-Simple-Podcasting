@@ -130,15 +130,19 @@ class Feed_Handler implements Service {
 	/**
 	 * Get series id
 	 *
-	 * @param string $podcast_series
+	 * @param string $series_slug
 	 *
 	 * @return int Series id.
 	 */
-	public function get_series_id( $podcast_series ) {
+	public function get_series_id( $series_slug ) {
 		$series_id = 0;
-		if ( $podcast_series ) {
-			$series    = get_term_by( 'slug', $podcast_series, 'series' );
+		if ( $series_slug ) {
+			$series    = get_term_by( 'slug', $series_slug, ssp_series_taxonomy() );
 			$series_id = $series->term_id;
+		}
+
+		if ( ! $series_id ) {
+			$series_id = ssp_get_default_series_id();
 		}
 
 		return $series_id;

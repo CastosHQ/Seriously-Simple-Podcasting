@@ -52,9 +52,7 @@ class Images_Handler implements Service {
 	 */
 	public function is_image_square( $image_data = array() ) {
 		if ( isset( $image_data['width'] ) && isset( $image_data['height'] ) ) {
-			if ( ( $image_data['width'] / $image_data['height'] ) === 1 ) {
-				return true;
-			}
+			return ( $image_data['width'] === $image_data['height'] );
 		}
 
 		return false;

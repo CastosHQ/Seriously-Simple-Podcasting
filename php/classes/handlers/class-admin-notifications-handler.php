@@ -163,8 +163,7 @@ class Admin_Notifications_Handler implements Service {
 		if ( ! $server_type ) {
 			$response = $this->get_response( site_url( '/test.mp3' ) );
 			$server   = $response ? $response->get_headers()->offsetGet( 'server' ) : '';
-
-			$server_type = false !== strpos( $server, 'nginx' ) ? 'nginx' : $server;
+			$server_type = is_string( $server ) && ( false !== strpos( $server, 'nginx' ) ) ? 'nginx' : $server;
 
 			set_transient( 'ssp_server_type', $server_type, DAY_IN_SECONDS );
 		}

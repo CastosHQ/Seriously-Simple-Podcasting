@@ -45,7 +45,7 @@ class SSP_Functions_Test extends WPTestCase {
 
 		$res = ssp_version_check();
 
-		if ( strstr( SSP_VERSION, 'beta' ) ) {
+		if ( strstr( SSP_VERSION, 'beta' ) || strstr( SSP_VERSION, 'alpha' ) ) {
 			$this->assertTrue( $res );
 		} else {
 			$this->assertFalse( $res );

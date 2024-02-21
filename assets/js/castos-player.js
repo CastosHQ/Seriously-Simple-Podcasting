@@ -67,7 +67,11 @@ docReady(function() {
 			}, 100);
 		}
 
-		function playAudio(){
+		function playAudio() {
+			players.forEach( function( player ) {
+				episodeId = player.dataset.episode;
+				player.querySelector( '.clip-' + episodeId ).pause();
+			} );
 			audio.play();
 			syncPlayButton();
 		}

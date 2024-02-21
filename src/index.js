@@ -109,9 +109,6 @@ registerBlockType('seriously-simple-podcasting/castos-html-player', {
 	title: __('Castos Player', 'seriously-simple-podcasting'),
 	icon: 'controls-volumeon',
 	category: 'layout',
-	supports: {
-		multiple: false,
-	},
 	attributes: {
 		episodeId: {
 			type: 'string'

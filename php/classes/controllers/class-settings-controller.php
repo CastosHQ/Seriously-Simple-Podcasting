@@ -437,13 +437,13 @@ class Settings_Controller {
 	/**
 	 * @return string
 	 */
-	protected function get_current_tab(){
-		$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'], FILTER_DEFAULT ) : '' );
+	protected function get_current_tab() {
+		$tab = ( isset( $_POST['tab'] ) ? filter_var( $_POST['tab'] ) : '' );
 		if ( ! $tab ) {
-			$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'], FILTER_DEFAULT ) : '' );
+			$tab = ( isset( $_GET['tab'] ) ? filter_var( $_GET['tab'] ) : '' );
 		}
 
-		return $tab ?: 'general';
+		return ( $tab && isset( $this->settings[ $tab ] ) ) ? $tab : 'general';
 	}
 
 	/**
@@ -637,9 +637,9 @@ class Settings_Controller {
 	protected function show_page_messages() {
 		$html = '';
 		if ( isset( $_GET['settings-updated'] ) ) {
-			$tab = filter_input( INPUT_GET, 'tab' );
+			$tab = $this->get_current_tab();
 			$msg = $tab ?
-				sprintf( __( '%1$s settings updated', 'seriously-simple-podcasting' ),  str_replace( '-', ' ', ucwords( $tab ) ) ) :
+				sprintf( __( '%1$s settings updated', 'seriously-simple-podcasting' ),  esc_html( str_replace( '-', ' ', ucwords( $tab ) ) ) ):
 				__( 'Settings updated', 'seriously-simple-podcasting' );
 			$html .= '<br/><div class="updated notice notice-success is-dismissible"><p><b>' . $msg . '</b></p></div>';
 		}

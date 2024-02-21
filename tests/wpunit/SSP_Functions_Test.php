@@ -24,26 +24,26 @@ class SSP_Functions_Test extends WPTestCase {
 	}
 
 	/**
-	 * @covers ssp_beta_notice()
+	 * @covers ssp_version_notice()
 	 */
-	public function test_ssp_beta_notice() {
-		$this->assertTrue( function_exists( 'ssp_beta_notice' ) );
+	public function test_ssp_version_notice() {
+		$this->assertTrue( function_exists( 'ssp_version_notice' ) );
 
 		ob_start();
-		ssp_beta_notice();
+		ssp_version_notice();
 		$out = ob_get_flush();
 
 		$this->assertStringContainsString( '<div class="notice notice-warning">', $out );
-		$this->assertStringContainsString( 'You are using the Seriously Simple Podcasting beta', $out );
+		$this->assertStringContainsString( 'You are using the Seriously Simple Podcasting', $out );
 	}
 
 	/**
-	 * @covers ssp_beta_check()
+	 * @covers ssp_version_check()
 	 */
-	public function test_ssp_beta_check() {
-		$this->assertTrue( function_exists( 'ssp_beta_check' ) );
+	public function test_ssp_version_check() {
+		$this->assertTrue( function_exists( 'ssp_version_check' ) );
 
-		$res = ssp_beta_check();
+		$res = ssp_version_check();
 
 		if ( strstr( SSP_VERSION, 'beta' ) ) {
 			$this->assertTrue( $res );

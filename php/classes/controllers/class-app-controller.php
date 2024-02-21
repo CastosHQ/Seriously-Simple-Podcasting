@@ -214,7 +214,7 @@ class App_Controller {
 			return;
 		}
 
-		ssp_beta_check();
+		ssp_version_check();
 
 		$this->init_useful_variables();
 		$this->bootstrap();

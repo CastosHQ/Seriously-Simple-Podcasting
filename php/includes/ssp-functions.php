@@ -17,14 +17,14 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 
-if ( ! function_exists( 'ssp_beta_notice' ) ) {
+if ( ! function_exists( 'ssp_version_notice' ) ) {
 	/**
 	 * Displays SSP beta version notice.
 	 *
 	 * @return void
 	 */
-	function ssp_beta_notice() {
-		$beta_notice = __( 'You are using the Seriously Simple Podcasting beta ( %1$s ), connected to %2$s', 'seriously-simple-podcasting' );
+	function ssp_version_notice() {
+		$beta_notice = __( 'You are using the Seriously Simple Podcasting %1$s, connected to %2$s', 'seriously-simple-podcasting' );
 		?>
 		<div class="notice notice-warning">
 			<p>
@@ -36,20 +36,20 @@ if ( ! function_exists( 'ssp_beta_notice' ) ) {
 }
 
 
-if ( ! function_exists( 'ssp_beta_check' ) ) {
+if ( ! function_exists( 'ssp_version_check' ) ) {
 	/**
 	 * Checks if it's a beta version, and if yes, displays notice.
 	 *
 	 * @return bool
 	 */
-	function ssp_beta_check() {
-		if ( ! strstr( SSP_VERSION, 'beta' ) ) {
+	function ssp_version_check() {
+		if ( ! strstr( SSP_VERSION, 'beta' ) && ! strstr( SSP_VERSION, 'alpha' ) ) {
 			return false;
 		}
 		/**
 		 * Display the beta notice.
 		 */
-		add_action( 'admin_notices', 'ssp_beta_notice' );
+		add_action( 'admin_notices', 'ssp_version_notice' );
 
 		return true;
 	}

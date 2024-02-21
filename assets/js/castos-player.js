@@ -68,10 +68,6 @@ docReady(function() {
 		}
 
 		function playAudio() {
-			players.forEach( function( player ) {
-				episodeId = player.dataset.episode;
-				player.querySelector( '.clip-' + episodeId ).pause();
-			} );
 			audio.play();
 			syncPlayButton();
 		}

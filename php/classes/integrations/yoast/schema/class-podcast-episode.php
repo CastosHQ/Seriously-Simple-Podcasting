@@ -7,7 +7,7 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Yoast\Schema;
 
-use SeriouslySimplePodcasting\Controllers\Frontend_Controller;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
 
 /**
@@ -16,6 +16,18 @@ use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
  * @since 2.7.3
  */
 class PodcastEpisode extends Abstract_Schema_Piece {
+
+	/**
+	 * @var Episode_Repository
+	 * */
+	protected $episode_repository;
+
+	/**
+	 * @param Episode_Repository $episode_repository
+	 */
+	public function __construct( $episode_repository ){
+		$this->episode_repository = $episode_repository;
+	}
 
 	/**
 	 * Determines whether PodcastEpisode graph piece should be added.
@@ -34,8 +46,6 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	 * @return array $data The schema data.
 	 */
 	public function generate() {
-		$ss_podcasting = ssp_frontend_controller();
-
 		$series_parts = [];
 		$series       = wp_get_post_terms( $this->context->post->ID, 'series' );
 
@@ -56,9 +66,9 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 			);
 		}
 
-		$enclosure   = $ss_podcasting->get_enclosure( $this->context->post->ID );
+		$enclosure   = $this->episode_repository->get_enclosure( $this->context->post->ID );
 		$description = get_the_excerpt( $this->context->post->ID );
-		$duration    = $this->get_duration( $this->context->post->ID, $ss_podcasting, $enclosure );
+		$duration    = $this->get_duration( $this->context->post->ID, $enclosure );
 
 		$schema = array(
 			"@type"               => [ "PodcastEpisode", "OnDemandEvent" ],
@@ -83,7 +93,7 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		}
 
 		if ( $enclosure ) {
-			$schema = $this->add_enclosure_to_schema( $ss_podcasting, $enclosure, $schema );
+			$schema = $this->add_enclosure_to_schema( $enclosure, $schema );
 		}
 
 		if ( $series_parts ) {
@@ -97,15 +107,14 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	 * Gets a ISO 8601 duration compliant duration string.
 	 *
 	 * @param int                 $episode_id
-	 * @param Frontend_Controller $ss_podcasting
 	 * @param string              $enclosure
 	 *
 	 * @return string
 	 */
-	protected function get_duration( $episode_id, $ss_podcasting, $enclosure ) {
+	protected function get_duration( $episode_id, $enclosure ) {
 		$duration = get_post_meta( $episode_id, 'duration', true );
 		if ( empty( $duration ) ) {
-			$duration = $ss_podcasting->get_file_duration( $enclosure );
+			$duration = $this->episode_repository->get_file_duration( $enclosure );
 			if ( $duration ) {
 				update_post_meta( $episode_id, 'duration', $duration );
 			}
@@ -142,18 +151,17 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	/**
 	 * Add the enclosure to the schema based on its type.
 	 *
-	 * @param Frontend_Controller $ss_podcasting
 	 * @param string              $enclosure
 	 * @param array               $schema
 	 *
 	 * @return array
 	 */
-	private function add_enclosure_to_schema( $ss_podcasting, $enclosure, $schema ) {
-		$type = $ss_podcasting->get_episode_type();
+	private function add_enclosure_to_schema( $enclosure, $schema ) {
+		$type = $this->episode_repository->get_episode_type( $this->context->post->ID );
 
 		$object = array(
 			"contentUrl"  => $enclosure,
-			"contentSize" => $ss_podcasting->episode_repository->get_file_size(),
+			"contentSize" => get_post_meta( $this->context->post->ID , 'filesize' , true ),
 		);
 
 		if ( $type === 'audio' ) {

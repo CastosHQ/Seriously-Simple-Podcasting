@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastEpisode;
 use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastSeries;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use Yoast\WP\SEO\Context\Meta_Tags_Context;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -21,13 +22,30 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class Schema_Controller {
 
-	public function __construct() {
+	/**
+	 * @var Episode_Repository
+	 * */
+	protected $episode_repository;
+
+	/**
+	 * @param Episode_Repository $episode_repository
+	 */
+	public function __construct( $episode_repository ) {
+		$this->episode_repository = $episode_repository;
+
 		add_filter( 'wpseo_schema_graph_pieces', array( $this, 'add_graph_pieces' ) );
 		add_filter( 'wpseo_schema_webpage', array( $this, 'filter_webpage' ), 10, 2 );
 	}
 
-	public static function add_graph_pieces( $data ) {
-		$data[] = new PodcastEpisode();
+	/**
+	 * Adds pieces to the Yoast SEO graph
+	 *
+	 * @param array $data
+	 *
+	 * @return array
+	 */
+	public function add_graph_pieces( $data ) {
+		$data[] = new PodcastEpisode( $this->episode_repository );
 		$data[] = new PodcastSeries();
 
 		return $data;

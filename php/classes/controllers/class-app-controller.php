@@ -342,11 +342,11 @@ class App_Controller {
 
 		// Elementor integration.
 		if ( ssp_is_elementor_ok() ) {
-			new Elementor_Widgets( $this->episode_repository );
+			new Elementor_Widgets();
 		}
 
 		// Yoast Schema integration.
-		new Schema_Controller();
+		new Schema_Controller( $this->episode_repository );
 
 		// Paid Memberships Pro integration
 		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );

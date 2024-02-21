@@ -42,7 +42,10 @@ class Assets_Controller {
 		/**
 		 * If we're rendering a SSP Block, which includes the HTML5 player, also enqueue the player scripts
 		 */
-		if ( has_block( 'seriously-simple-podcasting/castos-player' ) || has_block( 'seriously-simple-podcasting/podcast-list' ) ) {
+		if ( has_block( 'seriously-simple-podcasting/castos-player' ) ||
+		     has_block( 'seriously-simple-podcasting/podcast-list' ) ||
+		     has_block( 'seriously-simple-podcasting/playlist-player' )
+		) {
 			wp_enqueue_script( 'ssp-castos-player' );
 			wp_enqueue_style( 'ssp-castos-player' );
 		}

@@ -6,6 +6,7 @@ use SeriouslySimplePodcasting\Controllers\Players_Controller;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\ShortCodes\Podcast_Playlist;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 // Exit if accessed directly.
@@ -284,6 +285,7 @@ class Castos_Blocks {
 		);
 
 		$this->register_podcast_list();
+		$this->register_playlist_player();
 	}
 
 
@@ -353,22 +355,7 @@ class Castos_Blocks {
 					),
 					'availablePodcasts' => array(
 						'type'    => 'array',
-						'default' => array_merge(
-							array(
-								array(
-									'label' => __( '-- All --', 'seriously-simple-podcasting' ),
-									'value' => - 1,
-								),
-							),
-							array_map( function ( $item ) use ( $default_series_id ) {
-								$label = $default_series_id === $item->term_id ?
-									     ssp_get_default_series_name( $item->name ) :
-									     $item->name;
-								return array(
-									'label' => $label,
-									'value' => $item->term_id,
-								);
-							}, ssp_get_podcasts() ) ),
+						'default' => $this->get_podcast_settings(),
 					),
 					'selectedPodcast' => array(
 						'type'    => 'string',
@@ -411,5 +398,100 @@ class Castos_Blocks {
 				),
 			)
 		);
+	}
+
+	protected function register_playlist_player() {
+
+		register_block_type(
+			'seriously-simple-podcasting/playlist-player',
+			array(
+				'attributes'      => array(
+					'availablePodcasts'   => array(
+						'type'    => 'array',
+						'default' => $this->get_podcast_settings(),
+					),
+					'selectedPodcast'     => array(
+						'type'    => 'string',
+						'default' => '-1',
+					),
+					// Use string everywhere instead of number because of the WP bug.
+					// It doesn't show the saved value in the admin after page refresh.
+					'limit'        => array(
+						'type'    => 'string',
+						'default' => -1,
+					),
+					'orderBy'             => array(
+						'type'    => 'string',
+						'default' => 'date',
+					),
+					'order'               => array(
+						'type'    => 'string',
+						'default' => 'desc',
+					),
+				),
+				'render_callback' => function ( $attributes ) {
+					$podcast_id = ( '' === $attributes['selectedPodcast'] ) ? - 1 : intval( $attributes['selectedPodcast'] );
+					$args       = array();
+
+					if ( $podcast_id ) {
+						$args['series'] = $this->get_term_slug_by_id( $podcast_id );
+					}
+
+					if ( ! empty( $attributes['limit'] ) ) {
+						$args['limit'] = $attributes['limit'];
+					}
+
+					if ( ! empty( $attributes['orderBy'] ) ) {
+						$args['orderby'] = $attributes['orderBy'];
+					}
+
+					if ( ! empty( $attributes['order'] ) ) {
+						$args['order'] = $attributes['order'];
+					}
+
+					$podcast_playlist = new Podcast_Playlist();
+
+					return $podcast_playlist->shortcode( $args );
+				},
+			)
+		);
+	}
+
+	/**
+	 * @param $term_id
+	 *
+	 * @return string|null
+	 */
+	protected function get_term_slug_by_id( $term_id ) {
+		$term = get_term_by( 'id', $term_id, ssp_series_taxonomy() );
+		if ( $term ) {
+			return $term->slug;
+		}
+		return null;
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_podcast_settings() {
+		$default_series_id = ssp_get_default_series_id();
+
+		return array_merge(
+			array(
+				array(
+					'label' => __( '-- All --', 'seriously-simple-podcasting' ),
+					'value' => - 1,
+				),
+			),
+			array_map( function ( $item ) use ( $default_series_id ) {
+				$label = $default_series_id === $item->term_id ?
+					ssp_get_default_series_name( $item->name ) :
+					$item->name;
+
+				return array(
+					'label' => $label,
+					'value' => $item->term_id,
+				);
+			}, ssp_get_podcasts() ) );
 	}
 }

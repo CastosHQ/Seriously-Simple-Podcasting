@@ -13,6 +13,7 @@ import EditCastosHTMLPlayer from './components/EditCastosHTMLPlayer';
 import EditPodcastList from "./components/EditPodcastList";
 import PostPublishPanel from "./components/PostPublishPanel";
 import './settingsExtender.js';
+import EditPlaylistPlayer from "./components/EditPlaylistPlayer";
 
 
 /**
@@ -131,6 +132,16 @@ registerBlockType('seriously-simple-podcasting/podcast-list', {
 		multiple: false,
 	},
 	edit: EditPodcastList
+});
+
+/**
+ * Playlist player block
+ */
+registerBlockType('seriously-simple-podcasting/playlist-player', {
+	title: __('Playlist Player', 'seriously-simple-podcasting'),
+	icon: 'controls-volumeon',
+	category: 'widgets',
+	edit: EditPlaylistPlayer
 });
 
 registerPlugin( 'post-publish-panel', {

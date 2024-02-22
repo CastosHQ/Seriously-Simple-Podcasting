@@ -4,7 +4,7 @@ Tags: podcast, audio, video, vodcast, rss, mp3, mp4, feed, itunes, podcasting, m
 Requires at least: 5.3
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 3.0.2
+Stable tag: 3.1.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -160,6 +160,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.1.0 =
+2024-02-22
+UPDATE SUMMARY: Gutenberg block and security improvements, small fixes
+[UPDATE] Gutenberg block for playlist player
+[UPDATE] Possibility to use multiple player blocks
+[UPDATE] Security improvements
+[FIX] Yoast integration fixes
+[FIX] Fixed PHP errors
 
 = 3.0.2 =
 2024-02-09

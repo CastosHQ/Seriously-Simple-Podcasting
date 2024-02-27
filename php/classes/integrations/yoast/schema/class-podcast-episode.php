@@ -46,6 +46,11 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	 * @return array $data The schema data.
 	 */
 	public function generate() {
+		$enclosure   = $this->episode_repository->get_enclosure( $this->context->post->ID );
+		if ( ! $enclosure ) {
+			return array();
+		}
+
 		$series_parts = [];
 		$series       = wp_get_post_terms( $this->context->post->ID, 'series' );
 
@@ -66,12 +71,11 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 			);
 		}
 
-		$enclosure   = $this->episode_repository->get_enclosure( $this->context->post->ID );
 		$description = get_the_excerpt( $this->context->post->ID );
 		$duration    = $this->get_duration( $this->context->post->ID, $enclosure );
 
 		$schema = array(
-			"@type"               => [ "PodcastEpisode", "OnDemandEvent" ],
+			"@type"               => "PodcastEpisode",
 			"@id"                 => $this->context->canonical . '#/schema/podcast',
 			"eventAttendanceMode" => "https://schema.org/OnlineEventAttendanceMode",
 			"location"            => array(
@@ -92,9 +96,7 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 			$schema['duration'] = $duration;
 		}
 
-		if ( $enclosure ) {
-			$schema = $this->add_enclosure_to_schema( $enclosure, $schema );
-		}
+		$schema = $this->add_enclosure_to_schema( $enclosure, $schema );
 
 		if ( $series_parts ) {
 			$schema['partOfSeries'] = $series_parts;

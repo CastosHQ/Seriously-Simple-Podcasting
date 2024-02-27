@@ -1297,6 +1297,8 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 
 		$content = strip_shortcodes( $content );
 		$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
+		$content = preg_replace( '/<style>(.|\s)*?<\/style>/', '', $content );
+		$content = preg_replace( '/<script>(.|\s)*?<\/script>/', '', $content );
 		$content = str_replace( '<br>', PHP_EOL, $content );
 		$content = strip_tags( $content, '<p>,<a>,<ul>,<ol>,<li>,<strong>,<em>,<h2>,<h3>,<h4>,<h5>,<label>' );
 

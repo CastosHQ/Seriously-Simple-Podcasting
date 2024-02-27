@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Entities\Castos_File_Data;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -805,7 +806,7 @@ class Frontend_Controller {
 
 				// Set other relevant headers
 				header( "Content-Description: File Transfer" );
-				header( "Content-Disposition: attachment; filename=\"" . basename( $file ) . "\";" );
+				header( "Content-Disposition: attachment; filename=\"" . esc_html( $this->get_file_name( $episode_id ) ) . "\";" );
 				header( "Content-Transfer-Encoding: binary" );
 
 				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
@@ -827,6 +828,25 @@ class Frontend_Controller {
 			exit;
 
 		}
+	}
+
+	/**
+	 * @param int $episode_id
+	 *
+	 * @return string
+	 */
+	protected function get_file_name( $episode_id ) {
+		$file_data = new Castos_File_Data(
+			json_decode( get_post_meta( $episode_id, 'castos_file_data', true ), true )
+		);
+
+		$allowed_extensions = array( 'm4a', 'mp3', 'mov', 'mp4' );
+		$file_name          = $file_data->name;
+
+		$file_name = $file_name && in_array( pathinfo( $file_name, PATHINFO_EXTENSION ), $allowed_extensions ) ?
+			$file_name : basename( $this->get_enclosure( $episode_id ) );
+
+		return apply_filters( 'ssp_file_name', $file_name, $episode_id );
 	}
 
 	/**

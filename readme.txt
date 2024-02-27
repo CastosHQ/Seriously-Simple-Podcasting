@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 3.1.0
+Stable tag: 3.1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.1.1 =
+2024-02-27
+UPDATE SUMMARY: Elementor and Yoast SEO integration fixes, small improvements
+[FIX] Removed the Elementor code showing in RSS feed
+[FIX] Removed OnDemandEvent from the Yoast SEO schema graph
+[UPDATE] Use the original file name for Castos files when downloading episodes
+[UPDATE] Updated the plugin description
 
 = 3.1.0 =
 2024-02-22

@@ -110,7 +110,7 @@ if ( $stylesheet_url ) {
 			<image>
 				<url><?php echo esc_url( $image ); ?></url>
 				<title><?php echo esc_html( $title ); ?></title>
-				<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $home_url, $podcast_series ) ) ?></link>
+				<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $feed_link, $podcast_series ) ) ?></link>
 			</image>
 		<?php endif;
 

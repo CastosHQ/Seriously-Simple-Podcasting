@@ -166,10 +166,15 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 			}
 
 			foreach ( $single_update_data['users'] as $user_id => $actions ) {
-				$added_memberships   = $actions['added_memberships'];
 				$revoked_memberships = $actions['revoked_memberships'];
-
 				$revoke_series_ids = $this->convert_membership_ids_into_series_ids( $revoked_memberships );
+
+				// Make sure user doesn't have other memberships that allow them to use this series
+				$user_membership_ids = $this->get_user_membership_ids( $user_id );
+				$allowed_series_ids  = $this->convert_membership_ids_into_series_ids( $user_membership_ids );
+				$revoke_series_ids   = array_diff( $revoke_series_ids, $allowed_series_ids );
+
+				$added_memberships   = $actions['added_memberships'];
 				$add_series_ids    = $this->convert_membership_ids_into_series_ids( $added_memberships );
 
 				$res = $this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
@@ -436,17 +441,22 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 			return false;
 		}
 
-		$user_active_memberships = wc_memberships_get_user_active_memberships( $user->ID );
-
-		if ( empty( $user_active_memberships ) ) {
-			return false;
-		}
-
-		$user_membership_ids = array_map( function( $user_membership ){
-			return $user_membership->id;
-		}, $user_active_memberships );
+		$user_membership_ids = $this->get_user_membership_ids( $user->ID );
 
 		return count( $user_membership_ids ) && count( array_intersect( $user_membership_ids, $required_level_ids ) );
+	}
+
+	/**
+	 * @param int $user_id
+	 *
+	 * @return int[]
+	 */
+	protected function get_user_membership_ids( $user_id ) {
+		$user_active_memberships = wc_memberships_get_user_active_memberships( $user_id );
+
+		return array_map( function ( $user_membership ) {
+			return $user_membership->get_plan_id();
+		}, $user_active_memberships );
 	}
 
 

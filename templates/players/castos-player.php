@@ -27,7 +27,7 @@
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo $episode_id?>">
-				<img src="<?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?>" alt="<?php echo $podcast_title ?>" title="<?php echo $podcast_title ?>">
+				<img src="<?php echo apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ); ?>" alt="<?php echo $album_art['alt'] ?: $podcast_title ?>" title="<?php echo $podcast_title ?>">
 			</div>
 			<div class="player__body">
 				<div class="currently-playing">

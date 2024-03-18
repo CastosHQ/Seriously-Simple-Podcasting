@@ -68,24 +68,29 @@ class Images_Handler implements Service {
 	 */
 	public function get_attachment_image_src( $attachment_id, $size = 'medium' ) {
 		$src = wp_get_attachment_image_src( $attachment_id, $size );
-		return $this->make_associative_image_src( $src );
+		return $this->make_associative_image_src( $src, $attachment_id );
 	}
 
 	/**
 	 * Convert the array returned from wp_get_attachment_image_src into a human readable version
 	 *
-	 * @param $image_data_array
+	 * @param array $image_data_array
+	 * @param int|null $attachment_id
 	 *
-	 * @return mixed
-	 *
+	 * @return array
 	 */
-	protected function make_associative_image_src( $image_data_array ) {
-		$new_image_data_array = array();
-		if ( is_array( $image_data_array ) && $image_data_array ) {
-			$new_image_data_array['src']    = isset( $image_data_array[0] ) ? $image_data_array[0] : '';
-			$new_image_data_array['width']  = isset( $image_data_array[1] ) ? $image_data_array[1] : '';
-			$new_image_data_array['height'] = isset( $image_data_array[2] ) ? $image_data_array[2] : '';
+	protected function make_associative_image_src( $image_data_array, $attachment_id = null ) {
+		if ( ! is_array( $image_data_array ) || ! $image_data_array ) {
+			return array();
 		}
+
+		$new_image_data_array['src']    = isset( $image_data_array[0] ) ? $image_data_array[0] : '';
+		$new_image_data_array['width']  = isset( $image_data_array[1] ) ? $image_data_array[1] : '';
+		$new_image_data_array['height'] = isset( $image_data_array[2] ) ? $image_data_array[2] : '';
+
+		$alt_text = $attachment_id ? get_post_meta( $attachment_id, '_wp_attachment_image_alt', true ) : '';
+
+		$new_image_data_array['alt'] = $alt_text ?: '';
 
 		return $new_image_data_array;
 	}

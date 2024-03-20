@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 3.1.1
+Stable tag: 3.2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.2.0 =
+2024-03-20
+UPDATE SUMMARY: Improved WC Memberships integration, small fixes
+[UPDATE] WC Memberships integration improvement - support multiple user plans
+[FIX] Changed the feed image link to use the podcast archive page URL
+[FIX] Removed outdated distribution links upgrade notice
+[FIX] Accessibility: use alt text (if provided) for episode images in Castos player
 
 = 3.1.1 =
 2024-02-27

@@ -490,6 +490,15 @@ class AcceptanceTester extends \Codeception\Actor {
 		if ( false !== strpos( $arg1, '{{base_url}}' ) ) {
 			$arg1 = str_replace( '{{base_url}}', $this->getConfig( 'url' ), $arg1 );
 		}
+		elseif ( false !== strpos( $arg1, '{{base_url_without_port}}' ) ) {
+			$parts =  parse_url($this->getConfig( 'url' ));
+			$url = $parts['scheme'] . '://' . $parts['host'];
+			$arg1 = str_replace( '{{base_url_without_port}}', $url, $arg1 );
+		}
+		elseif ( false !== strpos( $arg1, '{{podcast_guid}}' ) ) {
+			$arg1 = str_replace( '{{podcast_guid}}', $this->getConfig( 'podcastGuid' ), $arg1 );
+		}
+
 		$this->seeInSource( $arg1 );
 	}
 }

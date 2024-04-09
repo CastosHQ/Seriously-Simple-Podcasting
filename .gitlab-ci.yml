@@ -46,7 +46,6 @@ unit_tests:
 
     # Prepare testing environment file
     - touch .env.testing
-    - echo "TEST_WP_ROOT=$(pwd)"
     - echo "TEST_WP_ROOT=$(pwd)" >> .env.testing
     - echo "TEST_DB_HOST=db" >> .env.testing
     - echo "TEST_DB_NAME=$MYSQL_DATABASE" >> .env.testing
@@ -151,6 +150,7 @@ acceptance_tests:
     - echo "SITE_URL=$SSH_USER" >> .env.testing
     - echo "SITE_USER=$SITE_USER" >> .env.testing
     - echo "SITE_USER_PASS=$SITE_USER_PASS" >> .env.testing
+    - echo "PODCAST_GUID=115e423a-72d2-531e-9d3c-ece7dd4b74fe" >> .env.testing
 
     # Run Acceptance tests
     - vendor/bin/codecept run acceptance --steps

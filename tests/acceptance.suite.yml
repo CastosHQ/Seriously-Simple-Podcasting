@@ -7,24 +7,13 @@
 actor: AcceptanceTester
 modules:
     enabled:
-#        - WPBrowser
         - PhpBrowser:
-#            url: http://castos.loc
         - \Helper\Acceptance
-#        - WPWebDriver:
-#            url: 'http://castos.loc'
-#            browser: phantomjs
-#            port: 4444
-#            restart: true
-#            wait: 2
-#            adminUsername: admin
-#            adminPassword: password
-#            adminUrl: /wp-admin
-
     config:
       PhpBrowser:
         url: '%SITE_URL%'
         adminPath: '%SITE_URL%/wp-admin'
+        podcastGuid: '%PODCAST_GUID%'
 
 step_decorators: ~
 

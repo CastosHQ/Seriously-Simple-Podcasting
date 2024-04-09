@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - develop
+      - master
+
+permissions:
+  contents: read
+
+jobs:
+  run_tests:
+    name: Run Unit & Acceptance Tests
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: wordpress
+          MYSQL_USER: wordpress
+          MYSQL_PASSWORD: wordpress
+          MYSQL_DATABASE: wordpress_test
+        ports:
+          - 3306:3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php_version }}
+          coverage: none
+          tools: wp-cli
+
+      - name: Install Composer dependencies
+        run: composer install
+
+      - name: Setup Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: '17'
+
+      - name: Prepare testing environment
+        run: |
+          # Move the plugin files to the separate folder
+          mkdir ssp && mv `ls -A | grep -v ssp` ssp
+
+          # Download WordPress
+          wp core download --allow-root
+
+          # Set up .env
+          echo "TEST_WP_ROOT=$(pwd)" > .env.testing
+          echo "TEST_DB_HOST=127.0.0.1" >> .env.testing
+          echo "TEST_DB_NAME=wordpress_test" >> .env.testing
+          echo "TEST_DB_USER=wordpress" >> .env.testing
+          echo "TEST_DB_PASSWORD=wordpress" >> .env.testing
+          echo "TEST_DOMAIN=localhost" >> .env.testing
+          mv .env.testing ssp/
+
+          # Move the plugin to the plugins folder
+          mv ssp ./wp-content/plugins/seriously-simple-podcasting
+          cd wp-content/plugins/seriously-simple-podcasting
+          npm install -g grunt-cli
+          npm install
+          npm rebuild node-sass
+          grunt uglify && grunt cssmin && npm run build
+
+      - name: Run Unit tests
+        run: cd wp-content/plugins/seriously-simple-podcasting && vendor/bin/codecept run wpunit
+
+      - name: Run Acceptance tests
+        run: |
+          wp config create --dbname=wordpress_test --dbuser=wordpress --dbpass=wordpress --dbhost=127.0.0.1 --dbprefix=wsy_ --allow-root
+          wp config set WP_SITEURL http://localhost:8000 --type=constant --allow-root
+          wp config set WP_HOME http://localhost:8000 --type=constant --allow-root
+          nohup php -S localhost:8000 &
+          cd wp-content/plugins/seriously-simple-podcasting
+          echo "SITE_URL=http://localhost:8000" >> .env.testing
+          echo "SITE_USER=autotest" >> .env.testing
+          echo "SITE_USER_PASS=password" >> .env.testing
+          echo "PODCAST_GUID=dd94465b-580a-501c-a892-caf224d23d7a" >> .env.testing
+          sudo apt-get update -qq
+          sudo env DEBIAN_FRONTEND=noninteractive apt-get install -qq mysql-client default-libmysqlclient-dev
+          gzip -d tests/seed.sql.gz && wp db import tests/seed.sql --allow-root
+          wp core update-db --allow-root
+          wp theme activate twentytwentyfour --allow-root
+          wp plugin install classic-editor --allow-root
+          vendor/bin/codecept run acceptance --steps
+
+      - name: Upload codeception output on failure
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: acceptance-tests
+          path: wp-content/plugins/seriously-simple-podcasting/tests/_output
+
+      - name: Upload PHP server logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v2
+        with:
+          name: acceptance-tests
+          path: nohup.out

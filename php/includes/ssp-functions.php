@@ -220,7 +220,7 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 			$podcast_series = empty( $args['series'] ) ? null : $args['series'];
 
 			// Get query args
-			$query_args = apply_filters( 'ssp_get_podcast_query_args', ssp_episodes( -1, $podcast_series, true ) );
+			$query_args = apply_filters( 'ssp_get_podcast_query_args', ssp_episodes( - 1, $podcast_series, true ) );
 
 			// The Query
 			$query = get_posts( $query_args );
@@ -229,7 +229,7 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 			if ( ! is_wp_error( $query ) && is_array( $query ) && count( $query ) > 0 ) {
 				foreach ( $query as $k => $v ) {
 					// Get the URL
-					$query[$k]->url = get_permalink( $v->ID );
+					$query[ $k ]->url = get_permalink( $v->ID );
 				}
 			} else {
 				$query = false;
@@ -239,18 +239,18 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 
 			$terms = get_terms( 'series' );
 
-			if ( count( $terms ) > 0) {
+			if ( count( $terms ) > 0 ) {
 
 				foreach ( $terms as $term ) {
-					$query[ $term->term_id ] = new stdClass();
+					$query[ $term->term_id ]        = new stdClass();
 					$query[ $term->term_id ]->title = $term->name;
-					$query[ $term->term_id ]->url = get_term_link( $term );
+					$query[ $term->term_id ]->url   = get_term_link( $term );
 
-					$query_args = apply_filters( 'ssp_get_podcast_series_query_args', ssp_episodes( -1, $term->slug, true, '' ) );
+					$query_args = apply_filters( 'ssp_get_podcast_series_query_args', ssp_episodes( - 1, $term->slug, true, '' ) );
 
 					$posts = get_posts( $query_args );
 
-					$count = count( $posts );
+					$count                          = count( $posts );
 					$query[ $term->term_id ]->count = $count;
 				}
 			}
@@ -547,7 +547,7 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 	 *
 	 * @param boolean $include_podcast Include the `podcast` post type or not
 	 *
-	 * @param bool $verify	Verify if the post type has been registered by register_post_type
+	 * @param bool $verify Verify if the post type has been registered by register_post_type
 	 *
 	 * @return array                    Array of podcast post types
 	 * @since  1.8.7
@@ -640,7 +640,7 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 
 		} else {
 			// If there is no series ID, it's a deprecated default feed settings, which are not used anymore
-			$category = get_option( 'ss_podcasting_data_category' . $level, '' );
+			$category    = get_option( 'ss_podcasting_data_category' . $level, '' );
 			$subcategory = $category ? get_option( 'ss_podcasting_data_subcategory' . $level, '' ) : '';
 		}
 
@@ -760,7 +760,7 @@ if ( ! function_exists( 'ssp_get_not_synced_episodes' ) ) {
 	 *
 	 * @return WP_Query
 	 */
-	function ssp_get_not_synced_episodes( $posts_per_page = -1 ) {
+	function ssp_get_not_synced_episodes( $posts_per_page = - 1 ) {
 		$podcast_post_types = ssp_post_types();
 		$args               = array(
 			'post_type'      => $podcast_post_types,
@@ -945,7 +945,7 @@ if ( ! function_exists( 'ssp_email_podcasts_imported' ) ) {
 		/* translators: %s: Site Name */
 		$message .= sprintf( __( 'The Podcast import for %1$s has completed.' ), $site_name ) . PHP_EOL;
 		$message .= __( 'Thank you for using Castos to host your podcasts.' );
-		$from     = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
+		$from    = sprintf( 'From: "%1$s" <%2$s>', _x( 'Site Admin', 'email "From" field' ), $to );
 
 		return wp_mail( $to, $subject, $message, $from );
 	}
@@ -975,12 +975,13 @@ if ( ! function_exists( 'ssp_setup_upload_credentials' ) ) {
 if ( ! function_exists( 'ssp_get_image_id_from_url' ) ) {
 	/**
 	 * Get image ID when only the URL of the image is known
-	 * @deprecated Do not use this function. Use attachment_url_to_postid() instead
-	 * @todo: remove it in the next versions
 	 *
 	 * @param $image_url
 	 *
 	 * @return mixed
+	 * @deprecated Do not use this function. Use attachment_url_to_postid() instead
+	 * @todo: remove it in the next versions
+	 *
 	 */
 	function ssp_get_image_id_from_url( $image_url ) {
 		$relative_image_url = str_replace( get_site_url(), '', $image_url );
@@ -1159,6 +1160,7 @@ if ( ! function_exists( 'ssp_is_elementor_ok' ) ) {
 		if ( array_key_exists( 'elementor/elementor.php', $active_plugins ) || in_array( 'elementor/elementor.php', $active_plugins, true ) ) {
 			return true;
 		}
+
 		return false;
 	}
 }
@@ -1173,7 +1175,9 @@ if ( ! function_exists( 'ssp_is_feed_image_valid' ) ) {
 	 * @return bool
 	 */
 	function ssp_is_feed_image_valid( $image_url ) {
-		global $images_handler; /** @var Images_Handler $images_handler */
+		global $images_handler;
+
+		/** @var Images_Handler $images_handler */
 		return $images_handler->is_feed_image_valid( $image_url );
 	}
 }
@@ -1188,7 +1192,9 @@ if ( ! function_exists( 'ssp_is_image_square' ) ) {
 	 * @return bool
 	 * */
 	function ssp_is_image_square( $image_data_array = array() ) {
-		global $images_handler; /** @var Images_Handler $images_handler */
+		global $images_handler;
+
+		/** @var Images_Handler $images_handler */
 		return $images_handler->is_image_square( $image_data_array );
 	}
 }
@@ -1204,9 +1210,11 @@ if ( ! function_exists( 'ssp_get_attachment_image_src' ) ) {
 	 *
 	 * @return array
 	 */
-	function  ssp_get_attachment_image_src( $attachment_id, $size = "full" ) {
-		global $images_handler; /** @var Images_Handler $images_handler */
-		return $images_handler->get_attachment_image_src( $attachment_id, $size  );
+	function ssp_get_attachment_image_src( $attachment_id, $size = "full" ) {
+		global $images_handler;
+
+		/** @var Images_Handler $images_handler */
+		return $images_handler->get_attachment_image_src( $attachment_id, $size );
 	}
 }
 
@@ -1236,7 +1244,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 		 * The same as in @see excerpt_remove_blocks() plus 'core/block',
 		 * */
 		if ( $blocks and is_array( $blocks ) ) {
-			$content = '';
+			$content        = '';
 			$allowed_blocks = array(
 				null,
 				'core/freeform',
@@ -1280,7 +1288,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 				$block_content = render_block( $block );
 
 				// Strip tags with content inside (styles, scripts)
-				$strip_tags = array('style', 'script');
+				$strip_tags = array( 'style', 'script' );
 
 				foreach ( $strip_tags as $strip_tag ) {
 					$strip_pattern = sprintf( '/<%s[^>]*>([\s\S]*?)<\/%s[^>]*>/', $strip_tag, $strip_tag );
@@ -1475,6 +1483,7 @@ if ( ! function_exists( 'ssp_frontend_controller' ) ) {
 	 */
 	function ssp_frontend_controller() {
 		global $ss_podcasting;
+
 		return $ss_podcasting;
 	}
 }
@@ -1504,9 +1513,9 @@ if ( ! function_exists( 'ssp_series_slug' ) ) {
 	/**
 	 * Get base slug for Series taxonomy.
 	 * Since 2.14.0, Series taxonomy was renamed to Podcasts.
+	 * @return string
 	 * @since 2.14.0
 	 *
-	 * @return string
 	 */
 	function ssp_series_slug() {
 		if ( $slug = ssp_get_option( 'series_slug' ) ) {
@@ -1704,6 +1713,7 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 	 */
 	function ssp_get_podcasts( $hide_empty = false ) {
 		$podcasts = get_terms( ssp_series_taxonomy(), array( 'hide_empty' => $hide_empty ) );
+
 		return is_array( $podcasts ) ? $podcasts : array();
 	}
 }
@@ -1746,11 +1756,11 @@ if ( ! function_exists( 'ssp_renderer' ) ) {
 	 * @return Renderer|Service
 	 */
 	function ssp_renderer() {
-		return ssp_app()->get_service('renderer');
+		return ssp_app()->get_service( 'renderer' );
 	}
 }
 
-if( ! function_exists('ssp_config') ){
+if ( ! function_exists( 'ssp_config' ) ) {
 	/**
 	 * @param string $name
 	 * @param array $args
@@ -1766,7 +1776,7 @@ if( ! function_exists('ssp_config') ){
 	}
 }
 
-if( ! function_exists('ssp_get_tab_url') ){
+if ( ! function_exists( 'ssp_get_tab_url' ) ) {
 	/**
 	 * @param string $tab
 	 *
@@ -1776,13 +1786,13 @@ if( ! function_exists('ssp_get_tab_url') ){
 		return add_query_arg( array(
 			'post_type' => SSP_CPT_PODCAST,
 			'page'      => 'podcast_settings',
-			'tab'       => $tab
+			'tab'       => $tab,
 		), admin_url( 'edit.php' ) );
 	}
 }
 
 
-if( ! function_exists('ssp_get_default_series_id') ){
+if ( ! function_exists( 'ssp_get_default_series_id' ) ) {
 	/**
 	 *
 	 * @return int
@@ -1792,7 +1802,7 @@ if( ! function_exists('ssp_get_default_series_id') ){
 	}
 }
 
-if( ! function_exists('ssp_get_default_series') ){
+if ( ! function_exists( 'ssp_get_default_series' ) ) {
 	/**
 	 *
 	 * @return WP_Term|null
@@ -1807,7 +1817,7 @@ if( ! function_exists('ssp_get_default_series') ){
 	}
 }
 
-if( ! function_exists('ssp_get_default_series_slug') ){
+if ( ! function_exists( 'ssp_get_default_series_slug' ) ) {
 	/**
 	 *
 	 * @return string
@@ -1833,11 +1843,20 @@ if ( ! function_exists( 'ssp_get_default_series_name' ) ) {
 	}
 }
 
-if( ! function_exists('ssp_series_repository') ){
+if ( ! function_exists( 'ssp_series_repository' ) ) {
 	/**
 	 * @return Series_Repository
 	 */
 	function ssp_series_repository() {
 		return Series_Repository::instance();
+	}
+}
+
+if ( ! function_exists( 'ssp_onboarded' ) ) {
+	/**
+	 * @return bool
+	 */
+	function ssp_onboarded() {
+		return ! empty( ssp_get_option( 'data_title', '', ssp_get_default_series_id() ) );
 	}
 }

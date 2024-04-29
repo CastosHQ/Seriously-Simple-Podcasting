@@ -281,7 +281,7 @@ class App_Controller {
 
 		$this->assets_controller = new Assets_Controller();
 
-		$this->series_handler    = new Series_Handler( $this->admin_notices_handler, $this->roles_handler, $this->castos_handler, $this->settings_handler, $this->episode_repository );
+		$this->series_handler = new Series_Handler( $this->admin_notices_handler, $this->roles_handler, $this->castos_handler, $this->settings_handler, $this->episode_repository );
 
 		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler, $this->series_handler );
 
@@ -331,7 +331,7 @@ class App_Controller {
 		$this->load_plugin_textdomain();
 	}
 
-	protected function init_integrations(){
+	protected function init_integrations() {
 		/*
 		 * Gutenberg integration.
 		 * Only load Blocks if the WordPress version is newer than 5.0.
@@ -393,7 +393,7 @@ class App_Controller {
 	 *
 	 * @return string
 	 * */
-	protected function get_wp_version(){
+	protected function get_wp_version() {
 		global $wp_version;
 
 		return $wp_version;
@@ -402,7 +402,7 @@ class App_Controller {
 	/**
 	 * Init REST API
 	 */
-	protected function init_rest_api(){
+	protected function init_rest_api() {
 		global $wp_version;
 
 		// Only load WP REST API Endpoints if the WordPress version is newer than 4.7.
@@ -494,7 +494,6 @@ class App_Controller {
 	}
 
 
-
 	/**
 	 * Register the Castos Blog dashboard widget
 	 * Hooks into the wp_dashboard_setup action hook
@@ -547,9 +546,9 @@ class App_Controller {
 		/**
 		 * Check if there is a cached version of the RSS Feed and output it
 		 */
-		$locale    = get_user_locale();
-		$cache_key = 'ssp_dash_v2_' . md5( $widget_id . '_' . $locale );
-		$rss_output    = get_transient( $cache_key );
+		$locale     = get_user_locale();
+		$cache_key  = 'ssp_dash_v2_' . md5( $widget_id . '_' . $locale );
+		$rss_output = get_transient( $cache_key );
 		if ( false !== $rss_output ) {
 			return $rss_output;
 		}
@@ -568,13 +567,14 @@ class App_Controller {
 		 * Set up the cached version to expire in 12 hours and output the content
 		 */
 		set_transient( $cache_key, $rss_output, 12 * HOUR_IN_SECONDS );
+
 		return $rss_output;
 	}
 
 	/**
 	 * Adding podcast episodes to 'At a glance' dashboard widget
 	 *
-	 * @param  array $items Existing items
+	 * @param array $items Existing items
 	 *
 	 * @return array        Updated items
 	 */
@@ -583,8 +583,8 @@ class App_Controller {
 		$num_posts = count( ssp_episodes( - 1, '', false, 'glance' ) );
 
 		$post_type_object = get_post_type_object( $this->token );
-		$text = _n( '%s Episode', '%s Episodes', $num_posts, 'seriously-simple-podcasting' );
-		$text = sprintf( $text, number_format_i18n( $num_posts ) );
+		$text             = _n( '%s Episode', '%s Episodes', $num_posts, 'seriously-simple-podcasting' );
+		$text             = sprintf( $text, number_format_i18n( $num_posts ) );
 
 		if ( $post_type_object && current_user_can( $post_type_object->cap->edit_posts ) ) {
 			$items[] = sprintf( '<a class="%1$s-count" href="edit.php?post_type=%1$s">%2$s</a>', $this->token, $text ) . "\n";
@@ -598,10 +598,10 @@ class App_Controller {
 	/**
 	 * Adding appreciation links to the SSP record in the plugin list table
 	 *
-	 * @param  array $plugin_meta Default plugin meta links
-	 * @param  string $plugin_file Plugin file
-	 * @param  array $plugin_data Array of plugin data
-	 * @param  string $status Plugin status
+	 * @param array $plugin_meta Default plugin meta links
+	 * @param string $plugin_file Plugin file
+	 * @param array $plugin_data Array of plugin data
+	 * @param string $status Plugin status
 	 *
 	 * @return array               Modified plugin meta links
 	 */
@@ -613,6 +613,7 @@ class App_Controller {
 		$plugin_meta['docs']   = '<a href="https://support.castos.com/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019" target="_blank">' . __( 'Documentation', 'seriously-simple-podcasting' ) . '</a>';
 		$plugin_meta['addons'] = '<a href="https://castos.com/add-ons/?utm_medium=sspodcasting&utm_source=wordpress&utm_campaign=wpplugin_08_2019" target="_blank">' . __( 'Add-ons', 'seriously-simple-podcasting' ) . '</a>';
 		$plugin_meta['review'] = '<a href="https://wordpress.org/support/view/plugin-reviews/' . $plugin_data['slug'] . '?rate=5#postform" target="_blank">' . __( 'Write a review', 'seriously-simple-podcasting' ) . '</a>';
+
 		return $plugin_meta;
 	}
 
@@ -650,7 +651,7 @@ class App_Controller {
 	/**
 	 * Hide RSS footer created by WordPress SEO from podcast RSS feed
 	 *
-	 * @param  boolean $include_footer Default inclusion value
+	 * @param boolean $include_footer Default inclusion value
 	 *
 	 * @return boolean                 Modified inclusion value
 	 */
@@ -710,7 +711,7 @@ class App_Controller {
 	/**
 	 * Add rating link to admin footer on SSP settings pages
 	 *
-	 * @param  string $footer_text Default footer text
+	 * @param string $footer_text Default footer text
 	 *
 	 * @return string              Modified footer text
 	 */
@@ -722,7 +723,7 @@ class App_Controller {
 			// Change the footer text
 			if ( ! get_option( 'ssp_admin_footer_text_rated' ) ) {
 				$footer_text = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
-				$footer_text .= sprintf("<script type='text/javascript'>
+				$footer_text .= sprintf( "<script type='text/javascript'>
 					(function($){
 					  $('a.ssp-rating-link').click(function() {
 						$.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated', nonce: '%s' } );
@@ -741,8 +742,8 @@ class App_Controller {
 	/**
 	 * Clear the cache on post save.
 	 *
-	 * @param  int $id POST ID
-	 * @param  object $post WordPress Post Object
+	 * @param int $id POST ID
+	 * @param object $post WordPress Post Object
 	 *
 	 * @return void
 	 */
@@ -788,7 +789,7 @@ class App_Controller {
 		if ( $trigger_import_submit === $submit ) {
 			$import = sanitize_text_field( $_POST['ss_podcasting_podmotor_import'] );
 			if ( 'on' === $import ) {
-				$result         = $this->castos_handler->trigger_podcast_import();
+				$result = $this->castos_handler->trigger_podcast_import();
 				if ( 'success' !== $result['status'] ) {
 					add_action( 'admin_notices', array( $this, 'trigger_import_error' ) );
 				} else {

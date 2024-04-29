@@ -62,7 +62,7 @@ class Onboarding_Controller {
 	 * Fix PHP deprecated warning for new WordPress installations on the first onboarding step.
 	 * */
 	public function fix_deprecated_warning() {
-		$page = filter_input(INPUT_GET, 'page');
+		$page = filter_input( INPUT_GET, 'page' );
 		if ( $page && ( false !== strpos( $page, self::ONBOARDING_BASE_SLUG ) ) ) {
 			global $title;
 			if ( ! isset( $title ) ) {
@@ -75,8 +75,7 @@ class Onboarding_Controller {
 		if ( $plugin !== plugin_basename( $this->file ) ) {
 			return;
 		}
-		$title = ssp_get_option( 'data_title', '', ssp_get_default_series_id() );
-		if ( ! $title ) {
+		if ( ! ssp_onboarded() ) {
 			wp_redirect( admin_url( sprintf( 'admin.php?page=%s-1', self::ONBOARDING_BASE_SLUG ) ) );
 			exit();
 		}
@@ -87,16 +86,28 @@ class Onboarding_Controller {
 		if ( false !== strpos( $screen->base, self::ONBOARDING_BASE_SLUG ) ) {
 			wp_enqueue_media();
 			wp_enqueue_script( 'ssp-onboarding', esc_url( $this->assets_url . 'admin/js/onboarding' . $this->script_suffix . '.js' ), array(
-				'jquery'
+				'jquery',
 			), $this->version );
 		}
 	}
 
 	public function register_pages() {
+		if ( ! ssp_onboarded() ) {
+			add_submenu_page(
+				'edit.php?post_type=' . SSP_CPT_PODCAST,
+				__( 'Onboarding Wizard', 'seriously-simple-podcasting' ),
+				__( 'Onboarding Wizard', 'seriously-simple-podcasting' ),
+				'manage_podcast',
+				'ssp-onboarding-1',
+				array( $this, 'step_1' ),
+				0
+			);
+		}
+
 		for ( $page_number = 1; $page_number <= self::STEPS_NUMBER; $page_number ++ ) {
-			$this->register_page( 'Onboarding wizzard', $this->get_page_slug( $page_number ), array(
+			$this->register_page( 'Onboarding wizard', $this->get_page_slug( $page_number ), array(
 				$this,
-				sprintf( 'step_%s', $page_number )
+				sprintf( 'step_%s', $page_number ),
 			) );
 		}
 	}
@@ -174,7 +185,7 @@ class Onboarding_Controller {
 			$step_urls[ $page_number ] = $this->get_step_url( $page_number );
 		}
 		$data['step_urls'] = $step_urls;
-		$series_id = ( 4 === $step_number ) ? 0 : ssp_get_default_series_id();
+		$series_id         = ( 4 === $step_number ) ? 0 : ssp_get_default_series_id();
 
 		foreach ( $this->get_step_fields( $step_number ) as $field_name ) {
 			$data[ $field_name ] = ssp_get_option( $field_name, '', $series_id );
@@ -236,7 +247,7 @@ class Onboarding_Controller {
 			}
 		}
 
-		if( 1 === $step_number ){
+		if ( 1 === $step_number ) {
 			$this->update_default_series_name( $default_series_id );
 			ssp_add_option( 'series_slug', CPT_Podcast_Handler::DEFAULT_SERIES_SLUG );
 		}
@@ -249,8 +260,9 @@ class Onboarding_Controller {
 	 */
 	protected function update_default_series_name( $series_id ) {
 		$series = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
-		$name   = ssp_get_option( 'data_title', get_bloginfo('name'), $series_id );
+		$name   = ssp_get_option( 'data_title', get_bloginfo( 'name' ), $series_id );
 		$slug   = wp_unique_term_slug( sanitize_title( $name ), $series );
+
 		return wp_update_term( $series_id, ssp_series_taxonomy(), array(
 			'name' => $name,
 			'slug' => $slug,

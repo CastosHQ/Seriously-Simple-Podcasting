@@ -105,6 +105,13 @@ class Assets_Controller {
 	 */
 	public function enqueue_admin_scripts( $hook ) {
 
+		wp_enqueue_script(
+			'ssp-admin-menu',
+			esc_url( $this->assets_url . 'js/admin-menu' . $this->script_suffix . '.js' ),
+			array( 'jquery' ),
+			$this->version
+		);
+
 		if ( ! $this->need_admin_scripts( $hook ) ) {
 			return;
 		}

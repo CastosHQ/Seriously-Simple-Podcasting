@@ -243,6 +243,7 @@ class Onboarding_Controller {
 		foreach ( $this->get_step_fields( $step_number ) as $field_id ) {
 			$val = filter_input( INPUT_POST, $field_id );
 			if ( $val ) {
+				$val = esc_html( strip_tags( $val ) );
 				ssp_update_option( $field_id, $val, $series_id );
 			}
 		}

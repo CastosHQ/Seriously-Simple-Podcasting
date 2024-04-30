@@ -1,5 +1,7 @@
 <?php
 
+namespace wpunit;
+
 use Codeception\TestCase\WPTestCase;
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
@@ -24,11 +26,11 @@ class Players_Controller_Test extends WPTestCase {
 	 * @covers Players_Controller::render_html_player() method returns the new html player code
 	 */
 	public function test_player_controller_html_player_method() {
-		$renderer = new Renderer();
-		$options_handler = new Options_Handler();
+		$renderer           = new Renderer();
+		$options_handler    = new Options_Handler();
 		$episode_repository = $this->episode_repository();
 
-		$this->players_controller = new Players_Controller($renderer, $options_handler, $episode_repository);
+		$this->players_controller = new Players_Controller( $renderer, $options_handler, $episode_repository );
 		$episode_id               = $this->factory->post->create(
 			array(
 				'title'       => 'My Custom Podcast',
@@ -84,7 +86,7 @@ class Players_Controller_Test extends WPTestCase {
 			'<div class="player-panel-row">',
 
 			'RSS Feed',
-			sprintf( '<input value="%s/?feed=podcast&podcast_series=wordpress-test" class="input-rss input-rss-%s" title="RSS Feed URL" readonly />', $site_url, $episode_id ),
+			sprintf( '<input value="%s/?feed=podcast&amp;podcast_series=wordpress-test" class="input-rss input-rss-%s" title="RSS Feed URL" readonly />', $site_url, $episode_id ),
 
 			sprintf( '<button class="copy-rss copy-rss-%s" title="Copy RSS Feed URL"></button>', $episode_id ),
 
@@ -110,7 +112,7 @@ class Players_Controller_Test extends WPTestCase {
 			'target="_blank" rel="noopener noreferrer" class="share-icon download" title="Download" download>',
 			'<div class="title">',
 			'Link',
-			sprintf( '<input value="%s" class="input-link input-link-%s" title="Episode URL" readonly />', $permalink, $episode_id ),
+			sprintf( '<input value="%s" class="input-link input-link-%d" title="Episode URL" readonly />', $permalink, $episode_id ),
 			sprintf( '<button class="copy-link copy-link-%s" title="Copy Episode URL" readonly=""></button>', $episode_id ),
 			'<div class="player-panel-row">',
 			'Embed',

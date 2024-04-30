@@ -307,18 +307,18 @@ class Castos_Handler implements Service {
 
 		$app_response = wp_remote_post( $api_url, $options );
 
-		if ( isset( $app_response['response']['code'] ) ) {
-			$this->update_response( 'code', intval( $app_response['response']['code'] ) );
-		}
-
-		$this->logger->log( 'Upload Podcast app_response', $app_response );
-
 		if ( is_wp_error( $app_response ) ) {
 			$this->logger->log( 'An unknown error occurred sending podcast data to castos: ' . $app_response->get_error_message() );
 			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
 
 			return $this->response;
 		}
+
+		if ( isset( $app_response['response']['code'] ) ) {
+			$this->update_response( 'code', intval( $app_response['response']['code'] ) );
+		}
+
+		$this->logger->log( 'Upload Podcast app_response', $app_response );
 
 		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 

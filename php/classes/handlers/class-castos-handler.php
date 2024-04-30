@@ -549,8 +549,10 @@ class Castos_Handler implements Service {
 	}
 
 	public function get_podcasts() {
-		if ( $this->cached_podcasts_response ) {
-			return $this->cached_podcasts_response;
+		$transient = 'ssp_castos_podcasts';
+
+		if ( $cache = get_transient( $transient ) ) {
+			return $cache;
 		}
 
 		$this->setup_default_response();
@@ -576,6 +578,8 @@ class Castos_Handler implements Service {
 			$this->update_response( 'message', 'An error occurred connecting to the Castos server to get podcasts lists.' );
 			$this->logger->log( 'response', $this->response );
 
+			set_transient( $transient, $app_response, MINUTE_IN_SECONDS );
+
 			return $this->response;
 		}
 
@@ -587,7 +591,7 @@ class Castos_Handler implements Service {
 
 		$this->update_response( 'data', $podcasts_data );
 
-		$this->cached_podcasts_response = $this->response;
+		set_transient( $transient, $this->response, 5 * MINUTE_IN_SECONDS );
 
 		return $this->response;
 	}

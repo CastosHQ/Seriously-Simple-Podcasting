@@ -113,7 +113,7 @@ class Ads_Controller {
 
 		$series_id = $this->get_current_feed_series_id();
 
-		if ( empty( $podcasts['data']['podcast_list'] ) ) {
+		if ( ! is_array( $podcasts ) || empty( $podcasts['data']['podcast_list'] ) ) {
 			return false;
 		}
 

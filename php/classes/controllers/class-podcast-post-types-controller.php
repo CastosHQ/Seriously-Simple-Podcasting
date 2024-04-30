@@ -719,7 +719,8 @@ class Podcast_Post_Types_Controller {
 			// Schedule uploading with a cronjob.1
 			// If it's 404, something wrong with the file ID. We don't try to reupload it since result will be the same.
 			if ( 404 != $response['code'] ) {
-				update_post_meta( $id, 'podmotor_schedule_upload', true );
+				update_post_meta( $id, Cron_Controller::SYNC_SCHEDULE_META, true );
+				update_post_meta( $id, Cron_Controller::ATTEMPTS_META, 1 );
 			}
 			$this->admin_notices_handler->add_predefined_flash_notice(
 				Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR

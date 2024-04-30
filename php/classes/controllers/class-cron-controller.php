@@ -35,6 +35,12 @@ class Cron_Controller {
 	 * */
 	protected $upgrade_handler;
 
+	const SYNC_SCHEDULE_META = 'podmotor_schedule_upload';
+
+	const ATTEMPTS_META = 'castos_sync_attempts';
+
+	const MAX_ATTEMPTS = 3;
+
 	/**
 	 * @param Castos_Handler $castos_handler
 	 * @param Episode_Repository $episodes_respository
@@ -42,9 +48,9 @@ class Cron_Controller {
 	 */
 	public function __construct( $castos_handler, $episodes_respository, $upgrade_handler ) {
 
-		$this->castos_handler = $castos_handler;
+		$this->castos_handler       = $castos_handler;
 		$this->episodes_respository = $episodes_respository;
-		$this->upgrade_handler = $upgrade_handler;
+		$this->upgrade_handler      = $upgrade_handler;
 
 		add_action( 'admin_init', array( $this, 'schedule_events' ) );
 		add_filter( 'cron_schedules', array( $this, 'add_cron_intervals' ) );
@@ -55,7 +61,7 @@ class Cron_Controller {
 	/**
 	 * @return void
 	 */
-	protected function run_actions(){
+	protected function run_actions() {
 		add_action( 'ssp_cron_hook', array( $this, 'upload_scheduled_episodes' ) );
 		$this->upgrade_handler->run_upgrade_actions();
 	}
@@ -80,7 +86,7 @@ class Cron_Controller {
 		if ( ! wp_next_scheduled( 'ssp_cron_hook' ) ) {
 			wp_schedule_event( time(), 'hourly', 'ssp_cron_hook' );
 		}
-		if( ! wp_next_scheduled('ssp_check_ads') ){
+		if ( ! wp_next_scheduled( 'ssp_check_ads' ) ) {
 			wp_schedule_event( time(), 'daily', 'ssp_check_ads' );
 		}
 	}
@@ -90,19 +96,36 @@ class Cron_Controller {
 	 */
 	public function upload_scheduled_episodes() {
 		$uploaded = 0;
-		$logger = new Log_Helper();
+		$logger   = new Log_Helper();
+
 		foreach ( $this->episodes_respository->get_scheduled_episodes() as $episode ) {
 			$response = $this->castos_handler->upload_episode_to_castos( $episode );
 
 			if ( 'success' === $response['status'] ) {
-				delete_post_meta( $episode->ID, 'podmotor_schedule_upload' );
+				$this->unschedule_episode( $episode->ID );
 				$this->episodes_respository->update_episode_sync_status( $episode->ID, Sync_Status::SYNC_STATUS_SYNCED );
 				$this->episodes_respository->delete_episode_sync_error( $episode->ID );
-				$uploaded++;
+				$uploaded ++;
+			} else {
+				$attempts = get_post_meta( $episode->ID, self::ATTEMPTS_META, true );
+				if ( $attempts < self::MAX_ATTEMPTS ) {
+					update_post_meta( $episode->ID, self::ATTEMPTS_META, ++ $attempts );
+				} else {
+					$this->unschedule_episode( $episode->ID );
+				}
 			}
 
-			if ( 404 == $response['code'] ) {
-				delete_post_meta( $episode->ID, 'podmotor_schedule_upload' );
+			if ( isset( $response['code'] ) && 404 == $response['code'] ) {
+				$castos_episode_id = get_post_meta( $episode->ID, 'podmotor_episode_id', true );
+
+				// Episode does not exists anymore, remove connection
+				if ( $castos_episode_id ) {
+					delete_post_meta( $episode->ID, 'podmotor_episode_id' );
+					delete_post_meta( $episode->ID, 'podmotor_file_id' );
+				}
+
+				$this->unschedule_episode( $episode->ID );
+
 				$logger->log( sprintf( 'Cron: could not upload episode %d', $episode->ID ) );
 			}
 		}
@@ -112,5 +135,9 @@ class Cron_Controller {
 		}
 
 		return $uploaded;
+	}
+
+	protected function unschedule_episode( $episode_id ) {
+		delete_post_meta( $episode_id, self::SYNC_SCHEDULE_META );
 	}
 }

@@ -156,7 +156,7 @@ class Settings_Controller {
 		if ( isset( $args['field']['id'] ) && 'podcasts_sync' === $args['field']['id'] ) {
 			$data = (array) $data;
 			$res = $this->castos_handler->get_podcasts();
-			if ( empty( $res['status'] ) || 'success' !== $res['status'] || ! isset( $res['data']['podcast_list'] ) ) {
+			if ( ! is_array( $res ) || empty( $res['status'] ) || 'success' !== $res['status'] || ! isset( $res['data']['podcast_list'] ) ) {
 				$data['statuses'] = null;
 
 				return $data;

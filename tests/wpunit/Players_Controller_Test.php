@@ -39,9 +39,21 @@ class Players_Controller_Test extends WPTestCase {
 			)
 		);
 		$episode                  = get_post( $episode_id );
+
 		$html_player_content      = $this->players_controller->render_html_player( $episode->ID );
+
+		// Empty, because the file is not assigned
+		$this->assertEmpty( $html_player_content );
+
+		// Now, let's check that it's not empty for admin
+		define( 'WP_ADMIN', true );
+		$html_player_content      = $this->players_controller->render_html_player( $episode->ID );
+		$this->assertNotEmpty( $html_player_content );
+
 		$permalink                = get_post_permalink( $episode_id );
 		$site_url                 = site_url();
+
+		$this->assertStringContainsString( 'Warning: the player will not be shown', $html_player_content );
 
 		$player_parts = array(
 			'class="castos-player dark-mode"',

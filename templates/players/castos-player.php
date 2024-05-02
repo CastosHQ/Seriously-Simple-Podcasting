@@ -19,6 +19,7 @@
  * @var bool $show_subscribe_button
  * @var bool $show_share_button
  * @var int $player_id
+ * @var bool $add_empty_warning
  **/
 
 ?>
@@ -194,5 +195,12 @@
 				<?php endforeach ?>
 			</ul>
 		</div>
+	<?php endif; ?>
+
+
+	<?php if ( $add_empty_warning ) : ?>
+		<p style="color:#BE123C"><em><?php
+			_e( 'Warning: the player will not be shown to users because the episode file is missing, please upload a file or provide a URL to an existing audio file.', 'seriously-simple-podcasting' ); ?>
+		</em></p>
 	<?php endif; ?>
 </div>

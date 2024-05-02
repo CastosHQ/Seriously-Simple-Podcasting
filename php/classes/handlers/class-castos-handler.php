@@ -578,7 +578,7 @@ class Castos_Handler implements Service {
 			$this->update_response( 'message', 'An error occurred connecting to the Castos server to get podcasts lists.' );
 			$this->logger->log( 'response', $this->response );
 
-			set_transient( $transient, $app_response, MINUTE_IN_SECONDS );
+			set_transient( $transient, $this->response, MINUTE_IN_SECONDS );
 
 			return $this->response;
 		}

@@ -49,12 +49,12 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 	public function get_episodes() {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
-			'posts_per_page' => -1,
+			'posts_per_page' => - 1,
 			'post_type'      => ssp_post_types( true ),
 			'post_status'    => array( 'publish', 'draft', 'future' ),
 		);
 
-		$episodes       = get_posts( $args );
+		$episodes        = get_posts( $args );
 		$episode_options = [
 			'-1' => __( 'Current Episode', 'seriously-simple-podcasting' ),
 			'0'  => __( 'Latest Episode', 'seriously-simple-podcasting' ),
@@ -84,7 +84,7 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 				'label'   => __( 'Select Episode', 'seriously-simple-podcasting' ),
 				'type'    => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episode_options,
-				'default' => '-1'
+				'default' => '-1',
 			]
 		);
 
@@ -92,8 +92,7 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 	}
 
 	protected function render() {
-		global $ss_podcasting;
-		$players_controller = $ss_podcasting->players_controller;
+		$players_controller = ssp_app()->players_controller;
 		$settings           = $this->get_settings_for_display();
 		$episode_id         = $settings['show_elements'];
 		if ( '-1' === $episode_id ) {
@@ -102,15 +101,15 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 		if ( empty( $episode_id ) ) {
 			$episode_id = $players_controller->get_latest_episode_id();
 		}
-		$html_player = $players_controller->render_html_player( $episode_id );
-		echo $html_player;
+
+		echo $players_controller->render_html_player( $episode_id );
 	}
 
 	protected function _content_template() {
 		?>
-        <# _.each( settings.show_elements, function( element ) { #>
-        <div>{{{ element }}}</div>
-        <# } ) #>
+		<# _.each( settings.show_elements, function( element ) { #>
+		<div>{{{ element }}}</div>
+		<# } ) #>
 		<?php
 	}
 

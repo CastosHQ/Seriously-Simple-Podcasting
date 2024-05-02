@@ -273,7 +273,7 @@ class Castos_Blocks {
 				),
 			),
 			'render_callback' => function ( $args ) {
-				return ssp_frontend_controller()->players_controller->render_html_player( $args['episodeId'], false );
+				return ssp_frontend_controller()->players_controller->render_html_player( $args['episodeId'] );
 			}
 		) );
 

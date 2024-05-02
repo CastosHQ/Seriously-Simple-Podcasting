@@ -629,6 +629,7 @@ class Episode_Repository implements Service {
 				'title'                 => $episode->post_title,
 				'excerpt'               => ssp_get_episode_excerpt( $episode->ID ),
 				'player_id'             => wp_rand(),
+				'add_empty_warning'     => false,
 			);
 
 			return apply_filters( 'ssp_html_player_data', $template_data );

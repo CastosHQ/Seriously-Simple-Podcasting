@@ -133,8 +133,17 @@ class Players_Controller {
 	 */
 	public function render_html_player( $episode_id, $skip_empty_audio = true, $context = 'block' ) {
 		$template_data = $this->episode_repository->get_player_data( $episode_id, null, false );
-		if ( $skip_empty_audio && ! array_key_exists( 'audio_file', $template_data ) ) {
-			return '';
+
+		if ( $skip_empty_audio && empty( $template_data['audio_file'] ) ) {
+			$show_with_warning = is_admin() ||
+			                     'edit' === filter_input( INPUT_GET, 'context' ) ||
+			                     'elementor' === filter_input( INPUT_GET, 'action' );
+
+			if ( $show_with_warning ) {
+				$template_data['add_empty_warning'] = true;
+			} else {
+				return '';
+			}
 		}
 
 		$this->enqueue_player_assets();

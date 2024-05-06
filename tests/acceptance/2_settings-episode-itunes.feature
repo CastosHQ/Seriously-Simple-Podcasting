@@ -7,7 +7,7 @@ Feature: Create new episode
 		Given I login as admin
 
 	Scenario: "Enable iTunes fields" option works properly
-		When I click "Podcast" submenu "Add New"
+		When I click "Podcast" submenu "Add New Episode"
 		Then I can see "Add New Episode"
 		And I can not see "iTunes Episode Number:"
 		And I can not see "The iTunes Episode Number. Leave Blank If None."
@@ -22,7 +22,7 @@ Feature: Create new episode
 		Then I check "Enable iTunes fields" checkbox
 		And I save settings
 
-		When I click "Podcast" submenu "Add New"
+		When I click "Podcast" submenu "Add New Episode"
 		Then I can see "Add New Episode"
 		And I can see "iTunes Episode Number:"
 		And I can see "The iTunes Episode Number. Leave Blank If None."

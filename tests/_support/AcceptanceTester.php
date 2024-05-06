@@ -473,7 +473,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	}
 
 	protected function createEpisode( $args ) {
-		$this->iClickMenuSubmenu( 'Podcast', "Add New" );
+		$this->iClickMenuSubmenu( 'Podcast', "Add New Episode" );
 		$this->iFillTheFieldWith( 'Episode title', $args[0] );
 		$this->iFillTheFieldWith( 'Episode content', $args[1] );
 

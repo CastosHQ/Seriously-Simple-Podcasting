@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Rest;
 
-use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use WP_REST_Controller;

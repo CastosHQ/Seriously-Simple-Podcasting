@@ -121,7 +121,18 @@ class Onboarding_Controller {
 		add_submenu_page( '', __( $title, 'seriously-simple-podcasting' ), __( $title, 'seriously-simple-podcasting' ), Roles_Handler::MANAGE_PODCAST, $slug, $callable );
 	}
 
+	protected function maybe_update_feed_title() {
+		$default_series_id = ssp_get_default_series_id();
+		$title             = ssp_get_option( 'data_title', '', $default_series_id );
+		if ( ! $title ) {
+			$title = $this->settings_handler->get_feed_title( ssp_get_default_series_id() );
+			$title = $title ?: __( 'My First Show', 'seriously-simple-podcasting' );
+			ssp_update_option( 'data_title', $title, $default_series_id );
+		}
+	}
+
 	public function step_1() {
+		$this->maybe_update_feed_title();
 		$this->render( $this->get_step_data( 1 ), 'onboarding/step-1' );
 	}
 

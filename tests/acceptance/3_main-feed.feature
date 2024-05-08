@@ -54,7 +54,7 @@ Feature: Login
 		And I can see in source "<googleplay:description>This show is to test some SSP functionality</googleplay:description>"
 		And I can see in source "<googleplay:explicit>No</googleplay:explicit>"
 		And I can see in source "<podcast:locked>yes</podcast:locked>"
-		And I can see in source "<podcast:guid>{{podcast_guid}}</podcast:guid>"
+		And I can see in source "<podcast:guid>"
 
 		# Check items
 		And I can see in source "<title>Episode3</title>"

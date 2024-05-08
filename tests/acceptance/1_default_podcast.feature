@@ -17,5 +17,3 @@ Feature: Login
 		Then I can see that current url is "/feed/podcast/automated-test-show"
 		When I go to the "/feed/podcast/not-existing-feed"
 		Then I can see that current url is "/feed/podcast/automated-test-show"
-		Then I am on the plugins page
-		And I deactivate the SSP plugin

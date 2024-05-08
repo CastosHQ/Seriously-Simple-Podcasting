@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
-Tested up to: 6.4
+Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 3.2.0
+Stable tag: 3.3.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.3.0 =
+2024-05-08
+[UPDATE] Show the "Onboarding wizard" menu item for new users
+[UPDATE] Improved scheduled episodes sync - maximum 3 attempts
+[UPDATE] Hide player if no file provided
+[UPDATE] Cache Castos ads settings
+[FIX] Security improvements
 
 = 3.2.0 =
 2024-03-20

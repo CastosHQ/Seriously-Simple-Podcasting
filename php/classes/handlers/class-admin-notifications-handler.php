@@ -78,9 +78,6 @@ class Admin_Notifications_Handler implements Service {
 		// Check if a valid permalink structure is set and show a message
 		add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
 
-		// Check if the podcast feed category update message needs to trigger
-		add_action( 'admin_init', array( $this, 'check_category_update_required' ) );
-
 		// Trigger the Elementor Templates message
 		add_action( 'admin_init', array( $this, 'show_elementor_templates_available' ) );
 
@@ -536,80 +533,6 @@ class Admin_Notifications_Handler implements Service {
 		?>
 		<div class="notice notice-info is-dismissible">
 			<p><?php _e( $message, 'ssp' ); ?></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Checks to see if we need to notify the user about the category update
-	 */
-	public function check_category_update_required() {
-		// check if we're on version higher than 1.20.6, if so, dismiss and ignore this message
-		$ssp_version = get_option( 'ssp_version', '1.0.0' );
-		if ( version_compare( $ssp_version, '1.20.6', '>' ) ) {
-			update_option( 'ssp_categories_update_dismissed', 'true' );
-
-			return;
-		}
-
-		// check if the user has dismissed this notice previously
-		$ssp_categories_update_dismissed = get_option( 'ssp_categories_update_dismissed', 'false' );
-		if ( 'true' === $ssp_categories_update_dismissed ) {
-			return;
-		}
-		// trigger the notice
-		add_action( 'admin_notices', array( $this, 'categories_update_notice' ) );
-	}
-
-	/**
-	 * Show 'categories need updating' notice
-	 */
-	public function categories_update_notice() {
-		$feed_settings_url = add_query_arg(
-			array(
-				'post_type'                     => $this->token,
-				'page'                          => 'podcast_settings',
-				'tab'                           => 'feed-details',
-				'ssp_dismiss_categories_update' => 'true',
-			),
-			admin_url( 'edit.php' )
-		);
-
-		$ignore_message_url = add_query_arg( array(
-			'ssp_dismiss_categories_update' => 'true',
-			'nonce'                         => wp_create_nonce( 'dismiss_categories_update' ),
-		) );
-
-		$message             = __( 'Seriously Simple Podcasting\'s feed categories have been updated.', 'seriously-simple-podcasting' );
-		$feed_settings_link  = sprintf(
-			wp_kses(
-			// translators: Placeholder is the url to the Feed details
-				__( 'Please check your <a href="%s">Feed details</a>  to update your categories.', 'seriously-simple-podcasting' ),
-				array(
-					'a' => array(
-						'href' => array(),
-					),
-				)
-			),
-			esc_url( $feed_settings_url )
-		);
-		$ignore_message_link = sprintf(
-			wp_kses(
-			// translators: Placeholder is the url to dismiss the message
-				__( 'Alternatively you can <a href="%s">dismiss this message</a>.', 'seriously-simple-podcasting' ),
-				array(
-					'a' => array(
-						'href' => array(),
-					),
-				)
-			),
-			esc_url( $ignore_message_url )
-		);
-		?>
-		<div class="notice notice-info">
-			<p><?php echo $message; ?></p>
-			<p><?php echo $feed_settings_link; ?></p>
-			<p><?php echo $ignore_message_link; ?></p>
 		</div>
 		<?php
 	}

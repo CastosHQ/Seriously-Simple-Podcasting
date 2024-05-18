@@ -1148,7 +1148,10 @@ class Settings_Controller {
 	 * @return string
 	 */
 	public function render_external_import_form() {
-		$post_types = ssp_post_types( true );
+		$post_types = array( SSP_CPT_PODCAST ); // Make sure that podcast is the first in the list.
+		$post_types = array_merge( $post_types, ssp_post_types( false ) );
+
+
 		$series     = get_terms( 'series', array( 'hide_empty' => false ) );
 
 		return $this->renderer->fetch( 'settings/import-rss-form', compact( 'post_types', 'series' ) );

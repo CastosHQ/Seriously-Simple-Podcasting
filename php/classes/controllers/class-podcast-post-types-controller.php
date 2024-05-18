@@ -129,9 +129,35 @@ class Podcast_Post_Types_Controller {
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_episodes_status' ), 10, 2 );
 
 		add_action( 'ssp_check_episode_sync_status', array( $this, 'maybe_update_sync_status' ), 10, 2 );
+
+		// Handle translations
+		add_filter( 'pll_copy_post_metas', array( $this, 'handle_polylang_translations' ), 10, 3 );
 	}
 
-	public function add_custom_columns(){
+	/**
+	 * Handle Polylang translations - prevent copying episode meta fields.
+	 *
+	 * @param array $metas
+	 *
+	 * @return array
+	 */
+	public function handle_polylang_translations( $metas, $sync, $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! in_array( $post->post_type, ssp_post_types() ) ) {
+			return $metas;
+		}
+		$fields  = array_keys( $this->custom_fields( true ) );
+		$fields  = array_merge( $fields, array(
+			'enclosure',
+			'castos_sync_attempts',
+		) );
+		$allowed = array( 'cover_image', 'cover_image_id' );
+		$fields  = array_diff( $fields, $allowed );
+
+		return array_diff( $metas, $fields );
+	}
+
+	public function add_custom_columns() {
 		$ssp_post_types = ssp_post_types();
 		foreach ( $ssp_post_types as $post_type ) {
 			add_filter( 'manage_edit-' . $post_type . '_columns', array( $this, 'register_custom_column_headings' ), 20, 2 );
@@ -163,7 +189,7 @@ class Podcast_Post_Types_Controller {
 
 		// First, let's check if the podcast is still syncing and maybe update the status
 		if ( $syncing === $podcast_status || ! $podcast_status ) {
-			$sync_status = $this->castos_handler->get_podcast_sync_status( $series_id );
+			$sync_status    = $this->castos_handler->get_podcast_sync_status( $series_id );
 			$podcast_status = $sync_status->status;
 			$this->series_handler->update_sync_status( $series_id, $podcast_status );
 		}
@@ -238,9 +264,9 @@ class Podcast_Post_Types_Controller {
 	 * This function is needed for such cases:
 	 *  - when a new episode without series is created
 	 *  - when a new episode with series was first created as draft and then published.
-	 * For all other cases, @see notify_podping_on_series_added()
+	 * For all other cases, @param \WP_Post $post
+	 * @see notify_podping_on_series_added()
 	 *
-	 * @param \WP_Post $post
 	 */
 	public function notify_podping( $post_id, $post, $update, $post_before ) {
 
@@ -315,12 +341,12 @@ class Podcast_Post_Types_Controller {
 				return;
 			}
 
-			$remove_redundant_metas = function ( $post_id ){
+			$remove_redundant_metas = function ( $post_id ) {
 				$exclusions = [
 					'podmotor_file_id',
 					'podmotor_episode_id',
 					'audio_file',
-					'enclosure'
+					'enclosure',
 				];
 
 				foreach ( $exclusions as $exclusion ) {
@@ -336,7 +362,7 @@ class Podcast_Post_Types_Controller {
 			} );
 
 			// This is for Post Duplicator plugin
-			add_action( 'mtphr_post_duplicator_created', function() use ( $remove_redundant_metas, $post_id ) {
+			add_action( 'mtphr_post_duplicator_created', function () use ( $remove_redundant_metas, $post_id ) {
 				$remove_redundant_metas( $post_id );
 			} );
 
@@ -414,7 +440,7 @@ class Podcast_Post_Types_Controller {
 
 		$old_data = array();
 
-		$enclosure = '';
+		$enclosure     = '';
 		$old_enclosure = '';
 
 		foreach ( $field_data as $k => $field ) {
@@ -433,7 +459,7 @@ class Podcast_Post_Types_Controller {
 			}
 
 			if ( $k == 'audio_file' ) {
-				$enclosure = $val;
+				$enclosure     = $val;
 				$old_enclosure = get_post_meta( $post_id, $k, true );
 			}
 
@@ -490,11 +516,11 @@ class Podcast_Post_Types_Controller {
 	 *
 	 * @return bool
 	 */
-	public function save_podcast_action_check( $post ){
+	public function save_podcast_action_check( $post ) {
 		$podcast_post_types = ssp_post_types();
 
 		// Post type check
-		if (  ( 'trash' === $post->post_status ) || ! in_array( $post->post_type, $podcast_post_types ) ) {
+		if ( ( 'trash' === $post->post_status ) || ! in_array( $post->post_type, $podcast_post_types ) ) {
 			return false;
 		}
 
@@ -517,13 +543,13 @@ class Podcast_Post_Types_Controller {
 		global $pagenow;
 		add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details', 'seriously-simple-podcasting' ), array(
 			$this,
-			'meta_box_content'
+			'meta_box_content',
 		), $post->post_type, 'normal', 'high' );
 
 		if ( 'post.php' == $pagenow && 'publish' == $post->post_status && function_exists( 'get_post_embed_html' ) ) {
 			add_meta_box( 'episode-embed-code', __( 'Episode Embed Code', 'seriously-simple-podcasting' ), array(
 				$this,
-				'embed_code_meta_box_content'
+				'embed_code_meta_box_content',
 			), $post->post_type, 'side', 'low' );
 		}
 
@@ -569,7 +595,7 @@ class Podcast_Post_Types_Controller {
 
 		if ( 0 < count( $field_data ) ) {
 
-			$html .= '<input id="seriouslysimple_post_id" type="hidden" value="' . $post_id . '" />';
+			$html     .= '<input id="seriouslysimple_post_id" type="hidden" value="' . $post_id . '" />';
 			$renderer = ssp_renderer();
 
 			foreach ( $field_data as $k => $v ) {
@@ -603,16 +629,16 @@ class Podcast_Post_Types_Controller {
 						$file_data = new Castos_File_Data(
 							json_decode( get_post_meta( $post_id, 'castos_file_data', true ), true )
 						);
-						$html .= $renderer->fetch(
+						$html      .= $renderer->fetch(
 							'metafields/episode_file',
 							compact( 'k', 'v', 'data', 'is_castos', 'file_data' )
 						);
 						break;
 
 					case 'image':
-						$label = $v['name'];
+						$label       = $v['name'];
 						$description = $v['description'];
-						$html .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'data', 'k' ) );
+						$html        .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'data', 'k' ) );
 						break;
 
 					case 'checkbox':
@@ -656,10 +682,13 @@ class Podcast_Post_Types_Controller {
 
 	/**
 	 * Setup custom fields for episodes
+	 *
+	 * @param bool $all
+	 *
 	 * @return array Custom fields
 	 */
-	public function custom_fields() {
-		return $this->cpt_podcast_handler->custom_fields();
+	public function custom_fields( $all = false ) {
+		return $this->cpt_podcast_handler->custom_fields( $all );
 	}
 
 	/**

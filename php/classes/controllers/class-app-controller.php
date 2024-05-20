@@ -689,6 +689,7 @@ class App_Controller {
 	public function deactivate() {
 		flush_rewrite_rules();
 		$this->roles_handler->remove_custom_roles();
+		$this->castos_handler->remove_api_credentials();
 	}
 
 	/**

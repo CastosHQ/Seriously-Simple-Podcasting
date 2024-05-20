@@ -28,6 +28,10 @@ class Castos_Handler implements Service {
 	 * */
 	const TIMEOUT = 45;
 
+	const API_EMAIL_OPTION = 'ss_podcasting_podmotor_account_email';
+
+	const API_TOKEN_OPTION = 'ss_podcasting_podmotor_account_api_token';
+
 	/**
 	 * @var string
 	 */
@@ -58,11 +62,6 @@ class Castos_Handler implements Service {
 	 * */
 	protected $cached_podcast_statuses;
 
-	/**
-	 * @var array $cached_podcasts_response
-	 * */
-	protected $cached_podcasts_response;
-
 
 	/**
 	 * Castos_Handler constructor.
@@ -80,7 +79,7 @@ class Castos_Handler implements Service {
 	 */
 	protected function api_token(){
 		if ( ! isset( $this->api_token ) ) {
-			$this->api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
+			$this->api_token = get_option( self::API_TOKEN_OPTION, '' );
 		}
 		return $this->api_token;
 	}
@@ -105,6 +104,11 @@ class Castos_Handler implements Service {
 		$this->response[ $key ] = $value;
 	}
 
+	public function remove_api_credentials() {
+		delete_option( self::API_EMAIL_OPTION );
+		delete_option( self::API_TOKEN_OPTION );
+	}
+
 	/**
 	 * Connect to Castos API and validate API credentials
 	 *
@@ -126,9 +130,7 @@ class Castos_Handler implements Service {
 		/**
 		 * Clear out existing values
 		 */
-		delete_option( 'ss_podcasting_podmotor_account_email' );
-		delete_option( 'ss_podcasting_podmotor_account_api_token' );
-		delete_option( 'ss_podcasting_podmotor_account_id' );
+		$this->remove_api_credentials();
 
 		$api_url = SSP_CASTOS_APP_URL . 'api/v2/users/validate';
 

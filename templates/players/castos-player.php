@@ -23,22 +23,21 @@
  **/
 
 ?>
-
 <div id="<?php echo esc_attr( $player_id ); ?>" class="castos-player <?php echo esc_attr( $player_mode ) ?>-mode"
 	 data-episode="<?php echo esc_attr( $episode_id ) ?>" data-player_id="<?php echo esc_attr( $player_id ); ?>">
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo esc_attr( $episode_id ) ?>">
 				<img src="<?php echo esc_attr( apply_filters( 'ssp_album_art_cover', $album_art['src'], get_the_ID() ) ); ?>"
-					 alt="<?php echo isset( $album_art['alt'] ) ? esc_attr( $album_art['alt'] ) : esc_attr( $podcast_title ) ?>"
-					 title="<?php echo esc_attr( $podcast_title ) ?>">
+					 alt="<?php echo ! empty( $album_art['alt'] ) ? esc_attr( $album_art['alt'] ) : esc_attr( strip_tags( $podcast_title ) ); ?>"
+					 title="<?php echo esc_attr( strip_tags( $podcast_title ) ) ?>">
 			</div>
 			<div class="player__body">
 				<div class="currently-playing">
 					<div class="show player__podcast-title">
-						<?php echo esc_html( $podcast_title ) ?>
+						<?php echo wp_kses_post( $podcast_title ) ?>
 					</div>
-					<div class="episode-title player__episode-title"><?php echo esc_attr( $episode->post_title ); ?></div>
+					<div class="episode-title player__episode-title"><?php echo wp_kses_post( $episode->post_title ); ?></div>
 				</div>
 				<div class="play-progress">
 					<div class="play-pause-controls">
@@ -181,12 +180,12 @@
 					<li class="playlist__item<?php if ( 0 === $k ): ?> active<?php endif ?>"
 						data-episode="<?php echo esc_attr( $item['episode_id'] ); ?>">
 						<div class="playlist__item__cover">
-							<img src="<?php echo esc_attr( $item['album_art']['src'] ) ?>" title="<?php echo esc_attr( $item['title'] ); ?>" alt="<?php echo esc_attr( $item['title'] ) ?>"/>
+							<img src="<?php echo esc_attr( $item['album_art']['src'] ) ?>" title="<?php echo esc_attr( strip_tags( $item['title'] ) ); ?>" alt="<?php echo esc_attr( strip_tags( $item['title'] ) ) ?>"/>
 						</div>
 						<div class="playlist__item__details">
-							<h2 class="playlist__episode-title" data-podcast="<?php echo esc_attr( $item['podcast_title'] ); ?>"><?php echo esc_html( $item['title'] ) ?></h2>
+							<h2 class="playlist__episode-title" data-podcast="<?php echo esc_attr( $item['podcast_title'] ); ?>"><?php echo wp_kses_post( $item['title'] ) ?></h2>
 							<p><?php echo $item['date'] . ' • ' . $item['duration']; ?></p>
-							<p class="playlist__episode-description"><?php echo esc_html( $item['excerpt'] ); ?></p>
+							<p class="playlist__episode-description"><?php echo wp_kses_post( $item['excerpt'] ); ?></p>
 						</div>
 						<audio preload="none" class="clip clip-<?php echo esc_attr( $item['episode_id'] ) ?>">
 							<source src="<?php echo esc_attr( $item['audio_file'] ) ?>">

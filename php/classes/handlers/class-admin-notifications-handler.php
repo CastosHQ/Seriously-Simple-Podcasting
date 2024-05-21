@@ -71,10 +71,6 @@ class Admin_Notifications_Handler implements Service {
 
 		add_action( 'current_screen', array( $this, 'maybe_show_nginx_error_notice' ) );
 
-		add_action( 'admin_init', array( $this, 'revalidate_api_credentials' ) );
-
-		add_action( 'admin_init', array( $this, 'show_revalidate_api_credentials_for_20' ) );
-
 		// Check if a valid permalink structure is set and show a message
 		add_action( 'admin_init', array( $this, 'check_valid_permalink' ) );
 
@@ -411,107 +407,6 @@ class Admin_Notifications_Handler implements Service {
 		<?php
 	}
 
-	/**
-	 * Trigger an admin notice to require a user to revalidate their API
-	 */
-	public function show_revalidate_api_credentials_for_20() {
-		/**
-		 * Only trigger this if we're connected to Seriously Simple Hosting
-		 */
-		if ( ! ssp_is_connected_to_castos() ) {
-			return;
-		}
-		$castos_podmotor_account_id = get_option( 'ss_podcasting_podmotor_account_id', '' );
-		if ( empty( $castos_podmotor_account_id ) ) {
-			return;
-		}
-		if ( '2.0' === $castos_podmotor_account_id ) {
-			add_action( 'admin_notices', array( $this, 'revalidate_api_credentials_for_20_notice' ) );
-		}
-	}
-
-	/**
-	 * Show the admin notice to trigger re-validating the Castos API credentials
-	 */
-	public function revalidate_api_credentials_for_20_notice() {
-		$revalidate_api_credentials_url  = wp_nonce_url(
-			add_query_arg(
-				array( 'ssp_revalidate_api_credentials' => 'true' ),
-				admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST )
-			),
-			'revalidate-api-credentials'
-		);
-		$revalidate_api_credentials_link = sprintf(
-			wp_kses(
-			// translators: Placeholder is the url to trigger the action
-				__( 'In order to ensure that your WordPress site continues to connect to Castos, please click <a href="%s">this link</a> to re-validate your API credentials.', 'seriously-simple-podcasting' ),
-				array(
-					'a' => array(
-						'href' => array(),
-					),
-				)
-			),
-			esc_url( $revalidate_api_credentials_url )
-		);
-
-		$message = __( 'You\'ve recently upgraded Seriously Simple Podcasting to version 2.0 (or newer). This update includes some changes to how the plugin interacts with your Castos account.', 'seriously-simple-podcasting' );
-
-		?>
-		<div class="notice notice-info">
-			<p><?php echo $message; ?></p>
-			<p><?php echo $revalidate_api_credentials_link; ?></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Attempt to revalidate API credentials
-	 */
-	public function revalidate_api_credentials() {
-		if ( ! isset( $_GET['ssp_revalidate_api_credentials'] ) || ! current_user_can( 'manage_podcast' ) ) {
-			return;
-		}
-		check_admin_referer( 'revalidate-api-credentials' );
-		$ssp_revalidate_api_credentials = sanitize_key( $_GET['ssp_revalidate_api_credentials'] );
-		if ( 'true' !== $ssp_revalidate_api_credentials ) {
-			return;
-		}
-		$account_email     = get_option( 'ss_podcasting_podmotor_account_email', '' );
-		$account_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		$response          = $this->castos_handler->validate_api_credentials( $account_api_token, $account_email );
-		if ( 'success' === $response['status'] ) {
-			// Reset the details because they are cleared on validation
-			update_option( 'ss_podcasting_podmotor_account_email', $account_email );
-			update_option( 'ss_podcasting_podmotor_account_api_token', $account_api_token );
-			add_action( 'admin_notices', array( $this, 'api_credentials_revalidated' ) );
-		} else {
-			add_action( 'admin_notices', array( $this, 'api_credentials_invalid' ) );
-		}
-	}
-
-	/**
-	 * Show API credentials valid message
-	 */
-	public function api_credentials_revalidated() {
-		$message = __( 'Castos API credentials validated.', 'seriously-simple-podcasting' );
-		?>
-		<div class="notice notice-info is-dismissible">
-			<p><?php echo $message; ?></p>
-		</div>
-		<?php
-	}
-
-	/**
-	 * Show API credentials invalid message
-	 */
-	public function api_credentials_invalid() {
-		$message = __( 'Castos API credentials could not be validated. Please check your credentials from the Hosting tab of the Seriously Simple Podcasting Settings', 'seriously-simple-podcasting' );
-		?>
-		<div class="notice notice-error is-dismissible">
-			<p><?php echo $message; ?></p>
-		</div>
-		<?php
-	}
 
 	/**
 	 * Checks to see if a valid permalink structure is in place

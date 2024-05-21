@@ -1080,6 +1080,10 @@ class Frontend_Controller {
 			return '';
 		}
 
+		if ( '-1' == $episode_id ) {
+			$episode_id = $this->episode_repository->get_latest_episode_id();
+		}
+
 		// Get episode object
 		$episode = get_post( $episode_id );
 

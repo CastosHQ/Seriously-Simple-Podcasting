@@ -150,6 +150,8 @@ class Podcast_Post_Types_Controller {
 		$fields  = array_merge( $fields, array(
 			'enclosure',
 			'castos_sync_attempts',
+			'podmotor_episode_id',
+			'podmotor_file_id',
 		) );
 		$allowed = array( 'cover_image', 'cover_image_id' );
 		$fields  = array_diff( $fields, $allowed );

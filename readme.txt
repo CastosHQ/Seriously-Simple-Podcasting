@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.5
 Requires PHP: 7.4
-Stable tag: 3.3.1
+Stable tag: 3.4.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.4.0 =
+2024-05-28
+[UPDATE] Polylang compatibility
+[UPDATE] Clear Castos API Credentials upon plugin deactivation
+[UPDATE] Carry over podcast description to feed details when creating a new podcast
+[UPDATE] Improved [podcast_episode] shortcode - possibility to show the latest episode
+[FIX] Use podcast post type by default instead of post when importing from RSS
+[FIX] Improved player rendering, allowing links in the player title
+[FIX] Removed outdated plugin messages
 
 = 3.3.1 =
 2024-05-08

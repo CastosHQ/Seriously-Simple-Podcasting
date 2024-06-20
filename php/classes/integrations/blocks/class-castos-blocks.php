@@ -449,6 +449,10 @@ class Castos_Blocks {
 						$args['order'] = $attributes['order'];
 					}
 
+					if ( ! empty( $attributes['className'] ) ) {
+						$args['class'] = $attributes['className'];
+					}
+
 					$podcast_playlist = new Podcast_Playlist();
 
 					return $podcast_playlist->shortcode( $args );

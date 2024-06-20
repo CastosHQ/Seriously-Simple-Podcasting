@@ -131,8 +131,11 @@ class Players_Controller {
 	 *
 	 * @return string
 	 */
-	public function render_html_player( $episode_id, $skip_empty_audio = true, $context = 'block' ) {
+	public function render_html_player( $episode_id, $skip_empty_audio = true, $context = 'block', $args = array() ) {
 		$template_data = $this->episode_repository->get_player_data( $episode_id, null, false );
+		if ( isset( $args['className'] ) ) {
+			$template_data['class'] .= ' ' . $args['className'];
+		}
 
 		if ( $skip_empty_audio && empty( $template_data['audio_file'] ) ) {
 			$show_with_warning = is_admin() ||
@@ -285,7 +288,7 @@ class Players_Controller {
 			$template_data['playlist'][] = $this->episode_repository->get_player_data( $episode->ID );
 		}
 
-		return $this->renderer->render_deprecated( $template_data, 'players/castos-player' );
+		return $this->renderer->fetch( 'players/castos-player', $template_data );
 	}
 
 	/**

@@ -279,6 +279,7 @@ class Players_Controller {
 		global $wp;
 		$template_data['current_url'] = home_url( $wp->request );
 		$template_data['player_id']   = $player_id;
+		$template_data['class']       = $atts['class'];
 
 		if ( in_array( $atts['style'], array( 'light', 'dark' ) ) ) {
 			$template_data['player_mode'] = $atts['style'];
@@ -320,6 +321,7 @@ class Players_Controller {
 
 		$safe_type  = esc_attr( $atts['type'] );
 		$safe_style = esc_attr( $atts['style'] );
+		$class      = $atts['class'];
 
 		static $instance = 0;
 		$instance ++;
@@ -329,9 +331,9 @@ class Players_Controller {
 			do_action( 'wp_playlist_scripts', $atts['type'], $atts['style'] );
 		}
 
-		return $this->renderer->render_deprecated(
-			compact('safe_style', 'safe_type', 'data', 'width', 'height'),
-			'players/playlist-compact-player'
+		return $this->renderer->fetch(
+			'players/playlist-compact-player',
+			compact('safe_style', 'safe_type', 'data', 'width', 'height', 'class')
 		);
 	}
 

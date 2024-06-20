@@ -49,7 +49,7 @@ class Podcast_Playlist implements Shortcode {
 		$this->prepare_properties();
 
 		$atts     = $this->prepare_atts( $params );
-		$episodes = $this->ss_podcasting->players_controller->get_playlist_episodes( $atts );
+		$episodes = $this->ss_podcasting->episode_repository->get_episodes( $atts );
 
 		if ( empty ( $episodes ) ) {
 			return '';
@@ -111,13 +111,14 @@ class Podcast_Playlist implements Shortcode {
 				'orderby'      => 'menu_order ID',
 				'include'      => '',
 				'exclude'      => '',
-				'style'        => 'light',
+				'style'        => get_option( 'ss_podcasting_player_mode', 'light' ),
 				'player_style' => 'standard',
 				'tracklist'    => true,
 				'tracknumbers' => true,
 				'images'       => true,
 				'limit'        => 10,
 				'page'         => 1,
+				'class'        => '',
 			),
 			$params,
 			'podcast_playlist'

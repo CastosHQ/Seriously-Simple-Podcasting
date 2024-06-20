@@ -7,10 +7,11 @@
  * @var string $width
  * @var string $height
  * @var array $data
+ * @var string $class
  **/
 ?>
 
-<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?>">
+<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?> <?php echo esc_attr( $class ) ?>">
 	<<?php echo $safe_type ?> controls="controls" preload="none" width="<?php echo (int) $width; ?>"<?php
 	if ( 'video' === $safe_type ):
 		echo ' height="', (int) $height, '"';

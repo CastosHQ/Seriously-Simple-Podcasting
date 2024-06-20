@@ -20,10 +20,11 @@
  * @var bool $show_share_button
  * @var int $player_id
  * @var bool $add_empty_warning
+ * @var bool $class
  **/
 
 ?>
-<div id="<?php echo esc_attr( $player_id ); ?>" class="castos-player <?php echo esc_attr( $player_mode ) ?>-mode"
+<div id="<?php echo esc_attr( $player_id ); ?>" class="castos-player <?php echo esc_attr( $class ) ?> <?php echo esc_attr( $player_mode ) ?>-mode"
 	 data-episode="<?php echo esc_attr( $episode_id ) ?>" data-player_id="<?php echo esc_attr( $player_id ); ?>">
 	<div class="player">
 		<div class="player__main">

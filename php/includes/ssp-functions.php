@@ -7,6 +7,7 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Series_Repository;
@@ -668,33 +669,39 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 	 * @since     1.0.0
 	 */
 	function ssp_readfile_chunked( $file, $retbytes = true ) {
+		try {
+			$chunksize = 1 * ( 1024 * 1024 );
+			$cnt       = 0;
 
-		$chunksize = 1 * ( 1024 * 1024 );
-		$cnt       = 0;
+			$handle = fopen( $file, 'r' );
+			if ( false === $handle ) {
+				return false;
+			}
 
-		$handle = fopen( $file, 'r' );
-		if ( false === $handle ) {
+			while ( ! feof( $handle ) ) {
+				$buffer = fread( $handle, $chunksize );
+				echo $buffer;
+				ob_flush();
+				flush();
+
+				if ( $retbytes ) {
+					$cnt += strlen( $buffer );
+				}
+			}
+
+			$status = fclose( $handle );
+
+			if ( $retbytes && $status ) {
+				return $cnt;
+			}
+
+			return $status;
+		} catch ( \Throwable $e ) {
+			$logger = new Log_Helper();
+			$logger->log( 'Error in ' . __FUNCTION__ . ': ' . $e->getMessage(), 'File: ' . $file );
+
 			return false;
 		}
-
-		while ( ! feof( $handle ) ) {
-			$buffer = fread( $handle, $chunksize );
-			echo $buffer;
-			ob_flush();
-			flush();
-
-			if ( $retbytes ) {
-				$cnt += strlen( $buffer );
-			}
-		}
-
-		$status = fclose( $handle );
-
-		if ( $retbytes && $status ) {
-			return $cnt;
-		}
-
-		return $status;
 	}
 }
 

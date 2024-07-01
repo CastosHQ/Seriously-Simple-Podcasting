@@ -273,11 +273,11 @@ class App_Controller {
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
-		$this->ajax_handler = new Ajax_Handler( $this->castos_handler );
+		$this->admin_notices_handler = new Admin_Notifications_Handler();
+
+		$this->ajax_handler = new Ajax_Handler( $this->castos_handler, $this->admin_notices_handler );
 
 		$this->podping_handler = new Podping_Handler( $this->logger );
-
-		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
 
 		$this->assets_controller = new Assets_Controller();
 

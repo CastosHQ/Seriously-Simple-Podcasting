@@ -45,20 +45,12 @@ class Admin_Notifications_Handler implements Service {
 	const ERROR = 'error';
 	const SUCCESS = 'success';
 
-	/**
-	 * @var Castos_Handler $castos_handler
-	 * */
-	protected $castos_handler;
 
 	/**
 	 * Admin_Notifications_Handler constructor.
-	 *
-	 * @param Castos_Handler $castos_handler
-	 */
-	public function __construct( $castos_handler ) {
+	 **/
+	public function __construct() {
 		$this->init_useful_variables();
-
-		$this->castos_handler = $castos_handler;
 
 		return $this;
 	}

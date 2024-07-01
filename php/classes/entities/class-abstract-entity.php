@@ -26,7 +26,7 @@ abstract class Abstract_Entity {
      *
      * @param array $properties Array of message properties.
      */
-    public function __construct( $properties ) {
+    public function __construct( $properties = array() ) {
         foreach ( get_object_vars( $this ) as $k => $v ) {
             if ( is_array( $properties ) ) {
                 $this->fill_with_array( $properties, $k );

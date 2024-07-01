@@ -4,21 +4,16 @@
  * */
 return array(
 	'title'    => __( 'Hosting', 'seriously-simple-podcasting' ),
+	'button_text' => __( 'Connect', 'seriously-simple-podcasting' ),
+	'button_class' => 'castos-connect disabled hidden',
 	'sections' => array(
 		'credentials' => array(
+			'condition_callback' => function () {
+				return ! ssp_is_connected_to_castos();
+			},
 			'title'       => __( 'Podcast Hosting', 'seriously-simple-podcasting' ),
 			'description' => sprintf( __( 'Connect your WordPress site to your %s account.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . '">Castos</a>' ),
 			'fields'      => array(
-				array(
-					'id'          => 'podmotor_account_email',
-					'type'        => 'text',
-					'label'       => __( 'Your email', 'seriously-simple-podcasting' ),
-					'description' => __( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ),
-					'default'     => '',
-					'placeholder' => __( 'email@domain.com', 'seriously-simple-podcasting' ),
-					'callback'    => 'esc_email',
-					'class'       => 'regular-text',
-				),
 				array(
 					'id'          => 'podmotor_account_api_token',
 					'type'        => 'text',
@@ -28,12 +23,6 @@ return array(
 					'placeholder' => __( 'Enter your api key', 'seriously-simple-podcasting' ),
 					'callback'    => 'sanitize_text_field',
 					'class'       => 'regular-text',
-				),
-				array(
-					'id'    => 'validate_api_credentials',
-					'type'  => 'button',
-					'label' => esc_attr( __( 'Verify Credentials', 'seriously-simple-podcasting' ) ),
-					'class' => 'button-primary',
 				),
 			),
 		),
@@ -67,13 +56,13 @@ return array(
 			'no_store'           => true,
 			'fields'             => array(
 				array(
-					'id'          => 'podmotor_disconnect',
-					'label'       => __( 'Disconnect Castos', 'seriously-simple-podcasting' ),
+					'id'          => 'disconnect_castos',
+					'label'       => __( 'Disconnect', 'seriously-simple-podcasting' ),
 					'description' => __( 'Select this if you wish to disconnect your Castos account.', 'seriously-simple-podcasting' ),
-					'type'        => 'checkbox',
+					'type'        => 'button',
 					'default'     => '',
 					'callback'    => 'wp_strip_all_tags',
-					'class'       => 'disconnect-castos',
+					'class'       => 'disconnect-castos button',
 				),
 			),
 		),

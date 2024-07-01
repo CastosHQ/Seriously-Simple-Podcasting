@@ -749,9 +749,8 @@ if ( ! function_exists( 'ssp_is_connected_to_castos' ) ) {
 		if ( $cache = wp_cache_get( $cache_key ) ) {
 			return $cache;
 		}
-		$podmotor_email     = get_option( 'ss_podcasting_podmotor_account_email', '' );
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		if ( ! empty( $podmotor_email ) && ! empty( $podmotor_api_token ) ) {
+		if ( ! empty( $podmotor_api_token ) ) {
 			$is_connected = true;
 		}
 

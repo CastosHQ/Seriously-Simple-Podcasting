@@ -80,6 +80,7 @@ class Castos_Handler implements Service {
 		add_filter( 'http_request_args', array( $this, 'authorization_headers' ), 10, 2 );
 	}
 
+
 	/**
 	 * Adds authorization headers
 	 *

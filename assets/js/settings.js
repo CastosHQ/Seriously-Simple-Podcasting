@@ -52,8 +52,8 @@ jQuery(document).ready(function($) {
 		  });
 	  },
 	  /**
-		* Validate the api credentials
-		*/
+	   * Validate the api credentials
+	   */
 	  initConnect = function () {
 		  $connectBtn.on('click', function (e) {
 			  e.preventDefault();

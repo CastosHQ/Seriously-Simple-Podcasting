@@ -348,7 +348,7 @@ class Settings_Controller {
 				$is_section_valid = true;
 				if ( isset( $section_data['condition_callback'] ) ) {
 					$callback = $section_data['condition_callback'];
-					if ( is_string( $callback ) && function_exists( $callback ) ) {
+					if ( is_callable( $callback ) ) {
 						$is_section_valid = call_user_func( $callback );
 					}
 				}
@@ -619,7 +619,7 @@ class Settings_Controller {
 		$tab = empty( $q_args['tab'] ) ? 'general' : $q_args['tab'];
 
 		$html .= $this->show_page_messages();
-		$html .= '<div id="ssp-main-settings">' . "\n";
+		$html .= '<div id="ssp-main-settings" class="ssp-main-settings tab-' . esc_attr( $tab ) . '">' . "\n";
 		$html .= $this->show_page_tabs();
 		$html .= $this->show_tab_before_settings( $tab );
 		$html .= $this->show_tab_settings( $tab );
@@ -805,10 +805,18 @@ class Settings_Controller {
 		$disable_save_button_on_tabs = array( 'extensions', 'import' );
 
 		if ( ! in_array( $tab, $disable_save_button_on_tabs ) ) {
+			$button_text = isset( $this->settings[$tab]['button_text'] ) ?
+				$this->settings[$tab]['button_text'] :
+				__( 'Save Settings', 'seriously-simple-podcasting' );
+			$button_class = 'button-primary ssp-settings-submit';
+			$button_class .= isset( $this->settings[$tab]['button_class'] ) ?
+				' ' . $this->settings[$tab]['button_class'] : '';
+
 			// Submit button
 			$html .= '<p class="submit">' . "\n";
 			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+			$html .= '<button id="ssp-settings-submit" name="Submit" type="submit" class="' .
+			         esc_attr($button_class) . '">' . esc_attr( $button_text ) . '</button>' . "\n";
 			$html .= '</p>' . "\n";
 		}
 

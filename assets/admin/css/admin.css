@@ -229,8 +229,6 @@ textarea#episode_embed_code {
   .ssp-settings table input.regular-text {
     max-width: 90%;
     background: #F1F5F9; }
-  .ssp-settings .validate-api-credentials-message {
-    margin-left: 30px; }
   .ssp-settings .loader {
     position: relative; }
     .ssp-settings .loader:after {
@@ -252,6 +250,32 @@ textarea#episode_embed_code {
       color: #DF4E4F; }
     .ssp-settings .ssp-sync-msg.success .sync-overview {
       color: #4caf50; }
+
+.ssp-main-settings .error {
+  color: #DF4E4F; }
+
+.ssp-main-settings .hidden {
+  display: none; }
+
+.ssp-main-settings .disconnect-castos {
+  margin-right: 8px;
+  vertical-align: middle; }
+
+.ssp-main-settings.tab-castos-hosting .loader {
+  position: relative; }
+  .ssp-main-settings.tab-castos-hosting .loader:after {
+    content: '';
+    display: block;
+    background: url(../img/loader2.svg) no-repeat;
+    position: absolute;
+    right: -50px;
+    top: -9px;
+    background-size: contain;
+    width: 44px;
+    height: 44px; }
+
+.connect-castos-message {
+  margin-left: 20px; }
 
 .ssp-sync-podcast {
   display: flex;

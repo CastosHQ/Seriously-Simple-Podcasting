@@ -6,6 +6,7 @@ namespace SeriouslySimplePodcasting\Handlers;
 use Exception;
 use SeriouslySimplePodcasting\Entities\API_File_Data;
 use SeriouslySimplePodcasting\Entities\API_Podcast;
+use SeriouslySimplePodcasting\Entities\Castos_Response;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Entities\Episode_File_Data;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
@@ -135,9 +136,54 @@ class Castos_Handler implements Service {
 	}
 
 	public function remove_api_credentials() {
-		delete_option( self::API_EMAIL_OPTION );
+		delete_option( self::API_EMAIL_OPTION ); // Not used since 3.5.0
 		delete_option( self::API_TOKEN_OPTION );
 	}
+
+	/**
+	 * Connect to Castos API and validate API credentials
+	 *
+	 * @param string $account_api_token
+	 *
+	 * @return Castos_Response
+	 */
+	public function connect( $account_api_token ) {
+
+		$response = new Castos_Response();
+
+		if ( empty( $account_api_token ) ) {
+			$response->message = 'Invalid API Token.';
+
+			return $response;
+		}
+
+		$api_url = SSP_CASTOS_APP_URL . 'api/v2/ssp/connect';
+
+		$this->logger->log( 'Connecting to Castos : API URL', $api_url );
+
+		$args = array(
+			'timeout' => 45,
+			'body'    => array(
+				'website' => get_home_url(),
+			),
+			'headers' => array(
+				'Authorization' => 'Bearer ' . $account_api_token,
+			),
+		);
+
+		$app_response = wp_remote_post( $api_url, $args );
+
+		$this->logger->log( 'Connect to Castos: App Response', $app_response );
+
+		$response->update( $app_response );
+
+		return $response;
+	}
+
+	public function set_token( $token ) {
+		update_option( self::API_TOKEN_OPTION, $token );
+	}
+
 
 	/**
 	 * Connect to Castos API and validate API credentials

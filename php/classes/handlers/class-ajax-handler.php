@@ -15,12 +15,19 @@ class Ajax_Handler {
 	protected $castos_handler;
 
 	/**
+	 * @var Admin_Notifications_Handler $admin_notices_handler
+	 * */
+	protected $admin_notices_handler;
+
+	/**
 	 * Ajax_Handler constructor.
 	 *
 	 * @param Castos_Handler $castos_handler
+	 * @param Admin_Notifications_Handler $admin_notices_handler
 	 */
-	public function __construct( $castos_handler ) {
+	public function __construct( $castos_handler, $admin_notices_handler ) {
 		$this->castos_handler = $castos_handler;
+		$this->admin_notices_handler = $admin_notices_handler;
 
 		$this->bootstrap();
 	}
@@ -32,8 +39,9 @@ class Ajax_Handler {
 		// Add ajax action for plugin rating
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 
-		// Add ajax action for plugin rating.
-		add_action( 'wp_ajax_validate_castos_credentials', array( $this, 'validate_podmotor_api_credentials' ) );
+		add_action( 'wp_ajax_connect_castos', array( $this, 'connect_castos' ) );
+
+		add_action( 'wp_ajax_disconnect_castos', array( $this, 'disconnect_castos' ) );
 
 		// Add ajax action for customising episode embed code
 		add_action( 'wp_ajax_update_episode_embed_code', array( $this, 'update_episode_embed_code' ) );
@@ -168,24 +176,45 @@ class Ajax_Handler {
 		return __( 'Error', 'seriously-simple-podcasting' );
 	}
 
+	public function disconnect_castos() {
+		$this->castos_handler->remove_api_credentials();
+		$this->admin_notices_handler->add_flash_notice(
+			__( 'Castos account successfully disconnected.', 'seriously-simple-podcasting' )
+		);
+		wp_send_json_success();
+	}
+
 	/**
 	 * Validate the Seriously Simple Hosting api credentials
 	 */
-	public function validate_podmotor_api_credentials() {
+	public function connect_castos() {
 		try {
 			$this->nonce_check('ss_podcasting_castos-hosting');
 			$this->user_capability_check();
 
-			if ( ! isset( $_GET['api_token'] ) || ! isset( $_GET['email'] ) ) {
+			if ( ! isset( $_GET['api_token'] ) ) {
 				throw new \Exception( __('Castos arguments not set', 'seriously-simple-podcasting') );
 			}
 
 			$account_api_token = sanitize_text_field( $_GET['api_token'] );
-			$account_email     = sanitize_text_field( $_GET['email'] );
 
-			$response       = $this->castos_handler->validate_api_credentials( $account_api_token, $account_email );
-			wp_send_json( $response );
+			$response       = $this->castos_handler->connect( $account_api_token );
+			if ( ! $response->success ) {
+				throw new \Exception( $response->message );
+			}
+
+			//$response       = $this->castos_handler->validate_api_credentials( $account_api_token, $account_email );
+
+			$this->castos_handler->set_token( $account_api_token );
+
+			$this->admin_notices_handler->add_flash_notice( $response->message, Admin_Notifications_Handler::SUCCESS );
+
+			wp_send_json( [
+				'status'  => $response->status,
+				'message' => $response->message,
+			] );
 		} catch ( \Exception $e ) {
+			$this->castos_handler->remove_api_credentials();
 			$this->send_json_error( $e->getMessage() );
 		}
 	}

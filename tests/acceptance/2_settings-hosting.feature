@@ -14,6 +14,6 @@ Feature: SSP Plugin Hosting Settings
 		Then I can see "Podcast Hosting"
 		And I can see "Your email"
 		And I can see "The email address you used to register your Castos account."
-		And I can see "Castos API key"
-		And I can see "Your Castos API key. Available from your Castos account dashboard."
+		And I can see "Castos API token"
+		And I can see "Your Castos API token. Available from your Castos account dashboard."
 		And I can see "Verify Credentials"

@@ -501,6 +501,8 @@ textarea#episode_embed_code {
     right: 350px; }
   .ssp-onboarding-step-4 .ssp-onboarding__steps::after {
     right: 180px; }
+  .ssp-onboarding-step-4 .ssp-onboarding__settings-body {
+    padding: 24px 24px 36px; }
   .ssp-onboarding-step-4__info {
     display: flex;
     flex-direction: column;
@@ -693,7 +695,7 @@ textarea#episode_embed_code {
     z-index: 0;
     visibility: hidden;
     transition: .6s;
-    margin-top: -444px; }
+    margin-top: -345px; }
     .ssp-onboarding-step-4__form--opened {
       visibility: visible;
       margin-top: 0; }
@@ -783,6 +785,12 @@ textarea#episode_embed_code {
     text-align: right;
     margin-top: 25px;
     position: relative; }
+    .ssp-onboarding__submit span.connect-castos-message {
+      position: absolute;
+      left: 0;
+      bottom: -24px;
+      margin-left: 0;
+      display: block; }
     .ssp-onboarding__submit button[type=submit], .ssp-onboarding__submit .button {
       position: relative;
       height: 50px;
@@ -828,39 +836,56 @@ textarea#episode_embed_code {
         background: #516178; }
     .ssp-onboarding__submit .button span {
       line-height: 50px; }
-    .ssp-onboarding__submit .validate-token {
+    .ssp-onboarding__submit .castos-connect {
       float: left;
       position: relative;
       padding: 0 20px 0 45px; }
-      .ssp-onboarding__submit .validate-token:after {
+      .ssp-onboarding__submit .castos-connect:after {
         content: '';
         display: block;
         position: absolute;
-        background: url(../img/validate.svg) no-repeat;
-        background-size: cover;
-        left: 19px;
-        top: 17px;
-        width: 14px;
-        height: 18px;
-        filter: none; }
-      .ssp-onboarding__submit .validate-token.validating {
-        background: #374151; }
-        .ssp-onboarding__submit .validate-token.validating:hover, .ssp-onboarding__submit .validate-token.validating:active, .ssp-onboarding__submit .validate-token.validating:focus {
-          background: #374151; }
-        .ssp-onboarding__submit .validate-token.validating:after {
+        background: url(../img/connect.svg) no-repeat;
+        left: 13px;
+        top: 13px;
+        width: 25px;
+        height: 23px;
+        filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(198deg) brightness(101%) contrast(102%);
+        background-size: contain; }
+      .ssp-onboarding__submit .castos-connect:disabled {
+        background: #9CA3AF !important;
+        color: #D1D5DB !important; }
+        .ssp-onboarding__submit .castos-connect:disabled:after {
+          filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
+          transition: none; }
+      .ssp-onboarding__submit .castos-connect.connecting {
+        background: #DE7373 !important;
+        color: #FFFFFF !important; }
+        .ssp-onboarding__submit .castos-connect.connecting:hover, .ssp-onboarding__submit .castos-connect.connecting:active, .ssp-onboarding__submit .castos-connect.connecting:focus, .ssp-onboarding__submit .castos-connect.connecting:disabled {
+          background: #DE7373; }
+        .ssp-onboarding__submit .castos-connect.connecting:after {
           width: 17px;
           height: 18px;
-          background-image: url(../img/validating.svg); }
-      .ssp-onboarding__submit .validate-token.valid {
-        background: #10B981;
-        padding: 0 16px 0 45px; }
-        .ssp-onboarding__submit .validate-token.valid:hover, .ssp-onboarding__submit .validate-token.valid:active, .ssp-onboarding__submit .validate-token.valid:focus {
+          background-image: url(../img/connecting.svg);
+          animation: rotation 2s infinite linear;
+          filter: none;
+          transition: none;
+          top: 15px;
+          left: 15px; }
+      .ssp-onboarding__submit .castos-connect.connected {
+        background: #10B981 !important;
+        color: #FFFFFF !important;
+        padding: 0 16px 0 45px;
+        opacity: .7; }
+        .ssp-onboarding__submit .castos-connect.connected:hover, .ssp-onboarding__submit .castos-connect.connected:active, .ssp-onboarding__submit .castos-connect.connected:focus {
           background: #10B981; }
-        .ssp-onboarding__submit .validate-token.valid:after {
-          width: 16px;
-          height: 12px;
-          top: 19px;
-          background-image: url(../img/checkbox.svg); }
+        .ssp-onboarding__submit .castos-connect.connected:after {
+          background-image: url(../img/connect.svg);
+          left: 13px;
+          top: 13px;
+          width: 25px;
+          height: 23px;
+          filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(198deg) brightness(101%) contrast(102%);
+          background-size: contain; }
   .ssp-onboarding__image-info {
     position: absolute;
     display: flex;
@@ -898,10 +923,6 @@ textarea#episode_embed_code {
       transform: rotate(-45deg); }
     .ssp-onboarding__delete-image:hover:before, .ssp-onboarding__delete-image:hover:after {
       background: #fff; }
-  .ssp-onboarding .validate-api-credentials-message {
-    position: absolute;
-    left: 0;
-    bottom: -18px; }
   .ssp-onboarding__links {
     display: flex;
     text-align: left; }

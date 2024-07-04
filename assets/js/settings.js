@@ -59,6 +59,7 @@ jQuery(document).ready(function($) {
 			  e.preventDefault();
 			  e.stopPropagation();
 			  $connectBtn.prop('disabled', 'disabled');
+			  $connectBtn.trigger('connecting');
 
 			  var podmotor_account_api_token = $('#podmotor_account_api_token').val(),
 				  nonce = $('#podcast_settings_tab_nonce').val(),
@@ -83,10 +84,14 @@ jQuery(document).ready(function($) {
 				  },
 			  })
 			  .done(function (response) {
+				  $connectBtn.trigger('connected', response);
 				  if (response.status === 'success') {
-					  $connectBtn.addClass('valid');
-					  $connectBtn.trigger('validated'); // todo: onboarding
-					  window.location.reload();
+					  $connectBtn.addClass('connected');
+					  if ( ! $connectBtn.data( 'no-reload' ) ) {
+						  window.location.reload();
+					  } else {
+						  $msg.html( response.message );
+					  }
 				  } else {
 					  $connectBtn.removeClass('loader');
 					  $msg.addClass('error');

@@ -17,8 +17,8 @@ return array(
 				array(
 					'id'          => 'podmotor_account_api_token',
 					'type'        => 'text',
-					'label'       => __( 'Castos API key', 'seriously-simple-podcasting' ),
-					'description' => __( 'Your Castos API key. Available from your Castos account dashboard.', 'seriously-simple-podcasting' ),
+					'label'       => __( 'Castos API token', 'seriously-simple-podcasting' ),
+					'description' => __( 'Your Castos API token. Available from your Castos account dashboard.', 'seriously-simple-podcasting' ),
 					'default'     => '',
 					'placeholder' => __( 'Enter your api key', 'seriously-simple-podcasting' ),
 					'callback'    => 'sanitize_text_field',

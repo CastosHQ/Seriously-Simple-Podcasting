@@ -198,12 +198,10 @@ class Ajax_Handler {
 
 			$account_api_token = sanitize_text_field( $_GET['api_token'] );
 
-			$response       = $this->castos_handler->connect( $account_api_token );
+			$response = $this->castos_handler->connect( $account_api_token );
 			if ( ! $response->success ) {
 				throw new \Exception( $response->message );
 			}
-
-			//$response       = $this->castos_handler->validate_api_credentials( $account_api_token, $account_email );
 
 			$this->castos_handler->set_token( $account_api_token );
 
@@ -214,13 +212,14 @@ class Ajax_Handler {
 				'message' => $response->message,
 			] );
 		} catch ( \Exception $e ) {
+			usleep( 500000 ); // Add a 0.5s delay to ensure smoother transitions on the frontend.
 			$this->castos_handler->remove_api_credentials();
 			$this->send_json_error( $e->getMessage() );
 		}
 	}
 
 	/**
-	 * Update the epiaode embed code via ajax
+	 * Update the episode embed code via ajax
 	 * @return void
 	 */
 	public function update_episode_embed_code() {

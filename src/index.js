@@ -147,3 +147,9 @@ registerBlockType('seriously-simple-podcasting/playlist-player', {
 registerPlugin( 'post-publish-panel', {
 	render: PostPublishPanel
 } );
+
+import EpisodeSyncStatus from './components/EpisodeSyncStatus';
+
+registerPlugin('episode-sync-status', {
+	render: EpisodeSyncStatus,
+});

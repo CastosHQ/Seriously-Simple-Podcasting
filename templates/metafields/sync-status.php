@@ -10,13 +10,13 @@
 		</label>
 	</div>
 	<div class="ssp-episode-sync-status__data">
-			<span class="ssp-sync-label ssp-full-label <?php echo esc_attr( $status->status ) ?>"
+			<span class="ssp-sync-label js-ssp-sync-label ssp-full-label <?php echo esc_attr( $status->status ) ?>"
 				  title="<?php echo esc_html( $status->title ) ?>">
 			<?php echo esc_html( $status->title ) ?>
 			</span>
-		<span><?php echo esc_html( $status->message ) ?></span>
+		<span class="js-ssp-sync-message"><?php echo esc_html( $status->message ) ?></span>
 	</div>
-	<div class="ssp-episode-sync-status__description">
+	<div class="ssp-episode-sync-status__description js-ssp-sync-description">
 		<?php echo $status->error; ?>
 	</div>
 </div>

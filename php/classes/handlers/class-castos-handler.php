@@ -7,6 +7,7 @@ use Exception;
 use SeriouslySimplePodcasting\Entities\API_File_Data;
 use SeriouslySimplePodcasting\Entities\API_Podcast;
 use SeriouslySimplePodcasting\Entities\Castos_Response;
+use SeriouslySimplePodcasting\Entities\Castos_Response_Episode;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Entities\Episode_File_Data;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
@@ -306,115 +307,89 @@ class Castos_Handler implements Service {
 	 *
 	 * @param \WP_Post $post
 	 *
-	 * @return array
+	 * @return Castos_Response_Episode
 	 */
 	public function upload_episode_to_castos( $post ) {
 
-		$this->setup_default_response();
+		$response = new Castos_Response_Episode();
 
-		if ( empty( $post ) || empty( $post->ID ) || empty( $post->post_title ) ) {
-			$this->update_response( 'message', 'Invalid Podcast data' );
-			$this->logger->log( 'Invalid Podcast data when uploading podcast data' );
+		try {
+			if ( empty( $post ) || empty( $post->ID ) || empty( $post->post_title ) ) {
+				throw new \Exception( __( 'Invalid episode data when uploading to Castos', 'seriously-simple-podcasting' ) );
+			}
 
-			return $this->response;
+			$api_url = SSP_CASTOS_APP_URL . 'api/v2/posts/create';
+
+			/**
+			 * Don't trigger this unless we have a valid file id
+			 */
+			$podmotor_file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
+			if ( empty( $podmotor_file_id ) ) {
+				throw new \Exception(__( 'Invalid file data when uploading the episode to Castos', 'seriously-simple-podcasting') );
+			}
+
+			/**
+			 * Don't trigger this unless we have a valid file id
+			 */
+			$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
+			if ( $podmotor_episode_id ) {
+				$api_url = SSP_CASTOS_APP_URL . 'api/v2/posts/update';
+			}
+
+			$series_id = ssp_get_episode_series_id( $post->ID );
+
+			$post_body = array(
+				'token'          => $this->api_token(),
+				'post_id'        => $post->ID,
+				'post_title'     => $post->post_title,
+				'post_content'   => $this->get_episode_content( $post->ID, $series_id ),
+				'keywords'       => get_keywords_for_episode( $post->ID ),
+				'series_number'  => get_post_meta( $post->ID, 'itunes_season_number', true ),
+				'episode_number' => get_post_meta( $post->ID, 'itunes_episode_number', true ),
+				'episode_type'   => get_post_meta( $post->ID, 'itunes_episode_type', true ),
+				'post_date'      => $post->post_date,
+				'post_date_gmt'  => $post->post_date_gmt,
+				'file_id'        => $podmotor_file_id,
+				'series_id'      => $series_id,
+			);
+
+			if ( ! empty( $podmotor_episode_id ) ) {
+				$post_body['id'] = $podmotor_episode_id;
+			}
+
+			$this->logger->log( 'API URL', $api_url );
+
+			$episode_image_url = $this->get_episode_image_url( $post );
+			if ( ! empty( $episode_image_url ) ) {
+				$post_body['featured_image_url'] = $episode_image_url;
+			}
+
+			$this->logger->log( 'Post body', $post_body );
+
+			$options = array(
+				'body'    => wp_json_encode( $post_body ),
+				'headers' => array(
+					'Content-Type' => 'application/json',
+				),
+				'timeout' => 60,
+			);
+
+			$app_response = wp_remote_post( $api_url, $options );
+
+			$this->logger->log( 'Upload episode app_response', $app_response );
+
+			if ( is_wp_error( $app_response ) ) {
+				throw new \Exception( $app_response->get_error_message() );
+			}
+
+			$response->update( $app_response );
+
+			return $response;
+		} catch(\Exception $e) {
+			$this->logger->log( __METHOD__ . ': ' . $e->getMessage() . '; $post:' . serialize( $post ) );
+			$response->message = $e->getMessage();
+			return $response;
 		}
-
-		/**
-		 * Don't trigger this unless we have a valid PodcastMotor file id
-		 */
-		$podmotor_file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
-		if ( empty( $podmotor_file_id ) ) {
-			$this->update_response( 'message', 'Invalid Podcast file data' );
-			$this->logger->log( 'Invalid Podcast file data when uploading podcast data' );
-
-			return $this->response;
-		}
-
-		$api_url             = SSP_CASTOS_APP_URL . 'api/v2/posts/create';
-		$podmotor_episode_id = get_post_meta( $post->ID, 'podmotor_episode_id', true );
-		if ( $podmotor_episode_id ) {
-			$api_url = SSP_CASTOS_APP_URL . 'api/v2/posts/update';
-		}
-
-		$series_id = ssp_get_episode_series_id( $post->ID );
-
-		$post_body = array(
-			'token'          => $this->api_token(),
-			'post_id'        => $post->ID,
-			'post_title'     => $post->post_title,
-			'post_content'   => $this->get_episode_content( $post->ID, $series_id ),
-			'keywords'       => get_keywords_for_episode( $post->ID ),
-			'series_number'  => get_post_meta( $post->ID, 'itunes_season_number', true ),
-			'episode_number' => get_post_meta( $post->ID, 'itunes_episode_number', true ),
-			'episode_type'   => get_post_meta( $post->ID, 'itunes_episode_type', true ),
-			'post_date'      => $post->post_date,
-			'post_date_gmt'  => $post->post_date_gmt,
-			'file_id'        => $podmotor_file_id,
-			'series_id'      => $series_id,
-		);
-
-		if ( ! empty( $podmotor_episode_id ) ) {
-			$post_body['id'] = $podmotor_episode_id;
-		}
-
-		$this->logger->log( 'API URL', $api_url );
-
-		$episode_image_url = $this->get_episode_image_url( $post );
-		if ( ! empty( $episode_image_url ) ) {
-			// Todo: change 'featured_image_url' to 'cover_image_url' after API update
-			$post_body['featured_image_url'] = $episode_image_url;
-		}
-
-		$this->logger->log( 'Parameter post_body Contents', $post_body );
-
-		/**
-		 * Convert to JSON so that we send it with the Content-Type of application/json
-		 * On some WordPress installs the Content-Type defaults to text/html
-		 * Just setting the Content-Type to application/json was not enough, so the post_body has to be converted
-		 * to JSON as well.
-		 */
-		$post_body = wp_json_encode( $post_body );
-
-		$options = array(
-			'body'    => $post_body,
-			'headers' => array(
-				'Content-Type' => 'application/json',
-			),
-			'timeout' => 60,
-		);
-
-		$app_response = wp_remote_post( $api_url, $options );
-
-		if ( is_wp_error( $app_response ) ) {
-			$this->logger->log( 'An unknown error occurred sending podcast data to castos: ' . $app_response->get_error_message() );
-			$this->update_response( 'message', 'An unknown error occurred: ' . $app_response->get_error_message() );
-
-			return $this->response;
-		}
-
-		if ( isset( $app_response['response']['code'] ) ) {
-			$this->update_response( 'code', intval( $app_response['response']['code'] ) );
-		}
-
-		$this->logger->log( 'Upload Podcast app_response', $app_response );
-
-		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-
-		$this->logger->log( 'Upload Podcast Response', $response_object );
-
-		if ( ! isset( $response_object->status ) || ! $response_object->status || empty( $response_object->success ) ) {
-			$this->logger->log( 'An error occurred uploading the episode data to Castos', $response_object );
-			$this->update_response( 'message', 'An error occurred uploading the episode data to Castos' );
-
-			return $this->response;
-		}
-
-		$this->logger->log( 'Podcast episode successfully uploaded to Castos with episode id ' . $response_object->episode->id );
-		$this->update_response( 'status', 'success' );
-		$this->update_response( 'message', 'Podcast episode successfully uploaded to Castos' );
-		$this->update_response( 'episode_id', $response_object->episode->id );
-
-		return $this->response;
 	}
 
 

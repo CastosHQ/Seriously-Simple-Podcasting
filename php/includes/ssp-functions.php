@@ -10,6 +10,7 @@ use SeriouslySimplePodcasting\Handlers\Images_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Repositories\Series_Repository;
 
 // Exit if accessed directly.
@@ -1864,5 +1865,17 @@ if ( ! function_exists( 'ssp_onboarded' ) ) {
 	 */
 	function ssp_onboarded() {
 		return ! empty( ssp_get_option( 'data_title', '', ssp_get_default_series_id() ) );
+	}
+}
+
+
+if ( ! function_exists( 'ssp_episode_sync_error' ) ) {
+	/**
+	 * @return \SeriouslySimplePodcasting\Entities\Sync_Status
+	 */
+	function ssp_episode_sync_status( $episode_id ) {
+		/** @var Episode_Repository $episode_repository **/
+		$episode_repository = ssp_get_service('episode_repository');
+		return $episode_repository->get_episode_sync_status( $episode_id );
 	}
 }

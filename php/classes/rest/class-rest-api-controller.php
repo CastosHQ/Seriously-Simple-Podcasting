@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Rest;
 
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
@@ -520,13 +521,22 @@ class Rest_Api_Controller {
 	 */
 	public function get_episode_player_data( $object, $field_name, $request ) {
 		if ( ! empty( $object['id'] ) ) {
-			$options_handler    = new Options_Handler();
-			$episode_id         = $object['id'];
-			$player_data        = array(
+			$options_handler = new Options_Handler();
+			$episode_id      = $object['id'];
+			$sync_status     = ssp_episode_sync_status( $episode_id );
+
+			$player_data = array(
 				'playerMode'    => get_option( 'ss_podcasting_player_mode', 'dark' ),
 				'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
 				'rssFeedUrl'    => $this->episode_repository->get_feed_url( $episode_id ),
 				'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
+				'syncStatus'    => array(
+					'isSynced' => Sync_Status::SYNC_STATUS_SYNCED === $sync_status->status,
+					'status'   => $sync_status->status,
+					'error'    => $sync_status->error,
+					'message'  => $sync_status->message,
+					'title'    => $sync_status->title,
+				),
 			);
 
 			return $player_data;

@@ -26,6 +26,7 @@ class Episode_Repository implements Service {
 	use Useful_Variables;
 
 	const META_SYNC_STATUS = 'sync_status';
+
 	const META_SYNC_ERROR = 'ssp_sync_episode_error';
 
 	/**
@@ -476,6 +477,7 @@ class Episode_Repository implements Service {
 	public function update_episode_sync_status( $episode_id, $status ) {
 		return update_post_meta( $episode_id, self::META_SYNC_STATUS, $status );
 	}
+
 
 	/**
 	 * @param int $episode_id

@@ -731,15 +731,17 @@ class Podcast_Post_Types_Controller {
 			return;
 		}
 
+		$this->episode_repository->delete_episode_sync_error( $post->ID );
+
 		$response = $this->castos_handler->upload_episode_to_castos( $post );
 
-		if ( 'success' === $response['status'] ) {
-			$podmotor_episode_id = $response['episode_id'];
-			if ( $podmotor_episode_id ) {
-				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
+		if ( $response->success ) {
+			if ( $response->castos_episode_id ) {
+				update_post_meta( $id, 'podmotor_episode_id', $response->castos_episode_id );
 			}
-			$this->admin_notices_handler->add_predefined_flash_notice(
-				Admin_Notifications_Handler::NOTICE_API_EPISODE_SUCCESS
+			$this->admin_notices_handler->add_flash_notice(
+				$response->message,
+				Admin_Notifications_Handler::SUCCESS
 			);
 
 			// if uploading was scheduled before, lets unschedule it
@@ -747,16 +749,23 @@ class Podcast_Post_Types_Controller {
 			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_SYNCED );
 			$this->episode_repository->delete_sync_error( $post->ID );
 		} else {
-			// Schedule uploading with a cronjob.1
+			// Schedule uploading with a cronjob.
 			// If it's 404, something wrong with the file ID. We don't try to reupload it since result will be the same.
-			if ( 404 != $response['code'] ) {
+			if ( in_array( $response->code, array( 403, 404 ) ) ) {
+				$this->admin_notices_handler->add_flash_notice(
+					$response->message,
+					Admin_Notifications_Handler::ERROR
+				);
+			} else {
 				update_post_meta( $id, Cron_Controller::SYNC_SCHEDULE_META, true );
 				update_post_meta( $id, Cron_Controller::ATTEMPTS_META, 1 );
+				$this->admin_notices_handler->add_predefined_flash_notice(
+					Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
+				);
 			}
-			$this->admin_notices_handler->add_predefined_flash_notice(
-				Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
-			);
+
 			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_FAILED );
+			$this->episode_repository->update_episode_sync_error( $post->ID, $response->message );
 		}
 	}
 

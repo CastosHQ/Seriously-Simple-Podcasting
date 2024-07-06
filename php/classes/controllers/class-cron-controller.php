@@ -101,7 +101,7 @@ class Cron_Controller {
 		foreach ( $this->episodes_respository->get_scheduled_episodes() as $episode ) {
 			$response = $this->castos_handler->upload_episode_to_castos( $episode );
 
-			if ( 'success' === $response['status'] ) {
+			if ( $response->success ) {
 				$this->unschedule_episode( $episode->ID );
 				$this->episodes_respository->update_episode_sync_status( $episode->ID, Sync_Status::SYNC_STATUS_SYNCED );
 				$this->episodes_respository->delete_episode_sync_error( $episode->ID );
@@ -115,18 +115,17 @@ class Cron_Controller {
 				}
 			}
 
-			if ( isset( $response['code'] ) && 404 == $response['code'] ) {
+			if ( 404 == $response->code ) {
 				$castos_episode_id = get_post_meta( $episode->ID, 'podmotor_episode_id', true );
 
-				// Episode does not exists anymore, remove connection
+				// File does not exist anymore, remove connection
 				if ( $castos_episode_id ) {
 					delete_post_meta( $episode->ID, 'podmotor_episode_id' );
 					delete_post_meta( $episode->ID, 'podmotor_file_id' );
 				}
 
 				$this->unschedule_episode( $episode->ID );
-
-				$logger->log( sprintf( 'Cron: could not upload episode %d', $episode->ID ) );
+				$logger->log( sprintf( 'Cron: file does not exists on Castos, stop syncing: %d', $episode->ID ) );
 			}
 		}
 

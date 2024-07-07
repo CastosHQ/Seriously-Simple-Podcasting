@@ -1,16 +1,28 @@
 import { useDispatch, useSelect } from '@wordpress/data'
 import { useRef} from '@wordpress/element'
+import apiFetch from '@wordpress/api-fetch';
 
 const EpisodeSyncStatus = () => {
+	if(!isEpisode(useSelect((select) => select('core/editor')))){
+		return;
+	}
 
 	const isSavingPost = useSelect((select) => select('core/editor').isSavingPost(), [])
 	const previousIsSaving = useRef(isSavingPost)
 	const currentPost = useSelect((select) => select('core/editor').getCurrentPost(), [])
-	const { createWarningNotice } = useDispatch('core/notices')
+	const { createWarningNotice, createInfoNotice } = useDispatch('core/notices')
+	const isPostJustSaved = previousIsSaving.current && ! isSavingPost
+	previousIsSaving.current = isSavingPost
+
+	if (isPostJustSaved) {
+		setTimeout(async () => {
+			await displaySyncData(currentPost)
+		}, 1000)
+	}
 
 	const displaySyncData = async (currentPost) => {
 		try {
-			const updatedPost = await fetchPostData(currentPost.id);
+			const updatedPost = await fetchPostData(currentPost);
 
 			if (updatedPost && updatedPost[ 'episode_data' ]) {
 				let syncStatus = updatedPost[ 'episode_data' ].syncStatus
@@ -47,24 +59,42 @@ const EpisodeSyncStatus = () => {
 			}
 			createWarningNotice(msg, { id: noticeId })
 		} else {
-			createWarningNotice(msg, { type: 'snackbar', id: noticeId })
+			createInfoNotice(msg, { type: 'snackbar', id: noticeId })
 		}
 	}
 
-	const fetchPostData = async (postId) => {
-		const response = await fetch(`/wp-json/wp/v2/podcast/${ postId }`)
-		return await response.json()
+	const getRestBaseForPostType = async (postType)=> {
+		try {
+			// Fetch the post types data from the REST API
+			const types = await apiFetch({ path: '/wp/v2/types' });
+
+			// Check if the specified post type exists in the fetched data
+			if (types[postType] && types[postType].rest_base) {
+				console.log('Returning rest base:', types[postType].rest_base);
+				return types[postType].rest_base;
+			} else {
+				console.warn(`Post type "${postType}" not found.`);
+				return null;
+			}
+		} catch (error) {
+			console.error('There was a problem with the fetch operation:', error);
+			return null;
+		}
 	}
 
-	const isPostJustSaved = previousIsSaving.current && ! isSavingPost
-
-	if (isPostJustSaved) {
-		setTimeout(async () => {
-			await displaySyncData(currentPost)
-		}, 1000)
+	const fetchPostData = async (post) => {
+		const restBase = await getRestBaseForPostType(post.type)
+		return await apiFetch({ path: `/wp/v2/${restBase}/${post.id}` })
 	}
+}
 
-	previousIsSaving.current = isSavingPost
+const isEpisode = (editor) => {
+	if(!editor){
+		return false;
+	}
+	const sspPostTypes = sspAdmin.sspPostTypes
+	let currentPost = editor.getCurrentPost();
+	return (sspPostTypes instanceof Array) && currentPost && sspPostTypes.includes(currentPost.type)
 }
 
 

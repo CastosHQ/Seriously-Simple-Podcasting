@@ -18,7 +18,7 @@
     height: auto;
 }
 
-#ssp-main-settings {
+#ssp-main-settings.castos-disconnected {
     width: 75%;
     float: left;
 }
@@ -34,11 +34,6 @@
     border: 1px solid #cbd5e1;
     border-radius: 8px;
     overflow: hidden;
-}
-
-#ssp-sidebar .sidebar-content.castos-connected {
-	border: none;
-	background: none;
 }
 
 #ssp-sidebar .sidebar-content h3 {

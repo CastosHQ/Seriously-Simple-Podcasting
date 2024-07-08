@@ -1315,7 +1315,8 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 		$content = preg_replace( '/<style>(.|\s)*?<\/style>/', '', $content );
 		$content = preg_replace( '/<script>(.|\s)*?<\/script>/', '', $content );
 		$content = str_replace( '<br>', PHP_EOL, $content );
-		$content = strip_tags( $content, '<p>,<a>,<ul>,<ol>,<li>,<strong>,<em>,<h2>,<h3>,<h4>,<h5>,<label>' );
+		$allowed_tags = apply_filters('ssp_feed_item_content_allowed_tags', '<p>,<a>,<ul>,<ol>,<li>,<strong>,<em>,<h2>,<h3>,<h4>,<h5>,<label>');
+		$content = strip_tags( $content, $allowed_tags );
 
 		// Remove empty paragraphs as well.
 		$content = trim( str_replace( '<p></p>', '', $content ) );

@@ -619,7 +619,10 @@ class Settings_Controller {
 		$tab = empty( $q_args['tab'] ) ? 'general' : $q_args['tab'];
 
 		$html .= $this->show_page_messages();
-		$html .= '<div id="ssp-main-settings" class="ssp-main-settings tab-' . esc_attr( $tab ) . '">' . "\n";
+
+		$class = 'ssp-main-settings tab-' . esc_attr( $tab ) . ' ';
+		$class .= ssp_is_connected_to_castos() ? 'castos-connected' : 'castos-disconnected';
+		$html .= '<div id="ssp-main-settings" class="' . $class . '">' . "\n";
 		$html .= $this->show_page_tabs();
 		$html .= $this->show_tab_before_settings( $tab );
 		$html .= $this->show_tab_settings( $tab );
@@ -961,14 +964,13 @@ class Settings_Controller {
 	 * @return string
 	 */
 	public function render_seriously_simple_sidebar() {
+		if(ssp_is_connected_to_castos()){
+			return '';
+		}
 		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-		$link      = 'https://castos.com/1ksubs?utm_source=WordPress&utm_medium=Settings&utm_campaign=Banner';
-		$is_connected = ssp_is_connected_to_castos();
-		$img = $is_connected ?
-			'<a href="' . $link . '" target="_blank"><img src="' . $image_dir . 'castos-connected-banner.jpg"></a>' :
-			'<img src="' . $image_dir . 'castos-plugin-settings-banner.jpg">';
+		$img = '<img src="' . esc_attr( $image_dir ) . 'castos-plugin-settings-banner.jpg">';
 
-		return $this->renderer->fetch( 'settings-sidebar', compact( 'img', 'is_connected' ) );
+		return $this->renderer->fetch( 'settings-sidebar', compact( 'img' ) );
 	}
 
 	public function render_seriously_simple_extensions() {

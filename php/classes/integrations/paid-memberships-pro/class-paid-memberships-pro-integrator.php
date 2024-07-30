@@ -20,9 +20,9 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Paid Memberships Pro controller
  *
  *
- * @author Sergiy Zakharchenko
- * @package SeriouslySimplePodcasting
  * @since 2.9.3
+ * @package SeriouslySimplePodcasting
+ * @author Sergiy Zakharchenko
  */
 class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
@@ -33,6 +33,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	const ADD_LIST_OPTION = 'ssp_pmpro_add_subscribers';
 
 	const REVOKE_LIST_OPTION = 'ssp_pmpro_revoke_subscribers';
+
+	const MEMBERSHIP_SERIES_OPTION = 'ssp_pmpro_membership_series';
 
 	const EVENT_BULK_SYNC_SUBSCRIBERS = 'ssp_pmpro_bulk_sync_subscribers';
 
@@ -57,9 +59,9 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			return;
 		}
 
-		$this->feed_handler    = $feed_handler;
-		$this->castos_handler  = $castos_handler;
-		$this->logger          = $logger;
+		$this->feed_handler = $feed_handler;
+		$this->castos_handler = $castos_handler;
+		$this->logger = $logger;
 		$this->notices_handler = $notices_handler;
 
 		if ( is_admin() && ! ssp_is_ajax() ) {
@@ -85,26 +87,14 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	protected function init_subscribers_sync() {
 
 		// Sync users when their Membership Level is changed (from admin panel, when registered or cancelled).
-		add_filter( 'pmpro_change_level', array(
+		add_filter( 'pmpro_before_change_membership_level', array(
 			$this,
-			'sync_subscribers_on_change_membership_level'
+			'sync_subscribers_on_change_membership_level',
 		), 10, 2 );
 
 
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
-		add_filter( 'allowed_options', function ( $allowed_options ) {
-			// Option ss_podcasting_is_pmpro_integration is just a marker that PMPro integration settings have been saved.
-			// If so, we can do the sync magic.
-			if ( isset( $allowed_options['ss_podcasting'] ) ) {
-				$key = array_search( 'ss_podcasting_is_pmpro_integration', $allowed_options['ss_podcasting'] );
-				if ( false !== $key ) {
-					unset( $allowed_options['ss_podcasting'][ $key ] );
-					$this->schedule_bulk_sync_subscribers();
-				}
-			}
-
-			return $allowed_options;
-		}, 20 );
+		add_filter( 'allowed_options', array( $this, 'schedule_bulk_sync_on_settings_update' ), 20 );
 
 		// Step 1. Run the scheduled bulk sync. Prepare add and remove lists, and run add process.
 		add_action( self::EVENT_BULK_SYNC_SUBSCRIBERS, array( $this, 'bulk_sync_subscribers' ) );
@@ -115,6 +105,273 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		// Step 3. Run revoke process.
 		add_action( self::EVENT_REVOKE_SUBSCRIBERS, array( $this, 'bulk_revoke_subscribers' ) );
 	}
+
+	/**
+	 * Schedules bulk sync cronjob when integration settings are updated.
+	 *
+	 * @since 3.4.1
+	 *
+	 * @param array $allowed_options
+	 *
+	 * @return array
+	 */
+	public function schedule_bulk_sync_on_settings_update( $allowed_options ) {
+		// Option ss_podcasting_is_pmpro_integration is a marker that PMPro integration settings have been saved.
+		if ( ! isset( $allowed_options['ss_podcasting'] ) ) {
+			return $allowed_options;
+		}
+
+		$key = array_search( 'ss_podcasting_is_pmpro_integration', $allowed_options['ss_podcasting'] );
+		if ( false !== $key ) {
+			unset( $allowed_options['ss_podcasting'][ $key ] );
+			$this->update_membership_series();
+			$this->schedule_bulk_sync_subscribers();
+		}
+
+		return $allowed_options;
+	}
+
+	/**
+	 * To prevent unexpected revokes from Castos when PMPro integration is enabled,
+	 * sync only series that were connected to PMPro membership levels before or connected now.
+	 * */
+	protected function update_membership_series() {
+
+		$series_ids = $this->get_current_membership_series_ids();
+
+		$old_sync_series = $this->get_saved_membership_series();
+
+		$new_sync_series = array_unique( array_merge( $old_sync_series, $series_ids ) );
+
+		$this->save_membership_series_data( $new_sync_series );
+	}
+
+	/**
+	 * Save membership series option to determine later which series can be synchronized with Castos.
+	 *
+	 * @since 3.4.1
+	 *
+	 * @param $series
+	 *
+	 * @return void
+	 */
+	protected function save_membership_series_data( $series ) {
+		update_option( self::MEMBERSHIP_SERIES_OPTION, $series, false );
+	}
+
+	/**
+	 * Get saved membership series option to determine which series can be synchronized with Castos.
+	 *
+	 * @since 3.4.1
+	 *
+	 * @return false|mixed|null
+	 */
+	protected function get_saved_membership_series() {
+		return get_option( self::MEMBERSHIP_SERIES_OPTION, array() );
+	}
+
+	/**
+	 * Gets membership series using previous and current membership series data.
+	 * It's needed to make sure we sync only series that are or were involved with PMPro integration.
+	 * */
+	protected function get_membership_series_ids() {
+		$ssp_membership_series_ids = $this->get_current_membership_series_ids();
+		$castos_sync_series = $this->get_saved_membership_series();
+
+		return array_unique( array_merge( $ssp_membership_series_ids, $castos_sync_series ) );
+	}
+
+	/**
+	 * Bulk sync subscribers after settings change.
+	 * Modified version of @see parent::bulk_sync_subscribers() that uses current Castos emails instead of the previous settings state.
+	 *
+	 * @since 3.4.1
+	 */
+	public function bulk_sync_subscribers() {
+		try {
+			if ( $this->bulk_update_started() ) {
+				throw new \Exception('Another bulk update has already started');
+			}
+			$users_series_map = $this->generate_users_series_map();
+			$membership_series_ids = $this->get_membership_series_ids();
+
+			$series_emails_map = $this->get_series_emails_map( $users_series_map );
+
+			$list_to_add = array();
+			$list_to_revoke = array();
+
+			foreach ( $membership_series_ids as $series_id ) {
+				$ssp_series_emails = isset ( $series_emails_map[ $series_id ] ) ? $series_emails_map[ $series_id ] : array();
+				$castos_series_emails = $this->get_castos_series_emails( $series_id );
+				$list_to_add[ $series_id ] = array_diff( $ssp_series_emails, $castos_series_emails );
+				$list_to_revoke[ $series_id ] = array_diff( $castos_series_emails, $ssp_series_emails );
+			}
+
+			// Convert emails to ids for Add for backward compatibility,
+			// and because we'll need not only email but also username.
+			update_option( static::ADD_LIST_OPTION, $this->convert_emails_to_ids( $list_to_add ) );
+
+			// For revoke, we'll need a list of emails, so don't convert it and use directly.
+			// Also, this approach allows removing emails that are not associated with any user in WordPress.
+			update_option( static::REVOKE_LIST_OPTION, $list_to_revoke );
+
+			$this->schedule_bulk_add_subscribers( 0 );
+		} catch ( \Exception $e ) {
+			$this->logger->log( __METHOD__ . ': Something went wrong! Bulk sync process rescheduled. ' . $e->getMessage() );
+
+			// Another process is running, try to sync later.
+			if ( ! wp_next_scheduled( static::EVENT_BULK_SYNC_SUBSCRIBERS ) ) {
+				wp_schedule_single_event( time() + 5 * MINUTE_IN_SECONDS, static::EVENT_BULK_SYNC_SUBSCRIBERS );
+			}
+		}
+	}
+
+	/**
+	 * Recursively converts user emails in the list to ids.
+	 * We need the user ids format for the backward compatibility and to determine emails and user names in the bulk add function.
+	 *
+	 * @since 3.4.1
+	 *
+	 * @param array $list
+	 *
+	 * @return array
+	 */
+	protected function convert_emails_to_ids( $list ) {
+		$converted = array();
+		foreach ( $list as $k => $v ) {
+			if ( is_array( $v ) ) {
+				$converted[ $k ] = $this->convert_emails_to_ids( $v );
+			}
+			if ( is_string( $v ) && filter_var( $v, FILTER_VALIDATE_EMAIL ) ) {
+				$user = get_user_by( 'email', $v );
+				if ( $user ) {
+					$converted[ $k ] = $user->ID;
+				}
+			}
+		}
+
+		return $converted;
+	}
+
+	/**
+	 * Revoke subscribers from Castos podcasts. Uses emails list instead of IDs.
+	 *
+	 * @since 3.4.1
+	 *
+	 * @see parent::revoke_subscribers_from_podcast()
+	 *
+	 * @param int $series_id
+	 * @param string[] $emails
+	 *
+	 * @return int
+	 */
+	protected function revoke_subscribers_from_podcast( $series_id, $emails ) {
+		$podcast_ids = $this->convert_series_ids_to_podcast_ids( array( $series_id ) );
+
+		$count = $this->castos_handler->revoke_subscribers_from_podcasts( $podcast_ids, $emails );
+
+		$this->logger->log( __METHOD__ . ' Revoked subscribers: ' . $count . PHP_EOL . print_r( $emails, true ) );
+
+		return $count;
+	}
+
+	/**
+	 * Converts "user_ids->series_ids" map to "series_ids->emails" map.
+	 *
+	 * @since 3.4.1
+	 *
+	 * @param array $users_series_map
+	 *
+	 * @return array
+	 */
+	public function get_series_emails_map( $users_series_map ) {
+		$users_data = $this->get_users_data( array_keys( $users_series_map ) );
+
+		$series_emails_map = array();
+		foreach ( $users_series_map as $user_id => $series_ids ) {
+			$user_email = isset( $users_data[ $user_id ]['user_email'] ) ? $users_data[ $user_id ]['user_email'] : '';
+			if ( ! $series_ids || ! $user_email ) {
+				continue;
+			}
+			foreach ( $series_ids as $series_id ) {
+				$series_emails_map[ $series_id ][] = $user_email;
+			}
+		}
+		foreach ( $series_emails_map as $series_id => $user_emails ) {
+			$series_emails_map[ $series_id ] = array_unique( $user_emails );
+		}
+
+		return $series_emails_map;
+	}
+
+	/**
+	 * Gets all series ids currently involved in PMPro integration.
+	 *
+	 * @since 3.4.1
+	 *
+	 * @return array
+	 * */
+	public function get_current_membership_series_ids() {
+		$membership_levels = $this->get_membership_levels();
+
+		$membership_series_ids = array();
+		foreach ( $membership_levels as $level ) {
+			$membership_series_ids = array_unique( array_merge(
+				$membership_series_ids,
+				$this->get_series_ids_by_level( $level->id )
+			) );
+		}
+
+		return $membership_series_ids;
+	}
+
+	/**
+	 * Gets Castos series active subscriber emails
+	 *
+	 * @since 3.4.1
+	 *
+	 * @param int $series_id
+	 *
+	 * @return array
+	 * @throws \Exception
+	 */
+	public function get_castos_series_emails( $series_id ) {
+		$subscribers = [];
+		$podcast = $this->get_castos_podcast_by_series_id( $series_id );
+		if ( $podcast ) {
+			$subscribers = $this->castos_handler->get_podcast_subscribers( $podcast['id'] );
+		}
+		$emails = array();
+		foreach ( $subscribers as $subscriber ) {
+			if ( 'active' === $subscriber['status'] ) {
+				$emails[] = $subscriber['email'];
+			}
+		}
+
+		return $emails;
+	}
+
+	/**
+	 * Gets Castos podcast by SSP series ID.
+	 *
+	 * @since 3.4.1
+	 *
+	 * @param int $series_id
+	 *
+	 * @return array
+	 */
+	public function get_castos_podcast_by_series_id( $series_id ) {
+		$castos_podcasts = $this->get_castos_podcasts();
+
+		foreach ( $castos_podcasts as $castos_podcast ) {
+			if ( isset( $castos_podcast['series_id'] ) && $series_id === $castos_podcast['series_id'] ) {
+				return $castos_podcast;
+			}
+		}
+
+		return array();
+	}
+
 
 	/**
 	 * Gets users series map.
@@ -159,7 +416,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	/**
 	 * @return string
 	 */
-	protected function get_successfully_finished_notice(){
+	protected function get_successfully_finished_notice() {
 		return __( 'PMPro data successfully synchronized!', 'seriously-simple-podcasting' );
 	}
 
@@ -263,7 +520,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return string[]
 	 */
 	protected function get_private_feed_urls() {
-		$current_user     = wp_get_current_user();
+		$current_user = wp_get_current_user();
 		$users_series_map = $this->generate_users_series_map();
 
 		$feed_urls = get_transient( 'ssp_pmpro_feed_urls_user_' . $current_user->ID );
@@ -328,7 +585,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), 'series' );
 
 		$series_levels = $this->get_series_level_ids( $series->term_id );
-		$has_access    = $this->has_access( wp_get_current_user(), $series_levels );
+		$has_access = $this->has_access( wp_get_current_user(), $series_levels );
 
 		if ( ! $has_access ) {
 			$description = wp_strip_all_tags( pmpro_get_no_access_message( '', $series_levels ) );
@@ -355,7 +612,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			return isset( $item->id ) ? $item->id : null;
 		}, (array) $post_levels ) );
 
-		$is_admin   = is_admin() && ! ssp_is_ajax();
+		$is_admin = is_admin() && ! ssp_is_ajax();
 		$is_podcast = in_array( $post->post_type, ssp_post_types() );
 
 		if ( $is_admin || ! $is_podcast || ! $access ) {
@@ -405,7 +662,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return int[]
 	 */
 	protected function get_series_level_ids( $term_id ) {
-		$levels    = (array) ssp_get_option( sprintf( 'series_%s_pmpro_levels', $term_id ), null );
+		$levels = (array) ssp_get_option( sprintf( 'series_%s_pmpro_levels', $term_id ), null );
 		$level_ids = array();
 		foreach ( $levels as $level ) {
 			$level_ids[] = (int) str_replace( 'lvl_', '', $level );
@@ -431,7 +688,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			$msg = sprintf( $msg, admin_url( 'edit.php?post_type=podcast&page=podcast_settings&tab=castos-hosting' ) );
 
 			$args['description'] = $msg;
-			$args['fields']      = array();
+			$args['fields'] = array();
 		} else {
 			if ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) && $this->bulk_update_started() ) {
 				$this->notices_handler->add_flash_notice( __( 'Synchronizing Paid Memberships Pro data with Castos...', 'seriously-simple-podcasting' ) );
@@ -464,20 +721,20 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$levels = $this->get_membership_levels();
 
 		$settings = array(
-			'id'          => 'paid_memberships_pro',
-			'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
+			'id' => 'paid_memberships_pro',
+			'title' => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
 			'description' => __( 'Select which Podcast you would like to be available only
 								to Members via Paid Memberships Pro.', 'seriously-simple-podcasting' ),
-			'fields'      => array(
+			'fields' => array(
 				array(
-					'id'   => 'is_pmpro_integration',
+					'id' => 'is_pmpro_integration',
 					'type' => 'hidden',
 				),
 				array(
-					'id'          => 'enable_pmpro_integration',
-					'type'        => 'checkbox',
-					'default'     => 'on',
-					'label'       => __( 'Enable integration', 'seriously-simple-podcasting' ),
+					'id' => 'enable_pmpro_integration',
+					'type' => 'checkbox',
+					'default' => 'on',
+					'label' => __( 'Enable integration', 'seriously-simple-podcasting' ),
 					'description' => __( 'Enable Paid Memberships Pro integration', 'seriously-simple-podcasting' ),
 				),
 			),
@@ -490,7 +747,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		if ( ! $levels ) {
-			$levels_url              = admin_url( 'admin.php?page=pmpro-membershiplevels' );
+			$levels_url = admin_url( 'admin.php?page=pmpro-membershiplevels' );
 			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up a
 										membership level</a> first.', 'seriously-simple-podcasting' ), $levels_url );
 
@@ -505,15 +762,15 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(
-				'id'          => sprintf( 'series_%s_pmpro_levels', $series_item->term_id ),
-				'label'       => $series_item->name,
-				'type'        => 'select2_multi',
-				'options'     => $checkbox_options,
+				'id' => sprintf( 'series_%s_pmpro_levels', $series_item->term_id ),
+				'label' => $series_item->name,
+				'type' => 'select2_multi',
+				'options' => $checkbox_options,
 				'description' => 'Require enrollment to level',
 			);
 
 			if ( ! $this->is_series_protected_in_castos( $series_item->term_id ) ) {
-				$series_item_settings['type']        = 'info';
+				$series_item_settings['type'] = 'info';
 				$series_item_settings['description'] = 'Please first make this podcast private in your Castos dashboard';
 			}
 

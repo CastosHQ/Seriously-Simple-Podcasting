@@ -204,6 +204,16 @@ textarea#episode_embed_code {
   font-size: 16px;
   top: -3px; }
 
+#podmotor_account_api_token {
+  width: 100%;
+  min-width: 100%;
+  display: block;
+  margin-bottom: 8px; }
+
+.ssp-settings-integrations table label {
+  margin-top: 10px;
+  display: block; }
+
 .ssp-settings:not(.ssp-settings-extensions, .ssp-settings-integrations) {
   background: #FFFFFF;
   margin-top: 28px;

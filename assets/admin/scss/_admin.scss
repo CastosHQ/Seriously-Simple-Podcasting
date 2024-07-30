@@ -272,6 +272,13 @@ textarea#episode_embed_code {
 }
 
 
+.ssp-settings-integrations {
+	table label {
+		margin-top: 10px;
+		display: block;
+	}
+}
+
 .ssp-settings:not(.ssp-settings-extensions,.ssp-settings-integrations) {
 	background: $clr_white;
 	margin-top: 28px;

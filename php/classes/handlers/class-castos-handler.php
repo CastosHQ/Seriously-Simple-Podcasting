@@ -74,6 +74,34 @@ class Castos_Handler implements Service {
 	public function __construct( $feed_handler, $log_helper ) {
 		$this->feed_handler = $feed_handler;
 		$this->logger       = $log_helper;
+
+		add_filter( 'http_request_args', array( $this, 'authorization_headers' ), 10, 2 );
+	}
+
+	/**
+	 * Adds authorization headers
+	 *
+	 * @since 3.4.1
+	 *
+	 * @param $args
+	 * @param $url
+	 *
+	 * @return mixed
+	 */
+	public function authorization_headers( $args, $url ) {
+		if ( false === strpos( $url, SSP_CASTOS_APP_URL ) ) {
+			return $args;
+		}
+
+		$ssp_headers     = array(
+			'Authorization'    => 'Bearer ' . $this->api_token,
+			'X-SSP-Website'    => home_url(),
+			'X-SSP-Version'    => SSP_VERSION,
+			'X-SSP-WP-Version' => get_bloginfo( 'version' ),
+		);
+		$args['headers'] = array_merge( $ssp_headers, $args['headers'] );
+
+		return $args;
 	}
 
 	/**

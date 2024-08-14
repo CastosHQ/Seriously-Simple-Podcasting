@@ -182,6 +182,34 @@ class Castos_Handler implements Service {
 		return $response;
 	}
 
+	/**
+	 * Gets connected user email.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return string
+	 * @throws Exception
+	 */
+	public function get_email() {
+		$this->logger->log( __METHOD__ );
+
+		$cache_key = 'ssp_castos_api_email';
+
+		$email = wp_cache_get( $cache_key );
+
+		if ( $email ) {
+			return $email;
+		}
+
+		$res = $this->send_request( 'api/v2/' );
+
+		$email = isset( $res['email'] ) ? $res['email'] : '';
+
+		wp_cache_add( $cache_key, $email, '', MINUTE_IN_SECONDS );
+
+		return $email;
+	}
+
 	public function set_token( $token ) {
 		update_option( self::API_TOKEN_OPTION, $token );
 	}

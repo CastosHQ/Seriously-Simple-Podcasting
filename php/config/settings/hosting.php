@@ -31,11 +31,13 @@ return array(
 			'condition_callback' => 'ssp_is_connected_to_castos',
 			'title' => __( 'Sync to Castos', 'seriously-simple-podcasting' ),
 			'no_store' => true,
-			'description' => sprintf(
-				__( 'Use this option for a one time sync of your existing WordPress podcast to your Castos account. If you encounter any problems with it, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ),
-				'<a href="' . SSP_CASTOS_APP_URL . '">Castos</a>'
-			),
 			'fields' => array(
+				array(
+					'id' => 'castos_sync_info',
+					'label' => __( 'Castos Account', 'seriously-simple-podcasting' ),
+					'description' => do_shortcode( '[castos_email]' ),
+					'type' => 'info',
+				),
 				array(
 					'id' => 'podcasts_sync',
 					'label' => __( 'Podcast', 'seriously-simple-podcasting' ),
@@ -47,6 +49,10 @@ return array(
 					'id' => 'trigger_sync',
 					'type' => 'button',
 					'label' => esc_attr( __( 'Trigger Sync', 'seriously-simple-podcasting' ) ),
+					'description' => '<br><br>' . sprintf(
+							__( 'Use this option for a one time sync of your existing WordPress podcast to your %s. If you encounter any problems with it, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ),
+							'<a target="_blank" rel="noopener" href="' . esc_attr( SSP_CASTOS_APP_URL ) . '">' . __( 'Castos account', 'seriously-simple-podcasting' ) . '</a>'
+						),
 					'class' => 'button-primary',
 				),
 			),

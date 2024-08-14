@@ -143,6 +143,20 @@ class Settings_Controller {
 		add_filter( 'ssp_field_data', array( $this, 'provide_podcasts_sync_status' ), 10, 2 );
 
 		$this->generate_dynamic_color_scheme();
+
+		add_shortcode( 'castos_email', array( $this, 'castos_email' ) );
+	}
+
+	/**
+	 * Gets castos email to show in the Hosting tab.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function castos_email() {
+		return $this->castos_handler->get_email();
 	}
 
 	/**

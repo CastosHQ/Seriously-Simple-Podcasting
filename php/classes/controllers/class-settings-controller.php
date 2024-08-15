@@ -156,7 +156,7 @@ class Settings_Controller {
 	 * @throws \Exception
 	 */
 	public function castos_email() {
-		return $this->castos_handler->get_email();
+		return ssp_is_connected_to_castos() ? $this->castos_handler->get_email() : '';
 	}
 
 	/**

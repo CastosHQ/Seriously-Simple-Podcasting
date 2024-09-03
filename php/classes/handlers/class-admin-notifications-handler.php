@@ -14,10 +14,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Main plugin class
  *
- * @author      Hugh Lashbrooke
+ * @since       1.0
  * @category    Class
  * @package     SeriouslySimplePodcasting/Controllers
- * @since       1.0
+ * @author      Hugh Lashbrooke
  */
 class Admin_Notifications_Handler implements Service {
 
@@ -28,6 +28,11 @@ class Admin_Notifications_Handler implements Service {
 	 * Transient key to store flash notices
 	 * */
 	const NOTICES_KEY = 'ssp_notices';
+
+	/**
+	 * Option key to store constant notices that can be removed by closing the notice manually.
+	 * */
+	const CONSTANT_NOTICES_KEY = 'ssp_constant_notices';
 
 	/**
 	 * Predefined notices
@@ -73,7 +78,7 @@ class Admin_Notifications_Handler implements Service {
 		add_action( 'series_pre_add_form', array( $this, 'show_series_helper_text' ) );
 
 		// Print flash notices
-		add_action( 'admin_notices', array( $this, 'display_flash_notices' ), 12 );
+		add_action( 'admin_notices', array( $this, 'display_notices' ), 12 );
 
 		return $this;
 	}
@@ -130,7 +135,7 @@ class Admin_Notifications_Handler implements Service {
 	 * */
 	protected function show_nginx_error_notice() {
 		$messages = $this->get_predefined_notices();
-		$notice   = $messages[ self::NOTICE_NGINX_ERROR ];
+		$notice = $messages[ self::NOTICE_NGINX_ERROR ];
 
 		$this->add_flash_notice( $notice['msg'], $notice['type'], false );
 	}
@@ -144,7 +149,7 @@ class Admin_Notifications_Handler implements Service {
 		$server_type = get_transient( 'ssp_server_type' );
 		if ( ! $server_type ) {
 			$response = $this->get_response( site_url( '/test.mp3' ) );
-			$server   = $response ? $response->get_headers()->offsetGet( 'server' ) : '';
+			$server = $response ? $response->get_headers()->offsetGet( 'server' ) : '';
 			$server_type = is_string( $server ) && ( false !== strpos( $server, 'nginx' ) ) ? 'nginx' : $server;
 
 			set_transient( 'ssp_server_type', $server_type, DAY_IN_SECONDS );
@@ -183,7 +188,7 @@ class Admin_Notifications_Handler implements Service {
 		$response = $res['http_response'];
 
 		if ( in_array( $response->get_status(), array( 301, 302 ) ) ) {
-			$headers  = $response->get_headers();
+			$headers = $response->get_headers();
 			$location = isset( $headers['location'] ) ? $headers['location'] : '';
 
 			return $location ? $this->get_response( $location ) : $response;
@@ -231,7 +236,7 @@ class Admin_Notifications_Handler implements Service {
 		$messages = $this->get_predefined_notices();
 
 		if ( isset( $messages[ $notice ] ) ) {
-			$this->remove_flash_notice (
+			$this->remove_flash_notice(
 				$messages[ $notice ]['msg']
 			);
 
@@ -239,6 +244,45 @@ class Admin_Notifications_Handler implements Service {
 		}
 
 		return false;
+	}
+
+	/**
+	 * @uses Ajax_Handler::remove_constant_notice;
+	 *
+	 * @param string $id
+	 *
+	 * @return bool
+	 */
+	public function remove_constant_notice( $id ) {
+		$notices = $this->get_constant_notices();
+
+		$res = false;
+
+		if ( array_key_exists( $id, $notices ) ) {
+			unset( $notices[ $id ] );
+			$res = update_option( self::CONSTANT_NOTICES_KEY, $notices );
+		}
+
+		return $res;
+	}
+
+	/**
+	 * Adds constant notice that is closed manually to make sure users have read it.
+	 *
+	 * @param string $notice
+	 * @param string $type
+	 *
+	 * @return void
+	 */
+	public function add_constant_notice( $notice, $type ) {
+		$notices = $this->get_constant_notices();
+		$notices[ $this->get_notice_hash( $notice ) ] = array(
+			"notice" => $notice,
+			"type" => $type,
+			"dismissible" => "is-dismissible is-constant",
+		);
+
+		add_option( self::CONSTANT_NOTICES_KEY, $notices );
 	}
 
 	/**
@@ -259,9 +303,9 @@ class Admin_Notifications_Handler implements Service {
 		$dismissible_text = ( $dismissible ) ? "is-dismissible" : "";
 
 		$notices[ $this->get_notice_hash( $notice ) ] = array(
-			"notice"      => $notice,
-			"type"        => $type,
-			"dismissible" => $dismissible_text
+			"notice" => $notice,
+			"type" => $type,
+			"dismissible" => $dismissible_text,
 		);
 
 		set_transient( self::NOTICES_KEY, $notices, DAY_IN_SECONDS );
@@ -287,7 +331,7 @@ class Admin_Notifications_Handler implements Service {
 		$notices = get_transient( self::NOTICES_KEY );
 		$hash = $this->get_notice_hash( $notice );
 
-		if( is_array( $notices ) && array_key_exists( $hash, $notices ) ){
+		if ( is_array( $notices ) && array_key_exists( $hash, $notices ) ) {
 			unset( $notices[ $hash ] );
 		}
 
@@ -295,30 +339,50 @@ class Admin_Notifications_Handler implements Service {
 	}
 
 	/**
+	 * @return array
+	 */
+	public function get_constant_notices() {
+		$notices = get_option( self::CONSTANT_NOTICES_KEY, array() );
+
+		return is_array( $notices ) ? $notices : array();
+	}
+
+	/**
 	 * Prints flash notices
 	 */
-	public function display_flash_notices() {
+	public function display_notices() {
 		if ( ! $this->is_ssp_post_page() && ! $this->is_ssp_admin_page() ) {
 			return;
 		}
 
-		$notices = get_transient( self::NOTICES_KEY );
+		$notices = $this->get_flash_notices();
 
-		if ( ! is_array( $notices ) ) {
+		$notices = array_merge( $notices, $this->get_constant_notices() );
+
+		if ( empty( $notices ) ) {
 			return;
 		}
 
-		foreach ( $notices as $notice ) {
-			printf( '<div class="notice notice-%1$s %2$s"><p>%3$s</p></div>',
+		foreach ( $notices as $hash => $notice ) {
+			printf( '<div class="notice notice-%1$s %2$s" data-id="%3$s" data-nonce="%4$s"><p>%5$s</p></div>',
 				$notice['type'],
 				$notice['dismissible'],
+				$hash,
+				wp_create_nonce( 'notice-' . $hash ),
 				$notice['notice']
 			);
 		}
 
-		if ( ! empty( $notices ) ) {
-			delete_transient( self::NOTICES_KEY );
-		}
+		delete_transient( self::NOTICES_KEY );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function get_flash_notices() {
+		$notices = get_transient( self::NOTICES_KEY );
+
+		return is_array( $notices ) ? $notices : array();
 	}
 
 	/**
@@ -383,15 +447,15 @@ class Admin_Notifications_Handler implements Service {
 	 * Show 'existing podcast' notice
 	 */
 	public function existing_episodes_notice() {
-		$hosting_tab_url    = ssp_get_tab_url( 'castos-hosting' );
+		$hosting_tab_url = ssp_get_tab_url( 'castos-hosting' );
 		$ignore_message_url = add_query_arg( array(
 			'podcast_import_action' => 'ignore',
-			'nonce'                 => wp_create_nonce( 'podcast_import_action' ),
+			'nonce' => wp_create_nonce( 'podcast_import_action' ),
 		) );
-		$message            = '';
-		$message            .= '<p>You\'ve connected to your Castos account, and you have existing podcasts that can be synced.</p>';
-		$message            .= '<p>You can <a href="' . $hosting_tab_url . '">sync your existing podcasts to Castos now.</a></p>';
-		$message            .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
+		$message = '';
+		$message .= '<p>You\'ve connected to your Castos account, and you have existing podcasts that can be synced.</p>';
+		$message .= '<p>You can <a href="' . $hosting_tab_url . '">sync your existing podcasts to Castos now.</a></p>';
+		$message .= '<p>Alternatively you can <a href="' . $ignore_message_url . '">dismiss this message.</a></p>';
 		?>
 		<div class="notice notice-info">
 			<p><?php _e( $message, 'seriousy-simple-podcasting' ); ?></p>
@@ -451,7 +515,7 @@ class Admin_Notifications_Handler implements Service {
 				__( 'Using Elementor? Seriously Simple Podcasting now has built in Elementor templates to build podcast specific pages. <a href="%s">Click here to install them now.</a> ', 'seriously-simple-podcasting' ),
 				array(
 					'a' => array(
-						'href'   => array(),
+						'href' => array(),
 						'target' => true,
 					),
 				)
@@ -459,7 +523,7 @@ class Admin_Notifications_Handler implements Service {
 			esc_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings&tab=extensions' ) )
 		);
 
-		$ignore_message_url  = add_query_arg( array( 'ssp_disable_elementor_template_notice' => 'true' ) );
+		$ignore_message_url = add_query_arg( array( 'ssp_disable_elementor_template_notice' => 'true' ) );
 		$ignore_message_link = sprintf(
 			wp_kses(
 			// translators: Placeholder is the url to dismiss the message
@@ -488,17 +552,17 @@ class Admin_Notifications_Handler implements Service {
 	public function get_predefined_notices() {
 		$notices = array(
 			self::NOTICE_API_EPISODE_SUCCESS => array(
-				'msg'  => __( 'Your episode was successfully synced to your Castos account', 'seriously-simple-podcasting' ),
+				'msg' => __( 'Your episode was successfully synced to your Castos account', 'seriously-simple-podcasting' ),
 				'type' => self::SUCCESS,
 			),
-			self::NOTICE_API_EPISODE_ERROR   => array(
-				'msg'  => __( "An error occurred in syncing this episode to your Castos account. <br>
+			self::NOTICE_API_EPISODE_ERROR => array(
+				'msg' => __( "An error occurred in syncing this episode to your Castos account. <br>
 								We will keep attempting to sync your episode over the next 24 hours. <br>
 								If you don't see this episode in your Castos account at that time please contact our support team at hello@castos.com", 'seriously-simple-podcasting' ),
 				'type' => self::ERROR,
 			),
-			self::NOTICE_NGINX_ERROR         => array(
-				'msg'  => sprintf( __(
+			self::NOTICE_NGINX_ERROR => array(
+				'msg' => sprintf( __(
 					"We've detected that your website is using NGINX.
 					In order for Seriously Simple Podcasting to play your episodes, you'll need to reach out to your web host or system administrator and follow the instructions outlined in this <a href='%s'>help document.</a>",
 					'seriously-simple-podcasting'

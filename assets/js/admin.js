@@ -257,5 +257,19 @@ jQuery(document).ready(function($) {
 		});
 	}
 
+	var initNotifications = function () {
+		$('.notice.is-constant').on( 'click', '.notice-dismiss', function () {
+			var $notice = $(this).closest('.notice'),
+				data = {
+					'action': 'remove_constant_notice',
+					'id': $notice.data('id'),
+					'nonce': $notice.data('nonce'),
+				};
+
+			$.post(ajaxurl, data);
+		});
+	};
+
 	initDynamoBtn();
+	initNotifications();
 });

@@ -2,9 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller as PPT_Controller;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
-use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
 class Ajax_Handler {
 
@@ -57,6 +55,30 @@ class Ajax_Handler {
 
 		// Add ajax action to the Castos sync process
 		add_action( 'wp_ajax_sync_castos', array( $this, 'sync_castos' ) );
+
+		// Ajax action to removing the constant notice
+		add_action( 'wp_ajax_remove_constant_notice', array( $this, 'remove_constant_notice' ) );
+	}
+
+	/**
+	 * Removes constant notice
+	 *
+	 * @return void
+	 */
+	public function remove_constant_notice() {
+		try {
+			$id = $_POST['id'];
+
+			if ( empty( $_POST['nonce'] ) && ! wp_verify_nonce( 'nonce-' . $_POST['id'] ) ) {
+				throw new \Exception();
+			}
+
+			$this->admin_notices_handler->remove_constant_notice( $id );
+
+			wp_send_json_success();
+		} catch ( \Exception $e ) {
+			wp_send_json_error();
+		}
 	}
 
 	/**

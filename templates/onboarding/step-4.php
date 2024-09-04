@@ -98,8 +98,8 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 						<?php echo $podmotor_account_api_token ? __('Connected', 'seriously-simple-podcasting') : __( 'Connect Castos', 'seriously-simple-podcasting' ) ?>
 					</button>
 					<?php wp_nonce_field( 'ss_podcasting_castos-hosting', 'podcast_settings_tab_nonce', false ); ?>
-					<span class="connect-castos-message"></span>
 					<button type="submit" <?php disabled( ! $podmotor_account_api_token ) ?>><?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?></button>
+					<span class="connect-castos-message"></span>
 				</div>
 			</form>
 		</div>

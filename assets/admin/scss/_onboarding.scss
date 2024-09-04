@@ -590,11 +590,9 @@
 		position: relative;
 
 		span.connect-castos-message {
-			position: absolute;
-			left: 0;
-			bottom: -24px;
-			margin-left: 0;
 			display: block;
+			text-align: left;
+			margin: 20px 0 0;
 		}
 
 		button[type=submit], .button {

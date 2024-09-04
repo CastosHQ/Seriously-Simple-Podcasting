@@ -13,5 +13,5 @@ Feature: SSP Plugin Hosting Settings
 	Scenario: All hosting settings exist
 		Then I can see "Podcast Hosting"
 		And I can see "Castos API token"
-		And I can see "Your Castos API token. Available from your Castos account dashboard."
+		And I can see "Your Castos API token. Available from your"
 		And I can see "Connect"

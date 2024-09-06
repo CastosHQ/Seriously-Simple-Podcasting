@@ -282,7 +282,7 @@ class Admin_Notifications_Handler implements Service {
 			"dismissible" => "is-dismissible is-constant",
 		);
 
-		add_option( self::CONSTANT_NOTICES_KEY, $notices );
+		update_option( self::CONSTANT_NOTICES_KEY, $notices );
 	}
 
 	/**

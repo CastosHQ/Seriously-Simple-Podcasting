@@ -530,14 +530,17 @@ class Rest_Api_Controller {
 				'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
 				'rssFeedUrl'    => $this->episode_repository->get_feed_url( $episode_id ),
 				'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
-				'syncStatus'    => array(
-					'isSynced' => Sync_Status::SYNC_STATUS_SYNCED === $sync_status->status,
-					'status'   => $sync_status->status,
-					'error'    => $sync_status->error,
-					'message'  => $sync_status->message,
-					'title'    => $sync_status->title,
-				),
 			);
+
+			if ( ssp_is_connected_to_castos() ) {
+				$player_data['syncStatus'] = array(
+					'isSynced' => Sync_Status::SYNC_STATUS_SYNCED === $sync_status->status,
+					'status' => $sync_status->status,
+					'error' => $sync_status->error,
+					'message' => $sync_status->message,
+					'title' => $sync_status->title,
+				);
+			}
 
 			return $player_data;
 		}

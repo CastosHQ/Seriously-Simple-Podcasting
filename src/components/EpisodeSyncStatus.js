@@ -26,6 +26,9 @@ const EpisodeSyncStatus = () => {
 
 			if (updatedPost && updatedPost[ 'episode_data' ]) {
 				let syncStatus = updatedPost[ 'episode_data' ].syncStatus
+				if ( 'none' === syncStatus.status ) {
+					return; // Do not show redundant "Not Synced yet" status.
+				}
 				displayNotice(syncStatus)
 				updateSyncStatus(syncStatus)
 			}

@@ -92,14 +92,14 @@ jobs:
 
       - name: Upload codeception output on failure
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: acceptance-tests
           path: wp-content/plugins/seriously-simple-podcasting/tests/_output
 
       - name: Upload PHP server logs on failure
         if: failure()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: acceptance-tests
           path: nohup.out

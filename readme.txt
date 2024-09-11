@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.6
 Requires PHP: 7.4
-Stable tag: 3.4.1
+Stable tag: 3.5.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,19 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.5.0 =
+2024-09-11
+[UPDATE] Enhanced UX/UI for Hosting (Castos connection) settings
+[UPDATE] Display success and error messages for Castos connection
+[UPDATE] Auto-disconnect SSP when users are disconnected on Castos
+[UPDATE] Display Castos sync status after saving episodes
+[UPDATE] Added filter for allowed tags in the feed description
+[UPDATE] Removed the "1,000 Subscriber Challenge" from the settings sidebar
+[FIX] Handle PHP exceptions in the ssp_readfile_chunked() function
+[FIX] Catch potential PHP errors during episode file downloads
+[FIX] Support additional classes in the player and podcast playlist blocks
+[FIX] Use dark mode for the playlist block when dark mode is set in the settings
 
 = 3.4.1 =
 2024-07-31

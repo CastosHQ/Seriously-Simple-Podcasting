@@ -8,7 +8,7 @@
 ?>
 <p>
 	<span class="ssp-episode-details-label"><?php echo wp_kses_post( $label ) ?></span><br/>
-	<img id="<?php echo esc_attr( $k ) ?>_preview" src="<?php echo esc_attr( $data ) ?>"
+	<img class="ssp-preview-<?php echo esc_attr( $k ) ?>" src="<?php echo esc_attr( $data ) ?>"
 		 style="max-width:200px;height:auto;margin:20px 0;"/>
 	<br/>
 	<input id="<?php echo esc_attr( $k ) ?>_button" type="button" class="button"

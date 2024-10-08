@@ -153,3 +153,8 @@ import EpisodeSyncStatus from './components/EpisodeSyncStatus';
 registerPlugin('episode-sync-status', {
 	render: EpisodeSyncStatus,
 });
+
+import EpisodeMetaSidebar from './components/EpisodeMetaSidebar';
+
+// Register the plugin.
+registerPlugin( 'ssp-episode-meta-sidebar', { render: EpisodeMetaSidebar } );

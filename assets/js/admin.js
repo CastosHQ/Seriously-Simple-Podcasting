@@ -4,9 +4,9 @@ jQuery(document).ready(function($) {
 	var file_frame, series_img_frame;
 
 	$.fn.ssp_upload_media_file = function( button, preview_media, validateImageSize = false ) {
-		var button_id = button.attr('id');
-		var field_id = button_id.replace( '_button', '' );
-		var preview_id = button_id.replace( '_button', '_preview' );
+		//var button_id = button.attr('id');
+		var field_class = button.data( 'field' );
+		var preview_class = button.data( 'preview' );
 
 		// Create the media frame.
 		file_frame = wp.media.frames.file_frame = wp.media({
@@ -19,16 +19,16 @@ jQuery(document).ready(function($) {
 
 		// When an image is selected, run a callback.
 		file_frame.on( 'select', function() {
-		  var attachment = file_frame.state().get('selection').first().toJSON();
+			var attachment = file_frame.state().get('selection').first().toJSON();
 
-		  if ( typeof validateImageSize === 'function' && !validateImageSize( attachment ) ) {
-			return;
-		  }
+			if ( typeof validateImageSize === 'function' && !validateImageSize( attachment ) ) {
+			  return;
+			}
 
-		  $("#"+field_id).val(attachment.url);
-		  if ( preview_media ) {
-		  	$("#"+preview_id).attr('src',attachment.url);
-		  }
+			$('input.' + field_class).val(attachment.url).trigger('change');
+			if ( preview_media ) {
+				$('.' + preview_class).attr('src', attachment.url);
+			}
 		});
 
 		// Finally, open the modal
@@ -93,8 +93,7 @@ jQuery(document).ready(function($) {
 	});
 
 	/* ADD/EDIT EPISODE */
-
-	$('#upload_audio_file_button').click(function( event ){
+	$('body').on('click', '.upload_audio_file_button', function( event ){
 		event.preventDefault();
 		$.fn.ssp_upload_media_file( $(this), false );
 	});
@@ -208,7 +207,7 @@ jQuery(document).ready(function($) {
 
 	$('#cover_image_delete').click(function() {
 		$( '#cover_image, #cover_image_id' ).val( '' );
-		$( '#cover_image_preview' ).attr( 'src', '' );
+		$( '#cover_image_previfieldSelectorew' ).attr( 'src', '' );
 	});
 
 	$('.js-ssp-select2').select2();
@@ -270,6 +269,29 @@ jQuery(document).ready(function($) {
 		});
 	};
 
+	var initSSPControls = function () {
+		$('.js-open-ssp-controls').click(function () {
+			$('.ssp-open').trigger('click');
+		});
+
+		// Send changed event to Gutenberg
+		$('.ssp-sync-field').change(function () {
+			document.dispatchEvent(new CustomEvent('changedSSPField', {
+				'detail': { field: $(this).prop('name'), value: $(this).val() }
+			}));
+		});
+
+		// Listen changed even from Gutenberg
+		document.addEventListener('changedSSPGutField', function ( event ) {
+			var data = event.detail;
+
+			$('input.ssp-sync-field[type="text"][name="' + data.field + '"]').val(data.value);
+
+			$('input.ssp-sync-field[type="radio"][name="' + data.field + '"][value="' + data.value + '"]').filter('.ssp-sync-field').prop('checked', true);
+		});
+	};
+
 	initDynamoBtn();
 	initNotifications();
+	initSSPControls();
 });

@@ -252,7 +252,7 @@ jQuery(document).ready(function($) {
 				subtitle = $dynamo.data('default-podcast-title');
 			}
 
-			changeUrlArg('s', subtitle)
+			changeUrlArg('s', subtitle.replace(" (default)", ""))
 		});
 	}
 

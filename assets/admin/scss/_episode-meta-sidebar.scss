@@ -91,6 +91,15 @@
 	.ssp-image-uploader {
 		margin-top: 8px;
 
+		img {
+			transition:0.4s;
+			box-shadow: 1px 1px 6px 0 rgba(0, 0, 20, 0.2);
+
+			&:hover {
+				box-shadow: 1px 1px 8px 0 rgba(0, 0, 20, 0.3);
+			}
+		}
+
 		.no-image {
 			height: 230px;
 			background: #F6F7F7;
@@ -99,6 +108,12 @@
 			justify-content: center;
 			text-align: center;
 			color: #555;
+			box-shadow:1px 1px 6px 0 rgba(0, 0, 20, 0.2);
+			transition:0.4s;
+
+			&:hover {
+				box-shadow: 1px 1px 8px 0 rgba(0, 0, 20, 0.3);
+			}
 		}
 
 		.remove-image {
@@ -111,6 +126,70 @@
 			height: 24px;
 			min-width: 24px;
 			box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+		}
+	}
+
+	.ssp-promo-sidebar {
+		margin-right: -16px;
+		margin-left: -16px;
+		background: #EBF6FF;
+		padding: 16px;
+		margin-bottom: -24px;
+
+		&__description {
+			color: #2271B1;
+		}
+
+		&__description-row {
+			display: flex;
+			gap: 12px;
+			margin-bottom: 12px;
+		}
+
+		&__bell {
+			width: 40px;
+			min-width: 40px;
+			height: 40px;
+			background: #BFDBFE;
+			border-radius: 4px;
+			img {
+				padding: 8px;
+			}
+		}
+
+		&__btn {
+			display: block;
+			border: 1px solid #2271B1;
+			border-radius: 3px;
+			padding: 8px;
+			width: 100%;
+			text-decoration: none;
+			text-align: center;
+			transition: .4s;
+			box-shadow: 0 0 4px 0 rgba(0, 0, 20, 0.2);
+
+			&:hover {
+				background: #eff5fb;
+				box-shadow: 1px 1px 8px 0 rgba(0, 0, 20, 0.3);
+			}
+
+			img {
+				position: relative;
+				top: 3px;
+				left: 4px;
+			}
+		}
+	}
+
+	.button {
+		border: 1px solid #2271B1;
+		box-shadow: 0 0 4px 0 rgba(0, 0, 20, 0.2);
+		transition: .4s;
+
+		&:hover:not(:disabled) {
+			border: 1px solid #2271B1;
+			background: #f6f7f7;
+			box-shadow: 1px 1px 4px 0 rgba(0, 0, 20, 0.2);
 		}
 	}
 }

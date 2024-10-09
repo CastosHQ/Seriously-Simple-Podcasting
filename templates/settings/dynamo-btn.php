@@ -14,7 +14,7 @@
 	<a class="ssp-dynamo__btn" target="_blank"
 	   href="https://dynamo.castos.com/podcast-covers?utm_source=WordPress&utm_medium=Plugin&utm_campaign=dashboard&t=<?php
 	   echo rawurlencode( $title ) ?>&s=<?php echo rawurlencode( $subtitle ) ?>">
-		<span class="ssp-dynamo__arrow-up">Dynamo</span>
+		<span class="ssp-dynamo__arrow-up"><?php _e('Dynamo', 'seriously-simple-podcasting') ?></span>
 	</a>
 </span>
 </p>

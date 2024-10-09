@@ -7,6 +7,8 @@ import SSPIcon from '../img/ssp-icon.svg';
 import classnames from 'classnames';
 import ImageUploader from './Sidebar/ImageUploader';
 import FileUploader from './Sidebar/FileUploader';
+import Dynamo from './Sidebar/Dynamo';
+import Promo from './Sidebar/Promo';
 
 const EpisodeMetaSidebar = () => {
 	const postMeta = useSelect(( select ) => select('core/editor').getEditedPostAttribute('meta'));
@@ -55,14 +57,6 @@ const EpisodeMetaSidebar = () => {
 
 	// Ensure state sync with meta field value
 	useEffect(() => {
-		if ( episodeTypeMeta !== episodeType ) {
-			setEpisodeType(episodeTypeMeta); // Sync with meta value
-		}
-
-		if ( audioFileMeta !== audioFile ) {
-			setAudioFile(audioFileMeta); // Sync with meta value
-		}
-
 		const handleChangeSSPField = ( event ) => {
 			handleFieldChange(event.detail.field, event.detail.value);
 		};
@@ -125,16 +119,12 @@ const EpisodeMetaSidebar = () => {
 							</div>
 						</div>
 
-						<div>
-							<p className="upsell-field">
-								<span className="upsell-field__container">
-									<span className="upsell-field__description">Get lower bandwidth fees, file storage, and better stats when hosting with Castos.</span>
-									<a className="upsell-field__btn"
-									   target="_blank"
-									   href="https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&amp;utm_medium=episode-file-box&amp;utm_campaign=upgrade">
-										Try Castos for free	</a>
-								</span>
-							</p>
+						<div className="ssp-sidebar-field-section">
+							<Promo
+								description={ __('Get lower bandwidth fees, file storage, and better stats when hosting with Castos.', 'seriously-simple-podcasting')}
+								title={__('Try Castos for free', 'seriously-simple-podcasting')}
+								url={'https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&amp;utm_medium=episode-file-box&amp;utm_campaign=upgrade'}
+							/>
 						</div>
 
 					</div>
@@ -153,14 +143,23 @@ const EpisodeMetaSidebar = () => {
 					<div className="ssp-sidebar-content">
 						<div className="ssp-sidebar-field-section">
 							<ImageUploader
-								imageId={imageId}
-								imageUrl={imageUrl}
+								imageId={ imageId }
+								imageUrl={ imageUrl }
 								onRemoveImage={ removeCoverImage }
 								onSelectImage={ ( media ) => {
 									handleFieldChange('cover_image', media.url, true);
-									handleFieldChange('cover_image_id', media.id, true);
+									handleFieldChange('cover_image_id', media.id.toString() + '', true);
 								} }/>
+							<div className={ 'description' }>
+								{ __('The episode image should be square to display properly in podcasting apps and directories, ' +
+									'and should be at least 300x300px in size.',
+									'seriously-simple-podcasting') }
+							</div>
 						</div>
+						<div className="ssp-sidebar-field-section">
+							<Dynamo/>
+						</div>
+
 					</div>
 				) }
 			</PanelBody>

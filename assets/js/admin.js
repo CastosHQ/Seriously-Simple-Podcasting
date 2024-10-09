@@ -3,7 +3,7 @@ jQuery(document).ready(function($) {
 	// Uploading files
 	var file_frame, series_img_frame;
 
-	$.fn.ssp_upload_media_file = function( button, preview_media, validateImageSize = false ) {
+	$.fn.ssp_upload_media_file = function( button, validateCallback = null ) {
 		//var button_id = button.attr('id');
 		var field_class = button.data( 'field' );
 		var preview_class = button.data( 'preview' );
@@ -21,12 +21,12 @@ jQuery(document).ready(function($) {
 		file_frame.on( 'select', function() {
 			var attachment = file_frame.state().get('selection').first().toJSON();
 
-			if ( typeof validateImageSize === 'function' && !validateImageSize( attachment ) ) {
-			  return;
+			if ( typeof validateCallback === 'function' && ! validateCallback(attachment) ) {
+				return;
 			}
 
 			$('input.' + field_class).val(attachment.url).trigger('change');
-			if ( preview_media ) {
+			if ( preview_class ) {
 				$('.' + preview_class).attr('src', attachment.url);
 			}
 		});
@@ -93,9 +93,9 @@ jQuery(document).ready(function($) {
 	});
 
 	/* ADD/EDIT EPISODE */
-	$('body').on('click', '.upload_audio_file_button', function( event ){
+	$('body').on('click', '.ssp-upload-file', function( event ){
 		event.preventDefault();
-		$.fn.ssp_upload_media_file( $(this), false );
+		$.fn.ssp_upload_media_file( $(this) );
 	});
 
 	$('#episode_embed_code').click(function() {
@@ -186,18 +186,18 @@ jQuery(document).ready(function($) {
 					attachment.width <= maxWidth &&
 					attachment.height === attachment.width;
 			},
-			validateImageSize = 'cover_image_button' === $(e.target).prop('id') ? coverImgValidator : feedImgValidator,
+			validateImage = 'cover_image' === $(e.target).data('validator') ? coverImgValidator : feedImgValidator,
 			description = $(this).parent().find('.description'),
 			$img = 'cover_image_button' === $(e.target).prop('id') ? $('#cover_image_id') : $('#ss_podcasting_data_image_preview');
 
 
-		$.fn.ssp_upload_media_file($(this), true, validateImageSize);
+		$.fn.ssp_upload_media_file($(this), validateImage);
 
 		description.css('color', '');
 
 		file_frame.on('select', function () {
 			var attachment = file_frame.state().get('selection').first().toJSON();
-			if (validateImageSize(attachment)) {
+			if (validateImage(attachment)) {
 				$img.val(attachment.id);
 			} else {
 				description.css('color', 'red');
@@ -205,9 +205,9 @@ jQuery(document).ready(function($) {
 		});
 	});
 
-	$('#cover_image_delete').click(function() {
-		$( '#cover_image, #cover_image_id' ).val( '' );
-		$( '#cover_image_previfieldSelectorew' ).attr( 'src', '' );
+	$('.ssp-image-delete').click(function(){
+		$('.' + $(this).data('field')).val('').trigger('change');
+		$('.' + $(this).data('preview')).attr('src', '').trigger('change');
 	});
 
 	$('.js-ssp-select2').select2();
@@ -275,19 +275,20 @@ jQuery(document).ready(function($) {
 		});
 
 		// Send changed event to Gutenberg
-		$('.ssp-sync-field').change(function () {
+		$('.ssp-sync').change(function () {
 			document.dispatchEvent(new CustomEvent('changedSSPField', {
 				'detail': { field: $(this).prop('name'), value: $(this).val() }
 			}));
 		});
 
-		// Listen changed even from Gutenberg
+		// Listen changed event from Gutenberg
 		document.addEventListener('changedSSPGutField', function ( event ) {
 			var data = event.detail;
 
-			$('input.ssp-sync-field[type="text"][name="' + data.field + '"]').val(data.value);
-
-			$('input.ssp-sync-field[type="radio"][name="' + data.field + '"][value="' + data.value + '"]').filter('.ssp-sync-field').prop('checked', true);
+			$('input.ssp-sync[type="text"][name="' + data.field + '"]').val(data.value);
+			$('input.ssp-sync[type="hidden"][name="' + data.field + '"]').val(data.value);
+			$('input.ssp-sync[type="radio"][name="' + data.field + '"][value="' + data.value + '"]').prop('checked', true);
+			$('img.ssp-sync.ssp-preview-' + data.field).prop('src', data.value);
 		});
 	};
 

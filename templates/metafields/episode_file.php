@@ -23,7 +23,7 @@
 
 <div>
 	<input name="<?php echo esc_attr( $k )
-	?>" type="text" class="ssp-sync-field ssp-field-<?php echo esc_attr( $k )
+	?>" type="text" class="ssp-sync ssp-field-<?php echo esc_attr( $k )
 	?>" value="<?php echo esc_attr( $data )
 	?>" />
 
@@ -33,7 +33,7 @@
 			  _e( 'Select file', 'seriously-simple-podcasting' ) ?></button>
 	  </div>
 	<?php else : ?>
-		<input type="button" class="button upload_<?php echo esc_attr( $k )
+		<input type="button" class="button ssp-upload-file upload_<?php echo esc_attr( $k )
 		?>_button" value="<?php _e( 'Upload File', 'seriously-simple-podcasting' )
 		?>" data-uploader_title="<?php _e( 'Choose a file', 'seriously-simple-podcasting' )
 		?>" data-uploader_button_text="<?php _e( 'Insert podcast file', 'seriously-simple-podcasting' )

@@ -5,6 +5,8 @@ import { PanelBody, RadioControl, TextControl } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import SSPIcon from '../img/ssp-icon.svg';
 import classnames from 'classnames';
+import ImageUploader from './Sidebar/ImageUploader';
+import FileUploader from './Sidebar/FileUploader';
 
 const EpisodeMetaSidebar = () => {
 	const postMeta = useSelect(( select ) => select('core/editor').getEditedPostAttribute('meta'));
@@ -12,24 +14,30 @@ const EpisodeMetaSidebar = () => {
 	// Get current meta values
 	const episodeTypeMeta = postMeta.episode_type || 'audio';
 	const audioFileMeta = postMeta.audio_file || '';
+	const coverImageIdMeta = postMeta.cover_image_id || '';
+	const coverImageMeta = postMeta.cover_image || '';
 
 	// Init local states to manage the meta fields
 	const [episodeType, setEpisodeType] = useState(episodeTypeMeta);
 	const [audioFile, setAudioFile] = useState(audioFileMeta);
-
-	// Callbacks map
-	const callbacks = {
-		audio_file: setAudioFile,
-		episode_type: setEpisodeType,
-	};
+	const [imageId, setImageId] = useState(coverImageIdMeta);
+	const [imageUrl, setImageUrl] = useState(coverImageMeta);
 
 	const handleFieldChange = ( fieldName, value, triggerUpdate ) => {
+		// Callbacks map
+		const setCallbacks = {
+			audio_file: setAudioFile,
+			episode_type: setEpisodeType,
+			cover_image_id: setImageId,
+			cover_image: setImageUrl,
+		};
+
 		editPost({
 			meta: {
 				[ fieldName ]: value,  // Set the value for the post meta field
 			},
 		});
-		callbacks[ fieldName ]?.(value); // Set the local value
+		setCallbacks[ fieldName ]?.(value); // Set the local value
 
 		// Trigger event to update standard meta fields
 		if ( triggerUpdate ) {
@@ -37,6 +45,12 @@ const EpisodeMetaSidebar = () => {
 				'detail': { field: fieldName, value: value },
 			}));
 		}
+	};
+
+	const removeCoverImage = ( event ) => {
+		event.stopPropagation();
+		handleFieldChange('cover_image', '', true);
+		handleFieldChange('cover_image_id', '', true);
 	};
 
 	// Ensure state sync with meta field value
@@ -66,8 +80,9 @@ const EpisodeMetaSidebar = () => {
 	const { editPost } = useDispatch('core/editor');
 
 	// Toggle sections
-	const [isEpisodeMediaSectionOpen, setEpisodeMediaSectionOpen] = useState(true);
-	const [isEpisodeMetaSectionOpen, setEpisodeMetaSectionOpen] = useState(false);
+	const [isMediaSectionOpen, setMediaSectionOpen] = useState(true);
+	const [isImageSectionOpen, setImageSectionOpen] = useState(true);
+	const [isMetaSectionOpen, setMetaSectionOpen] = useState(false);
 
 	return (
 		<PluginSidebar
@@ -78,13 +93,13 @@ const EpisodeMetaSidebar = () => {
 		>
 			<PanelBody>
 				<h2
-					className={ classnames('ssp-accordion', { open: isEpisodeMediaSectionOpen }) }
-					onClick={ () => setEpisodeMediaSectionOpen( ! isEpisodeMediaSectionOpen) }
-					aria-expanded={ isEpisodeMediaSectionOpen }
+					className={ classnames('ssp-accordion', { open: isMediaSectionOpen }) }
+					onClick={ () => setMediaSectionOpen( ! isMediaSectionOpen) }
+					aria-expanded={ isMediaSectionOpen }
 				>
 					{ __('Episode Media', 'seriously-simple-podcasting') }
 				</h2>
-				{ isEpisodeMediaSectionOpen && (
+				{ isMediaSectionOpen && (
 					<div className="ssp-sidebar-content">
 						<div className="ssp-sidebar-field-section">
 							<h3>{ __('Episode Type', 'seriously-simple-podcasting') }</h3>
@@ -99,19 +114,12 @@ const EpisodeMetaSidebar = () => {
 						</div>
 						<div className="ssp-sidebar-field-section">
 							<h3>{ __('Episode File', 'seriously-simple-podcasting') }</h3>
-							<TextControl
-								className={ 'w-full mb-2 ssp-field-audio_file' }
-								value={ audioFile }
-								onChange={ ( value ) => handleFieldChange('audio_file', value, true) }
-							/>
 
-							<input type="button"
-								   className={ 'button upload_audio_file_button w-full' }
-								   data-field={ 'ssp-field-audio_file' }
-								   id="upload_audio_file_button"
-								   value={ __('Upload File', 'seriously-simple-podcasting') }
-								   data-uploader_title={ __('Choose a file', 'seriously-simple-podcasting') }
-								   data-uploader_button_text={ __('Insert podcast file', 'seriously-simple-podcasting') }/>
+							<FileUploader
+								audioUrl={ audioFile }
+								onChangeUrl={ ( value ) => handleFieldChange('audio_file', value, true) }
+								onSelectAudio={ ( media ) => handleFieldChange('audio_file', media.url, true) }
+							/>
 							<div className={ 'description' }>
 								{ __('Upload audio episode files as MP3 or M4A, video episodes as MP4, or paste the file URL.', 'seriously-simple-podcasting') }
 							</div>
@@ -121,7 +129,8 @@ const EpisodeMetaSidebar = () => {
 							<p className="upsell-field">
 								<span className="upsell-field__container">
 									<span className="upsell-field__description">Get lower bandwidth fees, file storage, and better stats when hosting with Castos.</span>
-									<a className="upsell-field__btn" target="_blank"
+									<a className="upsell-field__btn"
+									   target="_blank"
 									   href="https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&amp;utm_medium=episode-file-box&amp;utm_campaign=upgrade">
 										Try Castos for free	</a>
 								</span>
@@ -134,13 +143,37 @@ const EpisodeMetaSidebar = () => {
 
 			<PanelBody>
 				<h2
-					className={ classnames('ssp-accordion', { open: isEpisodeMetaSectionOpen }) }
-					onClick={ () => setEpisodeMetaSectionOpen( ! isEpisodeMetaSectionOpen) }
-					aria-expanded={ isEpisodeMetaSectionOpen }
+					className={ classnames('ssp-accordion', { open: isImageSectionOpen }) }
+					onClick={ () => setImageSectionOpen( ! isImageSectionOpen) }
+					aria-expanded={ isImageSectionOpen }
+				>
+					{ __('Episode Image', 'seriously-simple-podcasting') }
+				</h2>
+				{ isImageSectionOpen && (
+					<div className="ssp-sidebar-content">
+						<div className="ssp-sidebar-field-section">
+							<ImageUploader
+								imageId={imageId}
+								imageUrl={imageUrl}
+								onRemoveImage={ removeCoverImage }
+								onSelectImage={ ( media ) => {
+									handleFieldChange('cover_image', media.url, true);
+									handleFieldChange('cover_image_id', media.id, true);
+								} }/>
+						</div>
+					</div>
+				) }
+			</PanelBody>
+
+			<PanelBody>
+				<h2
+					className={ classnames('ssp-accordion', { open: isMetaSectionOpen }) }
+					onClick={ () => setMetaSectionOpen( ! isMetaSectionOpen) }
+					aria-expanded={ isMetaSectionOpen }
 				>
 					{ __('Episode Meta', 'seriously-simple-podcasting') }
 				</h2>
-				{ isEpisodeMetaSectionOpen && (
+				{ isMetaSectionOpen && (
 					<div className="ssp-sidebar-content">
 						<div className="ssp-sidebar-field-section">
 							<h3>{ __('Episode Type', 'seriously-simple-podcasting') }</h3>

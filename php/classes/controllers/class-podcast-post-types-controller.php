@@ -638,9 +638,10 @@ class Podcast_Post_Types_Controller {
 						break;
 
 					case 'image':
-						$label       = $v['name'];
+						$label = $v['name'];
 						$description = $v['description'];
-						$html        .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'data', 'k' ) );
+						$validator = isset( $v['validator'] ) ? $v['validator'] : '';
+						$html .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'validator', 'data', 'k' ) );
 						break;
 
 					case 'checkbox':

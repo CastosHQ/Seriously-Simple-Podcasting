@@ -220,6 +220,7 @@ class CPT_Podcast_Handler implements Service {
 			'type'             => 'image',
 			'default'          => '',
 			'section'          => 'info',
+			'validator'        => 'cover_image',
 			'meta_description' => __( 'The full URL of image file used in HTML 5 player if available.', 'seriously-simple-podcasting' ),
 		);
 

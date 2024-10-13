@@ -18,12 +18,16 @@ const EpisodeMetaSidebar = () => {
 	const audioFileMeta = postMeta.audio_file || '';
 	const coverImageIdMeta = postMeta.cover_image_id || '';
 	const coverImageMeta = postMeta.cover_image || '';
+	const durationMeta = postMeta.duration || '';
+	const filesizeMeta = postMeta.filesize || '';
 
 	// Init local states to manage the meta fields
 	const [episodeType, setEpisodeType] = useState(episodeTypeMeta);
 	const [audioFile, setAudioFile] = useState(audioFileMeta);
 	const [imageId, setImageId] = useState(coverImageIdMeta);
 	const [imageUrl, setImageUrl] = useState(coverImageMeta);
+	const [duration, setDuration] = useState(durationMeta);
+	const [filesize, setFilesize] = useState(filesizeMeta);
 
 	const handleFieldChange = ( fieldName, value, triggerUpdate ) => {
 		// Callbacks map
@@ -32,6 +36,8 @@ const EpisodeMetaSidebar = () => {
 			episode_type: setEpisodeType,
 			cover_image_id: setImageId,
 			cover_image: setImageUrl,
+			duration: setDuration,
+			filesize: setFilesize,
 		};
 
 		editPost({
@@ -76,7 +82,7 @@ const EpisodeMetaSidebar = () => {
 	// Toggle sections
 	const [isMediaSectionOpen, setMediaSectionOpen] = useState(true);
 	const [isImageSectionOpen, setImageSectionOpen] = useState(true);
-	const [isMetaSectionOpen, setMetaSectionOpen] = useState(false);
+	const [isMetaSectionOpen, setMetaSectionOpen] = useState(true);
 
 	return (
 		<PluginSidebar
@@ -175,8 +181,32 @@ const EpisodeMetaSidebar = () => {
 				{ isMetaSectionOpen && (
 					<div className="ssp-sidebar-content">
 						<div className="ssp-sidebar-field-section">
-							<h3>{ __('Episode Type', 'seriously-simple-podcasting') }</h3>
-							<p>{ __('This is the content of Section 2', 'seriously-simple-podcasting') }</p>
+							<h3>{ __('Duration', 'seriously-simple-podcasting') }</h3>
+
+							<TextControl
+								__nextHasNoMarginBottom
+								value={ duration }
+								onChange={ ( value ) => handleFieldChange('duration', value, true) }
+							/>
+
+							<div className={ 'description' }>
+								{ __('Duration of podcast file for display (calculated automatically if possible).',
+									'seriously-simple-podcasting') }
+							</div>
+						</div>
+						<div className="ssp-sidebar-field-section">
+							<h3>{ __('File Size', 'seriously-simple-podcasting') }</h3>
+
+							<TextControl
+								__nextHasNoMarginBottom
+								value={ filesize }
+								onChange={ ( value ) => handleFieldChange('filesize', value, true) }
+							/>
+
+							<div className={ 'description' }>
+								{ __('Size of the podcast file for display (calculated automatically if possible).',
+									'seriously-simple-podcasting') }
+							</div>
 						</div>
 					</div>
 				) }

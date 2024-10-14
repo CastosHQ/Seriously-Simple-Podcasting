@@ -15,10 +15,13 @@ if ( $data ) {
 	<label class="ssp-episode-details-label" for="<?php echo esc_attr( $k ) ?>_display"><?php
 		echo wp_kses_post( $v['name'] ) ?></label>
 	<br/>
-	<input type="text" id="<?php echo esc_attr( $k ) ?>_display" class="ssp-datepicker <?php
-	echo esc_attr( $class ) ?>" value="<?php echo esc_attr( $display_date ) ?>" />
-	<input name="<?php echo esc_attr( $k ) ?>" id="<?php echo esc_attr( $k )
-	?>" type="hidden" value="<?php echo esc_attr( $data ) ?>" />
+	<input type="text" class="ssp-sync ssp-datepicker <?php echo esc_attr( $class )
+	?>" name="<?php echo esc_attr( sprintf('%s_display', $k ) )
+	?>" id="<?php echo esc_attr( sprintf('%s_display', $k ) )
+	?>" value="<?php echo esc_attr( $display_date ) ?>" />
+	<input name="<?php echo esc_attr( $k )
+	?>" id="<?php echo esc_attr( $k )
+	?>" class="ssp-sync" type="hidden" value="<?php echo esc_attr( $data ) ?>" />
 	<br/>
 	<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span>
 </p>

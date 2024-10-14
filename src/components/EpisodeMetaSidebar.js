@@ -1,7 +1,12 @@
 import { __ } from '@wordpress/i18n';
 import { PluginSidebar } from '@wordpress/edit-post'; // Ensure you're using edit-post for PluginSidebar
 import { useSelect, useDispatch } from '@wordpress/data';
-import { PanelBody, RadioControl, TextControl } from '@wordpress/components';
+import {
+	PanelBody,
+	RadioControl,
+	TextControl,
+	CheckboxControl,
+} from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import SSPIcon from '../img/ssp-icon.svg';
 import classnames from 'classnames';
@@ -9,6 +14,7 @@ import ImageUploader from './Sidebar/ImageUploader';
 import FileUploader from './Sidebar/FileUploader';
 import Dynamo from './Sidebar/Dynamo';
 import Promo from './Sidebar/Promo';
+import DateInput from './Sidebar/DateInput';
 
 const EpisodeMetaSidebar = () => {
 	const postMeta = useSelect(( select ) => select('core/editor').getEditedPostAttribute('meta'));
@@ -20,6 +26,9 @@ const EpisodeMetaSidebar = () => {
 	const coverImageMeta = postMeta.cover_image || '';
 	const durationMeta = postMeta.duration || '';
 	const filesizeMeta = postMeta.filesize || '';
+	const dateRecordedMeta = postMeta.date_recorded || '';
+	const explicitMeta = postMeta.explicit || '';
+	const blockMeta = postMeta.block || '';
 
 	// Init local states to manage the meta fields
 	const [episodeType, setEpisodeType] = useState(episodeTypeMeta);
@@ -28,6 +37,10 @@ const EpisodeMetaSidebar = () => {
 	const [imageUrl, setImageUrl] = useState(coverImageMeta);
 	const [duration, setDuration] = useState(durationMeta);
 	const [filesize, setFilesize] = useState(filesizeMeta);
+	const [dateRecorded, setDateRecorded] = useState(dateRecordedMeta);
+	const [explicit, setExplicit] = useState(explicitMeta);
+	const [block, setBlock] = useState(blockMeta);
+
 
 	const handleFieldChange = ( fieldName, value, triggerUpdate ) => {
 		// Callbacks map
@@ -38,7 +51,14 @@ const EpisodeMetaSidebar = () => {
 			cover_image: setImageUrl,
 			duration: setDuration,
 			filesize: setFilesize,
+			date_recorded: setDateRecorded,
+			explicit: setExplicit,
+			block: setBlock,
 		};
+
+		if (typeof value == "boolean") {
+			value = value ? 'on' : '';
+		}
 
 		editPost({
 			meta: {
@@ -61,9 +81,10 @@ const EpisodeMetaSidebar = () => {
 		handleFieldChange('cover_image_id', '', true);
 	};
 
-	// Ensure state sync with meta field value
+	// Ensure state sync with meta field values
 	useEffect(() => {
 		const handleChangeSSPField = ( event ) => {
+			console.log('handleChangeSSPField event:', event);
 			handleFieldChange(event.detail.field, event.detail.value);
 		};
 
@@ -127,9 +148,9 @@ const EpisodeMetaSidebar = () => {
 
 						<div className="ssp-sidebar-field-section">
 							<Promo
-								description={ __('Get lower bandwidth fees, file storage, and better stats when hosting with Castos.', 'seriously-simple-podcasting')}
-								title={__('Try Castos for free', 'seriously-simple-podcasting')}
-								url={'https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&amp;utm_medium=episode-file-box&amp;utm_campaign=upgrade'}
+								description={ __('Get lower bandwidth fees, file storage, and better stats when hosting with Castos.', 'seriously-simple-podcasting') }
+								title={ __('Try Castos for free', 'seriously-simple-podcasting') }
+								url={ 'https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&amp;utm_medium=episode-file-box&amp;utm_campaign=upgrade' }
 							/>
 						</div>
 
@@ -208,6 +229,34 @@ const EpisodeMetaSidebar = () => {
 									'seriously-simple-podcasting') }
 							</div>
 						</div>
+						<div className="ssp-sidebar-field-section">
+							<h3>{ __('Date Recorded', 'seriously-simple-podcasting') }</h3>
+
+							<DateInput
+								value={ dateRecorded }
+								onChange={ ( value, displayedValue ) => {
+									handleFieldChange('date_recorded', value, true);
+									document.dispatchEvent(new CustomEvent('changedSSPGutField', {
+										'detail': { field: 'date_recorded_display', value: displayedValue },
+									}));
+								} }
+							/>
+						</div>
+						<div className="ssp-sidebar-field-section">
+							<CheckboxControl
+								label={ __('Mark this episode as explicit.', 'seriously-simple-podcasting') }
+								checked={ explicit }
+								onChange={ ( value ) => handleFieldChange('explicit', value, true) }
+							/>
+						</div>
+						<div className="ssp-sidebar-field-section">
+							<CheckboxControl
+								label={ __('Block this episode from appearing in the iTunes & Google Play podcast libraries.', 'seriously-simple-podcasting') }
+								checked={ block }
+								onChange={ ( value ) => handleFieldChange('block', value, true) }
+							/>
+						</div>
+
 					</div>
 				) }
 			</PanelBody>

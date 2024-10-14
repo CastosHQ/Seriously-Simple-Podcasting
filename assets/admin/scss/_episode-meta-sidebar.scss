@@ -44,6 +44,16 @@
 		border-radius: 3px;
 	}
 
+	input[type=checkbox] {
+		border: 1px solid #CBD5E1;
+		border-radius: 5px;
+	}
+
+	.components-checkbox-control__label {
+		color: #334155;
+	}
+
+
 	.components-radio-control .components-base-control__field > div {
 		flex-direction: row;
 		gap: 0.5rem;
@@ -61,7 +71,7 @@
 		margin: 12px 0;
 		font-size: 11px;
 		line-height: 13px;
-		color: #757575;
+		color: #64748B;
 	}
 
 	.ssp-sidebar-content {
@@ -192,4 +202,34 @@
 			box-shadow: 1px 1px 4px 0 rgba(0, 0, 20, 0.2);
 		}
 	}
+
+
 }
+
+.ssp-date-input {
+	.components-popover__content {
+		padding: 8px;
+	}
+
+	.components-datetime__time {
+		fieldset:first-child {
+			display: none;
+		}
+	}
+}
+
+.ssp-calendar-icon {
+	position: relative;
+	&:after {
+		content: '';
+		display: inline-block;
+		position: absolute;
+		right: 6px;
+		background: url(../img/calendar.svg) no-repeat;
+		background-size: contain;
+		width: 17px;
+		height: 16px;
+		top: 7px;
+	}
+}
+

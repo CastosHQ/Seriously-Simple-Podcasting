@@ -138,7 +138,7 @@ jQuery(document).ready(function($) {
 		    var d = $.datepicker.parseDate("d MM, yy", dateText);
 		    var date = $.datepicker.formatDate("yy-mm-dd", d);
 		    var save_field = $(this).attr('id').replace( '_display', '' );
-		    $( '#' + save_field ).val( date );
+		    $( '#' + save_field ).val( date ).trigger('change');
 		}
 	});
 
@@ -276,8 +276,10 @@ jQuery(document).ready(function($) {
 
 		// Send changed event to Gutenberg
 		$('.ssp-sync').change(function () {
+			var value = $(this).val();
+			value = 'checkbox' === $(this).attr('type') && ! $(this).is(':checked')  ? '' : value;
 			document.dispatchEvent(new CustomEvent('changedSSPField', {
-				'detail': { field: $(this).prop('name'), value: $(this).val() }
+				'detail': { field: $(this).prop('name'), value: value }
 			}));
 		});
 
@@ -288,6 +290,7 @@ jQuery(document).ready(function($) {
 			$('input.ssp-sync[type="text"][name="' + data.field + '"]').val(data.value);
 			$('input.ssp-sync[type="hidden"][name="' + data.field + '"]').val(data.value);
 			$('input.ssp-sync[type="radio"][name="' + data.field + '"][value="' + data.value + '"]').prop('checked', true);
+			$('input.ssp-sync[type="checkbox"][name="' + data.field + '"]').prop('checked', 'on' === data.value);
 			$('img.ssp-sync.ssp-preview-' + data.field).prop('src', data.value);
 		});
 	};

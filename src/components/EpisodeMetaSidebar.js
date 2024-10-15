@@ -17,7 +17,13 @@ import Promo from './Sidebar/Promo';
 import DateInput from './Sidebar/DateInput';
 
 const EpisodeMetaSidebar = () => {
-	const postMeta = useSelect(( select ) => select('core/editor').getEditedPostAttribute('meta'));
+
+	const editor = useSelect(( select ) => select('core/editor'));
+	if ( ! sspAdmin.sspPostTypes.includes(editor.getCurrentPostType()) ) {
+		return;
+	}
+
+	const postMeta = editor.getEditedPostAttribute('meta');
 
 	// Get current meta values
 	const episodeTypeMeta = postMeta.episode_type || 'audio';
@@ -41,7 +47,6 @@ const EpisodeMetaSidebar = () => {
 	const [explicit, setExplicit] = useState(explicitMeta);
 	const [block, setBlock] = useState(blockMeta);
 
-
 	const handleFieldChange = ( fieldName, value, triggerUpdate ) => {
 		// Callbacks map
 		const setCallbacks = {
@@ -56,7 +61,7 @@ const EpisodeMetaSidebar = () => {
 			block: setBlock,
 		};
 
-		if (typeof value == "boolean") {
+		if ( typeof value == 'boolean' ) {
 			value = value ? 'on' : '';
 		}
 
@@ -84,7 +89,6 @@ const EpisodeMetaSidebar = () => {
 	// Ensure state sync with meta field values
 	useEffect(() => {
 		const handleChangeSSPField = ( event ) => {
-			console.log('handleChangeSSPField event:', event);
 			handleFieldChange(event.detail.field, event.detail.value);
 		};
 

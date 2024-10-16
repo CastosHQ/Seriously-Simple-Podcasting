@@ -56,23 +56,21 @@ jQuery( document ).ready( function ( $ ) {
 	 * If the upload_credentials object isn't available
 	 */
 	if ( typeof upload_credentials != "undefined" ) {
-		initUploader();
+		initUploader({
+			runtimes: 'html5',
+			browse_button: 'ssp_select_file',
+			multi_selection: false,
+			container: 'ssp_upload_container',
+			url: upload_credentials.castos_api_url + 'files',
+		});
 	}
 
-	function initUploader(){
+	function initUploader(config){
 		/**
 		 * Creates instance of plupload
 		 * @type {module:plupload.Uploader}
 		 */
-		var uploader = new plupload.Uploader(
-			{
-				runtimes: 'html5',
-				browse_button: 'ssp_select_file',
-				multi_selection: false,
-				container: 'ssp_upload_container',
-				url: upload_credentials.castos_api_url + 'files',
-			}
-		);
+		var uploader = new plupload.Uploader(config);
 
 		/**
 		 * Init Uploader

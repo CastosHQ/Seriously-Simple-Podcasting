@@ -1131,7 +1131,7 @@ textarea#episode_embed_code {
     .ssp-post-publish__btn a:hover {
       background: #eff0f0; }
 
-#ssp-episode-meta-sidebar\:ssp-sidebar .interface-complementary-area-header__title {
+#ssp-episode-meta-sidebar\:ssp-episode-meta-sidebar .interface-complementary-area-header__title {
   font-size: 12px; }
 
 .ssp-episode-meta-sidebar .ssp-accordion, .ssp-sidebar-panel .ssp-accordion {

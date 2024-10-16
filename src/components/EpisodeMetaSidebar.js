@@ -146,7 +146,7 @@ const EpisodeMetaSidebar = () => {
 
 	return (
 		<PluginSidebar
-			name="ssp-sidebar"
+			name="ssp-episode-meta-sidebar"
 			title={ __('Seriously Simple Podcasting') }
 			className="ssp-episode-meta-sidebar"
 			icon={ <img src={ SSPIcon } className="ssp-open" alt="SSP Icon"/> }

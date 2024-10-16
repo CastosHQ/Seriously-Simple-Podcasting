@@ -1,11 +1,11 @@
 import { PluginPostStatusInfo } from '@wordpress/edit-post';
-import { useSelect } from '@wordpress/data';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { useState } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import FileIsUploadedSvg from '../img/file-is-uploaded.svg';
 import FileNotUploadedSvg from '../img/file-not-uploaded.svg';
+import { useDispatch, useSelect } from '@wordpress/data';
 
 const SSPSidebarPanel = () => {
 	const editor = useSelect(( select ) => select('core/editor'));
@@ -16,6 +16,12 @@ const SSPSidebarPanel = () => {
 	const [isSSPSectionOpen, setSSPSectionOpen] = useState(true);
 	const postMeta = editor.getEditedPostAttribute('meta');
 	const fileIsUploaded = !! postMeta.audio_file;
+
+	const { openGeneralSidebar } = useDispatch('core/edit-post');
+
+	const openSSPSidebar = () => {
+		openGeneralSidebar('ssp-episode-meta-sidebar/ssp-episode-meta-sidebar'); // Sidebar slug
+	};
 
 	return (
 		<PluginPostStatusInfo>
@@ -54,11 +60,7 @@ const SSPSidebarPanel = () => {
 
 						<Button
 							className={ 'ssp-open-meta-btn' }
-							onClick={ () => {
-								document.querySelectorAll('.ssp-open').forEach(function ( element ) {
-									element.click();
-								});
-							} }
+							onClick={ openSSPSidebar }
 						>{ __('Manage your Episode', 'seriously-simple-podcasting') }
 						</Button>
 					</div>

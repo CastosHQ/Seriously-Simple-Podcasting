@@ -158,3 +158,11 @@ import EpisodeMetaSidebar from './components/EpisodeMetaSidebar';
 
 // Register the plugin.
 registerPlugin( 'ssp-episode-meta-sidebar', { render: EpisodeMetaSidebar } );
+
+
+// const { registerBlockType } = wp.blocks;
+import SSPSidebarPanel from './components/SSPSidebarPanel';
+
+registerPlugin( 'ssp-sidebar-panel', { render: SSPSidebarPanel } );
+
+

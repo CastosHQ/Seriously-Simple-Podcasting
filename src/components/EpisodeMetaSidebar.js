@@ -56,6 +56,14 @@ const EpisodeMetaSidebar = () => {
 	const [filesizeRaw, setFilesizeRaw] = useState(filesizeRawMeta);
 	const [castosFileData, setCastosFileData] = useState(castosFileDataMeta);
 
+	// Toggle sections
+	const [isMediaSectionOpen, setMediaSectionOpen] = useState(true);
+	const [isImageSectionOpen, setImageSectionOpen] = useState(true);
+	const [isMetaSectionOpen, setMetaSectionOpen] = useState(true);
+
+	// Use `useDispatch` to update post meta
+	const { editPost } = useDispatch('core/editor');
+
 	const setPostMeta = ( fieldName, value ) => {
 		editPost({
 			meta: {
@@ -104,7 +112,7 @@ const EpisodeMetaSidebar = () => {
 	};
 
 	const getFilename = () => {
-		const fileData = JSON.parse(castosFileData);
+		const fileData = castosFileData ? JSON.parse(castosFileData) : '';
 		return fileData?.name;
 	}
 
@@ -123,13 +131,6 @@ const EpisodeMetaSidebar = () => {
 		};
 	}, []);
 
-	// Use `useDispatch` to update post meta
-	const { editPost } = useDispatch('core/editor');
-
-	// Toggle sections
-	const [isMediaSectionOpen, setMediaSectionOpen] = useState(true);
-	const [isImageSectionOpen, setImageSectionOpen] = useState(true);
-	const [isMetaSectionOpen, setMetaSectionOpen] = useState(true);
 
 	return (
 		<PluginSidebar
@@ -176,11 +177,11 @@ const EpisodeMetaSidebar = () => {
 									handleFieldChange('audio_file', file.file_path, true);
 									handleFieldChange('podmotor_file_id', file.id.toString(), true);
 									handleFieldChange('filesize_raw', file.file_size.toString(), true);
-									handleFieldChange('filesize', plupload.formatSize( file.file_size ), true);
+									handleFieldChange('filesize', plupload.formatSize(file.file_size), true);
 									handleFieldChange('duration', file.file_duration, true);
 									handleFieldChange('castos_file_data', JSON.stringify({
 										path: file.file_path,
-										name: fileName
+										name: fileName,
 									}), false);
 								} }
 							/> }

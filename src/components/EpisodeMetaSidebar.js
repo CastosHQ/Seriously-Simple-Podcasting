@@ -15,6 +15,7 @@ import FileUploader from './Sidebar/FileUploader';
 import Dynamo from './Sidebar/Dynamo';
 import Promo from './Sidebar/Promo';
 import DateInput from './Sidebar/DateInput';
+import CastosUploader from './Sidebar/CastosUploader';
 
 const EpisodeMetaSidebar = () => {
 
@@ -22,6 +23,8 @@ const EpisodeMetaSidebar = () => {
 	if ( ! sspAdmin.sspPostTypes.includes(editor.getCurrentPostType()) ) {
 		return;
 	}
+
+	const isCastosUser = sspAdmin.isCastosUser;
 
 	const postMeta = editor.getEditedPostAttribute('meta');
 
@@ -35,6 +38,9 @@ const EpisodeMetaSidebar = () => {
 	const dateRecordedMeta = postMeta.date_recorded || '';
 	const explicitMeta = postMeta.explicit || '';
 	const blockMeta = postMeta.block || '';
+	const podmotorFileIdMeta = postMeta.podmotor_file_id || '';
+	const filesizeRawMeta = postMeta.filesize_raw || '';
+	const castosFileDataMeta = postMeta.castos_file_data || '';
 
 	// Init local states to manage the meta fields
 	const [episodeType, setEpisodeType] = useState(episodeTypeMeta);
@@ -46,6 +52,17 @@ const EpisodeMetaSidebar = () => {
 	const [dateRecorded, setDateRecorded] = useState(dateRecordedMeta);
 	const [explicit, setExplicit] = useState(explicitMeta);
 	const [block, setBlock] = useState(blockMeta);
+	const [podmotorFileId, setPodmotorFileId] = useState(podmotorFileIdMeta);
+	const [filesizeRaw, setFilesizeRaw] = useState(filesizeRawMeta);
+	const [castosFileData, setCastosFileData] = useState(castosFileDataMeta);
+
+	const setPostMeta = ( fieldName, value ) => {
+		editPost({
+			meta: {
+				[ fieldName ]: value,  // Set the value for the post meta field
+			},
+		});
+	};
 
 	const handleFieldChange = ( fieldName, value, triggerUpdate ) => {
 		// Callbacks map
@@ -59,17 +76,17 @@ const EpisodeMetaSidebar = () => {
 			date_recorded: setDateRecorded,
 			explicit: setExplicit,
 			block: setBlock,
+			podmotor_file_id: setPodmotorFileId,
+			filesize_raw: setFilesizeRaw,
+			castos_file_data: setCastosFileData,
 		};
 
 		if ( typeof value == 'boolean' ) {
 			value = value ? 'on' : '';
 		}
 
-		editPost({
-			meta: {
-				[ fieldName ]: value,  // Set the value for the post meta field
-			},
-		});
+		setPostMeta(fieldName, value);
+
 		setCallbacks[ fieldName ]?.(value); // Set the local value
 
 		// Trigger event to update standard meta fields
@@ -85,6 +102,11 @@ const EpisodeMetaSidebar = () => {
 		handleFieldChange('cover_image', '', true);
 		handleFieldChange('cover_image_id', '', true);
 	};
+
+	const getFilename = () => {
+		const fileData = JSON.parse(castosFileData);
+		return fileData?.name;
+	}
 
 	// Ensure state sync with meta field values
 	useEffect(() => {
@@ -140,14 +162,33 @@ const EpisodeMetaSidebar = () => {
 						<div className="ssp-sidebar-field-section">
 							<h3>{ __('Episode File', 'seriously-simple-podcasting') }</h3>
 
-							<FileUploader
+							{ ! isCastosUser && <FileUploader
 								audioUrl={ audioFile }
 								onChangeUrl={ ( value ) => handleFieldChange('audio_file', value, true) }
 								onSelectAudio={ ( media ) => handleFieldChange('audio_file', media.url, true) }
 							/>
+							}
+							{ isCastosUser && <CastosUploader
+								audioUrl={ audioFile }
+								onChangeUrl={ ( value ) => handleFieldChange('audio_file', value, true) }
+								fileName={ getFilename() }
+								onFileUploaded={ ( file, fileName ) => {
+									handleFieldChange('audio_file', file.file_path, true);
+									handleFieldChange('podmotor_file_id', file.id.toString(), true);
+									handleFieldChange('filesize_raw', file.file_size.toString(), true);
+									handleFieldChange('filesize', plupload.formatSize( file.file_size ), true);
+									handleFieldChange('duration', file.file_duration, true);
+									handleFieldChange('castos_file_data', JSON.stringify({
+										path: file.file_path,
+										name: fileName
+									}), false);
+								} }
+							/> }
 							<div className={ 'description' }>
 								{ __('Upload audio episode files as MP3 or M4A, video episodes as MP4, or paste the file URL.', 'seriously-simple-podcasting') }
 							</div>
+
+
 						</div>
 
 						<div className="ssp-sidebar-field-section">

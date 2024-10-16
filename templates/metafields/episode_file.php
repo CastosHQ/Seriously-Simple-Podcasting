@@ -28,10 +28,11 @@
 	?>" />
 
 	<?php if ( $is_castos ) : ?>
-	  <div id="ssp_upload_container" style="display: inline;">
-		  <button class="button" id="ssp_select_file" href="javascript:"><?php
-			  _e( 'Select file', 'seriously-simple-podcasting' ) ?></button>
-	  </div>
+		<div id="ssp_upload_container" style="display: inline;">
+			<button class="button" id="ssp_select_file" class="ssp_select_file" type="button"><?php
+				_e( 'Select file', 'seriously-simple-podcasting' )
+				?></button>
+		</div>
 	<?php else : ?>
 		<input type="button" class="button ssp-upload-file upload_<?php echo esc_attr( $k )
 		?>_button" value="<?php _e( 'Upload File', 'seriously-simple-podcasting' )

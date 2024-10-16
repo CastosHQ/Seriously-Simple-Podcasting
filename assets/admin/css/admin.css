@@ -1162,6 +1162,12 @@ textarea#episode_embed_code {
       transform: rotate(-135deg);
       top: 3px; }
 
+.ssp-episode-meta-sidebar .ssp-sync-label, .ssp-sidebar-panel .ssp-sync-label {
+  margin-top: 8px; }
+
+.ssp-episode-meta-sidebar .ssp-sync-message, .ssp-sidebar-panel .ssp-sync-message {
+  margin-top: 8px; }
+
 .ssp-sidebar-panel {
   width: 100%; }
   .ssp-sidebar-panel .ssp-accordion {

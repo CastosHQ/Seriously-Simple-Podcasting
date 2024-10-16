@@ -15,10 +15,7 @@ const SSPSidebarPanel = () => {
 
 	const [isSSPSectionOpen, setSSPSectionOpen] = useState(true);
 	const postMeta = editor.getEditedPostAttribute('meta');
-
-	console.log('postMeta:', postMeta);
 	const fileIsUploaded = !! postMeta.audio_file;
-	console.log('fileIsUploaded:', fileIsUploaded);
 
 	return (
 		<PluginPostStatusInfo>

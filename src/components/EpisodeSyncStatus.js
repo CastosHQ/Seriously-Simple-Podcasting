@@ -31,6 +31,10 @@ const EpisodeSyncStatus = () => {
 				}
 				displayNotice(syncStatus)
 				updateSyncStatus(syncStatus)
+
+				document.dispatchEvent(new CustomEvent('changedSyncStatus', {
+					'detail': { syncStatus: syncStatus },
+				}));
 			}
 
 		} catch (error) {

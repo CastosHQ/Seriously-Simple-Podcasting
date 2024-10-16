@@ -16,6 +16,7 @@ import Dynamo from './Sidebar/Dynamo';
 import Promo from './Sidebar/Promo';
 import DateInput from './Sidebar/DateInput';
 import CastosUploader from './Sidebar/CastosUploader';
+import SyncStatus from './Sidebar/SyncStatus';
 
 const EpisodeMetaSidebar = () => {
 
@@ -25,6 +26,8 @@ const EpisodeMetaSidebar = () => {
 	}
 
 	const isCastosUser = sspAdmin.isCastosUser;
+
+	const syncStatusAttr = isCastosUser ? editor.getEditedPostAttribute('episode_data')?.syncStatus : null;
 
 	const postMeta = editor.getEditedPostAttribute('meta');
 
@@ -56,7 +59,11 @@ const EpisodeMetaSidebar = () => {
 	const [filesizeRaw, setFilesizeRaw] = useState(filesizeRawMeta);
 	const [castosFileData, setCastosFileData] = useState(castosFileDataMeta);
 
+	// Manage sync status
+	const [syncStatus, setSyncStatus] = useState(syncStatusAttr);
+
 	// Toggle sections
+	const [isSyncSectionOpen, setSyncSectionOpen] = useState(true);
 	const [isMediaSectionOpen, setMediaSectionOpen] = useState(true);
 	const [isImageSectionOpen, setImageSectionOpen] = useState(true);
 	const [isMetaSectionOpen, setMetaSectionOpen] = useState(true);
@@ -114,7 +121,7 @@ const EpisodeMetaSidebar = () => {
 	const getFilename = () => {
 		const fileData = castosFileData ? JSON.parse(castosFileData) : '';
 		return fileData?.name;
-	}
+	};
 
 	// Ensure state sync with meta field values
 	useEffect(() => {
@@ -122,15 +129,20 @@ const EpisodeMetaSidebar = () => {
 			handleFieldChange(event.detail.field, event.detail.value);
 		};
 
+		const handleSyncStatus = ( event ) => {
+			setSyncStatus(event.detail.syncStatus);
+		};
+
 		// Listen the standard meta field changed event
 		document.addEventListener('changedSSPField', handleChangeSSPField);
+		document.addEventListener('changedSyncStatus', handleSyncStatus);
 
 		// Cleanup the event listener when the component unmounts
 		return () => {
 			document.removeEventListener('changedSSPField', handleChangeSSPField);
+			document.removeEventListener('changedSyncStatus', handleSyncStatus);
 		};
 	}, []);
-
 
 	return (
 		<PluginSidebar
@@ -139,6 +151,7 @@ const EpisodeMetaSidebar = () => {
 			className="ssp-episode-meta-sidebar"
 			icon={ <img src={ SSPIcon } className="ssp-open" alt="SSP Icon"/> }
 		>
+
 			<PanelBody>
 				<h2
 					className={ classnames('ssp-accordion', { open: isMediaSectionOpen }) }
@@ -306,6 +319,16 @@ const EpisodeMetaSidebar = () => {
 					</div>
 				) }
 			</PanelBody>
+			{ syncStatus && (<PanelBody>
+				<h2
+					className={ classnames('ssp-accordion', { open: isSyncSectionOpen }) }
+					onClick={ () => setSyncSectionOpen( ! isSyncSectionOpen) }
+					aria-expanded={ isSyncSectionOpen }
+				>
+					{ __('Sync Status', 'seriously-simple-podcasting') }
+				</h2>
+				{ isSyncSectionOpen && <SyncStatus syncStatus={ syncStatus }/> }
+			</PanelBody>) }
 		</PluginSidebar>
 	);
 };

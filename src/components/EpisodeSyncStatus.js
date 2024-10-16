@@ -77,7 +77,6 @@ const EpisodeSyncStatus = () => {
 
 			// Check if the specified post type exists in the fetched data
 			if (types[postType] && types[postType].rest_base) {
-				console.log('Returning rest base:', types[postType].rest_base);
 				return types[postType].rest_base;
 			} else {
 				console.warn(`Post type "${postType}" not found.`);

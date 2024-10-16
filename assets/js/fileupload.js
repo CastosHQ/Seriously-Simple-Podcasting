@@ -149,11 +149,11 @@ jQuery( document ).ready( function ( $ ) {
 				var file = response.file,
 					fileName = up.files[0].name;
 
-				$( "#podmotor_file_id" ).val( file.id );
-				$( "#filesize_raw" ).val( file.file_size );
-				$( "#filesize" ).val( plupload.formatSize( file.file_size ) );
-				$( "#duration" ).val( file.file_duration );
-				$( '#upload_audio_file' ).val( file.file_path );
+				$( "#podmotor_file_id" ).val( file.id ).trigger('change');
+				$( "#filesize_raw" ).val( file.file_size ).trigger('change');
+				$( "#filesize" ).val( plupload.formatSize( file.file_size ) ).trigger('change');
+				$( "#duration" ).val( file.file_duration ).trigger('change');
+				$( '#upload_audio_file' ).val( file.file_path ).trigger('change');
 				$( '.peek-a-bar' ).fadeOut( 5000 );
 				$('#castos_file_data').val(JSON.stringify({
 					path: file.file_path,

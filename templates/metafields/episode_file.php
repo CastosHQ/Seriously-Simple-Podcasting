@@ -23,7 +23,7 @@
 
 <div>
 	<input name="<?php echo esc_attr( $k )
-	?>" type="text" class="ssp-sync ssp-field-<?php echo esc_attr( $k )
+	?>" type="text" id="upload_<?php echo esc_attr( $k ) ?>" class="ssp-sync ssp-field-<?php echo esc_attr( $k )
 	?>" value="<?php echo esc_attr( $data )
 	?>" />
 

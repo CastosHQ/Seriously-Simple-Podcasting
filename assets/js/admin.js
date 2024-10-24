@@ -288,8 +288,10 @@ jQuery(document).ready(function($) {
 			var data = event.detail;
 
 			$('input.ssp-sync[type="text"][name="' + data.field + '"]').val(data.value);
+			$('input.ssp-sync[type="number"][name="' + data.field + '"]').val(data.value);
 			$('input.ssp-sync[type="hidden"][name="' + data.field + '"]').val(data.value);
 			$('input.ssp-sync[type="radio"][name="' + data.field + '"][value="' + data.value + '"]').prop('checked', true);
+			$('select.ssp-sync[name="' + data.field + '"] option[value="' + data.value + '"]').prop('selected', true);
 			$('input.ssp-sync[type="checkbox"][name="' + data.field + '"]').prop('checked', 'on' === data.value);
 			$('img.ssp-sync.ssp-preview-' + data.field).prop('src', data.value);
 		});

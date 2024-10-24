@@ -6,6 +6,7 @@ import {
 	RadioControl,
 	TextControl,
 	CheckboxControl,
+	SelectControl,
 } from '@wordpress/components';
 import { useState, useEffect } from '@wordpress/element';
 import SSPIcon from '../img/ssp-icon.svg';
@@ -44,6 +45,10 @@ const EpisodeMetaSidebar = () => {
 	const podmotorFileIdMeta = postMeta.podmotor_file_id || '';
 	const filesizeRawMeta = postMeta.filesize_raw || '';
 	const castosFileDataMeta = postMeta.castos_file_data || '';
+	const itunesEpisodeNumberMeta = postMeta.itunes_episode_number || '';
+	const itunesTitleMeta = postMeta.itunes_title || '';
+	const itunesSeasonNumberMeta = postMeta.itunes_season_number || '';
+	const itunesEpisodeTypeMeta = postMeta.itunes_episode_type || '';
 
 	// Init local states to manage the meta fields
 	const [episodeType, setEpisodeType] = useState(episodeTypeMeta);
@@ -58,6 +63,10 @@ const EpisodeMetaSidebar = () => {
 	const [podmotorFileId, setPodmotorFileId] = useState(podmotorFileIdMeta);
 	const [filesizeRaw, setFilesizeRaw] = useState(filesizeRawMeta);
 	const [castosFileData, setCastosFileData] = useState(castosFileDataMeta);
+	const [itunesEpisodeNumber, setItunesEpisodeNumber] = useState(itunesEpisodeNumberMeta);
+	const [itunesTitle, setItunesTitle] = useState(itunesTitleMeta);
+	const [itunesSeasonNumber, setItunesSeasonNumber] = useState(itunesSeasonNumberMeta);
+	const [itunesEpisodeType, setItunesEpisodeType] = useState(itunesEpisodeTypeMeta);
 
 	// Manage sync status
 	const [syncStatus, setSyncStatus] = useState(syncStatusAttr);
@@ -67,6 +76,7 @@ const EpisodeMetaSidebar = () => {
 	const [isMediaSectionOpen, setMediaSectionOpen] = useState(true);
 	const [isImageSectionOpen, setImageSectionOpen] = useState(true);
 	const [isMetaSectionOpen, setMetaSectionOpen] = useState(true);
+	const [isItunesSectionOpen, setItunesSectionOpen] = useState(true);
 
 	// Use `useDispatch` to update post meta
 	const { editPost } = useDispatch('core/editor');
@@ -94,6 +104,10 @@ const EpisodeMetaSidebar = () => {
 			podmotor_file_id: setPodmotorFileId,
 			filesize_raw: setFilesizeRaw,
 			castos_file_data: setCastosFileData,
+			itunes_episode_number: setItunesEpisodeNumber,
+			itunes_title: setItunesTitle,
+			itunes_season_number: setItunesSeasonNumber,
+			itunes_episode_type: setItunesEpisodeType,
 		};
 
 		if ( typeof value == 'boolean' ) {
@@ -319,6 +333,90 @@ const EpisodeMetaSidebar = () => {
 					</div>
 				) }
 			</PanelBody>
+
+			<PanelBody>
+				<h2
+					className={ classnames('ssp-accordion', { open: isItunesSectionOpen }) }
+					onClick={ () => setItunesSectionOpen( ! isItunesSectionOpen) }
+					aria-expanded={ isItunesSectionOpen }
+				>
+					{ __('ITunes', 'seriously-simple-podcasting') }
+				</h2>
+				{ isItunesSectionOpen && (
+					<div className="ssp-sidebar-content">
+						<div className="ssp-sidebar-field-section">
+							<h3>{ __('iTunes Episode Number', 'seriously-simple-podcasting') }</h3>
+
+							<TextControl
+								__nextHasNoMarginBottom
+								value={ itunesEpisodeNumber }
+								type="number"
+								onChange={ ( value ) => handleFieldChange('itunes_episode_number', value, true) }
+							/>
+
+							<div className={ 'description' }>
+								{ __('The iTunes episode number. Leave blank if none.', 'seriously-simple-podcasting') }
+							</div>
+						</div>
+						<div className="ssp-sidebar-field-section">
+							<h3>{ __('iTunes Episode Title (Exclude Your Podcast / Show Number)', 'seriously-simple-podcasting') }</h3>
+
+							<TextControl
+								__nextHasNoMarginBottom
+								value={ itunesTitle }
+								onChange={ ( value ) => handleFieldChange('itunes_title', value, true) }
+							/>
+
+							<div className={ 'description' }>
+								{ __('The iTunes Episode Title. NO Podcast / Show Number Should Be Included.',
+									'seriously-simple-podcasting') }
+							</div>
+						</div>
+						<div className="ssp-sidebar-field-section">
+							<h3>{ __('iTunes Season Number', 'seriously-simple-podcasting') }</h3>
+
+							<TextControl
+								__nextHasNoMarginBottom
+								value={ itunesSeasonNumber }
+								type="number"
+								onChange={ ( value ) => handleFieldChange('itunes_season_number', value, true) }
+							/>
+
+							<div className={ 'description' }>
+								{ __('The iTunes Season Number. Leave Blank If None.', 'seriously-simple-podcasting') }
+							</div>
+						</div>
+						<div className="ssp-sidebar-field-section">
+							<h3>{ __('iTunes Episode Type', 'seriously-simple-podcasting') }</h3>
+
+							<SelectControl
+								value={ itunesEpisodeType }
+								options={ [
+									{
+										label: __( 'Please Select', 'seriously-simple-podcasting' ),
+										value: ''
+									},
+									{
+										label: __( 'Full: For Normal Episodes', 'seriously-simple-podcasting' ),
+										value: 'full'
+									},
+									{
+										label: __( 'Trailer: Promote an Upcoming Show', 'seriously-simple-podcasting' ),
+										value: 'trailer'
+									},
+									{
+										label: __( 'Bonus: For Extra Content Related To a Show', 'seriously-simple-podcasting' ),
+										value: 'bonus'
+									},
+								] }
+								onChange={ ( value ) => handleFieldChange('itunes_episode_type', value, true) }
+							/>
+						</div>
+
+					</div>
+				) }
+			</PanelBody>
+
 			{ syncStatus && (<PanelBody>
 				<h2
 					className={ classnames('ssp-accordion', { open: isSyncSectionOpen }) }

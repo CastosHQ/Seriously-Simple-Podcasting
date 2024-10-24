@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use Couchbase\Role;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Interfaces\Service;
 

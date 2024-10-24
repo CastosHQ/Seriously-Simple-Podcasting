@@ -26,6 +26,8 @@ const EpisodeMetaSidebar = () => {
 		return;
 	}
 
+	const isItunesEnabled = sspAdmin.isItunesEnabled;
+
 	const isCastosUser = sspAdmin.isCastosUser;
 
 	const syncStatusAttr = isCastosUser ? editor.getEditedPostAttribute('episode_data')?.syncStatus : null;
@@ -334,7 +336,7 @@ const EpisodeMetaSidebar = () => {
 				) }
 			</PanelBody>
 
-			<PanelBody>
+			{ isItunesEnabled && <PanelBody>
 				<h2
 					className={ classnames('ssp-accordion', { open: isItunesSectionOpen }) }
 					onClick={ () => setItunesSectionOpen( ! isItunesSectionOpen) }
@@ -415,7 +417,7 @@ const EpisodeMetaSidebar = () => {
 
 					</div>
 				) }
-			</PanelBody>
+			</PanelBody> }
 
 			{ syncStatus && (<PanelBody>
 				<h2

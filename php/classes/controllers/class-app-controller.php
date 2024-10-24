@@ -726,7 +726,7 @@ class App_Controller {
 				$footer_text = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
 				$footer_text .= sprintf( "<script type='text/javascript'>
 					(function($){
-					  $('a.ssp-rating-link').click(function() {
+					  $('a.ssp-rating-link').on('click', function() {
 						$.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated', nonce: '%s' } );
 						$(this).parent().text( $(this).data( 'rated' ) );
 					})})(jQuery);

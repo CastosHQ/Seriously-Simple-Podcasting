@@ -167,11 +167,11 @@ jQuery(document).ready(function($) {
 		}
 		updateSyncBtn();
 
-		getPodcastCheckboxes().change(function(){
+		getPodcastCheckboxes().on('change', function(){
 			updateSyncBtn();
 		});
 
-		$syncBtn.click(function(){
+		$syncBtn.on('click', function(){
 			$syncBtn.addClass('loader');
 
 			var $msg = $('.ssp-sync-msg'),

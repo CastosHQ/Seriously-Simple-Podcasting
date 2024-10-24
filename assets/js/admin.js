@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 	};
 
   /* Add/Edit Series Image */
-	$('#series_upload_image_button').click(function( event ){
+	$('#series_upload_image_button').on('click', function( event ){
 		event.preventDefault();
 		var send_attachment_bkp = wp.media.editor.send.attachment;
     var button = $(this);
@@ -78,7 +78,7 @@ jQuery(document).ready(function($) {
 	});
 
 	/* Remove/clear Series Image */
-	$('#series_remove_image_button').click(function( event ){
+	$('#series_remove_image_button').on('click', function( event ){
 		event.preventDefault();
 		var button = $(this);
 		var button_id = button.attr('id');
@@ -98,11 +98,11 @@ jQuery(document).ready(function($) {
 		$.fn.ssp_upload_media_file( $(this) );
 	});
 
-	$('#episode_embed_code').click(function() {
+	$('#episode_embed_code').on('click', function() {
 		$(this).select();
 	});
 
-	$( '.episode_embed_code_size_option' ).change(function() {
+	$( '.episode_embed_code_size_option' ).on('change', function() {
 
 		var width = $( '#episode_embed_code_width' ).val();
 		var height = $( '#episode_embed_code_height' ).val();
@@ -153,7 +153,7 @@ jQuery(document).ready(function($) {
 
 	/* SETTINGS PAGE */
 
-	$('#feed-series-toggle').click(function(e) {
+	$('#feed-series-toggle').on('click', function(e) {
 
 		if ( $(this).hasClass( 'series-open' ) ) {
 			$('#feed-series-list').slideUp('fast');
@@ -169,13 +169,13 @@ jQuery(document).ready(function($) {
 
 	});
 
-	$('#ss_podcasting_data_image_delete').click(function() {
+	$('#ss_podcasting_data_image_delete').on('click', function() {
 		$( '#ss_podcasting_data_image' ).val( '' );
 		$( '#ss_podcasting_data_image_preview' ).attr('src', '');
 		return false;
 	});
 
-	$('#cover_image_button, #ss_podcasting_data_image_button').click(function (e) {
+	$('#cover_image_button, #ss_podcasting_data_image_button').on('click', function (e) {
 		var coverImgValidator = function (attachment) {
 				return attachment.width === attachment.height && attachment.width >= 300;
 			},
@@ -205,7 +205,7 @@ jQuery(document).ready(function($) {
 		});
 	});
 
-	$('.ssp-image-delete').click(function(){
+	$('.ssp-image-delete').on('click', function(){
 		$('.' + $(this).data('field')).val('').trigger('change');
 		$('.' + $(this).data('preview')).attr('src', '').trigger('change');
 	});
@@ -270,12 +270,12 @@ jQuery(document).ready(function($) {
 	};
 
 	var initSSPControls = function () {
-		$('.js-open-ssp-controls').click(function () {
+		$('.js-open-ssp-controls').on('click', function () {
 			$('.ssp-open').trigger('click');
 		});
 
 		// Send changed event to Gutenberg
-		$('.ssp-sync').change(function () {
+		$('.ssp-sync').on('change', function () {
 			var value = $(this).val();
 			value = 'checkbox' === $(this).attr('type') && ! $(this).is(':checked')  ? '' : value;
 			document.dispatchEvent(new CustomEvent('changedSSPField', {

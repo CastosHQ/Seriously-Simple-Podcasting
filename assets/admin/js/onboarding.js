@@ -26,7 +26,7 @@ jQuery(document).ready(function($) {
 			}
 		},
 		initDeleteImgInfo = function(){
-			$imgInfo.find('.js-onboarding-delete-img-info').click(function(){
+			$imgInfo.find('.js-onboarding-delete-img-info').on('click', function(){
 				$imgInput.val('');
 				$imgInfo.hide();
 				validateOnboarding();
@@ -89,7 +89,7 @@ jQuery(document).ready(function($) {
 			validateOnboarding();
 		},
 		initHostingConnectionSteps = function(){
-			$accordion.click(function () {
+			$accordion.on('click', function () {
 				let openedClass = 'ssp-onboarding-step-4__accordion--opened',
 					openedFormClass = 'ssp-onboarding-step-4__form--opened';
 				if ($accordion.hasClass(openedClass)) {
@@ -117,7 +117,7 @@ jQuery(document).ready(function($) {
 					e.stopPropagation();
 					$uploadImageBtn.trigger('click');
 			});
-			$dragable.click(function(){
+			$dragable.on('click', function(){
 				$uploadImageBtn.trigger('click');
 			});
 		},

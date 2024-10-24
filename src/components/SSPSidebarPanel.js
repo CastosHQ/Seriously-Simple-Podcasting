@@ -1,4 +1,4 @@
-import { PluginPostStatusInfo } from '@wordpress/edit-post';
+import { PluginPostStatusInfo } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
 import { useState } from '@wordpress/element';

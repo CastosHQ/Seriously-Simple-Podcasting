@@ -1,5 +1,5 @@
 import { __ } from '@wordpress/i18n';
-import { PluginSidebar } from '@wordpress/edit-post'; // Ensure you're using edit-post for PluginSidebar
+import { PluginSidebar } from '@wordpress/editor'; // Ensure you're using edit-post for PluginSidebar
 import { useSelect, useDispatch } from '@wordpress/data';
 import {
 	PanelBody,

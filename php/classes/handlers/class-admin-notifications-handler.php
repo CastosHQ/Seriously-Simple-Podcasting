@@ -448,10 +448,10 @@ class Admin_Notifications_Handler implements Service {
 	 */
 	public function existing_episodes_notice() {
 		$hosting_tab_url = ssp_get_tab_url( 'castos-hosting' );
-		$ignore_message_url = add_query_arg( array(
+		$ignore_message_url = esc_url( add_query_arg( array(
 			'podcast_import_action' => 'ignore',
 			'nonce' => wp_create_nonce( 'podcast_import_action' ),
-		) );
+		) ) );
 		$message = '';
 		$message .= '<p>You\'ve connected to your Castos account, and you have existing podcasts that can be synced.</p>';
 		$message .= '<p>You can <a href="' . $hosting_tab_url . '">sync your existing podcasts to Castos now.</a></p>';

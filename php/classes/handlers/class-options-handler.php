@@ -85,13 +85,13 @@ class Options_Handler implements Service {
 
 		$subscribe_options_array = $this->get_subscribe_field_options();
 
-		$feed_details_url = add_query_arg(
+		$feed_details_url = esc_url( add_query_arg(
 			array(
 				'post_type' => SSP_CPT_PODCAST,
 				'page'      => 'podcast_settings',
 				'tab'       => 'feed-details',
 			)
-		);
+		) );
 
 		$options['subscribe'] = array(
 			'title'       => __( 'Distribution options', 'seriously-simple-podcasting' ),

@@ -527,12 +527,15 @@ class Settings_Renderer implements Service {
 	protected function render_image( $field, $data, $option_name, $default_option_name = '' ) {
 		$default_option_name = $default_option_name ?: $option_name;
 
-		$html = '<img id="' . esc_attr( $default_option_name ) . '_preview" src="' .
+		$html = '<img id="' . esc_attr( $default_option_name ) . '_preview" class="' .
+				esc_attr( $default_option_name ) . '_preview" src="' .
 				esc_attr( $data ) . '" style="max-width:400px;height:auto;"' .
 				$this->get_data_attrs( $field ) . ' /><br/>' . "\n";
 
 		$html .= '<input id="' . esc_attr( $default_option_name ) .
-				 '_button" type="button" class="button" value="' .
+				 '_button" type="button" class="button" data-field="ss_podcasting_' .
+				 esc_attr( $default_option_name ) . '" data-preview="' .
+				 esc_attr( $default_option_name ) . '_preview" value="' .
 				 __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 
 		$html .= '<input id="' . esc_attr( $default_option_name ) .
@@ -540,7 +543,8 @@ class Settings_Renderer implements Service {
 				 __( 'Remove image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 
 		$html .= '<input id="' . esc_attr( $default_option_name ) .
-				 '" type="hidden" name="' . esc_attr( $option_name ) .
+				 '" type="hidden" class="ss_podcasting_' .
+				 esc_attr( $default_option_name ) . '" name="' . esc_attr( $option_name ) .
 				 '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
 
 		return $html;

@@ -719,6 +719,7 @@
     height: 44px;
     display: block;
     border-radius: 50%;
+    box-sizing: border-box;
 }
 .castos-player .play-pause-controls button {
     position: absolute;

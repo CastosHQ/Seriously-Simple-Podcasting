@@ -168,11 +168,11 @@ class Assets_Controller {
 	protected function need_admin_scripts( $hook ) {
 		$ssp = ssp_post_types();
 
-		return 'post.php' === $hook ||
-		       'post-new.php' === $hook ||
+		return ( in_array( 'post', $ssp ) && 'post.php' === $hook ) ||
+		       ( in_array( 'post', $ssp ) && 'post-new.php' === $hook ) ||
+		       ( in_array( 'post', $ssp ) && 'edit.php' === $hook ) ||
 		       strpos( $hook, 'ssp-onboarding' ) ||
 		       $this->is_ssp_admin_page() ||
-		       ( in_array( 'post', $ssp ) && 'edit.php' === $hook ) ||
-		       ( 'term.php' === $hook && ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) );
+		       ( 'term.php' === $hook && (ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) ) );
 	}
 }

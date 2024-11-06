@@ -76,7 +76,7 @@ class Episode_Controller {
 	 * @deprecated Use Episode_Repository::get_episode_player_link()
 	 */
 	public function get_episode_player_link( $episode_id ) {
-		return $this->episode_repository->get_episode_player_link( $episode_id );
+		return $this->episode_repository->get_passthrough_url( $episode_id );
 	}
 
 	/**

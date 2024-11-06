@@ -1880,3 +1880,48 @@ if ( ! function_exists( 'ssp_episode_sync_error' ) ) {
 		return $episode_repository->get_episode_sync_status( $episode_id );
 	}
 }
+
+if ( ! function_exists( 'ssp_episode_passthrough_required' ) ) {
+	/**
+	 * Checks if episode requires the passthrough file URL ( /podcast-download/22/my-episode.mp3 ).
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param int $episode_id
+	 *
+	 * @return bool
+	 */
+	function ssp_episode_passthrough_required( $episode_id ) {
+		$series    = wp_get_post_terms( $episode_id, ssp_series_taxonomy() );
+
+		$needs_passthrough = false;
+
+		// Mark passthrough as needed if Ads enabled in any of the episode series.
+		if ( is_array( $series ) ) {
+			foreach ( $series as $term ) {
+				$needs_passthrough = $needs_passthrough || ssp_series_passthrough_required( $term->term_id );
+			}
+		}
+
+		return apply_filters( 'ssp_episode_passthrough_required', $needs_passthrough, $episode_id );
+	}
+}
+
+if ( ! function_exists( 'ssp_series_passthrough_required' ) ) {
+	/**
+	 * Checks if series requires the passthrough file URL ( /podcast-download/22/my-episode.mp3 )
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param int $series_id
+	 *
+	 * @return bool
+	 */
+	function ssp_series_passthrough_required( $series_id ) {
+
+		$needs_passthrough = 'on' === ssp_get_option( 'enable_ads', 'off', $series_id );
+
+
+		return apply_filters( 'ssp_series_passthrough_required', $needs_passthrough, $series_id );
+	}
+}

@@ -142,12 +142,6 @@
                             <p class="episode_meta">
                                     <a>
                                         <xsl:attribute name="href">
-                                            <xsl:value-of select="enclosure/@url"/>?ref=download
-                                        </xsl:attribute>
-                                        Download episode
-                                    </a> |
-                                    <a>
-                                        <xsl:attribute name="href">
                                             <xsl:value-of select="enclosure/@url"/>?ref=new_window
                                         </xsl:attribute>
                                         <xsl:attribute name="target">_blank</xsl:attribute>

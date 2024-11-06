@@ -272,7 +272,7 @@ class Rest_Api_Controller {
 	 */
 	public function get_episode_audio_player() {
 		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_DEFAULT ) : '' );
-		$file   = $this->episode_repository->get_episode_player_link( $podcast_id );
+		$file   = $this->episode_repository->get_passthrough_url( $podcast_id );
 		$params = array( 'src' => $file, 'preload' => 'none' );
 
 		return array(
@@ -481,7 +481,7 @@ class Rest_Api_Controller {
 	 */
 	public function get_rest_audio_player_link( $object, $field_name, $request ) {
 		if ( ! empty( $object['meta']['audio_file'] ) ) {
-			return $this->episode_repository->get_episode_player_link( $object['id'] );
+			return $this->episode_repository->get_passthrough_url( $object['id'] );
 		}
 
 		return '';
@@ -506,7 +506,7 @@ class Rest_Api_Controller {
 			if ( 'standard' !== $player_style ) {
 				return;
 			}
-			$file   = $this->episode_repository->get_episode_player_link( $object['id'] );
+			$file   = $this->episode_repository->get_passthrough_url( $object['id'] );
 			$params = array( 'src' => $file, 'preload' => 'none' );
 			return wp_audio_shortcode( $params );
 		}

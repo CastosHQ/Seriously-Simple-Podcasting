@@ -63,7 +63,7 @@ Feature: Login
 		And I can see in source "<description><![CDATA[Episode3 content]]></description>"
 		And I can see in source "<itunes:subtitle><![CDATA[Episode3 content]]></itunes:subtitle>"
 		And I can see in source "<content:encoded><![CDATA[Episode3 content]]></content:encoded>"
-		And I can see in source "<enclosure url=\"{{base_url}}/podcast-download"
+		And I can see in source "<enclosure url=\"https://episodes.castos.com/podcasthacker/d21a1b7a-531f-48f1-b4c0-8b8add2bccfe-file-example.mp3\" length=\"1087849\" type=\"audio/mpeg\"></enclosure>"
 		And I can see in source "type=\"audio/mpeg\"></enclosure>"
 		And I can see in source "<itunes:summary><![CDATA[Episode3 content]]></itunes:summary>"
 		And I can see in source "<itunes:explicit>false</itunes:explicit>"

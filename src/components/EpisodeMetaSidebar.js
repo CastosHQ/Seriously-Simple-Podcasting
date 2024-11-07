@@ -80,6 +80,9 @@ const EpisodeMetaSidebar = () => {
 	const [isMetaSectionOpen, setMetaSectionOpen] = useState(true);
 	const [isItunesSectionOpen, setItunesSectionOpen] = useState(true);
 
+	// Render additional content using the filter
+	const additionalContent = wp.hooks.applyFilters('ssp.episodeMetaSidebarEnd', null);
+
 	// Use `useDispatch` to update post meta
 	const { editPost } = useDispatch('core/editor');
 
@@ -429,6 +432,9 @@ const EpisodeMetaSidebar = () => {
 				</h2>
 				{ isSyncSectionOpen && <SyncStatus syncStatus={ syncStatus }/> }
 			</PanelBody>) }
+
+			{ additionalContent }
+
 		</PluginSidebar>
 	);
 };

@@ -1892,18 +1892,23 @@ if ( ! function_exists( 'ssp_episode_passthrough_required' ) ) {
 	 * @return bool
 	 */
 	function ssp_episode_passthrough_required( $episode_id ) {
+		// Require passthrough if the SSStats plugin is enabled.
+		if ( class_exists( 'SeriouslySimpleStats\Classes\Stats' ) ) {
+			return apply_filters( 'ssp_episode_passthrough_required', true, $episode_id );
+		}
+
+		// Require passthrough if ads are enabled for any episode series.
 		$series    = wp_get_post_terms( $episode_id, ssp_series_taxonomy() );
 
-		$needs_passthrough = false;
+		$required = false;
 
-		// Mark passthrough as needed if Ads enabled in any of the episode series.
 		if ( is_array( $series ) ) {
 			foreach ( $series as $term ) {
-				$needs_passthrough = $needs_passthrough || ssp_series_passthrough_required( $term->term_id );
+				$required = $required || ssp_series_passthrough_required( $term->term_id );
 			}
 		}
 
-		return apply_filters( 'ssp_episode_passthrough_required', $needs_passthrough, $episode_id );
+		return apply_filters( 'ssp_episode_passthrough_required', $required, $episode_id );
 	}
 }
 
@@ -1918,10 +1923,14 @@ if ( ! function_exists( 'ssp_series_passthrough_required' ) ) {
 	 * @return bool
 	 */
 	function ssp_series_passthrough_required( $series_id ) {
+		// Require passthrough if the SSStats plugin is enabled.
+		if ( class_exists( 'SeriouslySimpleStats\Classes\Stats' ) ) {
+			return apply_filters( 'ssp_episode_passthrough_required', true, $series_id );
+		}
 
-		$needs_passthrough = 'on' === ssp_get_option( 'enable_ads', 'off', $series_id );
+		// Require passthrough if ads are enabled for this series.
+		$required = 'on' === ssp_get_option( 'enable_ads', 'off', $series_id );
 
-
-		return apply_filters( 'ssp_series_passthrough_required', $needs_passthrough, $series_id );
+		return apply_filters( 'ssp_series_passthrough_required', $required, $series_id );
 	}
 }

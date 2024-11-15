@@ -78,14 +78,6 @@ class Players_Controller {
 
 
 	/**
-	 * @return Episode_Controller
-	 */
-	protected function episode_controller(){
-		return ssp_episode_controller();
-	}
-
-
-	/**
 	 * Todo: move it to Episode_Repository
 	 * */
 	public function get_ajax_playlist_items() {
@@ -98,9 +90,7 @@ class Players_Controller {
 			wp_send_json_error();
 		}
 
-		$episode_repository = ssp_episode_controller()->episode_repository;
-
-		$episodes = $episode_repository->get_episodes( array_merge( $atts, compact( 'page' ) ) );
+		$episodes = $this->episode_repository->get_episodes( array_merge( $atts, compact( 'page' ) ) );
 		$items    = array();
 
 		$allowed_keys = array(
@@ -472,7 +462,11 @@ class Players_Controller {
 		 * If the id passed is empty or 0, get_post will return the current post
 		 */
 		$episode  = get_post( $id );
-		$src_file = $this->episode_controller()->get_episode_player_link( $id );
+
+		$src_file = ssp_episode_passthrough_required( $id ) ?
+			$this->episode_repository->get_passthrough_url( $id ) :
+			$this->episode_repository->get_enclosure( $id );
+
 		$params   = array(
 			'src'     => $src_file,
 			'preload' => 'none',
@@ -523,7 +517,7 @@ class Players_Controller {
 	 * @deprecated Use Episode_Repository::get_playlist_episodes()
 	 */
 	public function get_playlist_episodes( $atts ) {
-		return $this->episode_controller()->episode_repository->get_episodes( $atts );
+		return $this->episode_repository->get_episodes( $atts );
 	}
 
 	/**
@@ -533,7 +527,7 @@ class Players_Controller {
 	 * @deprecated Use Episode_Repository::get_latest_episode_id()
 	 */
 	public function get_latest_episode_id() {
-		return $this->episode_controller()->episode_repository->get_latest_episode_id();
+		return $this->episode_repository->get_latest_episode_id();
 	}
 
 	/**

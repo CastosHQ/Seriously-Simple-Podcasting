@@ -68,18 +68,6 @@ class Episode_Controller {
 	}
 
 	/**
-	 * Get player link for episode.
-	 *
-	 * @param int $episode_id
-	 *
-	 * @return string
-	 * @deprecated Use Episode_Repository::get_episode_player_link()
-	 */
-	public function get_episode_player_link( $episode_id ) {
-		return $this->episode_repository->get_passthrough_url( $episode_id );
-	}
-
-	/**
 	 * Get Album Art for Player
 	 *
 	 * Iteratively tries to find the correct album art based on whether the desired image is of square aspect ratio.

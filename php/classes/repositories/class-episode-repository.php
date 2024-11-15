@@ -589,7 +589,7 @@ class Episode_Repository implements Service {
 				$id = $this->get_latest_episode_id();
 			}
 
-			$audio_file = get_post_meta( $id, 'audio_file', true );
+			$audio_file = $this->get_enclosure( $id );
 
 			if ( $skip_empty_audio && empty( $audio_file ) ) {
 				throw new \Exception();

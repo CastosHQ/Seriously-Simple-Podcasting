@@ -10,6 +10,10 @@
  * @var bool $is_default
  * */
 
+use SeriouslySimplePodcasting\Integrations\LifterLMS\LifterLMS_Integrator;
+use SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator;
+use SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro\Paid_Memberships_Pro_Integrator;
+
 $feed_fields = array(
 	array(
 		'id'          => 'data_title',
@@ -359,11 +363,11 @@ $private_podcast = array(
 
 if ( ! ssp_is_connected_to_castos() ) {
 	$private_unavailable_descr = __( 'Setting a podcast as Private is only available to Castos hosting customers.', 'seriously-simple-podcasting' );
-} elseif ( class_exists( 'PMPro_Membership_Level' ) && ssp_get_option( 'enable_pmpro_integration', 'on' ) ) {
+} elseif ( class_exists( 'PMPro_Membership_Level' ) && Paid_Memberships_Pro_Integrator::integration_enabled() ) {
 	$private_unavailable_descr = __( 'Looks like you\'re already using Paid Membership Pro to make your podcast private.', 'seriously-simple-podcasting' );
-} elseif ( class_exists( 'LifterLMS' ) && ssp_get_option( 'enable_lifterlms_integration' ) ) {
+} elseif ( class_exists( 'LifterLMS' ) && LifterLMS_Integrator::integration_enabled() ) {
 	$private_unavailable_descr = __( 'Looks like you\'re already using LifterLMS to make your podcast private.', 'seriously-simple-podcasting' );
-} elseif ( class_exists( 'MeprUser' ) && ssp_get_option( 'enable_memberpress_integration' ) ) {
+} elseif ( class_exists( 'MeprUser' ) && Memberpress_Integrator::integration_enabled() ) {
 	$private_unavailable_descr = __( 'Looks like you\'re already using MemberPress to make your podcast private.', 'seriously-simple-podcasting' );
 }
 

@@ -148,15 +148,21 @@ class Podcast_Post_Types_Controller {
 	 *
 	 * @return array
 	 */
-	public function update_podcast_post_type_args( $args, $post_type  ) {
+	public function update_podcast_post_type_args( $args, $post_type ) {
 		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
-		if ( in_array( $post_type, $podcast_post_types ) && empty( $args['supports']['custom-fields'] ) ) {
-			if ( empty( $args['supports'] ) ) {
-				// Add default support values if none are defined.
-				$args['supports'] = array( 'title', 'editor', 'autosave' );
-			}
-			$args['supports'][] = 'custom-fields';
+
+		if ( ! is_array( $podcast_post_types ) ||
+		     ! is_array( $args ) ||
+		     ! in_array( $post_type, $podcast_post_types ) ||
+		     ! empty( $args['supports']['custom-fields'] ) ) {
+			return $args;
 		}
+
+		if ( empty( $args['supports'] ) ) {
+			// Add default support values if none are defined.
+			$args['supports'] = array( 'title', 'editor', 'autosave' );
+		}
+		$args['supports'][] = 'custom-fields';
 
 		return $args;
 	}

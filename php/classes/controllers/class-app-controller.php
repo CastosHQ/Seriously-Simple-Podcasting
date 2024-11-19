@@ -348,17 +348,8 @@ class App_Controller {
 		// Yoast Schema integration.
 		new Schema_Controller( $this->episode_repository );
 
-		// Paid Memberships Pro integration
-		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
-
-		// Lifter LMS integration
-		LifterLMS_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger );
-
-		// Paid Memberships Pro integration
-		Memberpress_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
-
-		// Woocommerce Memberships integration
-		WC_Memberships_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
+		// Membership integrations.
+		new Integrations_Controller( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
 	}
 
 	/**

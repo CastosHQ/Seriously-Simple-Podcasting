@@ -95,7 +95,10 @@ class Podcast_Post_Types_Controller {
 		// Register podcast post type, taxonomies and meta fields.
 		add_action( 'init', array( $this, 'register_post_type' ), 11 );
 
-		// prevent copying some meta fields
+		// Update podcast post type arguments to include custom-fields support if not already enabled.
+		add_filter( 'register_post_type_args', array( $this, 'update_podcast_post_type_args' ), 20, 2 );
+
+		// Prevent copying some meta fields
 		add_action( 'admin_init', array( $this, 'prevent_copy_meta' ) );
 
 		// Episode meta box.
@@ -132,6 +135,30 @@ class Podcast_Post_Types_Controller {
 
 		// Handle translations
 		add_filter( 'pll_copy_post_metas', array( $this, 'handle_polylang_translations' ), 10, 3 );
+	}
+
+	/**
+	 * Updates podcast post type arguments to include custom-fields support if not already enabled.
+	 * Custom fields are necessary for displaying both standard and Gutenberg meta fields.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param array $args
+	 * @param string $post_type
+	 *
+	 * @return array
+	 */
+	public function update_podcast_post_type_args( $args, $post_type  ) {
+		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+		if ( in_array( $post_type, $podcast_post_types ) && empty( $args['supports']['custom-fields'] ) ) {
+			if ( empty( $args['supports'] ) ) {
+				// Add default support values if none are defined.
+				$args['supports'] = array( 'title', 'editor', 'autosave' );
+			}
+			$args['supports'][] = 'custom-fields';
+		}
+
+		return $args;
 	}
 
 	/**

@@ -15,6 +15,11 @@ const SSPSidebarPanel = () => {
 
 	const [isSSPSectionOpen, setSSPSectionOpen] = useState(true);
 	const postMeta = editor.getEditedPostAttribute('meta');
+
+	if ( ! postMeta ) {
+		return;
+	}
+
 	const fileIsUploaded = !! postMeta.audio_file;
 
 	const { openGeneralSidebar } = useDispatch('core/edit-post');

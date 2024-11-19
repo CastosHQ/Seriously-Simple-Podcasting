@@ -34,6 +34,22 @@ const EpisodeMetaSidebar = () => {
 
 	const postMeta = editor.getEditedPostAttribute('meta');
 
+	if ( ! postMeta ) {
+		const { createNotice } = useDispatch('core/notices');
+		const message = __('We noticed that your custom post type does not support custom fields. Please ensure that custom fields are supported. [URL]Learn more[/URL]', 'seriously-simple-podcasting');
+
+		createNotice(
+			'warning',
+			message.replace('[URL]', '<a href="https://support.castos.com/article/453-using-seriously-simple-podcasting-with-custom-post-types" target="_blank" rel="noopener">').replace('[/URL]', '</a>'),
+			{
+				isDismissible: true,
+				id: 'ssp-gutenberg-meta',
+				__unstableHTML: true,
+			}
+		);
+		return;
+	}
+
 	// Get current meta values
 	const episodeTypeMeta = postMeta.episode_type || 'audio';
 	const audioFileMeta = postMeta.audio_file || '';
@@ -166,7 +182,7 @@ const EpisodeMetaSidebar = () => {
 	return (
 		<PluginSidebar
 			name="ssp-episode-meta-sidebar"
-			title={ __('Seriously Simple Podcasting') }
+			title={ __('Seriously Simple Podcasting', 'seriously-simple-podcasting') }
 			className="ssp-episode-meta-sidebar"
 			icon={ <img src={ SSPIcon } className="ssp-open" alt="SSP Icon"/> }
 		>

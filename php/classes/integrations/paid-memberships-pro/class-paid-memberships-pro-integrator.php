@@ -67,8 +67,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
 		} else {
-			$integration_enabled = ssp_get_option( 'enable_pmpro_integration', 'on' );
-			if ( $integration_enabled ) {
+			if ( self::integration_enabled() ) {
 				$this->protect_private_series();
 				$this->print_private_podcast_feeds();
 			}
@@ -77,6 +76,14 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$this->init_subscribers_sync();
 	}
 
+	/**
+	 * Checks if integration is enabled.
+	 *
+	 * @return bool
+	 */
+	public static function integration_enabled() {
+		return 'on' === ssp_get_option( 'enable_pmpro_integration', 'on' );
+	}
 
 	/**
 	 * Inits subscribers sync.
@@ -740,7 +747,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			),
 		);
 
-		if ( ! ssp_get_option( 'enable_pmpro_integration', 'on' ) ) {
+		if ( ! self::integration_enabled() ) {
 			$settings['description'] = '';
 
 			return $settings;

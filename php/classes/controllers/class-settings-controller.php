@@ -142,7 +142,9 @@ class Settings_Controller {
 		// Add podcasts sync status to the sync settings
 		add_filter( 'ssp_field_data', array( $this, 'provide_podcasts_sync_status' ), 10, 2 );
 
-		$this->generate_dynamic_color_scheme();
+		add_action('admin_init', function(){
+			$this->generate_dynamic_color_scheme();
+		});
 
 		add_shortcode( 'castos_email', array( $this, 'castos_email' ) );
 	}

@@ -82,7 +82,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return bool
 	 */
 	public static function integration_enabled() {
-		return 'on' === ssp_get_option( 'enable_pmpro_integration', 'on' );
+		return class_exists( 'PMPro_Membership_Level' ) && 'on' === ssp_get_option( 'enable_pmpro_integration', 'on' );
 	}
 
 	/**

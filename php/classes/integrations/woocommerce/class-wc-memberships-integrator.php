@@ -83,7 +83,7 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	 * @return bool
 	 */
 	public static function integration_enabled() {
-		return 'on' === ssp_get_option( 'enable_wcmps_integration' );
+		return class_exists( 'WC_Memberships_Loader' ) && 'on' === ssp_get_option( 'enable_wcmps_integration' );
 	}
 
 	/**

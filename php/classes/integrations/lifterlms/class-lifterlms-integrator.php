@@ -85,7 +85,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	 * @return bool
 	 */
 	public static function integration_enabled() {
-		return 'on' === ssp_get_option( 'enable_lifterlms_integration' );
+		return class_exists( 'LifterLMS' ) && 'on' === ssp_get_option( 'enable_lifterlms_integration' );
 	}
 
 

@@ -80,7 +80,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * @return bool
 	 */
 	public static function integration_enabled(){
-		return 'on' === ssp_get_option( 'enable_memberpress_integration' );
+		return class_exists( 'MeprUser' ) && 'on' === ssp_get_option( 'enable_memberpress_integration' );
 	}
 
 	/**

@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
-Tested up to: 6.6
+Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 3.6.1
+Stable tag: 3.7.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.7.0 =
+2024-11-25
+[UPDATE] Use direct file URLs for player and feed.
+[UPDATE] Add support for Seriously Simple Transcripts sidebar meta field.
+[FIX] Resolve fatal error in sidebar meta for certain custom post type settings.
+[FIX] Correct PHP notice in player color settings.
+[FIX] Disable private feed settings when membership integration is enabled.
 
 = 3.6.1 =
 2024-11-05

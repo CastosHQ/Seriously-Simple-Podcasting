@@ -166,7 +166,7 @@ class Feed_Handler implements Service {
 		$message = get_option( 'ss_podcasting_protection_no_access_message', $default_message );
 
 		// Allow message to be filtered dynamically.
-		$message = apply_filters( 'ssp_feed_no_access_message', $message );
+		$message = apply_filters( 'ssp_feed_no_access_message', $message, $series_id );
 
 		header( 'WWW-Authenticate: Basic realm="Podcast Feed"' );
 
@@ -186,7 +186,7 @@ class Feed_Handler implements Service {
 
 		$message = __( 'This content is Private. To access this podcast, contact the site owner.', 'seriously-simple-podcasting' );
 
-		$message = apply_filters( 'ssp_private_feed_message', $message );
+		$message = apply_filters( 'ssp_private_feed_message', $message, $series_id );
 
 		$this->render_feed_no_access( $series_id, $message );
 	}
@@ -201,8 +201,8 @@ class Feed_Handler implements Service {
 
 		$stylesheet_url = $this->get_stylesheet_url();
 		$title          = esc_html( $this->get_podcast_title( $series_id ) );
-		$args           = apply_filters( 'ssp_feed_no_access_args', compact( 'stylesheet_url', 'title', 'description' ) );
-		$path           = apply_filters( 'ssp_feed_no_access_path', 'feed/feed-no-access' );
+		$args           = apply_filters( 'ssp_feed_no_access_args', compact( 'stylesheet_url', 'title', 'description' ), $series_id );
+		$path           = apply_filters( 'ssp_feed_no_access_path', 'feed/feed-no-access', $series_id );
 
 		$this->renderer->render( $path, $args );
 		exit;
@@ -597,7 +597,7 @@ class Feed_Handler implements Service {
 	 * @return WP_Query
 	 */
 	public function get_feed_query( $podcast_series, $exclude_series, $pub_date_type ) {
-		$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ) ) );
+		$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ), $podcast_series ) );
 
 		$args = ssp_episodes( $num_posts, $podcast_series, true, 'feed', $exclude_series );
 
@@ -624,7 +624,7 @@ class Feed_Handler implements Service {
 			$link = trailingslashit( home_url() );
 		}
 
-		return apply_filters( 'ssp_feed_channel_link_tag', $link );
+		return apply_filters( 'ssp_feed_channel_link_tag', $link, $podcast_id );
 	}
 
 
@@ -642,7 +642,7 @@ class Feed_Handler implements Service {
 			$output  = get_the_excerpt( $post_id );
 			// Remove filter convert_chars, because our feed is already escaped with CDATA.
 			remove_filter( 'the_excerpt_rss', 'convert_chars' );
-			$content = apply_filters( 'the_excerpt_rss', $output );
+			$content = apply_filters( 'the_excerpt_rss', $output, $post_id, $is_excerpt_mode );
 		} else {
 			$content = ssp_get_the_feed_item_content( $post_id );
 			if ( $turbo_post_count > 10 ) {

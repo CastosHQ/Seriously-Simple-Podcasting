@@ -10,6 +10,7 @@ use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Repositories\Settings_Config;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
@@ -398,13 +399,15 @@ class Settings_Controller {
 
 	/**
 	 * @param string $section_id
-	 * @param array $section_data
+	 * @param Settings_Config|array $section_data
 	 * @param string $feed_series
 	 * @param int $series_id
 	 *
 	 * @return void
 	 */
 	protected function register_settings_section( $section_id, $section_data, $feed_series = '', $series_id = 0 ) {
+		$section_data = is_object( $section_data ) ? $section_data->get_config() : $section_data;
+
 		$section_title = isset( $section_data['title'] ) ? $section_data['title'] : '';
 
 		$default_section_args = $section_data['fields'] ? array(

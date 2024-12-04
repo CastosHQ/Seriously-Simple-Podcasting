@@ -127,6 +127,9 @@ class Settings_Renderer implements Service {
 					break;
 				default:
 					if ( ! empty( $field['description'] ) ) {
+						if ( is_callable( $field['description'] ) ) {
+							$field['description'] = call_user_func( $field['description'] );
+						}
 						$html .= '<label for="' . esc_attr( $field['id'] ) . '"><span class="description">' . wp_kses_post( $field['description'] ) . '</span></label>' . "\n";
 					}
 					break;

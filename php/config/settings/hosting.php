@@ -35,7 +35,9 @@ return array(
 				array(
 					'id' => 'castos_sync_info',
 					'label' => __( 'Castos Account', 'seriously-simple-podcasting' ),
-					'description' => do_shortcode( '[castos_email]' ),
+					'description' => function() {
+						return do_shortcode( '[castos_email]' );
+					},
 					'type' => 'info',
 				),
 				array(

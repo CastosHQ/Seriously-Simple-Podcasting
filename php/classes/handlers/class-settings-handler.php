@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Repositories\Settings_Config;
 
 /**
  * SSP Settings Handler
@@ -49,9 +50,20 @@ class Settings_Handler implements Service {
 	/**
 	 * General settings
 	 *
-	 * @return array
+	 * @return Settings_Config
 	 */
 	public function get_general_settings() {
+		return new Settings_Config( function () {
+			return $this->_get_general_settings();
+		} );
+	}
+
+	/**
+	 * General settings
+	 *
+	 * @return array
+	 */
+	private function _get_general_settings() {
 		global $wp_post_types; // Todo: get rid of global here
 
 		$post_type_options = array();
@@ -80,9 +92,20 @@ class Settings_Handler implements Service {
 	/**
 	 * Player settings
 	 *
-	 * @return array
+	 * @return Settings_Config
 	 */
 	public function get_feed_settings() {
+		return new Settings_Config( function () {
+			return $this->_get_feed_settings();
+		} );
+	}
+
+	/**
+	 * Player settings
+	 *
+	 * @return array
+	 */
+	public function _get_feed_settings() {
 		// translators: placeholders are simply html tags to break up the content.
 		return array(
 			'title'       => __( 'Feed details', 'seriously-simple-podcasting' ),
@@ -136,9 +159,18 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @return array
+	 * @return Settings_Config
 	 */
 	public function get_hosting_settings() {
+		return new Settings_Config( function () {
+			return $this->_get_hosting_settings();
+		} );
+	}
+
+	/**
+	 * @return array
+	 */
+	public function _get_hosting_settings() {
 		$podcast_options = $this->get_podcasts_list();
 
 		return ssp_config( 'settings/hosting', compact( 'podcast_options' ) );
@@ -177,9 +209,20 @@ class Settings_Handler implements Service {
 	/**
 	 * Player settings
 	 *
-	 * @return array
+	 * @return Settings_Config
 	 */
 	public function get_player_settings() {
+		return new Settings_Config( function () {
+			return $this->_get_player_settings();
+		} );
+	}
+
+	/**
+	 * Player settings
+	 *
+	 * @return array
+	 */
+	private function _get_player_settings() {
 		$player_style             = ssp_get_option( 'player_style', 'larger' );
 		$is_meta_data_enabled     = $this->is_player_meta_data_enabled();
 		$is_custom_colors_enabled = $this->is_player_custom_colors_enabled();

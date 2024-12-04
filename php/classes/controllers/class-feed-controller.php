@@ -241,7 +241,7 @@ class Feed_Controller {
 
 		$feed_controller = $this;
 
-		$feed_data = apply_filters( 'ssp_feed_data', get_defined_vars() );
+		$feed_data = apply_filters( 'ssp_feed_data', get_defined_vars(), $series_id );
 
 		$feed = $this->renderer->fetch( $path, $feed_data );
 

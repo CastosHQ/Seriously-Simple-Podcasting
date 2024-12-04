@@ -203,9 +203,7 @@ class Castos_Handler implements Service {
 
 			$cache_key = 'ssp_castos_api_email';
 
-			$email = wp_cache_get( $cache_key );
-
-			if ( $email ) {
+			if ( $email = get_transient( $cache_key ) ) {
 				return $email;
 			}
 
@@ -213,7 +211,7 @@ class Castos_Handler implements Service {
 
 			$email = isset( $res['email'] ) ? $res['email'] : '';
 
-			wp_cache_add( $cache_key, $email, '', MINUTE_IN_SECONDS );
+			set_transient( $cache_key, $email, MINUTE_IN_SECONDS );
 
 			return $email;
 		} catch ( \Exception $e ) {

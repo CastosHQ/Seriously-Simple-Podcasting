@@ -71,7 +71,9 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			}
 		}
 
-		$this->init_subscribers_sync();
+		if ( ssp_is_connected_to_castos() ) {
+			$this->init_subscribers_sync();
+		}
 	}
 
 	/**

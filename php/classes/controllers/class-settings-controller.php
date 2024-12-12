@@ -360,6 +360,10 @@ class Settings_Controller {
 			return;
 		}
 
+		if ( $data instanceof Settings_Config ) {
+			$data = $data->get_config();
+		}
+
 		if ( isset( $data['sections'] ) ) {
 			foreach ( $data['sections'] as $section_id => $section_data ) {
 				$is_section_valid = true;

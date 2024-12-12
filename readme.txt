@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 3.7.0
+Stable tag: 3.7.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,18 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.7.1 =
+2024-12-12
+[UPDATE] Improved plugin performance ( lazy loading for settings, caching ).
+[UPDATE] Enhanced SSP feed data filters.
+[FIX] Fixed an issue with attempting to sync memberships with Castos when not connected.
+
+#### Developer Updates
+* Added the $series_id parameter to the following feed filters: `ssp_feed_data`, `ssp_feed_no_access_message`, `ssp_private_feed_message`, `ssp_feed_no_access_path`, `ssp_feed_number_of_posts`, `ssp_feed_channel_link_tag`.
+* Added the $podcast_series parameter to the `ssp_feed_number_of_posts` filter.
+* Added the $podcast_id parameter to the `ssp_feed_channel_link_tag` filter.
+* Added the $post_id and $is_excerpt_mode parameters to the `the_excerpt_rss` filter.
 
 = 3.7.0 =
 2024-11-25

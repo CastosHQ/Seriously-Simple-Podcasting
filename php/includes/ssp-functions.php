@@ -1310,6 +1310,8 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 			$frontend_controller->restore_filters();
 		}
 
+		$content = apply_filters( 'ssp_feed_item_raw_content', $content, $post );
+
 		$content = strip_shortcodes( $content );
 		$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 		$content = preg_replace( '/<style>(.|\s)*?<\/style>/', '', $content );

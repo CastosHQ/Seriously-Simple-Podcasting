@@ -107,6 +107,7 @@ class Podcast_Playlist implements Shortcode {
 			array(
 				'type'         => 'audio',
 				'series'       => '',
+				'tag'          => '',
 				'order'        => 'ASC',
 				'orderby'      => 'menu_order ID',
 				'include'      => '',

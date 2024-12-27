@@ -110,6 +110,7 @@ class Podcast_Post_Types_Controller {
 
 		// Update podcast details to Castos when a post is updated or saved
 		add_action( 'save_post', array( $this, 'sync_episode' ), 20, 2 );
+		add_action( 'et_save_post', array( $this, 'sync_divi_episode' ) );
 
 		// Assign default series if no series was specified
 		add_action( 'save_post', array( $this, 'maybe_assign_default_series' ), 20 );
@@ -726,6 +727,45 @@ class Podcast_Post_Types_Controller {
 	public function custom_fields( $all = false ) {
 		return $this->cpt_podcast_handler->custom_fields( $all );
 	}
+
+	/**
+	 * Syncs a Divi episode with Castos
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param $post_id
+	 *
+	 * @return void
+	 */
+	public function sync_divi_episode( $post_id ) {
+		// Post type check
+		$post = get_post( $post_id );
+
+		$podcast_post_types = ssp_post_types();
+
+		if ( ! in_array( $post->post_type, $podcast_post_types ) || ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
+		$get_divi_content = function ( $content, $post ) {
+			if ( ! $content ) {
+				$content = $post->post_content;
+			}
+			if ( false !== strpos( $content, '[et_pb_' ) ) {
+				$content = do_shortcode( $content );
+			}
+
+			return $content;
+		};
+
+		add_filter( 'ssp_feed_item_raw_content', $get_divi_content, 10, 2 );
+
+		$this->castos_handler->upload_episode_to_castos( $post );
+
+		remove_filter( 'ssp_feed_item_raw_content', $get_divi_content );
+	}
+
+
 
 	/**
 	 * Send the podcast details to Castos

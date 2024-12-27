@@ -20,6 +20,8 @@ class EditPlaylistPlayer extends Component {
 
 		const {
 			availablePodcasts,
+			availableTags,
+			selectedTag,
 			limit,
 			orderBy,
 			order,
@@ -41,6 +43,21 @@ class EditPlaylistPlayer extends Component {
 								onChange={(selectedPodcast) => {
 									setAttributes({
 										selectedPodcast: selectedPodcast
+									});
+								}}
+							/>
+						</PanelRow>
+						<PanelRow>
+							<label htmlFor="ssp-playlist-player-tag">
+								{__('Select Tag', 'seriously-simple-podcasting')}
+							</label>
+							<SelectControl
+								id="ssp-playlist-player-tag"
+								value={selectedTag}
+								options={availableTags}
+								onChange={(selectedTag) => {
+									setAttributes({
+										selectedTag: selectedTag
 									});
 								}}
 							/>

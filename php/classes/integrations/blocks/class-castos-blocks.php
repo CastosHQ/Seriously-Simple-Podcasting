@@ -417,6 +417,14 @@ class Castos_Blocks {
 						'type'    => 'string',
 						'default' => '-1',
 					),
+					'availableTags'   => array(
+						'type'    => 'array',
+						'default' => $this->get_tags(),
+					),
+					'selectedTag'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
 					// Use string everywhere instead of number because of the WP bug.
 					// It doesn't show the saved value in the admin after page refresh.
 					'limit'        => array(
@@ -438,6 +446,10 @@ class Castos_Blocks {
 
 					if ( $podcast_id ) {
 						$args['series'] = $this->get_term_slug_by_id( $podcast_id );
+					}
+
+					if ( ! empty( $attributes['selectedTag'] ) ) {
+						$args['tag'] = $attributes['selectedTag'];
 					}
 
 					if ( ! empty( $attributes['limit'] ) ) {
@@ -500,5 +512,24 @@ class Castos_Blocks {
 					'value' => $item->term_id,
 				);
 			}, ssp_get_podcasts() ) );
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_tags() {
+		return array_merge(
+			array(
+				array(
+					'label' => __( '-- All --', 'seriously-simple-podcasting' ),
+					'value' => '',
+				),
+			),
+			array_map( function ( $item ) {
+				return array(
+					'label' => $item->name,
+					'value' => $item->slug,
+				);
+			}, ssp_get_tags() ) );
 	}
 }

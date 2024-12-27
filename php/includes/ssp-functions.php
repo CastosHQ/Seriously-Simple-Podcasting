@@ -1727,6 +1727,26 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 }
 
 /**
+ * Gets array of tags.
+ */
+if ( ! function_exists( 'ssp_get_tags' ) ) {
+	/**
+	 * Gets array of tags.
+	 *
+	 * @param bool $hide_empty
+	 *
+	 * @return WP_Term[]
+	 */
+	function ssp_get_tags( $hide_empty = false ) {
+		$tags = get_terms( 'post_tag', array(
+			'post_type' => ssp_post_types(),
+			'hide_empty' => $hide_empty,
+		) );
+		return is_array( $tags ) ? $tags : array();
+	}
+}
+
+/**
  * Gets SSP Version.
  */
 if ( ! function_exists( 'ssp_version' ) ) {

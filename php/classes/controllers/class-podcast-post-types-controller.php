@@ -111,6 +111,7 @@ class Podcast_Post_Types_Controller {
 		// Update podcast details to Castos when a post is updated or saved
 		add_action( 'save_post', array( $this, 'sync_episode' ), 20, 2 );
 		add_action( 'et_save_post', array( $this, 'sync_divi_episode' ) );
+		add_action( 'elementor/editor/after_save', array( $this, 'sync_elementor_episode' ) );
 
 		// Assign default series if no series was specified
 		add_action( 'save_post', array( $this, 'maybe_assign_default_series' ), 20 );
@@ -741,6 +742,10 @@ class Podcast_Post_Types_Controller {
 		// Post type check
 		$post = get_post( $post_id );
 
+		if( 'publish' !== $post->post_status ){
+			return;
+		}
+
 		$podcast_post_types = ssp_post_types();
 
 		if ( ! in_array( $post->post_type, $podcast_post_types ) || ! ssp_is_connected_to_castos() ) {
@@ -765,7 +770,31 @@ class Podcast_Post_Types_Controller {
 		remove_filter( 'ssp_feed_item_raw_content', $get_divi_content );
 	}
 
+	/**
+	 * Syncs an Elementor episode with Castos
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param $post_id
+	 *
+	 * @return void
+	 */
+	public function sync_elementor_episode( $post_id ) {
+		// Post type check
+		$post = get_post( $post_id );
 
+		if( 'publish' !== $post->post_status ){
+			return;
+		}
+
+		$podcast_post_types = ssp_post_types();
+
+		if ( ! in_array( $post->post_type, $podcast_post_types ) || ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
+		$this->upload_episode_to_castos( $post );
+	}
 
 	/**
 	 * Send the podcast details to Castos

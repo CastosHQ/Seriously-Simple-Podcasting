@@ -760,7 +760,7 @@ class Podcast_Post_Types_Controller {
 
 		add_filter( 'ssp_feed_item_raw_content', $get_divi_content, 10, 2 );
 
-		$this->castos_handler->upload_episode_to_castos( $post );
+		$this->upload_episode_to_castos( $post );
 
 		remove_filter( 'ssp_feed_item_raw_content', $get_divi_content );
 	}
@@ -807,11 +807,26 @@ class Podcast_Post_Types_Controller {
 
 		$this->episode_repository->delete_episode_sync_error( $post->ID );
 
+		$this->upload_episode_to_castos( $post );
+	}
+
+
+	/**
+	 * Uploads an episode to Castos and updates the episode's sync post metadata.
+	 * Schedules a sync by cron in case of a sync error.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param $post
+	 *
+	 * @return void
+	 */
+	protected function upload_episode_to_castos( $post ) {
 		$response = $this->castos_handler->upload_episode_to_castos( $post );
 
 		if ( $response->success ) {
 			if ( $response->castos_episode_id ) {
-				update_post_meta( $id, 'podmotor_episode_id', $response->castos_episode_id );
+				update_post_meta( $post->ID, 'podmotor_episode_id', $response->castos_episode_id );
 			}
 			$this->admin_notices_handler->add_flash_notice(
 				$response->message,
@@ -819,7 +834,7 @@ class Podcast_Post_Types_Controller {
 			);
 
 			// if uploading was scheduled before, lets unschedule it
-			delete_post_meta( $id, 'podmotor_schedule_upload' );
+			delete_post_meta( $post->ID, 'podmotor_schedule_upload' );
 			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_SYNCED );
 			$this->episode_repository->delete_sync_error( $post->ID );
 		} else {

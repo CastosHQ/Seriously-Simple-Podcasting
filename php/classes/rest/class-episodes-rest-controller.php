@@ -331,6 +331,15 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		// Handle query results
 		$posts = array();
 
+		// Prepare Divi content
+		add_filter( 'the_content', function ( $content ) {
+			if ( false !== strpos( $content, '[et_pb_' ) ) {
+				$content = do_shortcode( $content );
+			}
+
+			return $content;
+		} );
+
 		foreach ( $query_result as $post ) {
 
 			// Get PostController for Post Type

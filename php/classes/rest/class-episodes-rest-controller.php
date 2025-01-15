@@ -334,7 +334,8 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		// Prepare Divi content
 		add_filter( 'the_content', function ( $content ) {
 			if ( false !== strpos( $content, '[et_pb_' ) ) {
-				$content = do_shortcode( $content );
+				// Remove all [et_pb...] and [/et_pb...] shortcodes
+				$content = preg_replace('/\\[\\/et_pb[^\\]]*\\]|\\[et_pb[^\\]]*\\]/', '', $content);
 			}
 
 			return $content;

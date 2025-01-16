@@ -78,14 +78,6 @@ class Players_Controller {
 
 
 	/**
-	 * @return Episode_Controller
-	 */
-	protected function episode_controller(){
-		return ssp_episode_controller();
-	}
-
-
-	/**
 	 * Todo: move it to Episode_Repository
 	 * */
 	public function get_ajax_playlist_items() {
@@ -98,9 +90,7 @@ class Players_Controller {
 			wp_send_json_error();
 		}
 
-		$episode_repository = ssp_episode_controller()->episode_repository;
-
-		$episodes = $episode_repository->get_episodes( array_merge( $atts, compact( 'page' ) ) );
+		$episodes = $this->episode_repository->get_episodes( array_merge( $atts, compact( 'page' ) ) );
 		$items    = array();
 
 		$allowed_keys = array(
@@ -131,8 +121,11 @@ class Players_Controller {
 	 *
 	 * @return string
 	 */
-	public function render_html_player( $episode_id, $skip_empty_audio = true, $context = 'block' ) {
+	public function render_html_player( $episode_id, $skip_empty_audio = true, $context = 'block', $args = array() ) {
 		$template_data = $this->episode_repository->get_player_data( $episode_id, null, false );
+		if ( isset( $args['className'] ) ) {
+			$template_data['class'] .= ' ' . $args['className'];
+		}
 
 		if ( $skip_empty_audio && empty( $template_data['audio_file'] ) ) {
 			$show_with_warning = is_admin() ||
@@ -276,6 +269,7 @@ class Players_Controller {
 		global $wp;
 		$template_data['current_url'] = home_url( $wp->request );
 		$template_data['player_id']   = $player_id;
+		$template_data['class']       = $atts['class'];
 
 		if ( in_array( $atts['style'], array( 'light', 'dark' ) ) ) {
 			$template_data['player_mode'] = $atts['style'];
@@ -285,7 +279,7 @@ class Players_Controller {
 			$template_data['playlist'][] = $this->episode_repository->get_player_data( $episode->ID );
 		}
 
-		return $this->renderer->render_deprecated( $template_data, 'players/castos-player' );
+		return $this->renderer->fetch( 'players/castos-player', $template_data );
 	}
 
 	/**
@@ -317,6 +311,7 @@ class Players_Controller {
 
 		$safe_type  = esc_attr( $atts['type'] );
 		$safe_style = esc_attr( $atts['style'] );
+		$class      = $atts['class'];
 
 		static $instance = 0;
 		$instance ++;
@@ -326,9 +321,9 @@ class Players_Controller {
 			do_action( 'wp_playlist_scripts', $atts['type'], $atts['style'] );
 		}
 
-		return $this->renderer->render_deprecated(
-			compact('safe_style', 'safe_type', 'data', 'width', 'height'),
-			'players/playlist-compact-player'
+		return $this->renderer->fetch(
+			'players/playlist-compact-player',
+			compact('safe_style', 'safe_type', 'data', 'width', 'height', 'class')
 		);
 	}
 
@@ -467,7 +462,11 @@ class Players_Controller {
 		 * If the id passed is empty or 0, get_post will return the current post
 		 */
 		$episode  = get_post( $id );
-		$src_file = $this->episode_controller()->get_episode_player_link( $id );
+
+		$src_file = ssp_episode_passthrough_required( $id ) ?
+			$this->episode_repository->get_passthrough_url( $id ) :
+			$this->episode_repository->get_enclosure( $id );
+
 		$params   = array(
 			'src'     => $src_file,
 			'preload' => 'none',
@@ -518,7 +517,7 @@ class Players_Controller {
 	 * @deprecated Use Episode_Repository::get_playlist_episodes()
 	 */
 	public function get_playlist_episodes( $atts ) {
-		return $this->episode_controller()->episode_repository->get_episodes( $atts );
+		return $this->episode_repository->get_episodes( $atts );
 	}
 
 	/**
@@ -528,7 +527,7 @@ class Players_Controller {
 	 * @deprecated Use Episode_Repository::get_latest_episode_id()
 	 */
 	public function get_latest_episode_id() {
-		return $this->episode_controller()->episode_repository->get_latest_episode_id();
+		return $this->episode_repository->get_latest_episode_id();
 	}
 
 	/**

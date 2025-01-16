@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
 		$imgName = $imgInfo.find('.js-onboarding-img-name'),
 		$fields = $('.js-onboarding-field'),
 		$btn = $('.js-onboarding-btn'),
-		$validateTokenBtn = $('.js-onboarding-validate-token'),
+		$connectCastosBtn = $('.js-onboarding-castos-connect'),
 		$hostingStep2 = $('.js-hosting-form'),
 		$accordion = $('.js-accordion'),
 		$dragable = $('.js-onboarding-dragable'),
@@ -26,7 +26,7 @@ jQuery(document).ready(function($) {
 			}
 		},
 		initDeleteImgInfo = function(){
-			$imgInfo.find('.js-onboarding-delete-img-info').click(function(){
+			$imgInfo.find('.js-onboarding-delete-img-info').on('click', function(){
 				$imgInput.val('');
 				$imgInfo.hide();
 				validateOnboarding();
@@ -54,29 +54,33 @@ jQuery(document).ready(function($) {
 			});
 		},
 		initTokenValidation = function(){
-			$validateTokenBtn.on('validated', function () {
-				//don't use $btn since it has custom validation
-				var $form = $validateTokenBtn.closest('form'),
-					$nextButton = $form.find('button[type=submit]');
-				$(this).removeClass('validating');
-				if ($validateTokenBtn.hasClass('valid')) {
+			$connectCastosBtn.on('connected', function (e, response) {
+				var $form = $connectCastosBtn.closest('form'),
+					$nextButton = $form.find('button[type=submit]'),
+					$me = $(this),
+					$msg = $form.find('.connect-castos-message'),
+					$field = $('.js-onboarding-castos-connect-field');
+				$me.removeClass('connecting');
+				$msg.show();
+
+				if ("success" === response.status) {
+					$me.html($me.data('connected-txt'));
+					$field.attr('disabled', 'disabled');
 					$nextButton.removeAttr('disabled');
-					$form.find('.validate-api-credentials-message').html('');
-					$(this).html($(this).data('valid-txt'));
 				} else {
-					$(this).html($(this).data('initial-txt'));
+					$me.html($me.data('initial-txt'));
 					$nextButton.attr('disabled', 'disabled');
 				}
 			});
 
-			$validateTokenBtn.on('click', function(){
-				$(this).addClass('validating').html($(this).data('validating-txt'));
+			$connectCastosBtn.on('connecting', function(){
+				$(this).addClass('connecting').html($(this).data('connecting-txt'));
 			});
 
-			$('.js-onboarding-validate-token-field').on('change paste keyup', function(){
-				var $nextButton = $validateTokenBtn.closest('form').find('button[type=submit]');
-				$validateTokenBtn.html($validateTokenBtn.data('initial-txt'));
-				$validateTokenBtn.removeClass('valid');
+			$('.js-onboarding-castos-connect-field').on('change paste keyup', function(){
+				var $nextButton = $connectCastosBtn.closest('form').find('button[type=submit]');
+				$connectCastosBtn.html($connectCastosBtn.data('initial-txt'));
+				$connectCastosBtn.removeClass('valid');
 				$nextButton.attr('disabled', 'disabled');
 			});
 		},
@@ -85,7 +89,7 @@ jQuery(document).ready(function($) {
 			validateOnboarding();
 		},
 		initHostingConnectionSteps = function(){
-			$accordion.click(function () {
+			$accordion.on('click', function () {
 				let openedClass = 'ssp-onboarding-step-4__accordion--opened',
 					openedFormClass = 'ssp-onboarding-step-4__form--opened';
 				if ($accordion.hasClass(openedClass)) {
@@ -113,7 +117,7 @@ jQuery(document).ready(function($) {
 					e.stopPropagation();
 					$uploadImageBtn.trigger('click');
 			});
-			$dragable.click(function(){
+			$dragable.on('click', function(){
 				$uploadImageBtn.trigger('click');
 			});
 		},

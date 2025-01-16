@@ -56,7 +56,7 @@ class Players_Controller_Test extends WPTestCase {
 		$this->assertStringContainsString( 'Warning: the player will not be shown', $html_player_content );
 
 		$player_parts = array(
-			'class="castos-player dark-mode"',
+			'class="castos-player dark-mode',
 			'<div class="currently-playing">',
 			sprintf( '<div class="episode-title player__episode-title">%s</div>', $episode->post_title ),
 			'<div class="play-progress">',

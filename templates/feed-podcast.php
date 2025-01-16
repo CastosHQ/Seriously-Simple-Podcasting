@@ -197,7 +197,7 @@ if ( $stylesheet_url ) {
 			while ( $qry->have_posts() ) {
 				$turbo_post_count = isset( $turbo_post_count ) ? $turbo_post_count + 1 : null;
 				$args             = compact( 'author', 'is_excerpt_mode', 'pub_date_type', 'turbo_post_count', 'media_prefix' );
-				echo $feed_controller->fetch_feed_item( $qry, $args );
+				echo $feed_controller->fetch_feed_item( $qry, $args, $series_id );
 			}
 		} ?>
 	</channel>

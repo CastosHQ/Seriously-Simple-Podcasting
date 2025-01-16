@@ -259,7 +259,9 @@ class App_Controller {
 
 		$this->episode_repository = new Episode_Repository( $this->feed_handler );
 
-		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger );
+		$this->admin_notices_handler = new Admin_Notifications_Handler();
+
+		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger, $this->admin_notices_handler );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
@@ -273,11 +275,9 @@ class App_Controller {
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
-		$this->ajax_handler = new Ajax_Handler( $this->castos_handler );
+		$this->ajax_handler = new Ajax_Handler( $this->castos_handler, $this->admin_notices_handler );
 
 		$this->podping_handler = new Podping_Handler( $this->logger );
-
-		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->token );
 
 		$this->assets_controller = new Assets_Controller();
 
@@ -348,17 +348,8 @@ class App_Controller {
 		// Yoast Schema integration.
 		new Schema_Controller( $this->episode_repository );
 
-		// Paid Memberships Pro integration
-		Paid_Memberships_Pro_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
-
-		// Lifter LMS integration
-		LifterLMS_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger );
-
-		// Paid Memberships Pro integration
-		Memberpress_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
-
-		// Woocommerce Memberships integration
-		WC_Memberships_Integrator::instance()->init( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
+		// Membership integrations.
+		new Integrations_Controller( $this->feed_handler, $this->castos_handler, $this->logger, $this->admin_notices_handler );
 	}
 
 	/**
@@ -689,6 +680,7 @@ class App_Controller {
 	public function deactivate() {
 		flush_rewrite_rules();
 		$this->roles_handler->remove_custom_roles();
+		$this->castos_handler->remove_api_credentials();
 	}
 
 	/**
@@ -725,7 +717,7 @@ class App_Controller {
 				$footer_text = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
 				$footer_text .= sprintf( "<script type='text/javascript'>
 					(function($){
-					  $('a.ssp-rating-link').click(function() {
+					  $('a.ssp-rating-link').on('click', function() {
 						$.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated', nonce: '%s' } );
 						$(this).parent().text( $(this).data( 'rated' ) );
 					})})(jQuery);

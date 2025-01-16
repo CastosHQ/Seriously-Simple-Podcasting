@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
-Tested up to: 6.5
+Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 3.3.0
+Stable tag: 3.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -27,7 +27,7 @@ With other podcast providers, you’ll need to make updates to your podcast’s 
 
 Getting started with Seriously Simple Podcasting is a seriously simple process. In just four steps, you’ll go from installing the plugin to your WordPress site to submitting a functioning RSS feed to every podcast directory.
 
-[youtube https://www.youtube.com/watch?v=sKjZTx02Ng0]
+[youtube https://www.youtube.com/watch?v=4Ekj4W9hljA]
 
 1. Install the Seriously Simple Podcasting plugin to your WordPress site.
 2. Begin the onboarding wizard, and create your first podcast. Here you’ll give details like the Podcast Title, Description, and upload your cover image.
@@ -164,6 +164,74 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.8.0 =
+2025-01-16
+[UPDATE] Added support for Divi theme to Castos synchronization.
+[UPDATE] Added support for Elementor to Castos synchronization.
+[UPDATE] Added tag filter for the playlist player (thanks to damian-c).
+
+= 3.7.1 =
+2024-12-12
+[UPDATE] Improved plugin performance ( lazy loading for settings, caching ).
+[UPDATE] Enhanced SSP feed data filters.
+[FIX] Fixed an issue with attempting to sync memberships with Castos when not connected.
+
+#### Developer Updates
+* Added the $series_id parameter to the following feed filters: `ssp_feed_data`, `ssp_feed_no_access_message`, `ssp_private_feed_message`, `ssp_feed_no_access_path`, `ssp_feed_number_of_posts`, `ssp_feed_channel_link_tag`.
+* Added the $podcast_series parameter to the `ssp_feed_number_of_posts` filter.
+* Added the $podcast_id parameter to the `ssp_feed_channel_link_tag` filter.
+* Added the $post_id and $is_excerpt_mode parameters to the `the_excerpt_rss` filter.
+
+= 3.7.0 =
+2024-11-25
+[UPDATE] Use direct file URLs for player and feed.
+[UPDATE] Add support for Seriously Simple Transcripts sidebar meta field.
+[FIX] Resolve fatal error in sidebar meta for certain custom post type settings.
+[FIX] Correct PHP notice in player color settings.
+[FIX] Disable private feed settings when membership integration is enabled.
+
+= 3.6.1 =
+2024-11-05
+[FIX] Fixed episode meta field styles
+
+= 3.6.0 =
+2024-11-04
+[UPDATE] Display episode meta boxes in the sidebar
+[FIX] Lifter LMS compatibility
+[FIX] Fix player button styles for certain environments
+[FIX] Code and security improvements
+
+= 3.5.0 =
+2024-09-11
+[UPDATE] Enhanced UX/UI for Hosting (Castos connection) settings
+[UPDATE] Display success and error messages for Castos connection
+[UPDATE] Auto-disconnect SSP when users are disconnected on Castos
+[UPDATE] Display Castos sync status after saving episodes
+[UPDATE] Added filter for allowed tags in the feed description
+[UPDATE] Removed the "1,000 Subscriber Challenge" from the settings sidebar
+[FIX] Handle PHP exceptions in the ssp_readfile_chunked() function
+[FIX] Catch potential PHP errors during episode file downloads
+[FIX] Support additional classes in the player and podcast playlist blocks
+[FIX] Use dark mode for the playlist block when dark mode is set in the settings
+
+= 3.4.1 =
+2024-07-31
+[UPDATE] Improved and fixed synchronization with the latest version of Paid Memberships Pro.
+
+= 3.4.0 =
+2024-05-28
+[UPDATE] Polylang compatibility
+[UPDATE] Clear Castos API Credentials upon plugin deactivation
+[UPDATE] Carry over podcast description to feed details when creating a new podcast
+[UPDATE] Improved [podcast_episode] shortcode - possibility to show the latest episode
+[FIX] Use podcast post type by default instead of post when importing from RSS
+[FIX] Improved player rendering, allowing links in the player title
+[FIX] Removed outdated plugin messages
+
+= 3.3.1 =
+2024-05-08
+[FIX] Fixed the plugin activation issue in WordPress 6.5.3
 
 = 3.3.0 =
 2024-05-08

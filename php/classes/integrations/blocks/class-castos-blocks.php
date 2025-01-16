@@ -239,9 +239,12 @@ class Castos_Blocks {
 			true
 		);
 
+		$itunes_enabled    = get_option( 'ss_podcasting_itunes_fields_enabled' );
+
 		wp_localize_script( 'ssp-block-script', 'sspAdmin', array(
 			'sspPostTypes' => ssp_post_types(true, false),
 			'isCastosUser' => ssp_is_connected_to_castos(),
+			'isItunesEnabled' => $itunes_enabled && $itunes_enabled == 'on',
 		) );
 
 		wp_register_style(
@@ -273,7 +276,7 @@ class Castos_Blocks {
 				),
 			),
 			'render_callback' => function ( $args ) {
-				return ssp_frontend_controller()->players_controller->render_html_player( $args['episodeId'] );
+				return ssp_frontend_controller()->players_controller->render_html_player( $args['episodeId'], true, 'block', $args );
 			}
 		) );
 
@@ -414,6 +417,14 @@ class Castos_Blocks {
 						'type'    => 'string',
 						'default' => '-1',
 					),
+					'availableTags'   => array(
+						'type'    => 'array',
+						'default' => $this->get_tags(),
+					),
+					'selectedTag'     => array(
+						'type'    => 'string',
+						'default' => '',
+					),
 					// Use string everywhere instead of number because of the WP bug.
 					// It doesn't show the saved value in the admin after page refresh.
 					'limit'        => array(
@@ -437,6 +448,10 @@ class Castos_Blocks {
 						$args['series'] = $this->get_term_slug_by_id( $podcast_id );
 					}
 
+					if ( ! empty( $attributes['selectedTag'] ) ) {
+						$args['tag'] = $attributes['selectedTag'];
+					}
+
 					if ( ! empty( $attributes['limit'] ) ) {
 						$args['limit'] = $attributes['limit'];
 					}
@@ -447,6 +462,10 @@ class Castos_Blocks {
 
 					if ( ! empty( $attributes['order'] ) ) {
 						$args['order'] = $attributes['order'];
+					}
+
+					if ( ! empty( $attributes['className'] ) ) {
+						$args['class'] = $attributes['className'];
 					}
 
 					$podcast_playlist = new Podcast_Playlist();
@@ -493,5 +512,24 @@ class Castos_Blocks {
 					'value' => $item->term_id,
 				);
 			}, ssp_get_podcasts() ) );
+	}
+
+	/**
+	 * @return array
+	 */
+	protected function get_tags() {
+		return array_merge(
+			array(
+				array(
+					'label' => __( '-- All --', 'seriously-simple-podcasting' ),
+					'value' => '',
+				),
+			),
+			array_map( function ( $item ) {
+				return array(
+					'label' => $item->name,
+					'value' => $item->slug,
+				);
+			}, ssp_get_tags() ) );
 	}
 }

@@ -5,11 +5,8 @@
  */
 
 jQuery(document).ready(function($) {
-
-	var $podmotorAccountEmail = $("#podmotor_account_email"),
-		$podmotorAccountAPIToken = $("#podmotor_account_api_token"),
-		$parentCategories = $('.js-parent-category'),
-		$validateBtn = $("#validate_api_credentials");
+	var $podmotorAccountAPIToken = $("#podmotor_account_api_token"),
+		$parentCategories = $('.js-parent-category');
 
 	const { __ } = wp.i18n;
 
@@ -35,103 +32,106 @@ jQuery(document).ready(function($) {
 	}
 
 	function initCastosAPICredentials() {
-		var disableSubmitButton = function () {
-				/**
-				 * If either API field is empty, disable the submit button
-				 */
-				if ($podmotorAccountEmail.val() === '' || $podmotorAccountAPIToken.val() === '') {
-					$("#ssp-settings-submit").prop("disabled", "disabled");
-				}
+	  var $connectBtn = $(".castos-connect"),
+	  disableConnectButton = function(){
+		  $connectBtn.prop("disabled", "disabled");
+	  },
+	  enableConnectButton = function(){
+		  $connectBtn.prop("disabled", "").removeClass('disabled');
+	  },
+	  connectButtonStates = function () {
+		  if ($podmotorAccountAPIToken.length) {
+			  $connectBtn.show();
+		  }
+		  $podmotorAccountAPIToken.on("focus change paste keydown keyup", function () {
+			  $podmotorAccountAPIToken.val() ? enableConnectButton() : disableConnectButton();
+		  });
 
-				/**
-				 * If the user changes the email, disable the submit button
-				 */
-				$podmotorAccountEmail.on("change paste keydown keyup", function () {
-					$("#ssp-settings-submit").prop("disabled", "disabled");
-				});
+		  $podmotorAccountAPIToken.on("focus", function(){
+			  $('.connect-castos-message').html('').removeClass('error');
+		  });
+	  },
+	  /**
+	   * Validate the api credentials
+	   */
+	  initConnect = function () {
+		  $connectBtn.on('click', function (e) {
+			  e.preventDefault();
+			  e.stopPropagation();
+			  $connectBtn.prop('disabled', 'disabled');
+			  $connectBtn.trigger('connecting');
 
-				/**
-				 * If the user changes the account api key, disable the submit button
-				 */
-				$podmotorAccountAPIToken.on("change paste keydown keyup", function () {
-					$("#ssp-settings-submit").prop("disabled", "disabled");
-				});
-			},
-			/**
-			 * Validate the api credentials
-			 */
-			validateAPICredentials = function () {
-				$validateBtn.on("click", function () {
+			  var podmotor_account_api_token = $('#podmotor_account_api_token').val(),
+				  nonce = $('#podcast_settings_tab_nonce').val(),
+				  $msg = $('.connect-castos-message');
 
-					var podmotor_account_email = $("#podmotor_account_email").val(),
-						podmotor_account_api_token = $("#podmotor_account_api_token").val(),
-						nonce = $("#podcast_settings_tab_nonce").val(),
-						$msg = $('.validate-api-credentials-message');
+			  if ($msg.length) {
+				  $msg.html('').removeClass('error');
+			  } else {
+				  $msg = $('<span class="connect-castos-message"></span>');
+				  $connectBtn.parent().append($msg);
+			  }
 
-					if (!$msg.length) {
-						$msg = $('<span class="validate-api-credentials-message"></span>');
-						$validateBtn.parent().append($msg);
-					}
+			  $connectBtn.addClass('loader');
 
-					$msg.html("Validating API credentials...");
+			  $.ajax({
+				  method: 'GET',
+				  url: ajaxurl,
+				  data: {
+					  action: 'connect_castos',
+					  api_token: podmotor_account_api_token,
+					  nonce: nonce,
+				  },
+			  })
+			  .done(function (response) {
+				  $connectBtn.trigger('connected', response);
+				  if (response.status === 'success') {
+					  $connectBtn.addClass('connected');
+					  if ( ! $connectBtn.data( 'no-reload' ) ) {
+						  window.location.reload();
+					  } else {
+						  $msg.html( response.message );
+					  }
+				  } else {
+					  $connectBtn.removeClass('loader');
+					  $msg.addClass('error');
+					  $msg.html(response.message);
+				  }
+			  })
+		  })
+	  },
+	  /**
+		* Disconnect Castos checkbox on change, renders a confirmation message to the user.
+		*/
+	  initDisconnect = function () {
+		  var $disconnect = $('#disconnect_castos');
+		  $disconnect.on('click', function (event) {
+			  var $message = 'If you disconnect from Castos hosting you will no longer be able to upload media files to the Castos hosting platform. If you’re no longer a Castos customer your media files may no longer be available to your listeners.';
+			  var user_input = confirm($message);
+			  if (user_input === true) {
+				  $disconnect.addClass('loader');
+				  $disconnect.parent().find('label').remove();
+				  $.ajax({
+					  method: 'GET',
+					  url: ajaxurl,
+					  data: {
+						  action: 'disconnect_castos',
+						  nonce:  $('#podcast_settings_tab_nonce').val(),
+					  },
+				  })
+					  .done(function (response) {
+						  window.location.reload();
+					  })
+			  }
+		  });
+	  }
 
-					$validateBtn.addClass('loader');
-
-					$.ajax({
-						method: "GET",
-						url: ajaxurl,
-						data: {
-							action: "validate_castos_credentials",
-							api_token: podmotor_account_api_token,
-							email: podmotor_account_email,
-							nonce: nonce
-						}
-					})
-						.done(function (response) {
-							$validateBtn.removeClass('loader');
-							if (response.status === 'success') {
-								$(".validate-api-credentials-message").html("Credentials Valid. Please click 'Save Settings' to save Credentials.");
-								$("#ssp-settings-submit").prop("disabled", "");
-								$validateBtn.val('Valid Credentials');
-								$validateBtn.addClass('valid');
-							} else {
-								$validateBtn.addClass('invalid');
-								$(".validate-api-credentials-message").html(response.message);
-							}
-							$validateBtn.trigger('validated');
-						});
-				});
-			},
-			/**
-			 * Disconnect Castos checkbox on change, renders a confirmation message to the user.
-			 */
-			disconnectCastos = function () {
-				$('#podmotor_disconnect').on('change', function (event) {
-					var $checkbox = $(this);
-
-					// if the change is to uncheck the checkbox
-					if (!$checkbox.is(':checked')) {
-						return;
-					}
-
-					var $message = 'If you disconnect from Castos hosting you will no longer be able to upload media files to the Castos hosting platform. If you’re no longer a Castos customer your media files may no longer be available to your listeners.';
-					var user_input = confirm($message);
-					if (user_input !== true) {
-						// Ensures this code runs AFTER the browser handles click however it wants.
-						setTimeout(function () {
-							$checkbox.removeAttr('checked');
-						}, 0);
-						event.preventDefault();
-						event.stopPropagation();
-					}
-				});
-			}
-
-		if ($podmotorAccountEmail.length > 0 && $podmotorAccountAPIToken.length > 0) {
-			disableSubmitButton();
-			validateAPICredentials();
-			disconnectCastos();
+		if ($podmotorAccountAPIToken.length > 0) {
+			connectButtonStates();
+			initConnect();
 		}
+
+		initDisconnect();
 	}
 
 	function initSubcategoryFiltration(){
@@ -167,11 +167,11 @@ jQuery(document).ready(function($) {
 		}
 		updateSyncBtn();
 
-		getPodcastCheckboxes().change(function(){
+		getPodcastCheckboxes().on('change', function(){
 			updateSyncBtn();
 		});
 
-		$syncBtn.click(function(){
+		$syncBtn.on('click', function(){
 			$syncBtn.addClass('loader');
 
 			var $msg = $('.ssp-sync-msg'),

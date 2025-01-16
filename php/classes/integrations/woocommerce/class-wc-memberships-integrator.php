@@ -69,13 +69,23 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
 		} else {
-			$integration_enabled = ssp_get_option( 'enable_wcmps_integration' );
-			if ( $integration_enabled ) {
+			if ( self::integration_enabled() ) {
 				$this->protect_private_series();
 			}
 		}
 
-		$this->init_subscribers_sync();
+		if ( ssp_is_connected_to_castos() ) {
+			$this->init_subscribers_sync();
+		}
+	}
+
+	/**
+	 * Checks if integration is enabled.
+	 *
+	 * @return bool
+	 */
+	public static function integration_enabled() {
+		return class_exists( 'WC_Memberships_Loader' ) && 'on' === ssp_get_option( 'enable_wcmps_integration' );
 	}
 
 	/**
@@ -591,7 +601,7 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	 * @return bool
 	 */
 	protected function needs_extended_integration_settings() {
-		if ( ! ssp_get_option( 'enable_wcmps_integration' ) ) {
+		if ( ! self::integration_enabled() ) {
 			return false;
 		}
 

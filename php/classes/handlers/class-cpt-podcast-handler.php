@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
-use Couchbase\Role;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
@@ -137,14 +136,18 @@ class CPT_Podcast_Handler implements Service {
 
 	/**
 	 * Setup custom fields for episodes
+	 *
+	 * @param bool $all
+	 *
 	 * @return array Custom fields
 	 */
-	public function custom_fields() {
-		$is_itunes_fields_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
+	public function custom_fields( $all = false ) {
+		$itunes_fields_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
+		$is_itunes_fields_enabled = $itunes_fields_enabled && ( $itunes_fields_enabled === 'on' );
 		$fields                   = array();
 		$is_connected_to_castos = ssp_is_connected_to_castos();
 
-		if ( $is_connected_to_castos ) {
+		if ( $is_connected_to_castos || $all ) {
 			$fields['sync_status'] = array(
 				'name'             => __( 'Sync status:', 'seriously-simple-podcasting' ),
 				'type'             => 'sync_status',
@@ -177,7 +180,7 @@ class CPT_Podcast_Handler implements Service {
 		);
 
 		//
-		if ( $is_connected_to_castos ) {
+		if ( $is_connected_to_castos || $all ) {
 			$fields['castos_file_data'] = array(
 				'type' => 'hidden',
 			);
@@ -216,6 +219,7 @@ class CPT_Podcast_Handler implements Service {
 			'type'             => 'image',
 			'default'          => '',
 			'section'          => 'info',
+			'validator'        => 'cover_image',
 			'meta_description' => __( 'The full URL of image file used in HTML 5 player if available.', 'seriously-simple-podcasting' ),
 		);
 
@@ -244,7 +248,7 @@ class CPT_Podcast_Handler implements Service {
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 
-		if ( $is_connected_to_castos ) {
+		if ( $is_connected_to_castos || $all ) {
 			$fields['filesize_raw'] = array(
 				'type'             => 'hidden',
 				'default'          => '',
@@ -280,7 +284,7 @@ class CPT_Podcast_Handler implements Service {
 			'meta_description' => __( 'Indicates whether this specific episode should be blocked from the iTunes and Google Play Podcast libraries.', 'seriously-simple-podcasting' ),
 		);
 
-		if ( $is_itunes_fields_enabled && $is_itunes_fields_enabled == 'on' ) {
+		if ( $is_itunes_fields_enabled || $all ) {
 			/**
 			 * New iTunes Tag Announced At WWDC 2017
 			 */

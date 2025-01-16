@@ -95,7 +95,10 @@ class Podcast_Post_Types_Controller {
 		// Register podcast post type, taxonomies and meta fields.
 		add_action( 'init', array( $this, 'register_post_type' ), 11 );
 
-		// prevent copying some meta fields
+		// Update podcast post type arguments to include custom-fields support if not already enabled.
+		add_filter( 'register_post_type_args', array( $this, 'update_podcast_post_type_args' ), 20, 2 );
+
+		// Prevent copying some meta fields
 		add_action( 'admin_init', array( $this, 'prevent_copy_meta' ) );
 
 		// Episode meta box.
@@ -107,6 +110,8 @@ class Podcast_Post_Types_Controller {
 
 		// Update podcast details to Castos when a post is updated or saved
 		add_action( 'save_post', array( $this, 'sync_episode' ), 20, 2 );
+		add_action( 'et_save_post', array( $this, 'sync_divi_episode' ) );
+		add_action( 'elementor/editor/after_save', array( $this, 'sync_elementor_episode' ) );
 
 		// Assign default series if no series was specified
 		add_action( 'save_post', array( $this, 'maybe_assign_default_series' ), 20 );
@@ -129,9 +134,67 @@ class Podcast_Post_Types_Controller {
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_episodes_status' ), 10, 2 );
 
 		add_action( 'ssp_check_episode_sync_status', array( $this, 'maybe_update_sync_status' ), 10, 2 );
+
+		// Handle translations
+		add_filter( 'pll_copy_post_metas', array( $this, 'handle_polylang_translations' ), 10, 3 );
 	}
 
-	public function add_custom_columns(){
+	/**
+	 * Updates podcast post type arguments to include custom-fields support if not already enabled.
+	 * Custom fields are necessary for displaying both standard and Gutenberg meta fields.
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param array $args
+	 * @param string $post_type
+	 *
+	 * @return array
+	 */
+	public function update_podcast_post_type_args( $args, $post_type ) {
+		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
+
+		if ( ! is_array( $podcast_post_types ) ||
+		     ! is_array( $args ) ||
+		     ! in_array( $post_type, $podcast_post_types ) ||
+		     ! empty( $args['supports']['custom-fields'] ) ) {
+			return $args;
+		}
+
+		if ( empty( $args['supports'] ) ) {
+			// Add default support values if none are defined.
+			$args['supports'] = array( 'title', 'editor', 'autosave' );
+		}
+		$args['supports'][] = 'custom-fields';
+
+		return $args;
+	}
+
+	/**
+	 * Handle Polylang translations - prevent copying episode meta fields.
+	 *
+	 * @param array $metas
+	 *
+	 * @return array
+	 */
+	public function handle_polylang_translations( $metas, $sync, $post_id ) {
+		$post = get_post( $post_id );
+		if ( ! in_array( $post->post_type, ssp_post_types() ) ) {
+			return $metas;
+		}
+		$fields  = array_keys( $this->custom_fields( true ) );
+		$fields  = array_merge( $fields, array(
+			'enclosure',
+			'castos_sync_attempts',
+			'podmotor_episode_id',
+			'podmotor_file_id',
+		) );
+		$allowed = array( 'cover_image', 'cover_image_id' );
+		$fields  = array_diff( $fields, $allowed );
+
+		return array_diff( $metas, $fields );
+	}
+
+	public function add_custom_columns() {
 		$ssp_post_types = ssp_post_types();
 		foreach ( $ssp_post_types as $post_type ) {
 			add_filter( 'manage_edit-' . $post_type . '_columns', array( $this, 'register_custom_column_headings' ), 20, 2 );
@@ -163,7 +226,7 @@ class Podcast_Post_Types_Controller {
 
 		// First, let's check if the podcast is still syncing and maybe update the status
 		if ( $syncing === $podcast_status || ! $podcast_status ) {
-			$sync_status = $this->castos_handler->get_podcast_sync_status( $series_id );
+			$sync_status    = $this->castos_handler->get_podcast_sync_status( $series_id );
 			$podcast_status = $sync_status->status;
 			$this->series_handler->update_sync_status( $series_id, $podcast_status );
 		}
@@ -238,9 +301,9 @@ class Podcast_Post_Types_Controller {
 	 * This function is needed for such cases:
 	 *  - when a new episode without series is created
 	 *  - when a new episode with series was first created as draft and then published.
-	 * For all other cases, @see notify_podping_on_series_added()
+	 * For all other cases, @param \WP_Post $post
+	 * @see notify_podping_on_series_added()
 	 *
-	 * @param \WP_Post $post
 	 */
 	public function notify_podping( $post_id, $post, $update, $post_before ) {
 
@@ -315,12 +378,12 @@ class Podcast_Post_Types_Controller {
 				return;
 			}
 
-			$remove_redundant_metas = function ( $post_id ){
+			$remove_redundant_metas = function ( $post_id ) {
 				$exclusions = [
 					'podmotor_file_id',
 					'podmotor_episode_id',
 					'audio_file',
-					'enclosure'
+					'enclosure',
 				];
 
 				foreach ( $exclusions as $exclusion ) {
@@ -336,7 +399,7 @@ class Podcast_Post_Types_Controller {
 			} );
 
 			// This is for Post Duplicator plugin
-			add_action( 'mtphr_post_duplicator_created', function() use ( $remove_redundant_metas, $post_id ) {
+			add_action( 'mtphr_post_duplicator_created', function () use ( $remove_redundant_metas, $post_id ) {
 				$remove_redundant_metas( $post_id );
 			} );
 
@@ -414,7 +477,7 @@ class Podcast_Post_Types_Controller {
 
 		$old_data = array();
 
-		$enclosure = '';
+		$enclosure     = '';
 		$old_enclosure = '';
 
 		foreach ( $field_data as $k => $field ) {
@@ -433,7 +496,7 @@ class Podcast_Post_Types_Controller {
 			}
 
 			if ( $k == 'audio_file' ) {
-				$enclosure = $val;
+				$enclosure     = $val;
 				$old_enclosure = get_post_meta( $post_id, $k, true );
 			}
 
@@ -490,11 +553,11 @@ class Podcast_Post_Types_Controller {
 	 *
 	 * @return bool
 	 */
-	public function save_podcast_action_check( $post ){
+	public function save_podcast_action_check( $post ) {
 		$podcast_post_types = ssp_post_types();
 
 		// Post type check
-		if (  ( 'trash' === $post->post_status ) || ! in_array( $post->post_type, $podcast_post_types ) ) {
+		if ( ( 'trash' === $post->post_status ) || ! in_array( $post->post_type, $podcast_post_types ) ) {
 			return false;
 		}
 
@@ -517,13 +580,13 @@ class Podcast_Post_Types_Controller {
 		global $pagenow;
 		add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details', 'seriously-simple-podcasting' ), array(
 			$this,
-			'meta_box_content'
+			'meta_box_content',
 		), $post->post_type, 'normal', 'high' );
 
 		if ( 'post.php' == $pagenow && 'publish' == $post->post_status && function_exists( 'get_post_embed_html' ) ) {
 			add_meta_box( 'episode-embed-code', __( 'Episode Embed Code', 'seriously-simple-podcasting' ), array(
 				$this,
-				'embed_code_meta_box_content'
+				'embed_code_meta_box_content',
 			), $post->post_type, 'side', 'low' );
 		}
 
@@ -569,7 +632,7 @@ class Podcast_Post_Types_Controller {
 
 		if ( 0 < count( $field_data ) ) {
 
-			$html .= '<input id="seriouslysimple_post_id" type="hidden" value="' . $post_id . '" />';
+			$html     .= '<input id="seriouslysimple_post_id" type="hidden" value="' . $post_id . '" />';
 			$renderer = ssp_renderer();
 
 			foreach ( $field_data as $k => $v ) {
@@ -603,7 +666,7 @@ class Podcast_Post_Types_Controller {
 						$file_data = new Castos_File_Data(
 							json_decode( get_post_meta( $post_id, 'castos_file_data', true ), true )
 						);
-						$html .= $renderer->fetch(
+						$html      .= $renderer->fetch(
 							'metafields/episode_file',
 							compact( 'k', 'v', 'data', 'is_castos', 'file_data' )
 						);
@@ -612,7 +675,8 @@ class Podcast_Post_Types_Controller {
 					case 'image':
 						$label = $v['name'];
 						$description = $v['description'];
-						$html .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'data', 'k' ) );
+						$validator = isset( $v['validator'] ) ? $v['validator'] : '';
+						$html .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'validator', 'data', 'k' ) );
 						break;
 
 					case 'checkbox':
@@ -656,10 +720,80 @@ class Podcast_Post_Types_Controller {
 
 	/**
 	 * Setup custom fields for episodes
+	 *
+	 * @param bool $all
+	 *
 	 * @return array Custom fields
 	 */
-	public function custom_fields() {
-		return $this->cpt_podcast_handler->custom_fields();
+	public function custom_fields( $all = false ) {
+		return $this->cpt_podcast_handler->custom_fields( $all );
+	}
+
+	/**
+	 * Syncs a Divi episode with Castos
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param $post_id
+	 *
+	 * @return void
+	 */
+	public function sync_divi_episode( $post_id ) {
+		// Post type check
+		$post = get_post( $post_id );
+
+		if( 'publish' !== $post->post_status ){
+			return;
+		}
+
+		$podcast_post_types = ssp_post_types();
+
+		if ( ! in_array( $post->post_type, $podcast_post_types ) || ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
+		$get_divi_content = function ( $content, $post ) {
+			if ( ! $content ) {
+				$content = $post->post_content;
+			}
+			if ( false !== strpos( $content, '[et_pb_' ) ) {
+				$content = do_shortcode( $content );
+			}
+
+			return $content;
+		};
+
+		add_filter( 'ssp_feed_item_raw_content', $get_divi_content, 10, 2 );
+
+		$this->upload_episode_to_castos( $post );
+
+		remove_filter( 'ssp_feed_item_raw_content', $get_divi_content );
+	}
+
+	/**
+	 * Syncs an Elementor episode with Castos
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param $post_id
+	 *
+	 * @return void
+	 */
+	public function sync_elementor_episode( $post_id ) {
+		// Post type check
+		$post = get_post( $post_id );
+
+		if( 'publish' !== $post->post_status ){
+			return;
+		}
+
+		$podcast_post_types = ssp_post_types();
+
+		if ( ! in_array( $post->post_type, $podcast_post_types ) || ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
+		$this->upload_episode_to_castos( $post );
 	}
 
 	/**
@@ -700,32 +834,56 @@ class Podcast_Post_Types_Controller {
 			return;
 		}
 
+		$this->episode_repository->delete_episode_sync_error( $post->ID );
+
+		$this->upload_episode_to_castos( $post );
+	}
+
+
+	/**
+	 * Uploads an episode to Castos and updates the episode's sync post metadata.
+	 * Schedules a sync by cron in case of a sync error.
+	 *
+	 * @since 3.8.0
+	 *
+	 * @param $post
+	 *
+	 * @return void
+	 */
+	protected function upload_episode_to_castos( $post ) {
 		$response = $this->castos_handler->upload_episode_to_castos( $post );
 
-		if ( 'success' === $response['status'] ) {
-			$podmotor_episode_id = $response['episode_id'];
-			if ( $podmotor_episode_id ) {
-				update_post_meta( $id, 'podmotor_episode_id', $podmotor_episode_id );
+		if ( $response->success ) {
+			if ( $response->castos_episode_id ) {
+				update_post_meta( $post->ID, 'podmotor_episode_id', $response->castos_episode_id );
 			}
-			$this->admin_notices_handler->add_predefined_flash_notice(
-				Admin_Notifications_Handler::NOTICE_API_EPISODE_SUCCESS
+			$this->admin_notices_handler->add_flash_notice(
+				$response->message,
+				Admin_Notifications_Handler::SUCCESS
 			);
 
 			// if uploading was scheduled before, lets unschedule it
-			delete_post_meta( $id, 'podmotor_schedule_upload' );
+			delete_post_meta( $post->ID, 'podmotor_schedule_upload' );
 			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_SYNCED );
 			$this->episode_repository->delete_sync_error( $post->ID );
 		} else {
-			// Schedule uploading with a cronjob.1
+			// Schedule uploading with a cronjob.
 			// If it's 404, something wrong with the file ID. We don't try to reupload it since result will be the same.
-			if ( 404 != $response['code'] ) {
+			if ( in_array( $response->code, array( 403, 404 ) ) ) {
+				$this->admin_notices_handler->add_flash_notice(
+					$response->message,
+					Admin_Notifications_Handler::ERROR
+				);
+			} else {
 				update_post_meta( $id, Cron_Controller::SYNC_SCHEDULE_META, true );
 				update_post_meta( $id, Cron_Controller::ATTEMPTS_META, 1 );
+				$this->admin_notices_handler->add_predefined_flash_notice(
+					Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
+				);
 			}
-			$this->admin_notices_handler->add_predefined_flash_notice(
-				Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
-			);
+
 			$this->episode_repository->update_episode_sync_status( $post->ID, Sync_Status::SYNC_STATUS_FAILED );
+			$this->episode_repository->update_episode_sync_error( $post->ID, $response->message );
 		}
 	}
 

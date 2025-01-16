@@ -271,6 +271,19 @@ textarea#episode_embed_code {
 	}
 }
 
+#podmotor_account_api_token {
+	width: 100%;
+	min-width: 100%;
+	display: block;
+	margin-bottom: 8px;
+}
+
+.ssp-settings-integrations {
+	table label {
+		margin-top: 10px;
+		display: block;
+	}
+}
 
 .ssp-settings:not(.ssp-settings-extensions,.ssp-settings-integrations) {
 	background: $clr_white;
@@ -296,10 +309,6 @@ textarea#episode_embed_code {
 			max-width: 90%;
 			background: #F1F5F9;
 		}
-	}
-
-	.validate-api-credentials-message {
-		margin-left: 30px;
 	}
 
 	.loader {
@@ -332,6 +341,42 @@ textarea#episode_embed_code {
 			color: $clr_green;
 		}
 	}
+}
+
+.ssp-main-settings {
+	.error {
+		color: $clr_red_400;
+	}
+
+	.hidden {
+		display: none;
+	}
+
+	.disconnect-castos {
+		margin-right: 8px;
+		vertical-align: middle;
+	}
+
+	&.tab-castos-hosting {
+		.loader {
+			position: relative;
+			&:after {
+				content: '';
+				display: block;
+				background: url(../img/loader2.svg) no-repeat;
+				position: absolute;
+				right: -50px;
+				top: -9px;
+				background-size: contain;
+				width: 44px;
+				height: 44px;
+			}
+		}
+	}
+}
+
+.connect-castos-message {
+	margin-left: 20px;
 }
 
 .ssp-sync-podcast {

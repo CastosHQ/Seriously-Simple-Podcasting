@@ -12,7 +12,7 @@ import PlayerMeta from "./PlayerMeta";
 class PodcastListItem extends Component {
 	render() {
 		const {className, post, attributes} = this.props;
-		console.log(post);
+
 		const imageClassNames = classnames(
 			"podcast-image-link",
 			{ 'hide-featured-image': !attributes.featuredImage },

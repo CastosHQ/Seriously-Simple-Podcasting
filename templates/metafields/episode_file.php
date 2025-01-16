@@ -22,19 +22,25 @@
 <?php endif ?>
 
 <div>
-	<input name="<?php echo esc_attr( $k ) ?>" type="text" id="upload_<?php
-	  echo esc_attr( $k ) ?>" value="<?php echo esc_attr( $data ) ?>" />
+	<input name="<?php echo esc_attr( $k )
+	?>" type="text" id="upload_<?php echo esc_attr( $k ) ?>" class="ssp-sync ssp-field-<?php echo esc_attr( $k )
+	?>" value="<?php echo esc_attr( $data )
+	?>" />
 
 	<?php if ( $is_castos ) : ?>
-	  <div id="ssp_upload_container" style="display: inline;">
-		  <button class="button" id="ssp_select_file" href="javascript:"><?php
-			  _e( 'Select file', 'seriously-simple-podcasting' ) ?></button>
-	  </div>
+		<div id="ssp_upload_container" style="display: inline;">
+			<button class="button" id="ssp_select_file" class="ssp_select_file" type="button"><?php
+				_e( 'Select file', 'seriously-simple-podcasting' )
+				?></button>
+		</div>
 	<?php else : ?>
-		<input type="button" class="button" id="upload_<?php echo esc_attr( $k ) ?>_button" value="<?php
-		_e( 'Upload File', 'seriously-simple-podcasting' ) ?>" data-uploader_title="<?php
-		_e( 'Choose a file', 'seriously-simple-podcasting' ) ?>" data-uploader_button_text="<?php
-		_e( 'Insert podcast file', 'seriously-simple-podcasting' ) ?>" />
+		<input type="button" class="button ssp-upload-file upload_<?php echo esc_attr( $k )
+		?>_button" value="<?php _e( 'Upload File', 'seriously-simple-podcasting' )
+		?>" data-uploader_title="<?php _e( 'Choose a file', 'seriously-simple-podcasting' )
+		?>" data-uploader_button_text="<?php _e( 'Insert podcast file', 'seriously-simple-podcasting' )
+		?>" data-field="ssp-field-<?php echo esc_attr( $k )
+		?>" data-preview="ssp-preview-<?php echo esc_attr( $k )
+		?>" />
 	<?php endif ?>
 </div>
 

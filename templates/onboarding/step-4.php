@@ -2,7 +2,6 @@
 /**
  * @var int $step_number
  * @var array $step_urls
- * @var string $podmotor_account_email
  * @var string $podmotor_account_api_token
  * */
 
@@ -48,7 +47,7 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 				</ul>
 			</div>
 			<div class="ssp-onboarding-step-4__start-trial">
-				<a href="<?php echo $trial_url; ?>">
+				<a target="_blank" rel="noopener" href="<?php echo $trial_url; ?>">
 					<?php _e( 'Start Free Trial on Castos', 'seriously-simple-podcasting' ) ?>
 					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M21.5 12H3.5M14.5 5L21.5 12L14.5 5ZM21.5 12L14.5 19L21.5 12Z" stroke="#F3C2C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -73,41 +72,34 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 				</div>
 
 				<div class="ssp-onboarding__hosting-step">
-					<a href="https://app.castos.com/account/publish" target="_blank">
+					<a href="https://app.castos.com/integrations/api-details" target="_blank" rel="noopener">
 						<span class="ssp-onboarding__hosting-step--header">
 							<?php _e( 'Complete details below', 'seriously-simple-podcasting' ); ?>
 						</span>
 						<span class="ssp-onboarding__hosting-step--info">
-							<?php printf( __( 'Get your API key from %s', 'seriously-simple-podcasting' ), '<span>Castos</span>' ); ?>
+							<?php printf( __( 'Get your API token from %s', 'seriously-simple-podcasting' ), '<span>Castos</span>' ); ?>
 						</span>
 					</a>
 				</div>
 			</div>
 			<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
 				<div class="ssp-onboarding__settings-item">
-					<h2><?php _e( 'Your Email', 'seriously-simple-podcasting' ); ?></h2>
-					<label for="podmotor_account_email" class="description">
-						<?php _e( 'The email address you used to register your Castos account.', 'seriously-simple-podcasting' ); ?>
-					</label>
-					<input id="podmotor_account_email" type="text" class="js-onboarding-validate-token-field" name="podmotor_account_email" value="<?php echo $podmotor_account_email ?>">
-				</div>
-
-				<div class="ssp-onboarding__settings-item">
-					<h2><?php _e( 'Castos API Key', 'seriously-simple-podcasting' ); ?></h2>
+					<h2><?php _e( 'Castos API Token', 'seriously-simple-podcasting' ); ?></h2>
 					<label for="podmotor_account_api_token" class="description">
 						<?php _e( 'Available from your Castos account dashboard.', 'seriously-simple-podcasting' ); ?>
 					</label>
-					<input id="podmotor_account_api_token" type="text" class="js-onboarding-validate-token-field" name="podmotor_account_api_token" value="<?php echo $podmotor_account_api_token ?>">
+					<input id="podmotor_account_api_token" type="text" class="js-onboarding-castos-connect-field" name="podmotor_account_api_token" value="<?php echo $podmotor_account_api_token ?>" <?php disabled( !! $podmotor_account_api_token ) ?>>
 				</div>
 
 				<div class="ssp-onboarding__submit">
 					<?php wp_nonce_field( 'ssp_onboarding_' . $step_number, 'nonce', false ); ?>
-					<button id="validate_api_credentials" type="button" class="button validate-token js-onboarding-validate-token" data-validating-txt="Validating Credentials" data-valid-txt="Valid Credentials" data-initial-txt="Validate Credentials" >
-						<?php _e( 'Verify Credentials', 'seriously-simple-podcasting' ); ?>
+					<button id="castos-connect" type="button" class="button castos-connect js-onboarding-castos-connect <?php if( $podmotor_account_api_token ) : ?>connected<?php endif ?>" data-connected-txt="<?php _e('Connected', 'seriously-simple-podcasting') ?>" data-connecting-txt="<?php
+						_e('Connecting Castos', 'seriously-simple-podcasting') ?>" data-no-reload="true" data-initial-txt="<?php _e('Connect Castos', 'seriously-simple-podcasting') ?>" disabled >
+						<?php echo $podmotor_account_api_token ? __('Connected', 'seriously-simple-podcasting') : __( 'Connect Castos', 'seriously-simple-podcasting' ) ?>
 					</button>
 					<?php wp_nonce_field( 'ss_podcasting_castos-hosting', 'podcast_settings_tab_nonce', false ); ?>
-					<span class="validate-api-credentials-message"></span>
-					<button type="submit" disabled="disabled"><?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?></button>
+					<button type="submit" <?php disabled( ! $podmotor_account_api_token ) ?>><?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?></button>
+					<span class="connect-castos-message"></span>
 				</div>
 			</form>
 		</div>

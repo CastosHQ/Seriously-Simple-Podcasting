@@ -7,8 +7,10 @@ use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Images_Handler;
+use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Repositories\Series_Repository;
 
 // Exit if accessed directly.
@@ -668,33 +670,39 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 	 * @since     1.0.0
 	 */
 	function ssp_readfile_chunked( $file, $retbytes = true ) {
+		try {
+			$chunksize = 1 * ( 1024 * 1024 );
+			$cnt       = 0;
 
-		$chunksize = 1 * ( 1024 * 1024 );
-		$cnt       = 0;
+			$handle = fopen( $file, 'r' );
+			if ( false === $handle ) {
+				return false;
+			}
 
-		$handle = fopen( $file, 'r' );
-		if ( false === $handle ) {
+			while ( ! feof( $handle ) ) {
+				$buffer = fread( $handle, $chunksize );
+				echo $buffer;
+				ob_flush();
+				flush();
+
+				if ( $retbytes ) {
+					$cnt += strlen( $buffer );
+				}
+			}
+
+			$status = fclose( $handle );
+
+			if ( $retbytes && $status ) {
+				return $cnt;
+			}
+
+			return $status;
+		} catch ( \Throwable $e ) {
+			$logger = new Log_Helper();
+			$logger->log( 'Error in ' . __FUNCTION__ . ': ' . $e->getMessage(), 'File: ' . $file );
+
 			return false;
 		}
-
-		while ( ! feof( $handle ) ) {
-			$buffer = fread( $handle, $chunksize );
-			echo $buffer;
-			ob_flush();
-			flush();
-
-			if ( $retbytes ) {
-				$cnt += strlen( $buffer );
-			}
-		}
-
-		$status = fclose( $handle );
-
-		if ( $retbytes && $status ) {
-			return $cnt;
-		}
-
-		return $status;
 	}
 }
 
@@ -742,9 +750,8 @@ if ( ! function_exists( 'ssp_is_connected_to_castos' ) ) {
 		if ( $cache = wp_cache_get( $cache_key ) ) {
 			return $cache;
 		}
-		$podmotor_email     = get_option( 'ss_podcasting_podmotor_account_email', '' );
 		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		if ( ! empty( $podmotor_email ) && ! empty( $podmotor_api_token ) ) {
+		if ( ! empty( $podmotor_api_token ) ) {
 			$is_connected = true;
 		}
 
@@ -1303,12 +1310,15 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 			$frontend_controller->restore_filters();
 		}
 
+		$content = apply_filters( 'ssp_feed_item_raw_content', $content, $post );
+
 		$content = strip_shortcodes( $content );
 		$content = preg_replace( '/<\/?iframe(.|\s)*?>/', '', $content );
 		$content = preg_replace( '/<style>(.|\s)*?<\/style>/', '', $content );
 		$content = preg_replace( '/<script>(.|\s)*?<\/script>/', '', $content );
 		$content = str_replace( '<br>', PHP_EOL, $content );
-		$content = strip_tags( $content, '<p>,<a>,<ul>,<ol>,<li>,<strong>,<em>,<h2>,<h3>,<h4>,<h5>,<label>' );
+		$allowed_tags = apply_filters('ssp_feed_item_content_allowed_tags', '<p>,<a>,<ul>,<ol>,<li>,<strong>,<em>,<h2>,<h3>,<h4>,<h5>,<label>');
+		$content = strip_tags( $content, $allowed_tags );
 
 		// Remove empty paragraphs as well.
 		$content = trim( str_replace( '<p></p>', '', $content ) );
@@ -1719,6 +1729,26 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 }
 
 /**
+ * Gets array of tags.
+ */
+if ( ! function_exists( 'ssp_get_tags' ) ) {
+	/**
+	 * Gets array of tags.
+	 *
+	 * @param bool $hide_empty
+	 *
+	 * @return WP_Term[]
+	 */
+	function ssp_get_tags( $hide_empty = false ) {
+		$tags = get_terms( 'post_tag', array(
+			'post_type' => ssp_post_types(),
+			'hide_empty' => $hide_empty,
+		) );
+		return is_array( $tags ) ? $tags : array();
+	}
+}
+
+/**
  * Gets SSP Version.
  */
 if ( ! function_exists( 'ssp_version' ) ) {
@@ -1858,5 +1888,71 @@ if ( ! function_exists( 'ssp_onboarded' ) ) {
 	 */
 	function ssp_onboarded() {
 		return ! empty( ssp_get_option( 'data_title', '', ssp_get_default_series_id() ) );
+	}
+}
+
+
+if ( ! function_exists( 'ssp_episode_sync_error' ) ) {
+	/**
+	 * @return \SeriouslySimplePodcasting\Entities\Sync_Status
+	 */
+	function ssp_episode_sync_status( $episode_id ) {
+		/** @var Episode_Repository $episode_repository **/
+		$episode_repository = ssp_get_service('episode_repository');
+		return $episode_repository->get_episode_sync_status( $episode_id );
+	}
+}
+
+if ( ! function_exists( 'ssp_episode_passthrough_required' ) ) {
+	/**
+	 * Checks if episode requires the passthrough file URL ( /podcast-download/22/my-episode.mp3 ).
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param int $episode_id
+	 *
+	 * @return bool
+	 */
+	function ssp_episode_passthrough_required( $episode_id ) {
+		// Require passthrough if the SSStats plugin is enabled.
+		if ( class_exists( 'SeriouslySimpleStats\Classes\Stats' ) ) {
+			return apply_filters( 'ssp_episode_passthrough_required', true, $episode_id );
+		}
+
+		// Require passthrough if ads are enabled for any episode series.
+		$series    = wp_get_post_terms( $episode_id, ssp_series_taxonomy() );
+
+		$required = false;
+
+		if ( is_array( $series ) ) {
+			foreach ( $series as $term ) {
+				$required = $required || ssp_series_passthrough_required( $term->term_id );
+			}
+		}
+
+		return apply_filters( 'ssp_episode_passthrough_required', $required, $episode_id );
+	}
+}
+
+if ( ! function_exists( 'ssp_series_passthrough_required' ) ) {
+	/**
+	 * Checks if series requires the passthrough file URL ( /podcast-download/22/my-episode.mp3 )
+	 *
+	 * @since 3.7.0
+	 *
+	 * @param int $series_id
+	 *
+	 * @return bool
+	 */
+	function ssp_series_passthrough_required( $series_id ) {
+		// Require passthrough if the SSStats plugin is enabled.
+		if ( class_exists( 'SeriouslySimpleStats\Classes\Stats' ) ) {
+			return apply_filters( 'ssp_episode_passthrough_required', true, $series_id );
+		}
+
+		// Require passthrough if ads are enabled for this series.
+		$required = 'on' === ssp_get_option( 'enable_ads', 'off', $series_id );
+
+		return apply_filters( 'ssp_series_passthrough_required', $required, $series_id );
 	}
 }

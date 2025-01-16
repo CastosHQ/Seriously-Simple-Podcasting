@@ -10,6 +10,7 @@ use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Repositories\Settings_Config;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
@@ -142,7 +143,23 @@ class Settings_Controller {
 		// Add podcasts sync status to the sync settings
 		add_filter( 'ssp_field_data', array( $this, 'provide_podcasts_sync_status' ), 10, 2 );
 
-		$this->generate_dynamic_color_scheme();
+		add_action('admin_init', function(){
+			$this->generate_dynamic_color_scheme();
+		});
+
+		add_shortcode( 'castos_email', array( $this, 'castos_email' ) );
+	}
+
+	/**
+	 * Gets castos email to show in the Hosting tab.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @return string
+	 * @throws \Exception
+	 */
+	public function castos_email() {
+		return ssp_is_connected_to_castos() ? $this->castos_handler->get_email() : '';
 	}
 
 	/**
@@ -343,12 +360,16 @@ class Settings_Controller {
 			return;
 		}
 
+		if ( $data instanceof Settings_Config ) {
+			$data = $data->get_config();
+		}
+
 		if ( isset( $data['sections'] ) ) {
 			foreach ( $data['sections'] as $section_id => $section_data ) {
 				$is_section_valid = true;
 				if ( isset( $section_data['condition_callback'] ) ) {
 					$callback = $section_data['condition_callback'];
-					if ( is_string( $callback ) && function_exists( $callback ) ) {
+					if ( is_callable( $callback ) ) {
 						$is_section_valid = call_user_func( $callback );
 					}
 				}
@@ -382,13 +403,15 @@ class Settings_Controller {
 
 	/**
 	 * @param string $section_id
-	 * @param array $section_data
+	 * @param Settings_Config|array $section_data
 	 * @param string $feed_series
 	 * @param int $series_id
 	 *
 	 * @return void
 	 */
 	protected function register_settings_section( $section_id, $section_data, $feed_series = '', $series_id = 0 ) {
+		$section_data = is_object( $section_data ) ? $section_data->get_config() : $section_data;
+
 		$section_title = isset( $section_data['title'] ) ? $section_data['title'] : '';
 
 		$default_section_args = $section_data['fields'] ? array(
@@ -619,7 +642,10 @@ class Settings_Controller {
 		$tab = empty( $q_args['tab'] ) ? 'general' : $q_args['tab'];
 
 		$html .= $this->show_page_messages();
-		$html .= '<div id="ssp-main-settings">' . "\n";
+
+		$class = 'ssp-main-settings tab-' . esc_attr( $tab ) . ' ';
+		$class .= ssp_is_connected_to_castos() ? 'castos-connected' : 'castos-disconnected';
+		$html .= '<div id="ssp-main-settings" class="' . $class . '">' . "\n";
 		$html .= $this->show_page_tabs();
 		$html .= $this->show_tab_before_settings( $tab );
 		$html .= $this->show_tab_settings( $tab );
@@ -805,10 +831,18 @@ class Settings_Controller {
 		$disable_save_button_on_tabs = array( 'extensions', 'import' );
 
 		if ( ! in_array( $tab, $disable_save_button_on_tabs ) ) {
+			$button_text = isset( $this->settings[$tab]['button_text'] ) ?
+				$this->settings[$tab]['button_text'] :
+				__( 'Save Settings', 'seriously-simple-podcasting' );
+			$button_class = 'button-primary ssp-settings-submit';
+			$button_class .= isset( $this->settings[$tab]['button_class'] ) ?
+				' ' . $this->settings[$tab]['button_class'] : '';
+
 			// Submit button
 			$html .= '<p class="submit">' . "\n";
 			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
-			$html .= '<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary" value="' . esc_attr( __( 'Save Settings', 'seriously-simple-podcasting' ) ) . '" />' . "\n";
+			$html .= '<button id="ssp-settings-submit" name="Submit" type="submit" class="' .
+			         esc_attr($button_class) . '">' . esc_attr( $button_text ) . '</button>' . "\n";
 			$html .= '</p>' . "\n";
 		}
 
@@ -953,14 +987,13 @@ class Settings_Controller {
 	 * @return string
 	 */
 	public function render_seriously_simple_sidebar() {
+		if(ssp_is_connected_to_castos()){
+			return '';
+		}
 		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-		$link      = 'https://castos.com/1ksubs?utm_source=WordPress&utm_medium=Settings&utm_campaign=Banner';
-		$is_connected = ssp_is_connected_to_castos();
-		$img = $is_connected ?
-			'<a href="' . $link . '" target="_blank"><img src="' . $image_dir . 'castos-connected-banner.jpg"></a>' :
-			'<img src="' . $image_dir . 'castos-plugin-settings-banner.jpg">';
+		$img = '<img src="' . esc_attr( $image_dir ) . 'castos-plugin-settings-banner.jpg">';
 
-		return $this->renderer->fetch( 'settings-sidebar', compact( 'img', 'is_connected' ) );
+		return $this->renderer->fetch( 'settings-sidebar', compact( 'img' ) );
 	}
 
 	public function render_seriously_simple_extensions() {
@@ -1148,7 +1181,10 @@ class Settings_Controller {
 	 * @return string
 	 */
 	public function render_external_import_form() {
-		$post_types = ssp_post_types( true );
+		$post_types = array( SSP_CPT_PODCAST ); // Make sure that podcast is the first in the list.
+		$post_types = array_merge( $post_types, ssp_post_types( false ) );
+
+
 		$series     = get_terms( 'series', array( 'hide_empty' => false ) );
 
 		return $this->renderer->fetch( 'settings/import-rss-form', compact( 'post_types', 'series' ) );

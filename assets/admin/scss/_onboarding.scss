@@ -156,7 +156,7 @@
 
 	&-step-2, &-step-3, &-step-4, &-step-5 {
 		.ssp-onboarding__steps::after {
-			background: #DF4E4F;
+			background: $clr_red_400;
 			width: initial;
 		}
 	}
@@ -189,6 +189,10 @@
 	&-step-4 {
 		.ssp-onboarding__steps::after {
 			right: 180px;
+		}
+
+		.ssp-onboarding__settings-body {
+			padding: 24px 24px 36px;
 		}
 
 		&__info {
@@ -317,7 +321,7 @@
 				li {
 					&:hover {
 						svg path, svg rect {
-							fill: #DF4E4F;
+							fill: $clr_red_400;
 						}
 					}
 				}
@@ -452,7 +456,7 @@
 			z-index: 0;
 			visibility: hidden;
 			transition: .6s;
-			margin-top: -444px;
+			margin-top: -345px;
 
 			&--opened {
 				visibility: visible;
@@ -585,13 +589,19 @@
 		margin-top: 25px;
 		position: relative;
 
+		span.connect-castos-message {
+			display: block;
+			text-align: left;
+			margin: 20px 0 0;
+		}
+
 		button[type=submit], .button {
 			position: relative;
 			height: 50px;
 			border-radius: 6px;
 			border: 0;
 			color: #FFFFFF;
-			background: #DF4E4F;
+			background: $clr_red_400;
 			font-size: 18px;
 			padding: 0 55px 0 33px;
 			transition: .3s;
@@ -650,7 +660,7 @@
 			}
 		}
 
-		.validate-token {
+		.castos-connect {
 			float: left;
 			position: relative;
 			padding: 0 20px 0 45px;
@@ -659,42 +669,62 @@
 				content: '';
 				display: block;
 				position: absolute;
-				background: url(../img/validate.svg) no-repeat;
-				background-size: cover;
-				left: 19px;
-				top: 17px;
-				width: 14px;
-				height: 18px;
-				filter: none;
+				background: url(../img/connect.svg) no-repeat;
+				left: 13px;
+				top: 13px;
+				width: 25px;
+				height: 23px;
+				filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(198deg) brightness(101%) contrast(102%);
+				background-size: contain;
 			}
 
-			&.validating {
-				background: #374151;
+			&:disabled {
+				background: #9CA3AF !important;
+				color: #D1D5DB !important;
+				&:after {
+					//filter: invert(92%) sepia(17%) saturate(74%) hue-rotate(176deg) brightness(92%) contrast(88%);
+					filter: invert(94%) sepia(8%) saturate(150%) hue-rotate(177deg) brightness(90%) contrast(93%);
+					transition: none;
+				}
+			}
 
-				&:hover, &:active, &:focus {
-					background: #374151;
+			&.connecting {
+				background: #DE7373 !important;
+				color: #FFFFFF !important;
+
+				&:hover, &:active, &:focus, &:disabled {
+					background: #DE7373;
 				}
 
 				&:after {
 					width: 17px;
 					height: 18px;
-					background-image: url(../img/validating.svg);
+					background-image: url(../img/connecting.svg);
+					animation: rotation 2s infinite linear;
+					filter: none;
+					transition: none;
+					top: 15px;
+					left: 15px;
 				}
 			}
 
-			&.valid {
-				background: #10B981;
+			&.connected {
+				background: #10B981 !important;
+				color: $clr_white !important;
 				padding: 0 16px 0 45px;
-
 				&:hover, &:active, &:focus {
 					background: #10B981;
 				}
+				opacity: .7;
 
 				&:after {
-					width: 16px;
-					height: 12px;
-					top: 19px;
-					background-image: url(../img/checkbox.svg);
+					background-image: url(../img/connect.svg);
+					left: 13px;
+					top: 13px;
+					width: 25px;
+					height: 23px;
+					filter: invert(100%) sepia(100%) saturate(0%) hue-rotate(198deg) brightness(101%) contrast(102%);
+					background-size: contain;
 				}
 			}
 		}
@@ -732,7 +762,7 @@
 			display: block;
 			height: 1.5px;
 			width: 14px;
-			background: #DF4E4F;
+			background: $clr_red_400;
 			position: absolute;
 			left: 7px;
 			top: 46%;
@@ -750,12 +780,6 @@
 				background: #fff;
 			}
 		}
-	}
-
-	.validate-api-credentials-message {
-		position: absolute;
-		left: 0;
-		bottom: -18px;
 	}
 
 	&__links {
@@ -822,7 +846,7 @@
 				width: 30px;
 				height: 30px;
 				background: #FFF;
-				color: #DF4E4F;
+				color: $clr_red_400;
 				font-size: 20px;
 				font-weight: 600;
 				border-radius: 50%;

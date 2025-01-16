@@ -3,10 +3,10 @@ jQuery(document).ready(function($) {
 	// Uploading files
 	var file_frame, series_img_frame;
 
-	$.fn.ssp_upload_media_file = function( button, preview_media, validateImageSize = false ) {
-		var button_id = button.attr('id');
-		var field_id = button_id.replace( '_button', '' );
-		var preview_id = button_id.replace( '_button', '_preview' );
+	$.fn.ssp_upload_media_file = function( button, validateCallback = null ) {
+		//var button_id = button.attr('id');
+		var field_class = button.data( 'field' );
+		var preview_class = button.data( 'preview' );
 
 		// Create the media frame.
 		file_frame = wp.media.frames.file_frame = wp.media({
@@ -19,16 +19,16 @@ jQuery(document).ready(function($) {
 
 		// When an image is selected, run a callback.
 		file_frame.on( 'select', function() {
-		  var attachment = file_frame.state().get('selection').first().toJSON();
+			var attachment = file_frame.state().get('selection').first().toJSON();
 
-		  if ( typeof validateImageSize === 'function' && !validateImageSize( attachment ) ) {
-			return;
-		  }
+			if ( typeof validateCallback === 'function' && ! validateCallback(attachment) ) {
+				return;
+			}
 
-		  $("#"+field_id).val(attachment.url);
-		  if ( preview_media ) {
-		  	$("#"+preview_id).attr('src',attachment.url);
-		  }
+			$('input.' + field_class).val(attachment.url).trigger('change');
+			if ( preview_class ) {
+				$('.' + preview_class).attr('src', attachment.url);
+			}
 		});
 
 		// Finally, open the modal
@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
 	};
 
   /* Add/Edit Series Image */
-	$('#series_upload_image_button').click(function( event ){
+	$('#series_upload_image_button').on('click', function( event ){
 		event.preventDefault();
 		var send_attachment_bkp = wp.media.editor.send.attachment;
     var button = $(this);
@@ -78,7 +78,7 @@ jQuery(document).ready(function($) {
 	});
 
 	/* Remove/clear Series Image */
-	$('#series_remove_image_button').click(function( event ){
+	$('#series_remove_image_button').on('click', function( event ){
 		event.preventDefault();
 		var button = $(this);
 		var button_id = button.attr('id');
@@ -93,17 +93,16 @@ jQuery(document).ready(function($) {
 	});
 
 	/* ADD/EDIT EPISODE */
-
-	$('#upload_audio_file_button').click(function( event ){
+	$('body').on('click', '.ssp-upload-file', function( event ){
 		event.preventDefault();
-		$.fn.ssp_upload_media_file( $(this), false );
+		$.fn.ssp_upload_media_file( $(this) );
 	});
 
-	$('#episode_embed_code').click(function() {
+	$('#episode_embed_code').on('click', function() {
 		$(this).select();
 	});
 
-	$( '.episode_embed_code_size_option' ).change(function() {
+	$( '.episode_embed_code_size_option' ).on('change', function() {
 
 		var width = $( '#episode_embed_code_width' ).val();
 		var height = $( '#episode_embed_code_height' ).val();
@@ -139,7 +138,7 @@ jQuery(document).ready(function($) {
 		    var d = $.datepicker.parseDate("d MM, yy", dateText);
 		    var date = $.datepicker.formatDate("yy-mm-dd", d);
 		    var save_field = $(this).attr('id').replace( '_display', '' );
-		    $( '#' + save_field ).val( date );
+		    $( '#' + save_field ).val( date ).trigger('change');
 		}
 	});
 
@@ -154,7 +153,7 @@ jQuery(document).ready(function($) {
 
 	/* SETTINGS PAGE */
 
-	$('#feed-series-toggle').click(function(e) {
+	$('#feed-series-toggle').on('click', function(e) {
 
 		if ( $(this).hasClass( 'series-open' ) ) {
 			$('#feed-series-list').slideUp('fast');
@@ -170,13 +169,13 @@ jQuery(document).ready(function($) {
 
 	});
 
-	$('#ss_podcasting_data_image_delete').click(function() {
+	$('#ss_podcasting_data_image_delete').on('click', function() {
 		$( '#ss_podcasting_data_image' ).val( '' );
 		$( '#ss_podcasting_data_image_preview' ).attr('src', '');
 		return false;
 	});
 
-	$('#cover_image_button, #ss_podcasting_data_image_button').click(function (e) {
+	$('#cover_image_button, #ss_podcasting_data_image_button').on('click', function (e) {
 		var coverImgValidator = function (attachment) {
 				return attachment.width === attachment.height && attachment.width >= 300;
 			},
@@ -187,18 +186,18 @@ jQuery(document).ready(function($) {
 					attachment.width <= maxWidth &&
 					attachment.height === attachment.width;
 			},
-			validateImageSize = 'cover_image_button' === $(e.target).prop('id') ? coverImgValidator : feedImgValidator,
+			validateImage = 'cover_image' === $(e.target).data('validator') ? coverImgValidator : feedImgValidator,
 			description = $(this).parent().find('.description'),
 			$img = 'cover_image_button' === $(e.target).prop('id') ? $('#cover_image_id') : $('#ss_podcasting_data_image_preview');
 
 
-		$.fn.ssp_upload_media_file($(this), true, validateImageSize);
+		$.fn.ssp_upload_media_file($(this), validateImage);
 
 		description.css('color', '');
 
 		file_frame.on('select', function () {
 			var attachment = file_frame.state().get('selection').first().toJSON();
-			if (validateImageSize(attachment)) {
+			if (validateImage(attachment)) {
 				$img.val(attachment.id);
 			} else {
 				description.css('color', 'red');
@@ -206,9 +205,9 @@ jQuery(document).ready(function($) {
 		});
 	});
 
-	$('#cover_image_delete').click(function() {
-		$( '#cover_image, #cover_image_id' ).val( '' );
-		$( '#cover_image_preview' ).attr( 'src', '' );
+	$('.ssp-image-delete').on('click', function(){
+		$('.' + $(this).data('field')).val('').trigger('change');
+		$('.' + $(this).data('preview')).attr('src', '').trigger('change');
 	});
 
 	$('.js-ssp-select2').select2();
@@ -253,9 +252,52 @@ jQuery(document).ready(function($) {
 				subtitle = $dynamo.data('default-podcast-title');
 			}
 
-			changeUrlArg('s', subtitle)
+			changeUrlArg('s', subtitle.replace(" (default)", ""))
 		});
 	}
 
+	var initNotifications = function () {
+		$('.notice.is-constant').on( 'click', '.notice-dismiss', function () {
+			var $notice = $(this).closest('.notice'),
+				data = {
+					'action': 'remove_constant_notice',
+					'id': $notice.data('id'),
+					'nonce': $notice.data('nonce'),
+				};
+
+			$.post(ajaxurl, data);
+		});
+	};
+
+	var initSSPControls = function () {
+		$('.js-open-ssp-controls').on('click', function () {
+			$('.ssp-open').trigger('click');
+		});
+
+		// Send changed event to Gutenberg
+		$('.ssp-sync').on('change', function () {
+			var value = $(this).val();
+			value = 'checkbox' === $(this).attr('type') && ! $(this).is(':checked')  ? '' : value;
+			document.dispatchEvent(new CustomEvent('changedSSPField', {
+				'detail': { field: $(this).prop('name'), value: value }
+			}));
+		});
+
+		// Listen changed event from Gutenberg
+		document.addEventListener('changedSSPGutField', function ( event ) {
+			var data = event.detail;
+
+			$('input.ssp-sync[type="text"][name="' + data.field + '"]').val(data.value);
+			$('input.ssp-sync[type="number"][name="' + data.field + '"]').val(data.value);
+			$('input.ssp-sync[type="hidden"][name="' + data.field + '"]').val(data.value);
+			$('input.ssp-sync[type="radio"][name="' + data.field + '"][value="' + data.value + '"]').prop('checked', true);
+			$('select.ssp-sync[name="' + data.field + '"] option[value="' + data.value + '"]').prop('selected', true);
+			$('input.ssp-sync[type="checkbox"][name="' + data.field + '"]').prop('checked', 'on' === data.value);
+			$('img.ssp-sync.ssp-preview-' + data.field).prop('src', data.value);
+		});
+	};
+
 	initDynamoBtn();
+	initNotifications();
+	initSSPControls();
 });

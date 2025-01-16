@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Rest;
 
+use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
@@ -271,7 +272,7 @@ class Rest_Api_Controller {
 	 */
 	public function get_episode_audio_player() {
 		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_DEFAULT ) : '' );
-		$file   = $this->episode_repository->get_episode_player_link( $podcast_id );
+		$file   = $this->episode_repository->get_passthrough_url( $podcast_id );
 		$params = array( 'src' => $file, 'preload' => 'none' );
 
 		return array(
@@ -480,7 +481,7 @@ class Rest_Api_Controller {
 	 */
 	public function get_rest_audio_player_link( $object, $field_name, $request ) {
 		if ( ! empty( $object['meta']['audio_file'] ) ) {
-			return $this->episode_repository->get_episode_player_link( $object['id'] );
+			return $this->episode_repository->get_passthrough_url( $object['id'] );
 		}
 
 		return '';
@@ -505,7 +506,7 @@ class Rest_Api_Controller {
 			if ( 'standard' !== $player_style ) {
 				return;
 			}
-			$file   = $this->episode_repository->get_episode_player_link( $object['id'] );
+			$file   = $this->episode_repository->get_passthrough_url( $object['id'] );
 			$params = array( 'src' => $file, 'preload' => 'none' );
 			return wp_audio_shortcode( $params );
 		}
@@ -520,14 +521,26 @@ class Rest_Api_Controller {
 	 */
 	public function get_episode_player_data( $object, $field_name, $request ) {
 		if ( ! empty( $object['id'] ) ) {
-			$options_handler    = new Options_Handler();
-			$episode_id         = $object['id'];
-			$player_data        = array(
+			$options_handler = new Options_Handler();
+			$episode_id      = $object['id'];
+			$sync_status     = ssp_episode_sync_status( $episode_id );
+
+			$player_data = array(
 				'playerMode'    => get_option( 'ss_podcasting_player_mode', 'dark' ),
 				'subscribeUrls' => $options_handler->get_subscribe_urls( $episode_id, 'rest_api' ),
 				'rssFeedUrl'    => $this->episode_repository->get_feed_url( $episode_id ),
 				'embedCode'     => preg_replace( '/(\r?\n){2,}/', '\n\n', get_post_embed_html( 500, 350, $episode_id ) ),
 			);
+
+			if ( ssp_is_connected_to_castos() ) {
+				$player_data['syncStatus'] = array(
+					'isSynced' => Sync_Status::SYNC_STATUS_SYNCED === $sync_status->status,
+					'status' => $sync_status->status,
+					'error' => $sync_status->error,
+					'message' => $sync_status->message,
+					'title' => $sync_status->title,
+				);
+			}
 
 			return $player_data;
 		}

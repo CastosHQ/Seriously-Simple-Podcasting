@@ -241,7 +241,7 @@ class Feed_Controller {
 
 		$feed_controller = $this;
 
-		$feed_data = apply_filters( 'ssp_feed_data', get_defined_vars() );
+		$feed_data = apply_filters( 'ssp_feed_data', get_defined_vars(), $series_id );
 
 		$feed = $this->renderer->fetch( $path, $feed_data );
 
@@ -265,7 +265,7 @@ class Feed_Controller {
 	 *
 	 * @return string
 	 */
-	public function fetch_feed_item( $qry, $args ) {
+	public function fetch_feed_item( $qry, $args, $series_id = 0 ) {
 
 		$author           = isset( $args['author'] ) ? $args['author'] : '';
 		$is_excerpt_mode  = isset( $args['is_excerpt_mode'] ) ? $args['is_excerpt_mode'] : '';
@@ -282,7 +282,7 @@ class Feed_Controller {
 		// Audio file
 		$audio_file = $ss_podcasting->get_enclosure( $post_id );
 
-		if ( get_option( 'permalink_structure' ) ) {
+		if ( ssp_series_passthrough_required( $series_id ) && get_option( 'permalink_structure' ) ) {
 			$enclosure = $ss_podcasting->get_episode_download_link( $post_id );
 		} else {
 			$enclosure = $audio_file;

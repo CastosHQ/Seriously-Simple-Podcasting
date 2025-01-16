@@ -26,6 +26,7 @@ class Episode_Repository implements Service {
 	use Useful_Variables;
 
 	const META_SYNC_STATUS = 'sync_status';
+
 	const META_SYNC_ERROR = 'ssp_sync_episode_error';
 
 	/**
@@ -255,6 +256,11 @@ class Episode_Repository implements Service {
 			}
 		}
 
+		// Limit query to only episodes with specified tag(s)
+		if ( $atts['tag'] ) {
+			$query_args['tag'] = $atts['tag'];
+		}
+
 		// Allow dynamic filtering of query args
 		$query_args = apply_filters( 'ssp_podcast_playlist_query_args', $query_args );
 
@@ -477,6 +483,7 @@ class Episode_Repository implements Service {
 		return update_post_meta( $episode_id, self::META_SYNC_STATUS, $status );
 	}
 
+
 	/**
 	 * @param int $episode_id
 	 *
@@ -587,7 +594,7 @@ class Episode_Repository implements Service {
 				$id = $this->get_latest_episode_id();
 			}
 
-			$audio_file = get_post_meta( $id, 'audio_file', true );
+			$audio_file = $this->get_enclosure( $id );
 
 			if ( $skip_empty_audio && empty( $audio_file ) ) {
 				throw new \Exception();
@@ -603,7 +610,10 @@ class Episode_Repository implements Service {
 			$current_post     = $current_post ?: $episode;
 			$episode_duration = get_post_meta( $id, 'duration', true );
 			$current_url      = get_post_permalink( $current_post->ID );
-			$audio_file       = $this->get_episode_player_link( $id );
+
+			if ( ssp_episode_passthrough_required( $id ) ) {
+				$audio_file = $this->get_passthrough_url( $id );
+			}
 			$album_art        = $this->get_album_art( $id, 'thumbnail' );
 			$podcast_title    = $this->get_podcast_title( $id );
 			$feed_url         = $this->get_feed_url( $id );
@@ -630,6 +640,7 @@ class Episode_Repository implements Service {
 				'excerpt'               => ssp_get_episode_excerpt( $episode->ID ),
 				'player_id'             => wp_rand(),
 				'add_empty_warning'     => false,
+				'class'                 => '',
 			);
 
 			return apply_filters( 'ssp_html_player_data', $template_data );
@@ -654,7 +665,7 @@ class Episode_Repository implements Service {
 	 *
 	 * @return string
 	 */
-	public function get_episode_player_link( $episode_id ) {
+	public function get_passthrough_url( $episode_id ) {
 		$file = $this->get_episode_download_link( $episode_id );
 
 		// Switch to podcast player URL
@@ -683,17 +694,19 @@ class Episode_Repository implements Service {
 		// Get download link based on permalink structure
 		if ( get_option( 'permalink_structure' ) ) {
 			$episode = get_post( $episode_id );
-			// Get file extension - default to MP3 to prevent empty extension strings
-			$ext = pathinfo( $file, PATHINFO_EXTENSION );
-			if ( ! $ext ) {
-				$ext = 'mp3';
+			// Get file extension - default to MP3 to prevent empty extension strings.
+			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name;
+
+			// Avoid extensions if possible because the new NGINX version can't handle it properly.
+			if ( ssp_episode_passthrough_required( $episode_id ) ) {
+				$ext = pathinfo( $file, PATHINFO_EXTENSION );
+				$link .= $ext ? '.' . $ext : '.mp3';
 			}
-			$link = $this->home_url . 'podcast-download/' . $episode_id . '/' . $episode->post_name . '.' . $ext;
 		} else {
 			$link = add_query_arg( array( 'podcast_episode' => $episode_id ), $this->home_url );
 		}
 
-		// Allow for dyamic referrer
+		// Allow for dynamic referrer
 		$referrer = apply_filters( 'ssp_download_referrer', $referrer, $episode_id );
 
 		// Add referrer flag if supplied

@@ -157,7 +157,7 @@
 		/** Close the bar on click */
 		var _applyCloseOnClick = function() {
 			if(that.settings.closeOnClick) {
-				that.bar.click(function() {
+				that.bar.on('click', function() {
 					that.hide();
 				});
 			}

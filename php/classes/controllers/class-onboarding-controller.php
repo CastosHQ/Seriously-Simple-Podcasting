@@ -72,7 +72,7 @@ class Onboarding_Controller {
 	}
 
 	public function maybe_start_onboarding( $plugin ) {
-		if ( $plugin !== plugin_basename( $this->file ) ) {
+		if ( $plugin !== plugin_basename( $this->file ) || wp_doing_ajax() ) {
 			return;
 		}
 		if ( ! ssp_onboarded() ) {

@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 3.7.1
+Stable tag: 3.8.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.8.0 =
+2025-01-16
+[UPDATE] Added support for Divi theme to Castos synchronization.
+[UPDATE] Added support for Elementor to Castos synchronization.
+[UPDATE] Added tag filter for the playlist player (thanks to damian-c).
 
 = 3.7.1 =
 2024-12-12

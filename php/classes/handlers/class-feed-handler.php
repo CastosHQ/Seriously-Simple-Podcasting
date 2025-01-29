@@ -223,6 +223,8 @@ class Feed_Handler implements Service {
 
 	/**
 	 * If redirect is on, redirect user to the new url.
+	 *
+	 * @return void
 	 */
 	public function maybe_redirect_to_the_new_feed( $series_id ) {
 		$redirect = ssp_get_option( 'redirect_feed', '', $series_id );
@@ -230,14 +232,27 @@ class Feed_Handler implements Service {
 			return;
 		}
 
-		$new_feed_url = ssp_get_option( 'new_feed_url', '', $series_id );
+		$new_feed_url = $this->get_new_feed_url( $series_id );
 
-		if ( ! $new_feed_url ) {
-			return;
+		$current_url = home_url( add_query_arg( null, null ) );
+
+		if ( $new_feed_url && trailingslashit( $new_feed_url ) !== trailingslashit( $current_url ) ) {
+			wp_redirect( $new_feed_url, 301 );
+			exit;
 		}
+	}
 
-		wp_redirect( $new_feed_url, 301 );
-		exit;
+	/**
+	 * Gets the new feed URL option.
+	 *
+	 * @since 3.8.1
+	 *
+	 * @param $series_id
+	 *
+	 * @return string
+	 */
+	public function get_new_feed_url( $series_id ) {
+		return ssp_get_option( 'new_feed_url', '', $series_id );
 	}
 
 	/**

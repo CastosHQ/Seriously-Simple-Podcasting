@@ -170,6 +170,8 @@ class Feed_Controller {
 
 		$this->feed_handler->maybe_protect_private_feed( $series_id );
 
+		$new_feed_url = $this->feed_handler->get_new_feed_url( $series_id );
+
 		$exclude_series = $this->feed_handler->get_excluded_series( $series_id );
 
 		$title = $this->feed_handler->get_podcast_title( $series_id );

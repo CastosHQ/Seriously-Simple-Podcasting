@@ -141,7 +141,7 @@ if ( $stylesheet_url ) {
 		<?php endif;
 
 		if ( $new_feed_url ) :
-			?><itunes:new-feed-url><?php echo esc_url( $new_feed_url ); ?></itunes:new-feed-url>
+			?><itunes:new-feed-url><?php echo trailingslashit( esc_url( $new_feed_url ) ); ?></itunes:new-feed-url>
 		<?php endif;
 
 		if ( 'on' !== $turbo ) :

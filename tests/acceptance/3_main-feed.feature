@@ -35,7 +35,7 @@ Feature: Login
 		And I can see in source "xmlns:podcast=\"https://podcastindex.org/namespace/1.0\""
 		And I can see in source "<channel>"
 		And I can see in source "<title>Automated test show</title>"
-		And I can see in source "<atom:link href=\"{{base_url_without_port}}/feed/podcast/automated-test-show/\" rel=\"self\" type=\"application/rss+xml\"/>"
+		And I can see in source "<atom:link href=\"{{base_url}}/feed/podcast/automated-test-show/\" rel=\"self\" type=\"application/rss+xml\"/>"
 		And I can see in source "<link>{{base_url}}/podcasts/automated-test-show/</link>"
 		And I can see in source "<description>This show is to test some SSP functionality</description>"
 		And I can see in source "<lastBuildDate>"

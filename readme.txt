@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.7
 Requires PHP: 7.4
-Stable tag: 3.8.0
+Stable tag: 3.8.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.8.1 =
+2025-01-29
+UPDATE SUMMARY: Improved feed redirection functionality
+[UPDATE] Display the <itunes:new-feed-url> tag when the "Redirect this feed to new URL" setting is specified.
+[UPDATE] Prevent an infinite loop if the feed redirects to itself.
 
 = 3.8.0 =
 2025-01-16

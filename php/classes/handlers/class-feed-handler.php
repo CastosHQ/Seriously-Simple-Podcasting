@@ -121,8 +121,11 @@ class Feed_Handler implements Service {
 			$term = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
 			if ( $term ) {
 				$url = ssp_get_feed_url( $term->slug );
-				wp_redirect( $url );
-				exit();
+				$current_url = htmlspecialchars('http' . (isset($_SERVER['HTTPS']) ? 's' : '') . '://' . "{$_SERVER['HTTP_HOST']}{$_SERVER['REQUEST_URI']}", ENT_QUOTES, 'UTF-8' );
+				if ($current_url != $url) {
+					wp_redirect( $url );
+					exit();
+				}
 			}
 		}
 	}

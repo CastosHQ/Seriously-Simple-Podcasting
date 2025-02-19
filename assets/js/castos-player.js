@@ -89,6 +89,27 @@ docReady(function() {
 
 		function updateDuration() {
 			duration.innerHTML = formatTime(audio.duration);
+			duration.setAttribute( 'datetime', convertToISO(audio.duration) );
+		}
+
+		function convertToISO( seconds ) {
+			const hours = Math.floor( seconds / 3600 );
+			const minutes = Math.floor( (seconds % 3600) / 60 );
+			const remainingSeconds = Math.floor( seconds % 60 );
+
+			let isoString = 'PT';
+
+			if ( hours > 0 ) {
+				isoString += hours + 'H';
+			}
+
+			if ( minutes > 0 || hours > 0 ) {
+				isoString += minutes + 'M';
+			}
+
+			isoString += remainingSeconds + 'S';
+
+			return isoString;
 		}
 
 		function handleProgress() {

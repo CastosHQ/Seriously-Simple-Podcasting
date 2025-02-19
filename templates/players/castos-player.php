@@ -74,7 +74,7 @@
 								<time class="ssp-timer">00:00</time>
 								<span>/</span>
 								<!-- We need actual duration here from the server -->
-								<time class="ssp-duration"><?php echo esc_html( $duration ) ?></time>
+								<time class="ssp-duration" datetime="<?php echo ssp_iso_duration( $duration ) ?>"><?php echo esc_html( $duration ) ?></time>
 							</div>
 						</div>
 					</div>
@@ -96,7 +96,7 @@
 		<div class="player-panels player-panels-<?php echo esc_attr( $episode_id ) ?>">
 			<?php if ( $show_subscribe_button ) : ?>
 				<div class="subscribe player-panel subscribe-<?php echo esc_attr( $episode_id ) ?>">
-					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>">
+					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>" aria-hidden="true">
 						<span></span>
 						<span></span>
 					</div>
@@ -118,14 +118,14 @@
 							<div>
 								<input value="<?php echo esc_attr( $feed_url ) ?>" class="input-rss input-rss-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'RSS Feed URL', 'seriously-simple-podcasting' ) ?>" readonly />
 							</div>
-							<button class="copy-rss copy-rss-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy RSS Feed URL', 'seriously-simple-podcasting' ) ?>"></button>
+							<button class="copy-rss copy-rss-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy RSS Feed URL', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Copy RSS Feed URL', 'seriously-simple-podcasting' ) ?>"></button>
 						</div>
 					</div>
 				</div>
 			<?php endif ?>
 			<?php if ( $show_share_button ) : ?>
 				<div class="share share-<?php echo esc_attr( $episode_id ) ?> player-panel">
-					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>">
+					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>" aria-hidden="true">
 						<span></span>
 						<span></span>
 					</div>
@@ -155,7 +155,7 @@
 						<div>
 							<input value="<?php echo esc_attr( $current_url ) ?>" class="input-link input-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Episode URL', 'seriously-simple-podcasting' ) ?>" readonly />
 						</div>
-						<button class="copy-link copy-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>" readonly=""></button>
+						<button class="copy-link copy-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>" readonly=""></button>
 					</div>
 					<div class="player-panel-row">
 						<div class="title">
@@ -166,7 +166,7 @@
 								   title="<?php esc_attr_e( 'Embed Code', 'seriously-simple-podcasting' ) ?>"
 								   class="input-embed input-embed-<?php echo $episode_id ?>" readonly/>
 						</div>
-						<button class="copy-embed copy-embed-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Embed Code', 'seriously-simple-podcasting' ) ?>"></button>
+						<button class="copy-embed copy-embed-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Embed Code', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Copy Embed Code', 'seriously-simple-podcasting' ) ?>"></button>
 					</div>
 				</div>
 			<?php endif ?>

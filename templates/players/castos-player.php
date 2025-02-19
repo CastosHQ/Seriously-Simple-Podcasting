@@ -42,16 +42,25 @@
 				</div>
 				<div class="play-progress">
 					<div class="play-pause-controls">
-						<button title="<?php esc_attr_e( 'Play', 'seriously-simple-podcasting' ) ?>" class="play-btn">
-							<span class="screen-reader-text"><?php esc_attr_e( 'Play Episode', 'seriously-simple-podcasting' ) ?></span>
+						<button title="<?php esc_attr_e( 'Play', 'seriously-simple-podcasting' )
+						?>" aria-label="<?php esc_attr_e( 'Play Episode', 'seriously-simple-podcasting' )
+						?>" aria-pressed="false" class="play-btn">
+							<span class="screen-reader-text"><?php
+								esc_attr_e( 'Play Episode', 'seriously-simple-podcasting' )
+								?></span>
 						</button>
-						<button title="<?php esc_attr_e( 'Pause', 'seriously-simple-podcasting' ) ?>" class="pause-btn hide">
-							<span class="screen-reader-text"><?php esc_attr_e( 'Pause Episode', 'seriously-simple-podcasting' ) ?></span>
+						<button title="<?php esc_attr_e( 'Pause', 'seriously-simple-podcasting' )
+						?>" aria-label="<?php esc_attr_e( 'Pause Episode', 'seriously-simple-podcasting' )
+						?>" class="pause-btn hide">
+							<span class="screen-reader-text"><?php
+								esc_attr_e( 'Pause Episode', 'seriously-simple-podcasting' )
+								?></span>
 						</button>
-						<img src="<?php echo SSP_PLUGIN_URL ?>assets/css/images/player/images/icon-loader.svg" alt="<?php esc_attr_e( 'Loading', 'seriously-simple-podcasting' ) ?>" class="ssp-loader hide"/>
+						<img src="<?php echo SSP_PLUGIN_URL ?>assets/css/images/player/images/icon-loader.svg"
+							 alt="<?php esc_attr_e( 'Loading', 'seriously-simple-podcasting' ) ?>" class="ssp-loader hide"/>
 					</div>
 					<div>
-						<audio preload="none" class="clip clip-<?php echo $episode_id ?>">
+						<audio preload="none" class="clip clip-<?php esc_attr_e( $episode_id ) ?>">
 							<source src="<?php echo $audio_file ?>">
 						</audio>
 						<div class="ssp-progress" role="progressbar" title="<?php
@@ -118,7 +127,7 @@
 								<?php endif ?>
 							<?php endforeach ?>
 						</div>
-						<div class="player-panel-row" area-label="RSS Feed URL">
+						<div class="player-panel-row" aria-label="RSS Feed URL">
 							<div class="title"><?php esc_attr_e( 'RSS Feed', 'seriously-simple-podcasting' ) ?></div>
 							<div>
 								<input value="<?php echo esc_attr( $feed_url ) ?>" class="input-rss input-rss-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'RSS Feed URL', 'seriously-simple-podcasting' ) ?>" readonly />

@@ -1969,3 +1969,42 @@ if ( ! function_exists( 'ssp_series_passthrough_required' ) ) {
 		return apply_filters( 'ssp_series_passthrough_required', $required, $series_id );
 	}
 }
+
+
+if ( ! function_exists( 'ssp_iso_duration' ) ) {
+	/**
+	 * Converts duration string to the ISO 8601 duration format
+	 *
+	 * @param string $time
+	 *
+	 * @return string
+	 */
+	function ssp_iso_duration( $time ) {
+		$time = trim( $time );
+
+		// Check if the input is a valid time format (HH:MM:SS, MM:SS, or H:MM:SS)
+		if ( ! preg_match( '/^(\d{1,2}:)?\d{1,2}:\d{1,2}$/', $time ) ) {
+			return 'PT0H0M0S';
+		}
+
+		$parts = explode( ':', $time );
+		$count = count( $parts );
+
+		// Handle different time formats
+		if ( $count === 3 ) {
+			list( $hours, $minutes, $seconds ) = $parts;
+		} elseif ( $count === 2 ) {
+			$hours = 0;
+			list( $minutes, $seconds ) = $parts;
+		} else {
+			return ''; // Invalid format
+		}
+
+		// Convert to integers
+		$hours   = (int) $hours;
+		$minutes = (int) $minutes;
+		$seconds = (int) $seconds;
+
+		return sprintf( 'PT%dH%dM%dS', $hours, $minutes, $seconds );
+	}
+}

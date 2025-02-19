@@ -81,9 +81,13 @@ docReady(function() {
 			if (audio.paused) {
 				pauseBtn.classList.add('hide');
 				playBtn.classList.remove('hide');
+				playBtn.setAttribute('aria-pressed', 'false');
+				pauseBtn.setAttribute('aria-pressed', 'true');
 			} else {
 				pauseBtn.classList.remove('hide');
 				playBtn.classList.add('hide');
+				playBtn.setAttribute('aria-pressed', 'true');
+				pauseBtn.setAttribute('aria-pressed', 'false');
 			}
 		}
 

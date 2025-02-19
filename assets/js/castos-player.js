@@ -88,11 +88,12 @@ docReady(function() {
 		}
 
 		function updateDuration() {
-			duration.innerHTML = formatTime(audio.duration);
-			duration.setAttribute( 'datetime', convertToISO(audio.duration) );
+			duration.innerHTML = formatTime( audio.duration );
+			duration.setAttribute( 'datetime', durationToISO( audio.duration ) );
+			progress.setAttribute( 'aria-valuemax', Math.floor( audio.duration ) );
 		}
 
-		function convertToISO( seconds ) {
+		function durationToISO( seconds ) {
 			const hours = Math.floor( seconds / 3600 );
 			const minutes = Math.floor( (seconds % 3600) / 60 );
 			const remainingSeconds = Math.floor( seconds % 60 );
@@ -115,6 +116,8 @@ docReady(function() {
 		function handleProgress() {
 			let percent = audio.currentTime / audio.duration * 100;
 			progressBar.style.flexBasis = percent + '%';
+			timer.innerHTML = formatTime( audio.currentTime );
+			progress.setAttribute( 'aria-valuenow', Math.floor( audio.currentTime ) );
 		}
 
 		function scrub(e) {
@@ -159,10 +162,6 @@ docReady(function() {
 			audio.addEventListener('playing', syncPlayButton);
 			audio.addEventListener('playing', updateDuration);
 			audio.addEventListener('timeupdate', handleProgress);
-
-			audio.ontimeupdate = function () {
-				timer.innerHTML = formatTime(audio.currentTime);
-			};
 
 			audio.onended = function () {
 				hideElement(pauseBtn);

@@ -54,7 +54,12 @@
 						<audio preload="none" class="clip clip-<?php echo $episode_id ?>">
 							<source src="<?php echo $audio_file ?>">
 						</audio>
-						<div class="ssp-progress" role="progressbar" title="<?php esc_attr_e( 'Seek', 'seriously-simple-podcasting' ) ?>">
+						<div class="ssp-progress" role="progressbar" title="<?php
+						esc_attr_e( 'Seek', 'seriously-simple-podcasting' )
+						?>" aria-valuenow="<?php echo 0
+						?>" aria-valuemin="<?php echo 0
+						?>" aria-valuemax="<?php echo ssp_duration_seconds( $duration )
+						?>">
 							<span class="progress__filled"></span>
 						</div>
 						<div class="ssp-playback playback">

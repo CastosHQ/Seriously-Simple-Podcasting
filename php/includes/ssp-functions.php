@@ -1975,19 +1975,19 @@ if ( ! function_exists( 'ssp_iso_duration' ) ) {
 	/**
 	 * Converts duration string to the ISO 8601 duration format
 	 *
-	 * @param string $time
+	 * @param string $duration
 	 *
 	 * @return string
 	 */
-	function ssp_iso_duration( $time ) {
-		$time = trim( $time );
+	function ssp_iso_duration( $duration ) {
+		$time = trim( $duration );
 
 		// Check if the input is a valid time format (HH:MM:SS, MM:SS, or H:MM:SS)
-		if ( ! preg_match( '/^(\d{1,2}:)?\d{1,2}:\d{1,2}$/', $time ) ) {
+		if ( ! preg_match( '/^(\d{1,2}:)?\d{1,2}:\d{1,2}$/', $duration ) ) {
 			return 'PT0H0M0S';
 		}
 
-		$parts = explode( ':', $time );
+		$parts = explode( ':', $duration );
 		$count = count( $parts );
 
 		// Handle different time formats
@@ -2006,5 +2006,44 @@ if ( ! function_exists( 'ssp_iso_duration' ) ) {
 		$seconds = (int) $seconds;
 
 		return sprintf( 'PT%dH%dM%dS', $hours, $minutes, $seconds );
+	}
+}
+
+
+if ( ! function_exists( 'ssp_duration_seconds' ) ) {
+	/**
+	 * Converts duration string to the ISO 8601 duration format
+	 *
+	 * @param string $duration
+	 *
+	 * @return int
+	 */
+	function ssp_duration_seconds( $duration ) {
+		if ( ! is_string( $duration ) || empty( trim( $duration ) ) ) {
+			return 0; // Return 0 for empty or non-string values
+		}
+
+		$duration = trim( $duration );
+
+		// Match valid time format: HH:MM:SS, MM:SS, or SS
+		if ( ! preg_match( '/^(\d{1,2}:)?\d{1,2}:\d{1,2}$|^\d+$/', $duration ) ) {
+			return 0; // Return 0 if format is invalid
+		}
+
+		$time_parts = explode( ':', $duration );
+		$time_parts = array_reverse( $time_parts ); // Reverse to handle flexible formats
+
+		$seconds = 0;
+		if ( isset( $time_parts[0] ) && is_numeric( $time_parts[0] ) ) {
+			$seconds += (int) $time_parts[0]; // Seconds
+		}
+		if ( isset( $time_parts[1] ) && is_numeric( $time_parts[1] ) ) {
+			$seconds += (int) $time_parts[1] * MINUTE_IN_SECONDS; // Minutes
+		}
+		if ( isset( $time_parts[2] ) && is_numeric( $time_parts[2] ) ) {
+			$seconds += (int) $time_parts[2] * HOUR_IN_SECONDS; // Hours
+		}
+
+		return $seconds;
 	}
 }

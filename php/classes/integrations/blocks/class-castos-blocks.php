@@ -3,6 +3,8 @@
 namespace SeriouslySimplePodcasting\Integrations\Blocks;
 
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
+use SeriouslySimplePodcasting\Entities\Available_Podcasts_Attribute;
+use SeriouslySimplePodcasting\Entities\Available_Tags_Attribute;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
@@ -411,7 +413,7 @@ class Castos_Blocks {
 				'attributes'      => array(
 					'availablePodcasts'   => array(
 						'type'    => 'array',
-						'default' => $this->get_podcast_settings(),
+						'default' => new Available_Podcasts_Attribute(),
 					),
 					'selectedPodcast'     => array(
 						'type'    => 'string',
@@ -419,7 +421,7 @@ class Castos_Blocks {
 					),
 					'availableTags'   => array(
 						'type'    => 'array',
-						'default' => $this->get_tags(),
+						'default' => new Available_Tags_Attribute(),
 					),
 					'selectedTag'     => array(
 						'type'    => 'string',
@@ -517,19 +519,25 @@ class Castos_Blocks {
 	/**
 	 * @return array
 	 */
-	protected function get_tags() {
-		return array_merge(
-			array(
-				array(
-					'label' => __( '-- All --', 'seriously-simple-podcasting' ),
-					'value' => '',
-				),
-			),
-			array_map( function ( $item ) {
-				return array(
-					'label' => $item->name,
-					'value' => $item->slug,
-				);
-			}, ssp_get_tags() ) );
+	protected function get_tag_settings() {
+		$settings = [
+			[
+				'label' => __( '-- All --', 'seriously-simple-podcasting' ),
+				'value' => '',
+			],
+		];
+
+		if ( is_admin() ) {
+			$settings = array_merge(
+				$settings,
+				array_map( function ( $item ) {
+					return [
+						'label' => $item->name,
+						'value' => $item->slug,
+					];
+				}, ssp_get_tags() ) );
+		}
+
+		return $settings;
 	}
 }

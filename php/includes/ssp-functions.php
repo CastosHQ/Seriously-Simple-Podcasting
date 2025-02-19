@@ -1722,6 +1722,8 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 	 * @return WP_Term[]
 	 */
 	function ssp_get_podcasts( $hide_empty = false ) {
+		$cache_key = 'ssp_podcasts';
+		$cache_group = 'ssp';
 		$podcasts = get_terms( ssp_series_taxonomy(), array( 'hide_empty' => $hide_empty ) );
 
 		return is_array( $podcasts ) ? $podcasts : array();
@@ -1740,11 +1742,22 @@ if ( ! function_exists( 'ssp_get_tags' ) ) {
 	 * @return WP_Term[]
 	 */
 	function ssp_get_tags( $hide_empty = false ) {
-		$tags = get_terms( 'post_tag', array(
-			'post_type' => ssp_post_types(),
+		$cache_key = 'ssp_tags';
+		$cache_group = 'ssp';
+		$tags      = wp_cache_get( $cache_key, $cache_group );
+
+		if ( $tags ) {
+			return $tags;
+		}
+
+		$tags = get_terms( 'post_tag', [
+			'post_type'  => ssp_post_types(),
 			'hide_empty' => $hide_empty,
-		) );
-		return is_array( $tags ) ? $tags : array();
+		] );
+
+		wp_cache_set( $cache_key, $tags, $cache_group, MINUTE_IN_SECONDS );
+
+		return is_array( $tags ) ? $tags : [];
 	}
 }
 

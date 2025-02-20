@@ -73,14 +73,14 @@
 						</div>
 						<div class="ssp-playback playback">
 							<div class="playback__controls">
-								<button class="player-btn__volume" title="<?php esc_attr_e( 'Mute/Unmute', 'seriously-simple-podcasting' ) ?>">
+								<button class="player-btn player-btn__volume" title="<?php esc_attr_e( 'Mute/Unmute', 'seriously-simple-podcasting' ) ?>">
 									<span class="screen-reader-text"><?php esc_attr_e( 'Mute/Unmute Episode', 'seriously-simple-podcasting' ) ?></span>
 								</button>
-								<button data-skip="-10" class="player-btn__rwd" title="<?php esc_attr_e( 'Rewind 10 seconds', 'seriously-simple-podcasting' ) ?>">
+								<button data-skip="-10" class="player-btn player-btn__rwd" title="<?php esc_attr_e( 'Rewind 10 seconds', 'seriously-simple-podcasting' ) ?>">
 									<span class="screen-reader-text"><?php esc_attr_e( 'Rewind 10 Seconds', 'seriously-simple-podcasting' ) ?></span>
 								</button>
-								<button data-speed="1" class="player-btn__speed" title="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>" <?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>>1x</button>
-								<button data-skip="10" class="player-btn__fwd" title="<?php esc_attr_e( 'Fast Forward 10 seconds', 'seriously-simple-podcasting' ) ?>">
+								<button data-speed="1" class="player-btn player-btn__speed" title="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>" <?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>>1x</button>
+								<button data-skip="10" class="player-btn player-btn__fwd" title="<?php esc_attr_e( 'Fast Forward 10 seconds', 'seriously-simple-podcasting' ) ?>">
 									<span class="screen-reader-text"><?php esc_attr_e( 'Fast Forward 10 seconds', 'seriously-simple-podcasting' ) ?></span>
 								</button>
 							</div>

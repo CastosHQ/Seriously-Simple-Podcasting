@@ -61,8 +61,10 @@ docReady(function() {
 			toggleTimeout = setTimeout(function(){
 				if (audio.paused) {
 					playAudio();
+					pauseBtn.focus();
 				} else {
 					pauseAudio();
+					playBtn.focus();
 				}
 			}, 100);
 		}
@@ -418,26 +420,27 @@ docReady(function() {
 		}
 
 		function initKeyboardListeners() {
-			document.addEventListener('keyup', (event) => {
-
+			document.addEventListener('keydown', (e) => {
 				// If the Space button was pressed and any of the player element is focused, toggle playback.
 				if (!document.activeElement.closest('.castos-player')) {
 					return;
 				}
 
-				if ('ArrowRight' === event.code) {
+				if ('ArrowRight' === e.code) {
+					e.preventDefault();
 					audio.currentTime += 10;
 					return;
 				}
 
-				if ('ArrowLeft' === event.code) {
+				if ('ArrowLeft' === e.code) {
+					e.preventDefault();
 					audio.currentTime -= 10;
 					return;
 				}
 
-				if ('Space' === event.code) {
-					// Fire togglePlayback() via event to prevent the double toggling
-					playBtn.dispatchEvent(new Event('click'));
+				if ('Space' === e.code) {
+					e.preventDefault();
+					togglePlayback();
 				}
 			});
 		}

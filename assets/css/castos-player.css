@@ -853,6 +853,9 @@
     opacity: 1;
     cursor: pointer;
 }
+.castos-player .player-btn:focus {
+	opacity: 1;
+}
 .castos-player .player-btn__volume,
 .castos-player .player-btn__rwd,
 .castos-player .player-btn__fwd {

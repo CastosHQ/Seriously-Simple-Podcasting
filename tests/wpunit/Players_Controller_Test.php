@@ -61,28 +61,28 @@ class Players_Controller_Test extends WPTestCase {
 			sprintf( '<div class="episode-title player__episode-title">%s</div>', $episode->post_title ),
 			'<div class="play-progress">',
 			'<div class="play-pause-controls">',
-			'<button title="Play" class="play-btn">',
+			'<button title="Play" aria-label="Play Episode" aria-pressed="false" class="play-btn">',
 			'<span class="screen-reader-text">Play Episode</span>',
-			'<button title="Pause" class="pause-btn hide">',
+			'<button title="Pause" aria-label="Pause Episode" aria-pressed="false" class="pause-btn hide">',
 			'<span class="screen-reader-text">Pause Episode</span>',
 			'/wp-content/plugins/seriously-simple-podcasting/assets/css/images/player/images/icon-loader.svg" alt="Loading" class="ssp-loader hide"/>',
 			sprintf( '<audio preload="none" class="clip clip-%s">', $episode_id ),
-			'<div class="ssp-progress" role="progressbar" title="Seek">',
+			'<div class="ssp-progress" role="progressbar" title="Seek" aria-valuenow="0" aria-valuemin="0" aria-valuemax="',
 			'<span class="progress__filled"></span>',
 
 			'<div class="ssp-playback playback">',
 			'<div class="playback__controls">',
-			'<button class="player-btn__volume" title="Mute/Unmute">',
+			'<button class="player-btn player-btn__volume" title="Mute/Unmute">',
 			'<span class="screen-reader-text">Mute/Unmute Episode</span>',
 
-			'<button data-skip="-10" class="player-btn__rwd" title="Rewind 10 seconds">',
+			'<button data-skip="-10" class="player-btn player-btn__rwd" title="Rewind 10 seconds">',
 			'<span class="screen-reader-text">Rewind 10 Seconds</span>',
-			'<button data-speed="1" class="player-btn__speed" title="Playback Speed">1x</button>',
-			'<button data-skip="30" class="player-btn__fwd" title="Fast Forward 30 seconds">',
-			'<span class="screen-reader-text">Fast Forward 30 seconds</span>',
+			'<button data-speed="1" class="player-btn player-btn__speed" title="Playback Speed" aria-label="Playback Speed">1x</button>',
+			'<button data-skip="10" class="player-btn player-btn__fwd" title="Fast Forward 10 seconds">',
+			'<span class="screen-reader-text">Fast Forward 10 seconds</span>',
 			'<div class="playback__timers">',
 			'<time class="ssp-timer">00:00</time>',
-			'<time class="ssp-duration"></time>',
+			'<time class="ssp-duration" datetime="PT0H0M0S"></time>',
 
 
 			'<nav class="player-panels-nav">',
@@ -100,7 +100,7 @@ class Players_Controller_Test extends WPTestCase {
 			'RSS Feed',
 			sprintf( '<input value="%s/?feed=podcast&amp;podcast_series=wordpress-test" class="input-rss input-rss-%s" title="RSS Feed URL" readonly />', $site_url, $episode_id ),
 
-			sprintf( '<button class="copy-rss copy-rss-%s" title="Copy RSS Feed URL"></button>', $episode_id ),
+			sprintf( '<button class="copy-rss copy-rss-%s" title="Copy RSS Feed URL" aria-label="Copy RSS Feed URL"></button>', $episode_id ),
 
 			sprintf( '<div class="share share-%s player-panel">', $episode_id ),
 			sprintf( '<div class="close-btn close-btn-%s">', $episode_id ),
@@ -125,10 +125,10 @@ class Players_Controller_Test extends WPTestCase {
 			'<div class="title">',
 			'Link',
 			sprintf( '<input value="%s" class="input-link input-link-%d" title="Episode URL" readonly />', $permalink, $episode_id ),
-			sprintf( '<button class="copy-link copy-link-%s" title="Copy Episode URL" readonly=""></button>', $episode_id ),
+			sprintf( '<button class="copy-link copy-link-%s" title="Copy Episode URL" aria-label="Copy Episode URL" readonly=""></button>', $episode_id ),
 			'<div class="player-panel-row">',
 			'Embed',
-			sprintf( '<button class="copy-embed copy-embed-%s" title="Copy Embed Code"></button>', $episode_id ),
+			sprintf( '<button class="copy-embed copy-embed-%s" title="Copy Embed Code" aria-label="Copy Embed Code"></button>', $episode_id ),
 		);
 
 		foreach ( $player_parts as $player_part ) {

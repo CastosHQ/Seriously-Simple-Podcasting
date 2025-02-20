@@ -24,8 +24,8 @@
  **/
 
 ?>
-<div id="<?php echo esc_attr( $player_id ); ?>" class="castos-player <?php echo esc_attr( $player_mode ) ?>-mode <?php echo esc_attr( $class ) ?>"
-	 data-episode="<?php echo esc_attr( $episode_id ) ?>" data-player_id="<?php echo esc_attr( $player_id ); ?>">
+<div id="<?php echo esc_attr( $player_id ); ?>" class="castos-player <?php echo esc_attr( $player_mode ) ?>-mode <?php echo esc_attr( $class )
+     ?>" tabindex="0" data-episode="<?php echo esc_attr( $episode_id ) ?>" data-player_id="<?php echo esc_attr( $player_id ); ?>">
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo esc_attr( $episode_id ) ?>">
@@ -51,7 +51,7 @@
 						</button>
 						<button title="<?php esc_attr_e( 'Pause', 'seriously-simple-podcasting' )
 						?>" aria-label="<?php esc_attr_e( 'Pause Episode', 'seriously-simple-podcasting' )
-						?>" class="pause-btn hide">
+						?>" aria-pressed="false" class="pause-btn hide">
 							<span class="screen-reader-text"><?php
 								esc_attr_e( 'Pause Episode', 'seriously-simple-podcasting' )
 								?></span>
@@ -79,9 +79,9 @@
 								<button data-skip="-10" class="player-btn__rwd" title="<?php esc_attr_e( 'Rewind 10 seconds', 'seriously-simple-podcasting' ) ?>">
 									<span class="screen-reader-text"><?php esc_attr_e( 'Rewind 10 Seconds', 'seriously-simple-podcasting' ) ?></span>
 								</button>
-								<button data-speed="1" class="player-btn__speed" title="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>">1x</button>
-								<button data-skip="30" class="player-btn__fwd" title="<?php esc_attr_e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?>">
-									<span class="screen-reader-text"><?php esc_attr_e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?></span>
+								<button data-speed="1" class="player-btn__speed" title="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>" <?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>>1x</button>
+								<button data-skip="10" class="player-btn__fwd" title="<?php esc_attr_e( 'Fast Forward 10 seconds', 'seriously-simple-podcasting' ) ?>">
+									<span class="screen-reader-text"><?php esc_attr_e( 'Fast Forward 10 seconds', 'seriously-simple-podcasting' ) ?></span>
 								</button>
 							</div>
 							<div class="playback__timers">
@@ -110,7 +110,7 @@
 		<div class="player-panels player-panels-<?php echo esc_attr( $episode_id ) ?>">
 			<?php if ( $show_subscribe_button ) : ?>
 				<div class="subscribe player-panel subscribe-<?php echo esc_attr( $episode_id ) ?>">
-					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>" aria-hidden="true">
+					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>">
 						<span></span>
 						<span></span>
 					</div>
@@ -139,7 +139,7 @@
 			<?php endif ?>
 			<?php if ( $show_share_button ) : ?>
 				<div class="share share-<?php echo esc_attr( $episode_id ) ?> player-panel">
-					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>" aria-hidden="true">
+					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>">
 						<span></span>
 						<span></span>
 					</div>

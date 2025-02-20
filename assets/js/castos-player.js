@@ -442,6 +442,13 @@ docReady(function() {
 					e.preventDefault();
 					togglePlayback();
 				}
+
+				if ( 'm' === e.key || 'M' === e.key ) {
+					e.preventDefault();
+					const audio = document.querySelector( 'audio.clip' );
+					volumeBtn.dispatchEvent(new Event('click'));
+					volumeBtn.focus();
+				}
 			});
 		}
 

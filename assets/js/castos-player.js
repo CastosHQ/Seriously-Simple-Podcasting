@@ -145,10 +145,18 @@ docReady(function() {
 		}
 
 		function handleSpeedChange() {
-			let newSpeed = this.dataset.speed < 2 ? (parseFloat(this.dataset.speed) + 0.2).toFixed(1) : 0.4;
-			speedBtn.setAttribute('data-speed', newSpeed);
-			speedBtn.innerHTML = newSpeed + 'x';
-			audio.playbackRate = newSpeed;
+			let newSpeed = this.dataset.speed < 2 ? (parseFloat( this.dataset.speed ) + 0.2).toFixed( 1 ) : 0.4;
+			setSpeed( newSpeed );
+		}
+
+		function setSpeed(speed){
+			if( speed < 0.4 || speed > 2 ){
+				speed = 1;
+			}
+
+			speedBtn.setAttribute('data-speed', speed);
+			speedBtn.innerHTML = speed + 'x';
+			audio.playbackRate = speed;
 		}
 
 		function handleWaiting() {
@@ -420,36 +428,34 @@ docReady(function() {
 		}
 
 		function initKeyboardListeners() {
-			document.addEventListener('keydown', (e) => {
+			document.addEventListener( 'keydown', ( e ) => {
 				// If the Space button was pressed and any of the player element is focused, toggle playback.
-				if (!document.activeElement.closest('.castos-player')) {
+				if ( ! document.activeElement.closest( '.castos-player' ) ) {
 					return;
 				}
 
-				if ('ArrowRight' === e.code) {
+				if ( 'ArrowRight' === e.code ) {
 					e.preventDefault();
 					audio.currentTime += 10;
-					return;
-				}
-
-				if ('ArrowLeft' === e.code) {
+				} else if ( 'ArrowLeft' === e.code ) {
 					e.preventDefault();
 					audio.currentTime -= 10;
-					return;
-				}
-
-				if ('Space' === e.code) {
+				} else if ( 'Space' === e.code ) {
 					e.preventDefault();
 					togglePlayback();
-				}
-
-				if ( 'm' === e.key || 'M' === e.key ) {
-					e.preventDefault();
-					const audio = document.querySelector( 'audio.clip' );
-					volumeBtn.dispatchEvent(new Event('click'));
+				} else if ( 'm' === e.key || 'M' === e.key ) {
+					volumeBtn.dispatchEvent( new Event( 'click' ) );
 					volumeBtn.focus();
+				} else if ( e.shiftKey && e.code === 'Period' ) { // Increase speed (up to 2x)
+					let speed = speedBtn.dataset.speed < 2 ? (parseFloat( speedBtn.dataset.speed ) + 0.2) : 2.0;
+					setSpeed( speed.toFixed( 1 ) );
+				} else if ( e.shiftKey && e.code === 'Comma' ) { // Decrease speed (down to 0.4x)
+					let speed = speedBtn.dataset.speed > 0.4 ? (parseFloat( speedBtn.dataset.speed ) - 0.2) : 0.4;
+					setSpeed( speed.toFixed( 1 ) );
+				} else if ( e.shiftKey && e.code === 'Digit0' ) { // Reset speed to 1x
+					setSpeed( 1 );
 				}
-			});
+			} );
 		}
 
 		function init() {

@@ -361,7 +361,7 @@ class Castos_Handler implements Service {
 			/**
 			 * Don't trigger this unless we have a valid file id
 			 */
-			$podmotor_file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
+			$podmotor_file_id = ssp_castos_file_id( $post->ID );
 			if ( empty( $podmotor_file_id ) ) {
 				throw new \Exception( __( 'Invalid file data when uploading the episode to Castos', 'seriously-simple-podcasting' ) );
 			}

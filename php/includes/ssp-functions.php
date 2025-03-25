@@ -2047,3 +2047,18 @@ if ( ! function_exists( 'ssp_duration_seconds' ) ) {
 		return $seconds;
 	}
 }
+
+if ( ! function_exists( 'ssp_castos_file_id' ) ) {
+	/**
+	 * Obtains Castos file ID.
+	 *
+	 * @since 3.10.0
+	 *
+	 * @param int $post_id
+	 *
+	 * @return int
+	 */
+	function ssp_castos_file_id( $post_id ) {
+		return intval( get_post_meta( $post_id, 'podmotor_file_id', true ) );
+	}
+}

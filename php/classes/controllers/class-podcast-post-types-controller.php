@@ -829,8 +829,7 @@ class Podcast_Post_Types_Controller {
 		/**
 		 * Don't trigger this unless we have a valid castos file id
 		 */
-		$file_id = get_post_meta( $post->ID, 'podmotor_file_id', true );
-		if ( empty( $file_id ) ) {
+		if ( empty( ssp_castos_file_id( $post->ID ) ) ) {
 			return;
 		}
 
@@ -851,6 +850,13 @@ class Podcast_Post_Types_Controller {
 	 * @return void
 	 */
 	protected function upload_episode_to_castos( $post ) {
+		/**
+		 * Don't trigger this unless we have a valid file id
+		 */
+		if ( empty( ssp_castos_file_id( $post->ID ) ) ) {
+			return;
+		}
+
 		$response = $this->castos_handler->upload_episode_to_castos( $post );
 
 		if ( $response->success ) {
@@ -875,8 +881,8 @@ class Podcast_Post_Types_Controller {
 					Admin_Notifications_Handler::ERROR
 				);
 			} else {
-				update_post_meta( $id, Cron_Controller::SYNC_SCHEDULE_META, true );
-				update_post_meta( $id, Cron_Controller::ATTEMPTS_META, 1 );
+				update_post_meta( $post->ID, Cron_Controller::SYNC_SCHEDULE_META, true );
+				update_post_meta( $post->ID, Cron_Controller::ATTEMPTS_META, 1 );
 				$this->admin_notices_handler->add_predefined_flash_notice(
 					Admin_Notifications_Handler::NOTICE_API_EPISODE_ERROR
 				);

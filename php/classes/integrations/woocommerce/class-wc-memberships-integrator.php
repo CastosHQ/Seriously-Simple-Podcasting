@@ -11,6 +11,7 @@ use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Integrations\Abstract_Integrator;
 use SeriouslySimplePodcasting\Traits\Singleton;
+use WP_User;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -59,6 +60,34 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 		$this->notices_handler = $notices_handler;
 
 		add_action( 'plugins_loaded', array( $this, 'late_init' ) );
+
+		add_action( 'profile_update', array( $this, 'update_user_email' ), 10, 2 );
+	}
+
+	/**
+	 * Updates user subscriptions when email is changed.
+	 *
+	 * @param int $user_id User ID.
+	 * @param WP_User $old_user_data User data before update.
+	 *
+	 * @return void
+	 */
+	public function update_user_email( $user_id,  $old_user_data ) {
+		$user = get_user_by( 'id', $user_id );
+		$new_email = $user->user_email;
+		$old_email = $old_user_data->user_email;
+
+		if ( $new_email === $old_email ) {
+			return;
+		}
+
+		$this->logger->log( __METHOD__, compact( 'new_email', 'old_email' ) );
+
+		$user_membership_ids = $this->get_user_membership_ids( $user_id );
+		$series_ids  = $this->convert_membership_ids_into_series_ids( $user_membership_ids );
+		$podcast_ids = $this->convert_series_ids_to_podcast_ids( $series_ids );
+		$this->castos_handler->revoke_subscriber_from_podcasts( $podcast_ids, $old_email );
+		$this->castos_handler->add_subscriber_to_podcasts( $podcast_ids, $new_email, $user->display_name );
 	}
 
 	public function late_init(){
@@ -437,7 +466,7 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	/**
 	 * Check if user has access to the episode.
 	 *
-	 * @param \WP_User $user
+	 * @param WP_User $user
 	 * @param int[] $required_level_ids
 	 *
 	 * @return bool

@@ -2062,3 +2062,19 @@ if ( ! function_exists( 'ssp_castos_file_id' ) ) {
 		return intval( get_post_meta( $post_id, 'podmotor_file_id', true ) );
 	}
 }
+
+if (! function_exists('ssp_feed_max_episodes')) {
+	/**
+	 * @param int $series_id Series ID.
+	 *
+	 * @return int Max number of episodes in the feed.
+	 */
+	function ssp_feed_max_episodes( $series_id ) {
+		$max = ssp_get_option( 'max_episodes', 0, $series_id );
+		if ( ! $max ) {
+			$max = get_option( 'posts_per_rss', 10 );
+		}
+
+		return intval( apply_filters( 'ssp_feed_number_of_posts', $max, $series_id ) );
+	}
+}

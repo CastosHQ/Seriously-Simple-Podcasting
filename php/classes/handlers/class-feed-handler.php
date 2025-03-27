@@ -605,16 +605,17 @@ class Feed_Handler implements Service {
 	/**
 	 * Gets the feed query
 	 *
-	 * @param string $podcast_series
+	 * @param string $series_slug
 	 * @param array $exclude_series
 	 * @param string $pub_date_type
 	 *
 	 * @return WP_Query
 	 */
-	public function get_feed_query( $podcast_series, $exclude_series, $pub_date_type ) {
-		$num_posts = intval( apply_filters( 'ssp_feed_number_of_posts', get_option( 'posts_per_rss', 10 ), $podcast_series ) );
+	public function get_feed_query( $series_slug, $exclude_series, $pub_date_type ) {
+		$series_id = $this->get_series_id( $series_slug );
+		$num_posts = ssp_feed_max_episodes( $series_id );
 
-		$args = ssp_episodes( $num_posts, $podcast_series, true, 'feed', $exclude_series );
+		$args = ssp_episodes( $num_posts, $series_slug, true, 'feed', $exclude_series );
 
 		if ( 'recorded' === $pub_date_type ) {
 			$args['orderby']  = 'meta_value';

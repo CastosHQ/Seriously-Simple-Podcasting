@@ -324,6 +324,21 @@ $feed_fields = array(
 		'callback'    => 'wp_strip_all_tags',
 	),
 	array(
+		'id'          => 'max_episodes',
+		'label'       => __( 'Max episodes per feed', 'seriously-simple-podcasting' ),
+		// translators: Do not translate the words inside the {} curly brackets; they are replaced.
+		'description' => strtr(
+			__( 'Episodes limit per feed. If not specified, defaults to {link}Syndication feeds show the most recent{/link} setting.', 'seriously-simple-podcasting' ),
+			[
+				'{link}'  => '<a href="' . esc_url( admin_url( 'options-reading.php' ) ) . '">',
+				'{/link}' => '</a>',
+			]
+		),
+		'type'        => 'number',
+		'default'     => '',
+		'callback'    => 'wp_strip_all_tags',
+	),
+	array(
 		'id'          => 'redirect_feed',
 		'label'       => __( 'Redirect this feed to new URL', 'seriously-simple-podcasting' ),
 		'description' => sprintf( __( 'Redirect your feed to a new URL (specified below).', 'seriously-simple-podcasting' ), '<br/>' ),

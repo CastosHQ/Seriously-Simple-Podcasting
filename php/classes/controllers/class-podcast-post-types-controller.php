@@ -370,11 +370,11 @@ class Podcast_Post_Types_Controller {
 
 
 	/**
-	 * Prevents copying some podcast meta fields
+	 * Prevents copying some episode meta fields.
 	 */
 	public function prevent_copy_meta() {
 		add_action( 'wp_insert_post', function ( $post_id, $post, $update ) {
-			if ( $update || $this->token != $post->post_type ) {
+			if ( $update || ! in_array( $post->post_type, ssp_post_types() ) ) {
 				return;
 			}
 
@@ -391,7 +391,7 @@ class Podcast_Post_Types_Controller {
 				}
 			};
 
-			// Most of the copy plugins use redirection after creating the post and it's meta
+			// Most of the copy plugins use redirection after creating the post and it's meta.
 			add_filter( 'wp_redirect', function ( $location ) use ( $remove_redundant_metas, $post_id ) {
 				$remove_redundant_metas( $post_id );
 

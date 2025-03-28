@@ -22,7 +22,7 @@ class PodcastSeries extends Abstract_Schema_Piece {
 	 * @return bool
 	 */
 	public function is_needed() {
-		return is_tax( 'series' );
+		return is_tax( ssp_series_taxonomy() );
 	}
 
 	/**

@@ -229,7 +229,7 @@ class Series_Handler implements Service {
 			$series_data              = get_series_data_for_castos( 0 );
 			$series_data['series_id'] = 0;
 		} else {
-			$series                   = get_term_by( 'slug', $feed_series_slug, 'series' );
+			$series                   = get_term_by( 'slug', $feed_series_slug, ssp_series_taxonomy() );
 			$series_data              = get_series_data_for_castos( $series->term_id );
 			$series_data['series_id'] = $series->term_id;
 		}

@@ -340,7 +340,7 @@ class RSS_Import_Handler {
 
 		// Set the series, if it is available
 		if ( ! empty( $this->series ) ) {
-			wp_set_post_terms( $post_id, $this->series, 'series' );
+			wp_set_post_terms( $post_id, $this->series, ssp_series_taxonomy() );
 		}
 
 		// Update the added count and imported title array

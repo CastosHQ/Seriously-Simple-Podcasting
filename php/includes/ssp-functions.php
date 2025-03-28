@@ -239,7 +239,7 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 
 		} else {
 
-			$terms = get_terms( 'series' );
+			$terms = get_terms( ssp_series_taxonomy() );
 
 			if ( count( $terms ) > 0 ) {
 
@@ -502,7 +502,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		if ( $exclude_series ) {
 			$args['tax_query'] = array(
 				array(
-					'taxonomy' => 'series',
+					'taxonomy' => ssp_series_taxonomy(),
 					'field'    => 'slug',
 					'terms'    => $exclude_series,
 					'operator' => 'NOT IN',
@@ -511,7 +511,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		} elseif ( $series && $series != ssp_get_default_series_slug() ) {
 			$args['tax_query'] = array(
 				array(
-					'taxonomy' => 'series',
+					'taxonomy' => ssp_series_taxonomy(),
 					'field'    => 'slug',
 					'terms'    => esc_attr( $series ),
 				),
@@ -1700,7 +1700,7 @@ if ( ! function_exists( 'ssp_get_episode_podcasts' ) ) {
 	 * @return WP_Term[]
 	 */
 	function ssp_get_episode_podcasts( $post_id ) {
-		$series = wp_get_post_terms( $post_id, 'series' );
+		$series = wp_get_post_terms( $post_id, ssp_series_taxonomy() );
 
 		if ( is_wp_error( $series ) ) {
 			return [];
@@ -1776,13 +1776,13 @@ if ( ! function_exists( 'ssp_version' ) ) {
 }
 
 /**
- * Gets SSP Version.
+ * Gets series taxonomy name. Default is series.
  */
 if ( ! function_exists( 'ssp_series_taxonomy' ) ) {
 	/**
 	 * Gets SSP Version.
 	 *
-	 * @return string|null
+	 * @return string
 	 */
 	function ssp_series_taxonomy() {
 		return apply_filters( 'ssp_series_taxonomy', 'series' );

@@ -40,7 +40,7 @@ trait Elementor_Widget_Helper {
 
 		$series = get_terms(
 			array(
-				'taxonomy' => 'series',
+				'taxonomy' => ssp_series_taxonomy(),
 			)
 		);
 

@@ -65,7 +65,7 @@ class Playlist extends Castos_Widget {
 	 * @return array
 	 */
 	protected function get_series() {
-		$series_terms = get_terms( 'series' );
+		$series_terms = get_terms( ssp_series_taxonomy() );
 		$series       = array();
 
 		foreach ( $series_terms as $term ) {

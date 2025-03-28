@@ -271,7 +271,7 @@ class Feed_Handler implements Service {
 
 		$series = get_terms(
 			array(
-				'taxonomy'   => 'series',
+				'taxonomy'   => ssp_series_taxonomy(),
 				'hide_empty' => false,
 			)
 		);
@@ -568,7 +568,7 @@ class Feed_Handler implements Service {
 
 		$feed_url = ssp_get_feed_url( $series_slug );
 
-		$term    = get_term_by( 'slug', $series_slug, 'series' );
+		$term    = get_term_by( 'slug', $series_slug, ssp_series_taxonomy() );
 		$term_id = isset( $term->term_id ) ? $term->term_id : null;
 
 		$option     = $term_id ? 'ss_podcasting_data_guid_' . $term_id : 'ss_podcasting_data_guid';

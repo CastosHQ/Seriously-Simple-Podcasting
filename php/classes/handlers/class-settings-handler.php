@@ -427,7 +427,7 @@ class Settings_Handler implements Service {
 	protected function get_current_series_id() {
 		$podcast_slug = filter_input( INPUT_GET, 'feed-series' );
 		if ( $podcast_slug ) {
-			$podcast = get_term_by( 'slug', $podcast_slug, 'series' );
+			$podcast = get_term_by( 'slug', $podcast_slug, ssp_series_taxonomy() );
 
 			return isset( $podcast->term_id ) ? $podcast->term_id : 0;
 		}

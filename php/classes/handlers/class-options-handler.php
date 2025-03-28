@@ -140,7 +140,7 @@ class Options_Handler implements Service {
 	 * @return mixed|void
 	 */
 	public function get_subscribe_urls( $episode_id, $context ) {
-		$terms             = get_the_terms( $episode_id, 'series' );
+		$terms             = get_the_terms( $episode_id, ssp_series_taxonomy() );
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
 		$subscribe_array   = array();
 
@@ -191,7 +191,7 @@ class Options_Handler implements Service {
 
 		$all_series = get_terms(
 			array(
-				'taxonomy'   => 'series',
+				'taxonomy'   => ssp_series_taxonomy(),
 				'hide_empty' => false,
 			)
 		);

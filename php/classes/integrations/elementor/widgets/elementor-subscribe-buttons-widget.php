@@ -69,10 +69,10 @@ class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
 		$settings    = $this->get_settings_for_display();
 		$series_id   = $settings['show_elements'];
 		$args        = array(
-			'post_type' => ssp_post_types( true ),
+			'post_type' => ssp_post_types(),
 			'tax_query' => array(
 				array(
-					'taxonomy' => 'series',
+					'taxonomy' => ssp_series_taxonomy(),
 					'field'    => 'term_id',
 					'terms'    => $series_id,
 				),

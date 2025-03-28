@@ -172,7 +172,7 @@ class Episode_Repository implements Service {
 		$feed_series = 'default';
 		$series_id   = $this->get_episode_series_id( $id );
 		if ( $series_id ) {
-			$series      = get_term_by( 'id', $series_id, 'series' );
+			$series      = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
 			$feed_series = $series->slug;
 		}
 
@@ -245,7 +245,7 @@ class Episode_Repository implements Service {
 
 			foreach ( $series_arr as $series ) {
 				$query_args['tax_query'][] = array(
-					'taxonomy' => 'series',
+					'taxonomy' => ssp_series_taxonomy(),
 					'field'    => 'slug',
 					'terms'    => $series,
 				);

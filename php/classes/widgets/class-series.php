@@ -80,7 +80,7 @@ class Series extends WP_Widget {
 			return;
 		}
 
-		$series = get_term( $series_id, 'series' );
+		$series = get_term( $series_id, ssp_series_taxonomy() );
 
 		if ( ! $series || is_wp_error( $series ) ) {
 			return;
@@ -170,7 +170,7 @@ class Series extends WP_Widget {
 		$show_date  = isset( $instance['show_date'] ) ? (bool) $instance['show_date'] : false;
 
 		// Get all podcast series
-		$series = get_terms( 'series' );
+		$series = get_terms( ssp_series_taxonomy() );
 ?>
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'seriously-simple-podcasting' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" placeholder="<?php _e( 'Use series title', 'seriously-simple-podcasting' ); ?>" value="<?php echo $title; ?>" /></p>

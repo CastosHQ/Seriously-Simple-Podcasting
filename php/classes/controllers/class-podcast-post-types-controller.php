@@ -271,7 +271,7 @@ class Podcast_Post_Types_Controller {
 
 		$post = get_post( $post_id );
 
-		if ( 'series' !== $taxonomy || 'publish' !== $post->post_status ) {
+		if ( ssp_series_taxonomy() !== $taxonomy || 'publish' !== $post->post_status ) {
 			return false;
 		}
 
@@ -318,7 +318,7 @@ class Podcast_Post_Types_Controller {
 			return;
 		}
 
-		$series_terms = wp_get_post_terms( $post->ID, 'series' );
+		$series_terms = wp_get_post_terms( $post->ID, ssp_series_taxonomy() );
 		$feed_urls    = array();
 
 		/**

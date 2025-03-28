@@ -137,7 +137,7 @@ class Ads_Controller {
 			return 0;
 		}
 
-		$podcast = get_term_by( 'slug', $podcast_slug, 'series' );
+		$podcast = get_term_by( 'slug', $podcast_slug, ssp_series_taxonomy() );
 
 		return isset( $podcast->term_id ) ? $podcast->term_id : 0;
 	}

@@ -591,7 +591,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		if ( empty( $series_slug ) ) {
 			return;
 		}
-		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), 'series' );
+		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), ssp_series_taxonomy() );
 
 		$series_levels = $this->get_series_level_ids( $series->term_id );
 		$has_access = $this->has_access( wp_get_current_user(), $series_levels );

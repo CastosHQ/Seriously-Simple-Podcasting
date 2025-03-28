@@ -395,7 +395,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 			return;
 		}
 
-		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), 'series' );
+		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), ssp_series_taxonomy() );
 
 		// Do not protect unprotected series
 		if ( ! $this->is_series_protected_in_castos( $series->term_id ) ) {
@@ -473,7 +473,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	 * @return WP_Term[]
 	 */
 	protected function get_episode_series( $post_id ) {
-		$series = wp_get_post_terms( $post_id, 'series' );
+		$series = wp_get_post_terms( $post_id, ssp_series_taxonomy() );
 
 		if ( is_wp_error( $series ) ) {
 			return [];

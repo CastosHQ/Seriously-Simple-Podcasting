@@ -113,7 +113,7 @@ abstract class Abstract_Integrator {
 	 * @return \WP_Term[]|\WP_Error
 	 */
 	protected function get_series() {
-		return get_terms( 'series', array( 'hide_empty' => false ) );
+		return get_terms( ssp_series_taxonomy(), array( 'hide_empty' => false ) );
 	}
 
 	/**
@@ -124,7 +124,7 @@ abstract class Abstract_Integrator {
 	 * @return \WP_Term[]
 	 */
 	protected function get_episode_series( $post_id ) {
-		$series = wp_get_post_terms( $post_id, 'series' );
+		$series = wp_get_post_terms( $post_id, ssp_series_taxonomy() );
 
 		if ( is_wp_error( $series ) ) {
 			return [];
@@ -140,7 +140,7 @@ abstract class Abstract_Integrator {
 		// First, lets check if it's series page
 		$queried = get_queried_object();
 
-		if ( isset( $queried->taxonomy ) && 'series' === $queried->taxonomy ) {
+		if ( isset( $queried->taxonomy ) && ssp_series_taxonomy() === $queried->taxonomy ) {
 			return array( $queried );
 		}
 

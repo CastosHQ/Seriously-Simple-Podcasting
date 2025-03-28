@@ -433,7 +433,7 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 			return;
 		}
 
-		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), 'series' );
+		$series = get_term_by( 'slug', $this->feed_handler->get_series_slug(), ssp_series_taxonomy() );
 
 		$has_access         = true;
 		$required_level_ids = $this->get_series_level_ids( $series->term_id );

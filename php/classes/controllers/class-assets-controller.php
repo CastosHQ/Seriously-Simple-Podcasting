@@ -131,7 +131,7 @@ class Assets_Controller {
 
 		// Only enqueue the WordPress Media Library picker for adding and editing SSP tags/terms post types.
 		if ( 'edit-tags.php' === $hook || 'term.php' === $hook ) {
-			if ( 'series' === $_REQUEST['taxonomy'] ) {
+			if ( ssp_series_taxonomy() === $_REQUEST['taxonomy'] ) {
 				wp_enqueue_media();
 			}
 		}

@@ -189,7 +189,7 @@ class Ajax_Handler {
 			return __( 'Default Podcast', 'seriously-simple-podcasting' );
 		}
 
-		$podcast = ( $podcast_id > 0 ) ? get_term( $podcast_id, 'series' ) : null;
+		$podcast = ( $podcast_id > 0 ) ? get_term( $podcast_id, ssp_series_taxonomy() ) : null;
 
 		if ( ! is_wp_error( $podcast ) && isset( $podcast->name ) ) {
 			return $podcast->name;

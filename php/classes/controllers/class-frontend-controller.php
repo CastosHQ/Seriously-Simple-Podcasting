@@ -233,7 +233,7 @@ class Frontend_Controller {
 		// Use queried object because is_tax('post_tag') doesn't work ( is_tax is false ).
 		$queried = get_queried_object();
 
-		if ( is_tax( 'series' ) || ( $use_post_tag && isset( $queried->taxonomy ) && 'post_tag' === $queried->taxonomy ) ) {
+		if ( is_tax( ssp_series_taxonomy() ) || ( $use_post_tag && isset( $queried->taxonomy ) && 'post_tag' === $queried->taxonomy ) ) {
 			$templates = array_merge( array( 'archive-' . SSP_CPT_PODCAST . '.php' ), $templates );
 		}
 
@@ -588,7 +588,7 @@ class Frontend_Controller {
 			return;
 		}
 
-		if ( is_post_type_archive( SSP_CPT_PODCAST ) || is_tax( 'series' ) ) {
+		if ( is_post_type_archive( SSP_CPT_PODCAST ) || is_tax( ssp_series_taxonomy() ) ) {
 
 			$podcast_post_types = ssp_post_types( false );
 
@@ -1025,7 +1025,7 @@ class Frontend_Controller {
 
 		// Check if this is a series taxonomy archive and display series-specific RSS feed tag
 		$current_obj = get_queried_object();
-		if( isset( $current_obj->taxonomy ) && 'series' == $current_obj->taxonomy && isset( $current_obj->slug ) && $current_obj->slug ) {
+		if( isset( $current_obj->taxonomy ) && ssp_series_taxonomy() == $current_obj->taxonomy && isset( $current_obj->slug ) && $current_obj->slug ) {
 
 			if( apply_filters( 'ssp_show_series_feed_tag', true, $current_obj->slug ) ) {
 

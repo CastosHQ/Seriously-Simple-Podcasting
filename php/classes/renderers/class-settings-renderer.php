@@ -395,7 +395,7 @@ class Settings_Renderer implements Service {
 			 * */
 			$link = '';
 			if ( $podcast_id ) {
-				$podcast = get_term_by( 'term_id', $podcast_id, 'series' );
+				$podcast = get_term_by( 'term_id', $podcast_id, ssp_series_taxonomy() );
 				$link    = admin_url( sprintf( 'edit.php?series=%s&post_type=%s', $podcast->slug, $this->token ) );
 			}
 

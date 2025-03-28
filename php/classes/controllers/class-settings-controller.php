@@ -388,7 +388,7 @@ class Settings_Controller {
 		if ( 'feed-details' === $tab ) {
 			$feed_series = ( isset( $_REQUEST['feed-series'] ) ? filter_var( $_REQUEST['feed-series'], FILTER_DEFAULT ) : '' );
 			if ( $feed_series && 'default' !== $feed_series ) {
-				$series = get_term_by( 'slug', esc_attr( $feed_series ), 'series' );
+				$series = get_term_by( 'slug', esc_attr( $feed_series ), ssp_series_taxonomy() );
 				$series_id = $series->term_id;
 
 				// Append series name to section title.
@@ -545,7 +545,7 @@ class Settings_Controller {
 			case 'feed-details':
 				$feed_series = isset( $_GET['feed-series'] ) ? esc_attr( $_GET['feed-series'] ) : 'default';
 
-				$term = get_term_by( 'slug', $feed_series, 'series' );
+				$term = get_term_by( 'slug', $feed_series, ssp_series_taxonomy() );
 
 				if ( $term ) {
 					$edit_podcast_url = sprintf( 'term.php?taxonomy=series&tag_ID=%d&post_type=%s', $term->term_id, SSP_CPT_PODCAST );
@@ -1185,7 +1185,7 @@ class Settings_Controller {
 		$post_types = array_merge( $post_types, ssp_post_types( false ) );
 
 
-		$series     = get_terms( 'series', array( 'hide_empty' => false ) );
+		$series     = get_terms( ssp_series_taxonomy(), array( 'hide_empty' => false ) );
 
 		return $this->renderer->fetch( 'settings/import-rss-form', compact( 'post_types', 'series' ) );
 	}

@@ -285,13 +285,13 @@ class Series_Controller {
 
 		switch ( $column_name ) {
 			case 'series_feed_url':
-				$series   = get_term( $term_id, 'series' );
+				$series   = get_term( $term_id, ssp_series_taxonomy() );
 				$feed_url = $this->get_series_feed_url( $series );
 
 				$column_data = '<a href="' . esc_attr( $feed_url ) . '" target="_blank">' . esc_html( $feed_url ) . '</a>';
 				break;
 			case 'series_image':
-				$series      = get_term( $term_id, 'series' );
+				$series      = get_term( $term_id, ssp_series_taxonomy() );
 				$source      = $this->get_series_image_src( $series );
 				$column_data = <<<HTML
 <img id="{$series->name}_image_preview" src="{$source}" width="auto" height="auto" style="max-width:50px;" />

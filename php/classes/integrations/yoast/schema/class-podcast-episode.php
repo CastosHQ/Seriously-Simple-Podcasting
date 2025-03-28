@@ -52,7 +52,7 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		}
 
 		$series_parts = [];
-		$series       = wp_get_post_terms( $this->context->post->ID, 'series' );
+		$series       = wp_get_post_terms( $this->context->post->ID, ssp_series_taxonomy() );
 
 		foreach ( $series as $term ) {
 			/** @var \WP_Term $term */

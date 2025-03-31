@@ -118,7 +118,7 @@
 						<div class="subscribe-icons">
 							<?php foreach ( $subscribe_links as $key => $subscribe_link ) : ?>
 								<?php if ( ! empty( $subscribe_link['url'] ) ) : ?>
-									<a href="<?php echo esc_attr( $subscribe_link['url'] ) ?>" target="_blank" rel="noopener noreferrer"
+									<a href="<?php echo esc_url( $subscribe_link['url'] ) ?>" target="_blank" rel="noopener noreferrer"
 									   class="<?php echo esc_attr( $subscribe_link['class'] ) ?>"
 									   title="Subscribe on  <?php echo esc_attr( $subscribe_link['label'] ) ?>">
 										<span></span>
@@ -156,7 +156,7 @@
 							   target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="<?php esc_attr_e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
 								<span></span>
 							</a>
-							<a href="<?php echo esc_attr( $audio_file ) ?>"
+							<a href="<?php echo esc_url( $audio_file ) ?>"
 							   target="_blank" rel="noopener noreferrer" class="share-icon download" title="<?php esc_attr_e( 'Download', 'seriously-simple-podcasting' ) ?>" download>
 								<span></span>
 							</a>
@@ -167,7 +167,7 @@
 							<?php esc_attr_e( 'Link', 'seriously-simple-podcasting' ) ?>
 						</div>
 						<div>
-							<input value="<?php echo esc_attr( $current_url ) ?>" class="input-link input-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Episode URL', 'seriously-simple-podcasting' ) ?>" readonly />
+							<input value="<?php echo esc_url( $current_url ) ?>" class="input-link input-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Episode URL', 'seriously-simple-podcasting' ) ?>" readonly />
 						</div>
 						<button class="copy-link copy-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>" readonly=""></button>
 					</div>

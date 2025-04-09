@@ -384,6 +384,14 @@ class Podcast_Post_Types_Controller {
 					'podmotor_episode_id',
 					'audio_file',
 					'enclosure',
+					'castos_file_data',
+					'date_recorded',
+					'duration',
+					'filesize',
+					'filesize_raw',
+					'itunes_episode_number',
+					'sync_status',
+					'transcript_file',
 				];
 
 				foreach ( $exclusions as $exclusion ) {

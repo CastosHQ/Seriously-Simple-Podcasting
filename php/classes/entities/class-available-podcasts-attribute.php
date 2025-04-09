@@ -25,6 +25,7 @@ class Available_Podcasts_Attribute implements JsonSerializable {
 	 *
 	 * @return array[]
 	 */
+	#[\ReturnTypeWillChange]
 	public function jsonSerialize() {
 		return $this->get_settings();
 	}

@@ -745,19 +745,7 @@ if ( ! function_exists( 'ssp_is_connected_to_castos' ) ) {
 	 * @return bool
 	 */
 	function ssp_is_connected_to_castos() {
-		$is_connected = false;
-		$cache_key    = 'ssp_is_connected_to_castos';
-		if ( $cache = wp_cache_get( $cache_key ) ) {
-			return $cache;
-		}
-		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		if ( ! empty( $podmotor_api_token ) ) {
-			$is_connected = true;
-		}
-
-		wp_cache_add( $cache_key, $is_connected );
-
-		return $is_connected;
+		return boolval( get_option( 'ss_podcasting_castos_account_api_token', '' ) );
 	}
 }
 

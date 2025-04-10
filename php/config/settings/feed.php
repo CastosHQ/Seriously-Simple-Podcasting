@@ -328,14 +328,14 @@ $feed_fields = array(
 		'label'       => __( 'Max episodes per feed', 'seriously-simple-podcasting' ),
 		// translators: Do not translate the words inside the {} curly brackets; they are replaced.
 		'description' => strtr(
-			__( 'Episodes limit per feed. If not specified, defaults to {link}Syndication feeds show the most recent{/link} setting.', 'seriously-simple-podcasting' ),
+			__( 'Episode limit in this feed. If not specified or 0, defaults to {link}Syndication feeds show the most recent{/link} setting.', 'seriously-simple-podcasting' ),
 			[
 				'{link}'  => '<a href="' . esc_url( admin_url( 'options-reading.php' ) ) . '">',
 				'{/link}' => '</a>',
 			]
 		),
 		'type'        => 'number',
-		'default'     => '',
+		'default'     => get_option( 'posts_per_rss', 10 ),
 		'callback'    => 'wp_strip_all_tags',
 	),
 	array(

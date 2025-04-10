@@ -745,7 +745,7 @@ if ( ! function_exists( 'ssp_is_connected_to_castos' ) ) {
 	 * @return bool
 	 */
 	function ssp_is_connected_to_castos() {
-		return boolval( get_option( 'ss_podcasting_castos_account_api_token', '' ) );
+		return boolval( get_option( 'ss_podcasting_podmotor_account_api_token', '' ) );
 	}
 }
 

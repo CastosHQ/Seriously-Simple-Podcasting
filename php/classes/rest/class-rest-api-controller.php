@@ -290,7 +290,7 @@ class Rest_Api_Controller {
 
 		foreach ( $podcast_fields as $podcast_field ) {
 			register_rest_field(
-				'series',
+				ssp_series_taxonomy(),
 				$podcast_field,
 				array(
 					'get_callback' => array( $this, 'series_get_field_value' ),

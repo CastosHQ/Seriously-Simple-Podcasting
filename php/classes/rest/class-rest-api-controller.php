@@ -306,18 +306,52 @@ class Rest_Api_Controller {
 	 * @param $field_name
 	 * @param $request
 	 *
-	 * @return mixed|void
+	 * @return mixed
 	 */
 	public function series_get_field_value( $data, $field_name, $request ) {
 		$podcast            = $this->get_default_podcast_settings();
 		$field_value        = $podcast[ $field_name ];
 		$series_id          = $data['id'];
+
+		// Categories are treated differently then other fields.
+		if( in_array( $field_name, ['category1', 'category2', 'category3'] ) ){
+			$res = $this->get_podcast_categories( $field_name, $series_id );
+			return $res;
+		}
+
 		$series_field_value = get_option( 'ss_podcasting_data_' . $field_name . '_' . $series_id, '' );
 		if ( $series_field_value ) {
 			$field_value = $series_field_value;
 		}
 
 		return $field_value;
+	}
+
+	/**
+	 * Gets the podcast category and subcategory for the series.
+	 *
+	 * @param string $field_name API field name.
+	 * @param int $series_id Series ID.
+	 *
+	 * @return array Array of category and subcategory.
+	 */
+	protected function get_podcast_categories( $field_name, $series_id ) {
+		$fields_map = [
+			'category1' => 'category',
+			'category2' => 'category2',
+			'category3' => 'category3',
+		];
+
+		if ( ! isset( $fields_map[ $field_name ] ) ) {
+			return [];
+		}
+
+		$base = $fields_map[ $field_name ];
+
+		return [
+			'category'    => get_option( "ss_podcasting_data_{$base}_{$series_id}", '' ),
+			'subcategory' => get_option( "ss_podcasting_data_sub{$base}_{$series_id}", '' ),
+		];
 	}
 
 	/**

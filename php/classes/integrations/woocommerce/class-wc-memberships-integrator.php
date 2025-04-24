@@ -60,8 +60,6 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 		$this->notices_handler = $notices_handler;
 
 		add_action( 'plugins_loaded', array( $this, 'late_init' ) );
-
-		add_action( 'profile_update', array( $this, 'update_user_email' ), 10, 2 );
 	}
 
 	/**
@@ -73,6 +71,10 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	 * @return void
 	 */
 	public function update_user_email( $user_id,  $old_user_data ) {
+		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
 		$user = get_user_by( 'id', $user_id );
 		$new_email = $user->user_email;
 		$old_email = $old_user_data->user_email;
@@ -93,6 +95,10 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	public function late_init(){
 		if ( !  $this->check_dependencies( array( 'WC_Memberships_Loader' ) ) ) {
 			return;
+		}
+
+		if ( self::integration_enabled() ) {
+			add_action( 'profile_update', [ $this, 'update_user_email' ], 10, 2 );
 		}
 
 		if ( is_admin() && ! ssp_is_ajax() ) {

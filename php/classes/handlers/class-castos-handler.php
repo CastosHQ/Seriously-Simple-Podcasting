@@ -882,11 +882,17 @@ class Castos_Handler implements Service {
 	 * @param array $podcast_ids
 	 * @param string $email
 	 * @param string $name
+	 *
+	 * @return array|null
 	 */
 	public function add_subscriber_to_podcasts( $podcast_ids, $email, $name ) {
 		$this->logger->log( __METHOD__, compact( 'podcast_ids', 'email', 'name' ) );
 
 		$podcasts = array();
+
+		if ( empty( $podcast_ids ) ) {
+			return;
+		}
 
 		foreach ( $podcast_ids as $podcast_id ) {
 			$podcasts[] = array( 'id' => $podcast_id );
@@ -1019,6 +1025,10 @@ class Castos_Handler implements Service {
 	 */
 	public function revoke_subscriber_from_podcasts( $podcast_ids, $email ) {
 		$this->logger->log( __METHOD__, compact( 'podcast_ids', 'email' ) );
+
+		if ( empty( $podcast_ids ) ) {
+			return;
+		}
 
 		$subscribers = array();
 

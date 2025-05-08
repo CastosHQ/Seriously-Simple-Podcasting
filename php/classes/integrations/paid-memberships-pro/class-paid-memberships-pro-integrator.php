@@ -607,7 +607,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	/**
 	 * Protects access to private episodes.
 	 *
-	 * @param array|false $access
+	 * @param bool $access
 	 * @param \WP_Post $post
 	 * @param \WP_User $user
 	 * @param object[] $post_levels
@@ -615,6 +615,17 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return bool
 	 */
 	public function access_filter( $access, $post, $user, $post_levels ) {
+
+		// If there is no access to this post, do not modify it.
+		if ( ! $access ) {
+			return $access;
+		}
+
+		$should_protect = apply_filters( 'ssp_pmpro_protect_private_episodes', true, $post, $user, $post_levels );
+
+		if ( ! $should_protect ) {
+			return $access;
+		}
 
 		// Get level ids.
 		$post_level_ids = array_filter( array_map( function ( $item ) {

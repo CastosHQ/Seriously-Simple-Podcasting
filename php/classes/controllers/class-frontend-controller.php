@@ -396,10 +396,6 @@ class Frontend_Controller {
 
 		if ( $file ) {
 
-			if ( get_option( 'permalink_structure' ) ) {
-				$file = $this->get_episode_download_link( $episode_id );
-			}
-
 			// Hide audio player in `ss_podcast` shortcode by default
 			$show_player = true;
 			if ( 'shortcode' === $context ) {

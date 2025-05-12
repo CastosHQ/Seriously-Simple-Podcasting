@@ -77,12 +77,6 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		$schema = array(
 			"@type"               => "PodcastEpisode",
 			"@id"                 => $this->context->canonical . '#/schema/podcast',
-			"eventAttendanceMode" => "https://schema.org/OnlineEventAttendanceMode",
-			"location"            => array(
-				"@type" => "VirtualLocation",
-				"url"   => $this->context->canonical,
-				"@id"   => $this->context->canonical . "#webpage",
-			),
 			"url"                 => $this->context->canonical,
 			"name"                => $this->context->title,
 			"datePublished"       => date( 'Y-m-d', strtotime( $this->context->post->post_date ) ),

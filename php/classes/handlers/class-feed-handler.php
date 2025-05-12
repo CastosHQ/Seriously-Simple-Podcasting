@@ -119,7 +119,7 @@ class Feed_Handler implements Service {
 		$default_series_id = ssp_get_option( 'default_series' );
 		if ( $default_series_id ) {
 			$term = get_term_by( 'id', $default_series_id, ssp_series_taxonomy() );
-			if ( $term ) {
+			if ( $term && $term->term_id !== intval( $default_series_id )  ) {
 				$url = ssp_get_feed_url( $term->slug );
 				wp_redirect( $url );
 				exit();
@@ -138,7 +138,7 @@ class Feed_Handler implements Service {
 		$series_id = 0;
 		if ( $series_slug ) {
 			$series    = get_term_by( 'slug', $series_slug, ssp_series_taxonomy() );
-			$series_id = $series->term_id;
+			$series_id = $series ? $series->term_id : null;
 		}
 
 		return $series_id;

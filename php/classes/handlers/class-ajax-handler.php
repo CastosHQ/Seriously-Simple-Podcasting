@@ -199,11 +199,17 @@ class Ajax_Handler {
 	}
 
 	public function disconnect_castos() {
-		$this->castos_handler->remove_api_credentials();
-		$this->admin_notices_handler->add_flash_notice(
-			__( 'Castos account successfully disconnected.', 'seriously-simple-podcasting' )
-		);
-		wp_send_json_success();
+		try {
+			$this->user_capability_check();
+
+			$this->castos_handler->remove_api_credentials();
+			$this->admin_notices_handler->add_flash_notice(
+				__( 'Castos account successfully disconnected.', 'seriously-simple-podcasting' )
+			);
+			wp_send_json_success();
+		} catch ( \Exception $e ) {
+			$this->send_json_error( $e->getMessage() );
+		}
 	}
 
 	/**

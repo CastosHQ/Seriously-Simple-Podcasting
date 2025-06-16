@@ -372,6 +372,89 @@ textarea#episode_embed_code {
   font-weight: bold;
   margin: 5px 0 10px; }
 
+.ssp-admin {
+  background-color: #F1F5F9;
+  font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
+  .ssp-admin h1.wp-heading-inline {
+    color: #334155;
+    font-weight: 600;
+    font-size: 20px;
+    margin-right: 15px; }
+  .ssp-admin .page-title-action {
+    color: #FFFFFF;
+    background: #853AED;
+    border-color: #853AED;
+    transition: 0.3s;
+    font-weight: bold;
+    border-radius: 6px;
+    font-size: 14px; }
+    .ssp-admin .page-title-action:hover {
+      background: #9351ef;
+      border-color: #9351ef;
+      color: #FFFFFF; }
+  .ssp-admin a, .ssp-admin .button-link {
+    color: #853AED;
+    transition: 0.2s; }
+    .ssp-admin a:hover, .ssp-admin .button-link:hover {
+      color: #a269f1; }
+  .ssp-admin .wp-list-table th {
+    color: #334155;
+    font-weight: 500;
+    font-size: 14px; }
+  .ssp-admin th.sorted.desc .sorting-indicator.desc:before {
+    color: #334155; }
+  .ssp-admin ul.subsubsub li {
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; }
+    .ssp-admin ul.subsubsub li a {
+      font-weight: 700;
+      font-size: 13px; }
+      .ssp-admin ul.subsubsub li a .count {
+        font-weight: 500;
+        font-size: 13px;
+        color: #51575D; }
+  .ssp-admin .tablenav-pages .displaying-num, .ssp-admin .tablenav-pages .tablenav-paging-text, .ssp-admin .tablenav-pages .current-page {
+    font-weight: 500;
+    font-size: 13px;
+    color: #334155; }
+  .ssp-admin .button, .ssp-admin .button-secondary {
+    color: #853AED;
+    border-radius: 6px;
+    border-color: #853AED;
+    background: #FFFFFF;
+    vertical-align: top;
+    transition: .3s;
+    font-weight: 600; }
+    .ssp-admin .button:hover, .ssp-admin .button-secondary:hover {
+      color: #9351ef;
+      border-color: #9351ef; }
+  .ssp-admin .button-secondary {
+    font-weight: 500; }
+  .ssp-admin select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-color: white;
+    /* this sets the background color */
+    background-image: url("../img/select-arrow.svg");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2rem;
+    border-color: #CBD5E1;
+    border-radius: 6px;
+    font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
+    font-size: 13px;
+    font-weight: 500; }
+    .ssp-admin select:hover {
+      color: #853AED; }
+  .ssp-admin input, .ssp-admin table.widefat, .ssp-admin .widefat thead td, .ssp-admin .widefat thead th {
+    border-color: #CBD5E1; }
+  .ssp-admin .manage-column input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    accent-color: #0073aa !important;
+    /* new in modern browsers */ }
+
 /* latin-ext */
 @font-face {
   font-family: 'Inter';

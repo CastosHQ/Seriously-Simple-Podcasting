@@ -31,6 +31,16 @@ class Assets_Controller {
 
 		// Register HTML5 player scripts and styles
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_html5_player_assets' ) );
+
+		add_filter( 'admin_body_class', array( $this, 'maybe_add_ssp_admin_body_class' ) );
+	}
+
+	public function maybe_add_ssp_admin_body_class( $class ) {
+		if ( $this->is_ssp_admin_page() || $this->is_ssp_post_page() ) {
+			$class .= ' ssp-admin';
+		}
+
+		return $class;
 	}
 
 	/**

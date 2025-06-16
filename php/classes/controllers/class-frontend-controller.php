@@ -29,12 +29,6 @@ class Frontend_Controller {
 	use Useful_Variables;
 
 	/**
-	 * @var Episode_Controller
-	 */
-	public $episode_controller;
-
-
-	/**
 	 * @var Players_Controller
 	 * */
 	public $players_controller;
@@ -53,14 +47,12 @@ class Frontend_Controller {
 	/**
 	 * Frontend_Controller constructor.
 	 *
-	 * @param Episode_Controller $episode_controller
 	 * @param Players_Controller $players_controller
 	 * @param Episode_Repository $episode_repository
 	 */
-	public function __construct( $episode_controller, $players_controller, $episode_repository ) {
+	public function __construct( $players_controller, $episode_repository ) {
 		$this->init_useful_variables();
 
-		$this->episode_controller = $episode_controller;
 		$this->players_controller = $players_controller;
 		$this->episode_repository = $episode_repository;
 
@@ -429,7 +421,7 @@ class Frontend_Controller {
 	 * @return string              URL of enclosure
 	 */
 	public function get_enclosure( $episode_id = 0 ) {
-		return $this->episode_controller->get_enclosure( $episode_id );
+		return $this->episode_repository->get_enclosure( $episode_id );
 	}
 
 	/**
@@ -441,7 +433,7 @@ class Frontend_Controller {
 	 * @return string              Episode download link
 	 */
 	public function get_episode_download_link( $episode_id, $referrer = '' ) {
-		return $this->episode_controller->get_episode_download_link( $episode_id, $referrer );
+		return $this->episode_repository->get_episode_download_link( $episode_id, $referrer );
 	}
 
 	/**

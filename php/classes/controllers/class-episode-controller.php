@@ -14,7 +14,6 @@ use WP_Query;
  *
  * @deprecated Almost all episode-related functions now in Episode_Repository or Frontend_Controller.
  * So lets just get rid of this class.
- * @todo: move functions to Episode_Repository, rest - to Podcast Post Types Controller
  */
 class Episode_Controller {
 
@@ -47,7 +46,7 @@ class Episode_Controller {
 	 *
 	 * @param integer $episode_id ID of episode
 	 *
-	 * @return string              URL of enclosure
+	 * @return string URL of enclosure
 	 * @deprecated Use Episode_Repository::get_enclosure()
 	 */
 	public function get_enclosure( $episode_id = 0 ) {
@@ -79,26 +78,10 @@ class Episode_Controller {
 	 *
 	 * @since 1.19.4
 	 *
-	 * @deprecated Please use Episode_Repository::get_album_art()
+	 * @deprecated Please use
+	 * @see Episode_Repository::get_album_art()
 	 */
 	public function get_album_art( $episode_id = false, $size = 'full' ) {
 		return $this->episode_repository->get_album_art( $episode_id, $size );
-	}
-
-	/**
-	 * Get featured image src.
-	 *
-	 * @param int $episode_id ID of the episode.
-	 *
-	 * @return array|null [ $src, $width, $height ]
-	 *
-	 * @since 2.9.9
-	 */
-	public function get_featured_image_src( $episode_id, $size = 'full' ) {
-		$thumb_id = get_post_thumbnail_id( $episode_id );
-		if ( empty( $thumb_id ) ) {
-			return null;
-		}
-		return ssp_get_attachment_image_src( $thumb_id, $size );
 	}
 }

@@ -2,8 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-use SeriouslySimplePodcasting\Handlers\Castos_Handler;
-use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Traits\Singleton;
 
 // Exit if accessed directly.

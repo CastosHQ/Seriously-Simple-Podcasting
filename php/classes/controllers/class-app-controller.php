@@ -83,9 +83,9 @@ class App_Controller {
 	protected $db_migration_controller;
 
 	/**
-	 * @var Episode_Controller
+	 * @var Admin_Controller
 	 */
-	public $episode_controller;
+	public $admin_controller;
 
 	/**
 	 * @var Players_Controller
@@ -301,7 +301,7 @@ class App_Controller {
 			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}
 
-		$this->episode_controller            = new Episode_Controller( $this->renderer, $this->episode_repository );
+		$this->admin_controller              = new Admin_Controller( $this->renderer );
 		$this->players_controller            = new Players_Controller( $this->renderer, $this->options_handler, $this->episode_repository );
 		$this->podcast_post_types_controller = new Podcast_Post_Types_Controller(
 			$this->cpt_podcast_handler,
@@ -321,7 +321,7 @@ class App_Controller {
 
 		// todo: further refactoring - get rid of global here
 		global $ss_podcasting;
-		$ss_podcasting = new Frontend_Controller( $this->episode_controller, $this->players_controller, $this->episode_repository );
+		$ss_podcasting = new Frontend_Controller( $this->players_controller, $this->episode_repository );
 
 		$this->init_integrations();
 		$this->init_rest_api();

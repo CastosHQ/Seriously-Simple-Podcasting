@@ -800,8 +800,6 @@ class Frontend_Controller {
 					wp_cache_set( $episode_id, $size, 'filesize_raw' );
 				}
 
-				$size = get_post_meta( $episode_id, 'filesize_raw', true );
-
 				// Send Content-Length header
 				if ( ! empty( $size ) ) {
 					header( "Content-Length: " . $size );

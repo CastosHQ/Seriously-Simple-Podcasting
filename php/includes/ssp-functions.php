@@ -671,32 +671,22 @@ if ( ! function_exists( 'ssp_readfile_chunked' ) ) {
 	 */
 	function ssp_readfile_chunked( $file, $retbytes = true ) {
 		try {
-			$chunksize = 1 * ( 1024 * 1024 );
-			$cnt       = 0;
-
-			$handle = fopen( $file, 'r' );
-			if ( false === $handle ) {
+			$handle = fopen( $file, 'rb' );
+			if ( $handle === false ) {
 				return false;
 			}
 
-			while ( ! feof( $handle ) ) {
-				$buffer = fread( $handle, $chunksize );
-				echo $buffer;
-				ob_flush();
-				flush();
-
-				if ( $retbytes ) {
-					$cnt += strlen( $buffer );
-				}
+			while ( ob_get_level() > 0 ) {
+				ob_end_flush();
 			}
+			ini_set( 'output_buffering', 'off' );
+			ini_set( 'zlib.output_compression', 'off' );
 
-			$status = fclose( $handle );
+			fpassthru( $handle );
+			fclose( $handle );
 
-			if ( $retbytes && $status ) {
-				return $cnt;
-			}
+			return true;
 
-			return $status;
 		} catch ( \Throwable $e ) {
 			$logger = new Log_Helper();
 			$logger->log( 'Error in ' . __FUNCTION__ . ': ' . $e->getMessage(), 'File: ' . $file );

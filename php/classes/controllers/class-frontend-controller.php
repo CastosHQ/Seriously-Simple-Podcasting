@@ -4,6 +4,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Entities\Castos_File_Data;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Traits\Logger;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 use WP_Term;
@@ -22,6 +23,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since       1.0
  */
 class Frontend_Controller {
+
+	use Logger;
 
 	use Useful_Variables;
 
@@ -770,11 +773,15 @@ class Frontend_Controller {
 				// Do we have anything in Cache/DB?
 				$size = wp_cache_get( $episode_id, 'filesize_raw' );
 
+				$this->log( __METHOD__ . ': Cached size: ' . $size );
+
 				// Nothing in the cache, let's see if we can figure it out.
 				if ( false === $size ) {
 
 					// Do we have anything in post_meta?
 					$size = get_post_meta( $episode_id, 'filesize_raw', true );
+
+					$this->log( __METHOD__ . ': Size raw: ' . $size );
 
 					if ( empty( $size ) ) {
 
@@ -783,6 +790,7 @@ class Frontend_Controller {
 
 						if ( ! empty( $attachment_id )  ) {
 							$size = filesize( get_attached_file( $attachment_id ) );
+							$this->log( __METHOD__ . ': Estimated size: ' . $size );
 							update_post_meta( $episode_id, 'filesize_raw', $size );
 						}
 
@@ -791,6 +799,8 @@ class Frontend_Controller {
 					// Update the cache
 					wp_cache_set( $episode_id, $size, 'filesize_raw' );
 				}
+
+				$size = get_post_meta( $episode_id, 'filesize_raw', true );
 
 				// Send Content-Length header
 				if ( ! empty( $size ) ) {

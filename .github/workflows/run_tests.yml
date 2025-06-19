@@ -88,6 +88,7 @@ jobs:
           wp core update-db --allow-root
           wp theme activate twentytwentyfour --allow-root
           wp plugin install classic-editor --allow-root
+          curl -I http://localhost:8000/wp-login.php
           vendor/bin/codecept run acceptance --steps
 
       - name: Upload codeception output on failure

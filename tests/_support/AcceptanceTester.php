@@ -353,6 +353,17 @@ class AcceptanceTester extends \Codeception\Actor {
 	}
 
 	/**
+	 * @When I uncheck :arg1 checkbox
+	 */
+	public function iUncheckArgCheckbox( $arg1 ) {
+		$map = $this->getFieldsMap();
+
+		assertTrue( array_key_exists( $arg1, $map ) );
+
+		$this->uncheckOption( $map[ $arg1 ] );
+	}
+
+	/**
 	 * @When I check checkbox with :arg1 label
 	 */
 	public function iCheckCheckboxWithLabel( $arg1 ) {

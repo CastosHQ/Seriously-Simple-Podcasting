@@ -241,7 +241,7 @@ class Castos_Blocks {
 			true
 		);
 
-		$itunes_enabled    = get_option( 'ss_podcasting_itunes_fields_enabled' );
+		$itunes_enabled    = ssp_get_option( 'itunes_fields_enabled', 'on' );
 
 		wp_localize_script( 'ssp-block-script', 'sspAdmin', array(
 			'sspPostTypes' => ssp_post_types(true, false),

@@ -26,7 +26,7 @@ return array(
 			'label'       => __( 'Enable iTunes fields ', 'seriously-simple-podcasting' ),
 			'description' => __( 'Turn this on to enable the iTunes iOS11 specific fields on each episode.', 'seriously-simple-podcasting' ),
 			'type'        => 'checkbox',
-			'default'     => '',
+			'default'     => 'on',
 		),
 		array(
 			// After 2.14.0, we renamed Series to Podcasts

@@ -142,7 +142,7 @@ class CPT_Podcast_Handler implements Service {
 	 * @return array Custom fields
 	 */
 	public function custom_fields( $all = false ) {
-		$itunes_fields_enabled = get_option( 'ss_podcasting_itunes_fields_enabled' );
+		$itunes_fields_enabled = ssp_get_option( 'itunes_fields_enabled', 'on' );
 		$is_itunes_fields_enabled = $itunes_fields_enabled && ( $itunes_fields_enabled === 'on' );
 		$fields                   = array();
 		$is_connected_to_castos = ssp_is_connected_to_castos();

@@ -354,7 +354,7 @@ class Feed_Controller {
 		$itunes_subtitle = $this->feed_handler->get_feed_item_itunes_subtitle( $description, $post_id );
 		$pub_date        = $this->feed_handler->get_feed_item_pub_date( $pub_date_type, $post_id );
 
-		$itunes_enabled    = get_option( 'ss_podcasting_itunes_fields_enabled' );
+		$itunes_enabled    = ssp_get_option( 'itunes_fields_enabled', 'on' );
 		$is_itunes_enabled = $itunes_enabled && $itunes_enabled == 'on';
 		// New iTunes WWDC 2017 Tags.
 		$itunes_episode_type   = $is_itunes_enabled ? get_post_meta( $post_id, 'itunes_episode_type', true ) : '';

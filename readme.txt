@@ -97,7 +97,7 @@ Feature embedded video players within any podcast post.
 Understand how your podcast is performing with our free Seriously Simple Stats add-on.
 
 - Install [Seriously Simple Stats](https://wordpress.org/plugins/seriously-simple-stats/) to access listener statistics for free. Track total listens per episode, by date range, and by listening sources.
-- Connect 3rd party analytics platforms like Podtrac or Chartable.
+- Connect 3rd party analytics platforms like Podtrac.
 - With Castos, view advanced analytics by geographic location, device, and listening platform plus total unique subscribers. Also access your Spotify-specific data from your dashboard for a holistic view of your podcast’s performance.
 
 ***SIMPLIFIED IMPORTS, MIGRATIONS, AND REDIRECTS***

@@ -281,7 +281,7 @@ class Feed_Controller {
 	 *  @type bool $is_excerpt_mode Use excerpt mode or not.
 	 *  @type string $pub_date_type Date type.
 	 *  @type int|null $turbo_post_count Feed items counter.
-	 *  @type string $media_prefix Prefix for Podtrac, Chartable, and other tracking services.
+	 *  @type string $media_prefix Prefix for Podtrac and other tracking services.
 	 * }
 	 *
 	 * @return string

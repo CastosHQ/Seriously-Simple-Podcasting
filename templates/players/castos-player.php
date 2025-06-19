@@ -80,8 +80,8 @@
 									<span class="screen-reader-text"><?php esc_attr_e( 'Rewind 10 Seconds', 'seriously-simple-podcasting' ) ?></span>
 								</button>
 								<button data-speed="1" class="player-btn player-btn__speed" title="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>">1x</button>
-								<button data-skip="10" class="player-btn player-btn__fwd" title="<?php esc_attr_e( 'Fast Forward 10 seconds', 'seriously-simple-podcasting' ) ?>">
-									<span class="screen-reader-text"><?php esc_attr_e( 'Fast Forward 10 seconds', 'seriously-simple-podcasting' ) ?></span>
+								<button data-skip="30" class="player-btn player-btn__fwd" title="<?php esc_attr_e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?>">
+									<span class="screen-reader-text"><?php esc_attr_e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?></span>
 								</button>
 							</div>
 							<div class="playback__timers">

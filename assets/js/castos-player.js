@@ -436,7 +436,7 @@ docReady(function() {
 
 				if ( 'ArrowRight' === e.code ) {
 					e.preventDefault();
-					audio.currentTime += 10;
+					audio.currentTime += 30;
 				} else if ( 'ArrowLeft' === e.code ) {
 					e.preventDefault();
 					audio.currentTime -= 10;

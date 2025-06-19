@@ -21,8 +21,7 @@ Feature: Create new episode
 		And I can see "Enable iTunes fields"
 		Then I uncheck "Enable iTunes fields" checkbox
 		And I save settings
-
-		When I click "Podcast" submenu "Add New Episode"
+		And I click "Podcast" submenu "Add New Episode"
 		Then I can see "Add New Episode"
 		And I can not see "iTunes Episode Number:"
 		And I can not see "The iTunes Episode Number. Leave Blank If None."
@@ -31,3 +30,14 @@ Feature: Create new episode
 		And I can not see "The iTunes Season Number. Leave Blank If None."
 		And I can not see "iTunes Episode Type:"
 
+		When I click "Podcast" submenu "Settings"
+		And I check "Enable iTunes fields" checkbox
+		And I save settings
+		And I click "Podcast" submenu "Add New Episode"
+		Then I can see "Add New Episode"
+		And I can see "iTunes Episode Number:"
+		And I can see "The iTunes Episode Number. Leave Blank If None."
+		And I can see "The iTunes Episode Title. NO Podcast / Show Number Should Be Included."
+		And I can see "iTunes Season Number:"
+		And I can see "The iTunes Season Number. Leave Blank If None."
+		And I can see "iTunes Episode Type:"

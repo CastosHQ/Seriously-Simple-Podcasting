@@ -21,7 +21,7 @@ $img_name = $data_image ? pathinfo( $data_image, PATHINFO_BASENAME ) : '';
 				<label for="ss_podcasting_data_image_button" class="description">
 					<?php _e( 'Image must be JPG or PNG format and between 1400 x 1400px and 3000 x 3000px.', 'seriously-simple-podcasting' ); ?>
 				</label>
-				<input id="ss_podcasting_data_image_button" type="hidden" class="button" value="Upload new image">
+				<input id="ss_podcasting_data_image_button" data-field="js-onboarding-img-val" data-preview="js-onboarding-img" type="hidden" class="button" value="Upload new image">
 
 				<div class="ssp-onboarding__dragable js-onboarding-dragable">
 					<span><?php _e( 'Upload image', 'seriously-simple-podcasting' ); ?>...</span>

@@ -993,7 +993,7 @@ class Podcast_Post_Types_Controller {
 		switch ( $column_name ) {
 			case 'ssp_cover':
 				$value = ssp_episode_image( $post_id, 40 );
-				$value = $value ?: '<span aria-hidden="true">—</span>';
+				$value = $value ?: '<span aria-hidden="true" class="no-image"></span>';
 				break;
 
 			case 'ssp_sync_status':

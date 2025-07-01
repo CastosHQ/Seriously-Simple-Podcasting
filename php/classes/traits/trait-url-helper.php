@@ -28,6 +28,12 @@ trait URL_Helper {
 	}
 
 	protected function is_ssp_post_page() {
-		return in_array( get_current_screen()->post_type, ssp_post_types() );
+
+		$current_screen = get_current_screen();
+		if( ! $current_screen ) {
+			return false;
+		}
+
+		return in_array( $current_screen->post_type, ssp_post_types() );
 	}
 }

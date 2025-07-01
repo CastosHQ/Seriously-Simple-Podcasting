@@ -426,9 +426,14 @@ textarea#episode_embed_code {
     font-weight: 600; }
     .ssp-admin .button:hover, .ssp-admin .button-secondary:hover {
       color: #9351ef;
-      border-color: #9351ef; }
+      border-color: #9351ef;
+      background: #f9f5fe; }
   .ssp-admin .button-secondary {
     font-weight: 500; }
+  .ssp-admin .striped > tbody > :nth-child(odd), .ssp-admin ul.striped > :nth-child(odd), .ssp-admin .alternate {
+    background-color: #F1F5F9; }
+  .ssp-admin .notice-info {
+    border-left-color: #853AED; }
   .ssp-admin select {
     appearance: none;
     -webkit-appearance: none;
@@ -454,6 +459,12 @@ textarea#episode_embed_code {
     height: 20px;
     accent-color: #0073aa !important;
     /* new in modern browsers */ }
+  .ssp-admin .no-image {
+    background: url("../img/no-image.svg") no-repeat center center;
+    background-size: contain;
+    width: 40px;
+    height: 40px;
+    display: inline-block; }
 
 /* latin-ext */
 @font-face {

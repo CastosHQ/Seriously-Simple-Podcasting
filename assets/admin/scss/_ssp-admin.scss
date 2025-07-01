@@ -82,11 +82,21 @@
 		&:hover {
 			color: lighten($clr_purple_600, 5%);
 			border-color: lighten($clr_purple_600, 5%);
+			background: lighten($clr_purple_600, 40%);
 		}
 	}
 
 	.button-secondary {
 		font-weight: 500;
+	}
+
+
+	.striped > tbody > :nth-child(odd), ul.striped > :nth-child(odd), .alternate {
+		background-color: $clr_gray_100;
+	}
+
+	.notice-info {
+		border-left-color: $clr_purple_600;
 	}
 
 	select {
@@ -119,5 +129,13 @@
 		width: 20px;
 		height: 20px;
 		accent-color: #0073aa !important;  /* new in modern browsers */
+	}
+
+	.no-image {
+		background: url('../img/no-image.svg') no-repeat center center;
+		background-size: contain;
+		width: 40px;
+		height: 40px;
+		display: inline-block;
 	}
 }

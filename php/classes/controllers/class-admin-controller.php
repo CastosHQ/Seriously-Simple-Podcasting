@@ -38,11 +38,11 @@ class Admin_Controller {
 	 *
 	 */
 	public function __construct( $renderer, $castos_handler ) {
-		$this->init_useful_variables();
-		$this->register_hooks();
-
 		$this->renderer = $renderer;
 		$this->castos_handler = $castos_handler;
+
+		$this->init_useful_variables();
+		$this->register_hooks();
 	}
 
 	/**

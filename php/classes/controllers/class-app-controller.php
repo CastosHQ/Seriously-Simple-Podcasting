@@ -301,7 +301,7 @@ class App_Controller {
 			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}
 
-		$this->admin_controller              = new Admin_Controller( $this->renderer );
+		$this->admin_controller              = new Admin_Controller( $this->renderer, $this->castos_handler );
 		$this->players_controller            = new Players_Controller( $this->renderer, $this->options_handler, $this->episode_repository );
 		$this->podcast_post_types_controller = new Podcast_Post_Types_Controller(
 			$this->cpt_podcast_handler,

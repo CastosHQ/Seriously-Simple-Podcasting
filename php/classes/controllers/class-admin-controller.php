@@ -2,6 +2,7 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
+use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Traits\URL_Helper;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
@@ -28,14 +29,20 @@ class Admin_Controller {
 	public $renderer;
 
 	/**
+	 * @var Castos_Handler
+	 */
+	private $castos_handler;
+
+	/**
 	 * Admin_Controller constructor.
 	 *
 	 */
-	public function __construct( $renderer ) {
+	public function __construct( $renderer, $castos_handler ) {
 		$this->init_useful_variables();
 		$this->register_hooks();
 
 		$this->renderer = $renderer;
+		$this->castos_handler = $castos_handler;
 	}
 
 	/**
@@ -105,6 +112,9 @@ class Admin_Controller {
 			return;
 		}
 
-		$this->renderer->render('admin/ssp-info-section');
+		$me = $this->castos_handler->me();
+		$plan = $me['plan'] ?? '';
+
+		$this->renderer->render('admin/ssp-info-section', compact('plan'));
 	}
 }

@@ -232,64 +232,13 @@ class Castos_Handler implements Service {
 	 *
 	 * @return array
 	 */
-	public function validate_api_credentials( $account_api_token = '', $account_email = '' ) {
-
-		$this->setup_default_response();
-
-		if ( empty( $account_api_token ) || empty( $account_email ) ) {
-			$this->update_response( 'message', 'Invalid API Token or email.' );
-
-			return $this->response;
+	public function me() {
+		try {
+			$res = $this->send_request( '/api/v2/' );
+			return $res;
+		} catch (\Exception $e){
+			return false;
 		}
-
-		/**
-		 * Clear out existing values
-		 */
-		$this->remove_api_credentials();
-
-		$api_url = SSP_CASTOS_APP_URL . 'api/v2/users/validate';
-
-		$this->logger->log( 'Validate Credentials : API URL', $api_url );
-
-		$api_payload = array(
-			'timeout' => 45,
-			'body' => array(
-				'api_token' => $account_api_token,
-				'email' => $account_email,
-				'website' => get_home_url(),
-			),
-		);
-
-		$this->logger->log( 'Validate Credentials : Api Payload', $api_payload );
-
-		$app_response = wp_remote_get( $api_url, $api_payload );
-
-		$this->logger->log( 'Validate Credentials : App Response', $app_response );
-
-		if ( is_wp_error( $app_response ) ) {
-			$this->update_response( 'message', 'An error occurred connecting to the server for validation.' );
-
-			return $this->response;
-		}
-
-		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-
-		if ( empty( $response_object ) ) {
-			$this->update_response( 'message', 'An error occurred retrieving the credential validation.' );
-
-			return $this->response;
-		}
-
-		if ( ! $response_object->success ) {
-			$this->update_response( 'message', 'An error occurred validating the credentials.' );
-
-			return $this->response;
-		}
-
-		$this->update_response( 'status', 'success' );
-		$this->update_response( 'message', 'API Credentials Validated.' );
-
-		return $this->response;
 	}
 
 	public function trigger_podcast_sync( $series_id ) {

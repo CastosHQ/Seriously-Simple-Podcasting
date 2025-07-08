@@ -93,6 +93,19 @@
 
 	.striped > tbody > :nth-child(odd), ul.striped > :nth-child(odd), .alternate {
 		background-color: $clr_gray_100;
+
+		.check-column label:hover, .check-column input:hover + label {
+			background: darken( $clr_gray_100, 2%);
+		}
+	}
+
+	.widefat .check-column {
+		width: 3em;
+	}
+
+	.check-column label:hover, .check-column input:hover + label {
+		background: lighten( $clr_gray_100, 1%);
+		transition: .3s;
 	}
 
 	.notice-info {
@@ -121,6 +134,17 @@
 		font-weight: 500;
 	}
 
+	input[type="checkbox"] {
+		width: 20px;
+		height: 20px;
+
+		&:checked {
+			&:before {
+				width: 24px;
+			}
+		}
+	}
+
 	input, table.widefat, .widefat thead td, .widefat thead th {
 		border-color: $clr_gray_300;
 	}
@@ -137,5 +161,134 @@
 		width: 40px;
 		height: 40px;
 		display: inline-block;
+	}
+
+	.wrap {
+		margin-right: 80px;
+	}
+
+	#screen-meta-links {
+		margin-right: 80px;
+	}
+
+	.nav-tab {
+		background: #eaedf1;
+		color: #8b5ec9;
+
+		&-active {
+			background: #f1f5f9;
+			color: $clr_purple_600;
+		}
+	}
+
+	#ssp-settings-submit {
+		color: $clr_white;
+		background: $clr_purple_600;
+		border-color: $clr_purple_600;
+		transition: 0.3s;
+		font-weight: bold;
+		border-radius: 6px;
+		font-size: 14px;
+		padding: 2px 18px;
+		&:hover {
+			color: $clr_white;
+			background: lighten( $clr_purple_600, 5% );
+		}
+	}
+}
+
+.ssp-admin-header {
+	display: flex;
+	width: calc( 100% + 20px );
+	height: 100px;
+	background: linear-gradient(to bottom, #F6F3FF 0%, #EFE9FEC4 77%);
+	margin-left: -20px;
+
+	&__container {
+		display: flex;
+		margin: 0 80px 0 20px;
+		align-items: center;
+		justify-content: space-between;
+		width: 100%;
+	}
+
+	&__logo {
+		display: flex;
+		align-items: center;
+		&-text {
+			margin-left: 10px;
+			display: flex;
+			flex-direction: column;
+			height: 50px;
+			justify-content: space-between;
+
+			span {
+				font-family: Inter, sans-serif;
+				font-size: 20px;
+				font-weight: 600;
+				color: $clr_purple_900;
+			}
+
+			a {
+				font-family: Inter, sans-serif;
+				font-size: 11px;
+				font-weight: 500;
+				color: $clr_white;
+				text-decoration: none;
+				transition: 0.2s;
+				background-color: $clr_purple_900;
+				letter-spacing: -2%;
+				align-self: flex-start;
+				text-transform: uppercase;
+				padding: 3px 10px 3px 8px;
+				border-radius: 4px;
+
+				&:hover {
+					color: lighten( $clr_purple_600, 30% );
+				}
+
+				&:after {
+					content: url('../img/logo-arrow-up.svg');
+					display: inline-block;
+					width: 10px;
+					height: 10px;
+					margin-left: 2px;
+					position: relative;
+					top: 2px;
+				}
+			}
+		}
+	}
+
+	&__info {
+		display: flex;
+		gap: 20px;
+		align-items: center;
+
+		&-plan {
+			font-family: Inter, sans-serif;
+			font-weight: 500;
+			font-size: 14px;
+			line-height: 20px;
+			color: $clr_purple_700;
+		}
+
+		&-upgrade {
+			a {
+				font-family: Inter, sans-serif;
+				font-weight: 600;
+				font-size: 14px;
+				border-radius: 8px;
+				padding: 9px 17px;
+				background: $clr_purple_600;
+				color: $clr_white;
+				text-decoration: none;
+				transition: .3s;
+				&:hover {
+					color: $clr_white;
+					background: lighten( $clr_purple_600, 5% );
+				}
+			}
+		}
 	}
 }

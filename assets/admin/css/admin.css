@@ -432,6 +432,13 @@ textarea#episode_embed_code {
     font-weight: 500; }
   .ssp-admin .striped > tbody > :nth-child(odd), .ssp-admin ul.striped > :nth-child(odd), .ssp-admin .alternate {
     background-color: #F1F5F9; }
+    .ssp-admin .striped > tbody > :nth-child(odd) .check-column label:hover, .ssp-admin .striped > tbody > :nth-child(odd) .check-column input:hover + label, .ssp-admin ul.striped > :nth-child(odd) .check-column label:hover, .ssp-admin ul.striped > :nth-child(odd) .check-column input:hover + label, .ssp-admin .alternate .check-column label:hover, .ssp-admin .alternate .check-column input:hover + label {
+      background: #eaf0f6; }
+  .ssp-admin .widefat .check-column {
+    width: 3em; }
+  .ssp-admin .check-column label:hover, .ssp-admin .check-column input:hover + label {
+    background: #f5f8fb;
+    transition: .3s; }
   .ssp-admin .notice-info {
     border-left-color: #853AED; }
   .ssp-admin select {
@@ -452,6 +459,11 @@ textarea#episode_embed_code {
     font-weight: 500; }
     .ssp-admin select:hover {
       color: #853AED; }
+  .ssp-admin input[type="checkbox"] {
+    width: 20px;
+    height: 20px; }
+    .ssp-admin input[type="checkbox"]:checked:before {
+      width: 24px; }
   .ssp-admin input, .ssp-admin table.widefat, .ssp-admin .widefat thead td, .ssp-admin .widefat thead th {
     border-color: #CBD5E1; }
   .ssp-admin .manage-column input[type="checkbox"] {
@@ -465,6 +477,101 @@ textarea#episode_embed_code {
     width: 40px;
     height: 40px;
     display: inline-block; }
+  .ssp-admin .wrap {
+    margin-right: 80px; }
+  .ssp-admin #screen-meta-links {
+    margin-right: 80px; }
+  .ssp-admin .nav-tab {
+    background: #eaedf1;
+    color: #8b5ec9; }
+    .ssp-admin .nav-tab-active {
+      background: #f1f5f9;
+      color: #853AED; }
+  .ssp-admin #ssp-settings-submit {
+    color: #FFFFFF;
+    background: #853AED;
+    border-color: #853AED;
+    transition: 0.3s;
+    font-weight: bold;
+    border-radius: 6px;
+    font-size: 14px;
+    padding: 2px 18px; }
+    .ssp-admin #ssp-settings-submit:hover {
+      color: #FFFFFF;
+      background: #9351ef; }
+
+.ssp-admin-header {
+  display: flex;
+  width: calc( 100% + 20px);
+  height: 100px;
+  background: linear-gradient(to bottom, #F6F3FF 0%, #EFE9FEC4 77%);
+  margin-left: -20px; }
+  .ssp-admin-header__container {
+    display: flex;
+    margin: 0 80px 0 20px;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%; }
+  .ssp-admin-header__logo {
+    display: flex;
+    align-items: center; }
+    .ssp-admin-header__logo-text {
+      margin-left: 10px;
+      display: flex;
+      flex-direction: column;
+      height: 50px;
+      justify-content: space-between; }
+      .ssp-admin-header__logo-text span {
+        font-family: Inter, sans-serif;
+        font-size: 20px;
+        font-weight: 600;
+        color: #4A1B89; }
+      .ssp-admin-header__logo-text a {
+        font-family: Inter, sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        color: #FFFFFF;
+        text-decoration: none;
+        transition: 0.2s;
+        background-color: #4A1B89;
+        letter-spacing: -2%;
+        align-self: flex-start;
+        text-transform: uppercase;
+        padding: 3px 10px 3px 8px;
+        border-radius: 4px; }
+        .ssp-admin-header__logo-text a:hover {
+          color: #dcc6fa; }
+        .ssp-admin-header__logo-text a:after {
+          content: url("../img/logo-arrow-up.svg");
+          display: inline-block;
+          width: 10px;
+          height: 10px;
+          margin-left: 2px;
+          position: relative;
+          top: 2px; }
+  .ssp-admin-header__info {
+    display: flex;
+    gap: 20px;
+    align-items: center; }
+    .ssp-admin-header__info-plan {
+      font-family: Inter, sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      line-height: 20px;
+      color: #6C25D0; }
+    .ssp-admin-header__info-upgrade a {
+      font-family: Inter, sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      border-radius: 8px;
+      padding: 9px 17px;
+      background: #853AED;
+      color: #FFFFFF;
+      text-decoration: none;
+      transition: .3s; }
+      .ssp-admin-header__info-upgrade a:hover {
+        color: #FFFFFF;
+        background: #9351ef; }
 
 /* latin-ext */
 @font-face {

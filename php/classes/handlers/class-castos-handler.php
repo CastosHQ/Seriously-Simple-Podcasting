@@ -71,6 +71,11 @@ class Castos_Handler implements Service {
 	 * */
 	protected $cached_podcast_statuses;
 
+	/**
+	 * @var array $cached_responses
+	 * */
+	protected $cached_responses;
+
 
 	/**
 	 * Castos_Handler constructor.
@@ -207,7 +212,7 @@ class Castos_Handler implements Service {
 				return $email;
 			}
 
-			$res = $this->send_request( 'api/v2/' );
+			$res = $this->me();
 
 			$email = isset( $res['email'] ) ? $res['email'] : '';
 
@@ -234,7 +239,7 @@ class Castos_Handler implements Service {
 	 */
 	public function me() {
 		try {
-			$res = $this->send_request( '/api/v2/' );
+			$res = $this->send_request( 'api/v2/' );
 			return $res;
 		} catch (\Exception $e){
 			return false;
@@ -1002,6 +1007,11 @@ class Castos_Handler implements Service {
 	 * @throws Exception
 	 */
 	protected function send_request( $api_url, $args = array(), $method = 'GET' ) {
+		// If we already sent this request, return cached response.
+		$args_hash = md5( serialize( $args ) );
+		if ( isset( $this->cached_responses[ $method ][ $api_url ][ $args_hash ] ) ) {
+			return $this->cached_responses[ $method ][ $api_url ][ $args_hash ];
+		}
 
 		$token = apply_filters( 'ssp_castos_api_token', $this->api_token(), $api_url, $args, $method );
 
@@ -1011,7 +1021,7 @@ class Castos_Handler implements Service {
 
 		$this->setup_default_response();
 
-		$api_url = SSP_CASTOS_APP_URL . $api_url;
+		$full_api_url = trailingslashit( SSP_CASTOS_APP_URL ) . ltrim( $api_url, '/' );
 
 		$this->logger->log( sprintf( 'Sending %s request to: ', $method ), compact( 'api_url', 'args', 'method' ) );
 
@@ -1024,7 +1034,7 @@ class Castos_Handler implements Service {
 		$body = array_merge( $default_args, $args );
 
 		$app_response = wp_remote_request(
-			$api_url,
+			$full_api_url,
 			array(
 				'timeout' => self::TIMEOUT,
 				'method' => $method,
@@ -1034,6 +1044,8 @@ class Castos_Handler implements Service {
 				),
 			)
 		);
+
+		$this->cached_responses[ $method ][ $api_url ][ $args_hash ] = $app_response;
 
 		$this->logger->log( 'Response:', $app_response );
 

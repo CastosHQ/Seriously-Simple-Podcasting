@@ -237,12 +237,12 @@ class Castos_Handler implements Service {
 	 *
 	 * @return array
 	 */
-	public function me() {
+	public function me(): ?array {
 		try {
 			$res = $this->send_request( 'api/v2/' );
 			return $res;
 		} catch (\Exception $e){
-			return false;
+			return null;
 		}
 	}
 
@@ -1006,7 +1006,7 @@ class Castos_Handler implements Service {
 	 * @return array Response object or the default errors array.
 	 * @throws Exception
 	 */
-	protected function send_request( $api_url, $args = array(), $method = 'GET' ) {
+	protected function send_request( $api_url, $args = array(), $method = 'GET' ): ?array {
 		// If we already sent this request, return cached response.
 		$args_hash = md5( serialize( $args ) );
 		if ( isset( $this->cached_responses[ $method ][ $api_url ][ $args_hash ] ) ) {
@@ -1045,8 +1045,6 @@ class Castos_Handler implements Service {
 			)
 		);
 
-		$this->cached_responses[ $method ][ $api_url ][ $args_hash ] = $app_response;
-
 		$this->logger->log( 'Response:', $app_response );
 
 		if ( is_wp_error( $app_response ) ) {
@@ -1067,6 +1065,8 @@ class Castos_Handler implements Service {
 		if ( 400 === $res['code'] && isset( $res['message'] ) && strpos( $res['message'], 'disconnected' ) ) {
 			$this->disconnect( $res['message'] );
 		}
+
+		$this->cached_responses[ $method ][ $api_url ][ $args_hash ] = $res;
 
 		return $res;
 	}

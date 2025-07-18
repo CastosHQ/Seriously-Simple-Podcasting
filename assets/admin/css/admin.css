@@ -559,19 +559,23 @@ textarea#episode_embed_code {
       font-size: 14px;
       line-height: 20px;
       color: #6C25D0; }
-    .ssp-admin-header__info-upgrade a {
-      font-family: Inter, sans-serif;
-      font-weight: 600;
-      font-size: 14px;
-      border-radius: 8px;
-      padding: 9px 17px;
-      background: #853AED;
-      color: #FFFFFF;
-      text-decoration: none;
-      transition: .3s; }
-      .ssp-admin-header__info-upgrade a:hover {
+    .ssp-admin-header__info-buttons {
+      display: flex;
+      gap: 6px; }
+      .ssp-admin-header__info-buttons a {
+        display: flex;
+        font-family: Inter, sans-serif;
+        font-weight: 600;
+        font-size: 14px;
+        border-radius: 8px;
+        padding: 9px 17px;
+        background: #853AED;
         color: #FFFFFF;
-        background: #9351ef; }
+        text-decoration: none;
+        transition: .3s; }
+        .ssp-admin-header__info-buttons a:hover {
+          color: #FFFFFF;
+          background: #9351ef; }
 
 /* latin-ext */
 @font-face {

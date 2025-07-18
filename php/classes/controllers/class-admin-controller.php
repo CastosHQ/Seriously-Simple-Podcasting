@@ -36,9 +36,11 @@ class Admin_Controller {
 	/**
 	 * Admin_Controller constructor.
 	 *
+	 * @param Renderer       $renderer       Renderer instance for rendering views.
+	 * @param Castos_Handler $castos_handler Handler for Castos API interactions.
 	 */
 	public function __construct( $renderer, $castos_handler ) {
-		$this->renderer = $renderer;
+		$this->renderer       = $renderer;
 		$this->castos_handler = $castos_handler;
 
 		$this->init_useful_variables();
@@ -49,7 +51,7 @@ class Admin_Controller {
 	 * Register all relevant front end hooks and filters
 	 */
 	public function register_hooks() {
-		add_action( 'in_admin_header', [ $this, 'render_ssp_info_section' ]);
+		add_action( 'in_admin_header', [ $this, 'render_ssp_info_section' ] );
 		add_action( 'current_screen', [ $this, 'disable_notices' ], 99 );
 	}
 
@@ -65,19 +67,22 @@ class Admin_Controller {
 			return;
 		}
 
-		add_action( 'admin_enqueue_scripts', function () {
-			$this->remove_notice_actions();
-		} );
+		add_action(
+            'admin_enqueue_scripts',
+            function () {
+				$this->remove_notice_actions();
+			}
+        );
 	}
 
 	/**
 	 * Remove all admin notices except the priority 12 that is used by SSP.
 	 *
-	 * @param $except_priority
+	 * @param int $except_priority Priority to exclude from removal. Default is 12.
 	 *
 	 * @return void
 	 */
-	protected function remove_notice_actions( $except_priority = 12 ){
+	protected function remove_notice_actions( $except_priority = 12 ) {
 		// Remove all admin notices except SSP that uses 12 priority level.
 		$priorities = range( 1, 99 );
 		foreach ( $priorities as $priority ) {
@@ -95,11 +100,11 @@ class Admin_Controller {
 	 */
 	protected function is_ssp_podcast_page() {
 		$current_screen = get_current_screen();
-		if( ! $current_screen ) {
+		if ( ! $current_screen ) {
 			return false;
 		}
 
-		return in_array( $current_screen->post_type, [ SSP_CPT_PODCAST ] );
+		return in_array( $current_screen->post_type, [ SSP_CPT_PODCAST ], true );
 	}
 
 	/**
@@ -112,9 +117,15 @@ class Admin_Controller {
 			return;
 		}
 
-		$me = $this->castos_handler->me();
-		$plan = $me['plan'] ?? '';
+		$is_connected = ssp_is_connected_to_castos();
 
-		$this->renderer->render('admin/ssp-info-section', compact('plan'));
+		if ( $is_connected ) {
+			$me   = $this->castos_handler->me();
+			$plan = $me['plan'] ?? '';
+		} else {
+			$plan = '';
+		}
+
+		$this->renderer->render( 'admin/ssp-info-section', compact( 'plan', 'is_connected' ) );
 	}
 }

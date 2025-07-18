@@ -273,8 +273,12 @@
 			color: $clr_purple_700;
 		}
 
-		&-upgrade {
+		&-buttons {
+			display: flex;
+			gap: 6px;
+
 			a {
+				display: flex;
 				font-family: Inter, sans-serif;
 				font-weight: 600;
 				font-size: 14px;
@@ -284,6 +288,7 @@
 				color: $clr_white;
 				text-decoration: none;
 				transition: .3s;
+				
 				&:hover {
 					color: $clr_white;
 					background: lighten( $clr_purple_600, 5% );

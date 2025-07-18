@@ -4,7 +4,9 @@
  *
  * @var string $title
  * @var string $plan
+ * @var bool $is_connected
  * */
+
 ?>
 <div class="ssp-admin-header">
 	<div class="ssp-admin-header__container">
@@ -20,22 +22,33 @@
 			<div class="ssp-admin-header__logo-text">
 				<span class="ssp-admin-header__logo-title">Seriously Simple Podcasting</span>
 				<a target="_blank" rel="noopener" class="ssp-admin-header__logo-button" href="https://castos.com/">
-					<?php _e( 'By Castos', 'seriously-simple-podcasting' ); ?>
+					<?php esc_html_e( 'By Castos', 'seriously-simple-podcasting' ); ?>
 				</a>
 			</div>
 		</div>
 		<div class="ssp-admin-header__info">
 			<div class="ssp-admin-header__info-plan">
-				<?php echo $plan ? esc_html( $plan ) : __('Free version', 'seriously-simple-podcasting') ?>
+				<?php if ( $is_connected ) : ?>
+					<?php echo $plan ? esc_html( $plan ) : esc_html( __( 'Connected', 'seriously-simple-podcasting' ) ); ?>
+				<?php else : ?>
+					<?php esc_html_e( 'Free version', 'seriously-simple-podcasting' ); ?>
+				<?php endif; ?>
 			</div>
-			<div class="ssp-admin-header__info-upgrade">
-				<?php if( $plan ): ?>
-					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL  . 'podcasts' ) ?>"><?php // Todo: Do we need get parameters? ?>
-						<?php _e( 'Manage Account', 'seriously-simple-podcasting' ); ?>
+
+			<div class="ssp-admin-header__info-buttons">
+				<?php if ( $plan ) : ?>
+					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'podcasts' ); ?>">
+						<?php esc_html_e( 'Manage Account', 'seriously-simple-podcasting' ); ?>
 					</a>
-				<?php else: ?>
-					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL  . 'pricing' ) ?>"><?php // Todo: Do we need get parameters? ?>
-						<?php _e( 'Upgrade', 'seriously-simple-podcasting' ); ?>
+					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'analytics?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
+						<?php esc_html_e( 'View Analytics', 'seriously-simple-podcasting' ); ?>
+					</a>
+				<?php else : ?>
+					<a target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/pricing?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
+						<?php esc_html_e( 'Upgrade', 'seriously-simple-podcasting' ); ?>
+					</a>
+					<a target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/analytics?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
+						<?php esc_html_e( 'Start Analytics', 'seriously-simple-podcasting' ); ?>
 					</a>
 				<?php endif; ?>
 

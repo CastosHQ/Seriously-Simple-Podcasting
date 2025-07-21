@@ -460,17 +460,30 @@ textarea#episode_embed_code {
     .ssp-admin select:hover {
       color: #853AED; }
   .ssp-admin input[type="checkbox"] {
-    width: 20px;
-    height: 20px; }
+    width: 18px;
+    height: 18px; }
     .ssp-admin input[type="checkbox"]:checked:before {
-      width: 24px; }
+      width: 22px;
+      content: url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%23853AED%27%2F%3E%3C%2Fsvg%3E); }
+  .ssp-admin input[type="text"]:focus, .ssp-admin input[type="password"]:focus, .ssp-admin input[type="color"]:focus,
+  .ssp-admin input[type="date"]:focus, .ssp-admin input[type="datetime"]:focus, .ssp-admin input[type="datetime-local"]:focus,
+  .ssp-admin input[type="email"]:focus, .ssp-admin input[type="month"]:focus, .ssp-admin input[type="number"]:focus,
+  .ssp-admin input[type="search"]:focus, .ssp-admin input[type="tel"]:focus, .ssp-admin input[type="time"]:focus,
+  .ssp-admin input[type="url"]:focus, .ssp-admin input[type="week"]:focus, .ssp-admin input[type="checkbox"]:focus,
+  .ssp-admin input[type="radio"]:focus, .ssp-admin select:focus, .ssp-admin textarea:focus {
+    border-color: #853AED;
+    box-shadow: 0 0 0 1px #a269f1;
+    outline: 1px solid transparent; }
+  .ssp-admin input[type="radio"]:checked::before {
+    content: "";
+    border-radius: 50%;
+    width: 0.5rem;
+    height: 0.5rem;
+    margin: 0.1875rem;
+    background-color: #853AED;
+    line-height: 1.14285714; }
   .ssp-admin input, .ssp-admin table.widefat, .ssp-admin .widefat thead td, .ssp-admin .widefat thead th {
     border-color: #CBD5E1; }
-  .ssp-admin .manage-column input[type="checkbox"] {
-    width: 20px;
-    height: 20px;
-    accent-color: #0073aa !important;
-    /* new in modern browsers */ }
   .ssp-admin .no-image {
     background: url("../img/no-image.svg") no-repeat center center;
     background-size: contain;
@@ -483,14 +496,14 @@ textarea#episode_embed_code {
     margin-right: 80px; }
   .ssp-admin .nav-tab {
     background: #eaedf1;
-    color: #8b5ec9; }
+    color: #853AED; }
     .ssp-admin .nav-tab-active {
       background: #f1f5f9;
       color: #853AED; }
   .ssp-admin #ssp-settings-submit {
     color: #FFFFFF;
-    background: #853AED;
-    border-color: #853AED;
+    background: #6C25D0;
+    border-color: #6C25D0;
     transition: 0.3s;
     font-weight: bold;
     border-radius: 6px;
@@ -498,7 +511,7 @@ textarea#episode_embed_code {
     padding: 2px 18px; }
     .ssp-admin #ssp-settings-submit:hover {
       color: #FFFFFF;
-      background: #9351ef; }
+      background: #7934db; }
 
 .ssp-admin-header {
   display: flex;
@@ -569,13 +582,15 @@ textarea#episode_embed_code {
         font-size: 14px;
         border-radius: 8px;
         padding: 9px 17px;
-        background: #853AED;
+        background: #6C25D0;
         color: #FFFFFF;
         text-decoration: none;
         transition: .3s; }
         .ssp-admin-header__info-buttons a:hover {
           color: #FFFFFF;
-          background: #9351ef; }
+          background: #7934db; }
+  .ssp-admin-header a:focus {
+    box-shadow: 0 0 0 2px #853AED; }
 
 /* latin-ext */
 @font-face {

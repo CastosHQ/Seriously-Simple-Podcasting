@@ -47,7 +47,7 @@
 					<a target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/pricing?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
 						<?php esc_html_e( 'Upgrade', 'seriously-simple-podcasting' ); ?>
 					</a>
-					<a target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/analytics?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
+					<a target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/podcast-analytics?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
 						<?php esc_html_e( 'Start Analytics', 'seriously-simple-podcasting' ); ?>
 					</a>
 				<?php endif; ?>

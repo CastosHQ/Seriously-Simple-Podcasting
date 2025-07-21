@@ -27,6 +27,11 @@ trait URL_Helper {
 		return SSP_CPT_PODCAST === filter_input( INPUT_GET, 'post_type' );
 	}
 
+	/**
+	 * Checks if this is a SSP post page or not.
+	 *
+	 * @return bool
+	 */
 	protected function is_ssp_post_page() {
 
 		$current_screen = get_current_screen();
@@ -35,5 +40,28 @@ trait URL_Helper {
 		}
 
 		return in_array( $current_screen->post_type, ssp_post_types() );
+	}
+
+	/**
+	 * Checks if this is a podcast post type page or not.
+	 *
+	 * @return bool
+	 */
+	protected function is_ssp_podcast_page() {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		return in_array( $current_screen->post_type, [ SSP_CPT_PODCAST ], true );
+	}
+
+	protected function is_any_post_page() {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		return 'post' === $current_screen->base;
 	}
 }

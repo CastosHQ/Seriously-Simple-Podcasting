@@ -36,11 +36,11 @@
 			</div>
 
 			<div class="ssp-admin-header__info-buttons">
-				<?php if ( $plan ) : ?>
+				<?php if ( $is_connected ) : ?>
 					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'podcasts' ); ?>">
 						<?php esc_html_e( 'Manage Account', 'seriously-simple-podcasting' ); ?>
 					</a>
-					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'analytics?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
+					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'analytics' ); ?>">
 						<?php esc_html_e( 'View Analytics', 'seriously-simple-podcasting' ); ?>
 					</a>
 				<?php else : ?>
@@ -51,7 +51,6 @@
 						<?php esc_html_e( 'Start Analytics', 'seriously-simple-podcasting' ); ?>
 					</a>
 				<?php endif; ?>
-
 			</div>
 		</div>
 	</div>

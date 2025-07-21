@@ -93,19 +93,6 @@ class Admin_Controller {
 		}
 	}
 
-	/**
-	 * Checks if this is a podcast page or not.
-	 *
-	 * @return bool
-	 */
-	protected function is_ssp_podcast_page() {
-		$current_screen = get_current_screen();
-		if ( ! $current_screen ) {
-			return false;
-		}
-
-		return in_array( $current_screen->post_type, [ SSP_CPT_PODCAST ], true );
-	}
 
 	/**
 	 * Renders the SSP info section on the admin page.
@@ -113,7 +100,7 @@ class Admin_Controller {
 	 * @return void
 	 */
 	public function render_ssp_info_section(): void {
-		if ( ! $this->is_ssp_admin_page() || ! $this->is_ssp_post_page() ) {
+		if ( ! $this->is_ssp_admin_page() || $this->is_any_post_page() ) {
 			return;
 		}
 

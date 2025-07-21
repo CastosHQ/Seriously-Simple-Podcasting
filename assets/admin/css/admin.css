@@ -122,7 +122,7 @@ textarea#episode_embed_code {
     justify-content: center;
     padding: 8px;
     gap: 16px;
-    background: #F6F7F7;
+    background: #F1F5F9;
     border-radius: 8px;
     align-items: center; }
     @media (max-width: 960px) {
@@ -130,7 +130,7 @@ textarea#episode_embed_code {
         padding: 12px; } }
     .ssp-dynamo__container:before, .upsell-field__container:before {
       content: '';
-      background: url("../img/stars.svg");
+      background: url("../img/stars-purple.svg");
       width: 22px;
       height: 22px; }
       @media (max-width: 960px) {
@@ -163,16 +163,14 @@ textarea#episode_embed_code {
     padding: 8px 12px;
     width: 139px;
     height: 32px;
-    background: #F6F7F7;
-    border: 1px solid #3970AC;
+    background: #F1F5F9;
+    border: 1px solid #853AED;
     border-radius: 6px;
     flex: none;
     order: 2;
     flex-grow: 0; }
     .ssp-dynamo__btn:hover, .upsell-field__btn:hover {
-      background: #f0f0f1;
-      border-color: #0a4b78;
-      color: #0a4b78; }
+      background: #f9f5fe; }
     @media (max-width: 960px) {
       .ssp-dynamo__btn, .upsell-field__btn {
         width: 100%; } }
@@ -191,7 +189,7 @@ textarea#episode_embed_code {
   .ssp-dynamo__arrow-up:after {
     content: '';
     display: block;
-    background: url("../img/arrow-up.svg");
+    background: url("../img/arrow-up-purple.svg");
     width: 11px;
     height: 12px;
     position: absolute;
@@ -227,8 +225,7 @@ textarea#episode_embed_code {
     padding: 15px 10px 12px;
     margin: 0 -10px 0 -10px; }
   .ssp-settings table input.regular-text {
-    max-width: 90%;
-    background: #F1F5F9; }
+    max-width: 90%; }
   .ssp-settings .loader {
     position: relative; }
     .ssp-settings .loader:after {
@@ -392,10 +389,12 @@ textarea#episode_embed_code {
       background: #9351ef;
       border-color: #9351ef;
       color: #FFFFFF; }
-  .ssp-admin a, .ssp-admin .button-link {
+  .ssp-admin a,
+  .ssp-admin .button-link {
     color: #853AED;
     transition: 0.2s; }
-    .ssp-admin a:hover, .ssp-admin .button-link:hover {
+    .ssp-admin a:hover,
+    .ssp-admin .button-link:hover {
       color: #a269f1; }
   .ssp-admin .wp-list-table th {
     color: #334155;
@@ -412,11 +411,14 @@ textarea#episode_embed_code {
         font-weight: 500;
         font-size: 13px;
         color: #51575D; }
-  .ssp-admin .tablenav-pages .displaying-num, .ssp-admin .tablenav-pages .tablenav-paging-text, .ssp-admin .tablenav-pages .current-page {
+  .ssp-admin .tablenav-pages .displaying-num,
+  .ssp-admin .tablenav-pages .tablenav-paging-text,
+  .ssp-admin .tablenav-pages .current-page {
     font-weight: 500;
     font-size: 13px;
     color: #334155; }
-  .ssp-admin .button, .ssp-admin .button-secondary {
+  .ssp-admin .button,
+  .ssp-admin .button-secondary {
     color: #853AED;
     border-radius: 6px;
     border-color: #853AED;
@@ -424,19 +426,28 @@ textarea#episode_embed_code {
     vertical-align: top;
     transition: .3s;
     font-weight: 600; }
-    .ssp-admin .button:hover, .ssp-admin .button-secondary:hover {
+    .ssp-admin .button:hover,
+    .ssp-admin .button-secondary:hover {
       color: #9351ef;
       border-color: #9351ef;
       background: #f9f5fe; }
   .ssp-admin .button-secondary {
     font-weight: 500; }
-  .ssp-admin .striped > tbody > :nth-child(odd), .ssp-admin ul.striped > :nth-child(odd), .ssp-admin .alternate {
+  .ssp-admin .striped > tbody > :nth-child(odd),
+  .ssp-admin ul.striped > :nth-child(odd),
+  .ssp-admin .alternate {
     background-color: #F1F5F9; }
-    .ssp-admin .striped > tbody > :nth-child(odd) .check-column label:hover, .ssp-admin .striped > tbody > :nth-child(odd) .check-column input:hover + label, .ssp-admin ul.striped > :nth-child(odd) .check-column label:hover, .ssp-admin ul.striped > :nth-child(odd) .check-column input:hover + label, .ssp-admin .alternate .check-column label:hover, .ssp-admin .alternate .check-column input:hover + label {
+    .ssp-admin .striped > tbody > :nth-child(odd) .check-column label:hover,
+    .ssp-admin .striped > tbody > :nth-child(odd) .check-column input:hover + label,
+    .ssp-admin ul.striped > :nth-child(odd) .check-column label:hover,
+    .ssp-admin ul.striped > :nth-child(odd) .check-column input:hover + label,
+    .ssp-admin .alternate .check-column label:hover,
+    .ssp-admin .alternate .check-column input:hover + label {
       background: #eaf0f6; }
   .ssp-admin .widefat .check-column {
     width: 3em; }
-  .ssp-admin .check-column label:hover, .ssp-admin .check-column input:hover + label {
+  .ssp-admin .check-column label:hover,
+  .ssp-admin .check-column input:hover + label {
     background: #f5f8fb;
     transition: .3s; }
   .ssp-admin .notice-info {
@@ -465,12 +476,24 @@ textarea#episode_embed_code {
     .ssp-admin input[type="checkbox"]:checked:before {
       width: 22px;
       content: url(data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%23853AED%27%2F%3E%3C%2Fsvg%3E); }
-  .ssp-admin input[type="text"]:focus, .ssp-admin input[type="password"]:focus, .ssp-admin input[type="color"]:focus,
-  .ssp-admin input[type="date"]:focus, .ssp-admin input[type="datetime"]:focus, .ssp-admin input[type="datetime-local"]:focus,
-  .ssp-admin input[type="email"]:focus, .ssp-admin input[type="month"]:focus, .ssp-admin input[type="number"]:focus,
-  .ssp-admin input[type="search"]:focus, .ssp-admin input[type="tel"]:focus, .ssp-admin input[type="time"]:focus,
-  .ssp-admin input[type="url"]:focus, .ssp-admin input[type="week"]:focus, .ssp-admin input[type="checkbox"]:focus,
-  .ssp-admin input[type="radio"]:focus, .ssp-admin select:focus, .ssp-admin textarea:focus {
+  .ssp-admin input[type="text"]:focus,
+  .ssp-admin input[type="password"]:focus,
+  .ssp-admin input[type="color"]:focus,
+  .ssp-admin input[type="date"]:focus,
+  .ssp-admin input[type="datetime"]:focus,
+  .ssp-admin input[type="datetime-local"]:focus,
+  .ssp-admin input[type="email"]:focus,
+  .ssp-admin input[type="month"]:focus,
+  .ssp-admin input[type="number"]:focus,
+  .ssp-admin input[type="search"]:focus,
+  .ssp-admin input[type="tel"]:focus,
+  .ssp-admin input[type="time"]:focus,
+  .ssp-admin input[type="url"]:focus,
+  .ssp-admin input[type="week"]:focus,
+  .ssp-admin input[type="checkbox"]:focus,
+  .ssp-admin input[type="radio"]:focus,
+  .ssp-admin select:focus,
+  .ssp-admin textarea:focus {
     border-color: #853AED;
     box-shadow: 0 0 0 1px #a269f1;
     outline: 1px solid transparent; }
@@ -482,7 +505,10 @@ textarea#episode_embed_code {
     margin: 0.1875rem;
     background-color: #853AED;
     line-height: 1.14285714; }
-  .ssp-admin input, .ssp-admin table.widefat, .ssp-admin .widefat thead td, .ssp-admin .widefat thead th {
+  .ssp-admin input,
+  .ssp-admin table.widefat,
+  .ssp-admin .widefat thead td,
+  .ssp-admin .widefat thead th {
     border-color: #CBD5E1; }
   .ssp-admin .no-image {
     background: url("../img/no-image.svg") no-repeat center center;
@@ -512,10 +538,58 @@ textarea#episode_embed_code {
     .ssp-admin #ssp-settings-submit:hover {
       color: #FFFFFF;
       background: #7934db; }
+  .ssp-admin.post-type-podcast .button,
+  .ssp-admin.post-type-podcast .button-secondary {
+    font-weight: 500; }
+  .ssp-admin.post-type-podcast .components-button.is-tertiary,
+  .ssp-admin.post-type-podcast .components-button.is-link {
+    color: #6C25D0; }
+    .ssp-admin.post-type-podcast .components-button.is-tertiary:hover:not(:disabled),
+    .ssp-admin.post-type-podcast .components-button.is-link:hover:not(:disabled) {
+      color: #7934db;
+      background-color: #f9f5fe; }
+  .ssp-admin.post-type-podcast .components-button.is-primary {
+    background-color: #853AED;
+    transition: 0.3s; }
+    .ssp-admin.post-type-podcast .components-button.is-primary:hover:not(:disabled) {
+      background-color: #9351ef; }
+    .ssp-admin.post-type-podcast .components-button.is-primary[aria-disabled=true] {
+      background-color: #a269f1; }
+      .ssp-admin.post-type-podcast .components-button.is-primary[aria-disabled=true]:hover {
+        background-color: #a269f1; }
+  .ssp-admin.post-type-podcast .components-button[aria-expanded=true] {
+    color: #6C25D0; }
+  .ssp-admin.post-type-podcast .components-checkbox-control__input[type="checkbox"]:checked {
+    background-color: #853AED;
+    border-color: #853AED; }
+  .ssp-admin.post-type-podcast .components-button.is-secondary {
+    background: #0000;
+    box-shadow: inset 0 0 0 1px #EC2D76;
+    color: #EC2D76;
+    outline: 1px solid #0000;
+    white-space: nowrap; }
+  .ssp-admin.post-type-podcast .components-button.is-pressed {
+    background: #ffffff; }
+  .ssp-admin.post-type-podcast .components-form-toggle.is-checked .components-form-toggle__track {
+    background-color: #853AED;
+    border-color: #853AED; }
+  .ssp-admin.post-type-podcast .block-editor-block-inspector .components-button:not(.is-secondary):hover {
+    color: #853AED; }
+  .ssp-admin.post-type-podcast .components-panel__body-toggle.components-button:focus {
+    border-radius: 0;
+    box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) #853AED; }
+  .ssp-admin.post-type-podcast .editor-preview-dropdown .components-button {
+    transition: 0.3s; }
+    .ssp-admin.post-type-podcast .editor-preview-dropdown .components-button:hover {
+      color: #853AED; }
+  .ssp-admin.post-type-podcast div[role="tablist"][aria-orientation="horizontal"]:before {
+    border-bottom: var(--wp-admin-border-width-focus) solid #6C25D0; }
+  .ssp-admin.post-type-podcast button[role="tab"]:not([aria-disabled="true"]):is(:hover, [data-focus-visible]) {
+    color: #6C25D0; }
 
 .ssp-admin-header {
   display: flex;
-  width: calc( 100% + 20px);
+  width: calc(100% + 20px);
   height: 100px;
   background: linear-gradient(to bottom, #F6F3FF 0%, #EFE9FEC4 77%);
   margin-left: -20px; }
@@ -1439,7 +1513,7 @@ textarea#episode_embed_code {
     box-shadow: none; }
     .ssp-sidebar-panel .ssp-open-meta-btn:hover {
       box-shadow: none;
-      color: #007cba;
+      color: #853AED;
       opacity: 0.8; }
 
 .ssp-episode-meta-sidebar .interface-complementary-area-header {

@@ -260,89 +260,90 @@
 			font-weight: 500;
 		}
 
-		.components-button.is-tertiary,
-		.components-button.is-link {
-			color: $clr_purple_700;
+		.components {
+			&-button.is-tertiary,
+			&-button.is-link {
+				color: $clr_purple_700;
 
-			&:hover:not(:disabled) {
-				color: lighten($clr_purple_700, 5%);
-				background-color: lighten($clr_purple_600, 40%);
-			}
-		}
-
-		// .components-button.has-icon {
-		// 	transition: 0.3s;
-		// 	&:hover:not(:disabled) {
-		// 		color: lighten( $clr_purple_700, 5% );
-		// 	}
-		// }
-
-		.components-button.is-primary {
-			background-color: $clr_purple_600;
-			transition: 0.3s;
-
-			&:hover:not(:disabled) {
-				background-color: lighten($clr_purple_600, 5%);
-			}
-
-			&[aria-disabled=true] {
-				background-color: lighten($clr_purple_600, 10%);
-
-				&:hover {
-					background-color: lighten($clr_purple_600, 10%);
+				&:hover:not(:disabled) {
+					color: lighten($clr_purple_700, 5%);
+					background-color: lighten($clr_purple_600, 40%);
 				}
 			}
-		}
 
-		.components-button[aria-expanded=true] {
-			color: $clr_purple_700;
-		}
+			&-button.is-primary {
+				background-color: $clr_purple_600;
+				transition: 0.3s;
 
-		.components-checkbox-control__input[type="checkbox"]:checked {
-			background-color: $clr_purple_600;
-			border-color: $clr_purple_600;
-		}
+				&:hover:not(:disabled) {
+					background-color: lighten($clr_purple_600, 5%);
+				}
 
-		.components-button.is-secondary {
-			&:hover {
-				color: $clr_purple_600;
-				background-color: lighten( $clr_purple_600, 40% );
+				&[aria-disabled=true] {
+					background-color: lighten($clr_purple_600, 10%);
+
+					&:hover {
+						background-color: lighten($clr_purple_600, 10%);
+					}
+				}
 			}
-		}
 
-		.components-button.is-destructive {
-			background: #0000;
-			box-shadow: inset 0 0 0 1px $clr_red_400;
-			color: $clr_red_400;
-			outline: 1px solid #0000;
-			white-space: nowrap;
-			transition: 0.3s;
-
-			&:hover {
-				color: $clr_red_500;
+			&-button[aria-expanded=true] {
+				color: $clr_purple_700;
 			}
-		}
 
-		.components-button.is-pressed:not(:disabled) {
-			background: #ffffff;
-			&:focus {
-				box-shadow: 0 0 0 2px lighten( $clr_purple_600, 10% );
+			&-checkbox-control__input[type="checkbox"]:checked {
+				background-color: $clr_purple_600;
+				border-color: $clr_purple_600;
 			}
-		}
 
-		.components-form-toggle.is-checked .components-form-toggle__track {
-			background-color: $clr_purple_600;
-			border-color: $clr_purple_600;
-		}
+			&-button.is-secondary {
+				&:hover {
+					color: $clr_purple_600;
+					background-color: lighten( $clr_purple_600, 40% );
+				}
+			}
 
-		.components-panel__body-toggle.components-button:focus {
-			border-radius: 0;
-			box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) $clr_purple_600;
-		}
+			&-button.is-destructive {
+				background: #0000;
+				box-shadow: inset 0 0 0 1px $clr_red_400;
+				color: $clr_red_400;
+				outline: 1px solid #0000;
+				white-space: nowrap;
+				transition: 0.3s;
 
-		.components-button.editor-post-featured-image__toggle {
-			&:hover {
-				color: $clr_purple_600;
+				&:hover {
+					color: $clr_red_500;
+				}
+			}
+
+			&-button.is-pressed:not(:disabled) {
+				background: #ffffff;
+				&:focus {
+					box-shadow: 0 0 0 2px lighten( $clr_purple_600, 10% );
+				}
+			}
+
+			&-form-toggle.is-checked &-form-toggle__track {
+				background-color: $clr_purple_600;
+				border-color: $clr_purple_600;
+			}
+
+			&-panel__body-toggle&-button:focus {
+				border-radius: 0;
+				box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) $clr_purple_600;
+			}
+
+			&-button.editor-post-featured-image__toggle {
+				&:hover {
+					color: $clr_purple_600;
+				}
+			}
+
+			&-button.editor-post-featured-image__toggle {
+				&:hover {
+					color: $clr_purple_600;
+				}
 			}
 		}
 

@@ -120,7 +120,7 @@ textarea#episode_embed_code {
   .ssp-dynamo__container, .upsell-field__container {
     display: flex;
     justify-content: center;
-    padding: 8px;
+    padding: 20px;
     gap: 16px;
     background: #F1F5F9;
     border-radius: 8px;
@@ -141,8 +141,7 @@ textarea#episode_embed_code {
         flex-direction: column; } }
   .ssp-dynamo__description, .upsell-field__description {
     align-items: center;
-    display: flex;
-    text-align: justify; }
+    display: flex; }
   .ssp-dynamo a, .upsell-field a {
     text-decoration: none;
     outline: none;
@@ -163,14 +162,14 @@ textarea#episode_embed_code {
     padding: 8px 12px;
     width: 139px;
     height: 32px;
-    background: #F1F5F9;
-    border: 1px solid #853AED;
+    border: 1px solid #3970AC;
     border-radius: 6px;
     flex: none;
     order: 2;
-    flex-grow: 0; }
+    flex-grow: 0;
+    transition: 0.3s; }
     .ssp-dynamo__btn:hover, .upsell-field__btn:hover {
-      background: #f9f5fe; }
+      background: white; }
     @media (max-width: 960px) {
       .ssp-dynamo__btn, .upsell-field__btn {
         width: 100%; } }
@@ -189,7 +188,7 @@ textarea#episode_embed_code {
   .ssp-dynamo__arrow-up:after {
     content: '';
     display: block;
-    background: url("../img/arrow-up-purple.svg");
+    background: url("../img/arrow-up.svg");
     width: 11px;
     height: 12px;
     position: absolute;
@@ -562,22 +561,30 @@ textarea#episode_embed_code {
   .ssp-admin.post-type-podcast .components-checkbox-control__input[type="checkbox"]:checked {
     background-color: #853AED;
     border-color: #853AED; }
-  .ssp-admin.post-type-podcast .components-button.is-secondary {
+  .ssp-admin.post-type-podcast .components-button.is-secondary:hover {
+    color: #853AED;
+    background-color: #f9f5fe; }
+  .ssp-admin.post-type-podcast .components-button.is-destructive {
     background: #0000;
-    box-shadow: inset 0 0 0 1px #EC2D76;
-    color: #EC2D76;
+    box-shadow: inset 0 0 0 1px #DF4E4F;
+    color: #DF4E4F;
     outline: 1px solid #0000;
-    white-space: nowrap; }
-  .ssp-admin.post-type-podcast .components-button.is-pressed {
+    white-space: nowrap;
+    transition: 0.3s; }
+    .ssp-admin.post-type-podcast .components-button.is-destructive:hover {
+      color: #EC2D76; }
+  .ssp-admin.post-type-podcast .components-button.is-pressed:not(:disabled) {
     background: #ffffff; }
+    .ssp-admin.post-type-podcast .components-button.is-pressed:not(:disabled):focus {
+      box-shadow: 0 0 0 2px #a269f1; }
   .ssp-admin.post-type-podcast .components-form-toggle.is-checked .components-form-toggle__track {
     background-color: #853AED;
     border-color: #853AED; }
-  .ssp-admin.post-type-podcast .block-editor-block-inspector .components-button:not(.is-secondary):hover {
-    color: #853AED; }
   .ssp-admin.post-type-podcast .components-panel__body-toggle.components-button:focus {
     border-radius: 0;
     box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) #853AED; }
+  .ssp-admin.post-type-podcast .components-button.editor-post-featured-image__toggle:hover {
+    color: #853AED; }
   .ssp-admin.post-type-podcast .editor-preview-dropdown .components-button {
     transition: 0.3s; }
     .ssp-admin.post-type-podcast .editor-preview-dropdown .components-button:hover {
@@ -586,6 +593,26 @@ textarea#episode_embed_code {
     border-bottom: var(--wp-admin-border-width-focus) solid #6C25D0; }
   .ssp-admin.post-type-podcast button[role="tab"]:not([aria-disabled="true"]):is(:hover, [data-focus-visible]) {
     color: #6C25D0; }
+  .ssp-admin.post-type-podcast .ssp-episode-meta-sidebar .button {
+    color: #6C25D0;
+    border-color: #853AED; }
+    .ssp-admin.post-type-podcast .ssp-episode-meta-sidebar .button:hover {
+      color: #6C25D0; }
+  .ssp-admin.post-type-podcast .block-editor-block-list__empty-block-inserter
+.block-editor-inserter__toggle.components-button.has-icon:hover,
+  .ssp-admin.post-type-podcast .block-editor-block-list__insertion-point-indicator,
+  .ssp-admin.post-type-podcast .block-editor-block-list__insertion-point-inserter {
+    background: #853AED; }
+    .ssp-admin.post-type-podcast .block-editor-block-list__empty-block-inserter
+.block-editor-inserter__toggle.components-button.has-icon:hover:focus,
+    .ssp-admin.post-type-podcast .block-editor-block-list__insertion-point-indicator:focus,
+    .ssp-admin.post-type-podcast .block-editor-block-list__insertion-point-inserter:focus {
+      box-shadow: 0 0 0 2px #a269f1; }
+  .ssp-admin.post-type-podcast .upsell-field__btn, .ssp-admin.post-type-podcast .ssp-dynamo__btn {
+    border-color: #853AED;
+    background: #FFFFFF; }
+  .ssp-admin.post-type-podcast .ssp-dynamo__arrow-up::after {
+    background: url("../img/arrow-up-purple.svg"); }
 
 .ssp-admin-header {
   display: flex;
@@ -1437,10 +1464,10 @@ textarea#episode_embed_code {
   padding: 16px;
   font-weight: 500;
   margin: 0;
-  background: #fafcfe;
+  background: #f8fafc;
   transition: 0.4s; }
   .ssp-episode-meta-sidebar .ssp-accordion:hover, .ssp-sidebar-panel .ssp-accordion:hover {
-    background: #f0f7ff; }
+    background: #F1F5F9; }
   .ssp-episode-meta-sidebar .ssp-accordion:after, .ssp-sidebar-panel .ssp-accordion:after {
     content: '';
     display: inline-block;
@@ -1461,6 +1488,12 @@ textarea#episode_embed_code {
 
 .ssp-episode-meta-sidebar .ssp-sync-message, .ssp-sidebar-panel .ssp-sync-message {
   margin-top: 8px; }
+
+.ssp-episode-meta-sidebar .components-radio-control__input[type=radio]:checked, .ssp-sidebar-panel .components-radio-control__input[type=radio]:checked {
+  background: #853AED;
+  border-color: #853AED; }
+  .ssp-episode-meta-sidebar .components-radio-control__input[type=radio]:checked::before, .ssp-sidebar-panel .components-radio-control__input[type=radio]:checked::before {
+    margin: 0; }
 
 .ssp-sidebar-panel {
   width: 100%; }
@@ -1578,6 +1611,7 @@ textarea#episode_embed_code {
       box-shadow: 1px 1px 8px 0 rgba(0, 0, 20, 0.3); }
   .ssp-episode-meta-sidebar .ssp-image-uploader .no-image {
     height: 230px;
+    width: 100%;
     background: #F6F7F7;
     display: flex;
     align-items: center;
@@ -1602,11 +1636,11 @@ textarea#episode_embed_code {
 .ssp-episode-meta-sidebar .ssp-promo-sidebar {
   margin-right: -16px;
   margin-left: -16px;
-  background: #EBF6FF;
+  background: #f9f5fe;
   padding: 16px;
   margin-bottom: -24px; }
   .ssp-episode-meta-sidebar .ssp-promo-sidebar__description {
-    color: #2271B1; }
+    color: #853AED; }
   .ssp-episode-meta-sidebar .ssp-promo-sidebar__description-row {
     display: flex;
     gap: 12px;
@@ -1615,22 +1649,23 @@ textarea#episode_embed_code {
     width: 40px;
     min-width: 40px;
     height: 40px;
-    background: #BFDBFE;
+    background: #dcc6fa;
     border-radius: 4px; }
     .ssp-episode-meta-sidebar .ssp-promo-sidebar__bell img {
       padding: 8px; }
   .ssp-episode-meta-sidebar .ssp-promo-sidebar__btn {
     display: block;
-    border: 1px solid #2271B1;
+    border: 1px solid #853AED;
     border-radius: 3px;
     padding: 8px;
     width: 100%;
     text-decoration: none;
     text-align: center;
     transition: .4s;
-    box-shadow: 0 0 4px 0 rgba(0, 0, 20, 0.2); }
+    box-shadow: 0 0 4px 0 rgba(0, 0, 20, 0.2);
+    color: #6C25D0; }
     .ssp-episode-meta-sidebar .ssp-promo-sidebar__btn:hover {
-      background: #eff5fb;
+      background: #f9f5fe;
       box-shadow: 1px 1px 8px 0 rgba(0, 0, 20, 0.3); }
     .ssp-episode-meta-sidebar .ssp-promo-sidebar__btn img {
       position: relative;
@@ -1638,13 +1673,19 @@ textarea#episode_embed_code {
       left: 4px; }
 
 .ssp-episode-meta-sidebar .button {
-  border: 1px solid #2271B1;
-  box-shadow: 0 0 4px 0 rgba(0, 0, 20, 0.2);
-  transition: .4s; }
-  .ssp-episode-meta-sidebar .button:hover:not(:disabled) {
-    border: 1px solid #2271B1;
+  border: 1px solid #853AED;
+  transition: .4s;
+  color: #6C25D0; }
+  .ssp-episode-meta-sidebar .button:active {
+    border: 1px solid #853AED;
+    color: #6C25D0; }
+  .ssp-episode-meta-sidebar .button:hover {
+    color: #6C25D0; }
+  .ssp-episode-meta-sidebar .button:hover:not(:disabled), .ssp-episode-meta-sidebar .button:focus {
+    color: #6C25D0;
+    border: 1px solid #853AED;
     background: #f6f7f7;
-    box-shadow: 1px 1px 4px 0 rgba(0, 0, 20, 0.2); }
+    box-shadow: 1px 1px 3px 0 #dcc6fa; }
 
 .ssp-date-input .components-popover__content {
   padding: 8px; }

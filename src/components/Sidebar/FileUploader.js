@@ -21,7 +21,7 @@ const FileUploader = ( { audioUrl, onChangeUrl, onSelectAudio } ) => {
 					render={ ( { open } ) => (
 						<Button
 							className={ 'button w-full' }
-							onClick={ open } isSecondary>
+							onClick={ open }>
 							{ __('Upload File', 'seriously-simple-podcasting') }
 						</Button>
 					) }

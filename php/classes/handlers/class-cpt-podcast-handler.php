@@ -191,7 +191,7 @@ class CPT_Podcast_Handler implements Service {
 				'meta_description' => __( 'Seriously Simple Hosting file id.', 'seriously-simple-podcasting' ),
 			);
 		} else {
-			$description = __( 'Get lower bandwidth fees, file storage, and better stats when hosting with Castos.', 'seriously-simple-podcasting' );
+			$description = __( 'Get advanced analytics and unlimited file storage when hosting with Castos.', 'seriously-simple-podcasting' );
 			$btn         = array(
 				'title' => 'Try Castos for free',
 				'url'   => 'https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&utm_medium=episode-file-box&utm_campaign=upgrade'

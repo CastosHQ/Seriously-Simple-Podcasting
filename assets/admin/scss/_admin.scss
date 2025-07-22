@@ -156,7 +156,7 @@ textarea#episode_embed_code {
 	&__container {
 		display: flex;
 		justify-content: center;
-		padding: 8px;
+		padding: 20px;
 		gap: 16px;
 		background: $clr_gray_100;
 		border-radius: 8px;
@@ -185,7 +185,6 @@ textarea#episode_embed_code {
 	&__description {
 		align-items: center;
 		display: flex;
-		text-align: justify;
 	}
 
 	a {
@@ -198,6 +197,7 @@ textarea#episode_embed_code {
 		font-size: 12px;
 		line-height: 16px;
 		color: #3970AC;
+		
 
 		&:focus    {
 			box-shadow: none;
@@ -214,16 +214,17 @@ textarea#episode_embed_code {
 		width: 139px;
 		height: 32px;
 
-		background: $clr_gray_100;
-		border: 1px solid $clr_purple_600;
+		border: 1px solid $clr_blue_400;
 		border-radius: 6px;
 
 		flex: none;
 		order: 2;
 		flex-grow: 0;
 
+		transition: 0.3s;
+
 		&:hover {
-			background: lighten($clr_purple_600, 40%);
+			background: lighten($clr_gray_100, 5%);
 		}
 
 		@include smaller('md'){
@@ -250,7 +251,7 @@ textarea#episode_embed_code {
 		&:after {
 			content: '';
 			display: block;
-			background: url("../img/arrow-up-purple.svg");
+			background: url("../img/arrow-up.svg");
 			width: 11px;
 			height: 12px;
 			position: absolute;

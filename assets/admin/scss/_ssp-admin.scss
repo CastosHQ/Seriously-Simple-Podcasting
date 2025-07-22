@@ -304,15 +304,30 @@
 		}
 
 		.components-button.is-secondary {
-			background: #0000;
-			box-shadow: inset 0 0 0 1px $clr_red_500;
-			color: $clr_red_500;
-			outline: 1px solid #0000;
-			white-space: nowrap;
+			&:hover {
+				color: $clr_purple_600;
+				background-color: lighten( $clr_purple_600, 40% );
+			}
 		}
 
-		.components-button.is-pressed:not(:disabled,[aria-disabled=true]) {
+		.components-button.is-destructive {
+			background: #0000;
+			box-shadow: inset 0 0 0 1px $clr_red_400;
+			color: $clr_red_400;
+			outline: 1px solid #0000;
+			white-space: nowrap;
+			transition: 0.3s;
+
+			&:hover {
+				color: $clr_red_500;
+			}
+		}
+
+		.components-button.is-pressed:not(:disabled) {
 			background: #ffffff;
+			&:focus {
+				box-shadow: 0 0 0 2px lighten( $clr_purple_600, 10% );
+			}
 		}
 
 		.components-form-toggle.is-checked .components-form-toggle__track {
@@ -320,13 +335,15 @@
 			border-color: $clr_purple_600;
 		}
 
-		.block-editor-block-inspector .components-button:not(.is-secondary):hover:not(:disabled,[aria-disabled=true]) {
-			color: $clr_purple_600;
-		}
-
 		.components-panel__body-toggle.components-button:focus {
 			border-radius: 0;
 			box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) $clr_purple_600;
+		}
+
+		.components-button.editor-post-featured-image__toggle {
+			&:hover {
+				color: $clr_purple_600;
+			}
 		}
 
 		.editor-preview-dropdown .components-button {
@@ -344,6 +361,40 @@
 
 		button[role="tab"]:not([aria-disabled="true"]):is(:hover, [data-focus-visible]) {
 			color: $clr_purple_700;
+		}
+
+		.ssp-episode-meta-sidebar {
+			.button {
+				color: $clr_purple_700;
+				&:hover {
+					color: $clr_purple_700;
+				}
+				border-color: $clr_purple_600;
+			}
+		}
+		
+
+		.block-editor-block-list__empty-block-inserter 
+		.block-editor-inserter__toggle.components-button.has-icon:hover,
+		.block-editor-block-list__insertion-point-indicator,
+		.block-editor-block-list__insertion-point-inserter {
+			background: $clr_purple_600;
+
+			&:focus {
+				box-shadow: 0 0 0 2px lighten( $clr_purple_600, 10% );
+			}
+		}
+
+		.upsell-field__btn, .ssp-dynamo__btn {
+			border-color: $clr_purple_600;
+			background: $clr_white;
+		}
+
+		.ssp-dynamo__arrow-up {
+
+			&::after {
+				background: url("../img/arrow-up-purple.svg");
+			}
 		}
 
 	}

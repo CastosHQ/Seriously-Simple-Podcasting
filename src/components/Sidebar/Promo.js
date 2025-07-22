@@ -1,5 +1,5 @@
-import Bell from '../../img/bell.svg';
-import Arrow from '../../img/arrow-right-up.svg';
+import Bell from '../../img/bell-purple.svg';
+import Arrow from '../../img/arrow-right-up-purple.svg';
 
 const Promo = ( { description, title, url } ) => {
 	return (

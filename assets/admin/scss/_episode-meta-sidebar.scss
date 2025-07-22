@@ -14,11 +14,13 @@
 		padding: 16px;
 		font-weight: 500;
 		margin: 0;
-		background: #fafcfe;
+		background: lighten($clr_gray_100, 2%);
+		
+	
 		transition: 0.4s;
 
 		&:hover {
-			background: #f0f7ff;
+			background: $clr_gray_100;
 		}
 
 		&:after {
@@ -47,6 +49,16 @@
 
 	.ssp-sync-message {
 		margin-top: 8px;
+	}
+
+	.components-radio-control__input[type=radio] {
+		&:checked {
+			background: $clr_purple_600;
+			border-color: $clr_purple_600;
+			&::before {
+				margin: 0;
+			}
+		}
 	}
 }
 
@@ -124,6 +136,8 @@
 			opacity: 0.8;
 		}
 	}
+
+	
 }
 
 .ssp-episode-meta-sidebar {
@@ -210,7 +224,8 @@
 
 		.no-image {
 			height: 230px;
-			background: #F6F7F7;
+			width: 100%;
+			background: $clr_blue_50;
 			display: flex;
 			align-items: center;
 			justify-content: center;
@@ -240,12 +255,12 @@
 	.ssp-promo-sidebar {
 		margin-right: -16px;
 		margin-left: -16px;
-		background: #EBF6FF;
+		background: lighten( $clr_purple_600, 40% );
 		padding: 16px;
 		margin-bottom: -24px;
 
 		&__description {
-			color: #2271B1;
+			color: $clr_purple_600;
 		}
 
 		&__description-row {
@@ -258,7 +273,7 @@
 			width: 40px;
 			min-width: 40px;
 			height: 40px;
-			background: #BFDBFE;
+			background: lighten( $clr_purple_600, 30% );
 			border-radius: 4px;
 			img {
 				padding: 8px;
@@ -267,7 +282,7 @@
 
 		&__btn {
 			display: block;
-			border: 1px solid #2271B1;
+			border: 1px solid $clr_purple_600;
 			border-radius: 3px;
 			padding: 8px;
 			width: 100%;
@@ -275,9 +290,10 @@
 			text-align: center;
 			transition: .4s;
 			box-shadow: 0 0 4px 0 rgba(0, 0, 20, 0.2);
+			color: $clr_purple_700;
 
 			&:hover {
-				background: #eff5fb;
+				background: lighten( $clr_purple_600, 40% );
 				box-shadow: 1px 1px 8px 0 rgba(0, 0, 20, 0.3);
 			}
 
@@ -290,14 +306,24 @@
 	}
 
 	.button {
-		border: 1px solid #2271B1;
-		box-shadow: 0 0 4px 0 rgba(0, 0, 20, 0.2);
+		border: 1px solid $clr_purple_600;
 		transition: .4s;
+		color: $clr_purple_700;
 
-		&:hover:not(:disabled) {
-			border: 1px solid #2271B1;
+		&:active {
+			border: 1px solid $clr_purple_600;
+			color: $clr_purple_700;
+		}
+
+		&:hover {
+			color: $clr_purple_700;
+		}
+
+		&:hover:not(:disabled), &:focus {
+			color: $clr_purple_700;
+			border: 1px solid $clr_purple_600;
 			background: #f6f7f7;
-			box-shadow: 1px 1px 4px 0 rgba(0, 0, 20, 0.2);
+			box-shadow: 1px 1px 3px 0 lighten( $clr_purple_600, 30% );
 		}
 	}
 

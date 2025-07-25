@@ -55,7 +55,7 @@ return array(
 							__( 'Use this option for a one time sync of your existing WordPress podcast to your %s. If you encounter any problems with it, please contact support at hello@castos.com.', 'seriously-simple-podcasting' ),
 							'<a target="_blank" rel="noopener" href="' . esc_attr( SSP_CASTOS_APP_URL ) . '">' . __( 'Castos account', 'seriously-simple-podcasting' ) . '</a>'
 						),
-					'class' => 'button-primary',
+					'class' => 'button-primary trigger-sync',
 				),
 			),
 		),

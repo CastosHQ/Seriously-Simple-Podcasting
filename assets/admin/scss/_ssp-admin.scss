@@ -231,9 +231,13 @@
 		background: #eaedf1;
 		color: $clr_purple_600;
 
-		&-active {
+		&-active, &:hover, &:focus {
 			background: #f1f5f9;
 			color: $clr_purple_600;
+		}
+
+		&:focus {
+			box-shadow: 0px -2px 0px -1px #853AED;
 		}
 	}
 
@@ -250,6 +254,38 @@
 		&:hover {
 			color: $clr_white;
 			background: lighten($clr_purple_700, 5%);
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 1px $clr_white, 0 0 0 3px $clr_purple_600;
+		}
+	}
+
+	.trigger-sync {
+		background: $clr_purple_600;
+		color: $clr_white;
+		border-color: $clr_purple_600;
+		border-radius: 6px;
+
+		&:hover, &:focus {
+			background: lighten($clr_purple_600, 5%);
+			border-color: lighten($clr_purple_600, 5%);
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 1px $clr_white, 0 0 0 3px $clr_purple_600;
+		}
+	}
+
+	.wp-color-result-text {
+		border-radius: 0 4px 4px 0;
+	}
+
+	.wp-color-result {
+    	border-color: #ccc;
+		&:hover {
+			border-color: #ccc;
+			box-shadow: 0px 0px 6px -1px lighten( $clr_purple_600, 20% );
 		}
 	}
 
@@ -329,7 +365,7 @@
 				border-color: $clr_purple_600;
 			}
 
-			&-panel__body-toggle&-button:focus {
+			.components-panel__body-toggle.components-button:focus {
 				border-radius: 0;
 				box-shadow: inset 0 0 0 var(--wp-admin-border-width-focus) $clr_purple_600;
 			}

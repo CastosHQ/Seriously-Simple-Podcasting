@@ -58,6 +58,11 @@ jQuery(document).ready(function($) {
 		  $connectBtn.on('click', function (e) {
 			  e.preventDefault();
 			  e.stopPropagation();
+			  
+			  if ($connectBtn.hasClass('disabled')) {
+				  return;
+			  }
+
 			  $connectBtn.prop('disabled', 'disabled');
 			  $connectBtn.trigger('connecting');
 

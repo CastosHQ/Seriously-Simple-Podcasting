@@ -36,8 +36,9 @@ $clr_purple_900: #4A1B89;
 
 // Breakpoints:
 $breakpoints: (
-	'sm':  767px,
-	'md': 960px,
+	'xs':  480px,
+	'sm':  600px,
+	'md':  783px,
 	'lg':  1200px
 ) !default;
 

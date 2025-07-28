@@ -125,7 +125,7 @@ textarea#episode_embed_code {
     background: #F1F5F9;
     border-radius: 8px;
     align-items: center; }
-    @media (max-width: 960px) {
+    @media (max-width: 783px) {
       .ssp-dynamo__container, .upsell-field__container {
         padding: 12px; } }
     .ssp-dynamo__container:before, .upsell-field__container:before {
@@ -133,10 +133,10 @@ textarea#episode_embed_code {
       background: url("../img/stars-purple.svg");
       width: 22px;
       height: 22px; }
-      @media (max-width: 960px) {
+      @media (max-width: 783px) {
         .ssp-dynamo__container:before, .upsell-field__container:before {
           display: none; } }
-    @media (max-width: 960px) {
+    @media (max-width: 783px) {
       .ssp-dynamo__container, .upsell-field__container {
         flex-direction: column; } }
   .ssp-dynamo__description, .upsell-field__description {
@@ -170,7 +170,7 @@ textarea#episode_embed_code {
     transition: 0.3s; }
     .ssp-dynamo__btn:hover, .upsell-field__btn:hover {
       background: white; }
-    @media (max-width: 960px) {
+    @media (max-width: 783px) {
       .ssp-dynamo__btn, .upsell-field__btn {
         width: 100%; } }
   .ssp-dynamo .dashicons, .upsell-field .dashicons {
@@ -178,7 +178,7 @@ textarea#episode_embed_code {
 
 .ssp-dynamo__btn {
   width: 108px; }
-  @media (max-width: 960px) {
+  @media (max-width: 783px) {
     .ssp-dynamo__btn {
       width: 100%; } }
 
@@ -384,10 +384,11 @@ textarea#episode_embed_code {
     font-weight: bold;
     border-radius: 6px;
     font-size: 14px; }
-    .ssp-admin .page-title-action:hover {
+    .ssp-admin .page-title-action:hover, .ssp-admin .page-title-action:active, .ssp-admin .page-title-action:focus {
       background: #9351ef;
       border-color: #9351ef;
-      color: #FFFFFF; }
+      color: #FFFFFF;
+      font-weight: bold; }
   .ssp-admin a,
   .ssp-admin .button-link {
     color: #853AED;
@@ -425,11 +426,15 @@ textarea#episode_embed_code {
     vertical-align: top;
     transition: .3s;
     font-weight: 600; }
-    .ssp-admin .button:hover,
-    .ssp-admin .button-secondary:hover {
+    .ssp-admin .button:hover, .ssp-admin .button:focus,
+    .ssp-admin .button-secondary:hover,
+    .ssp-admin .button-secondary:focus {
       color: #9351ef;
       border-color: #9351ef;
       background: #f9f5fe; }
+    .ssp-admin .button:focus,
+    .ssp-admin .button-secondary:focus {
+      box-shadow: 0 0 0 1px #a269f1; }
   .ssp-admin .button-secondary {
     font-weight: 500; }
   .ssp-admin .striped > tbody > :nth-child(odd),
@@ -467,7 +472,7 @@ textarea#episode_embed_code {
     font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
     font-size: 13px;
     font-weight: 500; }
-    .ssp-admin select:hover {
+    .ssp-admin select:hover, .ssp-admin select:focus, .ssp-admin select option {
       color: #853AED; }
   .ssp-admin input[type="checkbox"] {
     width: 18px;
@@ -517,6 +522,9 @@ textarea#episode_embed_code {
     display: inline-block; }
   .ssp-admin .wrap {
     margin-right: 80px; }
+    @media (max-width: 783px) {
+      .ssp-admin .wrap {
+        margin-right: 20px; } }
   .ssp-admin #screen-meta-links {
     margin-right: 80px; }
   .ssp-admin .nav-tab {
@@ -632,6 +640,11 @@ textarea#episode_embed_code {
     background: #FFFFFF; }
   .ssp-admin.post-type-podcast .ssp-dynamo__arrow-up::after {
     background: url("../img/arrow-up-purple.svg"); }
+  .ssp-admin #footer-left {
+    font-size: 16px;
+    margin-bottom: 20px; }
+  .ssp-admin #wpfooter {
+    margin-right: 60px; }
 
 .ssp-admin-header {
   display: flex;
@@ -639,12 +652,31 @@ textarea#episode_embed_code {
   height: 100px;
   background: linear-gradient(to bottom, #F6F3FF 0%, #EFE9FEC4 77%);
   margin-left: -20px; }
+  @media (max-width: 600px) {
+    .ssp-admin-header {
+      position: relative;
+      top: 45px; } }
+  @media (max-width: 600px) {
+    .ssp-admin-header {
+      height: 140px; } }
+  @media (max-width: 480px) {
+    .ssp-admin-header {
+      height: 180px; } }
   .ssp-admin-header__container {
     display: flex;
     margin: 0 80px 0 20px;
     align-items: center;
     justify-content: space-between;
     width: 100%; }
+    @media (max-width: 783px) {
+      .ssp-admin-header__container {
+        margin: 0 20px; } }
+    @media (max-width: 600px) {
+      .ssp-admin-header__container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 20px 0; } }
   .ssp-admin-header__logo {
     display: flex;
     align-items: center; }
@@ -659,6 +691,9 @@ textarea#episode_embed_code {
         font-size: 20px;
         font-weight: 600;
         color: #4A1B89; }
+        @media (max-width: 480px) {
+          .ssp-admin-header__logo-text span {
+            font-size: 18px; } }
       .ssp-admin-header__logo-text a {
         font-family: Inter, sans-serif;
         font-size: 11px;
@@ -671,7 +706,12 @@ textarea#episode_embed_code {
         align-self: flex-start;
         text-transform: uppercase;
         padding: 3px 10px 3px 8px;
-        border-radius: 4px; }
+        border-radius: 4px;
+        margin-top: 2px; }
+        @media (max-width: 600px) {
+          .ssp-admin-header__logo-text a {
+            font-size: 8px;
+            padding: 2px 10px 1px 10px; } }
         .ssp-admin-header__logo-text a:hover {
           color: #dcc6fa; }
         .ssp-admin-header__logo-text a:after {
@@ -682,16 +722,27 @@ textarea#episode_embed_code {
           margin-left: 2px;
           position: relative;
           top: 2px; }
+    @media (max-width: 480px) {
+      .ssp-admin-header__logo svg {
+        width: 50px; } }
   .ssp-admin-header__info {
     display: flex;
     gap: 20px;
     align-items: center; }
+    @media (max-width: 480px) {
+      .ssp-admin-header__info {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px; } }
     .ssp-admin-header__info-plan {
       font-family: Inter, sans-serif;
       font-weight: 500;
       font-size: 14px;
       line-height: 20px;
       color: #6C25D0; }
+      @media (max-width: 480px) {
+        .ssp-admin-header__info-plan {
+          font-size: 12px; } }
     .ssp-admin-header__info-buttons {
       display: flex;
       gap: 6px; }
@@ -706,6 +757,10 @@ textarea#episode_embed_code {
         color: #FFFFFF;
         text-decoration: none;
         transition: .3s; }
+        @media (max-width: 480px) {
+          .ssp-admin-header__info-buttons a {
+            padding: 9px 10px;
+            font-size: 10px; } }
         .ssp-admin-header__info-buttons a:hover {
           color: #FFFFFF;
           background: #7934db; }

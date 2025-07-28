@@ -20,10 +20,11 @@
 		border-radius: 6px;
 		font-size: 14px;
 
-		&:hover {
+		&:hover, &:active, &:focus {
 			background: lighten($clr_purple_600, 5%);
 			border-color: lighten($clr_purple_600, 5%);
 			color: $clr_white;
+			font-weight: bold;
 		}
 	}
 
@@ -87,10 +88,14 @@
 		transition: .3s;
 		font-weight: 600;
 
-		&:hover {
+		&:hover, &:focus {
 			color: lighten($clr_purple_600, 5%);
 			border-color: lighten($clr_purple_600, 5%);
 			background: lighten($clr_purple_600, 40%);
+		}
+
+		&:focus {
+			box-shadow: 0 0 0 1px lighten($clr_purple_600, 10%);
 		}
 	}
 
@@ -125,10 +130,6 @@
 	}
 
 	select {
-		&:hover {
-			color: $clr_purple_600;
-		}
-
 		appearance: none;
 		-webkit-appearance: none;
 		-moz-appearance: none;
@@ -155,6 +156,10 @@
 		sans-serif;
 		font-size: 13px;
 		font-weight: 500;
+
+		&:hover, &:focus, option {
+			color: $clr_purple_600;
+		}
 	}
 
 	input[type="checkbox"] {
@@ -221,6 +226,9 @@
 
 	.wrap {
 		margin-right: 80px;
+		@include smaller(md) {
+			margin-right: 20px;
+		}
 	}
 
 	#screen-meta-links {
@@ -429,6 +437,15 @@
 		}
 
 	}
+
+	#footer-left {
+		font-size: 16px;
+		margin-bottom: 20px;
+	}
+
+	#wpfooter {
+		margin-right: 60px;
+	}
 }
 
 .ssp-admin-header {
@@ -438,12 +455,34 @@
 	background: linear-gradient(to bottom, #F6F3FF 0%, #EFE9FEC4 77%);
 	margin-left: -20px;
 
+	@include smaller(sm) {
+		position: relative;
+		top: 45px;
+	}
+
+	@include smaller(sm) {
+		height: 140px;
+	}
+
+	@include smaller(xs) {
+		height: 180px;
+	}
+
 	&__container {
 		display: flex;
 		margin: 0 80px 0 20px;
 		align-items: center;
 		justify-content: space-between;
 		width: 100%;
+		@include smaller(md) {
+			margin: 0 20px;
+		}
+		@include smaller(sm) {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 10px;
+			padding: 20px 0;
+		}
 	}
 
 	&__logo {
@@ -462,6 +501,10 @@
 				font-size: 20px;
 				font-weight: 600;
 				color: $clr_purple_900;
+
+				@include smaller(xs) {
+					font-size: 18px;
+				}
 			}
 
 			a {
@@ -477,6 +520,12 @@
 				text-transform: uppercase;
 				padding: 3px 10px 3px 8px;
 				border-radius: 4px;
+				margin-top: 2px;
+
+				@include smaller(sm) {
+					font-size: 8px;
+					padding: 2px 10px 1px 10px;
+				}
 
 				&:hover {
 					color: lighten($clr_purple_600, 30%);
@@ -493,6 +542,12 @@
 				}
 			}
 		}
+
+		svg {
+			@include smaller(xs) {
+				width: 50px;
+			}
+		}
 	}
 
 	&__info {
@@ -500,12 +555,22 @@
 		gap: 20px;
 		align-items: center;
 
+		@include smaller(xs) {
+			flex-direction: column;
+			align-items: flex-start;
+			gap: 10px;
+		}
+
 		&-plan {
 			font-family: Inter, sans-serif;
 			font-weight: 500;
 			font-size: 14px;
 			line-height: 20px;
 			color: $clr_purple_700;
+
+			@include smaller(xs) {
+				font-size: 12px;
+			}
 		}
 
 		&-buttons {
@@ -523,6 +588,11 @@
 				color: $clr_white;
 				text-decoration: none;
 				transition: .3s;
+
+				@include smaller(xs) {
+					padding: 9px 10px;
+					font-size: 10px;
+				}
 
 				&:hover {
 					color: $clr_white;

@@ -1,14 +1,28 @@
 <?php
 /**
+ * Available Podcasts Attribute class file.
+ *
  * This class is for lazy loading Podcast settings
  * for the 'seriously-simple-podcasting/playlist-player' attributes.
- * */
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Entities;
 
 use JsonSerializable;
 
+/**
+ * Available Podcasts Attribute class.
+ *
+ * Handles lazy loading of podcast settings for playlist player attributes.
+ */
 class Available_Podcasts_Attribute implements JsonSerializable {
+	/**
+	 * Cached podcast settings.
+	 *
+	 * @var array
+	 */
 	private $settings;
 
 	/**
@@ -17,7 +31,7 @@ class Available_Podcasts_Attribute implements JsonSerializable {
 	 * @return false|string
 	 */
 	public function __toString() {
-		return json_encode( $this->get_settings() );
+		return wp_json_encode( $this->get_settings() );
 	}
 
 	/**

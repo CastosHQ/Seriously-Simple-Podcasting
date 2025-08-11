@@ -15,17 +15,23 @@ namespace SeriouslySimplePodcasting\Entities;
 class API_File_Data extends Abstract_API_Entity {
 
 	/**
-	 * @var int $id
-	 * */
+	 * File ID.
+	 *
+	 * @var int
+	 */
 	public $id;
 
 	/**
-	 * @var int $id
-	 * */
+	 * Episode ID associated with the file.
+	 *
+	 * @var int
+	 */
 	public $episode_id;
 
 	/**
-	 * @var string $file_path
-	 * */
+	 * Path to the file.
+	 *
+	 * @var string
+	 */
 	public $file_path;
 }

@@ -15,14 +15,32 @@ namespace SeriouslySimplePodcasting\Entities;
 class Castos_Response extends Abstract_API_Entity {
 
 	/**
-	 * @var string $id
-	 * */
+	 * Error message.
+	 *
+	 * @var string
+	 */
 	public $message = 'An unknown error occurred. Please try again later.';
 
+	/**
+	 * Response status.
+	 *
+	 * @var string
+	 */
 	public $status = 'error';
 
+	/**
+	 * Response body.
+	 *
+	 * @var array
+	 */
 	protected $body;
 
+	/**
+	 * Updates the response with raw data.
+	 *
+	 * @param array $raw_response Raw response data.
+	 * @return void
+	 */
 	public function update( $raw_response ) {
 		if ( ! is_array( $raw_response ) || ! isset( $raw_response['response']['code'] ) ) {
 			return;
@@ -34,11 +52,18 @@ class Castos_Response extends Abstract_API_Entity {
 		$this->status  = 200 === $this->code ? 'success' : $this->status;
 	}
 
+	/**
+	 * Translates response messages.
+	 *
+	 * @param string $text Text to translate.
+	 * @return string Translated text.
+	 * @throws \Exception When text is not translatable.
+	 */
 	public function translate( $text ) {
 		try {
 			$translations = array(
-				wp_hash( 'Authentication failed! Invalid or missing Access Token!' ) => __( 'Authentication failed! Invalid or missing Access Token!' ),
-				wp_hash( 'Seriously Simple Podcasting has successfully connected to your Castos account.' ) => __( 'Seriously Simple Podcasting has successfully connected to your Castos account.' ),
+				wp_hash( 'Authentication failed! Invalid or missing Access Token!' ) => __( 'Authentication failed! Invalid or missing Access Token!', 'seriously-simple-podcasting' ),
+				wp_hash( 'Seriously Simple Podcasting has successfully connected to your Castos account.' ) => __( 'Seriously Simple Podcasting has successfully connected to your Castos account.', 'seriously-simple-podcasting' ),
 			);
 			$msg_key      = wp_hash( $text );
 			if ( ! array_key_exists( $msg_key, $translations ) ) {

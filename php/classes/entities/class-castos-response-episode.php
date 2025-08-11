@@ -1,9 +1,10 @@
 <?php
 /**
- * Castos_Response_Episode Entity.
+ * Castos Response Episode entity class file.
  *
  * @package SeriouslySimplePodcasting
- * */
+ */
+
 namespace SeriouslySimplePodcasting\Entities;
 
 /**
@@ -13,8 +14,19 @@ namespace SeriouslySimplePodcasting\Entities;
  */
 class Castos_Response_Episode extends Castos_Response {
 
+	/**
+	 * Castos episode ID.
+	 *
+	 * @var int
+	 */
 	public $castos_episode_id;
 
+	/**
+	 * Updates the response with raw data.
+	 *
+	 * @param array $raw_response Raw response data.
+	 * @return void
+	 */
 	public function update( $raw_response ) {
 		parent::update( $raw_response );
 		if ( $this->body && isset( $this->body['episode']['id'] ) ) {

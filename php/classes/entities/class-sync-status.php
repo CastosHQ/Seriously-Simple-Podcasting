@@ -22,29 +22,44 @@ class Sync_Status extends Abstract_Entity {
 	const SYNC_STATUS_NONE               = 'none';
 
 	/**
+	 * Status of the sync process.
+	 *
 	 * @var string $status
-	 * */
+	 */
 	public $status;
 
 	/**
+	 * Title of the sync status.
+	 *
 	 * @var string $title
-	 * */
+	 */
 	public $title = '';
 
 	/**
+	 * Message describing the sync status.
+	 *
 	 * @var string $message
-	 * */
+	 */
 	public $message = '';
 
 	/**
+	 * Error message if sync failed.
+	 *
 	 * @var string $error
-	 * */
+	 */
 	public $error = '';
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string $status The sync status.
+	 *
+	 * @throws \Exception If status is not registered.
+	 */
 	public function __construct( $status ) {
 		$statuses = self::get_available_sync_statuses();
 		if ( ! array_key_exists( $status, $statuses ) ) {
-			throw new \Exception( sprintf( 'Status %s is not registered!', $status ) );
+			throw new \Exception( sprintf( 'Status %s is not registered!', esc_html( $status ) ) );
 		}
 
 		parent::__construct( $statuses[ $status ] );
@@ -52,7 +67,9 @@ class Sync_Status extends Abstract_Entity {
 
 
 	/**
-	 * @return array
+	 * Get all available sync statuses.
+	 *
+	 * @return array List of available sync statuses.
 	 */
 	public static function get_available_sync_statuses() {
 		$statuses = array(

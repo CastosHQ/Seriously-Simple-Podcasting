@@ -1,11 +1,10 @@
 <?php
-
 /**
  * Abstract Entity.
  *
  * @package SeriouslySimplePodcasting
  * @since 2.23.0
- * */
+ */
 
 namespace SeriouslySimplePodcasting\Entities;
 
@@ -37,6 +36,13 @@ abstract class Abstract_Entity {
 		}
 	}
 
+	/**
+	 * Fills entity properties from an object.
+	 *
+	 * @param object $properties Object containing properties.
+	 * @param string $k          Property key to fill.
+	 * @return void
+	 */
 	protected function fill_with_object( $properties, $k ) {
 		if ( isset( $properties->{$k} ) ) {
 			$val = $properties->{$k};
@@ -45,6 +51,13 @@ abstract class Abstract_Entity {
 		}
 	}
 
+	/**
+	 * Fills entity properties from an array.
+	 *
+	 * @param array  $properties Array containing properties.
+	 * @param string $k          Property key to fill.
+	 * @return void
+	 */
 	protected function fill_with_array( $properties, $k ) {
 		if ( isset( $properties[ $k ] ) ) {
 			$val = $properties[ $k ];
@@ -53,6 +66,12 @@ abstract class Abstract_Entity {
 		}
 	}
 
+	/**
+	 * Guesses and converts property type based on value.
+	 *
+	 * @param mixed $val Property value to convert.
+	 * @return mixed Converted property value.
+	 */
 	protected function guess_property_type( $val ) {
 		if ( is_numeric( $val ) ) {
 			$val = strval( $val );

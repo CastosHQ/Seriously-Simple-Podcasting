@@ -27,33 +27,33 @@ class Series extends WP_Widget {
 
 	/**
 	 * Constructor function.
+	 *
 	 * @since  1.9.0
 	 */
 	public function __construct() {
 		// Widget variable settings
-		$this->widget_cssclass = 'widget_podcast_series';
+		$this->widget_cssclass    = 'widget_podcast_series';
 		$this->widget_description = __( 'Display a list of episodes from a single podcast.', 'seriously-simple-podcasting' );
-		$this->widget_idbase = 'ss_podcast';
-		$this->widget_title = __( 'Podcast', 'seriously-simple-podcasting' );
+		$this->widget_idbase      = 'ss_podcast';
+		$this->widget_title       = __( 'Podcast', 'seriously-simple-podcasting' );
 
 		// Widget settings
 		$widget_ops = array(
-			'classname' => $this->widget_cssclass,
-			'description' => $this->widget_description,
+			'classname'                   => $this->widget_cssclass,
+			'description'                 => $this->widget_description,
 			'customize_selective_refresh' => true,
 		);
 
-		parent::__construct('podcast-series', $this->widget_title, $widget_ops);
+		parent::__construct( 'podcast-series', $this->widget_title, $widget_ops );
 
 		$this->alt_option_name = 'widget_podcast_series';
 
 		add_action( 'save_post', array( $this, 'flush_widget_cache' ) );
 		add_action( 'deleted_post', array( $this, 'flush_widget_cache' ) );
 		add_action( 'switch_theme', array( $this, 'flush_widget_cache' ) );
-
 	} // End __construct()
 
-	public function widget($args, $instance) {
+	public function widget( $args, $instance ) {
 		$cache = array();
 		if ( ! $this->is_preview() ) {
 			$cache = wp_cache_get( 'widget_podcast_series', 'widget' );
@@ -97,43 +97,47 @@ class Series extends WP_Widget {
 		}
 
 		$show_title = isset( $instance['show_title'] ) ? $instance['show_title'] : false;
-		$show_desc = isset( $instance['show_desc'] ) ? $instance['show_desc'] : false;
-		$show_date = isset( $instance['show_date'] ) ? $instance['show_date'] : false;
+		$show_desc  = isset( $instance['show_desc'] ) ? $instance['show_desc'] : false;
+		$show_date  = isset( $instance['show_date'] ) ? $instance['show_date'] : false;
 
 		$query_args = ssp_episodes( $number, $series->slug, true, 'widget' );
 
 		$qry = new WP_Query( apply_filters( 'ssp_widget_series_episodes_args', $query_args ) );
 
 		if ( $qry->have_posts() ) :
-?>
-		<?php echo $args['before_widget']; ?>
-		<?php if ( $title ) {
-			echo $args['before_title'] . $title . $args['after_title'];
-		} ?>
+			?>
+			<?php echo $args['before_widget']; ?>
+			<?php
+			if ( $title ) {
+				echo $args['before_title'] . $title . $args['after_title'];
+			}
+			?>
 
-		<?php if ( $show_title ) { ?>
+			<?php if ( $show_title ) { ?>
 			<h3><?php echo $series->name; ?></h3>
 		<?php } ?>
 
-		<?php if ( $show_desc ) { ?>
+			<?php if ( $show_desc ) { ?>
 			<p><?php echo $series->description; ?></p>
 		<?php } ?>
 
 		<ul>
-		<?php while ( $qry->have_posts() ) : $qry->the_post(); ?>
+			<?php
+			while ( $qry->have_posts() ) :
+				$qry->the_post();
+				?>
 			<li>
 				<a href="<?php the_permalink(); ?>"><?php get_the_title() ? the_title() : the_ID(); ?></a>
-			<?php if ( $show_date ) : ?>
+				<?php if ( $show_date ) : ?>
 				<span class="post-date"><?php echo get_the_date(); ?></span>
 			<?php endif; ?>
 			</li>
 		<?php endwhile; ?>
 		</ul>
-		<?php echo $args['after_widget']; ?>
-<?php
-		// Reset the global $the_post as this query will have stomped on it
-		wp_reset_postdata();
-
+			<?php echo $args['after_widget']; ?>
+			<?php
+			// Reset the global $the_post as this query will have stomped on it
+			wp_reset_postdata();
 		endif;
 
 		if ( ! $this->is_preview() ) {
@@ -158,7 +162,7 @@ class Series extends WP_Widget {
 	}
 
 	public function flush_widget_cache() {
-		wp_cache_delete('widget_podcast_series', 'widget');
+		wp_cache_delete( 'widget_podcast_series', 'widget' );
 	}
 
 	public function form( $instance ) {
@@ -171,7 +175,7 @@ class Series extends WP_Widget {
 
 		// Get all podcast series
 		$series = get_terms( ssp_series_taxonomy() );
-?>
+		?>
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'seriously-simple-podcasting' ); ?></label>
 		<input class="widefat" id="<?php echo $this->get_field_id( 'title' ); ?>" name="<?php echo $this->get_field_name( 'title' ); ?>" type="text" placeholder="<?php _e( 'Use series title', 'seriously-simple-podcasting' ); ?>" value="<?php echo $title; ?>" /></p>
 
@@ -197,7 +201,7 @@ class Series extends WP_Widget {
 
 		<p><input class="checkbox" type="checkbox" <?php checked( $show_date ); ?> id="<?php echo $this->get_field_id( 'show_date' ); ?>" name="<?php echo $this->get_field_name( 'show_date' ); ?>" />
 		<label for="<?php echo $this->get_field_id( 'show_date' ); ?>"><?php _e( 'Display episode date?', 'seriously-simple-podcasting' ); ?></label></p>
-<?php
+		<?php
 	}
 } // End Class
 

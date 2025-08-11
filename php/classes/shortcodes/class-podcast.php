@@ -19,7 +19,8 @@ class Podcast implements Shortcode {
 
 	/**
 	 * Load ss_podcast shortcode
-	 * @param  array  $params  Shortcode attributes
+	 *
+	 * @param  array $params  Shortcode attributes
 	 * @return string          HTML output
 	 */
 	public function shortcode( $params ) {

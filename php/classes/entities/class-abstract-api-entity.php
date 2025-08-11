@@ -16,6 +16,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Abstract API entity class.
+ *
  * @since 2.23.0
  * @author Serhiy Zakharchenko
  */

@@ -1,23 +1,19 @@
 <?php
 
-class ExampleTest extends \Codeception\TestCase\WPTestCase
-{
-    /**
-     * @var \UnitTester
-     */
-    protected $tester;
+class ExampleTest extends \Codeception\TestCase\WPTestCase {
 
-    protected function _before()
-    {
-    }
+	/**
+	 * @var \UnitTester
+	 */
+	protected $tester;
 
-    protected function _after()
-    {
-    }
+	protected function _before() {
+	}
 
-    // tests
-    public function testSomeFeature()
-    {
+	protected function _after() {
+	}
 
-    }
+	// tests
+	public function testSomeFeature() {
+	}
 }

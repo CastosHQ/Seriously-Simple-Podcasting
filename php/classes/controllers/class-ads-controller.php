@@ -37,14 +37,14 @@ class Ads_Controller {
 	/**
 	 * Check ads settings by WP Cron once a day.
 	 * */
-	public function check_ads_settings(){
+	public function check_ads_settings() {
 		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 
 		$podcasts = $this->castos_handler->get_podcast_items();
 		foreach ( $podcasts as $podcast ) {
-			if( ! $podcast->ads_enabled && $this->is_series_ads_enabled( $podcast->series_id ) ){
+			if ( ! $podcast->ads_enabled && $this->is_series_ads_enabled( $podcast->series_id ) ) {
 				$this->disable_series_ads( $podcast->series_id );
 			}
 		}
@@ -68,8 +68,10 @@ class Ads_Controller {
 
 		if ( ! ssp_is_connected_to_castos() ) {
 			$show_ads['description'] = sprintf(
-				__( 'Monetize your podcast today when you partner with Castos for podcast hosting. <a target="_blank" href="%s">Learn more.</a>',
-					'seriously-simple-podcasting' ),
+				__(
+					'Monetize your podcast today when you partner with Castos for podcast hosting. <a target="_blank" href="%s">Learn more.</a>',
+					'seriously-simple-podcasting'
+				),
 				'https://castos.com/advertising/'
 			);
 
@@ -80,8 +82,10 @@ class Ads_Controller {
 
 		if ( ! $this->is_ads_enabled_in_castos() ) {
 			$show_ads['description'] = sprintf(
-				__( 'Enable Ads in your Castos account first to get set up. <a target="_blank" href="%s">Learn more.</a>',
-					'seriously-simple-podcasting' ),
+				__(
+					'Enable Ads in your Castos account first to get set up. <a target="_blank" href="%s">Learn more.</a>',
+					'seriously-simple-podcasting'
+				),
 				'https://support.castos.com/article/300-enable-castos-ads'
 			);
 
@@ -90,12 +94,15 @@ class Ads_Controller {
 			return $fields;
 		}
 
-		$show_ads = array_merge( $show_ads, array(
-			'description' => __( 'Enable Castos Ads.', 'seriously-simple-podcasting' ),
-			'type'        => 'checkbox',
-			'default'     => 'off',
-			'callback'    => 'wp_strip_all_tags',
-		) );
+		$show_ads = array_merge(
+			$show_ads,
+			array(
+				'description' => __( 'Enable Castos Ads.', 'seriously-simple-podcasting' ),
+				'type'        => 'checkbox',
+				'default'     => 'off',
+				'callback'    => 'wp_strip_all_tags',
+			)
+		);
 
 		$fields['show_ads'] = $show_ads;
 
@@ -163,7 +170,7 @@ class Ads_Controller {
 			return $enclosure;
 		}
 
-		$file_data = $this->get_episode_file_data($episode_id);
+		$file_data = $this->get_episode_file_data( $episode_id );
 
 		if ( ! $file_data->success || ! $file_data->ads_enabled ) {
 			return $enclosure;
@@ -225,7 +232,7 @@ class Ads_Controller {
 	 *
 	 * @return bool
 	 */
-	protected function disable_series_ads( $series_id ){
+	protected function disable_series_ads( $series_id ) {
 		return ssp_update_option( self::ENABLE_ADS_OPTION, '', $series_id );
 	}
 
@@ -236,7 +243,7 @@ class Ads_Controller {
 	 *
 	 * @return int
 	 */
-	protected function get_episode_series_id( $episode_id ){
+	protected function get_episode_series_id( $episode_id ) {
 		$episode_podcasts = ssp_get_episode_podcasts( $episode_id );
 		return ! empty( $episode_podcasts[0] ) ? $episode_podcasts[0]->term_id : 0;
 	}

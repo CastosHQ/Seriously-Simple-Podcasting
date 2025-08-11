@@ -9,6 +9,7 @@ namespace SeriouslySimplePodcasting\Entities;
 
 /**
  * Class Castos_Response. Is used instead of response array in Castos_Handler class.
+ *
  * @since 3.5.0
  */
 class Castos_Response extends Abstract_API_Entity {
@@ -35,17 +36,16 @@ class Castos_Response extends Abstract_API_Entity {
 
 	public function translate( $text ) {
 		try {
-			$translations = array (
+			$translations = array(
 				wp_hash( 'Authentication failed! Invalid or missing Access Token!' ) => __( 'Authentication failed! Invalid or missing Access Token!' ),
 				wp_hash( 'Seriously Simple Podcasting has successfully connected to your Castos account.' ) => __( 'Seriously Simple Podcasting has successfully connected to your Castos account.' ),
 			);
-			$msg_key = wp_hash( $text );
+			$msg_key      = wp_hash( $text );
 			if ( ! array_key_exists( $msg_key, $translations ) ) {
 				throw new \Exception( 'Text is not translatable' );
 			}
 
 			return $translations[ $msg_key ];
-
 		} catch ( \Exception $e ) {
 			return $text;
 		}

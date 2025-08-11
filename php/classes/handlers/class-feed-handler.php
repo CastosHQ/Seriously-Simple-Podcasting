@@ -20,6 +20,7 @@ class Feed_Handler implements Service {
 
 	/**
 	 * Unique "podcast" namespace UUID
+	 *
 	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#guid
 	 * */
 	const PODCAST_NAMESPACE_UUID = 'ead4c236-bf58-58c6-a2c6-a6b28d128cb6';
@@ -40,7 +41,7 @@ class Feed_Handler implements Service {
 	 */
 	public function __construct( $settings_handler, $renderer ) {
 		$this->settings_handler = $settings_handler;
-		$this->renderer = $renderer;
+		$this->renderer         = $renderer;
 		$this->init_useful_variables();
 	}
 
@@ -69,7 +70,6 @@ class Feed_Handler implements Service {
 
 		// Handle feed protection if required.
 		if ( 'on' === $protection ) {
-
 			$give_access = false;
 
 			// Request password and give access if correct.
@@ -113,9 +113,10 @@ class Feed_Handler implements Service {
 
 	/**
 	 * Redirect the default feed to the default series feed
+	 *
 	 * @since 3.0.0
 	 * */
-	public function redirect_default_feed(){
+	public function redirect_default_feed() {
 		$default_series_id = ssp_get_option( 'default_series' );
 		if ( ! $default_series_id ) {
 			return;
@@ -196,7 +197,7 @@ class Feed_Handler implements Service {
 
 
 	/**
-	 * @param int $series_id
+	 * @param int    $series_id
 	 * @param string $description
 	 */
 	public function render_feed_no_access( $series_id, $description ) {
@@ -526,6 +527,7 @@ class Feed_Handler implements Service {
 
 	/**
 	 * Gets funding settings
+	 *
 	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#funding
 	 *
 	 * @param int $series_id
@@ -544,6 +546,7 @@ class Feed_Handler implements Service {
 
 	/**
 	 * Gets podcast value settings ( recipient wallet address )
+	 *
 	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#value
 	 *
 	 * @param int $series_id
@@ -609,7 +612,7 @@ class Feed_Handler implements Service {
 	 * Gets the feed query
 	 *
 	 * @param string $series_slug
-	 * @param array $exclude_series
+	 * @param array  $exclude_series
 	 * @param string $pub_date_type
 	 *
 	 * @return WP_Query
@@ -650,15 +653,15 @@ class Feed_Handler implements Service {
 	/**
 	 * Gets feed item description
 	 *
-	 * @param int $post_id
+	 * @param int  $post_id
 	 * @param bool $is_excerpt_mode
-	 * @param int $turbo_post_count
+	 * @param int  $turbo_post_count
 	 *
 	 * @return string
 	 */
 	public function get_feed_item_description( $post_id, $is_excerpt_mode, $turbo_post_count = 0 ) {
 		if ( $is_excerpt_mode ) {
-			$output  = get_the_excerpt( $post_id );
+			$output = get_the_excerpt( $post_id );
 			// Remove filter convert_chars, because our feed is already escaped with CDATA.
 			remove_filter( 'the_excerpt_rss', 'convert_chars' );
 			$content = apply_filters( 'the_excerpt_rss', $output, $post_id, $is_excerpt_mode );
@@ -693,7 +696,7 @@ class Feed_Handler implements Service {
 	 *
 	 * @return mixed|void
 	 */
-	public function get_feed_item_duration( $post_id ){
+	public function get_feed_item_duration( $post_id ) {
 		$duration = get_post_meta( $post_id, 'duration', true );
 		if ( ! $duration ) {
 			$duration = '0:00';
@@ -708,7 +711,7 @@ class Feed_Handler implements Service {
 	 *
 	 * @return int
 	 */
-	public function get_feed_item_file_size( $post_id ){
+	public function get_feed_item_file_size( $post_id ) {
 		$size = get_post_meta( $post_id, 'filesize_raw', true );
 
 		if ( ! $size ) {
@@ -776,7 +779,7 @@ class Feed_Handler implements Service {
 	 *
 	 * @return mixed|void
 	 */
-	public function get_feed_item_google_play_description( $description, $post_id ){
+	public function get_feed_item_google_play_description( $description, $post_id ) {
 		$gp_description = wp_strip_all_tags( $description );
 		$gp_description = mb_substr( $gp_description, 0, 999 );
 		return apply_filters( 'ssp_feed_item_gp_description', $gp_description, $post_id );
@@ -791,7 +794,7 @@ class Feed_Handler implements Service {
 	 *
 	 * @return mixed|void
 	 */
-	public function get_feed_item_itunes_subtitle( $description, $post_id ){
+	public function get_feed_item_itunes_subtitle( $description, $post_id ) {
 		$itunes_subtitle = wp_strip_all_tags( $description );
 		$itunes_subtitle = str_replace(
 			array(

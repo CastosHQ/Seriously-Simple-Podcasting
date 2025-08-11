@@ -15,7 +15,7 @@ class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
 	 * Class constructor.
 	 *
 	 * @param array $data Widget data.
-	 * @param null $args Widget arguments.
+	 * @param null  $args Widget arguments.
 	 *
 	 * @throws Exception
 	 */
@@ -47,17 +47,17 @@ class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'podcasting' ];
+		return array( 'podcasting' );
 	}
 
 	protected function register_controls() {
 
 		$this->start_controls_section(
 			'content_section',
-			[
+			array(
 				'label' => __( 'Content', 'seriously-simple-podcasting' ),
 				'tab'   => Controls_Manager::TAB_CONTENT,
-			]
+			)
 		);
 
 		$this->add_control( 'show_elements', $this->get_select_podcast_settings( false ) );
@@ -97,5 +97,4 @@ class Elementor_Subscribe_Buttons_Widget extends Widget_Base {
 	public function render_plain_content() {
 		echo '';
 	}
-
 }

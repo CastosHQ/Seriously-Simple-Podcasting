@@ -61,12 +61,12 @@ class Podcast_Post_Types_Controller {
 	protected $series_handler;
 
 	/**
-	 * @param CPT_Podcast_Handler $cpt_podcast_handler
-	 * @param Castos_Handler $castos_handler
+	 * @param CPT_Podcast_Handler         $cpt_podcast_handler
+	 * @param Castos_Handler              $castos_handler
 	 * @param Admin_Notifications_Handler $admin_notices_handler
-	 * @param Podping_Handler $podping_handler
-	 * @param Episode_Repository $episode_repository
-	 * @param Series_Handler $series_handler
+	 * @param Podping_Handler             $podping_handler
+	 * @param Episode_Repository          $episode_repository
+	 * @param Series_Handler              $series_handler
 	 */
 	public function __construct(
 		$cpt_podcast_handler,
@@ -145,7 +145,7 @@ class Podcast_Post_Types_Controller {
 	 *
 	 * @since 3.7.0
 	 *
-	 * @param array $args
+	 * @param array  $args
 	 * @param string $post_type
 	 *
 	 * @return array
@@ -154,9 +154,9 @@ class Podcast_Post_Types_Controller {
 		$podcast_post_types = get_option( 'ss_podcasting_use_post_types', array() );
 
 		if ( ! is_array( $podcast_post_types ) ||
-		     ! is_array( $args ) ||
-		     ! in_array( $post_type, $podcast_post_types ) ||
-		     ! empty( $args['supports']['custom-fields'] ) ) {
+			! is_array( $args ) ||
+			! in_array( $post_type, $podcast_post_types ) ||
+			! empty( $args['supports']['custom-fields'] ) ) {
 			return $args;
 		}
 
@@ -182,12 +182,15 @@ class Podcast_Post_Types_Controller {
 			return $metas;
 		}
 		$fields  = array_keys( $this->custom_fields( true ) );
-		$fields  = array_merge( $fields, array(
-			'enclosure',
-			'castos_sync_attempts',
-			'podmotor_episode_id',
-			'podmotor_file_id',
-		) );
+		$fields  = array_merge(
+			$fields,
+			array(
+				'enclosure',
+				'castos_sync_attempts',
+				'podmotor_episode_id',
+				'podmotor_file_id',
+			)
+		);
 		$allowed = array( 'cover_image', 'cover_image_id' );
 		$fields  = array_diff( $fields, $allowed );
 
@@ -213,7 +216,7 @@ class Podcast_Post_Types_Controller {
 	}
 
 	/**
-	 * @param int $episode_id
+	 * @param int    $episode_id
 	 * @param string $episode_status
 	 *
 	 * @return void
@@ -240,7 +243,7 @@ class Podcast_Post_Types_Controller {
 	}
 
 	/**
-	 * @param int $podcast_id
+	 * @param int   $podcast_id
 	 * @param array $response
 	 */
 	public function update_podcast_episodes_status( $podcast_id, $response ) {
@@ -261,8 +264,8 @@ class Podcast_Post_Types_Controller {
 	 *  - if a new episode with series is published
 	 *  - if a new series is added to existing episode.
 	 *
-	 * @param int $post_id
-	 * @param int $term_id
+	 * @param int    $post_id
+	 * @param int    $term_id
 	 * @param string $taxonomy
 	 *
 	 * @return bool
@@ -302,13 +305,13 @@ class Podcast_Post_Types_Controller {
 	 *  - when a new episode without series is created
 	 *  - when a new episode with series was first created as draft and then published.
 	 * For all other cases, @param \WP_Post $post
-	 * @see notify_podping_on_series_added()
 	 *
+	 * @see notify_podping_on_series_added()
 	 */
 	public function notify_podping( $post_id, $post, $update, $post_before ) {
 
 		$is_just_published = isset( $post_before->post_status ) && isset( $post->post_status ) &&
-		                     'publish' !== $post_before->post_status && 'publish' === $post->post_status;
+							'publish' !== $post_before->post_status && 'publish' === $post->post_status;
 
 		if ( ! $is_just_published ) {
 			return;
@@ -324,6 +327,7 @@ class Podcast_Post_Types_Controller {
 		/**
 		 * Episode can belong to multiple series feeds, so let's notify all of them.
 		 * If episode doesn't belong to any series, it belongs to the main feed.
+		 *
 		 * @var \WP_Term[] $series_terms
 		 * */
 		if ( is_array( $series_terms ) && $series_terms ) {
@@ -373,50 +377,61 @@ class Podcast_Post_Types_Controller {
 	 * Prevents copying some episode meta fields.
 	 */
 	public function prevent_copy_meta() {
-		add_action( 'wp_insert_post', function ( $post_id, $post, $update ) {
-			if ( $update || ! in_array( $post->post_type, ssp_post_types() ) ) {
-				return;
-			}
-
-			$remove_redundant_metas = function ( $post_id ) {
-				$exclusions = [
-					'podmotor_file_id',
-					'podmotor_episode_id',
-					'audio_file',
-					'enclosure',
-					'castos_file_data',
-					'date_recorded',
-					'duration',
-					'filesize',
-					'filesize_raw',
-					'itunes_episode_number',
-					'sync_status',
-					'transcript_file',
-				];
-
-				foreach ( $exclusions as $exclusion ) {
-					delete_post_meta( $post_id, $exclusion );
+		add_action(
+			'wp_insert_post',
+			function ( $post_id, $post, $update ) {
+				if ( $update || ! in_array( $post->post_type, ssp_post_types() ) ) {
+					return;
 				}
-			};
 
-			// Most of the copy plugins use redirection after creating the post and it's meta.
-			add_filter( 'wp_redirect', function ( $location ) use ( $remove_redundant_metas, $post_id ) {
-				$remove_redundant_metas( $post_id );
+				$remove_redundant_metas = function ( $post_id ) {
+					$exclusions = array(
+						'podmotor_file_id',
+						'podmotor_episode_id',
+						'audio_file',
+						'enclosure',
+						'castos_file_data',
+						'date_recorded',
+						'duration',
+						'filesize',
+						'filesize_raw',
+						'itunes_episode_number',
+						'sync_status',
+						'transcript_file',
+					);
 
-				return $location;
-			} );
+					foreach ( $exclusions as $exclusion ) {
+						delete_post_meta( $post_id, $exclusion );
+					}
+				};
 
-			// This is for Post Duplicator plugin
-			add_action( 'mtphr_post_duplicator_created', function () use ( $remove_redundant_metas, $post_id ) {
-				$remove_redundant_metas( $post_id );
-			} );
+				// Most of the copy plugins use redirection after creating the post and it's meta.
+				add_filter(
+					'wp_redirect',
+					function ( $location ) use ( $remove_redundant_metas, $post_id ) {
+						$remove_redundant_metas( $post_id );
 
-		}, 10, 3 );
+						return $location;
+					}
+				);
+
+				// This is for Post Duplicator plugin
+				add_action(
+					'mtphr_post_duplicator_created',
+					function () use ( $remove_redundant_metas, $post_id ) {
+						$remove_redundant_metas( $post_id );
+					}
+				);
+			},
+			10,
+			3
+		);
 	}
 
 
 	/**
 	 * Register podcast episode details meta boxes
+	 *
 	 * @return void
 	 */
 	public function register_meta_boxes() {
@@ -459,7 +474,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Save episode meta box content
 	 *
-	 * @param integer $post_id ID of post
+	 * @param integer  $post_id ID of post
 	 * @param \WP_Post $post
 	 *
 	 * @return bool
@@ -475,10 +490,8 @@ class Podcast_Post_Types_Controller {
 			if ( ! current_user_can( 'edit_page', $post_id ) ) {
 				return $post_id;
 			}
-		} else {
-			if ( ! current_user_can( 'edit_post', $post_id ) ) {
+		} elseif ( ! current_user_can( 'edit_post', $post_id ) ) {
 				return $post_id;
-			}
 		}
 
 		$field_data = $this->custom_fields();
@@ -489,7 +502,6 @@ class Podcast_Post_Types_Controller {
 		$old_enclosure = '';
 
 		foreach ( $field_data as $k => $field ) {
-
 			if ( 'embed_code' == $k ) {
 				continue;
 			}
@@ -516,7 +528,6 @@ class Podcast_Post_Types_Controller {
 		}
 
 		if ( $enclosure ) {
-
 			$is_enclosure_updated = $old_enclosure !== $enclosure;
 
 			if ( $is_enclosure_updated || get_post_meta( $post_id, 'date_recorded', true ) == '' ) {
@@ -536,7 +547,6 @@ class Podcast_Post_Types_Controller {
 				if ( $is_enclosure_updated || get_post_meta( $post_id, 'filesize', true ) == '' ) {
 					$filesize = $this->episode_repository->get_file_size( $enclosure );
 					if ( $filesize ) {
-
 						if ( isset( $filesize['formatted'] ) ) {
 							update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
 						}
@@ -544,7 +554,6 @@ class Podcast_Post_Types_Controller {
 						if ( isset( $filesize['raw'] ) ) {
 							update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
 						}
-
 					}
 				}
 			}
@@ -571,7 +580,7 @@ class Podcast_Post_Types_Controller {
 
 		// Security check
 		if ( ! isset( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ] ) ||
-		     ! wp_verify_nonce( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ], plugin_basename( $this->dir ) )
+			! wp_verify_nonce( $_POST[ 'seriouslysimple_' . $this->token . '_nonce' ], plugin_basename( $this->dir ) )
 		) {
 			return false;
 		}
@@ -582,25 +591,39 @@ class Podcast_Post_Types_Controller {
 
 	/**
 	 * Create meta box on episode edit screen
+	 *
 	 * @return void
 	 */
 	public function meta_box_setup( $post ) {
 		global $pagenow;
-		add_meta_box( 'podcast-episode-data', __( 'Podcast Episode Details', 'seriously-simple-podcasting' ), array(
-			$this,
-			'meta_box_content',
-		), $post->post_type, 'normal', 'high' );
+		add_meta_box(
+			'podcast-episode-data',
+			__( 'Podcast Episode Details', 'seriously-simple-podcasting' ),
+			array(
+				$this,
+				'meta_box_content',
+			),
+			$post->post_type,
+			'normal',
+			'high'
+		);
 
 		if ( 'post.php' == $pagenow && 'publish' == $post->post_status && function_exists( 'get_post_embed_html' ) ) {
-			add_meta_box( 'episode-embed-code', __( 'Episode Embed Code', 'seriously-simple-podcasting' ), array(
-				$this,
-				'embed_code_meta_box_content',
-			), $post->post_type, 'side', 'low' );
+			add_meta_box(
+				'episode-embed-code',
+				__( 'Episode Embed Code', 'seriously-simple-podcasting' ),
+				array(
+					$this,
+					'embed_code_meta_box_content',
+				),
+				$post->post_type,
+				'side',
+				'low'
+			);
 		}
 
 		// Allow more metaboxes to be added
 		do_action( 'ssp_meta_boxes', $post );
-
 	}
 
 	/**
@@ -616,7 +639,7 @@ class Podcast_Post_Types_Controller {
 		$embed_code = get_post_embed_html( 500, 350, $post );
 
 		// Generate markup for meta box
-		$html = '<p><em>' . __( 'Customise the size of your episode embed below, then copy the HTML to your clipboard.', 'seriously-simple-podcasting' ) . '</em></p>';
+		$html  = '<p><em>' . __( 'Customise the size of your episode embed below, then copy the HTML to your clipboard.', 'seriously-simple-podcasting' ) . '</em></p>';
 		$html .= '<p><label for="episode_embed_code_width">' . __( 'Width:', 'seriously-simple-podcasting' ) . '</label> <input id="episode_embed_code_width" class="episode_embed_code_size_option" type="number" value="500" length="3" min="0" step="1" /> &nbsp;&nbsp;&nbsp;&nbsp;<label for="episode_embed_code_height">' . __( 'Height:', 'seriously-simple-podcasting' ) . '</label> <input id="episode_embed_code_height" class="episode_embed_code_size_option" type="number" value="350" length="3" min="0" step="1" /></p>';
 		$html .= '<p><textarea readonly id="episode_embed_code">' . esc_textarea( $embed_code ) . '</textarea></p>';
 
@@ -639,8 +662,7 @@ class Podcast_Post_Types_Controller {
 		$html = '<input type="hidden" name="seriouslysimple_' . $this->token . '_nonce" id="seriouslysimple_' . $this->token . '_nonce" value="' . wp_create_nonce( plugin_basename( $this->dir ) ) . '" />';
 
 		if ( 0 < count( $field_data ) ) {
-
-			$html     .= '<input id="seriouslysimple_post_id" type="hidden" value="' . $post_id . '" />';
+			$html    .= '<input id="seriouslysimple_post_id" type="hidden" value="' . $post_id . '" />';
 			$renderer = ssp_renderer();
 
 			foreach ( $field_data as $k => $v ) {
@@ -674,17 +696,17 @@ class Podcast_Post_Types_Controller {
 						$file_data = new Castos_File_Data(
 							json_decode( get_post_meta( $post_id, 'castos_file_data', true ), true )
 						);
-						$html      .= $renderer->fetch(
+						$html     .= $renderer->fetch(
 							'metafields/episode_file',
 							compact( 'k', 'v', 'data', 'is_castos', 'file_data' )
 						);
 						break;
 
 					case 'image':
-						$label = $v['name'];
+						$label       = $v['name'];
 						$description = $v['description'];
-						$validator = isset( $v['validator'] ) ? $v['validator'] : '';
-						$html .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'validator', 'data', 'k' ) );
+						$validator   = isset( $v['validator'] ) ? $v['validator'] : '';
+						$html       .= $renderer->fetch( 'metafields/image', compact( 'label', 'description', 'validator', 'data', 'k' ) );
 						break;
 
 					case 'checkbox':
@@ -719,7 +741,6 @@ class Podcast_Post_Types_Controller {
 						$html .= $renderer->fetch( 'metafields/text', compact( 'k', 'v', 'class', 'data' ) );
 						break;
 				}
-
 			}
 		}
 
@@ -750,7 +771,7 @@ class Podcast_Post_Types_Controller {
 		// Post type check
 		$post = get_post( $post_id );
 
-		if( 'publish' !== $post->post_status ){
+		if ( 'publish' !== $post->post_status ) {
 			return;
 		}
 
@@ -791,7 +812,7 @@ class Podcast_Post_Types_Controller {
 		// Post type check
 		$post = get_post( $post_id );
 
-		if( 'publish' !== $post->post_status ){
+		if ( 'publish' !== $post->post_status ) {
 			return;
 		}
 
@@ -807,7 +828,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Send the podcast details to Castos
 	 *
-	 * @param int $id
+	 * @param int      $id
 	 * @param \WP_Post $post
 	 */
 	public function sync_episode( $id, $post ) {
@@ -928,16 +949,16 @@ class Podcast_Post_Types_Controller {
 
 		$messages[ $this->token ] = array(
 			0  => '',
-			1  => sprintf( __( 'Episode updated. %sView episode%s.', 'seriously-simple-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			1  => sprintf( __( 'Episode updated. %1$sView episode%2$s.', 'seriously-simple-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			2  => __( 'Custom field updated.', 'seriously-simple-podcasting' ),
 			3  => __( 'Custom field deleted.', 'seriously-simple-podcasting' ),
 			4  => __( 'Episode updated.', 'seriously-simple-podcasting' ),
 			5  => isset( $_GET['revision'] ) ? sprintf( __( 'Episode restored to revision from %s.', 'seriously-simple-podcasting' ), wp_post_revision_title( (int) $_GET['revision'], false ) ) : false,
-			6  => sprintf( __( 'Episode published. %sView episode%s.', 'seriously-simple-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
+			6  => sprintf( __( 'Episode published. %1$sView episode%2$s.', 'seriously-simple-podcasting' ), '<a href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
 			7  => __( 'Episode saved.', 'seriously-simple-podcasting' ),
-			8  => sprintf( __( 'Episode submitted. %sPreview episode%s.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			8  => sprintf( __( 'Episode submitted. %1$sPreview episode%2$s.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 			9  => sprintf( __( 'Episode scheduled for: %1$s. %2$sPreview episode%3$s.', 'seriously-simple-podcasting' ), '<strong>' . date_i18n( __( 'M j, Y @ G:i', 'seriously-simple-podcasting' ), strtotime( $post->post_date ) ) . '</strong>', '<a target="_blank" href="' . esc_url( get_permalink( $post_ID ) ) . '">', '</a>' ),
-			10 => sprintf( __( 'Episode draft updated. %sPreview episode%s.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
+			10 => sprintf( __( 'Episode draft updated. %1$sPreview episode%2$s.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . esc_url( add_query_arg( 'preview', 'true', get_permalink( $post_ID ) ) ) . '">', '</a>' ),
 		);
 
 		return $messages;
@@ -980,7 +1001,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Display column data in podcast list table
 	 *
-	 * @param string $column_name Name of current column
+	 * @param string  $column_name Name of current column
 	 * @param integer $post_id ID of episode
 	 *
 	 * @return void
@@ -1012,7 +1033,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Clear the cache on post save.
 	 *
-	 * @param int $id POST ID
+	 * @param int    $id POST ID
 	 * @param object $post WordPress Post Object
 	 *
 	 * @return void
@@ -1023,6 +1044,5 @@ class Podcast_Post_Types_Controller {
 			wp_cache_delete( 'episodes', 'ssp' );
 			wp_cache_delete( 'episode_ids', 'ssp' );
 		}
-
 	}
 }

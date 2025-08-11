@@ -53,7 +53,7 @@ trait Elementor_Widget_Helper {
 		if ( ! empty( $series ) ) {
 			foreach ( $series as $term ) {
 				if ( is_object( $term ) ) {
-					$term_name = ( $default_series_id === $term->term_id ) ? ssp_get_default_series_name( $term->name ): $term->name;
+					$term_name                        = ( $default_series_id === $term->term_id ) ? ssp_get_default_series_name( $term->name ) : $term->name;
 					$series_options[ $term->term_id ] = $term_name;
 				}
 			}
@@ -64,19 +64,19 @@ trait Elementor_Widget_Helper {
 			'type'     => Controls_Manager::SELECT2,
 			'options'  => $series_options,
 			'multiple' => false,
-			'default'  => $default_series_id
+			'default'  => $default_series_id,
 		);
 
 		return $this->select_podcast_settings;
 	}
 
-	protected function add_episodes_query_controls( $args = array() ){
+	protected function add_episodes_query_controls( $args = array() ) {
 
 		$defaults = array(
 			'episodes_number' => 3,
 		);
 
-		$args = wp_parse_args($args, $defaults);
+		$args = wp_parse_args( $args, $defaults );
 
 		$this->start_controls_section(
 			'query_section',

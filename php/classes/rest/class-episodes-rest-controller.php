@@ -109,7 +109,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		$timestamp    = $request->get_header( 'X-Castos-Timestamp' );
 		$status_401   = array( 'status' => 401 );
 
-		if ( empty( $signature ) || empty ( $timestamp ) ) {
+		if ( empty( $signature ) || empty( $timestamp ) ) {
 			return new \WP_Error( 'missing_signature', 'No signature or timestamp provided.', $status_401 );
 		}
 
@@ -176,16 +176,18 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 			$this->episode_repository->update_episode_sync_status( $episode_id, $sync_status );
 
-			return rest_ensure_response( array(
-				'id'   => intval( $episode_id ),
-				'file' => array(
-					'id'  => intval( get_post_meta( $episode_id, 'podmotor_file_id', true ) ),
-					'url' => get_post_meta( $episode_id, $audio_file_meta_key, true ),
-				),
-				'episode' => array(
-					'id' => intval( get_post_meta( $episode_id, 'podmotor_episode_id', true ) ),
-				),
-			) );
+			return rest_ensure_response(
+				array(
+					'id'      => intval( $episode_id ),
+					'file'    => array(
+						'id'  => intval( get_post_meta( $episode_id, 'podmotor_file_id', true ) ),
+						'url' => get_post_meta( $episode_id, $audio_file_meta_key, true ),
+					),
+					'episode' => array(
+						'id' => intval( get_post_meta( $episode_id, 'podmotor_episode_id', true ) ),
+					),
+				)
+			);
 		} catch ( \Exception $e ) {
 			return new \WP_Error( $e->getCode(), $e->getMessage() );
 		}
@@ -198,7 +200,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 *
 	 * @throws \Exception
 	 */
-	private function validate_update_episode_request( $request ){
+	private function validate_update_episode_request( $request ) {
 		$url_params = $request->get_url_params();
 
 		if ( ! is_array( $url_params ) || empty( $url_params['episode_id'] ) ) {
@@ -304,7 +306,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		 * @param array $args Key value array of query var to query value.
 		 * @param \WP_REST_Request $request The request used.
 		 */
-		$args       = apply_filters( "rest_episode_query", $args, $request );
+		$args       = apply_filters( 'rest_episode_query', $args, $request );
 		$query_args = $this->prepare_items_query( $args, $request );
 
 		// Get taxonomies for each of the requested post_types
@@ -332,14 +334,17 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		$posts = array();
 
 		// Prepare Divi content
-		add_filter( 'the_content', function ( $content ) {
-			if ( false !== strpos( $content, '[et_pb_' ) ) {
-				// Remove all [et_pb...] and [/et_pb...] shortcodes
-				$content = preg_replace('/\\[\\/et_pb[^\\]]*\\]|\\[et_pb[^\\]]*\\]/', '', $content);
-			}
+		add_filter(
+			'the_content',
+			function ( $content ) {
+				if ( false !== strpos( $content, '[et_pb_' ) ) {
+					// Remove all [et_pb...] and [/et_pb...] shortcodes
+					$content = preg_replace( '/\\[\\/et_pb[^\\]]*\\]|\\[et_pb[^\\]]*\\]/', '', $content );
+				}
 
-			return $content;
-		} );
+				return $content;
+			}
+		);
 
 		foreach ( $query_result as $post ) {
 
@@ -373,19 +378,25 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 		// Add additional current and recent options to the response
 		if ( ! empty( $request_params['get_additional_options'] ) ) {
-			array_unshift( $posts, array(
-				'id'    => 0,
-				'title' => array(
-					'rendered' => __( 'Current Episode', 'seriously-simple-podcasting' ),
+			array_unshift(
+				$posts,
+				array(
+					'id'    => 0,
+					'title' => array(
+						'rendered' => __( 'Current Episode', 'seriously-simple-podcasting' ),
+					),
 				)
-			) );
+			);
 
-			array_unshift( $posts, array(
-				'id'    => - 1,
-				'title' => array(
-					'rendered' => __( 'Latest Episode', 'seriously-simple-podcasting' ),
-				),
-			) );
+			array_unshift(
+				$posts,
+				array(
+					'id'    => - 1,
+					'title' => array(
+						'rendered' => __( 'Latest Episode', 'seriously-simple-podcasting' ),
+					),
+				)
+			);
 		}
 
 		// Construct response
@@ -425,7 +436,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 * Determine the allowed query_vars for a get_items() response and prepare
 	 * for WP_Query.
 	 *
-	 * @param array $prepared_args
+	 * @param array            $prepared_args
 	 * @param \WP_REST_Request $request
 	 *
 	 * @return array            $query_args
@@ -442,7 +453,6 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			 * @param string $value The query_var value.
 			 *
 			 * @since 4.7.0
-			 *
 			 */
 			$query_args[ $key ] = apply_filters( "rest_query_var-{$key}", $value ); // phpcs:ignore WordPress.NamingConventions.ValidHookName.UseUnderscores
 		}
@@ -558,12 +568,12 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 		$params['context']['default'] = 'view';
 
-		$params['per_page'] = array (
-			'description' => 'Maximum number of items to be returned in result set.',
-			'type' => 'integer',
-			'default' => 10,
-			'minimum' => 1,
-			'maximum' => 500,
+		$params['per_page'] = array(
+			'description'       => 'Maximum number of items to be returned in result set.',
+			'type'              => 'integer',
+			'default'           => 10,
+			'minimum'           => 1,
+			'maximum'           => 500,
 			'sanitize_callback' => 'absint',
 			'validate_callback' => 'rest_validate_request_arg',
 		);
@@ -704,14 +714,17 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		foreach ( $this->post_types as $post_type ) {
 			$post_type_obj = get_post_type_object( $post_type );
 			if ( ! current_user_can( $post_type_obj->cap->edit_posts ) ) {
-				return new \WP_Error( 'rest_forbidden_status', __( 'Status is forbidden' ), array(
-					'status'    => rest_authorization_required_code(),
-					'post_type' => $post_type_obj->name,
-				) );
+				return new \WP_Error(
+					'rest_forbidden_status',
+					__( 'Status is forbidden' ),
+					array(
+						'status'    => rest_authorization_required_code(),
+						'post_type' => $post_type_obj->name,
+					)
+				);
 			}
 		}
 
 		return true;
 	}
-
 }

@@ -5,7 +5,6 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
@@ -52,15 +51,15 @@ class Integrations_Controller {
 	/**
 	 * Onboarding_Controller constructor.
 	 *
-	 * @param Feed_Handler $feed_handler
-	 * @param Castos_Handler $castos_handler
-	 * @param Log_Helper $logger
+	 * @param Feed_Handler                $feed_handler
+	 * @param Castos_Handler              $castos_handler
+	 * @param Log_Helper                  $logger
 	 * @param Admin_Notifications_Handler $notices_handler
 	 */
 	public function __construct( $feed_handler, $castos_handler, $logger, $notices_handler ) {
-		$this->feed_handler = $feed_handler;
-		$this->castos_handler = $castos_handler;
-		$this->logger = $logger;
+		$this->feed_handler    = $feed_handler;
+		$this->castos_handler  = $castos_handler;
+		$this->logger          = $logger;
 		$this->notices_handler = $notices_handler;
 
 		$this->init_integrations();
@@ -108,8 +107,8 @@ class Integrations_Controller {
 	 */
 	public function is_any_integration_enabled() {
 		return Paid_Memberships_Pro_Integrator::integration_enabled() ||
-		       LifterLMS_Integrator::integration_enabled() ||
-		       Memberpress_Integrator::integration_enabled() ||
-		       WC_Memberships_Integrator::integration_enabled();
+				LifterLMS_Integrator::integration_enabled() ||
+				Memberpress_Integrator::integration_enabled() ||
+				WC_Memberships_Integrator::integration_enabled();
 	}
 }

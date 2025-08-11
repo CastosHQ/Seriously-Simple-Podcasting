@@ -42,25 +42,28 @@ class Available_Podcasts_Attribute implements JsonSerializable {
 
 		$default_series_id = ssp_get_default_series_id();
 
-		$settings = [
-			[
+		$settings = array(
+			array(
 				'label' => __( '-- All --', 'seriously-simple-podcasting' ),
 				'value' => - 1,
-			],
-		];
+			),
+		);
 
 		$this->settings = array_merge(
 			$settings,
-			array_map( function ( $item ) use ( $default_series_id ) {
-				$label = $default_series_id === $item->term_id ?
+			array_map(
+				function ( $item ) use ( $default_series_id ) {
+					$label = $default_series_id === $item->term_id ?
 					ssp_get_default_series_name( $item->name ) :
 					$item->name;
 
-				return [
-					'label' => $label,
-					'value' => $item->term_id,
-				];
-			}, ssp_get_podcasts() )
+					return array(
+						'label' => $label,
+						'value' => $item->term_id,
+					);
+				},
+				ssp_get_podcasts()
+			)
 		);
 
 		return $this->settings;

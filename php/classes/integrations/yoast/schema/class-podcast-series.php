@@ -43,12 +43,12 @@ class PodcastSeries extends Abstract_Schema_Piece {
 		$author = $this->get_series_author( $series );
 
 		$schema = array(
-			"@type"   => "PodcastSeries",
-			"@id"     => $this->context->canonical . '#/schema/podcastSeries',
-			"image"   => $series_repository->get_image_src( $series ),
-			"url"     => $this->context->canonical,
-			"name"    => $this->context->title,
-			"webFeed" => $series_repository->get_feed_url( $series ),
+			'@type'   => 'PodcastSeries',
+			'@id'     => $this->context->canonical . '#/schema/podcastSeries',
+			'image'   => $series_repository->get_image_src( $series ),
+			'url'     => $this->context->canonical,
+			'name'    => $this->context->title,
+			'webFeed' => $series_repository->get_feed_url( $series ),
 		);
 
 		if ( $description ) {
@@ -56,10 +56,10 @@ class PodcastSeries extends Abstract_Schema_Piece {
 		}
 
 		if ( $author ) {
-			$schema['author'] = [
-				"@type" => "Person",
-				"name"  => $author,
-			];
+			$schema['author'] = array(
+				'@type' => 'Person',
+				'name'  => $author,
+			);
 		}
 
 		return $schema;

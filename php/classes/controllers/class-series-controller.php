@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-
 // Exit if accessed directly.
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
@@ -53,9 +52,9 @@ class Series_Controller {
 	private $series_repository;
 
 	/**
-	 * @param Series_Handler $series_handler
-	 * @param Castos_Handler $castos_handler
-	 * @param Settings_Handler $settings_handler
+	 * @param Series_Handler              $series_handler
+	 * @param Castos_Handler              $castos_handler
+	 * @param Settings_Handler            $settings_handler
 	 * @param Admin_Notifications_Handler $notice_handler
 	 */
 	public function __construct( $series_handler, $castos_handler, $settings_handler, $notice_handler ) {
@@ -109,10 +108,12 @@ class Series_Controller {
 			$this->enable_default_series();
 			if ( ! ssp_get_default_series_id() ) {
 				$notice = sprintf(
-					__( 'The Default Podcast was not found! <br />
+					__(
+						'The Default Podcast was not found! <br />
 			Please try to disable and then re-enable the Seriously Simple Podcasting plugin. <br />
 			If this message persists, kindly reach out to us via the <a target="_blank" href="%s">plugin forum</a> for further assistance.',
-						'seriously-simple-podcasting' ),
+						'seriously-simple-podcasting'
+					),
 					'https://wordpress.org/support/plugin/seriously-simple-podcasting/'
 				);
 				$this->notice_handler->add_flash_notice( $notice );
@@ -186,7 +187,7 @@ class Series_Controller {
 		);
 		$edit_feed_url = admin_url( $edit_feed_url );
 
-		$feed_fields = $this->settings_handler->get_feed_fields();
+		$feed_fields      = $this->settings_handler->get_feed_fields();
 		$settings_handler = $this->settings_handler;
 
 		ssp_renderer()->render(
@@ -204,8 +205,8 @@ class Series_Controller {
 		$default_image = esc_url( $this->assets_url . 'images/no-image.png' );
 		$media_id      = $this->get_series_image_id( $term ) ?: '';
 		$src           = $this->get_series_image_src( $term );
-		$image_width   = "auto";
-		$image_height  = "auto";
+		$image_width   = 'auto';
+		$image_height  = 'auto';
 
 		$series_img_title = __( 'Podcast Image', 'seriously-simple-podcasting' );
 		$upload_btn_text  = __( 'Choose podcast image', 'seriously-simple-podcasting' );
@@ -216,10 +217,23 @@ class Series_Controller {
 			'seriously-simple-podcasting'
 		);
 
-		$upload_image = ssp_renderer()->fetch( 'settings/podcast-upload-image', compact(
-			'series_img_title', 'taxonomy', 'default_image', 'src', 'image_width', 'image_height', 'series_settings',
-			'media_id', 'upload_btn_title', 'upload_btn_text', 'upload_btn_value', 'series_img_desc'
-		) );
+		$upload_image = ssp_renderer()->fetch(
+			'settings/podcast-upload-image',
+			compact(
+				'series_img_title',
+				'taxonomy',
+				'default_image',
+				'src',
+				'image_width',
+				'image_height',
+				'series_settings',
+				'media_id',
+				'upload_btn_title',
+				'upload_btn_text',
+				'upload_btn_value',
+				'series_img_desc'
+			)
+		);
 
 		$mode = 'create' === strtolower( $mode ) ? 'create' : 'update';
 		ssp_renderer()->render( "settings/podcast-image-$mode", compact( 'series_img_title', 'upload_image' ) );
@@ -230,7 +244,6 @@ class Series_Controller {
 	 *
 	 * @return int|null
 	 * @since 2.7.3
-	 *
 	 */
 	public function get_series_image_id( $term = null ) {
 		if ( empty( $term ) ) {
@@ -245,7 +258,6 @@ class Series_Controller {
 	 *
 	 * @return string
 	 * @since 2.7.3
-	 *
 	 */
 	public function get_series_image_src( $term ) {
 		return $this->series_repository->get_image_src( $term );
@@ -274,8 +286,8 @@ class Series_Controller {
 	/**
 	 * Display column data in series list table
 	 *
-	 * @param string $column_data Default column content
-	 * @param string $column_name Name of current column
+	 * @param string  $column_data Default column content
+	 * @param string  $column_name Name of current column
 	 * @param integer $term_id ID of term
 	 *
 	 * @return string
@@ -308,7 +320,6 @@ HTML;
 	 *
 	 * @return string
 	 * @since 2.7.3
-	 *
 	 */
 	public function get_series_feed_url( $term ) {
 		return $this->series_repository->get_feed_url( $term );
@@ -337,6 +348,7 @@ HTML;
 			/**
 			 * It means we're creating the default series now,
 			 * and we'll update the default Podcast series ID instead of creating the new one.
+			 *
 			 * @see Castos_Handler::update_default_series_id()
 			 * */
 			return;
@@ -364,7 +376,7 @@ HTML;
 	}
 
 	/**
-	 * @param int $term_id
+	 * @param int    $term_id
 	 * @param string $taxonomy
 	 *
 	 * @return void
@@ -377,7 +389,7 @@ HTML;
 			if ( isset( $_POST['action'] ) && 'delete-tag' === $_POST['action'] ) {
 				$error = - 1; // it's an ajax action, just return -1
 			} else {
-				$error = new \WP_Error ();
+				$error = new \WP_Error();
 				$error->add( 1, __( '<h2>You cannot delete the default podcast!', 'seriously-simple-podcasting' ) );
 			}
 			wp_die( $error );
@@ -402,7 +414,7 @@ HTML;
 	/**
 	 * Changes the default series name in the terms list (All Podcasts page)
 	 *
-	 * @param string $name
+	 * @param string   $name
 	 * @param \WP_Term $tag
 	 *
 	 * @return string
@@ -422,8 +434,8 @@ HTML;
 	/**
 	 * Changes the default series name in the post columns (All Episodes -> Podcasts)
 	 *
-	 * @param array $term_links
-	 * @param string $taxonomy
+	 * @param array      $term_links
+	 * @param string     $taxonomy
 	 * @param \WP_Term[] $terms
 	 */
 	public function change_column_default_series_name( $term_links, $taxonomy, $terms ) {
@@ -464,7 +476,7 @@ HTML;
 	}
 
 	/**
-	 * @param array $actions
+	 * @param array    $actions
 	 * @param \WP_Term $term
 	 *
 	 * @return array
@@ -472,11 +484,14 @@ HTML;
 	public function add_term_actions( $actions, $term ) {
 
 		$link = '<a href="%s">' . __( 'Edit&nbsp;Feed&nbsp;Details', 'seriously-simple-podcasting' ) . '</a>';
-		$link = sprintf( $link, sprintf(
-			'edit.php?post_type=%s&page=podcast_settings&tab=feed-details&feed-series=%s',
-			SSP_CPT_PODCAST,
-			$term->slug
-		) );
+		$link = sprintf(
+			$link,
+			sprintf(
+				'edit.php?post_type=%s&page=podcast_settings&tab=feed-details&feed-series=%s',
+				SSP_CPT_PODCAST,
+				$term->slug
+			)
+		);
 
 		$actions['edit_feed_details'] = $link;
 
@@ -484,8 +499,8 @@ HTML;
 	}
 
 	/**
-	 * @param int $podcast_id
-	 * @param array $response
+	 * @param int    $podcast_id
+	 * @param array  $response
 	 * @param string $status
 	 *
 	 * @return void

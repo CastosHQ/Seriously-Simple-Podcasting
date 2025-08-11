@@ -20,6 +20,7 @@ trait Singleton {
 
 	/**
 	 * The single instance.
+	 *
 	 * @var $this
 	 */
 	protected static $_instance;

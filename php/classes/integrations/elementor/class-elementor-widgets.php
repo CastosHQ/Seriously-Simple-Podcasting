@@ -34,12 +34,12 @@ final class Elementor_Widgets {
 
 
 	public function __construct() {
-		add_action( 'plugins_loaded', [ $this, 'on_plugins_loaded' ] );
+		add_action( 'plugins_loaded', array( $this, 'on_plugins_loaded' ) );
 	}
 
 	public function on_plugins_loaded() {
 		if ( $this->is_compatible() ) {
-			add_action( 'elementor/init', [ $this, 'init' ] );
+			add_action( 'elementor/init', array( $this, 'init' ) );
 		}
 	}
 
@@ -64,7 +64,7 @@ final class Elementor_Widgets {
 		$this->template_importer = new Elementor_Template_Importer();
 		$this->settings_extender = new Settings_Extender();
 
-		add_action( 'elementor/widgets/register', [ $this, 'init_widgets' ] );
+		add_action( 'elementor/widgets/register', array( $this, 'init_widgets' ) );
 	}
 
 	public function init_widgets() {

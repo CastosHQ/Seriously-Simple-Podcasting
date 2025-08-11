@@ -9,6 +9,7 @@ namespace SeriouslySimplePodcasting\Entities;
 
 /**
  * Class API_File_Data.
+ *
  * @since 2.24.0
  */
 class API_File_Data extends Abstract_API_Entity {
@@ -28,4 +29,3 @@ class API_File_Data extends Abstract_API_Entity {
 	 * */
 	public $file_path;
 }
-

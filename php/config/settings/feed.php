@@ -126,8 +126,8 @@ $feed_fields = array(
 		'id'          => 'data_image',
 		'label'       => __( 'Cover Image', 'seriously-simple-podcasting' ),
 		'description' => __( 'The podcast cover image must be between 1400x1400px and 3000x3000px in size and either .jpg or .png file format', 'seriously-simple-podcasting' ) .
-		                 '. ' . __( 'Your image should be perfectly square in order for it to display properly in podcasting directories and mobile apps.', 'seriously-simple-podcasting' ) . '<br />' .
-		                 ssp_dynamo_btn( $title, 'With ' . $author, 'Create a custom cover with our free tool' ),
+						'. ' . __( 'Your image should be perfectly square in order for it to display properly in podcasting directories and mobile apps.', 'seriously-simple-podcasting' ) . '<br />' .
+						ssp_dynamo_btn( $title, 'With ' . $author, 'Create a custom cover with our free tool' ),
 		'type'        => 'image',
 		'default'     => '',
 		'placeholder' => '',
@@ -237,7 +237,8 @@ $feed_fields = array(
 		// translators: placeholders are for an Apple help document link
 		'description' => sprintf(
 			__( 'To mark this podcast as an explicit podcast, check this box. Explicit content rules can be found %1$shere%2$s.', 'seriously-simple-podcasting' ),
-			'<a target="_blank" href="https://discussions.apple.com/thread/1079151">', '</a>'
+			'<a target="_blank" href="https://discussions.apple.com/thread/1079151">',
+			'</a>'
 		),
 		'type'        => 'checkbox',
 		'default'     => '',
@@ -329,10 +330,10 @@ $feed_fields = array(
 		// translators: Do not translate the words inside the {} curly brackets; they are replaced.
 		'description' => strtr(
 			__( 'Episode limit in this feed. If not specified or 0, defaults to {link}Syndication feeds show the most recent{/link} setting.', 'seriously-simple-podcasting' ),
-			[
+			array(
 				'{link}'  => '<a href="' . esc_url( admin_url( 'options-reading.php' ) ) . '">',
 				'{/link}' => '</a>',
-			]
+			)
 		),
 		'type'        => 'number',
 		'default'     => get_option( 'posts_per_rss', 10 ),

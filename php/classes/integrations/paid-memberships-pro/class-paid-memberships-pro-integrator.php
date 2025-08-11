@@ -19,7 +19,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Paid Memberships Pro controller
  *
- *
  * @since 2.9.3
  * @package SeriouslySimplePodcasting
  * @author Sergiy Zakharchenko
@@ -46,31 +45,30 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	/**
 	 * Class Paid_Memberships_Pro_Integrator constructor.
 	 *
-	 * @param Feed_Handler $feed_handler
-	 * @param Castos_Handler $castos_handler
-	 * @param Log_Helper $logger
+	 * @param Feed_Handler                $feed_handler
+	 * @param Castos_Handler              $castos_handler
+	 * @param Log_Helper                  $logger
 	 * @param Admin_Notifications_Handler $notices_handler
 	 */
 	public function init( $feed_handler, $castos_handler, $logger, $notices_handler ) {
 
 		if ( ! $this->check_dependencies(
 			array( 'PMPro_Membership_Level' ),
-			array( 'pmpro_getMembershipLevelsForUser', 'pmpro_get_no_access_message' ) ) ) {
+			array( 'pmpro_getMembershipLevelsForUser', 'pmpro_get_no_access_message' )
+		) ) {
 			return;
 		}
 
-		$this->feed_handler = $feed_handler;
-		$this->castos_handler = $castos_handler;
-		$this->logger = $logger;
+		$this->feed_handler    = $feed_handler;
+		$this->castos_handler  = $castos_handler;
+		$this->logger          = $logger;
 		$this->notices_handler = $notices_handler;
 
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
-		} else {
-			if ( self::integration_enabled() ) {
+		} elseif ( self::integration_enabled() ) {
 				$this->protect_private_series();
 				$this->print_private_podcast_feeds();
-			}
 		}
 
 		if ( ssp_is_connected_to_castos() ) {
@@ -96,11 +94,15 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	protected function init_subscribers_sync() {
 
 		// Sync users when their Membership Level is changed (from admin panel, when registered or cancelled).
-		add_filter( 'pmpro_before_change_membership_level', array(
-			$this,
-			'sync_subscribers_on_change_membership_level',
-		), 10, 2 );
-
+		add_filter(
+			'pmpro_before_change_membership_level',
+			array(
+				$this,
+				'sync_subscribers_on_change_membership_level',
+			),
+			10,
+			2
+		);
 
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
 		add_filter( 'allowed_options', array( $this, 'schedule_bulk_sync_on_settings_update' ), 20 );
@@ -185,7 +187,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * */
 	protected function get_membership_series_ids() {
 		$ssp_membership_series_ids = $this->get_current_membership_series_ids();
-		$castos_sync_series = $this->get_saved_membership_series();
+		$castos_sync_series        = $this->get_saved_membership_series();
 
 		return array_unique( array_merge( $ssp_membership_series_ids, $castos_sync_series ) );
 	}
@@ -199,20 +201,20 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	public function bulk_sync_subscribers() {
 		try {
 			if ( $this->bulk_update_started() ) {
-				throw new \Exception('Another bulk update has already started');
+				throw new \Exception( 'Another bulk update has already started' );
 			}
-			$users_series_map = $this->generate_users_series_map();
+			$users_series_map      = $this->generate_users_series_map();
 			$membership_series_ids = $this->get_membership_series_ids();
 
 			$series_emails_map = $this->get_series_emails_map( $users_series_map );
 
-			$list_to_add = array();
+			$list_to_add    = array();
 			$list_to_revoke = array();
 
 			foreach ( $membership_series_ids as $series_id ) {
-				$ssp_series_emails = isset ( $series_emails_map[ $series_id ] ) ? $series_emails_map[ $series_id ] : array();
-				$castos_series_emails = $this->get_castos_series_emails( $series_id );
-				$list_to_add[ $series_id ] = array_diff( $ssp_series_emails, $castos_series_emails );
+				$ssp_series_emails            = isset( $series_emails_map[ $series_id ] ) ? $series_emails_map[ $series_id ] : array();
+				$castos_series_emails         = $this->get_castos_series_emails( $series_id );
+				$list_to_add[ $series_id ]    = array_diff( $ssp_series_emails, $castos_series_emails );
 				$list_to_revoke[ $series_id ] = array_diff( $castos_series_emails, $ssp_series_emails );
 			}
 
@@ -269,7 +271,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 *
 	 * @see parent::revoke_subscribers_from_podcast()
 	 *
-	 * @param int $series_id
+	 * @param int      $series_id
 	 * @param string[] $emails
 	 *
 	 * @return int
@@ -325,10 +327,12 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		$membership_series_ids = array();
 		foreach ( $membership_levels as $level ) {
-			$membership_series_ids = array_unique( array_merge(
-				$membership_series_ids,
-				$this->get_series_ids_by_level( $level->id )
-			) );
+			$membership_series_ids = array_unique(
+				array_merge(
+					$membership_series_ids,
+					$this->get_series_ids_by_level( $level->id )
+				)
+			);
 		}
 
 		return $membership_series_ids;
@@ -345,8 +349,8 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @throws \Exception
 	 */
 	public function get_castos_series_emails( $series_id ) {
-		$subscribers = [];
-		$podcast = $this->get_castos_podcast_by_series_id( $series_id );
+		$subscribers = array();
+		$podcast     = $this->get_castos_podcast_by_series_id( $series_id );
 		if ( $podcast ) {
 			$subscribers = $this->castos_handler->get_podcast_subscribers( $podcast['id'] );
 		}
@@ -434,7 +438,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * Sync subscribers when user's Membership Level is changed (case 1).
 	 *
 	 * @param array|int $level
-	 * @param int $user_id
+	 * @param int       $user_id
 	 */
 	public function sync_subscribers_on_change_membership_level( $level, $user_id ) {
 
@@ -489,13 +493,16 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		add_filter( 'pmpro_has_membership_access_filter', array( $this, 'access_filter' ), 10, 4 );
 		add_action( 'ssp_before_feed', array( $this, 'protect_feed_access' ) );
 
-		add_filter( 'ssp_show_media_player_in_content', function ( $show ) {
-			if ( function_exists( 'pmpro_has_membership_access' ) && ! pmpro_has_membership_access() ) {
-				return false;
-			}
+		add_filter(
+			'ssp_show_media_player_in_content',
+			function ( $show ) {
+				if ( function_exists( 'pmpro_has_membership_access' ) && ! pmpro_has_membership_access() ) {
+					return false;
+				}
 
-			return $show;
-		} );
+				return $show;
+			}
+		);
 	}
 
 	/**
@@ -504,23 +511,26 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return void
 	 */
 	protected function print_private_podcast_feeds() {
-		add_action( 'pmpro_account_bullets_top', function () {
-			$feed_urls = $this->get_private_feed_urls();
+		add_action(
+			'pmpro_account_bullets_top',
+			function () {
+				$feed_urls = $this->get_private_feed_urls();
 
-			if ( empty( $feed_urls ) ) {
-				return;
+				if ( empty( $feed_urls ) ) {
+					return;
+				}
+
+				$add = '<li class="ssp-pmpro-private-feeds"><strong>' . __( 'Private Podcast Feeds', 'seriously-simple-podcasting' ) . ':</strong> ' . '<ul>';
+
+				foreach ( $feed_urls as $feed_url ) {
+					$add .= '<li>' . make_clickable( $feed_url ) . '</li>';
+				}
+
+				$add .= '</ul></li>';
+
+				echo $add;
 			}
-
-			$add = '<li class="ssp-pmpro-private-feeds"><strong>' . __( 'Private Podcast Feeds', 'seriously-simple-podcasting' ) . ':</strong> ' . '<ul>';
-
-			foreach ( $feed_urls as $feed_url ) {
-				$add .= '<li>' . make_clickable( $feed_url ) . '</li>';
-			}
-
-			$add .= '</ul></li>';
-
-			echo $add;
-		} );
+		);
 	}
 
 	/**
@@ -529,7 +539,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return string[]
 	 */
 	protected function get_private_feed_urls() {
-		$current_user = wp_get_current_user();
+		$current_user     = wp_get_current_user();
 		$users_series_map = $this->generate_users_series_map();
 
 		$feed_urls = get_transient( 'ssp_pmpro_feed_urls_user_' . $current_user->ID );
@@ -567,14 +577,14 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return string|null
 	 */
 	protected function get_podcast_feed_url( $podcast_id ) {
-		$current_user = wp_get_current_user();
+		$current_user  = wp_get_current_user();
 		$subscriptions = $this->castos_handler->get_subscriptions_by_email( $current_user->user_email );
 
 		foreach ( $subscriptions as $subscription ) {
 			if (
 				isset( $subscription['status'] ) && 'active' === $subscription['status'] &&
 				isset( $subscription['podcast_id'] ) && $podcast_id === $subscription['podcast_id'] &&
-				isset ( $subscription['feed_url'] )
+				isset( $subscription['feed_url'] )
 			) {
 				return $subscription['feed_url'];
 			}
@@ -598,7 +608,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		$series_levels = $this->get_series_level_ids( $series_term->term_id );
-		$has_access = $this->has_access( wp_get_current_user(), $series_levels );
+		$has_access    = $this->has_access( wp_get_current_user(), $series_levels );
 
 		if ( ! $has_access ) {
 			$description = wp_strip_all_tags( pmpro_get_no_access_message( '', $series_levels ) );
@@ -611,7 +621,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	/**
 	 * Protects access to private episodes.
 	 *
-	 * @param bool $access
+	 * @param bool     $access
 	 * @param \WP_Post $post
 	 * @param \WP_User $user
 	 * @param object[] $post_levels
@@ -632,11 +642,16 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		// Get level ids.
-		$post_level_ids = array_filter( array_map( function ( $item ) {
-			return isset( $item->id ) ? $item->id : null;
-		}, (array) $post_levels ) );
+		$post_level_ids = array_filter(
+			array_map(
+				function ( $item ) {
+					return isset( $item->id ) ? $item->id : null;
+				},
+				(array) $post_levels
+			)
+		);
 
-		$is_admin = is_admin() && ! ssp_is_ajax();
+		$is_admin   = is_admin() && ! ssp_is_ajax();
 		$is_podcast = in_array( $post->post_type, ssp_post_types() );
 
 		if ( $is_admin || ! $is_podcast || ! $access ) {
@@ -686,7 +701,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	 * @return int[]
 	 */
 	protected function get_series_level_ids( $term_id ) {
-		$levels = (array) ssp_get_option( sprintf( 'series_%s_pmpro_levels', $term_id ), null );
+		$levels    = (array) ssp_get_option( sprintf( 'series_%s_pmpro_levels', $term_id ), null );
 		$level_ids = array();
 		foreach ( $levels as $level ) {
 			$level_ids[] = (int) str_replace( 'lvl_', '', $level );
@@ -712,11 +727,9 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 			$msg = sprintf( $msg, admin_url( 'edit.php?post_type=podcast&page=podcast_settings&tab=castos-hosting' ) );
 
 			$args['description'] = $msg;
-			$args['fields'] = array();
-		} else {
-			if ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) && $this->bulk_update_started() ) {
+			$args['fields']      = array();
+		} elseif ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) && $this->bulk_update_started() ) {
 				$this->notices_handler->add_flash_notice( __( 'Synchronizing Paid Memberships Pro data with Castos...', 'seriously-simple-podcasting' ) );
-			}
 		}
 
 		$this->add_integration_settings( $args );
@@ -745,20 +758,23 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$levels = $this->get_membership_levels();
 
 		$settings = array(
-			'id' => 'paid_memberships_pro',
-			'title' => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
-			'description' => __( 'Select which Podcast you would like to be available only
-								to Members via Paid Memberships Pro.', 'seriously-simple-podcasting' ),
-			'fields' => array(
+			'id'          => 'paid_memberships_pro',
+			'title'       => __( 'Paid Memberships Pro', 'seriously-simple-podcasting' ),
+			'description' => __(
+				'Select which Podcast you would like to be available only
+								to Members via Paid Memberships Pro.',
+				'seriously-simple-podcasting'
+			),
+			'fields'      => array(
 				array(
-					'id' => 'is_pmpro_integration',
+					'id'   => 'is_pmpro_integration',
 					'type' => 'hidden',
 				),
 				array(
-					'id' => 'enable_pmpro_integration',
-					'type' => 'checkbox',
-					'default' => 'on',
-					'label' => __( 'Enable integration', 'seriously-simple-podcasting' ),
+					'id'          => 'enable_pmpro_integration',
+					'type'        => 'checkbox',
+					'default'     => 'on',
+					'label'       => __( 'Enable integration', 'seriously-simple-podcasting' ),
 					'description' => __( 'Enable Paid Memberships Pro integration', 'seriously-simple-podcasting' ),
 				),
 			),
@@ -771,9 +787,15 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		}
 
 		if ( ! $levels ) {
-			$levels_url = admin_url( 'admin.php?page=pmpro-membershiplevels' );
-			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up a
-										membership level</a> first.', 'seriously-simple-podcasting' ), $levels_url );
+			$levels_url              = admin_url( 'admin.php?page=pmpro-membershiplevels' );
+			$settings['description'] = sprintf(
+				__(
+					'To require membership to access a podcast please <a href="%s">set up a
+										membership level</a> first.',
+					'seriously-simple-podcasting'
+				),
+				$levels_url
+			);
 
 			return $settings;
 		}
@@ -786,15 +808,15 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(
-				'id' => sprintf( 'series_%s_pmpro_levels', $series_item->term_id ),
-				'label' => $series_item->name,
-				'type' => 'select2_multi',
-				'options' => $checkbox_options,
+				'id'          => sprintf( 'series_%s_pmpro_levels', $series_item->term_id ),
+				'label'       => $series_item->name,
+				'type'        => 'select2_multi',
+				'options'     => $checkbox_options,
 				'description' => 'Require enrollment to level',
 			);
 
 			if ( ! $this->is_series_protected_in_castos( $series_item->term_id ) ) {
-				$series_item_settings['type'] = 'info';
+				$series_item_settings['type']        = 'info';
 				$series_item_settings['description'] = 'Please first make this podcast private in your Castos dashboard';
 			}
 
@@ -808,7 +830,7 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 	/**
 	 * Check if the series is protected on Castos side.
 	 *
-	 * @param int $series_id
+	 * @param int  $series_id
 	 * @param bool $default
 	 *
 	 * @return bool|mixed

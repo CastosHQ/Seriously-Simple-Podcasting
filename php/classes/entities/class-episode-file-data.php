@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Abstract entity class.
+ *
  * @since 2.24.0
  */
 class Episode_File_Data extends Abstract_API_Entity {
@@ -35,5 +36,4 @@ class Episode_File_Data extends Abstract_API_Entity {
 
 		$this->success = isset( $properties['code'] ) && ( 200 === $properties['code'] );
 	}
-
 }

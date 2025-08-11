@@ -38,7 +38,7 @@ class Feed_Controller_Test extends WPTestCase {
 
 		$series_id = ssp_get_default_series_id();
 
-		$feed = $feed_controller->get_podcast_feed( $series_id );
+		$feed     = $feed_controller->get_podcast_feed( $series_id );
 		$site_url = site_url();
 		global $wp_version;
 
@@ -73,9 +73,8 @@ class Feed_Controller_Test extends WPTestCase {
 			'<googleplay:description></googleplay:description>',
 			'<googleplay:explicit>No</googleplay:explicit>',
 			'<podcast:guid>',
-			sprintf('<!-- podcast_generator="SSP by Castos/%s" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->', SSP_VERSION),
-			sprintf('<generator>https://wordpress.org/?v=%s</generator>', $wp_version),
-
+			sprintf( '<!-- podcast_generator="SSP by Castos/%s" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->', SSP_VERSION ),
+			sprintf( '<generator>https://wordpress.org/?v=%s</generator>', $wp_version ),
 
 			// Test the item created
 			'<item>',
@@ -107,12 +106,12 @@ class Feed_Controller_Test extends WPTestCase {
 	/**
 	 * @return Feed_Controller
 	 */
-	protected function get_feed_controller(){
-		$ssp_app = new ReflectionClass('SeriouslySimplePodcasting\Controllers\App_Controller');
+	protected function get_feed_controller() {
+		$ssp_app = new ReflectionClass( 'SeriouslySimplePodcasting\Controllers\App_Controller' );
 
-		$property = $ssp_app->getProperty('feed_controller');
+		$property = $ssp_app->getProperty( 'feed_controller' );
 
-		$property->setAccessible(true);
+		$property->setAccessible( true );
 
 		return $property->getValue( ssp_app() );
 	}

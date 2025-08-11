@@ -108,7 +108,7 @@ class Frontend_Controller {
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 
-		add_filter( "archive_template_hierarchy", array( $this, 'fix_template_hierarchy' ) );
+		add_filter( 'archive_template_hierarchy', array( $this, 'fix_template_hierarchy' ) );
 	}
 
 	/**
@@ -137,6 +137,7 @@ class Frontend_Controller {
 
 	/**
 	 * Restore filters removed previously with $this->remove_filter().
+	 *
 	 * @since 2.11.0
 	 * */
 	public function restore_filters() {
@@ -193,7 +194,7 @@ class Frontend_Controller {
 			return $content;
 		}
 
-		$message =  __( 'This content is Private. To access this podcast, contact the site owner.', 'seriously-simple-podcasting' );
+		$message = __( 'This content is Private. To access this podcast, contact the site owner.', 'seriously-simple-podcasting' );
 
 		// Protect default feed episodes.
 		if ( empty( $terms ) && 'yes' === ssp_get_option( 'is_podcast_private' ) ) {
@@ -247,6 +248,7 @@ class Frontend_Controller {
 
 	/**
 	 * Add episode meta data to the full content
+	 *
 	 * @param  string $content Existing content
 	 * @return string          Modified content
 	 * @deprecated Use embed_player_in_content() instead
@@ -257,6 +259,7 @@ class Frontend_Controller {
 
 	/**
 	 * Add episode meta data to the full content
+	 *
 	 * @param  string $content Existing content
 	 * @return string          Modified content
 	 */
@@ -375,7 +378,7 @@ class Frontend_Controller {
 	 * Get episode meta data
 	 *
 	 * @param  integer $episode_id ID of episode post
-	 * @param  string $context Context for display
+	 * @param  string  $context Context for display
 	 *
 	 * @return string               Episode meta
 	 */
@@ -429,7 +432,7 @@ class Frontend_Controller {
 	 * Wrapper for Episode_Controller get_episode_download_link method
 	 *
 	 * @param  integer $episode_id ID of episode
-	 * @param  string $referrer Referrer
+	 * @param  string  $referrer Referrer
 	 * @return string              Episode download link
 	 */
 	public function get_episode_download_link( $episode_id, $referrer = '' ) {
@@ -438,8 +441,9 @@ class Frontend_Controller {
 
 	/**
 	 * Return media player for a given file. Used to enable other checks or to prevent the player from loading
+	 *
 	 * @param string $src_file
-	 * @param int $episode_id
+	 * @param int    $episode_id
 	 * @param string $player_size
 	 * @param string $context
 	 *
@@ -456,7 +460,7 @@ class Frontend_Controller {
 
 	/**
 	 * @param string $src_file
-	 * @param int $episode_id
+	 * @param int    $episode_id
 	 * @param string $player_size
 	 * @param string $context
 	 *
@@ -468,6 +472,7 @@ class Frontend_Controller {
 
 	/**
 	 * Get the type of podcast episode (audio or video)
+	 *
 	 * @param  integer $episode_id ID of episode
 	 * @return mixed              [description]
 	 * @deprecated Use Episode_Repository::get_episode_type() instead
@@ -478,6 +483,7 @@ class Frontend_Controller {
 
 	/**
 	 * Fetch episode meta details
+	 *
 	 * @param  integer $episode_id ID of episode post
 	 * @param  string  $context    Context for display
 	 * @return string              Episode meta details
@@ -488,6 +494,7 @@ class Frontend_Controller {
 
 	/**
 	 * Add the meta data to the episode excerpt
+	 *
 	 * @param  string $excerpt Existing excerpt
 	 * @return string          Modified excerpt
 	 */
@@ -497,6 +504,7 @@ class Frontend_Controller {
 
 	/**
 	 * Add episode meta data to the excerpt
+	 *
 	 * @param  string $excerpt Existing excerpt
 	 * @return string          Modified excerpt
 	 */
@@ -504,7 +512,7 @@ class Frontend_Controller {
 
 		global $post;
 
-		if( ! apply_filters( 'ssp_show_excerpt_player', true, $post, $excerpt, $content ) ){
+		if ( ! apply_filters( 'ssp_show_excerpt_player', true, $post, $excerpt, $content ) ) {
 			return $excerpt;
 		}
 
@@ -512,7 +520,7 @@ class Frontend_Controller {
 			return $excerpt;
 		}
 
-		if( post_password_required( $post->ID ) ) {
+		if ( post_password_required( $post->ID ) ) {
 			return $excerpt;
 		}
 
@@ -525,18 +533,22 @@ class Frontend_Controller {
 
 		$player_visibility = get_option( 'ss_podcasting_player_content_visibility', 'all' );
 
-		switch( $player_visibility ) {
-			case 'all': $show_player = true; break;
-			case 'membersonly': $show_player = is_user_logged_in(); break;
-			default: $show_player = true; break;
+		switch ( $player_visibility ) {
+			case 'all':
+				$show_player = true;
+				break;
+			case 'membersonly':
+				$show_player = is_user_logged_in();
+				break;
+			default:
+				$show_player = true;
+				break;
 		}
 
 		if ( $show_player && in_array( $post->post_type, $podcast_post_types ) && ! is_feed() && ! isset( $_GET['feed'] ) ) {
-
 			$meta = $this->get_episode_player( $post->ID, $content );
 
 			$excerpt = $meta . $excerpt;
-
 		}
 
 		return $excerpt;
@@ -544,6 +556,7 @@ class Frontend_Controller {
 
 	/**
 	 * Add the meta data to the embedded episode excerpt
+	 *
 	 * @param  string $excerpt Existing excerpt
 	 * @return string          Modified excerpt
 	 */
@@ -553,6 +566,7 @@ class Frontend_Controller {
 
 	/**
 	 * Add podcast to home page query
+	 *
 	 * @param object $query The query object
 	 */
 	public function add_to_home_query( $query ) {
@@ -561,7 +575,7 @@ class Frontend_Controller {
 			return;
 		}
 
-		$include_in_main_query = get_option('ss_podcasting_include_in_main_query');
+		$include_in_main_query = get_option( 'ss_podcasting_include_in_main_query' );
 		if ( $include_in_main_query && $include_in_main_query == 'on' ) {
 			if ( $query->is_home() && $query->is_main_query() ) {
 				$query->set( 'post_type', array( 'post', SSP_CPT_PODCAST ) );
@@ -569,7 +583,7 @@ class Frontend_Controller {
 		}
 	}
 
-	public function add_all_post_types ( $query ) {
+	public function add_all_post_types( $query ) {
 
 		if ( is_admin() ) {
 			return;
@@ -580,7 +594,6 @@ class Frontend_Controller {
 		}
 
 		if ( is_post_type_archive( SSP_CPT_PODCAST ) || is_tax( ssp_series_taxonomy() ) ) {
-
 			$podcast_post_types = ssp_post_types( false );
 
 			if ( empty( $podcast_post_types ) ) {
@@ -590,14 +603,12 @@ class Frontend_Controller {
 
 			$episode_ids = ssp_episode_ids();
 			if ( ! empty( $episode_ids ) ) {
-
 				$query->set( 'post__in', $episode_ids );
 
 				$podcast_post_types = array_merge( array( SSP_CPT_PODCAST ), $podcast_post_types );
 				$query->set( 'post_type', $podcast_post_types );
 			}
 		}
-
 	}
 
 	public function add_all_post_types_for_tag_archive( $query ) {
@@ -626,6 +637,7 @@ class Frontend_Controller {
 
 	/**
 	 * Get duration of audio file
+	 *
 	 * @param  string $file File name & path
 	 * @return mixed        File duration on success, boolean false on failure
 	 */
@@ -635,9 +647,10 @@ class Frontend_Controller {
 
 	/**
 	 * Load audio player for given file - wrapper for `media_player` method to maintain backwards compatibility
-	 * @param  string  $src 	   Source of audio file
+	 *
+	 * @param  string  $src        Source of audio file
 	 * @param  integer $episode_id Episode ID for audio empty string
-	 * @return string        	   Audio player HTML on success, false on failure
+	 * @return string              Audio player HTML on success, false on failure
 	 */
 	public function audio_player( $src = '', $episode_id = 0 ) {
 		$player = $this->media_player( $src, $episode_id );
@@ -646,6 +659,7 @@ class Frontend_Controller {
 
 	/**
 	 * Get episode image
+	 *
 	 * @param  integer $post_id   ID of episode
 	 * @param  string  $size Image size
 	 * @return string        Image HTML markup
@@ -677,7 +691,7 @@ class Frontend_Controller {
 	 * Get episode image url
 	 *
 	 * @param integer $post_id ID of episode
-	 * @param string $size Image size
+	 * @param string  $size Image size
 	 *
 	 * @return string        Image url
 	 */
@@ -699,11 +713,12 @@ class Frontend_Controller {
 
 	/**
 	 * Download file from `podcast_episode` query variable
+	 *
 	 * @return void
 	 */
 	public function download_file() {
 
-		if (  ! ssp_is_podcast_download() ) {
+		if ( ! ssp_is_podcast_download() ) {
 			return;
 		}
 
@@ -728,17 +743,14 @@ class Frontend_Controller {
 				$file  = $parts[0];
 			}
 
-
 			$this->validate_file( $file );
 
 			// Get file referrer
 			$referrer = '';
-			if( isset( $wp_query->query_vars['podcast_ref'] ) && $wp_query->query_vars['podcast_ref'] ) {
+			if ( isset( $wp_query->query_vars['podcast_ref'] ) && $wp_query->query_vars['podcast_ref'] ) {
 				$referrer = $wp_query->query_vars['podcast_ref'];
-			} else {
-				if( isset( $_GET['ref'] ) ) {
+			} elseif ( isset( $_GET['ref'] ) ) {
 					$referrer = esc_attr( $_GET['ref'] );
-				}
 			}
 
 			if ( 'test-nginx' !== $referrer ) {
@@ -747,10 +759,10 @@ class Frontend_Controller {
 			}
 
 			// Set necessary headers
-			header( "Pragma: no-cache" );
-			header( "Expires: 0" );
-			header( "Cache-Control: must-revalidate, post-check=0, pre-check=0" );
-			header( "Robots: none" );
+			header( 'Pragma: no-cache' );
+			header( 'Expires: 0' );
+			header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+			header( 'Robots: none' );
 
 			$original_file = $file;
 
@@ -759,7 +771,7 @@ class Frontend_Controller {
 			$this->validate_file( $file );
 
 			// Check file referrer
-			if( 'download' == $referrer && $file == $original_file ) {
+			if ( 'download' == $referrer && $file == $original_file ) {
 
 				// Set size of file
 				// Do we have anything in Cache/DB?
@@ -780,12 +792,11 @@ class Frontend_Controller {
 						// Let's see if we can figure out the path...
 						$attachment_id = $this->get_attachment_id_from_url( $file );
 
-						if ( ! empty( $attachment_id )  ) {
+						if ( ! empty( $attachment_id ) ) {
 							$size = filesize( get_attached_file( $attachment_id ) );
 							$this->log( __METHOD__ . ': Estimated size: ' . $size );
 							update_post_meta( $episode_id, 'filesize_raw', $size );
 						}
-
 					}
 
 					// Update the cache
@@ -794,16 +805,16 @@ class Frontend_Controller {
 
 				// Send Content-Length header
 				if ( ! empty( $size ) ) {
-					header( "Content-Length: " . $size );
+					header( 'Content-Length: ' . $size );
 				}
 
 				// Force file download
-				header( "Content-Type: application/force-download" );
+				header( 'Content-Type: application/force-download' );
 
 				// Set other relevant headers
-				header( "Content-Description: File Transfer" );
-				header( "Content-Disposition: attachment; filename=\"" . esc_html( $this->get_file_name( $episode_id ) ) . "\";" );
-				header( "Content-Transfer-Encoding: binary" );
+				header( 'Content-Description: File Transfer' );
+				header( 'Content-Disposition: attachment; filename="' . esc_html( $this->get_file_name( $episode_id ) ) . '";' );
+				header( 'Content-Transfer-Encoding: binary' );
 
 				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
 				$file = str_replace( ' ', '%20', $file );
@@ -822,7 +833,6 @@ class Frontend_Controller {
 
 			// Exit to prevent other processes running later on
 			exit;
-
 		}
 	}
 
@@ -874,7 +884,7 @@ class Frontend_Controller {
 	/**
 	 * Get the ID of an attachment from its image URL.
 	 *
-	 * @param   string      $url    The path to an image.
+	 * @param   string $url    The path to an image.
 	 * @return  int|bool            ID of the attachment or 0 on failure.
 	 */
 	public function get_attachment_id_from_url( $url = '' ) {
@@ -899,7 +909,6 @@ class Frontend_Controller {
 			// Set the default
 			$attachment_id = 0;
 
-
 			// Function introduced in 4.0, let's try this first.
 			if ( function_exists( 'attachment_url_to_postid' ) ) {
 				$attachment_id = absint( attachment_url_to_postid( $url ) );
@@ -911,7 +920,7 @@ class Frontend_Controller {
 
 			// Then this.
 			if ( preg_match( '#\.[a-zA-Z0-9]+$#', $url ) ) {
-				$sql = $wpdb->prepare(
+				$sql           = $wpdb->prepare(
 					"SELECT ID FROM $wpdb->posts WHERE post_type = 'attachment' AND guid = %s",
 					esc_url_raw( $url )
 				);
@@ -930,14 +939,13 @@ class Frontend_Controller {
 				// Remove the upload path base directory from the attachment URL
 				$url = str_replace( $upload_dir_paths['baseurl'] . '/', '', $url );
 				// Finally, run a custom database query to get the attachment ID from the modified attachment URL
-				$sql = $wpdb->prepare( "SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'", $url );
+				$sql           = $wpdb->prepare( "SELECT wposts.ID FROM $wpdb->posts wposts, $wpdb->postmeta wpostmeta WHERE wposts.ID = wpostmeta.post_id AND wpostmeta.meta_key = '_wp_attached_file' AND wpostmeta.meta_value = '%s' AND wposts.post_type = 'attachment'", $url );
 				$attachment_id = absint( $wpdb->get_var( $sql ) );
 				if ( 0 !== $attachment_id ) {
 					wp_cache_set( $key, $attachment_id, 'attachment_id', DAY_IN_SECONDS );
 					return $attachment_id;
 				}
 			}
-
 		}
 
 		return $attachment_id;
@@ -968,13 +976,13 @@ class Frontend_Controller {
 
 	/**
 	 * Display plugin name and version in generator meta tag
+	 *
 	 * @return void
 	 */
 	public function generator_tag( $gen, $type ) {
 
 		// Allow generator tags to be hidden if necessary
 		if ( apply_filters( 'ssp_show_generator_tag', true, $type ) ) {
-
 			$generator = 'Seriously Simple Podcasting ' . esc_attr( $this->version );
 
 			switch ( $type ) {
@@ -985,7 +993,6 @@ class Frontend_Controller {
 					$gen .= "\n" . '<meta name="generator" content="' . $generator . '" />';
 					break;
 			}
-
 		}
 
 		return $gen;
@@ -993,6 +1000,7 @@ class Frontend_Controller {
 
 	/**
 	 * Display feed meta tag in site HTML
+	 *
 	 * @return void
 	 */
 	public function rss_meta_tag() {
@@ -1015,16 +1023,14 @@ class Frontend_Controller {
 
 		$html = '';
 
-		if( apply_filters( 'ssp_show_global_feed_tag', true ) ) {
+		if ( apply_filters( 'ssp_show_global_feed_tag', true ) ) {
 			$html = '<link rel="alternate" type="application/rss+xml" title="' . __( 'Podcast RSS feed', 'seriously-simple-podcasting' ) . '" href="' . esc_url( $feed_url ) . '" />';
 		}
 
 		// Check if this is a series taxonomy archive and display series-specific RSS feed tag
 		$current_obj = get_queried_object();
-		if( isset( $current_obj->taxonomy ) && ssp_series_taxonomy() == $current_obj->taxonomy && isset( $current_obj->slug ) && $current_obj->slug ) {
-
-			if( apply_filters( 'ssp_show_series_feed_tag', true, $current_obj->slug ) ) {
-
+		if ( isset( $current_obj->taxonomy ) && ssp_series_taxonomy() == $current_obj->taxonomy && isset( $current_obj->slug ) && $current_obj->slug ) {
+			if ( apply_filters( 'ssp_show_series_feed_tag', true, $current_obj->slug ) ) {
 				if ( get_option( 'permalink_structure' ) ) {
 					$series_feed_url = $feed_url . '/' . $current_obj->slug;
 				} else {
@@ -1032,9 +1038,7 @@ class Frontend_Controller {
 				}
 
 				$html .= "\n" . '<link rel="alternate" type="application/rss+xml" title="' . sprintf( __( '%s RSS feed', 'seriously-simple-podcasting' ), $current_obj->name ) . '" href="' . esc_url( $series_feed_url ) . '" />';
-
 			}
-
 		}
 
 		echo "\n" . apply_filters( 'ssp_rss_meta_tag', $html ) . "\n\n";
@@ -1047,16 +1051,16 @@ class Frontend_Controller {
 	 * @param  string $type         Type of feed
 	 * @return string               Updated content type
 	 */
-	public function feed_content_type ( $content_type = '', $type = '' ) {
+	public function feed_content_type( $content_type = '', $type = '' ) {
 
-		if( SSP_CPT_PODCAST == $type ) {
+		if ( SSP_CPT_PODCAST == $type ) {
 			$content_type = 'text/xml';
 		}
 
 		return $content_type;
 	}
 
-	public function load_localisation () {
+	public function load_localisation() {
 		load_plugin_textdomain( 'seriously-simple-podcasting', false, basename( $this->dir ) . '/languages/' );
 	}
 
@@ -1069,7 +1073,7 @@ class Frontend_Controller {
 	 * @param  array   $content_items Ordered array of content items to display
 	 * @return string                 HTML of episode with specified content items
 	 */
-	public function podcast_episode ( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '', $style = 'standard' ) {
+	public function podcast_episode( $episode_id = 0, $content_items = array( 'title', 'player', 'details' ), $context = '', $style = 'standard' ) {
 		global $post, $episode_context;
 
 		if ( ! $episode_id || ! is_array( $content_items ) || empty( $content_items ) ) {
@@ -1096,9 +1100,7 @@ class Frontend_Controller {
 		$episode_context = $context;
 
 		foreach ( $content_items as $item ) {
-
 			switch ( $item ) {
-
 				case 'title':
 					$html .= '<h3 class="episode-title">' . get_the_title() . '</h3>' . "\n";
 					break;
@@ -1128,7 +1130,6 @@ class Frontend_Controller {
 				case 'image':
 					$html .= get_the_post_thumbnail( $episode_id, apply_filters( 'ssp_frontend_context_thumbnail_size', 'thumbnail' ) );
 					break;
-
 			}
 		}
 

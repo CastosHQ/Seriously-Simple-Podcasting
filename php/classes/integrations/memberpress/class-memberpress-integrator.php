@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * MemberPress Integrator
  *
- *
  * @author Sergiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * @since 2.16.0
@@ -47,9 +46,9 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	/**
 	 * Class Paid_Memberships_Pro_Integrator constructor.
 	 *
-	 * @param Feed_Handler $feed_handler
-	 * @param Castos_Handler $castos_handler
-	 * @param Log_Helper $logger
+	 * @param Feed_Handler                $feed_handler
+	 * @param Castos_Handler              $castos_handler
+	 * @param Log_Helper                  $logger
 	 * @param Admin_Notifications_Handler $notices_handler
 	 */
 	public function init( $feed_handler, $castos_handler, $logger, $notices_handler ) {
@@ -65,10 +64,8 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
-		} else {
-			if ( self::integration_enabled() ) {
+		} elseif ( self::integration_enabled() ) {
 				$this->protect_private_series();
-			}
 		}
 
 		if ( ssp_is_connected_to_castos() ) {
@@ -81,7 +78,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 *
 	 * @return bool
 	 */
-	public static function integration_enabled(){
+	public static function integration_enabled() {
 		return class_exists( 'MeprUser' ) && 'on' === ssp_get_option( 'enable_memberpress_integration' );
 	}
 
@@ -126,19 +123,23 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 */
 	protected function init_bulk_sync_process() {
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
-		add_filter( 'allowed_options', function ( $allowed_options ) {
-			// Option ss_podcasting_is_memberpress_integration is just a marker that PMPro integration settings have been saved.
-			// If so, we can do the sync magic.
-			if ( isset( $allowed_options['ss_podcasting'] ) ) {
-				$key = array_search( 'ss_podcasting_is_memberpress_integration', $allowed_options['ss_podcasting'] );
-				if ( false !== $key ) {
-					unset( $allowed_options['ss_podcasting'][ $key ] );
-					$this->schedule_bulk_sync_subscribers();
+		add_filter(
+			'allowed_options',
+			function ( $allowed_options ) {
+				// Option ss_podcasting_is_memberpress_integration is just a marker that PMPro integration settings have been saved.
+				// If so, we can do the sync magic.
+				if ( isset( $allowed_options['ss_podcasting'] ) ) {
+					$key = array_search( 'ss_podcasting_is_memberpress_integration', $allowed_options['ss_podcasting'] );
+					if ( false !== $key ) {
+						unset( $allowed_options['ss_podcasting'][ $key ] );
+						$this->schedule_bulk_sync_subscribers();
+					}
 				}
-			}
 
-			return $allowed_options;
-		}, 20 );
+				return $allowed_options;
+			},
+			20
+		);
 
 		// Step 1. Run the scheduled bulk sync. Prepare add and remove lists, and run add process.
 		add_action( self::EVENT_BULK_SYNC_SUBSCRIBERS, array( $this, 'bulk_sync_subscribers' ) );
@@ -161,43 +162,47 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 	/**
 	 * Do single sync as the separate event to not interfere with the DB update process.
+	 *
 	 * @see listen_members_table_update()
 	 *
 	 * @return void
 	 */
 	protected function listen_single_sync() {
-		add_action( self::SINGLE_SYNC_EVENT, function () {
-			$single_update_data = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
-			if ( empty( $single_update_data['users'] ) ) {
-				return;
-			}
-
-			foreach ( $single_update_data['users'] as $user_id => $actions ) {
-				$added_memberships   = $actions['added_memberships'];
-				$revoked_memberships = $actions['revoked_memberships'];
-
-				$revoke_series_ids = $this->convert_membership_ids_into_series_ids( $revoked_memberships );
-				$add_series_ids    = $this->convert_membership_ids_into_series_ids( $added_memberships );
-
-				$res = $this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
-
-				if ( ! $res ) {
-					// Let's make sure there won't be an infinite number of attempts.
-					if ( $single_update_data['attempts'] < 10 ) {
-						$this->logger->log( __METHOD__ . sprintf( ': Error! Could not sync user %s.', $user_id ) );
-					} else {
-						$this->logger->log( __METHOD__ . sprintf( ': Error! Failed to sync user %s. Will try again later.', $user_id ) );
-						$single_update_data['attempts'] = $single_update_data['attempts'] + 1;
-						update_option( self::SINGLE_SYNC_DATA_OPTION, $single_update_data );
-						$this->schedule_single_sync( 20 );
-					}
-
+		add_action(
+			self::SINGLE_SYNC_EVENT,
+			function () {
+				$single_update_data = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
+				if ( empty( $single_update_data['users'] ) ) {
 					return;
 				}
-			}
 
-			delete_option( self::SINGLE_SYNC_DATA_OPTION );
-		} );
+				foreach ( $single_update_data['users'] as $user_id => $actions ) {
+					$added_memberships   = $actions['added_memberships'];
+					$revoked_memberships = $actions['revoked_memberships'];
+
+					$revoke_series_ids = $this->convert_membership_ids_into_series_ids( $revoked_memberships );
+					$add_series_ids    = $this->convert_membership_ids_into_series_ids( $added_memberships );
+
+					$res = $this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+
+					if ( ! $res ) {
+						// Let's make sure there won't be an infinite number of attempts.
+						if ( $single_update_data['attempts'] < 10 ) {
+							$this->logger->log( __METHOD__ . sprintf( ': Error! Could not sync user %s.', $user_id ) );
+						} else {
+							$this->logger->log( __METHOD__ . sprintf( ': Error! Failed to sync user %s. Will try again later.', $user_id ) );
+							$single_update_data['attempts'] = $single_update_data['attempts'] + 1;
+							update_option( self::SINGLE_SYNC_DATA_OPTION, $single_update_data );
+							$this->schedule_single_sync( 20 );
+						}
+
+						return;
+					}
+				}
+
+				delete_option( self::SINGLE_SYNC_DATA_OPTION );
+			}
+		);
 	}
 
 	/**
@@ -206,55 +211,57 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 *
 	 * @return void
 	 */
-	protected function listen_members_table_update(){
-		add_filter( 'query', function ( $query ) {
+	protected function listen_members_table_update() {
+		add_filter(
+			'query',
+			function ( $query ) {
 
-			// We don't listen to INSERT because on insert they don't setup the memberships, it happens later on UPDATE
-			if ( ! $this->is_update_query( $query ) ) {
+				// We don't listen to INSERT because on insert they don't setup the memberships, it happens later on UPDATE
+				if ( ! $this->is_update_query( $query ) ) {
+					return $query;
+				}
+
+				/**
+				 * @var \MeprDb $mepr_db
+				 * */
+				$mepr_db = \MeprDb::fetch();
+
+				// Does current query updates members table?
+				if ( false === strpos( $query, $mepr_db->members ) ) {
+					return $query;
+				}
+
+				if ( ! $user_id = $this->get_user_id_by_query( $query ) ) {
+					$this->logger->log( __METHOD__ . sprintf( ' Could not get user id by query: %s', $user_id ) );
+
+					return $query;
+				}
+
+				// And now we can calculate the changes and schedule the sync process.
+				$old_members_data = $mepr_db->get_one_record( $mepr_db->members, array( 'user_id' => $user_id ) );
+
+				$old_memberships = $this->get_memberships( $old_members_data );
+				$new_memberships = $this->get_user_memberships( $user_id );
+
+				if ( $old_memberships === $new_memberships ) {
+					return $query;
+				}
+
+				$revoked_memberships = array_diff( $old_memberships, $new_memberships );
+				$added_memberships   = array_diff( $new_memberships, $old_memberships );
+
+				$single_sync_data                      = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
+				$single_sync_data['users'][ $user_id ] = array(
+					'added_memberships'   => $added_memberships,
+					'revoked_memberships' => $revoked_memberships,
+				);
+				$single_sync_data['attempts']          = 0;
+				update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_data, false );
+				$this->schedule_single_sync( 0 );
+
 				return $query;
 			}
-
-			/**
-			 * @var \MeprDb $mepr_db
-			 * */
-			$mepr_db = \MeprDb::fetch();
-
-			// Does current query updates members table?
-			if ( false === strpos( $query, $mepr_db->members ) ) {
-				return $query;
-			}
-
-			if ( ! $user_id = $this->get_user_id_by_query( $query ) ) {
-				$this->logger->log( __METHOD__ . sprintf( ' Could not get user id by query: %s', $user_id ) );
-
-				return $query;
-			}
-
-
-			// And now we can calculate the changes and schedule the sync process.
-			$old_members_data = $mepr_db->get_one_record( $mepr_db->members, array( 'user_id' => $user_id ) );
-
-			$old_memberships = $this->get_memberships( $old_members_data );
-			$new_memberships = $this->get_user_memberships( $user_id );
-
-			if ( $old_memberships === $new_memberships ) {
-				return $query;
-			}
-
-			$revoked_memberships = array_diff( $old_memberships, $new_memberships );
-			$added_memberships   = array_diff( $new_memberships, $old_memberships );
-
-			$single_sync_data             = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
-			$single_sync_data['users'][ $user_id ] = array(
-				'added_memberships'   => $added_memberships,
-				'revoked_memberships' => $revoked_memberships,
-			);
-			$single_sync_data['attempts'] = 0;
-			update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_data, false );
-			$this->schedule_single_sync( 0 );
-
-			return $query;
-		} );
+		);
 	}
 
 	/**
@@ -284,7 +291,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 *
 	 * @return void
 	 */
-	protected function schedule_single_sync( $delay = 5 ){
+	protected function schedule_single_sync( $delay = 5 ) {
 		if ( ! wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) {
 			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::SINGLE_SYNC_EVENT );
 		}
@@ -367,7 +374,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	/**
 	 * @return string
 	 */
-	protected function get_successfully_finished_notice(){
+	protected function get_successfully_finished_notice() {
 		return __( 'MemberPress data successfully synchronized!', 'seriously-simple-podcasting' );
 	}
 
@@ -389,12 +396,15 @@ class Memberpress_Integrator extends Abstract_Integrator {
 			return array();
 		}
 
-		$membership_users = array_map( function ( $user ) {
-			return array(
-				'ID'          => intval( $user->ID ),
-				'memberships' => $this->get_memberships( $user ),
-			);
-		}, $list_table['results'] );
+		$membership_users = array_map(
+			function ( $user ) {
+				return array(
+					'ID'          => intval( $user->ID ),
+					'memberships' => $this->get_memberships( $user ),
+				);
+			},
+			$list_table['results']
+		);
 
 		return $membership_users;
 	}
@@ -492,7 +502,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 * Check if user has access to the episode.
 	 *
 	 * @param \WP_User $user
-	 * @param int[] $required_level_ids
+	 * @param int[]    $required_level_ids
 	 *
 	 * @return bool
 	 */
@@ -516,8 +526,8 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	 *
 	 * @return array
 	 */
-	protected function get_user_memberships( $user_id ){
-		$member_data = \MeprUser::member_data( $user_id, [ 'memberships' ] );
+	protected function get_user_memberships( $user_id ) {
+		$member_data = \MeprUser::member_data( $user_id, array( 'memberships' ) );
 
 		return $this->get_memberships( $member_data );
 	}
@@ -558,11 +568,9 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 			$args['description'] = $msg;
 			$args['fields']      = array();
-		} else {
-			if ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) &&
-			     ( $this->bulk_update_started() || wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) ) {
+		} elseif ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) &&
+				( $this->bulk_update_started() || wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) ) {
 				$this->notices_handler->add_flash_notice( __( 'Synchronizing MemberPress data with Castos...', 'seriously-simple-podcasting' ) );
-			}
 		}
 
 		$this->add_integration_settings( $args );
@@ -590,8 +598,11 @@ class Memberpress_Integrator extends Abstract_Integrator {
 		$settings = array(
 			'id'          => 'memberpress',
 			'title'       => __( 'MemberPress', 'seriously-simple-podcasting' ),
-			'description' => __( 'Select which Podcast you would like to be available only
-								to Members via MemberPress.', 'seriously-simple-podcasting' ),
+			'description' => __(
+				'Select which Podcast you would like to be available only
+								to Members via MemberPress.',
+				'seriously-simple-podcasting'
+			),
 			'fields'      => array(
 				array(
 					'id'   => 'is_memberpress_integration',
@@ -618,8 +629,14 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 		if ( ! $levels ) {
 			$levels_url              = admin_url( 'edit.php?post_type=memberpressproduct' );
-			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up
-										memberships</a> first.', 'seriously-simple-podcasting' ), $levels_url );
+			$settings['description'] = sprintf(
+				__(
+					'To require membership to access a podcast please <a href="%s">set up
+										memberships</a> first.',
+					'seriously-simple-podcasting'
+				),
+				$levels_url
+			);
 
 			return $settings;
 		}
@@ -672,7 +689,7 @@ class Memberpress_Integrator extends Abstract_Integrator {
 	/**
 	 * Check if the series is protected on Castos side.
 	 *
-	 * @param int $series_id
+	 * @param int  $series_id
 	 * @param bool $default
 	 *
 	 * @return bool|mixed

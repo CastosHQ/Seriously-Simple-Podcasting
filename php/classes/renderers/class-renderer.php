@@ -31,7 +31,7 @@ class Renderer implements Service {
 	/**
 	 * Renderer function (old)
 	 *
-	 * @param array $data
+	 * @param array  $data
 	 * @param string $template_path
 	 *
 	 * @return string
@@ -58,11 +58,11 @@ class Renderer implements Service {
 	 * Prints the template.
 	 *
 	 * @param string $template_path
-	 * @param array $data
+	 * @param array  $data
 	 *
 	 * @return void
 	 */
-	public function render( $template_path, $data = [] ) {
+	public function render( $template_path, $data = array() ) {
 		$html = $this->fetch( $template_path, $data );
 
 		echo $html;
@@ -79,11 +79,11 @@ class Renderer implements Service {
 	 * And each path variant can be with and without .php extension.
 	 *
 	 * @param string $template_path
-	 * @param array $data
+	 * @param array  $data
 	 *
 	 * @return string
 	 */
-	public function fetch( $template_path, $data = [] ) {
+	public function fetch( $template_path, $data = array() ) {
 		$abs_path = '';
 
 		// Check if there is extension in the end. If not, lets add it.

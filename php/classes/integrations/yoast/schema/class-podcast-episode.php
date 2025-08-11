@@ -25,7 +25,7 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	/**
 	 * @param Episode_Repository $episode_repository
 	 */
-	public function __construct( $episode_repository ){
+	public function __construct( $episode_repository ) {
 		$this->episode_repository = $episode_repository;
 	}
 
@@ -46,12 +46,12 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	 * @return array $data The schema data.
 	 */
 	public function generate() {
-		$enclosure   = $this->episode_repository->get_enclosure( $this->context->post->ID );
+		$enclosure = $this->episode_repository->get_enclosure( $this->context->post->ID );
 		if ( ! $enclosure ) {
 			return array();
 		}
 
-		$series_parts = [];
+		$series_parts = array();
 		$series       = wp_get_post_terms( $this->context->post->ID, ssp_series_taxonomy() );
 
 		foreach ( $series as $term ) {
@@ -64,10 +64,10 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 			}
 
 			$series_parts[] = array(
-				"@type" => "PodcastSeries",
-				"name"  => $term->name,
-				"url"   => $url,
-				"id"    => $url . '#/schema/podcastSeries',
+				'@type' => 'PodcastSeries',
+				'name'  => $term->name,
+				'url'   => $url,
+				'id'    => $url . '#/schema/podcastSeries',
 			);
 		}
 
@@ -75,11 +75,11 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		$duration    = $this->get_duration( $this->context->post->ID, $enclosure );
 
 		$schema = array(
-			"@type"               => "PodcastEpisode",
-			"@id"                 => $this->context->canonical . '#/schema/podcast',
-			"url"                 => $this->context->canonical,
-			"name"                => $this->context->title,
-			"datePublished"       => date( 'Y-m-d', strtotime( $this->context->post->post_date ) ),
+			'@type'         => 'PodcastEpisode',
+			'@id'           => $this->context->canonical . '#/schema/podcast',
+			'url'           => $this->context->canonical,
+			'name'          => $this->context->title,
+			'datePublished' => date( 'Y-m-d', strtotime( $this->context->post->post_date ) ),
 		);
 
 		if ( $description ) {
@@ -102,8 +102,8 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	/**
 	 * Gets a ISO 8601 duration compliant duration string.
 	 *
-	 * @param int                 $episode_id
-	 * @param string              $enclosure
+	 * @param int    $episode_id
+	 * @param string $enclosure
 	 *
 	 * @return string
 	 */
@@ -129,7 +129,7 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		$seconds = intval( $time_parts[2] );
 
 		if ( ( ! $minutes && $seconds ) || $seconds > 30 ) {
-			$minutes ++;
+			++$minutes;
 		}
 
 		$time = 'P';
@@ -147,8 +147,8 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	/**
 	 * Add the enclosure to the schema based on its type.
 	 *
-	 * @param string              $enclosure
-	 * @param array               $schema
+	 * @param string $enclosure
+	 * @param array  $schema
 	 *
 	 * @return array
 	 */
@@ -156,25 +156,25 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		$type = $this->episode_repository->get_episode_type( $this->context->post->ID );
 
 		$object = array(
-			"contentUrl"  => $enclosure,
-			"contentSize" => get_post_meta( $this->context->post->ID , 'filesize' , true ),
+			'contentUrl'  => $enclosure,
+			'contentSize' => get_post_meta( $this->context->post->ID, 'filesize', true ),
 		);
 
 		if ( $type === 'audio' ) {
-			$object['@type'] = "AudioObject";
+			$object['@type'] = 'AudioObject';
 			$schema['audio'] = $object;
 
 			return $schema;
 		}
 
 		if ( $type === 'video' ) {
-			$object['@type'] = "VideoObject";
+			$object['@type'] = 'VideoObject';
 			$schema['video'] = $object;
 
 			return $schema;
 		}
 
-		$object['@type']           = "MediaObject";
+		$object['@type']           = 'MediaObject';
 		$schema['associatedMedia'] = $object;
 
 		return $schema;

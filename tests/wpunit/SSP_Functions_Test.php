@@ -142,9 +142,12 @@ class SSP_Functions_Test extends WPTestCase {
 		$this->assertFalse( ssp_is_podcast_download() );
 
 		// Make sure the filter works
-		add_filter( 'ssp_is_podcast_download', function () {
-			return true;
-		} );
+		add_filter(
+			'ssp_is_podcast_download',
+			function () {
+				return true;
+			}
+		);
 
 		$this->assertTrue( ssp_is_podcast_download() );
 	}
@@ -164,29 +167,33 @@ class SSP_Functions_Test extends WPTestCase {
 			'link_title' => true,
 		);
 
-		$create_args = [
+		$create_args = array(
 			'post_type'   => SSP_CPT_PODCAST,
 			'post_status' => 'publish',
-		];
+		);
 
 		// Test episodes
 
 		$episodes_number = 6;
 
-		$this->factory()->post->create_many( $episodes_number, $create_args, [
-			'post_title'   => new WP_UnitTest_Generator_Sequence( 'Episode %s' ),
-			'post_content' => new WP_UnitTest_Generator_Sequence( 'Episode content %s' ),
-		] );
+		$this->factory()->post->create_many(
+			$episodes_number,
+			$create_args,
+			array(
+				'post_title'   => new WP_UnitTest_Generator_Sequence( 'Episode %s' ),
+				'post_content' => new WP_UnitTest_Generator_Sequence( 'Episode content %s' ),
+			)
+		);
 
 		$episodes = ss_get_podcast( $args );
 
-		$this->assertArrayHasKey('content', $episodes);
-		$this->assertEquals('episodes', $episodes['content']);
+		$this->assertArrayHasKey( 'content', $episodes );
+		$this->assertEquals( 'episodes', $episodes['content'] );
 
 		$count = 0;
 		foreach ( $episodes as $episode ) {
 			if ( $episode instanceof WP_Post ) {
-				$count ++;
+				++$count;
 			}
 		}
 
@@ -198,44 +205,49 @@ class SSP_Functions_Test extends WPTestCase {
 		$series_number = 3;
 
 		// Create one less because default series should be created automatically on plugin activation
-		$this->factory()->category->create_many( $series_number - 1, [
-			'taxonomy' => 'series',
-		] );
+		$this->factory()->category->create_many(
+			$series_number - 1,
+			array(
+				'taxonomy' => 'series',
+			)
+		);
 
-		$terms = get_terms( array(
-			'taxonomy' => 'series',
-			'hide_empty' => false,
-		) );
+		$terms = get_terms(
+			array(
+				'taxonomy'   => 'series',
+				'hide_empty' => false,
+			)
+		);
 
 		// +1 because there is a default Series already
 		$this->assertCount( $series_number, $terms );
 
 		foreach ( $terms as $term ) {
-			$post_id = $this->factory()->post->create( array(
-				'post_type'     => SSP_CPT_PODCAST,
-				'post_status'   => 'publish',
-				'post_category' => array( $term->term_id ),
-			) );
+			$post_id = $this->factory()->post->create(
+				array(
+					'post_type'     => SSP_CPT_PODCAST,
+					'post_status'   => 'publish',
+					'post_category' => array( $term->term_id ),
+				)
+			);
 
 			wp_set_post_terms( $post_id, $term->term_id, 'series' );
 		}
 
-
 		$series = ss_get_podcast( $args );
 
-		$this->assertArrayHasKey('content', $series);
-		$this->assertEquals('series', $series['content']);
+		$this->assertArrayHasKey( 'content', $series );
+		$this->assertEquals( 'series', $series['content'] );
 		$count = 0;
 		foreach ( $series as $item ) {
 			if ( is_object( $item ) ) {
 				$this->assertObjectHasProperty( 'title', $item );
 				$this->assertObjectHasProperty( 'url', $item );
 				$this->assertObjectHasProperty( 'count', $item );
-				$count ++;
+				++$count;
 			}
 		}
 
 		$this->assertEquals( $series_number, $count );
 	}
-
 }

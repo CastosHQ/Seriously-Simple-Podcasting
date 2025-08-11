@@ -53,9 +53,11 @@ class Settings_Handler implements Service {
 	 * @return Settings_Config
 	 */
 	public function get_general_settings() {
-		return new Settings_Config( function () {
-			return $this->_get_general_settings();
-		} );
+		return new Settings_Config(
+			function () {
+				return $this->_get_general_settings();
+			}
+		);
 	}
 
 	/**
@@ -70,7 +72,6 @@ class Settings_Handler implements Service {
 
 		// Set options for post type selection.
 		foreach ( $wp_post_types as $post_type => $data ) {
-
 			$disallowed_post_types = array(
 				'page',
 				'attachment',
@@ -95,9 +96,11 @@ class Settings_Handler implements Service {
 	 * @return Settings_Config
 	 */
 	public function get_feed_settings() {
-		return new Settings_Config( function () {
-			return $this->_get_feed_settings();
-		} );
+		return new Settings_Config(
+			function () {
+				return $this->_get_feed_settings();
+			}
+		);
 	}
 
 	/**
@@ -111,8 +114,11 @@ class Settings_Handler implements Service {
 			'title'       => __( 'Feed details', 'seriously-simple-podcasting' ),
 			'description' => sprintf(
 				__( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe. %1$sIt is recommended that you fill in as many fields as possible (that apply to your podcast), however, some fields are required to satisfy Podcast RSS validation requirements.%2$s%3$sTo learn more about Podcast RSS Feed requirements, %4$sclick here%5$s.', 'seriously-simple-podcasting' ),
-				'<br/><em>', '</em>', '<br/>',
-				'<a target="_blank" href="https://support.castos.com/article/196-podcast-rss-feed-requirements">', '</a>'
+				'<br/><em>',
+				'</em>',
+				'<br/>',
+				'<a target="_blank" href="https://support.castos.com/article/196-podcast-rss-feed-requirements">',
+				'</a>'
 			),
 			'fields'      => $this->get_feed_fields(),
 		);
@@ -142,7 +148,7 @@ class Settings_Handler implements Service {
 	 */
 	public function get_integrations_settings() {
 		$integrations = ssp_config( 'settings/integrations' );
-		$integrations = apply_filters( 'ssp_integration_settings', $integrations);
+		$integrations = apply_filters( 'ssp_integration_settings', $integrations );
 
 		if ( empty( $integrations['items'] ) ) {
 			return null;
@@ -162,9 +168,11 @@ class Settings_Handler implements Service {
 	 * @return Settings_Config
 	 */
 	public function get_hosting_settings() {
-		return new Settings_Config( function () {
-			return $this->_get_hosting_settings();
-		} );
+		return new Settings_Config(
+			function () {
+				return $this->_get_hosting_settings();
+			}
+		);
 	}
 
 	/**
@@ -190,19 +198,25 @@ class Settings_Handler implements Service {
 		}
 
 		return array_combine(
-			array_map( function ( $i ) {
-				return $i->term_id;
-			}, $podcasts ),
-			array_map( function ( $i ) {
-				return $i->name;
-			}, $podcasts )
+			array_map(
+				function ( $i ) {
+					return $i->term_id;
+				},
+				$podcasts
+			),
+			array_map(
+				function ( $i ) {
+					return $i->name;
+				},
+				$podcasts
+			)
 		);
 	}
 
 	/**
 	 * @return array
 	 */
-	public function get_publishing_settings(){
+	public function get_publishing_settings() {
 		return ssp_config( 'settings/publishing' );
 	}
 
@@ -212,9 +226,11 @@ class Settings_Handler implements Service {
 	 * @return Settings_Config
 	 */
 	public function get_player_settings() {
-		return new Settings_Config( function () {
-			return $this->_get_player_settings();
-		} );
+		return new Settings_Config(
+			function () {
+				return $this->_get_player_settings();
+			}
+		);
 	}
 
 	/**
@@ -228,15 +244,21 @@ class Settings_Handler implements Service {
 		$is_custom_colors_enabled = $this->is_player_custom_colors_enabled();
 		$color_settings           = $is_custom_colors_enabled ? $this->get_player_color_settings() : array();
 
-		return ssp_config( 'settings/player', compact(
-			'player_style', 'is_meta_data_enabled', 'is_custom_colors_enabled', 'color_settings'
-		) );
+		return ssp_config(
+			'settings/player',
+			compact(
+				'player_style',
+				'is_meta_data_enabled',
+				'is_custom_colors_enabled',
+				'color_settings'
+			)
+		);
 	}
 
 	/**
 	 * @return bool
 	 */
-	public function is_player_meta_data_enabled(){
+	public function is_player_meta_data_enabled() {
 		return 'on' === ssp_get_option( 'player_meta_data_enabled', 'on' );
 	}
 
@@ -278,8 +300,8 @@ class Settings_Handler implements Service {
 	 * Since version 3.0, we use the Default Series settings, that should replace the default feed settings
 	 *
 	 * @param string|array $field
-	 * @param int $series_id
-	 * @param string $default
+	 * @param int          $series_id
+	 * @param string       $default
 	 *
 	 * @return string|null
 	 * @since 3.0.0
@@ -312,7 +334,7 @@ class Settings_Handler implements Service {
 			$propagate_exclusions = array( 'exclude_feed', 'redirect_feed' );
 			$propagated_types     = array( 'checkbox', 'select' );
 			$propagate            = in_array( $field['type'], $propagated_types, true ) &&
-			                        ! in_array( $field['id'], $propagate_exclusions, true );
+									! in_array( $field['id'], $propagate_exclusions, true );
 			$default_series_id    = $this->default_series_id();
 
 			if ( $propagate && ( $series_id != $default_series_id ) ) {
@@ -363,7 +385,7 @@ class Settings_Handler implements Service {
 	 *
 	 * @return string
 	 */
-	public function get_feed_image( $series_id ){
+	public function get_feed_image( $series_id ) {
 		// If it's series feed, try to use its own feed image.
 		if ( $series_id ) {
 			$image = ssp_get_option( 'data_image', null, $series_id );
@@ -466,7 +488,6 @@ class Settings_Handler implements Service {
 	public function validate_message( $message ) {
 
 		if ( $message ) {
-
 			$allowed = array(
 				'a'      => array(
 					'href'   => array(),
@@ -515,7 +536,7 @@ class Settings_Handler implements Service {
 			}
 
 			$field_id = $option_key . '_url';
-			$value = ssp_get_option( $field_id, '', $series_id );
+			$value    = ssp_get_option( $field_id, '', $series_id );
 
 			$subscribe_field_options[] = array(
 				'id'          => $field_id,

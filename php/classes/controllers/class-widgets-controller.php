@@ -44,6 +44,7 @@ class Widgets_Controller extends Controller {
 
 	/**
 	 * Register plugin widgets
+	 *
 	 * @return void
 	 */
 	public function register_widgets() {

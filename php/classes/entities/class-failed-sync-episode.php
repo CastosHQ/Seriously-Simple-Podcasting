@@ -9,6 +9,7 @@ namespace SeriouslySimplePodcasting\Entities;
 
 /**
  * Class Failed_Sync_Episode.
+ *
  * @since 2.23.0
  */
 class Failed_Sync_Episode extends Abstract_Entity {

@@ -79,11 +79,14 @@ abstract class Abstract_Integrator {
 	 * @param array $args
 	 */
 	public function add_integration_settings( $args ) {
-		add_filter( 'ssp_integration_settings', function ( $settings ) use ( $args ) {
-			$settings['items'][ $args['id'] ] = $args;
+		add_filter(
+			'ssp_integration_settings',
+			function ( $settings ) use ( $args ) {
+				$settings['items'][ $args['id'] ] = $args;
 
-			return $settings;
-		} );
+				return $settings;
+			}
+		);
 	}
 
 	/**
@@ -127,7 +130,7 @@ abstract class Abstract_Integrator {
 		$series = wp_get_post_terms( $post_id, ssp_series_taxonomy() );
 
 		if ( is_wp_error( $series ) ) {
-			return [];
+			return array();
 		}
 
 		return $series;
@@ -149,8 +152,7 @@ abstract class Abstract_Integrator {
 			global $post;
 		}
 
-
-		if( isset( $post->post_type ) && SSP_CPT_PODCAST === $post->post_type ){
+		if ( isset( $post->post_type ) && SSP_CPT_PODCAST === $post->post_type ) {
 			return $this->get_episode_series( $post->ID );
 		}
 
@@ -227,12 +229,12 @@ abstract class Abstract_Integrator {
 	}
 
 	/**
-	 * @param int $user_id
+	 * @param int   $user_id
 	 * @param int[] $revoke_series_ids
 	 * @param int[] $add_series_ids
 	 */
 	protected function sync_user( $user_id, $revoke_series_ids, $add_series_ids ) {
-		$user = get_user_by( 'id', $user_id );
+		$user    = get_user_by( 'id', $user_id );
 		$success = true;
 
 		if ( ! $user ) {
@@ -290,7 +292,7 @@ abstract class Abstract_Integrator {
 	 * Revokes subscriber from multiple Castos podcasts.
 	 *
 	 * @param \WP_User $user
-	 * @param int[] $series_ids
+	 * @param int[]    $series_ids
 	 *
 	 * @return array
 	 */
@@ -305,7 +307,7 @@ abstract class Abstract_Integrator {
 	 * Adds subscriber to multiple Castos podcasts.
 	 *
 	 * @param \WP_User $user
-	 * @param int[] $series_ids
+	 * @param int[]    $series_ids
 	 *
 	 * @return array
 	 */
@@ -322,7 +324,7 @@ abstract class Abstract_Integrator {
 	/**
 	 * Adds subscriber to multiple Castos podcasts.
 	 *
-	 * @param int $series_id
+	 * @param int   $series_id
 	 * @param int[] $user_ids
 	 *
 	 * @return int
@@ -354,7 +356,7 @@ abstract class Abstract_Integrator {
 	/**
 	 * Adds subscriber to multiple Castos podcasts.
 	 *
-	 * @param int $series_id
+	 * @param int   $series_id
 	 * @param int[] $user_ids
 	 *
 	 * @return int
@@ -612,7 +614,7 @@ abstract class Abstract_Integrator {
 	/**
 	 * @return string
 	 */
-	protected function get_successfully_finished_notice(){
+	protected function get_successfully_finished_notice() {
 		return __( 'Subscribers data successfully synchronized!', 'seriously-simple-podcasting' );
 	}
 
@@ -637,7 +639,7 @@ abstract class Abstract_Integrator {
 	 */
 	protected function bulk_update_started() {
 		return wp_next_scheduled( static::EVENT_BULK_SYNC_SUBSCRIBERS ) ||
-		       wp_next_scheduled( static::EVENT_ADD_SUBSCRIBERS ) ||
-		       wp_next_scheduled( static::EVENT_REVOKE_SUBSCRIBERS );
+				wp_next_scheduled( static::EVENT_ADD_SUBSCRIBERS ) ||
+				wp_next_scheduled( static::EVENT_REVOKE_SUBSCRIBERS );
 	}
 }

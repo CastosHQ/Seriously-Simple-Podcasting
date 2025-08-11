@@ -67,5 +67,4 @@ class DB_Migration_Controller {
 			update_post_meta( $post->ID, 'date_recorded', $date_recorded );
 		}
 	}
-
 }

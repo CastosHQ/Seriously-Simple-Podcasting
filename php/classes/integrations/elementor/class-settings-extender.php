@@ -32,22 +32,30 @@ class Settings_Extender {
 	 *
 	 * @return void
 	 */
-	protected function maybe_hide_element_content(){
-		add_action('elementor/db/before_save', function(){
-			add_filter( 'get_post_metadata', function ( $data, $post_id, $meta_key ) {
-				if ( '_elementor_data' !== $meta_key ) {
-					return $data;
-				}
+	protected function maybe_hide_element_content() {
+		add_action(
+			'elementor/db/before_save',
+			function () {
+				add_filter(
+					'get_post_metadata',
+					function ( $data, $post_id, $meta_key ) {
+						if ( '_elementor_data' !== $meta_key ) {
+							return $data;
+						}
 
-				$elements = $this->get_elements( $post_id );
+						$elements = $this->get_elements( $post_id );
 
-				foreach ( $elements as $k => $el ) {
-					$elements[ $k ] = $this->filter_feed_hidden_element( $el );
-				}
+						foreach ( $elements as $k => $el ) {
+							$elements[ $k ] = $this->filter_feed_hidden_element( $el );
+						}
 
-				return $elements ? array( $elements ) : $data;
-			}, 10, 3 );
-		});
+						return $elements ? array( $elements ) : $data;
+					},
+					10,
+					3
+				);
+			}
+		);
 	}
 
 	/**
@@ -85,7 +93,7 @@ class Settings_Extender {
 	/**
 	 * Get elements from the post meta.
 	 *
-	 * @param int $object_id
+	 * @param int    $object_id
 	 * @param string $meta_key
 	 *
 	 * @return array
@@ -114,7 +122,7 @@ class Settings_Extender {
 
 
 	protected function add_widget_categories() {
-		add_action( 'elementor/elements/categories_registered', [ $this, 'add_elementor_widget_categories' ] );
+		add_action( 'elementor/elements/categories_registered', array( $this, 'add_elementor_widget_categories' ) );
 	}
 
 	protected function init_feed_hidden_controls() {
@@ -159,15 +167,16 @@ class Settings_Extender {
 		}
 
 		$element->start_controls_section(
-			$section, array(
+			$section,
+			array(
 				'tab'   => Controls_Manager::TAB_CONTENT,
 				'label' => __( 'Feed', 'seriously-simple-podcasting' ),
 			)
 		);
 
 		$settings = array(
-			'label'   => __( 'Hide From Podcast RSS Feed', 'seriously-simple-podcasting' ),
-			'type'    => Controls_Manager::SWITCHER,
+			'label' => __( 'Hide From Podcast RSS Feed', 'seriously-simple-podcasting' ),
+			'type'  => Controls_Manager::SWITCHER,
 		);
 
 		if ( 'ssp-transcript' === $name ) {

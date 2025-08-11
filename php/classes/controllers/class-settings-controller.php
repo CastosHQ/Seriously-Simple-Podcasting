@@ -89,11 +89,11 @@ class Settings_Controller {
 	/**
 	 * Constructor
 	 *
-	 * @param Settings_Handler $settings_handler
-	 * @param Settings_Renderer $settings_renderer
-	 * @param Renderer $renderer
-	 * @param Series_Handler $series_handler
-	 * @param Castos_Handler $castos_handler
+	 * @param Settings_Handler   $settings_handler
+	 * @param Settings_Renderer  $settings_renderer
+	 * @param Renderer           $renderer
+	 * @param Series_Handler     $series_handler
+	 * @param Castos_Handler     $castos_handler
 	 * @param Episode_Repository $episode_repository
 	 */
 	public function __construct( $settings_handler, $settings_renderer, $renderer, $series_handler, $castos_handler, $episode_repository ) {
@@ -118,7 +118,7 @@ class Settings_Controller {
 
 		add_action( 'init', array( $this, 'load_settings' ), 15 );
 
-		//Todo: Can we use pre_update_option_ss_podcasting_data_title action instead?
+		// Todo: Can we use pre_update_option_ss_podcasting_data_title action instead?
 		add_action( 'admin_init', array( $this, 'maybe_feed_saved' ), 11 );
 
 		// Register podcast settings.
@@ -135,17 +135,25 @@ class Settings_Controller {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_styles' ), 10 );
 
 		// Trigger the disconnect action
-		add_filter( 'pre_update_option_' . $this->settings_base . 'podmotor_disconnect', array(
-			$this,
-			'maybe_disconnect_from_castos'
-		), 10, 2 );
+		add_filter(
+			'pre_update_option_' . $this->settings_base . 'podmotor_disconnect',
+			array(
+				$this,
+				'maybe_disconnect_from_castos',
+			),
+			10,
+			2
+		);
 
 		// Add podcasts sync status to the sync settings
 		add_filter( 'ssp_field_data', array( $this, 'provide_podcasts_sync_status' ), 10, 2 );
 
-		add_action('admin_init', function(){
-			$this->generate_dynamic_color_scheme();
-		});
+		add_action(
+			'admin_init',
+			function () {
+				$this->generate_dynamic_color_scheme();
+			}
+		);
 
 		add_shortcode( 'castos_email', array( $this, 'castos_email' ) );
 	}
@@ -172,7 +180,7 @@ class Settings_Controller {
 	public function provide_podcasts_sync_status( $data, $args ) {
 		if ( isset( $args['field']['id'] ) && 'podcasts_sync' === $args['field']['id'] ) {
 			$data = (array) $data;
-			$res = $this->castos_handler->get_podcasts();
+			$res  = $this->castos_handler->get_podcasts();
 			if ( ! is_array( $res ) || empty( $res['status'] ) || 'success' !== $res['status'] || ! isset( $res['data']['podcast_list'] ) ) {
 				$data['statuses'] = null;
 
@@ -180,7 +188,7 @@ class Settings_Controller {
 			}
 
 			// First, prepare all SSP podcasts with a "none" status, and after, update them with the data retrieved from Castos.
-			$statuses     = array();
+			$statuses = array();
 			foreach ( (array) $args['field']['options'] as $series_id => $v ) {
 				$statuses[ $series_id ] = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
 			}
@@ -196,7 +204,7 @@ class Settings_Controller {
 				$status = $this->castos_handler->retrieve_sync_status_by_podcast_data( $podcast );
 
 				// If status is none, let's try to guess the sync status
-				if( Sync_Status::SYNC_STATUS_NONE === $status->status ){
+				if ( Sync_Status::SYNC_STATUS_NONE === $status->status ) {
 					$status = $this->guess_podcast_sync_status( $podcast );
 				}
 
@@ -230,12 +238,17 @@ class Settings_Controller {
 	protected function generate_dynamic_color_scheme() {
 		$color_settings = $this->settings_handler->get_player_color_settings();
 		foreach ( $color_settings as $color_setting ) {
-			add_action( 'update_option_' . $this->settings_base . $color_setting['id'], function () {
-				$dynamic_style_path = $this->get_dynamic_style_path();
-				wp_mkdir_p( dirname( $dynamic_style_path ) );
-				file_put_contents( $dynamic_style_path, $this->generate_player_css() );
-				update_option( self::SETTINGS_BASE . 'dynamic_style_version', wp_generate_password( 6, false ) );
-			}, 10, 2 );
+			add_action(
+				'update_option_' . $this->settings_base . $color_setting['id'],
+				function () {
+					$dynamic_style_path = $this->get_dynamic_style_path();
+					wp_mkdir_p( dirname( $dynamic_style_path ) );
+					file_put_contents( $dynamic_style_path, $this->generate_player_css() );
+					update_option( self::SETTINGS_BASE . 'dynamic_style_version', wp_generate_password( 6, false ) );
+				},
+				10,
+				2
+			);
 		}
 	}
 
@@ -262,7 +275,7 @@ class Settings_Controller {
 		return sprintf( ':root {%s}', $css );
 	}
 
-	protected function get_dynamic_style_path(){
+	protected function get_dynamic_style_path() {
 		$upload_dir = wp_upload_dir()['basedir'];
 		return $upload_dir . '/ssp/css/ssp-dynamic-style.css';
 	}
@@ -280,15 +293,29 @@ class Settings_Controller {
 	 * @return void
 	 */
 	public function add_menu_item() {
-		add_submenu_page( 'edit.php?post_type=' . SSP_CPT_PODCAST, __( 'Podcast Settings', 'seriously-simple-podcasting' ), __( 'Settings', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings', array(
-			$this,
-			'settings_page',
-		) );
+		add_submenu_page(
+			'edit.php?post_type=' . SSP_CPT_PODCAST,
+			__( 'Podcast Settings', 'seriously-simple-podcasting' ),
+			__( 'Settings', 'seriously-simple-podcasting' ),
+			'manage_podcast',
+			'podcast_settings',
+			array(
+				$this,
+				'settings_page',
+			)
+		);
 
-		add_submenu_page( 'edit.php?post_type=podcast' . SSP_CPT_PODCAST, __( 'Extensions', 'seriously-simple-podcasting' ), __( 'Extensions', 'seriously-simple-podcasting' ), 'manage_podcast', 'podcast_settings&tab=extensions', array(
-			$this,
-			'settings_page',
-		) );
+		add_submenu_page(
+			'edit.php?post_type=podcast' . SSP_CPT_PODCAST,
+			__( 'Extensions', 'seriously-simple-podcasting' ),
+			__( 'Extensions', 'seriously-simple-podcasting' ),
+			'manage_podcast',
+			'podcast_settings&tab=extensions',
+			array(
+				$this,
+				'settings_page',
+			)
+		);
 	}
 
 	/**
@@ -300,7 +327,7 @@ class Settings_Controller {
 	 */
 	public function add_plugin_links( $links ) {
 		$settings_link = '<a href="edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings">' . __( 'Settings', 'seriously-simple-podcasting' ) . '</a>';
-		$upgrade_link = '<a href="https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&utm_medium=plugin-settings&utm_campaign=upgrade">' . __( 'Upgrade', 'seriously-simple-podcasting' ) . '</a>';
+		$upgrade_link  = '<a href="https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&utm_medium=plugin-settings&utm_campaign=upgrade">' . __( 'Upgrade', 'seriously-simple-podcasting' ) . '</a>';
 
 		array_unshift( $links, $settings_link );
 		array_push( $links, $upgrade_link );
@@ -348,7 +375,7 @@ class Settings_Controller {
 	 */
 	public function register_settings() {
 		if ( 'podcast_settings' !== filter_input( INPUT_GET, 'page' ) &&
-		     'ss_podcasting' !== filter_input( INPUT_POST, 'option_page' ) ) {
+			'ss_podcasting' !== filter_input( INPUT_POST, 'option_page' ) ) {
 			return;
 		}
 
@@ -388,7 +415,7 @@ class Settings_Controller {
 		if ( 'feed-details' === $tab ) {
 			$feed_series = ( isset( $_REQUEST['feed-series'] ) ? filter_var( $_REQUEST['feed-series'], FILTER_DEFAULT ) : '' );
 			if ( $feed_series && 'default' !== $feed_series ) {
-				$series = get_term_by( 'slug', esc_attr( $feed_series ), ssp_series_taxonomy() );
+				$series    = get_term_by( 'slug', esc_attr( $feed_series ), ssp_series_taxonomy() );
 				$series_id = $series->term_id;
 
 				// Append series name to section title.
@@ -402,10 +429,10 @@ class Settings_Controller {
 	}
 
 	/**
-	 * @param string $section_id
+	 * @param string                $section_id
 	 * @param Settings_Config|array $section_data
-	 * @param string $feed_series
-	 * @param int $series_id
+	 * @param string                $feed_series
+	 * @param int                   $series_id
 	 *
 	 * @return void
 	 */
@@ -471,11 +498,11 @@ class Settings_Controller {
 
 	/**
 	 * @param string $section
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $feed_series
-	 * @param int $series_id
+	 * @param int    $series_id
 	 */
-	protected function register_settings_field( $section, $field, $feed_series, $series_id ){
+	protected function register_settings_field( $section, $field, $feed_series, $series_id ) {
 		// only show the exclude_feed field on the non default feed settings
 		if ( 'exclude_feed' === $field['id'] ) {
 			if ( empty( $feed_series ) || 'default' === $feed_series ) {
@@ -502,9 +529,9 @@ class Settings_Controller {
 
 		// If field is hidden, lets hide the settings parent <tr>, otherwise it shows redundant empty space
 		if ( 'hidden' === $field['type'] ) {
-			$field['container_class'] = isset( $field['container_class'] ) ? $field['container_class'] : '';
+			$field['container_class']  = isset( $field['container_class'] ) ? $field['container_class'] : '';
 			$field['container_class'] .= ' hidden';
-			$field['label'] = '';
+			$field['label']            = '';
 		}
 
 		$container_class = '';
@@ -513,7 +540,9 @@ class Settings_Controller {
 		}
 
 		// Add field to page.
-		add_settings_field( $field['id'], $field['label'],
+		add_settings_field(
+			$field['id'],
+			$field['label'],
 			array(
 				$this,
 				'display_field',
@@ -524,7 +553,7 @@ class Settings_Controller {
 				'field'       => $field,
 				'prefix'      => $this->settings_base,
 				'feed-series' => $series_id,
-				'class'       => $container_class
+				'class'       => $container_class,
 			)
 		);
 	}
@@ -552,7 +581,7 @@ class Settings_Controller {
 
 					$html .= '<p><a class="view-feed-link" href="' . esc_url( $edit_podcast_url ) . '">
 								<span class="dashicons dashicons-edit"></span>' . __( 'Edit Podcast Settings', 'seriously-simple-podcasting' ) .
-							 '</a></p>' . "\n";
+							'</a></p>' . "\n";
 				}
 
 				$feed_url = ssp_get_feed_url( $feed_series );
@@ -565,7 +594,7 @@ class Settings_Controller {
 			case 'import':
 				if ( ssp_get_external_rss_being_imported() ) {
 					$progress = RSS_Import_Handler::get_import_data( 'import_progress', 0 );
-					$html     .= $this->render_external_import_process( $progress );
+					$html    .= $this->render_external_import_process( $progress );
 				} else {
 					$html .= $this->render_external_import_form();
 				}
@@ -600,9 +629,9 @@ class Settings_Controller {
 		$is_feed_field = isset( $args['feed-series'] ) && $args['feed-series'];
 
 		if ( $is_feed_field ) {
-			$series_id   = $args['feed-series'];
+			$series_id    = $args['feed-series'];
 			$option_name .= '_' . $series_id;
-			$data = $this->settings_handler->get_feed_option( $field, $series_id );
+			$data         = $this->settings_handler->get_feed_option( $field, $series_id );
 		} else {
 			$data = get_option( $option_name, isset( $field['default'] ) ? $field['default'] : '' );
 		}
@@ -629,6 +658,7 @@ class Settings_Controller {
 
 	/**
 	 * Generate HTML for settings page
+	 *
 	 * @return void
 	 */
 	public function settings_page() {
@@ -643,16 +673,16 @@ class Settings_Controller {
 
 		$html .= $this->show_page_messages();
 
-		$class = 'ssp-main-settings tab-' . esc_attr( $tab ) . ' ';
+		$class  = 'ssp-main-settings tab-' . esc_attr( $tab ) . ' ';
 		$class .= ssp_is_connected_to_castos() ? 'castos-connected' : 'castos-disconnected';
-		$html .= '<div id="ssp-main-settings" class="' . $class . '">' . "\n";
-		$html .= $this->show_page_tabs();
-		$html .= $this->show_tab_before_settings( $tab );
-		$html .= $this->show_tab_settings( $tab );
-		$html .= $this->show_tab_after_settings( $tab );
-		$html .= '</div><!--ssp-main-settings-->' . "\n";
-		$html .= $this->render_seriously_simple_sidebar();
-		$html .= '</div><!--ssp-settings-page-->' . "\n";
+		$html  .= '<div id="ssp-main-settings" class="' . $class . '">' . "\n";
+		$html  .= $this->show_page_tabs();
+		$html  .= $this->show_tab_before_settings( $tab );
+		$html  .= $this->show_tab_settings( $tab );
+		$html  .= $this->show_tab_after_settings( $tab );
+		$html  .= '</div><!--ssp-main-settings-->' . "\n";
+		$html  .= $this->render_seriously_simple_sidebar();
+		$html  .= '</div><!--ssp-settings-page-->' . "\n";
 
 		echo $html;
 	}
@@ -663,9 +693,9 @@ class Settings_Controller {
 	protected function show_page_messages() {
 		$html = '';
 		if ( isset( $_GET['settings-updated'] ) ) {
-			$tab = $this->get_current_tab();
-			$msg = $tab ?
-				sprintf( __( '%1$s settings updated', 'seriously-simple-podcasting' ),  esc_html( str_replace( '-', ' ', ucwords( $tab ) ) ) ):
+			$tab   = $this->get_current_tab();
+			$msg   = $tab ?
+				sprintf( __( '%1$s settings updated', 'seriously-simple-podcasting' ), esc_html( str_replace( '-', ' ', ucwords( $tab ) ) ) ) :
 				__( 'Settings updated', 'seriously-simple-podcasting' );
 			$html .= '<br/><div class="updated notice notice-success is-dismissible"><p><b>' . $msg . '</b></p></div>';
 		}
@@ -677,7 +707,8 @@ class Settings_Controller {
 	 * @return array
 	 */
 	protected function get_query_args() {
-		$q_args = wp_parse_args( $_GET,
+		$q_args = wp_parse_args(
+			$_GET,
 			array(
 				'post_type' => null,
 				'page'      => null,
@@ -686,9 +717,12 @@ class Settings_Controller {
 			)
 		);
 
-		array_walk( $q_args, function ( &$entry ) {
-			$entry = sanitize_title( $entry );
-		} );
+		array_walk(
+			$q_args,
+			function ( &$entry ) {
+				$entry = sanitize_title( $entry );
+			}
+		);
 
 		return $q_args;
 	}
@@ -699,7 +733,6 @@ class Settings_Controller {
 	protected function show_page_tabs() {
 		$html = '';
 		if ( is_array( $this->settings ) && 1 < count( $this->settings ) ) {
-
 			$html .= '<h2 class="nav-tab-wrapper">' . "\n";
 
 			$c = 0;
@@ -707,8 +740,8 @@ class Settings_Controller {
 			foreach ( $this->settings as $section => $data ) {
 
 				// Set tab class
-				$class = 'nav-tab';
-				$tab_defined = !empty( $_GET['tab'] );
+				$class       = 'nav-tab';
+				$tab_defined = ! empty( $_GET['tab'] );
 
 				if ( ( $tab_defined && $section === $_GET['tab'] ) || ( ! $tab_defined && 0 === $c ) ) {
 					$class .= ' nav-tab-active';
@@ -739,7 +772,7 @@ class Settings_Controller {
 				// Output tab
 				$html .= '<a href="' . esc_url( $tab_link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $title ) . '</a>' . "\n";
 
-				++ $c;
+				++$c;
 			}
 
 			$html .= '</h2>' . "\n";
@@ -772,10 +805,10 @@ class Settings_Controller {
 					),
 					admin_url( 'edit.php' )
 				);
-				$html              .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
-				$html              .= '<input type="hidden" name="action" value="post_import_form" />';
-				$html              .= wp_nonce_field( 'ss_podcasting_import', '_wpnonce', true, false );
-				$html              .= wp_nonce_field( 'ss_podcasting_import', 'podcast_settings_tab_nonce', false, false );
+				$html             .= '<form method="post" action="' . esc_url_raw( $current_admin_url ) . '" enctype="multipart/form-data">' . "\n";
+				$html             .= '<input type="hidden" name="action" value="post_import_form" />';
+				$html             .= wp_nonce_field( 'ss_podcasting_import', '_wpnonce', true, false );
+				$html             .= wp_nonce_field( 'ss_podcasting_import', 'podcast_settings_tab_nonce', false, false );
 				break;
 			case 'integrations':
 				$html .= $this->show_tab_integrations_subtabs();
@@ -788,13 +821,13 @@ class Settings_Controller {
 			// Add current series to posted data
 			if ( 'feed-details' === $tab ) {
 				$current_series = $this->get_current_series();
-				$html           .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
+				$html          .= '<input type="hidden" name="feed-series" value="' . esc_attr( $current_series ) . '" />' . "\n";
 			}
 
 			// Add current integration to posted data
 			if ( 'integrations' === $tab ) {
 				$current_integration = $this->get_current_integration();
-				$html .= '<input type="hidden" name="ssp_integration" value="' . esc_attr( $current_integration ) . '" />' . "\n";
+				$html               .= '<input type="hidden" name="ssp_integration" value="' . esc_attr( $current_integration ) . '" />' . "\n";
 			}
 		}
 
@@ -831,18 +864,18 @@ class Settings_Controller {
 		$disable_save_button_on_tabs = array( 'extensions', 'import' );
 
 		if ( ! in_array( $tab, $disable_save_button_on_tabs ) ) {
-			$button_text = isset( $this->settings[$tab]['button_text'] ) ?
-				$this->settings[$tab]['button_text'] :
+			$button_text   = isset( $this->settings[ $tab ]['button_text'] ) ?
+				$this->settings[ $tab ]['button_text'] :
 				__( 'Save Settings', 'seriously-simple-podcasting' );
-			$button_class = 'button-primary ssp-settings-submit';
-			$button_class .= isset( $this->settings[$tab]['button_class'] ) ?
-				' ' . $this->settings[$tab]['button_class'] : '';
+			$button_class  = 'button-primary ssp-settings-submit';
+			$button_class .= isset( $this->settings[ $tab ]['button_class'] ) ?
+				' ' . $this->settings[ $tab ]['button_class'] : '';
 
 			// Submit button
 			$html .= '<p class="submit">' . "\n";
 			$html .= '<input type="hidden" name="tab" value="' . esc_attr( $tab ) . '" />' . "\n";
 			$html .= '<button id="ssp-settings-submit" name="Submit" type="submit" class="' .
-			         esc_attr($button_class) . '">' . esc_attr( $button_text ) . '</button>' . "\n";
+					esc_attr( $button_class ) . '">' . esc_attr( $button_text ) . '</button>' . "\n";
 			$html .= '</p>' . "\n";
 		}
 
@@ -860,8 +893,11 @@ class Settings_Controller {
 			$sapi_type = php_sapi_name();
 			if ( strpos( $sapi_type, 'fcgi' ) !== false ) {
 				$html .= '<br/><div class="update-nag">';
-				$html .= '<p>' . sprintf( __( 'It looks like your server has FastCGI enabled, which will prevent the feed password protection feature from working. You can fix this by following %1$sthis quick guide%2$s.', 'seriously-simple-podcasting' ),
-						'<a href="https://support.castos.com/article/147-why-wont-the-password-i-set-for-my-rss-feed-in-wordpress-save" target="_blank">', '</a>' ) . '</p>';
+				$html .= '<p>' . sprintf(
+					__( 'It looks like your server has FastCGI enabled, which will prevent the feed password protection feature from working. You can fix this by following %1$sthis quick guide%2$s.', 'seriously-simple-podcasting' ),
+					'<a href="https://support.castos.com/article/147-why-wont-the-password-i-set-for-my-rss-feed-in-wordpress-save" target="_blank">',
+					'</a>'
+				) . '</p>';
 				$html .= '</div>';
 			}
 		}
@@ -890,11 +926,11 @@ class Settings_Controller {
 		$html .= '<ul id="feed-series-list" class="subsubsub series-open">' . "\n";
 
 		foreach ( $series as $k => $s ) {
-			$slug = $s ? $s->slug : 'default';
+			$slug         = $s ? $s->slug : 'default';
 			$series_class = $current_series === $slug ? 'current' : '';
 
 			$html .= '<li>' . "\n";
-			if( 0 !== $k ){
+			if ( 0 !== $k ) {
 				$html .= ' | ';
 			}
 
@@ -902,10 +938,14 @@ class Settings_Controller {
 
 			$name = 0 === $k ? $this->series_handler->default_series_name( $podcast_name ) : $podcast_name;
 
-			$html .= '<a href="' . esc_url( add_query_arg( array(
-					'feed-series'      => $s ? $s->slug : 'default',
-					'settings-updated' => false
-				) ) ) . '" class="' . $series_class . '">' . $name . '</a>' . "\n";
+			$html .= '<a href="' . esc_url(
+				add_query_arg(
+					array(
+						'feed-series'      => $s ? $s->slug : 'default',
+						'settings-updated' => false,
+					)
+				)
+			) . '" class="' . $series_class . '">' . $name . '</a>' . "\n";
 			$html .= '</li>' . "\n";
 		}
 
@@ -925,7 +965,7 @@ class Settings_Controller {
 		}
 
 		$integrations = $this->settings['integrations']['items'];
-		$current = $this->get_current_integration();
+		$current      = $this->get_current_integration();
 
 		return $this->renderer->fetch( 'settings/integrations-subtabs', compact( 'integrations', 'current' ) );
 	}
@@ -987,11 +1027,11 @@ class Settings_Controller {
 	 * @return string
 	 */
 	public function render_seriously_simple_sidebar() {
-		if(ssp_is_connected_to_castos()){
+		if ( ssp_is_connected_to_castos() ) {
 			return '';
 		}
 		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
-		$img = '<img src="' . esc_attr( $image_dir ) . 'castos-plugin-settings-banner.jpg">';
+		$img       = '<img src="' . esc_attr( $image_dir ) . 'castos-plugin-settings-banner.jpg">';
 
 		return $this->renderer->fetch( 'settings-sidebar', compact( 'img' ) );
 	}
@@ -999,7 +1039,7 @@ class Settings_Controller {
 	public function render_seriously_simple_extensions() {
 		add_thickbox();
 
-		$image_dir  = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
+		$image_dir = $this->assets_url . DIRECTORY_SEPARATOR . 'images' . DIRECTORY_SEPARATOR;
 
 		$extensions = array(
 			'connect'              => array(
@@ -1100,7 +1140,7 @@ class Settings_Controller {
 				'description' => __( 'Looking for a custom elementor template to use with Seriously Simple Podcasting? Click here to import all of them righ now!', 'seriously-simple-podcasting' ),
 				'button_text' => __( 'Import Templates', 'seriously-simple-podcasting' ),
 			);
-			$extensions = array_slice($extensions, 0, 1, true) + array("elementor-templates" =>  $elementor_templates) + array_slice($extensions, 1, count($extensions)-1, true);
+			$extensions          = array_slice( $extensions, 0, 1, true ) + array( 'elementor-templates' => $elementor_templates ) + array_slice( $extensions, 1, count( $extensions ) - 1, true );
 		}
 
 		$html = '<div id="ssp-extensions">';
@@ -1143,9 +1183,12 @@ class Settings_Controller {
 		$inner = $args['button_text'];
 
 		if ( $is_image ) {
-			$inner = sprintf( '<img width="880" height="440" src="%s"
+			$inner = sprintf(
+				'<img width="880" height="440" src="%s"
 								class="attachment-showcase size-showcase wp-post-image" alt="" title="%s">',
-				$args['image'], $args['title'] );
+				$args['image'],
+				$args['title']
+			);
 		}
 
 		$target = $args['new_window'] ? ' target="_blank" ' : '';
@@ -1162,7 +1205,11 @@ class Settings_Controller {
 
 		return sprintf(
 			'<a href="%s" title="%s" class="%s"%s>%s</a>',
-			$args['url'], $args['title'], $class, $target, $inner
+			$args['url'],
+			$args['title'],
+			$class,
+			$target,
+			$inner
 		);
 	}
 
@@ -1184,8 +1231,7 @@ class Settings_Controller {
 		$post_types = array( SSP_CPT_PODCAST ); // Make sure that podcast is the first in the list.
 		$post_types = array_merge( $post_types, ssp_post_types( false ) );
 
-
-		$series     = get_terms( ssp_series_taxonomy(), array( 'hide_empty' => false ) );
+		$series = get_terms( ssp_series_taxonomy(), array( 'hide_empty' => false ) );
 
 		return $this->renderer->fetch( 'settings/import-rss-form', compact( 'post_types', 'series' ) );
 	}

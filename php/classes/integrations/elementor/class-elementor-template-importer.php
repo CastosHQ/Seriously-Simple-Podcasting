@@ -120,5 +120,4 @@ class Elementor_Template_Importer {
 		$message = __( 'Unfortunately that action is not allow at this time.', 'seriously-simple-podcasting' );
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
 	}
-
 }

@@ -27,9 +27,12 @@ class Roles_Handler implements Service {
 		add_filter( 'admin_init', array( $this, 'add_podcast_manager_role' ) );
 
 		// Allows manage_podcast capability to save podcast settings
-		add_filter( 'option_page_capability_ss_podcasting', function () {
-			return self::MANAGE_PODCAST;
-		} );
+		add_filter(
+			'option_page_capability_ss_podcasting',
+			function () {
+				return self::MANAGE_PODCAST;
+			}
+		);
 	}
 
 
@@ -53,7 +56,7 @@ class Roles_Handler implements Service {
 	 * Adds podcast_manager role for managing the episodes and podcast settings
 	 */
 	public function add_podcast_manager_role() {
-		$role_title = __( 'Podcast Manager', 'seriously-simple-podcasting' );
+		$role_title      = __( 'Podcast Manager', 'seriously-simple-podcasting' );
 		$additional_caps = array(
 			self::MANAGE_PODCAST => true,
 			'manage_podcast_tax' => true,
@@ -66,7 +69,7 @@ class Roles_Handler implements Service {
 	 *
 	 * @param string $role
 	 * @param string $role_title
-	 * @param array $additional_caps
+	 * @param array  $additional_caps
 	 *
 	 * @return \WP_Role|null
 	 */
@@ -84,9 +87,12 @@ class Roles_Handler implements Service {
 		$podcast_caps = $this->get_podcast_capabilities();
 
 		// prepare capabilities to the array('capability' => true) structure
-		$podcast_caps = array_map( function () {
-			return true;
-		}, array_flip( $podcast_caps ) );
+		$podcast_caps = array_map(
+			function () {
+				return true;
+			},
+			array_flip( $podcast_caps )
+		);
 
 		$caps = array_merge( $initial_caps, $podcast_caps, $additional_caps );
 
@@ -104,7 +110,6 @@ class Roles_Handler implements Service {
 
 		// Loop through each role and assign capabilities.
 		foreach ( $podcast_managers as $the_role ) {
-
 			if ( ! $this->role_exists( $the_role ) ) {
 				continue;
 			}
@@ -131,7 +136,7 @@ class Roles_Handler implements Service {
 	 * Check to see if the given role has a cap, and add if it doesn't exist.
 	 *
 	 * @param  \WP_Role $role User Cap object, part of WP_User.
-	 * @param  string $cap Cap to test against.
+	 * @param  string   $cap Cap to test against.
 	 *
 	 * @return void
 	 */
@@ -173,10 +178,10 @@ class Roles_Handler implements Service {
 	 */
 	public function get_podcast_tax_capabilities() {
 		$caps = array(
-			'manage_terms'  => 'manage_podcast_tax',
-			'edit_terms'    => 'manage_podcast_tax',
-			'delete_terms'  => 'manage_podcast_tax',
-			'assign_terms'  => 'edit_podcast',
+			'manage_terms' => 'manage_podcast_tax',
+			'edit_terms'   => 'manage_podcast_tax',
+			'delete_terms' => 'manage_podcast_tax',
+			'assign_terms' => 'edit_podcast',
 		);
 
 		return apply_filters( 'ssp_podcast_tax_capabilities', $caps );

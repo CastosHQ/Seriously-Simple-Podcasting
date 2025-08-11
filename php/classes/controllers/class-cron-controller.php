@@ -42,9 +42,9 @@ class Cron_Controller {
 	const MAX_ATTEMPTS = 3;
 
 	/**
-	 * @param Castos_Handler $castos_handler
+	 * @param Castos_Handler     $castos_handler
 	 * @param Episode_Repository $episodes_respository
-	 * @param Upgrade_Handler $upgrade_handler
+	 * @param Upgrade_Handler    $upgrade_handler
 	 */
 	public function __construct( $castos_handler, $episodes_respository, $upgrade_handler ) {
 
@@ -105,11 +105,11 @@ class Cron_Controller {
 				$this->unschedule_episode( $episode->ID );
 				$this->episodes_respository->update_episode_sync_status( $episode->ID, Sync_Status::SYNC_STATUS_SYNCED );
 				$this->episodes_respository->delete_episode_sync_error( $episode->ID );
-				$uploaded ++;
+				++$uploaded;
 			} else {
 				$attempts = get_post_meta( $episode->ID, self::ATTEMPTS_META, true );
 				if ( $attempts < self::MAX_ATTEMPTS ) {
-					update_post_meta( $episode->ID, self::ATTEMPTS_META, ++ $attempts );
+					update_post_meta( $episode->ID, self::ATTEMPTS_META, ++$attempts );
 				} else {
 					$this->unschedule_episode( $episode->ID );
 				}

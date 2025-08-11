@@ -29,42 +29,42 @@ class Elementor_Episode_List_Widget extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'podcasting' ];
+		return array( 'podcasting' );
 	}
 
 	protected function register_controls() {
 
 		$this->start_controls_section(
 			'content_section',
-			[
+			array(
 				'label' => __( 'Content', 'seriously-simple-podcasting' ),
-				'tab' => Controls_Manager::TAB_CONTENT,
-			]
+				'tab'   => Controls_Manager::TAB_CONTENT,
+			)
 		);
 
 		$this->add_control(
 			'show_featured_image',
-			[
+			array(
 				'label'   => __( 'Show Featured Image', 'seriously-simple-podcasting' ),
 				'type'    => Controls_Manager::SWITCHER,
-				'default' => 'yes'
-			]
+				'default' => 'yes',
+			)
 		);
 		$this->add_control(
 			'show_episode_player',
-			[
+			array(
 				'label'   => __( 'Show Episode Player', 'seriously-simple-podcasting' ),
 				'type'    => Controls_Manager::SWITCHER,
-				'default' => 'yes'
-			]
+				'default' => 'yes',
+			)
 		);
 		$this->add_control(
 			'show_episode_excerpt',
-			[
+			array(
 				'label'   => __( 'Show Episode Excerpt', 'seriously-simple-podcasting' ),
 				'type'    => Controls_Manager::SWITCHER,
-				'default' => 'yes'
-			]
+				'default' => 'yes',
+			)
 		);
 
 		$this->end_controls_section();

@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-
 use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastEpisode;
 use SeriouslySimplePodcasting\Integrations\Yoast\Schema\PodcastSeries;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
@@ -65,9 +64,9 @@ class Schema_Controller {
 		if ( is_singular( $ssp_post_types ) ) {
 			$data['mainEntityOfPage'] = $context->canonical . '#/schema/podcast';
 			$data['potentialAction']  = array(
-				"@type"  => "ListenAction",
-				"target" => $context->canonical . '#podcast_player_' . get_the_ID(),
-				"object" => array( "@id" => $context->canonical . '#/schema/podcast' ),
+				'@type'  => 'ListenAction',
+				'target' => $context->canonical . '#podcast_player_' . get_the_ID(),
+				'object' => array( '@id' => $context->canonical . '#/schema/podcast' ),
 			);
 		}
 

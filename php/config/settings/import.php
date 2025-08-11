@@ -6,6 +6,5 @@
 return array(
 	'title'       => __( 'Import', 'seriously-simple-podcasting' ),
 	'description' => '',
-	'fields'      => array(
-	),
+	'fields'      => array(),
 );

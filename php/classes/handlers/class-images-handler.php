@@ -21,11 +21,10 @@ class Images_Handler implements Service {
 	 * @return bool
 	 */
 	public function is_feed_image_valid( $image_url ) {
-		$key = md5( $image_url );
+		$key   = md5( $image_url );
 		$valid = wp_cache_get( $key, 'valid' );
 
 		if ( false === $valid ) {
-
 			$image_id = attachment_url_to_postid( $image_url );
 
 			$image_att = $image_id ? wp_get_attachment_image_src( $image_id, 'full' ) : null;
@@ -36,7 +35,7 @@ class Images_Handler implements Service {
 			} else {
 				$width  = isset( $image_att[1] ) ? $image_att[1] : 0;
 				$height = isset( $image_att[2] ) ? $image_att[2] : 0;
-				$valid = $width === $height && $width >= $min_size && $width <= $max_size;
+				$valid  = $width === $height && $width >= $min_size && $width <= $max_size;
 			}
 			wp_cache_set( $key, $valid, 'valid', WEEK_IN_SECONDS );
 		}
@@ -74,7 +73,7 @@ class Images_Handler implements Service {
 	/**
 	 * Convert the array returned from wp_get_attachment_image_src into a human readable version
 	 *
-	 * @param array $image_data_array
+	 * @param array    $image_data_array
 	 * @param int|null $attachment_id
 	 *
 	 * @return array

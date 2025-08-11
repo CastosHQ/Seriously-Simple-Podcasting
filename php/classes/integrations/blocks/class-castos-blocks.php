@@ -57,9 +57,9 @@ class Castos_Blocks {
 	 * Castos_Blocks constructor.
 	 *
 	 * @param Admin_Notifications_Handler $admin_notices_handler
-	 * @param Episode_Repository $episode_repository
-	 * @param Players_Controller $players_controller
-	 * @param Renderer $renderer
+	 * @param Episode_Repository          $episode_repository
+	 * @param Players_Controller          $players_controller
+	 * @param Renderer                    $renderer
 	 */
 	public function __construct( $admin_notices_handler, $episode_repository, $players_controller, $renderer ) {
 
@@ -144,7 +144,7 @@ class Castos_Blocks {
 			'podcast_id'     => - 1,
 			'posts_per_page' => 10,
 			'paged'          => 1,
-			'orderby'       => 'date',
+			'orderby'        => 'date',
 			'order'          => 'desc',
 			'meta_query'     => array(
 				array(
@@ -189,11 +189,11 @@ class Castos_Blocks {
 
 	/**
 	 * @param \WP_Query $episodes_query
-	 * @param int $current_page
+	 * @param int       $current_page
 	 *
 	 * @return array
 	 */
-	protected function get_podcast_list_paginate_links( $episodes_query, $current_page ){
+	protected function get_podcast_list_paginate_links( $episodes_query, $current_page ) {
 		$args = array(
 			'format'    => '?podcast_page=%#%',
 			'total'     => $episodes_query->max_num_pages,
@@ -241,13 +241,17 @@ class Castos_Blocks {
 			true
 		);
 
-		$itunes_enabled    = ssp_get_option( 'itunes_fields_enabled', 'on' );
+		$itunes_enabled = ssp_get_option( 'itunes_fields_enabled', 'on' );
 
-		wp_localize_script( 'ssp-block-script', 'sspAdmin', array(
-			'sspPostTypes' => ssp_post_types(true, false),
-			'isCastosUser' => ssp_is_connected_to_castos(),
-			'isItunesEnabled' => $itunes_enabled && $itunes_enabled == 'on',
-		) );
+		wp_localize_script(
+			'ssp-block-script',
+			'sspAdmin',
+			array(
+				'sspPostTypes'    => ssp_post_types( true, false ),
+				'isCastosUser'    => ssp_is_connected_to_castos(),
+				'isItunesEnabled' => $itunes_enabled && $itunes_enabled == 'on',
+			)
+		);
 
 		wp_register_style(
 			'ssp-block-style',
@@ -266,21 +270,25 @@ class Castos_Blocks {
 
 		/**
 		 * Is used for both rendering the block itself and preview in editor
+		 *
 		 * @since 2.8.2
 		 * */
-		register_block_type( 'seriously-simple-podcasting/castos-html-player', array(
-			'editor_script'   => 'ssp-block-script',
-			'editor_style'    => 'ssp-castos-player',
-			'attributes'      => array(
-				'episodeId' => array(
-					'type' => 'string',
-					'default' => '',
+		register_block_type(
+			'seriously-simple-podcasting/castos-html-player',
+			array(
+				'editor_script'   => 'ssp-block-script',
+				'editor_style'    => 'ssp-castos-player',
+				'attributes'      => array(
+					'episodeId' => array(
+						'type'    => 'string',
+						'default' => '',
+					),
 				),
-			),
-			'render_callback' => function ( $args ) {
-				return ssp_frontend_controller()->players_controller->render_html_player( $args['episodeId'], true, 'block', $args );
-			}
-		) );
+				'render_callback' => function ( $args ) {
+					return ssp_frontend_controller()->players_controller->render_html_player( $args['episodeId'], true, 'block', $args );
+				},
+			)
+		);
 
 		register_block_type(
 			'seriously-simple-podcasting/audio-player',
@@ -299,15 +307,21 @@ class Castos_Blocks {
 
 		wp_register_style( 'ssp-podcast-list', esc_url( $this->assets_url . 'css/blocks/podcast-list' . $this->script_suffix . '.css' ), array(), $this->version );
 
-		add_action( 'admin_enqueue_scripts', function(){
-			wp_enqueue_style( 'ssp-podcast-list' );
-		});
-
-		add_action( 'wp_enqueue_scripts', function () {
-			if ( function_exists( 'has_block' ) && has_block( 'seriously-simple-podcasting/podcast-list' ) ) {
+		add_action(
+			'admin_enqueue_scripts',
+			function () {
 				wp_enqueue_style( 'ssp-podcast-list' );
 			}
-		} );
+		);
+
+		add_action(
+			'wp_enqueue_scripts',
+			function () {
+				if ( function_exists( 'has_block' ) && has_block( 'seriously-simple-podcasting/podcast-list' ) ) {
+					wp_enqueue_style( 'ssp-podcast-list' );
+				}
+			}
+		);
 
 		$default_series_id = ssp_get_default_series_id();
 
@@ -317,11 +331,11 @@ class Castos_Blocks {
 				'editor_script'   => 'ssp-block-script',
 				'editor_style'    => 'ssp-block-style',
 				'attributes'      => array(
-					'showTitle' => array(
+					'showTitle'           => array(
 						'type'    => 'boolean',
 						'default' => true,
 					),
-					'featuredImage' => array(
+					'featuredImage'       => array(
 						'type'    => 'boolean',
 						'default' => true,
 					),
@@ -334,65 +348,68 @@ class Castos_Blocks {
 									'value' => 'full',
 								),
 							),
-							array_map( function ( $item ) {
-								return array(
-									'label' => ucfirst( $item ),
-									'value' => $item,
-								);
-							}, get_intermediate_image_sizes() )
+							array_map(
+								function ( $item ) {
+									return array(
+										'label' => ucfirst( $item ),
+										'value' => $item,
+									);
+								},
+								get_intermediate_image_sizes()
+							)
 						),
 					),
-					'featuredImageSize' => array(
+					'featuredImageSize'   => array(
 						'type'    => 'string',
 						'default' => 'full',
 					),
-					'excerpt' => array(
+					'excerpt'             => array(
 						'type'    => 'boolean',
 						'default' => false,
 					),
-					'player' => array(
+					'player'              => array(
 						'type'    => 'boolean',
 						'default' => false,
 					),
-					'playerBelowExcerpt' => array(
+					'playerBelowExcerpt'  => array(
 						'type'    => 'boolean',
 						'default' => false,
 					),
-					'availablePodcasts' => array(
+					'availablePodcasts'   => array(
 						'type'    => 'array',
 						'default' => $this->get_podcast_settings(),
 					),
-					'selectedPodcast' => array(
+					'selectedPodcast'     => array(
 						'type'    => 'string',
 						'default' => '-1',
 					),
-					'defaultPodcastId' => array(
+					'defaultPodcastId'    => array(
 						'type'    => 'string',
 						'default' => $default_series_id,
 					),
 					// Use string everywhere instead of number because of the WP bug.
 					// It doesn't show the saved value in the admin after page refresh.
-					'postsPerPage' => array(
+					'postsPerPage'        => array(
 						'type'    => 'string',
 						'default' => 0,
 					),
-					'orderBy' => array(
+					'orderBy'             => array(
 						'type'    => 'string',
-						'default' => 'date'
+						'default' => 'date',
 					),
-					'order' => array(
+					'order'               => array(
 						'type'    => 'string',
-						'default' => 'desc'
+						'default' => 'desc',
 					),
-					'columnsPerRow' => array(
+					'columnsPerRow'       => array(
 						'type'    => 'string',
 						'default' => 1,
 					),
-					'titleSize' => array(
+					'titleSize'           => array(
 						'type'    => 'string',
 						'default' => 16,
 					),
-					'titleUnderImage' => array(
+					'titleUnderImage'     => array(
 						'type'    => 'boolean',
 						'default' => false,
 					),
@@ -411,33 +428,33 @@ class Castos_Blocks {
 			'seriously-simple-podcasting/playlist-player',
 			array(
 				'attributes'      => array(
-					'availablePodcasts'   => array(
+					'availablePodcasts' => array(
 						'type'    => 'array',
 						'default' => new Available_Podcasts_Attribute(),
 					),
-					'selectedPodcast'     => array(
+					'selectedPodcast'   => array(
 						'type'    => 'string',
 						'default' => '-1',
 					),
-					'availableTags'   => array(
+					'availableTags'     => array(
 						'type'    => 'array',
 						'default' => new Available_Tags_Attribute(),
 					),
-					'selectedTag'     => array(
+					'selectedTag'       => array(
 						'type'    => 'string',
 						'default' => '',
 					),
 					// Use string everywhere instead of number because of the WP bug.
 					// It doesn't show the saved value in the admin after page refresh.
-					'limit'        => array(
+					'limit'             => array(
 						'type'    => 'string',
 						'default' => -1,
 					),
-					'orderBy'             => array(
+					'orderBy'           => array(
 						'type'    => 'string',
 						'default' => 'date',
 					),
-					'order'               => array(
+					'order'             => array(
 						'type'    => 'string',
 						'default' => 'desc',
 					),
@@ -504,38 +521,46 @@ class Castos_Blocks {
 					'value' => - 1,
 				),
 			),
-			array_map( function ( $item ) use ( $default_series_id ) {
-				$label = $default_series_id === $item->term_id ?
+			array_map(
+				function ( $item ) use ( $default_series_id ) {
+					$label = $default_series_id === $item->term_id ?
 					ssp_get_default_series_name( $item->name ) :
 					$item->name;
 
-				return array(
-					'label' => $label,
-					'value' => $item->term_id,
-				);
-			}, ssp_get_podcasts() ) );
+					return array(
+						'label' => $label,
+						'value' => $item->term_id,
+					);
+				},
+				ssp_get_podcasts()
+			)
+		);
 	}
 
 	/**
 	 * @return array
 	 */
 	protected function get_tag_settings() {
-		$settings = [
-			[
+		$settings = array(
+			array(
 				'label' => __( '-- All --', 'seriously-simple-podcasting' ),
 				'value' => '',
-			],
-		];
+			),
+		);
 
 		if ( is_admin() ) {
 			$settings = array_merge(
 				$settings,
-				array_map( function ( $item ) {
-					return [
-						'label' => $item->name,
-						'value' => $item->slug,
-					];
-				}, ssp_get_tags() ) );
+				array_map(
+					function ( $item ) {
+						return array(
+							'label' => $item->name,
+							'value' => $item->slug,
+						);
+					},
+					ssp_get_tags()
+				)
+			);
 		}
 
 		return $settings;

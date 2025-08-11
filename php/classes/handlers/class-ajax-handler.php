@@ -8,7 +8,6 @@ class Ajax_Handler {
 
 	/**
 	 * @var Castos_Handler $castos_handler
-	 *
 	 * */
 	protected $castos_handler;
 
@@ -20,11 +19,11 @@ class Ajax_Handler {
 	/**
 	 * Ajax_Handler constructor.
 	 *
-	 * @param Castos_Handler $castos_handler
+	 * @param Castos_Handler              $castos_handler
 	 * @param Admin_Notifications_Handler $admin_notices_handler
 	 */
 	public function __construct( $castos_handler, $admin_notices_handler ) {
-		$this->castos_handler = $castos_handler;
+		$this->castos_handler        = $castos_handler;
 		$this->admin_notices_handler = $admin_notices_handler;
 
 		$this->bootstrap();
@@ -83,6 +82,7 @@ class Ajax_Handler {
 
 	/**
 	 * Indicate that plugin has been rated
+	 *
 	 * @return void
 	 */
 	public function rated() {
@@ -97,24 +97,23 @@ class Ajax_Handler {
 	 */
 	public function sync_castos() {
 		try {
-			$this->nonce_check('ss_podcasting_castos-hosting');
+			$this->nonce_check( 'ss_podcasting_castos-hosting' );
 			$this->user_capability_check();
 
 			$podcast_ids = filter_input( INPUT_GET, 'podcasts', FILTER_VALIDATE_INT, FILTER_REQUIRE_ARRAY );
 
 			// Provide possible errors for translation purposes.
 			$msgs_map = array(
-				'Failed to connect to SSP API.'                   => __( 'Failed to connect to SSP API.', 'seriously-simple-podcasting' ),
+				'Failed to connect to SSP API.' => __( 'Failed to connect to SSP API.', 'seriously-simple-podcasting' ),
 				'A sync is already in progress for this podcast.' => __( 'A sync is already in progress for this podcast.', 'seriously-simple-podcasting' ),
 			);
 
 			$podcast_statuses = array();
 
 			$has_syncing = false;
-			$has_errors = false;
+			$has_errors  = false;
 
 			foreach ( $podcast_ids as $podcast_id ) {
-
 				$podcast_status = array();
 
 				$response = $this->castos_handler->trigger_podcast_sync( $podcast_id );
@@ -141,7 +140,7 @@ class Ajax_Handler {
 					$msg = __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
 				}
 
-				$msg_template = _x( '%s: %s', 'podcast-sync-error-message', 'seriously-simple-podcasting' );
+				$msg_template = _x( '%1$s: %2$s', 'podcast-sync-error-message', 'seriously-simple-podcasting' );
 
 				$podcast_status['msg'] = $msg ? sprintf( $msg_template, $this->get_podcast_name( $podcast_id ), $msg ) : '';
 
@@ -150,12 +149,12 @@ class Ajax_Handler {
 
 			// We use SYNC_STATUS_ constants for both episode sync statuses and podcast sync statuses. Might be changed in the future.
 			$msgs = array(
-				Sync_Status::SYNC_STATUS_SYNCING             => __(
+				Sync_Status::SYNC_STATUS_SYNCING => __(
 					'Seriously Simple Podcasting is updating episode data to your Castos account. You can refresh this page to view the updated status in a few minutes.',
 					'seriously-simple-podcasting'
 				),
 				Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
-				Sync_Status::SYNC_STATUS_FAILED             => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
+				Sync_Status::SYNC_STATUS_FAILED  => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
 			);
 
 			$results_status = ! $has_errors ?
@@ -165,7 +164,7 @@ class Ajax_Handler {
 			$results = array(
 				'status'   => $results_status,
 				'msg'      => $msgs[ $results_status ],
-				'podcasts' => $podcast_statuses
+				'podcasts' => $podcast_statuses,
 			);
 
 			if ( Sync_Status::SYNC_STATUS_SYNCING === $results['status'] ) {
@@ -217,11 +216,11 @@ class Ajax_Handler {
 	 */
 	public function connect_castos() {
 		try {
-			$this->nonce_check('ss_podcasting_castos-hosting');
+			$this->nonce_check( 'ss_podcasting_castos-hosting' );
 			$this->user_capability_check();
 
 			if ( ! isset( $_GET['api_token'] ) ) {
-				throw new \Exception( __('Castos arguments not set', 'seriously-simple-podcasting') );
+				throw new \Exception( __( 'Castos arguments not set', 'seriously-simple-podcasting' ) );
 			}
 
 			$account_api_token = sanitize_text_field( $_GET['api_token'] );
@@ -235,10 +234,12 @@ class Ajax_Handler {
 
 			$this->admin_notices_handler->add_flash_notice( $response->message, Admin_Notifications_Handler::SUCCESS );
 
-			wp_send_json( [
-				'status'  => $response->status,
-				'message' => $response->message,
-			] );
+			wp_send_json(
+				array(
+					'status'  => $response->status,
+					'message' => $response->message,
+				)
+			);
 		} catch ( \Exception $e ) {
 			usleep( 500000 ); // Add a 0.5s delay to ensure smoother transitions on the frontend.
 			$this->castos_handler->remove_api_credentials();
@@ -248,6 +249,7 @@ class Ajax_Handler {
 
 	/**
 	 * Update the episode embed code via ajax
+	 *
 	 * @return void
 	 */
 	public function update_episode_embed_code() {
@@ -279,11 +281,11 @@ class Ajax_Handler {
 		$ssp_external_rss = get_option( 'ssp_external_rss', '' );
 		if ( empty( $ssp_external_rss ) ) {
 			wp_send_json(
-				[
+				array(
 					'status'        => 'error',
 					'message'       => __( 'No feed to process', 'seriously-simple-podcasting' ),
 					'can_try_again' => false,
-				]
+				)
 			);
 		}
 
@@ -300,7 +302,7 @@ class Ajax_Handler {
 		$this->import_security_check();
 		$progress = RSS_Import_Handler::get_import_data( 'import_progress', 0 );
 		$episodes = RSS_Import_Handler::get_import_data( 'episodes_imported', array() );
-		wp_send_json( compact('progress', 'episodes') );
+		wp_send_json( compact( 'progress', 'episodes' ) );
 	}
 
 	/**
@@ -355,11 +357,10 @@ class Ajax_Handler {
 	 */
 	protected function send_json_error( $message ) {
 		wp_send_json(
-			[
+			array(
 				'status'  => 'error',
 				'message' => $message,
-			]
+			)
 		);
 	}
-
 }

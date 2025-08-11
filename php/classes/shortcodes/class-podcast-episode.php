@@ -19,7 +19,8 @@ class Podcast_Episode implements Shortcode {
 
 	/**
 	 * Shortcode function to display single podcast episode
-	 * @param  array  $params Shortcode paramaters
+	 *
+	 * @param  array $params Shortcode paramaters
 	 * @return string         HTML output
 	 */
 	public function shortcode( $params ) {
@@ -42,7 +43,6 @@ class Podcast_Episode implements Shortcode {
 
 		// If no episode ID is specified then use the current post's ID
 		if ( ! $episode ) {
-
 			global $post;
 
 			if ( isset( $post->ID ) ) {

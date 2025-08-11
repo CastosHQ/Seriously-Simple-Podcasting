@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 /**
  * Abstract entity class.
+ *
  * @since 2.25.0
  */
 class Castos_File_Data extends Abstract_Entity {

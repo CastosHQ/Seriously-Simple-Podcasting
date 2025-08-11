@@ -7,7 +7,7 @@ return array(
 		'type'    => 'color',
 		'css_var' => array(
 			'--ssp-dark-mode-text-color',
-			'--ssp-light-mode-text-color'
+			'--ssp-light-mode-text-color',
 		),
 		'default' => '#fff',
 	),

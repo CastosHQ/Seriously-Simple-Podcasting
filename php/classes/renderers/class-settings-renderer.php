@@ -37,10 +37,10 @@ class Settings_Renderer implements Service {
 	/**
 	 * Prints the template.
 	 *
-	 * @param array $field
+	 * @param array        $field
 	 * @param array|string $data
-	 * @param string $option_name
-	 * @param string $default_option_name It's needed only for feed images
+	 * @param string       $option_name
+	 * @param string       $default_option_name It's needed only for feed images
 	 *
 	 * @return string
 	 * @since 2.9.3 Moved this function from the settings_controller.
@@ -106,16 +106,20 @@ class Settings_Renderer implements Service {
 				$html .= $this->render_importing_podcasts( $field );
 				break;
 			case 'podcasts_sync':
-				$html .= $this->render_sync_podcasts( $field, $data, $option_name );;
+				$html .= $this->render_sync_podcasts( $field, $data, $option_name );
 		}
 
-		if ( ! in_array( $field['type'], array(
-			'feed_link',
-			'feed_link_series',
-			'podcast_url',
-			'hidden',
-			'text_multi'
-		), true ) ) {
+		if ( ! in_array(
+			$field['type'],
+			array(
+				'feed_link',
+				'feed_link_series',
+				'podcast_url',
+				'hidden',
+				'text_multi',
+			),
+			true
+		) ) {
 			switch ( $field['type'] ) {
 				case 'checkbox_multi':
 				case 'radio':
@@ -144,15 +148,15 @@ class Settings_Renderer implements Service {
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 *
 	 * @return string
 	 */
 	protected function render_hidden_field( $field, $data ) {
 		return '<input name="' . esc_attr( $field['id'] ) .
-			   '" type="hidden" id="' . esc_attr( $field['id'] ) .
-			   '" value="' . esc_attr( $data ) . '" />' . "\n";
+				'" type="hidden" id="' . esc_attr( $field['id'] ) .
+				'" value="' . esc_attr( $data ) . '" />' . "\n";
 	}
 
 	/**
@@ -162,12 +166,12 @@ class Settings_Renderer implements Service {
 	 */
 	protected function render_button( $field ) {
 		return '<button type="button" id="' . esc_attr( $field['id'] ) .
-			   '" class="' . esc_attr( $field['class'] ) . '" />' . esc_html( $field['label'] ) .  "</button>\n";
+				'" class="' . esc_attr( $field['class'] ) . '" />' . esc_html( $field['label'] ) . "</button>\n";
 	}
 
 	/**
-	 * @param array $field
-	 * @param array $data
+	 * @param array  $field
+	 * @param array  $data
 	 * @param string $option_name
 	 *
 	 * @return string
@@ -181,11 +185,11 @@ class Settings_Renderer implements Service {
 		foreach ( $field['fields'] as $f ) {
 			$val      = isset( $data[ $f['id'] ] ) ? $data[ $f['id'] ] : '';
 			$field_id = esc_attr( sprintf( '%s_%s', $field['id'], $f['id'] ) );
-			$html     .= '<input id="' . $field_id . '" type="' . $f['type'] . '" name="' .
-						 esc_attr( sprintf( '%s[%s]', $option_name, $f['id'] ) ) . '" placeholder="' .
-						 esc_attr( $f['placeholder'] ) . '" value="' .
-						 esc_attr( $val ) . '" class="' . $this->get_field_class( $field ) . '"' .
-						 $this->get_data_attrs( $field ) . '/>';
+			$html    .= '<input id="' . $field_id . '" type="' . $f['type'] . '" name="' .
+						esc_attr( sprintf( '%s[%s]', $option_name, $f['id'] ) ) . '" placeholder="' .
+						esc_attr( $f['placeholder'] ) . '" value="' .
+						esc_attr( $val ) . '" class="' . $this->get_field_class( $field ) . '"' .
+						$this->get_data_attrs( $field ) . '/>';
 			if ( isset( $f['description'] ) ) {
 				$html .= '<label for=' . $field_id . '><span class="description">' . $f['description'] . '</span></label>';
 			}
@@ -196,7 +200,7 @@ class Settings_Renderer implements Service {
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 *
@@ -204,16 +208,16 @@ class Settings_Renderer implements Service {
 	 */
 	protected function render_text_field( $field, $data, $option_name ) {
 		return '<input id="' . esc_attr( $field['id'] ) .
-			   '" type="' . $field['type'] .
-			   '" name="' . esc_attr( $option_name ) .
-			   '" placeholder="' . esc_attr( $this->get_field_placeholder( $field ) ) .
-			   '" value="' . esc_attr( $data ) .
-			   '" class="' . $this->get_field_class( $field ) .
-			   '"' . $this->get_data_attrs( $field ) . '/>' . "\n";
+				'" type="' . $field['type'] .
+				'" name="' . esc_attr( $option_name ) .
+				'" placeholder="' . esc_attr( $this->get_field_placeholder( $field ) ) .
+				'" value="' . esc_attr( $data ) .
+				'" class="' . $this->get_field_class( $field ) .
+				'"' . $this->get_data_attrs( $field ) . '/>' . "\n";
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 *
@@ -221,7 +225,7 @@ class Settings_Renderer implements Service {
 	 */
 	protected function render_number_field( $field, $data, $option_name ) {
 		$input = '<input id="' . esc_attr( $field['id'] ) .
-			   '" type="number';
+				'" type="number';
 
 		if ( isset( $field['min'] ) ) {
 			$input .= '" min="' . $field['min'];
@@ -236,16 +240,16 @@ class Settings_Renderer implements Service {
 		}
 
 		$input .= '" name="' . esc_attr( $option_name ) .
-			   '" placeholder="' . esc_attr( $this->get_field_placeholder( $field ) ) .
-			   '" value="' . esc_attr( $data ) .
-			   '" class="' . $this->get_field_class( $field ) .
-			   '"' . $this->get_data_attrs( $field ) . '/>' . "\n";
+				'" placeholder="' . esc_attr( $this->get_field_placeholder( $field ) ) .
+				'" value="' . esc_attr( $data ) .
+				'" class="' . $this->get_field_class( $field ) .
+				'"' . $this->get_data_attrs( $field ) . '/>' . "\n";
 
 		return $input;
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 *
@@ -255,10 +259,10 @@ class Settings_Renderer implements Service {
 		$this->enable_colorpicker_dependencies();
 
 		return '<input id="' . esc_attr( $field['id'] ) .
-			   '" type="text" name="' . esc_attr( $option_name ) .
-			   '" value="' . esc_attr( $data ) .
-			   '" class="ssp-color-picker ' . $this->get_field_class( $field ) . '"' .
-			   $this->get_data_attrs( $field ) . '/>' . "\n";
+				'" type="text" name="' . esc_attr( $option_name ) .
+				'" value="' . esc_attr( $data ) .
+				'" class="ssp-color-picker ' . $this->get_field_class( $field ) . '"' .
+				$this->get_data_attrs( $field ) . '/>' . "\n";
 	}
 
 	/**
@@ -270,8 +274,10 @@ class Settings_Renderer implements Service {
 		if ( ! $this->colorpicker_dependencies_enabled ) {
 			wp_enqueue_script( 'wp-color-picker' );
 			wp_enqueue_style( 'wp-color-picker' );
-			add_action( 'admin_footer', function () {
-				?>
+			add_action(
+				'admin_footer',
+				function () {
+					?>
 				<script>
 					jQuery(document).ready(function ($) {
 						if ("function" === typeof $.fn.wpColorPicker) {
@@ -279,15 +285,17 @@ class Settings_Renderer implements Service {
 						}
 					});
 				</script>
-				<?php
-			}, 99 );
+					<?php
+				},
+				99
+			);
 
 			$this->colorpicker_dependencies_enabled = true;
 		}
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 *
@@ -300,14 +308,14 @@ class Settings_Renderer implements Service {
 		}
 
 		return '<input id="' . esc_attr( $field['id'] ) .
-			   '" type="text" name="' . esc_attr( $option_name ) .
-			   '" placeholder="' . esc_attr( $placeholder ) .
-			   '" value="" class="' . $this->get_field_class( $field ) . '"' .
-			   $this->get_data_attrs( $field ) . '/>' . "\n";
+				'" type="text" name="' . esc_attr( $option_name ) .
+				'" placeholder="' . esc_attr( $placeholder ) .
+				'" value="" class="' . $this->get_field_class( $field ) . '"' .
+				$this->get_data_attrs( $field ) . '/>' . "\n";
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 *
@@ -315,14 +323,14 @@ class Settings_Renderer implements Service {
 	 */
 	protected function render_textarea( $field, $data, $option_name ) {
 		return '<textarea id="' . esc_attr( $field['id'] ) .
-			   '" rows="5" cols="50" name="' . esc_attr( $option_name ) .
-			   '" placeholder="' . esc_attr( $field['placeholder'] ) .
-			   '" class="' . $this->get_field_class( $field ) . '"' .
-			   $this->get_data_attrs( $field ) . '>' . $data . '</textarea><br/>' . "\n";
+				'" rows="5" cols="50" name="' . esc_attr( $option_name ) .
+				'" placeholder="' . esc_attr( $field['placeholder'] ) .
+				'" class="' . $this->get_field_class( $field ) . '"' .
+				$this->get_data_attrs( $field ) . '>' . $data . '</textarea><br/>' . "\n";
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 *
@@ -335,16 +343,16 @@ class Settings_Renderer implements Service {
 		}
 
 		return '<input id="' . esc_attr( $field['id'] ) .
-			   '" type="' . $field['type'] .
-			   '" name="' . esc_attr( $option_name ) . '" ' . $checked .
-			   ' class="' . $this->get_field_class( $field ) . '"' .
-			   $this->get_data_attrs( $field ) . '/>' . "\n";
+				'" type="' . $field['type'] .
+				'" name="' . esc_attr( $option_name ) . '" ' . $checked .
+				' class="' . $this->get_field_class( $field ) . '"' .
+				$this->get_data_attrs( $field ) . '/>' . "\n";
 	}
 
 
 	/**
-	 * @param array $field
-	 * @param array $data
+	 * @param array  $field
+	 * @param array  $data
 	 * @param string $option_name
 	 *
 	 * @return string
@@ -360,20 +368,20 @@ class Settings_Renderer implements Service {
 				$checked = true;
 			}
 			$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) .
-					 '"><input type="checkbox" ' . checked( $checked, true, false ) .
-					 ' name="' . esc_attr( $option_name ) .
-					 '[]" value="' . esc_attr( $k ) .
-					 '" id="' . esc_attr( $field['id'] . '_' . $k ) .
-					 '" class="' . $this->get_field_class( $field ) . '" /> ' .
-					 $v . '</label><br/>';
+					'"><input type="checkbox" ' . checked( $checked, true, false ) .
+					' name="' . esc_attr( $option_name ) .
+					'[]" value="' . esc_attr( $k ) .
+					'" id="' . esc_attr( $field['id'] . '_' . $k ) .
+					'" class="' . $this->get_field_class( $field ) . '" /> ' .
+					$v . '</label><br/>';
 		}
 
 		return $html;
 	}
 
 	/**
-	 * @param array $field
-	 * @param array $data
+	 * @param array  $field
+	 * @param array  $data
 	 * @param string $option_name
 	 *
 	 * @return string
@@ -402,12 +410,11 @@ class Settings_Renderer implements Service {
 			$checkbox = '<div class="ssp-sync-podcast__checkbox"><label for="' . esc_attr( $field['id'] . '_' . $podcast_id ) .
 						'"><input type="checkbox" name="' . esc_attr( $option_name ) .
 						'[]" value="' . esc_attr( $podcast_id ) . '" id="' . esc_attr( $field['id'] . '_' . $podcast_id ) .
-						'" class="' . esc_attr ( $this->get_field_class( $field ) ) . '" /> ' . $v . '</label></div>';
+						'" class="' . esc_attr( $this->get_field_class( $field ) ) . '" /> ' . $v . '</label></div>';
 
-
-			$classes = 'js-sync-status ' . $status->status;
+			$classes       = 'js-sync-status ' . $status->status;
 			$is_full_label = true;
-			$label = ssp_renderer()->fetch( 'settings/sync-label', compact('status', 'classes', 'link', 'is_full_label') );
+			$label         = ssp_renderer()->fetch( 'settings/sync-label', compact( 'status', 'classes', 'link', 'is_full_label' ) );
 
 			$html .= '<div class="ssp-sync-podcast js-sync-podcast">' . $checkbox . $label . '</div>';
 		}
@@ -416,8 +423,8 @@ class Settings_Renderer implements Service {
 	}
 
 	/**
-	 * @param array $field
-	 * @param array $data
+	 * @param array  $field
+	 * @param array  $data
 	 * @param string $option_name
 	 *
 	 * @return string
@@ -426,10 +433,10 @@ class Settings_Renderer implements Service {
 		$html = '<select class="js-ssp-select2" name="' . esc_attr( $option_name ) . '[]" multiple="multiple">';
 		foreach ( $field['options'] as $k => $v ) {
 			$selected = in_array( $k, (array) $data, true );
-			$html     .= '<option ' . selected( $selected, true, false ) .
-						 ' value="' . esc_attr( $k ) .
-						 '" id="' . esc_attr( $field['id'] . '_' . $k ) .
-						 '" class="' . $this->get_field_class( $field ) . '"> ' . $v . '</option>';
+			$html    .= '<option ' . selected( $selected, true, false ) .
+						' value="' . esc_attr( $k ) .
+						'" id="' . esc_attr( $field['id'] . '_' . $k ) .
+						'" class="' . $this->get_field_class( $field ) . '"> ' . $v . '</option>';
 		}
 		$html .= '</select>';
 
@@ -437,7 +444,7 @@ class Settings_Renderer implements Service {
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 *
@@ -461,12 +468,12 @@ class Settings_Renderer implements Service {
 				$checked = true;
 			}
 			$html .= '<label for="' . esc_attr( $field['id'] . '_' . $k ) .
-					 '"><input type="radio" ' . checked( $checked, true, false ) .
-					 ' name="' . esc_attr( $option_name ) .
-					 '" value="' . esc_attr( $k ) .
-					 '" id="' . esc_attr( $field['id'] . '_' . $k ) .
-					 '" class="' . $this->get_field_class( $field ) . '"' .
-					 $this->get_data_attrs( $field ) . ' /> ' . $v . '</label><br/>';
+					'"><input type="radio" ' . checked( $checked, true, false ) .
+					' name="' . esc_attr( $option_name ) .
+					'" value="' . esc_attr( $k ) .
+					'" id="' . esc_attr( $field['id'] . '_' . $k ) .
+					'" class="' . $this->get_field_class( $field ) . '"' .
+					$this->get_data_attrs( $field ) . ' /> ' . $v . '</label><br/>';
 		}
 
 		return $html;
@@ -474,7 +481,7 @@ class Settings_Renderer implements Service {
 
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 *
@@ -482,12 +489,11 @@ class Settings_Renderer implements Service {
 	 */
 	protected function render_select( $field, $data, $option_name ) {
 		$html       = '<select name="' . esc_attr( $option_name ) .
-					  '" id="' . esc_attr( $field['id'] ) .
-					  '" class="' . $this->get_field_class( $field ) . '"' .
-					  $this->get_data_attrs( $field ) . '>';
+						'" id="' . esc_attr( $field['id'] ) .
+						'" class="' . $this->get_field_class( $field ) . '"' .
+						$this->get_data_attrs( $field ) . '>';
 		$prev_group = '';
 		foreach ( $field['options'] as $k => $v ) {
-
 			$group = '';
 			if ( is_array( $v ) ) {
 				if ( isset( $v['group'] ) ) {
@@ -510,7 +516,7 @@ class Settings_Renderer implements Service {
 			}
 
 			$html .= '<option ' . selected( $selected, true, false ) .
-					 ' value="' . esc_attr( $k ) . '">' . esc_html( $v ) . '</option>';
+					' value="' . esc_attr( $k ) . '">' . esc_html( $v ) . '</option>';
 
 			$prev_group = $group;
 		}
@@ -520,7 +526,7 @@ class Settings_Renderer implements Service {
 	}
 
 	/**
-	 * @param array $field
+	 * @param array  $field
 	 * @param string $data
 	 * @param string $option_name
 	 * @param string $default_option_name
@@ -536,19 +542,19 @@ class Settings_Renderer implements Service {
 				$this->get_data_attrs( $field ) . ' /><br/>' . "\n";
 
 		$html .= '<input id="' . esc_attr( $default_option_name ) .
-				 '_button" type="button" class="button" data-field="ss_podcasting_' .
-				 esc_attr( $default_option_name ) . '" data-preview="' .
-				 esc_attr( $default_option_name ) . '_preview" value="' .
-				 __( 'Upload new image', 'seriously-simple-podcasting' ) . '" />' . "\n";
+				'_button" type="button" class="button" data-field="ss_podcasting_' .
+				esc_attr( $default_option_name ) . '" data-preview="' .
+				esc_attr( $default_option_name ) . '_preview" value="' .
+				__( 'Upload new image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 
 		$html .= '<input id="' . esc_attr( $default_option_name ) .
-				 '_delete" type="button" class="button" value="' .
-				 __( 'Remove image', 'seriously-simple-podcasting' ) . '" />' . "\n";
+				'_delete" type="button" class="button" value="' .
+				__( 'Remove image', 'seriously-simple-podcasting' ) . '" />' . "\n";
 
 		$html .= '<input id="' . esc_attr( $default_option_name ) .
-				 '" type="hidden" class="ss_podcasting_' .
-				 esc_attr( $default_option_name ) . '" name="' . esc_attr( $option_name ) .
-				 '" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
+				'" type="hidden" class="ss_podcasting_' .
+				esc_attr( $default_option_name ) . '" name="' . esc_attr( $option_name ) .
+				'" value="' . esc_attr( $data ) . '"/><br/>' . "\n";
 
 		return $html;
 	}
@@ -558,13 +564,13 @@ class Settings_Renderer implements Service {
 	 */
 	protected function render_feed_link() {
 		// Set feed URL based on site's permalink structure
-		$links = '';
+		$links              = '';
 		$default_podcast_id = ssp_get_default_series_id();
 		foreach ( ssp_get_podcasts() as $podcast ) {
-			$url   = ssp_get_feed_url( $podcast->slug );
-			$link = '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>' . '<br />';
-			$name = ( $podcast->term_id === $default_podcast_id ) ? ssp_get_default_series_name( $podcast->name ) : $podcast->name;
-			$links .= sprintf(__('%1$s: %2$s', 'seriously-simple-podcasting'), $name, $link );
+			$url    = ssp_get_feed_url( $podcast->slug );
+			$link   = '<a href="' . esc_url( $url ) . '" target="_blank">' . $url . '</a>' . '<br />';
+			$name   = ( $podcast->term_id === $default_podcast_id ) ? ssp_get_default_series_name( $podcast->name ) : $podcast->name;
+			$links .= sprintf( __( '%1$s: %2$s', 'seriously-simple-podcasting' ), $name, $link );
 		}
 
 		return $links;
@@ -597,8 +603,8 @@ class Settings_Renderer implements Service {
 		$data = ssp_get_importing_podcasts_count();
 
 		return '<input type="input" value="' . esc_attr( $data ) .
-			   '" class="' . $this->get_field_class( $field ) . '" disabled' .
-			   $this->get_data_attrs( $field ) . '/>' . "\n";
+				'" class="' . $this->get_field_class( $field ) . '" disabled' .
+				$this->get_data_attrs( $field ) . '/>' . "\n";
 	}
 
 	/**
@@ -639,6 +645,4 @@ class Settings_Renderer implements Service {
 	protected function home_url() {
 		return trailingslashit( home_url() );
 	}
-
-
 }

@@ -40,18 +40,18 @@ class Players_Controller_Test extends WPTestCase {
 		);
 		$episode                  = get_post( $episode_id );
 
-		$html_player_content      = $this->players_controller->render_html_player( $episode->ID );
+		$html_player_content = $this->players_controller->render_html_player( $episode->ID );
 
 		// Empty, because the file is not assigned
 		$this->assertEmpty( $html_player_content );
 
 		// Now, let's check that it's not empty for admin
 		define( 'WP_ADMIN', true );
-		$html_player_content      = $this->players_controller->render_html_player( $episode->ID );
+		$html_player_content = $this->players_controller->render_html_player( $episode->ID );
 		$this->assertNotEmpty( $html_player_content );
 
-		$permalink                = get_post_permalink( $episode_id );
-		$site_url                 = site_url();
+		$permalink = get_post_permalink( $episode_id );
+		$site_url  = site_url();
 
 		$this->assertStringContainsString( 'Warning: the player will not be shown', $html_player_content );
 
@@ -83,7 +83,6 @@ class Players_Controller_Test extends WPTestCase {
 			'<div class="playback__timers">',
 			'<time class="ssp-timer">00:00</time>',
 			'<time class="ssp-duration" datetime="PT0H0M0S"></time>',
-
 
 			'<nav class="player-panels-nav">',
 			sprintf( '<button class="subscribe-btn" id="subscribe-btn-%s" title="Subscribe">Subscribe</button>', $episode_id ),

@@ -2,31 +2,30 @@
 
 use SeriouslySimplePodcasting\Controllers\Players_Controller;
 
-class Players_Controller_Test extends \Codeception\TestCase\WPTestCase
-{
-    /**
-     * @var \WpunitTester
-     */
-    protected $tester;
+class Players_Controller_Test extends \Codeception\TestCase\WPTestCase {
 
-    public function setUp(): void
-    {
-        // Before...
-        parent::setUp();
+	/**
+	 * @var \WpunitTester
+	 */
+	protected $tester;
 
-        // Your set up methods here.
-    }
+	public function setUp(): void {
+		// Before...
+		parent::setUp();
 
-    public function tearDown(): void
-    {
-        // Your tear down methods here.
+		// Your set up methods here.
+	}
 
-        // Then...
-        parent::tearDown();
-    }
+	public function tearDown(): void {
+		// Your tear down methods here.
+
+		// Then...
+		parent::tearDown();
+	}
 
 	/**
 	 * Tests that the Players_Controller::html_player method returns the new html player code
+	 *
 	 * @covers Players_Controller::html_player
 	 * @group player-controller-html-player
 	 */
@@ -43,7 +42,7 @@ class Players_Controller_Test extends \Codeception\TestCase\WPTestCase
 		$html_player_content      = $this->players_controller->html_player( $episode->ID );
 
 		$this->assertStringContainsString( '<div id="embed-app" class="dark-mode">', $html_player_content );
-		$this->assertStringContainsString('Your browser does not support the audio tag.', $html_player_content);
+		$this->assertStringContainsString( 'Your browser does not support the audio tag.', $html_player_content );
 		$this->assertStringContainsString( $episode->post_title, $html_player_content );
 	}
 }

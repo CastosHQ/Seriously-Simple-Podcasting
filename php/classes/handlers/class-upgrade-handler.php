@@ -26,12 +26,12 @@ class Upgrade_Handler implements Service {
 
 	/**
 	 * @param Episode_Repository $episode_repository
-	 * @param Castos_Handler $castos_handler
+	 * @param Castos_Handler     $castos_handler
 	 */
 	public function __construct( $episode_repository, $castos_handler, $series_handler ) {
 		$this->episode_repository = $episode_repository;
-		$this->castos_handler = $castos_handler;
-		$this->series_handler = $series_handler;
+		$this->castos_handler     = $castos_handler;
+		$this->series_handler     = $series_handler;
 	}
 
 	/**
@@ -112,7 +112,7 @@ class Upgrade_Handler implements Service {
 
 	/**
 	 * @param Failed_Sync_Episode[] $episodes
-	 * @param string $status
+	 * @param string                $status
 	 *
 	 * @return void
 	 */
@@ -142,7 +142,7 @@ class Upgrade_Handler implements Service {
 
 		$max_episodes = 20;
 
-		for ( $i = 0; $episodes && $i < $max_episodes; $i ++ ) {
+		for ( $i = 0; $episodes && $i < $max_episodes; $i++ ) {
 			$episode = $episodes[ $i ];
 			unset( $episodes[ $i ] );
 

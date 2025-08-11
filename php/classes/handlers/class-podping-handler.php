@@ -12,8 +12,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 class Podping_Handler implements Service {
 
-	const BASE_TOKEN = 'fUak8QYUE67cT8gM5DxHhQ';
-	const TOKEN_NAME = 'podping_token';
+	const BASE_TOKEN  = 'fUak8QYUE67cT8gM5DxHhQ';
+	const TOKEN_NAME  = 'podping_token';
 	const PODPING_URL = 'https://podping.cloud';
 
 	/**

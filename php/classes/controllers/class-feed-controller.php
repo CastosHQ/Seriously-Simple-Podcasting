@@ -25,12 +25,14 @@ class Feed_Controller {
 
 	/**
 	 * File name of the feed template
+	 *
 	 * @var string
 	 * */
 	public $feed_file_name = 'feed-podcast.php';
 
 	/**
 	 * Feed handler
+	 *
 	 * @var Feed_Handler
 	 * */
 	protected $feed_handler;
@@ -44,7 +46,7 @@ class Feed_Controller {
 	 * Admin_Controller constructor.
 	 *
 	 * @param Feed_Handler $feed_handler
-	 * @param Renderer $renderer
+	 * @param Renderer     $renderer
 	 */
 	public function __construct( $feed_handler, $renderer ) {
 		$this->init_useful_variables();
@@ -94,6 +96,7 @@ class Feed_Controller {
 
 	/**
 	 * Register podcast feed
+	 *
 	 * @return void
 	 */
 	public function add_feed() {
@@ -109,6 +112,7 @@ class Feed_Controller {
 
 	/**
 	 * Redirect feed URLs created prior to v1.8 to ensure backwards compatibility
+	 *
 	 * @return void
 	 */
 	public function redirect_old_feed() {
@@ -120,6 +124,7 @@ class Feed_Controller {
 
 	/**
 	 * Render the podcast feed
+	 *
 	 * @return void
 	 */
 	public function render_podcast_feed() {
@@ -155,11 +160,11 @@ class Feed_Controller {
 		$this->feed_handler->suppress_errors();
 
 		if ( $series_id ) {
-			$term = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
+			$term        = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
 			$series_slug = $term->slug;
 		} else {
 			$series_slug = $this->feed_handler->get_series_slug();
-			$series_id = $this->feed_handler->get_series_id( $series_slug );
+			$series_id   = $this->feed_handler->get_series_id( $series_slug );
 		}
 
 		if ( ! $series_slug || ! $series_id ) {
@@ -260,9 +265,9 @@ class Feed_Controller {
 	 *
 	 * @return void
 	 */
-	protected function disable_polylang_queries(){
+	protected function disable_polylang_queries() {
 		global $polylang;
-		if( ! $polylang instanceof \PLL_Frontend ){
+		if ( ! $polylang instanceof \PLL_Frontend ) {
 			return;
 		}
 
@@ -274,8 +279,8 @@ class Feed_Controller {
 	/**
 	 * @param \WP_Query $qry
 	 *
-	 * @param array $args {
-	 *     Array of the arguments for the feed item.
+	 * @param array     $args {
+	 *         Array of the arguments for the feed item.
 	 *
 	 *  @type int $author Episode author.
 	 *  @type bool $is_excerpt_mode Use excerpt mode or not.
@@ -335,8 +340,8 @@ class Feed_Controller {
 		}
 
 		// Episode block flag
-		$ep_block = get_post_meta( $post_id, 'block', true );
-		$ep_block = apply_filters( 'ssp_feed_item_block', $ep_block, $post_id );
+		$ep_block   = get_post_meta( $post_id, 'block', true );
+		$ep_block   = apply_filters( 'ssp_feed_item_block', $ep_block, $post_id );
 		$block_flag = ( $ep_block && $ep_block == 'on' ) ? 'yes' : 'no';
 
 		// Episode author.
@@ -366,13 +371,33 @@ class Feed_Controller {
 
 		$feed_item_path = apply_filters( 'ssp_feed_item_path', '/feed/feed-item' );
 
-		$args = apply_filters( 'ssp_feed_item_args', compact(
-			'title', 'pub_date', 'author', 'description', 'itunes_subtitle',
-			'itunes_episode_type', 'itunes_title', 'itunes_episode_number', 'itunes_season_number',
-			'turbo_post_count', 'enclosure', 'size', 'mime_type', 'turbo_post_count', 'itunes_summary',
-			'episode_image', 'itunes_explicit_flag', 'block_flag', 'duration', 'gp_description',
-			'googleplay_explicit_flag'
-		), $post_id );
+		$args = apply_filters(
+			'ssp_feed_item_args',
+			compact(
+				'title',
+				'pub_date',
+				'author',
+				'description',
+				'itunes_subtitle',
+				'itunes_episode_type',
+				'itunes_title',
+				'itunes_episode_number',
+				'itunes_season_number',
+				'turbo_post_count',
+				'enclosure',
+				'size',
+				'mime_type',
+				'turbo_post_count',
+				'itunes_summary',
+				'episode_image',
+				'itunes_explicit_flag',
+				'block_flag',
+				'duration',
+				'gp_description',
+				'googleplay_explicit_flag'
+			),
+			$post_id
+		);
 
 		return $this->renderer->fetch( $feed_item_path, $args );
 	}

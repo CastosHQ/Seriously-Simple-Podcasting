@@ -51,7 +51,7 @@ class Series_Repository implements Singleton {
 
 	/**
 	 * @param WP_Term $term
-	 * @param string $size
+	 * @param string  $size
 	 *
 	 * @return string
 	 */
@@ -71,6 +71,4 @@ class Series_Repository implements Singleton {
 
 		return ! empty( $src[0] ) ? $src[0] : $default_image;
 	}
-
-
 }

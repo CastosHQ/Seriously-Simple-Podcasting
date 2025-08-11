@@ -53,8 +53,8 @@ class Assets_Controller {
 		 * If we're rendering a SSP Block, which includes the HTML5 player, also enqueue the player scripts
 		 */
 		if ( has_block( 'seriously-simple-podcasting/castos-player' ) ||
-		     has_block( 'seriously-simple-podcasting/podcast-list' ) ||
-		     has_block( 'seriously-simple-podcasting/playlist-player' )
+			has_block( 'seriously-simple-podcasting/podcast-list' ) ||
+			has_block( 'seriously-simple-podcasting/playlist-player' )
 		) {
 			wp_enqueue_script( 'ssp-castos-player' );
 			wp_enqueue_style( 'ssp-castos-player' );
@@ -64,6 +64,7 @@ class Assets_Controller {
 
 	/**
 	 * Load admin CSS
+	 *
 	 * @return void
 	 */
 	public function enqueue_admin_styles( $hook ) {
@@ -94,23 +95,24 @@ class Assets_Controller {
 
 		/**
 		 * Only load the jquery-ui CSS when the import settings screen is loaded
+		 *
 		 * @todo load this locally perhaps? and only the progress bar stuff?
 		 */
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
-			//wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
+			// wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
 
 			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness' . $this->script_suffix . '.css' ), array(), $this->version );
 			wp_enqueue_style( 'jquery-ui-smoothness' );
 
 			wp_register_style( 'import-rss', esc_url( $this->assets_url . 'css/import-rss' . $this->script_suffix . '.css' ), array(), $this->version );
 			wp_enqueue_style( 'import-rss' );
-
 		}
 	}
 
 
 	/**
 	 * Load admin JS
+	 *
 	 * @return void
 	 */
 	public function enqueue_admin_scripts( $hook ) {
@@ -126,11 +128,16 @@ class Assets_Controller {
 			return;
 		}
 
-		wp_register_script( 'ssp-admin', esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ), array(
-			'jquery',
-			'jquery-ui-core',
-			'jquery-ui-datepicker'
-		), $this->version );
+		wp_register_script(
+			'ssp-admin',
+			esc_url( $this->assets_url . 'js/admin' . $this->script_suffix . '.js' ),
+			array(
+				'jquery',
+				'jquery-ui-core',
+				'jquery-ui-datepicker',
+			),
+			$this->version
+		);
 		wp_enqueue_script( 'ssp-admin' );
 
 		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
@@ -166,10 +173,15 @@ class Assets_Controller {
 		 * Only load the import js when the import settings screen is loaded
 		 */
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
-			wp_register_script( 'ssp-import-rss', esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ), array(
-				'jquery',
-				'jquery-ui-progressbar'
-			), $this->version );
+			wp_register_script(
+				'ssp-import-rss',
+				esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ),
+				array(
+					'jquery',
+					'jquery-ui-progressbar',
+				),
+				$this->version
+			);
 			wp_enqueue_script( 'ssp-import-rss' );
 		}
 	}
@@ -177,13 +189,13 @@ class Assets_Controller {
 
 	protected function need_admin_scripts( $hook ) {
 		$screen = get_current_screen();
-		$ssp = ssp_post_types();
+		$ssp    = ssp_post_types();
 
 		return ( in_array( $screen->post_type, $ssp ) && 'post.php' === $hook ) ||
-		       ( in_array( $screen->post_type, $ssp ) && 'post-new.php' === $hook ) ||
-		       ( in_array( $screen->post_type, $ssp ) && 'edit.php' === $hook ) ||
-		       strpos( $hook, 'ssp-onboarding' ) ||
-		       $this->is_ssp_admin_page() ||
-		       ( 'term.php' === $hook && ( ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) ) );
+				( in_array( $screen->post_type, $ssp ) && 'post-new.php' === $hook ) ||
+				( in_array( $screen->post_type, $ssp ) && 'edit.php' === $hook ) ||
+				strpos( $hook, 'ssp-onboarding' ) ||
+				$this->is_ssp_admin_page() ||
+				( 'term.php' === $hook && ( ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) ) );
 	}
 }

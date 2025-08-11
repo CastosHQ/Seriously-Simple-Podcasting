@@ -20,7 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 class RSS_Import_Handler {
 
 	const RSS_IMPORT_DATA_KEY = 'ssp_rss_import_data';
-	const ITEMS_PER_REQUEST = 3;
+	const ITEMS_PER_REQUEST   = 3;
 
 	/**
 	 * RSS feed url
@@ -167,7 +167,7 @@ class RSS_Import_Handler {
 		try {
 			set_time_limit( 0 );
 
-			$is_initial = ! $this->load_import_data();;
+			$is_initial = ! $this->load_import_data();
 
 			if ( $is_initial ) {
 				$this->load_rss_feed();
@@ -177,7 +177,7 @@ class RSS_Import_Handler {
 
 			$start_from = $this->episodes_added;
 
-			for ( $i = $start_from, $count = 0; $i < $this->episodes_count; $i ++, $count ++ ) {
+			for ( $i = $start_from, $count = 0; $i < $this->episodes_count; $i++, $count++ ) {
 				if ( $count >= self::ITEMS_PER_REQUEST ) {
 					return $this->create_response( 'Partially imported' );
 				}
@@ -189,8 +189,12 @@ class RSS_Import_Handler {
 
 			if ( ssp_is_connected_to_castos() ) {
 				$msg .= '<p>' . sprintf(
-						__( 'To complete the sync of your podcast(s) to your Castos account, navigate to the <a href="%s">Hosting</a> tab',
-							'seriously-simple-podcasting' ), ssp_get_tab_url( 'castos-hosting' ) ) . '</p>';
+					__(
+						'To complete the sync of your podcast(s) to your Castos account, navigate to the <a href="%s">Hosting</a> tab',
+						'seriously-simple-podcasting'
+					),
+					ssp_get_tab_url( 'castos-hosting' )
+				) . '</p>';
 			}
 
 			return $this->create_response( $msg, true );
@@ -227,16 +231,16 @@ class RSS_Import_Handler {
 			ssp_update_option( 'data_author', (string) $itunes->author, $series_id );
 		}
 
-
 		if ( isset( $itunes->category ) && is_iterable( $itunes->category ) ) {
 			$i = 0;
 			foreach ( $itunes->category as $category_item ) {
-				$i ++;
+				++$i;
 				// Update category
 				if ( isset( $category_item->attributes()->text ) ) {
 					ssp_update_option(
 						'data_category' . ( ( 1 === $i ) ? '' : $i ),
-						(string) $category_item->attributes()->text, $series_id
+						(string) $category_item->attributes()->text,
+						$series_id
 					);
 				}
 
@@ -244,7 +248,8 @@ class RSS_Import_Handler {
 				if ( isset( $category_item->category ) && isset( $category_item->category->attributes()->text ) ) {
 					ssp_update_option(
 						'data_subcategory' . ( ( 1 === $i ) ? '' : $i ),
-						(string) $category_item->category->attributes()->text, $series_id
+						(string) $category_item->category->attributes()->text,
+						$series_id
 					);
 				}
 			}
@@ -301,7 +306,7 @@ class RSS_Import_Handler {
 
 		self::reset_import_data();
 
-		$msg = 'Your podcast cannot be imported at this time because the RSS feed is locked by the existing podcast hosting provider. ';
+		$msg  = 'Your podcast cannot be imported at this time because the RSS feed is locked by the existing podcast hosting provider. ';
 		$msg .= 'Please unlock your RSS feed with your current host before attempting to import again. ';
 		$msg .= 'You can find out more about the podcast:lock tag here - https://support.castos.com/article/289-external-rss-feed-import-canceled';
 
@@ -344,7 +349,7 @@ class RSS_Import_Handler {
 		}
 
 		// Update the added count and imported title array
-		$this->episodes_added ++;
+		++$this->episodes_added;
 		$this->episodes_imported[] = $post_data['post_title'];
 
 		$this->update_import_progress();
@@ -395,7 +400,7 @@ class RSS_Import_Handler {
 	}
 
 	/**
-	 * @param int $post_id
+	 * @param int    $post_id
 	 * @param string $image_url
 	 *
 	 * @return bool
@@ -423,7 +428,7 @@ class RSS_Import_Handler {
 
 	/**
 	 * @param string $image_url
-	 * @param int $series_id
+	 * @param int    $series_id
 	 *
 	 * @return bool
 	 */
@@ -457,14 +462,14 @@ class RSS_Import_Handler {
 
 		$file_array = array(
 			'name'     => basename( $url ),
-			'tmp_name' => $tmp
+			'tmp_name' => $tmp,
 		);
 
 		return media_handle_sideload( $file_array );
 	}
 
 	/**
-	 * @param int $post_id
+	 * @param int    $post_id
 	 * @param string $url
 	 *
 	 * @return void

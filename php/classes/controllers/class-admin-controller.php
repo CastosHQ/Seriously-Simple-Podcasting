@@ -51,8 +51,8 @@ class Admin_Controller {
 	 * Register all relevant front end hooks and filters
 	 */
 	public function register_hooks() {
-		add_action( 'in_admin_header', [ $this, 'render_ssp_info_section' ] );
-		add_action( 'current_screen', [ $this, 'disable_notices' ], 99 );
+		add_action( 'in_admin_header', array( $this, 'render_ssp_info_section' ) );
+		add_action( 'current_screen', array( $this, 'disable_notices' ), 99 );
 	}
 
 	/**
@@ -68,11 +68,11 @@ class Admin_Controller {
 		}
 
 		add_action(
-            'admin_enqueue_scripts',
-            function () {
+			'admin_enqueue_scripts',
+			function () {
 				$this->remove_notice_actions();
 			}
-        );
+		);
 	}
 
 	/**

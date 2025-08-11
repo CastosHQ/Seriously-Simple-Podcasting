@@ -1,1 +1,1 @@
-<?php echo $audio_player ?>
+<?php echo $audio_player;

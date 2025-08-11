@@ -9,6 +9,7 @@ use function PHPUnit\Framework\assertTrue;
  * Acceptance tester functions.
  *
  * Inherited Methods
+ *
  * @method void wantToTest( $text )
  * @method void wantTo( $text )
  * @method void execute( $callable )
@@ -33,7 +34,6 @@ class AcceptanceTester extends \Codeception\Actor {
 
 
 	public function __construct( \Codeception\Scenario $scenario ) {
-
 
 		parent::__construct( $scenario );
 	}
@@ -65,17 +65,15 @@ class AcceptanceTester extends \Codeception\Actor {
 	/**
 	 * @When I go to the :arg1
 	 */
-	public function iGoToThe($arg1)
-	{
-		$this->amOnPage($arg1);
+	public function iGoToThe( $arg1 ) {
+		$this->amOnPage( $arg1 );
 	}
 
 	/**
 	 * @When I can see that I am on :arg1
 	 */
-	public function iCanSeeThatIAmOn($arg1)
-	{
-		throw new \PHPUnit\Framework\IncompleteTestError("Step `I can see that I am on :arg1` is not defined");
+	public function iCanSeeThatIAmOn( $arg1 ) {
+		throw new \PHPUnit\Framework\IncompleteTestError( 'Step `I can see that I am on :arg1` is not defined' );
 	}
 
 
@@ -117,7 +115,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	public function iCanSeeThatCheckboxForLabelIsChecked( $arg1 ) {
 		$xpath = "//th[text()='$arg1']/../td/input";
 
-		$this->seeCheckboxIsChecked(['xpath' => $xpath]);
+		$this->seeCheckboxIsChecked( array( 'xpath' => $xpath ) );
 	}
 
 	/**
@@ -127,7 +125,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	public function iDontSeeThatCheckboxForLabelIsChecked( $arg1 ) {
 		$xpath = "//th[text()='$arg1']/../td/input";
 
-		$this->dontSeeCheckboxIsChecked(['xpath' => $xpath]);
+		$this->dontSeeCheckboxIsChecked( array( 'xpath' => $xpath ) );
 	}
 
 	/**
@@ -369,7 +367,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	public function iCheckCheckboxWithLabel( $arg1 ) {
 		$xpath = "//th[text()='$arg1']/../td/input";
 
-		$elementId = $this->grabAttributeFrom(['xpath' => $xpath], 'id');
+		$elementId = $this->grabAttributeFrom( array( 'xpath' => $xpath ), 'id' );
 
 		$this->checkOption( '#' . $elementId );
 	}
@@ -381,7 +379,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	public function iUncheckCheckboxWithLabel( $arg1 ) {
 		$xpath = "//th[text()='$arg1']/../td/input";
 
-		$elementId = $this->grabAttributeFrom(['xpath' => $xpath], 'id');
+		$elementId = $this->grabAttributeFrom( array( 'xpath' => $xpath ), 'id' );
 
 		$this->uncheckOption( '#' . $elementId );
 	}
@@ -414,9 +412,9 @@ class AcceptanceTester extends \Codeception\Actor {
 	 * @Then I can see that discount widget exists
 	 */
 	public function iCanSeeThatDiscountWidgetExists() {
-		$this->see( "Castos Hosting Discount" );
-		$this->see( "Drop in your name and email and we’ll send you a coupon" );
-		$this->see( "Spam sucks. We will not use your email for anything else" );
+		$this->see( 'Castos Hosting Discount' );
+		$this->see( 'Drop in your name and email and we’ll send you a coupon' );
+		$this->see( 'Spam sucks. We will not use your email for anything else' );
 	}
 
 
@@ -484,7 +482,7 @@ class AcceptanceTester extends \Codeception\Actor {
 	}
 
 	protected function createEpisode( $args ) {
-		$this->iClickMenuSubmenu( 'Podcast', "Add New Episode" );
+		$this->iClickMenuSubmenu( 'Podcast', 'Add New Episode' );
 		$this->iFillTheFieldWith( 'Episode title', $args[0] );
 		$this->iFillTheFieldWith( 'Episode content', $args[1] );
 
@@ -500,13 +498,11 @@ class AcceptanceTester extends \Codeception\Actor {
 		$arg1 = str_replace( '\"', '"', $arg1 );
 		if ( false !== strpos( $arg1, '{{base_url}}' ) ) {
 			$arg1 = str_replace( '{{base_url}}', $this->getConfig( 'url' ), $arg1 );
-		}
-		elseif ( false !== strpos( $arg1, '{{base_url_without_port}}' ) ) {
-			$parts =  parse_url($this->getConfig( 'url' ));
-			$url = $parts['scheme'] . '://' . $parts['host'];
-			$arg1 = str_replace( '{{base_url_without_port}}', $url, $arg1 );
-		}
-		elseif ( false !== strpos( $arg1, '{{podcast_guid}}' ) ) {
+		} elseif ( false !== strpos( $arg1, '{{base_url_without_port}}' ) ) {
+			$parts = parse_url( $this->getConfig( 'url' ) );
+			$url   = $parts['scheme'] . '://' . $parts['host'];
+			$arg1  = str_replace( '{{base_url_without_port}}', $url, $arg1 );
+		} elseif ( false !== strpos( $arg1, '{{podcast_guid}}' ) ) {
 			$arg1 = str_replace( '{{podcast_guid}}', $this->getConfig( 'podcastGuid' ), $arg1 );
 		}
 

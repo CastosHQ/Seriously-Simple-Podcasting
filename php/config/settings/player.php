@@ -73,8 +73,8 @@ if ( 'larger' === $player_style ) {
 			'description' => __( 'Choose between Dark or Light mode, depending on your theme', 'seriously-simple-podcasting' ),
 			'type'        => 'radio',
 			'options'     => array(
-				'dark'   => __( 'Dark Mode', 'seriously-simple-podcasting' ),
-				'light'  => __( 'Light Mode', 'seriously-simple-podcasting' ),
+				'dark'  => __( 'Dark Mode', 'seriously-simple-podcasting' ),
+				'light' => __( 'Light Mode', 'seriously-simple-podcasting' ),
 			),
 			'default'     => 'dark',
 		),

@@ -20,7 +20,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * MemberPress Integrator
  *
- *
  * @author Sergiy Zakharchenko
  * @package SeriouslySimplePodcasting
  * @since 2.16.0
@@ -47,9 +46,9 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	/**
 	 * Class WC_Memberships_Integrator constructor.
 	 *
-	 * @param Feed_Handler $feed_handler
-	 * @param Castos_Handler $castos_handler
-	 * @param Log_Helper $logger
+	 * @param Feed_Handler                $feed_handler
+	 * @param Castos_Handler              $castos_handler
+	 * @param Log_Helper                  $logger
 	 * @param Admin_Notifications_Handler $notices_handler
 	 */
 	public function init( $feed_handler, $castos_handler, $logger, $notices_handler ) {
@@ -65,17 +64,17 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	/**
 	 * Updates user subscriptions when email is changed.
 	 *
-	 * @param int $user_id User ID.
+	 * @param int     $user_id User ID.
 	 * @param WP_User $old_user_data User data before update.
 	 *
 	 * @return void
 	 */
-	public function update_user_email( $user_id,  $old_user_data ) {
+	public function update_user_email( $user_id, $old_user_data ) {
 		if ( ! ssp_is_connected_to_castos() ) {
 			return;
 		}
 
-		$user = get_user_by( 'id', $user_id );
+		$user      = get_user_by( 'id', $user_id );
 		$new_email = $user->user_email;
 		$old_email = $old_user_data->user_email;
 
@@ -86,27 +85,25 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 		$this->logger->log( __METHOD__, compact( 'new_email', 'old_email' ) );
 
 		$user_membership_ids = $this->get_user_membership_ids( $user_id );
-		$series_ids  = $this->convert_membership_ids_into_series_ids( $user_membership_ids );
-		$podcast_ids = $this->convert_series_ids_to_podcast_ids( $series_ids );
+		$series_ids          = $this->convert_membership_ids_into_series_ids( $user_membership_ids );
+		$podcast_ids         = $this->convert_series_ids_to_podcast_ids( $series_ids );
 		$this->castos_handler->revoke_subscriber_from_podcasts( $podcast_ids, $old_email );
 		$this->castos_handler->add_subscriber_to_podcasts( $podcast_ids, $new_email, $user->display_name );
 	}
 
-	public function late_init(){
-		if ( !  $this->check_dependencies( array( 'WC_Memberships_Loader' ) ) ) {
+	public function late_init() {
+		if ( ! $this->check_dependencies( array( 'WC_Memberships_Loader' ) ) ) {
 			return;
 		}
 
 		if ( self::integration_enabled() ) {
-			add_action( 'profile_update', [ $this, 'update_user_email' ], 10, 2 );
+			add_action( 'profile_update', array( $this, 'update_user_email' ), 10, 2 );
 		}
 
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
-		} else {
-			if ( self::integration_enabled() ) {
+		} elseif ( self::integration_enabled() ) {
 				$this->protect_private_series();
-			}
 		}
 
 		if ( ssp_is_connected_to_castos() ) {
@@ -164,19 +161,23 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	 */
 	protected function init_bulk_sync_process() {
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
-		add_filter( 'allowed_options', function ( $allowed_options ) {
-			// Option ss_podcasting_is_wcmps_integration is just a marker that integration settings have been saved.
-			// If so, we can do the sync magic.
-			if ( isset( $allowed_options['ss_podcasting'] ) ) {
-				$key = array_search( 'ss_podcasting_is_wcmps_integration', $allowed_options['ss_podcasting'] );
-				if ( false !== $key ) {
-					unset( $allowed_options['ss_podcasting'][ $key ] );
-					$this->schedule_bulk_sync_subscribers();
+		add_filter(
+			'allowed_options',
+			function ( $allowed_options ) {
+				// Option ss_podcasting_is_wcmps_integration is just a marker that integration settings have been saved.
+				// If so, we can do the sync magic.
+				if ( isset( $allowed_options['ss_podcasting'] ) ) {
+					$key = array_search( 'ss_podcasting_is_wcmps_integration', $allowed_options['ss_podcasting'] );
+					if ( false !== $key ) {
+						unset( $allowed_options['ss_podcasting'][ $key ] );
+						$this->schedule_bulk_sync_subscribers();
+					}
 				}
-			}
 
-			return $allowed_options;
-		}, 20 );
+				return $allowed_options;
+			},
+			20
+		);
 
 		// Step 1. Run the scheduled bulk sync. Prepare add and remove lists, and run add process.
 		add_action( self::EVENT_BULK_SYNC_SUBSCRIBERS, array( $this, 'bulk_sync_subscribers' ) );
@@ -199,48 +200,51 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 
 	/**
 	 * Do single sync as the separate event to not interfere with the DB update process.
+	 *
 	 * @return void
 	 * @see listen_user_membership_update()
-	 *
 	 */
 	protected function listen_single_sync() {
-		add_action( self::SINGLE_SYNC_EVENT, function () {
-			$single_update_data = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
-			if ( empty( $single_update_data['users'] ) ) {
-				return;
-			}
-
-			foreach ( $single_update_data['users'] as $user_id => $actions ) {
-				$revoked_memberships = $actions['revoked_memberships'];
-				$revoke_series_ids = $this->convert_membership_ids_into_series_ids( $revoked_memberships );
-
-				// Make sure user doesn't have other memberships that allow them to use this series
-				$user_membership_ids = $this->get_user_membership_ids( $user_id );
-				$allowed_series_ids  = $this->convert_membership_ids_into_series_ids( $user_membership_ids );
-				$revoke_series_ids   = array_diff( $revoke_series_ids, $allowed_series_ids );
-
-				$added_memberships   = $actions['added_memberships'];
-				$add_series_ids    = $this->convert_membership_ids_into_series_ids( $added_memberships );
-
-				$res = $this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
-
-				if ( ! $res ) {
-					// Let's make sure there won't be an infinite number of attempts.
-					if ( $single_update_data['attempts'] < 10 ) {
-						$this->logger->log( __METHOD__ . sprintf( ': Error! Could not sync user %s.', $user_id ) );
-					} else {
-						$this->logger->log( __METHOD__ . sprintf( ': Error! Failed to sync user %s. Will try again later.', $user_id ) );
-						$single_update_data['attempts'] = $single_update_data['attempts'] + 1;
-						update_option( self::SINGLE_SYNC_DATA_OPTION, $single_update_data );
-						$this->schedule_single_sync( 20 );
-					}
-
+		add_action(
+			self::SINGLE_SYNC_EVENT,
+			function () {
+				$single_update_data = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
+				if ( empty( $single_update_data['users'] ) ) {
 					return;
 				}
-			}
 
-			delete_option( self::SINGLE_SYNC_DATA_OPTION );
-		} );
+				foreach ( $single_update_data['users'] as $user_id => $actions ) {
+					$revoked_memberships = $actions['revoked_memberships'];
+					$revoke_series_ids   = $this->convert_membership_ids_into_series_ids( $revoked_memberships );
+
+					// Make sure user doesn't have other memberships that allow them to use this series
+					$user_membership_ids = $this->get_user_membership_ids( $user_id );
+					$allowed_series_ids  = $this->convert_membership_ids_into_series_ids( $user_membership_ids );
+					$revoke_series_ids   = array_diff( $revoke_series_ids, $allowed_series_ids );
+
+					$added_memberships = $actions['added_memberships'];
+					$add_series_ids    = $this->convert_membership_ids_into_series_ids( $added_memberships );
+
+					$res = $this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+
+					if ( ! $res ) {
+						// Let's make sure there won't be an infinite number of attempts.
+						if ( $single_update_data['attempts'] < 10 ) {
+							$this->logger->log( __METHOD__ . sprintf( ': Error! Could not sync user %s.', $user_id ) );
+						} else {
+							$this->logger->log( __METHOD__ . sprintf( ': Error! Failed to sync user %s. Will try again later.', $user_id ) );
+							$single_update_data['attempts'] = $single_update_data['attempts'] + 1;
+							update_option( self::SINGLE_SYNC_DATA_OPTION, $single_update_data );
+							$this->schedule_single_sync( 20 );
+						}
+
+						return;
+					}
+				}
+
+				delete_option( self::SINGLE_SYNC_DATA_OPTION );
+			}
+		);
 	}
 
 	/**
@@ -260,28 +264,35 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 		 *  @type bool $is_update Is it update or create.
 		 * }
 		 * */
-		add_action( 'wc_memberships_user_membership_saved', function ( $plan, $user_data ) {
-			$user_membership_id = isset( $user_data['user_membership_id'] ) ? $user_data['user_membership_id'] : '';
-			if ( empty( $user_membership_id ) ) {
-				return;
-			}
+		add_action(
+			'wc_memberships_user_membership_saved',
+			function ( $plan, $user_data ) {
+				$user_membership_id = isset( $user_data['user_membership_id'] ) ? $user_data['user_membership_id'] : '';
+				if ( empty( $user_membership_id ) ) {
+					return;
+				}
 
-			$user_membership = $this->get_user_membership( $user_membership_id );
+				$user_membership = $this->get_user_membership( $user_membership_id );
 
-			if ( 'active' === $user_membership->get_status() ) {
-				$this->prepare_single_sync( $user_data['user_id'], $user_membership->get_plan_id(), null );
-			} else {
-				$this->prepare_single_sync( $user_data['user_id'], null, $user_membership->get_plan_id() );
-			}
-
-		}, 10, 2 );
+				if ( 'active' === $user_membership->get_status() ) {
+					$this->prepare_single_sync( $user_data['user_id'], $user_membership->get_plan_id(), null );
+				} else {
+					$this->prepare_single_sync( $user_data['user_id'], null, $user_membership->get_plan_id() );
+				}
+			},
+			10,
+			2
+		);
 
 		/**
 		 * @param \WC_Memberships_User_Membership $user_membership
 		 * */
-		add_action( 'wc_memberships_user_membership_deleted', function ( $user_membership ) {
-			$this->prepare_single_sync( $user_membership->user_id, null, $user_membership->get_plan_id() );
-		} );
+		add_action(
+			'wc_memberships_user_membership_deleted',
+			function ( $user_membership ) {
+				$this->prepare_single_sync( $user_membership->user_id, null, $user_membership->get_plan_id() );
+			}
+		);
 	}
 
 	/**
@@ -392,7 +403,7 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 				continue;
 			}
 
-			$podcast_ids = isset( $map[ $user->ID ] ) ? $map[ $user->ID ] : array();
+			$podcast_ids      = isset( $map[ $user->ID ] ) ? $map[ $user->ID ] : array();
 			$add_podcasts_ids = $this->get_series_ids_by_level( $membership->ID );
 
 			$map[ $user->ID ] = array_unique( array_merge( $podcast_ids, $add_podcasts_ids ) );
@@ -473,7 +484,7 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	 * Check if user has access to the episode.
 	 *
 	 * @param WP_User $user
-	 * @param int[] $required_level_ids
+	 * @param int[]   $required_level_ids
 	 *
 	 * @return bool
 	 */
@@ -499,9 +510,12 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	protected function get_user_membership_ids( $user_id ) {
 		$user_active_memberships = wc_memberships_get_user_active_memberships( $user_id );
 
-		return array_map( function ( $user_membership ) {
-			return $user_membership->get_plan_id();
-		}, $user_active_memberships );
+		return array_map(
+			function ( $user_membership ) {
+				return $user_membership->get_plan_id();
+			},
+			$user_active_memberships
+		);
 	}
 
 
@@ -540,11 +554,9 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 
 			$args['description'] = $msg;
 			$args['fields']      = array();
-		} else {
-			if ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) &&
-			     ( $this->bulk_update_started() || wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) ) {
+		} elseif ( 'podcast_settings' === filter_input( INPUT_GET, 'page' ) &&
+				( $this->bulk_update_started() || wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) ) {
 				$this->notices_handler->add_flash_notice( __( 'Synchronizing WooCommerce Memberships data with Castos...', 'seriously-simple-podcasting' ) );
-			}
 		}
 
 		$this->add_integration_settings( $args );
@@ -572,8 +584,11 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 		$settings = array(
 			'id'          => 'wc_memberships',
 			'title'       => __( 'Woocommerce Memberships', 'seriously-simple-podcasting' ),
-			'description' => __( 'Select which Podcast you would like to be available only
-								to Members via Woocommerce Memberships.', 'seriously-simple-podcasting' ),
+			'description' => __(
+				'Select which Podcast you would like to be available only
+								to Members via Woocommerce Memberships.',
+				'seriously-simple-podcasting'
+			),
 			'fields'      => array(
 				array(
 					'id'   => 'is_wcmps_integration',
@@ -600,8 +615,14 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 
 		if ( ! $levels ) {
 			$levels_url              = admin_url( 'edit.php?post_type=wc_membership_plan' );
-			$settings['description'] = sprintf( __( 'To require membership to access a podcast please <a href="%s">set up
-										memberships</a> first.', 'seriously-simple-podcasting' ), $levels_url );
+			$settings['description'] = sprintf(
+				__(
+					'To require membership to access a podcast please <a href="%s">set up
+										memberships</a> first.',
+					'seriously-simple-podcasting'
+				),
+				$levels_url
+			);
 
 			return $settings;
 		}
@@ -654,7 +675,7 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	/**
 	 * Check if the series is protected on Castos side.
 	 *
-	 * @param int $series_id
+	 * @param int  $series_id
 	 * @param bool $default
 	 *
 	 * @return bool|mixed

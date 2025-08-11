@@ -35,7 +35,7 @@ trait URL_Helper {
 	protected function is_ssp_post_page() {
 
 		$current_screen = get_current_screen();
-		if( ! $current_screen ) {
+		if ( ! $current_screen ) {
 			return false;
 		}
 
@@ -53,7 +53,7 @@ trait URL_Helper {
 			return false;
 		}
 
-		return in_array( $current_screen->post_type, [ SSP_CPT_PODCAST ], true );
+		return in_array( $current_screen->post_type, array( SSP_CPT_PODCAST ), true );
 	}
 
 	protected function is_any_post_page() {

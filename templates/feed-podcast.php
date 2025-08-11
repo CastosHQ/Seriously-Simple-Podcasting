@@ -32,14 +32,14 @@
  * @var array $funding {
  *      Array of link values.
  *
- * 	@type string $title Link title
- * 	@type string $url Link url
+ *  @type string $title Link title
+ *  @type string $url Link url
  * }
  *
  * @var array $podcast_value {
  *      Array of link values.
  *
- * 	@type string $recipient Recipient wallet address
+ *  @type string $recipient Recipient wallet address
  * }
  *
  * @var string $guid
@@ -70,17 +70,17 @@ if ( $stylesheet_url ) {
 
 ?>
 <rss version="2.0"
-	 xmlns:content="http://purl.org/rss/1.0/modules/content/"
-	 xmlns:wfw="http://wellformedweb.org/CommentAPI/"
-	 xmlns:dc="http://purl.org/dc/elements/1.1/"
-	 xmlns:atom="http://www.w3.org/2005/Atom"
-	 xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
-	 xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
-	 xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
-	 xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
-	 xmlns:podcast="https://podcastindex.org/namespace/1.0"
+	xmlns:content="http://purl.org/rss/1.0/modules/content/"
+	xmlns:wfw="http://wellformedweb.org/CommentAPI/"
+	xmlns:dc="http://purl.org/dc/elements/1.1/"
+	xmlns:atom="http://www.w3.org/2005/Atom"
+	xmlns:sy="http://purl.org/rss/1.0/modules/syndication/"
+	xmlns:slash="http://purl.org/rss/1.0/modules/slash/"
+	xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
+	xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
+	xmlns:podcast="https://podcastindex.org/namespace/1.0"
 	<?php do_action( 'rss2_ns' ); ?>>
-	<?php do_action( 'ssp_feed_before_channel_tag' ) ?>
+	<?php do_action( 'ssp_feed_before_channel_tag' ); ?>
 	<channel>
 		<title><?php echo esc_html( $title ); ?></title>
 		<atom:link href="<?php self_link(); ?>" rel="self" type="application/rss+xml"/>
@@ -91,96 +91,142 @@ if ( $stylesheet_url ) {
 		<copyright><?php echo esc_html( $copyright ); ?></copyright>
 		<itunes:subtitle><?php echo esc_html( $subtitle ); ?></itunes:subtitle>
 		<itunes:author><?php echo esc_html( $author ); ?></itunes:author>
-		<?php if ( $itunes_type ) :
-		?><itunes:type><?php echo $itunes_type; ?></itunes:type>
-		<?php endif
-		?><itunes:summary><?php echo esc_html( $description ); ?></itunes:summary>
+		<?php
+		if ( $itunes_type ) :
+			?>
+		<itunes:type><?php echo $itunes_type; ?></itunes:type>
+			<?php
+		endif
+		?>
+		<itunes:summary><?php echo esc_html( $description ); ?></itunes:summary>
 		<itunes:owner>
 			<itunes:name><?php echo esc_html( $owner_name ); ?></itunes:name>
-		<?php if ( $owner_email ) :
-			?>	<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>
+		<?php
+		if ( $owner_email ) :
+			?>
+			<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>
 		<?php endif; ?></itunes:owner>
 		<itunes:explicit><?php echo esc_html( $itunes_explicit ); ?></itunes:explicit>
 		<?php if ( $complete ) : ?>
 			<itunes:complete><?php echo esc_html( $complete ); ?></itunes:complete>
-		<?php endif;
+			<?php
+		endif;
 
 		if ( $image ) :
-			?><itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
+			?>
+			<itunes:image href="<?php echo esc_url( $image ); ?>"></itunes:image>
 			<image>
 				<url><?php echo esc_url( $image ); ?></url>
 				<title><?php echo esc_html( $title ); ?></title>
-				<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $feed_link, $podcast_series ) ) ?></link>
+				<link><?php echo esc_url( apply_filters( 'ssp_feed_channel_link_tag', $feed_link, $podcast_series ) ); ?></link>
 			</image>
-		<?php endif;
+			<?php
+		endif;
 
 		if ( isset( $category1['category'] ) && $category1['category'] ) :
-			?><itunes:category text="<?php echo esc_attr( $category1['category'] ); ?>"><?php
-		if ( isset( $category1['subcategory'] ) && $category1['subcategory'] ) : ?>
+			?>
+			<itunes:category text="<?php echo esc_attr( $category1['category'] ); ?>">
+			<?php
+			if ( isset( $category1['subcategory'] ) && $category1['subcategory'] ) :
+				?>
 
-			<itunes:category text="<?php echo esc_attr( $category1['subcategory'] ); ?>"></itunes:category><?php
-		endif; ?>
+			<itunes:category text="<?php echo esc_attr( $category1['subcategory'] ); ?>"></itunes:category>
+				<?php
+		endif;
+			?>
 
 		</itunes:category>
-		<?php endif;
+			<?php
+		endif;
 
 		if ( isset( $category2['category'] ) && $category2['category'] ) :
-			?><itunes:category text="<?php echo esc_attr( $category2['category'] ); ?>">
+			?>
+			<itunes:category text="<?php echo esc_attr( $category2['category'] ); ?>">
 				<?php if ( isset( $category2['subcategory'] ) && $category2['subcategory'] ) { ?>
 					<itunes:category text="<?php echo esc_attr( $category2['subcategory'] ); ?>"></itunes:category>
 				<?php } ?>
 			</itunes:category>
-		<?php endif;
+			<?php
+		endif;
 
 		if ( isset( $category3['category'] ) && $category3['category'] ) :
-			?><itunes:category text="<?php echo esc_attr( $category3['category'] ); ?>">
+			?>
+			<itunes:category text="<?php echo esc_attr( $category3['category'] ); ?>">
 				<?php if ( isset( $category3['subcategory'] ) && $category3['subcategory'] ) { ?>
 					<itunes:category text="<?php echo esc_attr( $category3['subcategory'] ); ?>"></itunes:category>
 				<?php } ?>
 			</itunes:category>
-		<?php endif;
+			<?php
+		endif;
 
 		if ( $new_feed_url ) :
-			?><itunes:new-feed-url><?php echo trailingslashit( esc_url( $new_feed_url ) ); ?></itunes:new-feed-url>
-		<?php endif;
+			?>
+			<itunes:new-feed-url><?php echo trailingslashit( esc_url( $new_feed_url ) ); ?></itunes:new-feed-url>
+			<?php
+		endif;
 
 		if ( 'on' !== $turbo ) :
-			?><googleplay:author><![CDATA[<?php echo esc_html( $author ); ?>]]></googleplay:author>
-			<?php if ( $owner_email ) :
-			?><googleplay:email><?php echo esc_html( $owner_email ); ?></googleplay:email><?php endif ?>
+			?>
+			<googleplay:author><![CDATA[<?php echo esc_html( $author ); ?>]]></googleplay:author>
+			<?php
+			if ( $owner_email ) :
+				?>
+			<googleplay:email><?php echo esc_html( $owner_email ); ?></googleplay:email><?php endif ?>
 			<googleplay:description><?php echo esc_html( $description ); ?></googleplay:description>
 			<googleplay:explicit><?php echo esc_html( $googleplay_explicit ); ?></googleplay:explicit>
-			<?php if ( $image ) :
-			?><googleplay:image href="<?php echo esc_url( $image ); ?>"></googleplay:image>
-			<?php endif;
+			<?php
+			if ( $image ) :
+				?>
+			<googleplay:image href="<?php echo esc_url( $image ); ?>"></googleplay:image>
+				<?php
+			endif;
 		endif;
 
 		if ( 'yes' === $locked ) :
-			?><podcast:locked<?php echo $owner_email ? ' owner="' . esc_html( $owner_email ) . '"' : '' ?>><?php
-			echo esc_html( $locked ) ?></podcast:locked>
-		<?php endif;
+			?>
+			<podcast:locked<?php echo $owner_email ? ' owner="' . esc_html( $owner_email ) . '"' : ''; ?>>
+			<?php
+			echo esc_html( $locked )
+			?>
+			</podcast:locked>
+			<?php
+		endif;
 
 		if ( $funding && ! empty( $funding['url'] ) && ! empty( $funding['title'] ) ) :
-			?><podcast:funding url="<?php echo esc_attr( $funding['url'] ) ?>"><?php echo esc_html( $funding['title'] ) ?></podcast:funding>
-		<?php endif;
+			?>
+			<podcast:funding url="<?php echo esc_attr( $funding['url'] ); ?>"><?php echo esc_html( $funding['title'] ); ?></podcast:funding>
+			<?php
+		endif;
 
 		if ( $podcast_value && ! empty( $podcast_value['recipient'] ) ) :
 			$name = empty( $podcast_value['name'] ) ? 'podcaster' : $podcast_value['name'];
-		?><podcast:value type="lightning" method="keysend" suggested="0.00000020000">
-			<?php if ( empty( $podcast_value['custom_key'] ) || empty( $podcast_value['custom_value'] ) ) :
-			?><podcast:valueRecipient name="<?php echo esc_attr( $name ) ?>" address="<?php echo esc_attr( $podcast_value['recipient'] ) ?>" split="100" type="node" />
-			<?php else :
-			?><podcast:valueRecipient name="<?php echo esc_attr( $name ) ?>" address="<?php echo esc_attr( $podcast_value['recipient'] ) ?>" split="100" type="node" customKey="<?php
-			echo esc_attr( $podcast_value['custom_key'] ) ?>" customValue="<?php echo esc_attr( $podcast_value['custom_value'] ) ?>" />
-		<?php    endif
-		?></podcast:value>
-		<?php endif;
+			?>
+		<podcast:value type="lightning" method="keysend" suggested="0.00000020000">
+			<?php
+			if ( empty( $podcast_value['custom_key'] ) || empty( $podcast_value['custom_value'] ) ) :
+				?>
+			<podcast:valueRecipient name="<?php echo esc_attr( $name ); ?>" address="<?php echo esc_attr( $podcast_value['recipient'] ); ?>" split="100" type="node" />
+				<?php
+			else :
+				?>
+			<podcast:valueRecipient name="<?php echo esc_attr( $name ); ?>" address="<?php echo esc_attr( $podcast_value['recipient'] ); ?>" split="100" type="node" customKey="
+				<?php
+				echo esc_attr( $podcast_value['custom_key'] )
+				?>
+			" customValue="<?php echo esc_attr( $podcast_value['custom_value'] ); ?>" />
+				<?php
+		endif
+			?>
+		</podcast:value>
+			<?php
+		endif;
 
 		if ( $guid ) :
-		?><podcast:guid><?php echo esc_attr( $guid ) ?></podcast:guid>
+			?>
+		<podcast:guid><?php echo esc_attr( $guid ); ?></podcast:guid>
 		<?php endif; ?>
 
-		<!-- podcast_generator="SSP by Castos/<?php echo SSP_VERSION ?>" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->
+		<!-- podcast_generator="SSP by Castos/<?php echo SSP_VERSION; ?>" Seriously Simple Podcasting plugin for WordPress (https://wordpress.org/plugins/seriously-simple-podcasting/) -->
 		<?php
 
 		// Prevent WP core from outputting an <image> element
@@ -199,6 +245,7 @@ if ( $stylesheet_url ) {
 				$args             = compact( 'author', 'is_excerpt_mode', 'pub_date_type', 'turbo_post_count', 'media_prefix' );
 				echo $feed_controller->fetch_feed_item( $qry, $args, $series_id );
 			}
-		} ?>
+		}
+		?>
 	</channel>
 </rss>

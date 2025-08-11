@@ -302,8 +302,12 @@ class App_Controller {
 
 			global $ssp_settings, $ssp_options;
 			$ssp_settings = $this->settings_controller = new Settings_Controller(
-				$this->settings_handler, $this->settings_renderer, $this->renderer,
-				$this->series_handler, $this->castos_handler, $this->episode_repository
+				$this->settings_handler,
+				$this->settings_renderer,
+				$this->renderer,
+				$this->series_handler,
+				$this->castos_handler,
+				$this->episode_repository
 			);
 			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
 		}
@@ -324,7 +328,6 @@ class App_Controller {
 		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );
 
 		$this->ads_controller = new Ads_Controller( $this->castos_handler );
-
 
 		// todo: further refactoring - get rid of global here
 		global $ss_podcasting;
@@ -418,7 +421,6 @@ class App_Controller {
 		// Setup custom permalink structures.
 		add_action( 'init', array( $this, 'setup_permastruct' ), 10 );
 
-
 		// Hide WP SEO footer text for podcast RSS feed.
 		add_filter( 'wpseo_include_rss_footer', array( $this, 'hide_wp_seo_rss_footer' ) );
 
@@ -436,7 +438,6 @@ class App_Controller {
 			// process the import form submission
 			add_action( 'admin_init', array( $this, 'submit_import_form' ) );
 
-
 			// Dashboard widgets.
 			add_action( 'wp_dashboard_setup', array( $this, 'ssp_dashboard_setup' ) );
 			add_filter( 'dashboard_glance_items', array( $this, 'glance_items' ), 10, 1 );
@@ -452,7 +453,6 @@ class App_Controller {
 
 			// Filter Embed HTML Code
 			add_filter( 'embed_html', array( $this, 'ssp_filter_embed_code' ), 10, 1 );
-
 		}
 
 		// Setup activation and deactivation hooks
@@ -466,6 +466,7 @@ class App_Controller {
 
 	/**
 	 * Setup custom permalink structures
+	 *
 	 * @return void
 	 */
 	public function setup_permastruct() {
@@ -596,9 +597,9 @@ class App_Controller {
 	/**
 	 * Adding appreciation links to the SSP record in the plugin list table
 	 *
-	 * @param array $plugin_meta Default plugin meta links
+	 * @param array  $plugin_meta Default plugin meta links
 	 * @param string $plugin_file Plugin file
-	 * @param array $plugin_data Array of plugin data
+	 * @param array  $plugin_data Array of plugin data
 	 * @param string $status Plugin status
 	 *
 	 * @return array               Modified plugin meta links
@@ -617,6 +618,7 @@ class App_Controller {
 
 	/**
 	 * Ensure thumbnail support on site
+	 *
 	 * @return void
 	 */
 	public function ensure_post_thumbnails_support() {
@@ -627,6 +629,7 @@ class App_Controller {
 
 	/**
 	 * Load plugin text domain
+	 *
 	 * @return void
 	 */
 	public function load_localisation() {
@@ -635,6 +638,7 @@ class App_Controller {
 
 	/**
 	 * Load localisation
+	 *
 	 * @return void
 	 */
 	public function load_plugin_textdomain() {
@@ -664,6 +668,7 @@ class App_Controller {
 
 	/**
 	 * All plugin activation functionality
+	 *
 	 * @return void
 	 */
 	public function activate() {
@@ -682,6 +687,7 @@ class App_Controller {
 
 	/**
 	 * All plugin deactivation functionality
+	 *
 	 * @return void
 	 */
 	public function deactivate() {
@@ -692,6 +698,7 @@ class App_Controller {
 
 	/**
 	 * Run functions on plugin update/activation
+	 *
 	 * @return void
 	 */
 	public function maybe_run_plugin_updates() {
@@ -721,18 +728,20 @@ class App_Controller {
 
 			// Change the footer text
 			if ( ! get_option( 'ssp_admin_footer_text_rated' ) ) {
-				$footer_text = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
-				$footer_text .= sprintf( "<script type='text/javascript'>
+				$footer_text  = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
+				$footer_text .= sprintf(
+					"<script type='text/javascript'>
 					(function($){
 					  $('a.ssp-rating-link').on('click', function() {
 						$.post( '" . admin_url( 'admin-ajax.php' ) . "', { action: 'ssp_rated', nonce: '%s' } );
 						$(this).parent().text( $(this).data( 'rated' ) );
 					})})(jQuery);
-				</script>", wp_create_nonce( 'ssp_rated' ) );
+				</script>",
+					wp_create_nonce( 'ssp_rated' )
+				);
 			} else {
 				$footer_text = sprintf( __( '%1$sThank you for publishing with %2$sSeriously Simple Podcasting%3$s.%4$s', 'seriously-simple-podcasting' ), '<span id="footer-thankyou">', '<a href="https://castos.com/seriously-simple-podcasting/" target="_blank">', '</a>', '</span>' );
 			}
-
 		}
 
 		return $footer_text;
@@ -741,7 +750,7 @@ class App_Controller {
 	/**
 	 * Clear the cache on post save.
 	 *
-	 * @param int $id POST ID
+	 * @param int    $id POST ID
 	 * @param object $post WordPress Post Object
 	 *
 	 * @return void
@@ -758,8 +767,8 @@ class App_Controller {
 	 */
 	public function ignore_importing_existing_podcasts() {
 		if ( 'ignore' === filter_input( INPUT_GET, 'podcast_import_action' ) &&
-			 wp_verify_nonce( $_GET['nonce'], 'podcast_import_action' ) &&
-			 current_user_can( 'manage_podcast' )
+			wp_verify_nonce( $_GET['nonce'], 'podcast_import_action' ) &&
+			current_user_can( 'manage_podcast' )
 		) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		}
@@ -874,8 +883,8 @@ class App_Controller {
 		// Check if the ssp_dismiss_categories_update variable exists
 		$ssp_dismiss_categories_update = ( isset( $_GET['ssp_dismiss_categories_update'] ) ? sanitize_text_field( $_GET['ssp_dismiss_categories_update'] ) : '' );
 		if ( ! $ssp_dismiss_categories_update ||
-			 ! wp_verify_nonce( $_GET['nonce'], 'dismiss_categories_update' ) ||
-			 ! current_user_can( 'manage_podcast' )
+			! wp_verify_nonce( $_GET['nonce'], 'dismiss_categories_update' ) ||
+			! current_user_can( 'manage_podcast' )
 		) {
 			return;
 		}

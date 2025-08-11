@@ -44,13 +44,13 @@ class Shortcodes_Controller extends Controller {
 
 	/**
 	 * Register plugin shortcodes
+	 *
 	 * @return void
 	 */
-	public function register_shortcodes () {
+	public function register_shortcodes() {
 		add_shortcode( 'ss_player', array( new Player(), 'shortcode' ) );
 		add_shortcode( 'ss_podcast', array( new Podcast(), 'shortcode' ) );
 		add_shortcode( 'podcast_episode', array( new Podcast_Episode(), 'shortcode' ) );
 		add_shortcode( 'podcast_playlist', array( new Podcast_Playlist(), 'shortcode' ) );
 	}
-
 }

@@ -2,7 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
-
 use Elementor\Widget_Base;
 
 class Elementor_Html_Player_Widget extends Widget_Base {
@@ -43,7 +42,7 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'podcasting' ];
+		return array( 'podcasting' );
 	}
 
 	public function get_episodes() {
@@ -55,10 +54,10 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 		);
 
 		$episodes        = get_posts( $args );
-		$episode_options = [
+		$episode_options = array(
 			'-1' => __( 'Current Episode', 'seriously-simple-podcasting' ),
 			'0'  => __( 'Latest Episode', 'seriously-simple-podcasting' ),
-		];
+		);
 		foreach ( $episodes as $episode ) {
 			$episode_options[ (string) $episode->ID ] = $episode->post_title;
 		}
@@ -70,22 +69,22 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 
 		$this->start_controls_section(
 			'content_section',
-			[
+			array(
 				'label' => __( 'Content', 'seriously-simple-podcasting' ),
 				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
-			]
+			)
 		);
 
 		$episode_options = $this->get_episodes();
 
 		$this->add_control(
 			'show_elements',
-			[
+			array(
 				'label'   => __( 'Select Episode', 'seriously-simple-podcasting' ),
 				'type'    => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episode_options,
 				'default' => '-1',
-			]
+			)
 		);
 
 		$this->end_controls_section();

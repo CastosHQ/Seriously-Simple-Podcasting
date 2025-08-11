@@ -19,22 +19,22 @@ class Elementor_Media_Player_Widget extends Widget_Base {
 	}
 
 	public function get_categories() {
-		return [ 'podcasting' ];
+		return array( 'podcasting' );
 	}
 
 	public function get_episodes() {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
-			'posts_per_page' => get_option('posts_per_page', 10),
+			'posts_per_page' => get_option( 'posts_per_page', 10 ),
 			'post_type'      => ssp_post_types( true ),
 			'post_status'    => array( 'publish', 'draft', 'future' ),
 		);
 
-		$episodes       = get_posts( $args );
-		$episode_options = [
+		$episodes        = get_posts( $args );
+		$episode_options = array(
 			'-1' => 'Current Episode',
-			'0'   => 'Latest Episode',
-		];
+			'0'  => 'Latest Episode',
+		);
 		foreach ( $episodes as $episode ) {
 			$episode_options[ (string) $episode->ID ] = $episode->post_title;
 		}
@@ -46,25 +46,24 @@ class Elementor_Media_Player_Widget extends Widget_Base {
 
 		$this->start_controls_section(
 			'content_section',
-			[
+			array(
 				'label' => __( 'Content', 'seriously-simple-podcasting' ),
-				'tab' => \Elementor\Controls_Manager::TAB_CONTENT,
-			]
+				'tab'   => \Elementor\Controls_Manager::TAB_CONTENT,
+			)
 		);
 
 		$episode_options = $this->get_episodes();
 		$this->add_control(
 			'show_elements',
-			[
-				'label' => __( 'Select Episode', 'seriously-simple-podcasting' ),
-				'type' => \Elementor\Controls_Manager::SELECT2,
+			array(
+				'label'   => __( 'Select Episode', 'seriously-simple-podcasting' ),
+				'type'    => \Elementor\Controls_Manager::SELECT2,
 				'options' => $episode_options,
-				'default' => '-1'
-			]
+				'default' => '-1',
+			)
 		);
 
 		$this->end_controls_section();
-
 	}
 
 	protected function render() {

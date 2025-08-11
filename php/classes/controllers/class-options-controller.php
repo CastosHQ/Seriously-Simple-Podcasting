@@ -78,7 +78,6 @@ class Options_Controller extends Controller {
 			}
 
 			foreach ( $this->options as $section => $data ) {
-
 				if ( $current_section && $current_section !== $section ) {
 					continue;
 				}
@@ -93,7 +92,6 @@ class Options_Controller extends Controller {
 				add_settings_section( $section, $section_title, array( $this, 'options_section' ), 'options_page' );
 
 				if ( ! empty( $data['fields'] ) ) {
-
 					foreach ( $data['fields'] as $field ) {
 
 						// Validation callback for field.
@@ -176,6 +174,7 @@ class Options_Controller extends Controller {
 
 	/**
 	 * Generate HTML for options page
+	 *
 	 * @return void
 	 */
 	public function options_page() {
@@ -208,7 +207,6 @@ class Options_Controller extends Controller {
 
 		// Show page tabs
 		if ( is_array( $this->options ) && 1 < count( $this->options ) ) {
-
 			$html .= '<h2 class="nav-tab-wrapper">' . "\n";
 
 			$c = 0;
@@ -221,10 +219,8 @@ class Options_Controller extends Controller {
 					if ( 0 === $c ) {
 						$class .= ' nav-tab-active';
 					}
-				} else {
-					if ( isset( $_GET['tab'] ) && $section == $_GET['tab'] ) {
+				} elseif ( isset( $_GET['tab'] ) && $section == $_GET['tab'] ) {
 						$class .= ' nav-tab-active';
-					}
 				}
 
 				// Set tab link
@@ -236,7 +232,7 @@ class Options_Controller extends Controller {
 				// Output tab
 				$html .= '<a href="' . esc_url( $tab_link ) . '" class="' . esc_attr( $class ) . '">' . esc_html( $data['title'] ) . '</a>' . "\n";
 
-				++ $c;
+				++$c;
 			}
 
 			$html .= '</h2>' . "\n";
@@ -272,7 +268,6 @@ class Options_Controller extends Controller {
 		$html .= '</div>' . "\n";
 
 		echo $html;
-
 	}
 
 	/**
@@ -359,10 +354,9 @@ class Options_Controller extends Controller {
 				}
 				break;
 			case 'select':
-				$html .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
+				$html      .= '<select name="' . esc_attr( $option_name ) . '" id="' . esc_attr( $field['id'] ) . '" class="' . $class . '">';
 				$prev_group = '';
 				foreach ( $field['options'] as $k => $v ) {
-
 					$group = '';
 					if ( is_array( $v ) ) {
 						if ( isset( $v['group'] ) ) {
@@ -429,5 +423,4 @@ class Options_Controller extends Controller {
 
 		echo $html;
 	}
-
 }

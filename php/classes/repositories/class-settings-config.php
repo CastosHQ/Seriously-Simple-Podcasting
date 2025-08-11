@@ -80,11 +80,11 @@ class Settings_Config implements Service, ArrayAccess, Countable, IteratorAggreg
 
 	#[\ReturnTypeWillChange]
 	public function getIterator() {
-		return new \ArrayIterator($this->get_config());
+		return new \ArrayIterator( $this->get_config() );
 	}
 
 	#[\ReturnTypeWillChange]
 	public function count() {
-		return count($this->get_config());
+		return count( $this->get_config() );
 	}
 }

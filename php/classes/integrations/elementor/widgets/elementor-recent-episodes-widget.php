@@ -13,7 +13,7 @@ class Elementor_Recent_Episodes_Widget extends Widget_Base {
 	use Useful_Variables;
 	use Elementor_Widget_Helper;
 
-	public function __construct( $data = [], $args = null ) {
+	public function __construct( $data = array(), $args = null ) {
 		parent::__construct( $data, $args );
 		$this->init_useful_variables();
 

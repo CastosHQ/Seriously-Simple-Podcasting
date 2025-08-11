@@ -55,9 +55,9 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	/**
 	 * Class Paid_Memberships_Pro_Integrator constructor.
 	 *
-	 * @param Feed_Handler $feed_handler
+	 * @param Feed_Handler   $feed_handler
 	 * @param Castos_Handler $castos_handler
-	 * @param Log_Helper $logger
+	 * @param Log_Helper     $logger
 	 */
 	public function init( $feed_handler, $castos_handler, $logger ) {
 		if ( ! $this->check_dependencies( array( 'LifterLMS', 'LLMS_Student' ), array( 'llms_page_restricted' ) ) ) {
@@ -70,10 +70,8 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 
 		if ( is_admin() && ! ssp_is_ajax() ) {
 			$this->init_integration_settings();
-		} else {
-			if ( self::integration_enabled() ) {
+		} elseif ( self::integration_enabled() ) {
 				$this->protect_private_series();
-			}
 		}
 
 		if ( ssp_is_connected_to_castos() ) {
@@ -101,39 +99,52 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	protected function init_subscribers_sync() {
 
 		// Sync users when their Membership Level is changed (from admin panel, when registered or cancelled).
-		add_filter( 'llms_user_enrolled_in_course', array(
-			$this,
-			'sync_subscriber_on_user_enrolled_in_course'
-		), 10, 2 );
+		add_filter(
+			'llms_user_enrolled_in_course',
+			array(
+				$this,
+				'sync_subscriber_on_user_enrolled_in_course',
+			),
+			10,
+			2
+		);
 
-		add_filter( 'llms_user_removed_from_course', array(
-			$this,
-			'sync_subscriber_on_user_removed_from_course'
-		), 10, 2 );
+		add_filter(
+			'llms_user_removed_from_course',
+			array(
+				$this,
+				'sync_subscriber_on_user_removed_from_course',
+			),
+			10,
+			2
+		);
 
 		add_action( self::SINGLE_SYNC_EVENT, array( $this, 'process_single_sync_events' ) );
 
-
 		// Schedule the bulk sync when Series -> Membership Level association is changed.
-		add_filter( 'allowed_options', function ( $allowed_options ) {
-			// Option ss_podcasting_is_lifterlms_integration is just a marker that PMPro integration settings have been saved.
-			// If so, we can do the sync magic.
-			if ( isset( $allowed_options['ss_podcasting'] ) ) {
-				$key = array_search( 'ss_podcasting_is_lifterlms_integration', $allowed_options['ss_podcasting'] );
-				if ( false !== $key ) {
-					unset( $allowed_options['ss_podcasting'][ $key ] );
-					$this->schedule_bulk_sync_subscribers();
+		add_filter(
+			'allowed_options',
+			function ( $allowed_options ) {
+				// Option ss_podcasting_is_lifterlms_integration is just a marker that PMPro integration settings have been saved.
+				// If so, we can do the sync magic.
+				if ( isset( $allowed_options['ss_podcasting'] ) ) {
+					$key = array_search( 'ss_podcasting_is_lifterlms_integration', $allowed_options['ss_podcasting'] );
+					if ( false !== $key ) {
+						unset( $allowed_options['ss_podcasting'][ $key ] );
+						$this->schedule_bulk_sync_subscribers();
+					}
 				}
-			}
 
-			return $allowed_options;
-		}, 20 );
+				return $allowed_options;
+			},
+			20
+		);
 
 		// Run the scheduled bulk sync.
 		add_action( 'ssp_bulk_sync_lifterlms_subscribers', array( $this, 'bulk_sync_subscribers' ) );
 	}
 
-	public function process_single_sync_events(){
+	public function process_single_sync_events() {
 		$single_sync_events = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
 
 		foreach ( $single_sync_events as $event ) {
@@ -194,7 +205,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	 *
 	 * @return void
 	 */
-	protected function schedule_single_sync( $delay = 5 ){
+	protected function schedule_single_sync( $delay = 5 ) {
 		if ( ! wp_next_scheduled( self::SINGLE_SYNC_EVENT ) ) {
 			wp_schedule_single_event( time() + $delay * MINUTE_IN_SECONDS, self::SINGLE_SYNC_EVENT );
 		}
@@ -346,7 +357,6 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		add_filter( 'llms_page_restricted_before_check_access', $restrict_filter, 10, 2 );
 
 		foreach ( $course_ids as $course_id ) {
-
 			$page_restricted = llms_page_restricted( $course_id );
 
 			if ( ! $page_restricted['is_restricted'] ) {
@@ -360,7 +370,6 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 			 * @see llms_content_restricted_by_{$page_restricted['reason']} A specific hook triggered by a specific restriction reason.
 			 *
 			 * @since Unknown
-			 *
 			 */
 			do_action( 'lifterlms_content_restricted', $page_restricted );
 
@@ -375,9 +384,8 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 			 * @see llms_content_restricted A generic hook triggered at the same time.
 			 *
 			 * @since Unknown
-			 *
 			 */
-			do_action( "llms_content_restricted_by_enrollment_lesson", $page_restricted );
+			do_action( 'llms_content_restricted_by_enrollment_lesson', $page_restricted );
 		}
 
 		remove_filter( 'llms_page_restricted_before_check_access', $restrict_filter );
@@ -403,7 +411,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		}
 
 		// Series is protected, does user have access?
-		$has_access = true;
+		$has_access         = true;
 		$related_course_ids = $this->get_series_course_ids( array( $series ) );
 
 		if ( $related_course_ids ) {
@@ -452,7 +460,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		$course_ids = array();
 
 		foreach ( $series_terms as $series ) {
-			$courses    = (array) ssp_get_option( sprintf( 'series_%s_lifterlms_courses', $series->term_id  ), null );
+			$courses            = (array) ssp_get_option( sprintf( 'series_%s_lifterlms_courses', $series->term_id ), null );
 			$current_course_ids = array();
 			foreach ( $courses as $course ) {
 				$current_course_ids[] = (int) str_replace( 'course_', '', $course );
@@ -476,7 +484,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		$series = wp_get_post_terms( $post_id, ssp_series_taxonomy() );
 
 		if ( is_wp_error( $series ) ) {
-			return [];
+			return array();
 		}
 
 		return $series;
@@ -529,22 +537,24 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		$settings = array(
 			'id'          => 'lifterlms',
 			'title'       => __( 'LifterLMS', 'seriously-simple-podcasting' ),
-			'description' => __( 'Select which Podcast you would like to be available only
-								to Members via LifterLMS.', 'seriously-simple-podcasting' ),
+			'description' => __(
+				'Select which Podcast you would like to be available only
+								to Members via LifterLMS.',
+				'seriously-simple-podcasting'
+			),
 			'fields'      => array(
 				array(
 					'id'   => 'is_lifterlms_integration',
 					'type' => 'hidden',
 				),
 				array(
-					'id'    => 'enable_lifterlms_integration',
-					'type'  => 'checkbox',
-					'label' => __( 'Enable integration', 'seriously-simple-podcasting' ),
+					'id'          => 'enable_lifterlms_integration',
+					'type'        => 'checkbox',
+					'label'       => __( 'Enable integration', 'seriously-simple-podcasting' ),
 					'description' => __( 'Enable LifterLMS integration', 'seriously-simple-podcasting' ),
 				),
 			),
 		);
-
 
 		if ( ! self::integration_enabled() ) {
 			$settings['description'] = '';
@@ -562,10 +572,10 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 
 		foreach ( $series as $series_item ) {
 			$series_item_settings = array(
-				'id'      => sprintf( 'series_%s_lifterlms_courses', $series_item->term_id ),
-				'label'   => $series_item->name,
-				'type'    => 'select2_multi',
-				'options' => $checkbox_options,
+				'id'          => sprintf( 'series_%s_lifterlms_courses', $series_item->term_id ),
+				'label'       => $series_item->name,
+				'type'        => 'select2_multi',
+				'options'     => $checkbox_options,
 				'description' => 'Require enrollment to course',
 			);
 
@@ -597,7 +607,7 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 	/**
 	 * Check if the series is protected on Castos side.
 	 *
-	 * @param int $series_id
+	 * @param int  $series_id
 	 * @param bool $default
 	 *
 	 * @return bool|mixed

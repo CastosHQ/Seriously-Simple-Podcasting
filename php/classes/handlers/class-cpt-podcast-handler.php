@@ -30,7 +30,7 @@ class CPT_Podcast_Handler implements Service {
 	 * CPT_Podcast_Handler constructor.
 	 *
 	 * @param Roles_Handler $roles_handler
-	 * @param Feed_Handler $feed_handler
+	 * @param Feed_Handler  $feed_handler
 	 */
 	public function __construct( $roles_handler, $feed_handler ) {
 		$this->roles_handler = $roles_handler;
@@ -77,7 +77,10 @@ class CPT_Podcast_Handler implements Service {
 			'show_in_nav_menus'   => true,
 			'query_var'           => true,
 			'can_export'          => true,
-			'rewrite'             => array( 'slug' => $slug, 'feeds' => true ),
+			'rewrite'             => array(
+				'slug'  => $slug,
+				'feeds' => true,
+			),
 			'capability_type'     => 'post',
 			'has_archive'         => true,
 			'hierarchical'        => false,
@@ -121,10 +124,9 @@ class CPT_Podcast_Handler implements Service {
 		);
 
 		foreach ( $fields as $key => $data ) {
-
 			$args = array(
 				'type'         => 'string',
-				'description'  => isset( $data['meta_description'] ) ? $data['meta_description'] : "",
+				'description'  => isset( $data['meta_description'] ) ? $data['meta_description'] : '',
 				'single'       => true,
 				'show_in_rest' => true,
 			);
@@ -142,17 +144,17 @@ class CPT_Podcast_Handler implements Service {
 	 * @return array Custom fields
 	 */
 	public function custom_fields( $all = false ) {
-		$itunes_fields_enabled = ssp_get_option( 'itunes_fields_enabled', 'on' );
+		$itunes_fields_enabled    = ssp_get_option( 'itunes_fields_enabled', 'on' );
 		$is_itunes_fields_enabled = $itunes_fields_enabled && ( $itunes_fields_enabled === 'on' );
 		$fields                   = array();
-		$is_connected_to_castos = ssp_is_connected_to_castos();
+		$is_connected_to_castos   = ssp_is_connected_to_castos();
 
 		if ( $is_connected_to_castos || $all ) {
 			$fields['sync_status'] = array(
-				'name'             => __( 'Sync status:', 'seriously-simple-podcasting' ),
-				'type'             => 'sync_status',
-				'default'          => Sync_Status::SYNC_STATUS_NONE,
-				'section'          => 'info',
+				'name'    => __( 'Sync status:', 'seriously-simple-podcasting' ),
+				'type'    => 'sync_status',
+				'default' => Sync_Status::SYNC_STATUS_NONE,
+				'section' => 'info',
 			);
 		}
 
@@ -163,7 +165,7 @@ class CPT_Podcast_Handler implements Service {
 			'default'          => 'audio',
 			'options'          => array(
 				'audio' => __( 'Audio', 'seriously-simple-podcasting' ),
-				'video' => __( 'Video', 'seriously-simple-podcasting' )
+				'video' => __( 'Video', 'seriously-simple-podcasting' ),
 			),
 			'section'          => 'info',
 			'meta_description' => __( 'The type of podcast episode - either Audio or Video', 'seriously-simple-podcasting' ),
@@ -179,7 +181,6 @@ class CPT_Podcast_Handler implements Service {
 			'meta_description' => __( 'The full URL for the podcast episode media file.', 'seriously-simple-podcasting' ),
 		);
 
-		//
 		if ( $is_connected_to_castos || $all ) {
 			$fields['castos_file_data'] = array(
 				'type' => 'hidden',
@@ -194,14 +195,14 @@ class CPT_Podcast_Handler implements Service {
 			$description = __( 'Get advanced analytics and unlimited file storage when hosting with Castos.', 'seriously-simple-podcasting' );
 			$btn         = array(
 				'title' => 'Try Castos for free',
-				'url'   => 'https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&utm_medium=episode-file-box&utm_campaign=upgrade'
+				'url'   => 'https://castos.com/podcast-hosting-wordpress/?utm_source=ssp&utm_medium=episode-file-box&utm_campaign=upgrade',
 			);
 
 			$fields['audio_file']['description'] .= ssp_upsell_field( $description, $btn );
 		}
 
-		$post = get_post();
-		$post_title = $post ? $post->post_title : '';
+		$post          = get_post();
+		$post_title    = $post ? $post->post_title : '';
 		$podcast_title = '';
 		if ( $post ) {
 			$podcasts = ssp_get_episode_podcasts( $post->ID );
@@ -333,7 +334,7 @@ class CPT_Podcast_Handler implements Service {
 					''        => __( 'Please Select', 'seriously-simple-podcasting' ),
 					'full'    => __( 'Full: For Normal Episodes', 'seriously-simple-podcasting' ),
 					'trailer' => __( 'Trailer: Promote an Upcoming Show', 'seriously-simple-podcasting' ),
-					'bonus'   => __( 'Bonus: For Extra Content Related To a Show', 'seriously-simple-podcasting' )
+					'bonus'   => __( 'Bonus: For Extra Content Related To a Show', 'seriously-simple-podcasting' ),
 				),
 				'section'          => 'info',
 				'meta_description' => __( 'The iTunes Episode Type', 'seriously-simple-podcasting' ),

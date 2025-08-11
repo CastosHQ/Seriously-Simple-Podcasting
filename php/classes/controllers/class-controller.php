@@ -112,7 +112,5 @@ abstract class Controller {
 		$this->token         = SSP_CPT_PODCAST;
 		$this->plugin_slug   = 'seriously-simple-podcasting';
 		$this->script_suffix = defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ? '' : '.min';
-
 	}
-
 }

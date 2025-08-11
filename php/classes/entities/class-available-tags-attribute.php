@@ -35,27 +35,30 @@ class Available_Tags_Attribute implements JsonSerializable {
 	 *
 	 * @return array[]
 	 */
-	protected function get_settings(){
+	protected function get_settings() {
 		if ( $this->settings ) {
 			return $this->settings;
 		}
 
-		$settings = [
-			[
+		$settings = array(
+			array(
 				'label' => __( '-- All --', 'seriously-simple-podcasting' ),
 				'value' => '',
-			],
-		];
+			),
+		);
 
 		$this->settings = array_merge(
 			$settings,
-			array_map( function ( $item ) {
-				return [
-					'label' => $item->name,
-					'value' => $item->slug,
-				];
-			}, ssp_get_tags() ) );
-
+			array_map(
+				function ( $item ) {
+					return array(
+						'label' => $item->name,
+						'value' => $item->slug,
+					);
+				},
+				ssp_get_tags()
+			)
+		);
 
 		return $this->settings;
 	}

@@ -19,6 +19,7 @@ class Player implements Shortcode {
 
 	/**
 	 * Load ss_player shortcode
+	 *
 	 * @return string          HTML output
 	 */
 	public function shortcode( $params ) {
@@ -49,5 +50,4 @@ class Player implements Shortcode {
 
 		return $frontent_controller->load_media_player( $file, $episode_id, $player_style, 'shortcode' );
 	}
-
 }

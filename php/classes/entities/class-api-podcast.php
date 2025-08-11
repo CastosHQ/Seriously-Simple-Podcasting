@@ -9,6 +9,7 @@ namespace SeriouslySimplePodcasting\Entities;
 
 /**
  * Class API_Podcast.
+ *
  * @since 2.24.0
  * @author Serhiy Zakharchenko
  */
@@ -44,4 +45,3 @@ class API_Podcast extends Abstract_API_Entity {
 	 * */
 	public $ads_enabled;
 }
-

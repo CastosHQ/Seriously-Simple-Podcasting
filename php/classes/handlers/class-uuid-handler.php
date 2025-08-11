@@ -5,31 +5,29 @@ namespace SeriouslySimplePodcasting\Handlers;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
 /**
- * UUID class
+ * Class UUID_Handler
  *
- * The following class generates VALID RFC 4122 COMPLIANT
- * Universally Unique IDentifiers (UUID) version 3, 4 and 5.
+ * Generates RFC 4122 compliant Universally Unique Identifiers (UUID) versions 3, 4, and 5.
+ * This is a pure PHP implementation that validates against the OSSP UUID Tool.
+ * For named-based UUIDs (v3 and v5), output matches OSSP exactly.
  *
- * UUIDs generated validates using OSSP UUID Tool, and output
- * for named-based UUIDs are exactly the same. This is a pure
- * PHP implementation.
- *
+ * @package Seriously Simple Podcasting
+ * @since 2.9.0
  * @author Andrew Moore, Serhiy Zakharchenko
  * @link http://www.php.net/manual/en/function.uniqid.php#94959
- * @package Seriously Simple Podcasting
  */
 class UUID_Handler implements Service {
 	/**
-	 * Generate v3 UUID
+	 * Generate version 3 UUID.
 	 *
-	 * Version 3 UUIDs are named based. They require a namespace (another
-	 * valid UUID) and a value (the name). Given the same namespace and
-	 * name, the output is always the same.
+	 * Version 3 UUIDs are name-based using MD5 hashing. They require a namespace
+	 * (another valid UUID) and a name. Given the same namespace and name,
+	 * the output is always the same.
 	 *
-	 * @param string $namespace
-	 * @param string $name
+	 * @param string $namespace The namespace UUID.
+	 * @param string $name     The name to generate the UUID for.
 	 *
-	 * @return false|string
+	 * @return false|string UUID string or false on failure.
 	 */
 	public function v3( $namespace, $name ) {
 		if ( ! $this->is_valid( $namespace ) ) {
@@ -69,10 +67,12 @@ class UUID_Handler implements Service {
 	}
 
 	/**
+	 * Generate version 4 UUID.
 	 *
-	 * Generate v4 UUID
+	 * Version 4 UUIDs are pseudo-random using mt_rand().
+	 * Each UUID is unique with very high probability.
 	 *
-	 * Version 4 UUIDs are pseudo-random.
+	 * @return string Generated UUID string.
 	 */
 	public static function v4() {
 		return sprintf(
@@ -97,16 +97,16 @@ class UUID_Handler implements Service {
 	}
 
 	/**
-	 * Generate v5 UUID
+	 * Generate version 5 UUID.
 	 *
-	 * Version 5 UUIDs are named based. They require a namespace (another
-	 * valid UUID) and a value (the name). Given the same namespace and
-	 * name, the output is always the same.
+	 * Version 5 UUIDs are name-based using SHA-1 hashing. They require a namespace
+	 * (another valid UUID) and a name. Given the same namespace and name,
+	 * the output is always the same.
 	 *
-	 * @param string $namespace
-	 * @param string $name
+	 * @param string $namespace The namespace UUID.
+	 * @param string $name     The name to generate the UUID for.
 	 *
-	 * @return string
+	 * @return false|string UUID string or false on failure.
 	 */
 	public static function v5( $namespace, $name ) {
 		if ( ! self::is_valid( $namespace ) ) {
@@ -145,6 +145,13 @@ class UUID_Handler implements Service {
 		);
 	}
 
+	/**
+	 * Validate a UUID string.
+	 *
+	 * @param string $uuid UUID string to validate.
+	 *
+	 * @return bool True if valid UUID, false otherwise.
+	 */
 	public static function is_valid( $uuid ) {
 		return preg_match(
 			'/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?' .

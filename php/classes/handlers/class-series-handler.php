@@ -7,7 +7,9 @@ use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
- * SSP Series Handler
+ * Class Series_Handler
+ *
+ * Handles podcast series (taxonomy) registration, management and settings.
  *
  * @package Seriously Simple Podcasting
  */
@@ -15,49 +17,70 @@ class Series_Handler implements Service {
 
 	use Useful_Variables;
 
+	/**
+	 * Meta key for storing series sync status.
+	 *
+	 * @var string
+	 */
 	const META_SYNC_STATUS = 'sync_status';
 
 	/**
+	 * Admin notifications handler instance.
+	 *
 	 * @var Admin_Notifications_Handler
-	 * */
+	 */
 	protected $notices_handler;
 
 	/**
+	 * Roles handler instance.
+	 *
 	 * @var Roles_Handler
-	 * */
+	 */
 	protected $roles_handler;
 
 	/**
+	 * Castos handler instance.
+	 *
 	 * @var Castos_Handler
-	 * */
+	 */
 	protected $castos_handler;
 
 	/**
+	 * Feed handler instance.
+	 *
 	 * @var Feed_Handler
-	 * */
+	 */
 	protected $feed_handler;
 
 	/**
+	 * Settings handler instance.
+	 *
 	 * @var Settings_Handler
-	 * */
+	 */
 	protected $settings_handler;
 
 	/**
+	 * Episode repository instance.
+	 *
 	 * @var Episode_Repository
-	 * */
+	 */
 	protected $episode_repository;
 
 	/**
-	 * @var int $default_series_id
-	 * */
+	 * Default series term ID.
+	 *
+	 * @var int
+	 */
 	protected $default_series_id;
 
 	/**
-	 * @param Admin_Notifications_Handler $notices_handler
-	 * @param Roles_Handler               $roles_handler
-	 * @param Castos_Handler              $castos_handler
-	 * @param Settings_Handler            $settings_handler
-	 * @param Episode_Repository          $episode_repository
+	 * Series_Handler constructor.
+	 *
+	 * @param Admin_Notifications_Handler $notices_handler     Admin notifications handler instance.
+	 * @param Roles_Handler              $roles_handler       Roles handler instance.
+	 * @param Castos_Handler             $castos_handler      Castos handler instance.
+	 * @param Settings_Handler           $settings_handler    Settings handler instance.
+	 * @param Episode_Repository         $episode_repository  Episode repository instance.
 	 */
 	public function __construct( $notices_handler, $roles_handler, $castos_handler, $settings_handler, $episode_repository ) {
 		$this->notices_handler    = $notices_handler;

@@ -13,17 +13,26 @@ use SeriouslySimplePodcasting\Interfaces\Service;
  */
 class CPT_Podcast_Handler implements Service {
 
+	/**
+	 * Default slug for podcast series.
+	 *
+	 * @const string
+	 */
 	const DEFAULT_SERIES_SLUG = 'podcasts';
 
 
 	/**
+	 * Roles handler instance.
+	 *
 	 * @var Roles_Handler
-	 * */
+	 */
 	protected $roles_handler;
 
 	/**
+	 * Feed handler instance.
+	 *
 	 * @var Feed_Handler
-	 * */
+	 */
 	protected $feed_handler;
 
 	/**
@@ -47,6 +56,11 @@ class CPT_Podcast_Handler implements Service {
 		$this->register_meta();
 	}
 
+	/**
+	 * Get podcast post type registration arguments.
+	 *
+	 * @return array Post type registration arguments.
+	 */
 	protected function get_podcast_args() {
 		$labels = array(
 			'name'                  => _x( 'Episode', 'post type general name', 'seriously-simple-podcasting' ),
@@ -137,11 +151,11 @@ class CPT_Podcast_Handler implements Service {
 
 
 	/**
-	 * Setup custom fields for episodes
+	 * Setup custom fields for episodes.
 	 *
-	 * @param bool $all
+	 * @param bool $all Whether to return all fields or only enabled ones.
 	 *
-	 * @return array Custom fields
+	 * @return array Custom fields configuration.
 	 */
 	public function custom_fields( $all = false ) {
 		$itunes_fields_enabled    = ssp_get_option( 'itunes_fields_enabled', 'on' );

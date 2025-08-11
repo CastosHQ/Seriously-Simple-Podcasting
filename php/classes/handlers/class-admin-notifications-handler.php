@@ -1,4 +1,12 @@
 <?php
+/**
+ * Admin Notifications Handler
+ *
+ * @package SeriouslySimplePodcasting
+ * @category Handlers
+ * @author Castos
+ * @since 1.0
+ */
 
 namespace SeriouslySimplePodcasting\Handlers;
 
@@ -25,26 +33,34 @@ class Admin_Notifications_Handler implements Service {
 	use Useful_Variables;
 
 	/**
-	 * Transient key to store flash notices
-	 * */
+	 * Transient key to store flash notices.
+	 *
+	 * @var string
+	 */
 	const NOTICES_KEY = 'ssp_notices';
 
 	/**
 	 * Option key to store constant notices that can be removed by closing the notice manually.
-	 * */
+	 *
+	 * @var string
+	 */
 	const CONSTANT_NOTICES_KEY = 'ssp_constant_notices';
 
 	/**
-	 * Predefined notices
-	 * */
+	 * Predefined notice constants.
+	 *
+	 * @var string
+	 */
 	const NOTICE_API_EPISODE_ERROR   = 'api_episode_error';
 	const NOTICE_API_EPISODE_SUCCESS = 'api_episode_success';
 	const NOTICE_NGINX_ERROR         = 'nginx_error';
 
 	/**
-	 * Notice types
-	 * "info", "warning", "error" or "success"
-	 * */
+	 * Notice type constants.
+	 * Available types: "info", "warning", "error" or "success".
+	 *
+	 * @var string
+	 */
 	const INFO    = 'info';
 	const WARNING = 'warning';
 	const ERROR   = 'error';
@@ -53,7 +69,9 @@ class Admin_Notifications_Handler implements Service {
 
 	/**
 	 * Admin_Notifications_Handler constructor.
-	 **/
+	 *
+	 * @return void
+	 */
 	public function __construct() {
 		$this->init_useful_variables();
 

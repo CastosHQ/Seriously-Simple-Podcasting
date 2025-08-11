@@ -10,77 +10,98 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * External RSS feed importer
+ * RSS Import Handler
  *
- * @author      Jonathan Bossenger, Sergiy Zakharchenko
- * @category    Class
- * @package     SeriouslySimplePodcasting/Classes
- * @since       1.19.18
+ * Handles importing podcast episodes from external RSS feeds.
+ *
+ * @package SeriouslySimplePodcasting
+ * @category Handlers
+ * @author Jonathan Bossenger, Sergiy Zakharchenko
+ * @since 1.19.18
  */
 class RSS_Import_Handler {
 
+	/**
+	 * Option key for storing RSS import data.
+	 *
+	 * @var string
+	 */
 	const RSS_IMPORT_DATA_KEY = 'ssp_rss_import_data';
-	const ITEMS_PER_REQUEST   = 3;
 
 	/**
-	 * RSS feed url
+	 * Number of items to process per request.
 	 *
-	 * @var mixed
+	 * @var int
+	 */
+	const ITEMS_PER_REQUEST = 3;
+
+	/**
+	 * RSS feed URL to import from.
+	 *
+	 * @var string
 	 */
 	private $rss_feed;
 
 	/**
-	 * Post type to import episodes to
+	 * Post type to import episodes to.
 	 *
-	 * @var mixed
+	 * @var string
 	 */
 	private $post_type;
 
 	/**
-	 * Series to import episodes to
+	 * Series term ID to import episodes to.
 	 *
-	 * @var mixed
+	 * @var int
 	 */
 	private $series;
 
 	/**
-	 * Feed object created by loading the xml url
+	 * Feed object created by loading the XML URL.
 	 *
-	 * @var
+	 * @var \SimpleXMLElement
 	 */
 	private $feed_object;
 
 	/**
-	 * Number of episodes processed
+	 * Total number of episodes in the feed.
 	 *
 	 * @var int
 	 */
 	private $episodes_count = 0;
 
 	/**
-	 * Number of episodes successfully added
+	 * Number of episodes successfully imported.
 	 *
 	 * @var int
 	 */
 	private $episodes_added = 0;
 
 	/**
-	 * Episode titles added
+	 * Titles of successfully imported episodes.
 	 *
-	 * @var array
+	 * @var string[]
 	 */
 	private $episodes_imported = array();
 
 	/**
+	 * Logger instance.
+	 *
 	 * @var Log_Helper
 	 */
 	private $logger;
 
 
 	/**
-	 * SSP_External_RSS_Importer constructor.
+	 * RSS_Import_Handler constructor.
 	 *
-	 * @param $ssp_external_rss
+	 * @param array $ssp_external_rss {
+	 *     RSS import configuration.
+	 *
+	 *     @type string $import_rss_feed  RSS feed URL to import from.
+	 *     @type string $import_post_type Post type to import episodes to.
+	 *     @type int    $import_series    Series term ID to import episodes to.
+	 * }
 	 */
 	public function __construct( $ssp_external_rss ) {
 		$this->rss_feed  = $ssp_external_rss['import_rss_feed'];

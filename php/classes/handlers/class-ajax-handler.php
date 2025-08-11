@@ -1,19 +1,37 @@
 <?php
+/**
+ * Ajax Handler
+ *
+ * @package SeriouslySimplePodcasting
+ * @category Handlers
+ * @author Castos
+ */
 
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 
+/**
+ * Class Ajax_Handler
+ *
+ * Handles all AJAX requests for the plugin.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 class Ajax_Handler {
 
 	/**
-	 * @var Castos_Handler $castos_handler
-	 * */
+	 * Castos handler instance.
+	 *
+	 * @var Castos_Handler
+	 */
 	protected $castos_handler;
 
 	/**
-	 * @var Admin_Notifications_Handler $admin_notices_handler
-	 * */
+	 * Admin notifications handler instance.
+	 *
+	 * @var Admin_Notifications_Handler
+	 */
 	protected $admin_notices_handler;
 
 	/**
@@ -30,32 +48,34 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * Runs any functionality to be included in the object instantiation
+	 * Runs any functionality to be included in the object instantiation.
+	 *
+	 * @return void
 	 */
 	public function bootstrap() {
-		// Add ajax action for plugin rating
+		// Add ajax action for plugin rating.
 		add_action( 'wp_ajax_ssp_rated', array( $this, 'rated' ) );
 
 		add_action( 'wp_ajax_connect_castos', array( $this, 'connect_castos' ) );
 
 		add_action( 'wp_ajax_disconnect_castos', array( $this, 'disconnect_castos' ) );
 
-		// Add ajax action for customising episode embed code
+		// Add ajax action for customising episode embed code.
 		add_action( 'wp_ajax_update_episode_embed_code', array( $this, 'update_episode_embed_code' ) );
 
-		// Add ajax action for importing external rss feed
+		// Add ajax action for importing external rss feed.
 		add_action( 'wp_ajax_import_external_rss_feed', array( $this, 'import_external_rss_feed' ) );
 
-		// Add ajax action for getting external rss feed progress
+		// Add ajax action for getting external rss feed progress.
 		add_action( 'wp_ajax_get_external_rss_feed_progress', array( $this, 'get_external_rss_feed_progress' ) );
 
-		// Add ajax action to reset external feed options
+		// Add ajax action to reset external feed options.
 		add_action( 'wp_ajax_reset_rss_feed_data', array( $this, 'reset_rss_feed_data' ) );
 
-		// Add ajax action to the Castos sync process
+		// Add ajax action to the Castos sync process.
 		add_action( 'wp_ajax_sync_castos', array( $this, 'sync_castos' ) );
 
-		// Ajax action to removing the constant notice
+		// Ajax action to removing the constant notice.
 		add_action( 'wp_ajax_remove_constant_notice', array( $this, 'remove_constant_notice' ) );
 	}
 

@@ -3,24 +3,34 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 /**
- * SSP Series_Walker
- * Customizes the series checklist output
+ * Class Series_Walker
+ *
+ * Customizes the series taxonomy checklist output in the admin area.
+ * Extends WordPress core Walker_Category_Checklist class.
  *
  * @package Seriously Simple Podcasting
- * @since 3.0.0
  */
 class Series_Walker extends \Walker_Category_Checklist {
 
 	/**
+	 * Series handler instance.
+	 *
 	 * @var Series_Handler
-	 * */
+	 */
 	protected $series_handler;
 
 	/**
+	 * Default series term ID.
+	 *
 	 * @var int
-	 * */
+	 */
 	protected $default_series_id;
 
+	/**
+	 * Series_Walker constructor.
+	 *
+	 * @param Series_Handler $series_handler Series handler instance.
+	 */
 	public function __construct( $series_handler ) {
 		$this->series_handler = $series_handler;
 	}
@@ -57,7 +67,9 @@ class Series_Walker extends \Walker_Category_Checklist {
 
 
 	/**
-	 * @return int
+	 * Gets the default series term ID.
+	 *
+	 * @return int Default series term ID.
 	 */
 	protected function default_series_id() {
 		if ( ! $this->default_series_id ) {

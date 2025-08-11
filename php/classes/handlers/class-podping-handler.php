@@ -1,4 +1,11 @@
 <?php
+/**
+ * Podping Handler
+ *
+ * @package SeriouslySimplePodcasting
+ * @category Handlers
+ * @author Castos
+ */
 
 namespace SeriouslySimplePodcasting\Handlers;
 
@@ -10,28 +17,58 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class Podping_Handler
+ *
+ * Handles notifications to Podping service when podcast feeds are updated.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 class Podping_Handler implements Service {
 
-	const BASE_TOKEN  = 'fUak8QYUE67cT8gM5DxHhQ';
-	const TOKEN_NAME  = 'podping_token';
+	/**
+	 * Base token for Podping authentication.
+	 *
+	 * @var string
+	 */
+	const BASE_TOKEN = 'fUak8QYUE67cT8gM5DxHhQ';
+
+	/**
+	 * Option name for storing the Podping token.
+	 *
+	 * @var string
+	 */
+	const TOKEN_NAME = 'podping_token';
+
+	/**
+	 * Podping service URL.
+	 *
+	 * @var string
+	 */
 	const PODPING_URL = 'https://podping.cloud';
 
 	/**
-	 * @var Log_Helper $logger
-	 * */
+	 * Logger instance.
+	 *
+	 * @var Log_Helper
+	 */
 	protected $logger;
 
 	/**
 	 * Podping_Handler constructor.
+	 *
+	 * @param Log_Helper $logger Logger instance.
 	 */
 	public function __construct( $logger ) {
 		$this->logger = $logger;
 	}
 
 	/**
-	 * @param $feed_url
+	 * Notifies Podping service about a feed update.
 	 *
-	 * @return bool
+	 * @param string $feed_url The URL of the podcast feed.
+	 *
+	 * @return bool True if notification was successful, false otherwise.
 	 */
 	public function notify( $feed_url ) {
 		$this->logger->log( __METHOD__ . sprintf( ': Notify Podping. Feed URL: %s', $feed_url ) );
@@ -84,7 +121,9 @@ class Podping_Handler implements Service {
 	}
 
 	/**
-	 * @return string
+	 * Gets the Podping authentication token.
+	 *
+	 * @return string The authentication token.
 	 */
 	protected function get_token() {
 		$token = get_option( self::TOKEN_NAME );
@@ -100,7 +139,9 @@ class Podping_Handler implements Service {
 	}
 
 	/**
-	 * @return string
+	 * Generates a new Podping authentication token.
+	 *
+	 * @return string The generated authentication token.
 	 */
 	protected function generate_token() {
 		return self::BASE_TOKEN . wp_generate_password( 22, false );

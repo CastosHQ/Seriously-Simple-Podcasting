@@ -6,26 +6,34 @@ use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Repositories\Settings_Config;
 
 /**
- * SSP Settings Handler
+ * Class Settings_Handler
+ *
+ * Handles all plugin settings, including general settings, player settings,
+ * feed settings, security settings, and more.
  *
  * @package Seriously Simple Podcasting
+ * @since 1.0
  */
 class Settings_Handler implements Service {
 
 	/**
+	 * Feed settings fields.
+	 *
 	 * @var array
-	 * */
+	 */
 	protected $feed_fields;
 
 	/**
+	 * Default series term ID.
+	 *
 	 * @var int
-	 * */
+	 */
 	protected $default_series_id;
 
 	/**
-	 * Build settings fields
+	 * Build all settings fields.
 	 *
-	 * @return array Fields to be displayed on settings page.
+	 * @return array Fields to be displayed on settings page, grouped by section.
 	 */
 	public function settings_fields() {
 		$settings = array(
@@ -48,9 +56,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * General settings
+	 * Get general settings configuration.
 	 *
-	 * @return Settings_Config
+	 * @return Settings_Config General settings configuration object.
 	 */
 	public function get_general_settings() {
 		return new Settings_Config(
@@ -61,9 +69,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * General settings
+	 * Get general settings array.
 	 *
-	 * @return array
+	 * @return array General settings array.
 	 */
 	private function _get_general_settings() {
 		global $wp_post_types; // Todo: get rid of global here
@@ -91,9 +99,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * Player settings
+	 * Get feed settings configuration.
 	 *
-	 * @return Settings_Config
+	 * @return Settings_Config Feed settings configuration object.
 	 */
 	public function get_feed_settings() {
 		return new Settings_Config(
@@ -104,9 +112,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * Player settings
+	 * Get feed settings array.
 	 *
-	 * @return array
+	 * @return array Feed settings array.
 	 */
 	public function _get_feed_settings() {
 		// translators: placeholders are simply html tags to break up the content.
@@ -125,9 +133,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * Security settings
+	 * Get security settings configuration.
 	 *
-	 * @return array
+	 * @return array Security settings array.
 	 */
 	public function get_security_settings() {
 		$protection_password_callback = array( $this, 'encode_password' );
@@ -137,14 +145,18 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @return array
+	 * Get import settings configuration.
+	 *
+	 * @return array Import settings array.
 	 */
 	public function get_import_settings() {
 		return ssp_config( 'settings/import' );
 	}
 
 	/**
-	 * @return array|null
+	 * Get integrations settings configuration.
+	 *
+	 * @return array|null Integrations settings array or null if no integrations are available.
 	 */
 	public function get_integrations_settings() {
 		$integrations = ssp_config( 'settings/integrations' );
@@ -158,14 +170,18 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @return array
+	 * Get extensions settings configuration.
+	 *
+	 * @return array Extensions settings array.
 	 */
 	public function get_extensions_settings() {
 		return ssp_config( 'settings/extensions' );
 	}
 
 	/**
-	 * @return Settings_Config
+	 * Get hosting settings configuration.
+	 *
+	 * @return Settings_Config Hosting settings configuration object.
 	 */
 	public function get_hosting_settings() {
 		return new Settings_Config(
@@ -176,7 +192,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @return array
+	 * Get hosting settings array.
+	 *
+	 * @return array Hosting settings array.
 	 */
 	public function _get_hosting_settings() {
 		$podcast_options = $this->get_podcasts_list();
@@ -185,7 +203,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @return array|false
+	 * Get list of podcasts.
+	 *
+	 * @return array|false Array of podcasts or false if none found.
 	 */
 	protected function get_podcasts_list() {
 		$default_podcast_id = $this->default_series_id();
@@ -214,16 +234,18 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @return array
+	 * Get publishing settings configuration.
+	 *
+	 * @return array Publishing settings array.
 	 */
 	public function get_publishing_settings() {
 		return ssp_config( 'settings/publishing' );
 	}
 
 	/**
-	 * Player settings
+	 * Get player settings configuration.
 	 *
-	 * @return Settings_Config
+	 * @return Settings_Config Player settings configuration object.
 	 */
 	public function get_player_settings() {
 		return new Settings_Config(
@@ -234,9 +256,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * Player settings
+	 * Get player settings array.
 	 *
-	 * @return array
+	 * @return array Player settings array.
 	 */
 	private function _get_player_settings() {
 		$player_style             = ssp_get_option( 'player_style', 'larger' );
@@ -256,21 +278,27 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @return bool
+	 * Check if player meta data is enabled.
+	 *
+	 * @return bool True if enabled, false otherwise.
 	 */
 	public function is_player_meta_data_enabled() {
 		return 'on' === ssp_get_option( 'player_meta_data_enabled', 'on' );
 	}
 
 	/**
-	 * @return bool
+	 * Check if player custom colors are enabled.
+	 *
+	 * @return bool True if enabled, false otherwise.
 	 */
 	public function is_player_custom_colors_enabled() {
 		return 'on' === ssp_get_option( 'player_custom_colors_enabled' );
 	}
 
 	/**
-	 * @return array
+	 * Get player color settings.
+	 *
+	 * @return array Player color settings array.
 	 */
 	public function get_player_color_settings() {
 		$settings = ssp_config( 'settings/player-color' );

@@ -5,28 +5,50 @@ namespace SeriouslySimplePodcasting\Handlers;
 use SeriouslySimplePodcasting\Interfaces\Service;
 
 /**
- * SSP Roles Handler
+ * Class Roles_Handler
+ *
+ * Handles WordPress roles and capabilities for podcast management.
  *
  * @package Seriously Simple Podcasting
  */
 class Roles_Handler implements Service {
 
+	/**
+	 * Role name for podcast editors.
+	 *
+	 * @var string
+	 */
 	const PODCAST_EDITOR = 'podcast_editor';
 
+	/**
+	 * Role name for podcast managers.
+	 *
+	 * @var string
+	 */
 	const PODCAST_MANAGER = 'podcast_manager';
 
+	/**
+	 * Capability name for managing podcast settings.
+	 *
+	 * @var string
+	 */
 	const MANAGE_PODCAST = 'manage_podcast';
 
 
+	/**
+	 * Constructor.
+	 *
+	 * Sets up role management hooks and filters.
+	 */
 	public function __construct() {
 		add_action( 'admin_init', array( $this, 'manage_default_roles' ), 1 );
 		add_action( 'activated_plugin', array( $this, 'manage_default_roles' ), 1 );
 
-		// Adds podcast roles
+		// Adds podcast roles.
 		add_filter( 'admin_init', array( $this, 'add_podcast_editor_role' ) );
 		add_filter( 'admin_init', array( $this, 'add_podcast_manager_role' ) );
 
-		// Allows manage_podcast capability to save podcast settings
+		// Allows manage_podcast capability to save podcast settings.
 		add_filter(
 			'option_page_capability_ss_podcasting',
 			function () {
@@ -78,7 +100,7 @@ class Roles_Handler implements Service {
 			return null;
 		}
 
-		// capabilities to get to the admin area and upload files
+		// Capabilities to get to the admin area and upload files.
 		$initial_caps = array(
 			'read'         => true,
 			'upload_files' => true,
@@ -86,7 +108,7 @@ class Roles_Handler implements Service {
 
 		$podcast_caps = $this->get_podcast_capabilities();
 
-		// prepare capabilities to the array('capability' => true) structure
+		// Prepare capabilities to the array('capability' => true) structure.
 		$podcast_caps = array_map(
 			function () {
 				return true;
@@ -120,7 +142,7 @@ class Roles_Handler implements Service {
 			$tax_caps = $this->get_podcast_tax_capabilities();
 			$caps     = array_merge( $caps, $tax_caps );
 
-			// add the possibility to manage the podcast settings
+			// Add the possibility to manage the podcast settings.
 			$caps[ self::MANAGE_PODCAST ] = self::MANAGE_PODCAST;
 
 			$caps = array_unique( $caps );

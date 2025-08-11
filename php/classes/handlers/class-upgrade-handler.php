@@ -7,26 +7,44 @@ use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 
+/**
+ * Class Upgrade_Handler
+ *
+ * Handles plugin upgrades and migrations between versions.
+ * Responsible for running necessary database updates, fixing data inconsistencies,
+ * and ensuring smooth transitions between plugin versions.
+ *
+ * @package Seriously Simple Podcasting
+ */
 class Upgrade_Handler implements Service {
 
 	/**
-	 * @var Episode_Repository $episode_repository
-	 * */
+	 * Episode repository instance.
+	 *
+	 * @var Episode_Repository
+	 */
 	protected $episode_repository;
 
 	/**
-	 * @var Castos_Handler $castos_handler
-	 * */
+	 * Castos handler instance.
+	 *
+	 * @var Castos_Handler
+	 */
 	protected $castos_handler;
 
 	/**
-	 * @var Series_Handler $series_handler
-	 * */
+	 * Series handler instance.
+	 *
+	 * @var Series_Handler
+	 */
 	protected $series_handler;
 
 	/**
-	 * @param Episode_Repository $episode_repository
-	 * @param Castos_Handler     $castos_handler
+	 * Upgrade_Handler constructor.
+	 *
+	 * @param Episode_Repository $episode_repository Episode repository instance.
+	 * @param Castos_Handler    $castos_handler     Castos handler instance.
+	 * @param Series_Handler    $series_handler     Series handler instance.
 	 */
 	public function __construct( $episode_repository, $castos_handler, $series_handler ) {
 		$this->episode_repository = $episode_repository;
@@ -35,9 +53,12 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
-	 * Main upgrade method, called from admin controller
+	 * Main upgrade method, called from admin controller.
+	 * Runs necessary upgrades based on the previous version.
 	 *
-	 * @param $previous_version
+	 * @param string $previous_version Previous plugin version.
+	 *
+	 * @return void
 	 */
 	public function run_upgrades( $previous_version ) {
 		if ( version_compare( $previous_version, '1.13.1', '<' ) ) {
@@ -86,6 +107,8 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
+	 * Registers upgrade action hooks.
+	 *
 	 * @return void
 	 */
 	public function run_upgrade_actions() {
@@ -93,9 +116,11 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
-	 * Update enclosures.
-	 * Since version 2.20.0, we need to update enclosures to get rid of AWS files.
-	 * */
+	 * Schedule fixing episodes sync status.
+	 * Since version 2.23.0, we need to fix episodes sync status.
+	 *
+	 * @return void
+	 */
 	public function schedule_fixing_episodes_sync() {
 		ignore_user_abort( true );
 		if ( ! ssp_is_connected_to_castos() ) {
@@ -111,8 +136,10 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
-	 * @param Failed_Sync_Episode[] $episodes
-	 * @param string                $status
+	 * Set sync status for multiple episodes.
+	 *
+	 * @param Failed_Sync_Episode[] $episodes Array of failed sync episodes.
+	 * @param string               $status   New sync status to set.
 	 *
 	 * @return void
 	 */
@@ -123,6 +150,8 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
+	 * Schedule the fix episodes sync event.
+	 *
 	 * @return void
 	 */
 	protected function schedule_fix_episodes_sync_event() {
@@ -133,8 +162,13 @@ class Upgrade_Handler implements Service {
 
 
 	/**
+	 * Fix episodes sync status.
+	 * Called by the scheduled event set up in schedule_fixing_episodes_sync().
+	 *
 	 * @see self::schedule_fixing_episodes_sync()
-	 * */
+	 *
+	 * @return void
+	 */
 	public function fix_episodes_sync() {
 		if ( $episodes = $this->episode_repository->get_failed_sync_episodes_option() ) {
 			$this->schedule_fix_episodes_sync_event();
@@ -192,9 +226,11 @@ class Upgrade_Handler implements Service {
 
 
 	/**
-	 * Update enclosures.
+	 * Update enclosures to remove AWS file references.
 	 * Since version 2.20.0, we need to update enclosures to get rid of AWS files.
-	 * */
+	 *
+	 * @return void
+	 */
 	public function update_enclosures() {
 		ignore_user_abort( true );
 		$episode_ids = ssp_episode_ids();
@@ -218,12 +254,18 @@ class Upgrade_Handler implements Service {
 
 
 	/**
-	 * Variants:
-	 * https://seriouslysimplepodcasting.s3.amazonaws.com/One-Sensitive/Intro.m4a -> https://episodes.castos.com/One-Sensitive/Intro.m4a
-	 * https://s3.amazonaws.com/seriouslysimplepodcasting/spotfight/WWE-SmackDown-Review-ABSTURZ-18.10.19.mp3 -> https://episodes.castos.com/spotfight/WWE-SmackDown-Review-ABSTURZ-18.10.19.mp3
-	 * https://s3.us-west-001.backblazeb2.com/seriouslysimplepodcasting/thegatheringpodcast/In-suffering-take-2.mp3 -> https://episodes.castos.com/thegatheringpodcast/In-suffering-take-2.mp3
-	 * https://episodes.seriouslysimplepodcasting.com/djreecepodcast/9PMCheckIn5-22-2017.mp3 -> https://episodes.castos.com/djreecepodcast/9PMCheckIn5-22-2017.mp3
-	 * */
+	 * Get updated enclosure URL by replacing old storage domains with episodes.castos.com.
+	 *
+	 * Example URL transformations:
+	 * - seriouslysimplepodcasting.s3.amazonaws.com/file.mp3 -> episodes.castos.com/file.mp3
+	 * - s3.amazonaws.com/seriouslysimplepodcasting/file.mp3 -> episodes.castos.com/file.mp3
+	 * - s3.us-west-001.backblazeb2.com/seriouslysimplepodcasting/file.mp3 -> episodes.castos.com/file.mp3
+	 * - episodes.seriouslysimplepodcasting.com/file.mp3 -> episodes.castos.com/file.mp3
+	 *
+	 * @param string $enclosure Original enclosure URL.
+	 *
+	 * @return string Updated enclosure URL.
+	 */
 	public function get_updated_enclosure_url( $enclosure ) {
 
 		$replacements = array(
@@ -244,7 +286,10 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
-	 * Adds the ss_podcasting_subscribe_options array to the options table
+	 * Adds the ss_podcasting_subscribe_options array to the options table.
+	 * Sets up default subscribe options for various podcast platforms.
+	 *
+	 * @return void
 	 */
 	public function upgrade_subscribe_links_options() {
 		$subscribe_links_options = array(
@@ -258,7 +303,9 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
-	 * Fixes an incorrectly spelled subscribe option
+	 * Fixes an incorrectly spelled Stitcher subscribe option.
+	 *
+	 * @return void
 	 */
 	public function upgrade_stitcher_subscribe_link_option() {
 		$subscribe_links_options = get_option( 'ss_podcasting_subscribe_options', array() );
@@ -269,14 +316,20 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
-	 * Adds the default episode_description option
+	 * Adds the default episode_description option.
+	 * Sets 'excerpt' as the default episode description type.
+	 *
+	 * @return void
 	 */
 	public function add_default_episode_description_option() {
 		update_option( 'ss_podcasting_episode_description', 'excerpt' );
 	}
 
 	/**
-	 * Update the ss_podcasting_podmotor_account_id value to trigger the API credential validation notification
+	 * Update the ss_podcasting_podmotor_account_id value.
+	 * Triggers the API credential validation notification by setting a new version value.
+	 *
+	 * @return void
 	 */
 	public function clear_castos_api_credentials() {
 		if ( ! ssp_is_connected_to_castos() ) {
@@ -290,7 +343,10 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
-	 * Update or create the ss_podcasting_elementor_templates_disabled option, to show the admin notice if it's off
+	 * Update or create the ss_podcasting_elementor_templates_disabled option.
+	 * Shows the admin notice if Elementor templates are disabled.
+	 *
+	 * @return void
 	 */
 	public function enable_elementor_template_notice() {
 		if ( ! ssp_is_elementor_ok() ) {
@@ -304,7 +360,10 @@ class Upgrade_Handler implements Service {
 	}
 
 	/**
-	 * Update or create the ss_podcasting_distribution_upgrade_disabled option, to show the admin notice if it's off
+	 * Update or create the ss_podcasting_distribution_upgrade_disabled option.
+	 * Shows the admin notice if distribution upgrade is disabled.
+	 *
+	 * @return void
 	 */
 	public function enable_distribution_upgrade_notice() {
 		$ss_podcasting_distribution_upgrade_disabled = get_option( 'ss_podcasting_distribution_upgrade_disabled', 'false' );

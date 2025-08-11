@@ -1,4 +1,13 @@
 <?php
+/**
+ * Castos Handler
+ *
+ * Handles all interactions with the Castos API.
+ *
+ * @package SeriouslySimplePodcasting
+ * @category Handlers
+ * @author Castos
+ */
 
 namespace SeriouslySimplePodcasting\Handlers;
 
@@ -17,22 +26,49 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * Class Castos_Handler
+ *
+ * Handles all interactions with the Castos API, including podcast syncing,
+ * episode management, and subscriber management.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 class Castos_Handler implements Service {
 
 	/**
+	 * Minimum image size in pixels for episode cover images.
+	 *
 	 * @const int
 	 */
 	const MIN_IMG_SIZE = 300;
 
 	/**
+	 * API request timeout in seconds.
+	 *
 	 * @const int
-	 * */
+	 */
 	const TIMEOUT = 45;
 
+	/**
+	 * Option name for storing the Castos account email.
+	 *
+	 * @const string
+	 */
 	const API_EMAIL_OPTION = 'ss_podcasting_podmotor_account_email';
 
+	/**
+	 * Option name for storing the Castos API token.
+	 *
+	 * @const string
+	 */
 	const API_TOKEN_OPTION = 'ss_podcasting_podmotor_account_api_token';
 
+	/**
+	 * Transient name for storing cached podcasts data.
+	 *
+	 * @const string
+	 */
 	const TRANSIENT_PODCASTS = 'ssp_castos_podcasts';
 
 	/**
@@ -81,7 +117,7 @@ class Castos_Handler implements Service {
 	 *
 	 * @param Feed_Handler                $feed_handler
 	 * @param Log_Helper                  $log_helper
-	 * @param Admin_Notifications_Handler $log_helper
+	 * @param Admin_Notifications_Handler $notifications_handler
 	 */
 	public function __construct( $feed_handler, $log_helper, $notifications_handler ) {
 		$this->feed_handler          = $feed_handler;

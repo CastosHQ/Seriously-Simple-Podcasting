@@ -1,16 +1,29 @@
 <?php
+/**
+ * Options Handler
+ *
+ * @package SeriouslySimplePodcasting
+ * @category Handlers
+ */
 
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
 
 /**
- * SSP Options Handler
+ * Class Options_Handler
+ *
+ * Handles podcast distribution options and subscribe URLs.
  *
  * @package Seriously Simple Podcasting
  */
 class Options_Handler implements Service {
 
+	/**
+	 * List of available podcast distribution platforms.
+	 *
+	 * @var array
+	 */
 	public $available_subscribe_options = array(
 		'acast'            => 'Acast',
 		'amazon'           => 'Amazon',
@@ -112,7 +125,7 @@ class Options_Handler implements Service {
 
 	/**
 	 * Builds the array of field settings for the subscribe links, based on the options stored in the options table.
-	 * // @todo this is duplicated from the settings handler, so it should probably be placed in it's own class somewhere
+	 * @todo This is duplicated from the settings handler, so it should probably be placed in its own class somewhere.
 	 *
 	 * @return array
 	 */
@@ -134,12 +147,12 @@ class Options_Handler implements Service {
 	}
 
 	/**
-	 * Get the subscribe urls for an episode
+	 * Get the subscribe URLs for an episode.
 	 *
-	 * @param $episode_id
-	 * @param $context
+	 * @param int    $episode_id The episode ID.
+	 * @param string $context    The context in which the URLs will be used.
 	 *
-	 * @return mixed|void
+	 * @return array Array of subscribe URLs and their details.
 	 */
 	public function get_subscribe_urls( $episode_id, $context ) {
 		$terms             = get_the_terms( $episode_id, ssp_series_taxonomy() );
@@ -173,9 +186,9 @@ class Options_Handler implements Service {
 	}
 
 	/**
-	 * Gather the legacy subscribe links for a CSV export
+	 * Gather the legacy subscribe links for a CSV export.
 	 *
-	 * @return array $subscribe_links
+	 * @return array Array containing headers and subscribe links for each feed.
 	 */
 	public function get_old_subscribe_url_data() {
 		$subscribe_options = get_option( 'ss_podcasting_subscribe_options', array() );
@@ -220,7 +233,9 @@ class Options_Handler implements Service {
 	}
 
 	/**
-	 * Gather the existing subscribe data and send to the browser as a csv download
+	 * Gather the existing subscribe data and send to the browser as a CSV download.
+	 *
+	 * @return void
 	 */
 	public function send_old_subscribe_links_to_browser_download() {
 		$file_data = $this->store_old_subscribe_links_to_a_file();
@@ -238,9 +253,9 @@ class Options_Handler implements Service {
 	}
 
 	/**
-	 * Export the current subscribe links to a csv file
+	 * Export the current subscribe links to a CSV file.
 	 *
-	 * @return array $file_data
+	 * @return array Array containing export file path and URL.
 	 */
 	public function store_old_subscribe_links_to_a_file() {
 		$subscribe_links_data = $this->get_old_subscribe_url_data();

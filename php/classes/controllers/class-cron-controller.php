@@ -1,4 +1,9 @@
 <?php
+/**
+ * Cron controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -14,25 +19,33 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * SSP Episode Controller
+ * Cron Controller
+ *
+ * Handles scheduled tasks and cron events for podcast episodes.
  *
  * @package Seriously Simple Podcasting
  */
 class Cron_Controller {
 
 	/**
-	 * @var Castos_Handler $castos_handler
-	 * */
+	 * Castos handler instance.
+	 *
+	 * @var Castos_Handler
+	 */
 	protected $castos_handler;
 
 	/**
-	 * @var Episode_Repository $episodes_respository
-	 * */
+	 * Episode repository instance.
+	 *
+	 * @var Episode_Repository
+	 */
 	protected $episodes_respository;
 
 	/**
-	 * @var Upgrade_Handler $upgrade_handler
-	 * */
+	 * Upgrade handler instance.
+	 *
+	 * @var Upgrade_Handler
+	 */
 	protected $upgrade_handler;
 
 	const SYNC_SCHEDULE_META = 'podmotor_schedule_upload';
@@ -42,9 +55,11 @@ class Cron_Controller {
 	const MAX_ATTEMPTS = 3;
 
 	/**
-	 * @param Castos_Handler     $castos_handler
-	 * @param Episode_Repository $episodes_respository
-	 * @param Upgrade_Handler    $upgrade_handler
+	 * Cron_Controller constructor.
+	 *
+	 * @param Castos_Handler     $castos_handler       Handler for Castos API interactions.
+	 * @param Episode_Repository $episodes_respository Repository for episode data operations.
+	 * @param Upgrade_Handler    $upgrade_handler      Handler for upgrade operations.
 	 */
 	public function __construct( $castos_handler, $episodes_respository, $upgrade_handler ) {
 
@@ -59,6 +74,8 @@ class Cron_Controller {
 	}
 
 	/**
+	 * Registers cron action hooks.
+	 *
 	 * @return void
 	 */
 	protected function run_actions() {
@@ -67,21 +84,28 @@ class Cron_Controller {
 	}
 
 	/**
-	 * @param array $schedules
+	 * Adds custom cron intervals.
 	 *
-	 * @return array
+	 * @param array $schedules Existing cron schedules.
+	 *
+	 * @return array Modified cron schedules.
 	 */
 	public function add_cron_intervals( $schedules ) {
 		if ( empty( $schedules['ssp_five_minutes'] ) ) {
 			$schedules['ssp_five_minutes'] = array(
 				'interval' => 5 * MINUTE_IN_SECONDS,
-				'display'  => __( 'SSP every five minutes' ),
+				'display'  => __( 'SSP every five minutes', 'seriously-simple-podcasting' ),
 			);
 		}
 
 		return $schedules;
 	}
 
+	/**
+	 * Schedules cron events if not already scheduled.
+	 *
+	 * @return void
+	 */
 	public function schedule_events() {
 		if ( ! wp_next_scheduled( 'ssp_cron_hook' ) ) {
 			wp_schedule_event( time(), 'hourly', 'ssp_cron_hook' );
@@ -92,7 +116,9 @@ class Cron_Controller {
 	}
 
 	/**
-	 * @return int Number of uploaded episodes
+	 * Uploads scheduled episodes to Castos.
+	 *
+	 * @return int Number of uploaded episodes.
 	 */
 	public function upload_scheduled_episodes() {
 		$uploaded = 0;
@@ -118,7 +144,7 @@ class Cron_Controller {
 			if ( 404 == $response->code ) {
 				$castos_episode_id = get_post_meta( $episode->ID, 'podmotor_episode_id', true );
 
-				// File does not exist anymore, remove connection
+				// File does not exist anymore, remove connection.
 				if ( $castos_episode_id ) {
 					delete_post_meta( $episode->ID, 'podmotor_episode_id' );
 					delete_post_meta( $episode->ID, 'podmotor_file_id' );
@@ -136,6 +162,13 @@ class Cron_Controller {
 		return $uploaded;
 	}
 
+	/**
+	 * Unschedules an episode from sync queue.
+	 *
+	 * @param int $episode_id Episode ID to unschedule.
+	 *
+	 * @return void
+	 */
 	protected function unschedule_episode( $episode_id ) {
 		delete_post_meta( $episode_id, self::SYNC_SCHEDULE_META );
 	}

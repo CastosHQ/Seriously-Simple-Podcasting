@@ -1,4 +1,9 @@
 <?php
+/**
+ * Admin controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -24,11 +29,15 @@ class Admin_Controller {
 	use URL_Helper;
 
 	/**
+	 * Renderer instance.
+	 *
 	 * @var Renderer
 	 */
 	public $renderer;
 
 	/**
+	 * Castos handler instance.
+	 *
 	 * @var Castos_Handler
 	 */
 	private $castos_handler;

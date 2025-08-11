@@ -5,6 +5,8 @@
 	<!-- What to scan -->
 	<file>.</file>
 	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/tests/</exclude-pattern>
+	<exclude-pattern>/node_modules/</exclude-pattern>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
@@ -32,8 +34,14 @@
 			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
 			<property name="prefixes" type="array">
 				<element key="0" value="seriously-simple-podcasting"/>
+				<element key="1" value="SSP"/>
+				<element key="2" value="SeriouslySimplePodcasting"/>
 			</property>
 		</properties>
+		<!-- Exclude constants as SSP prefix is legacy and widely used -->
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed"/>
+		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.InvalidPrefixPassed"/>
 	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>

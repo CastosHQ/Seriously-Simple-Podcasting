@@ -1,4 +1,9 @@
 <?php
+/**
+ * Assets controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -21,7 +26,9 @@ class Assets_Controller {
 	use Useful_Variables;
 	use URL_Helper;
 
-
+	/**
+	 * Assets_Controller constructor.
+	 */
 	public function __construct() {
 		$this->init_useful_variables();
 
@@ -29,12 +36,19 @@ class Assets_Controller {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_styles' ) );
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_scripts' ) );
 
-		// Register HTML5 player scripts and styles
+		// Register HTML5 player scripts and styles.
 		add_action( 'wp_enqueue_scripts', array( $this, 'register_html5_player_assets' ) );
 
 		add_filter( 'admin_body_class', array( $this, 'maybe_add_ssp_admin_body_class' ) );
 	}
 
+	/**
+	 * Adds SSP admin body class when on SSP pages.
+	 *
+	 * @param string $class Current body classes.
+	 *
+	 * @return string Modified body classes.
+	 */
 	public function maybe_add_ssp_admin_body_class( $class ) {
 		if ( $this->is_ssp_admin_page() || $this->is_ssp_podcast_page() ) {
 			$class .= ' ssp-admin';
@@ -44,9 +58,11 @@ class Assets_Controller {
 	}
 
 	/**
-	 * Used to load the HTML5 player scripts and styles
-	 * Only load this if the HTML5 player is enabled in the plugin
-	 * Additionally, if we're rendering a post or page which includes a player block, enqueue the player assets
+	 * Used to load the HTML5 player scripts and styles.
+	 * Only load this if the HTML5 player is enabled in the plugin.
+	 * Additionally, if we're rendering a post or page which includes a player block, enqueue the player assets.
+	 *
+	 * @return void
 	 */
 	public function register_html5_player_assets() {
 		/**
@@ -63,7 +79,9 @@ class Assets_Controller {
 
 
 	/**
-	 * Load admin CSS
+	 * Load admin CSS.
+	 *
+	 * @param string $hook Current admin page hook.
 	 *
 	 * @return void
 	 */
@@ -75,7 +93,7 @@ class Assets_Controller {
 		wp_register_style( 'ssp-admin', esc_url( $this->assets_url . 'admin/css/admin' . $this->script_suffix . '.css' ), array(), $this->version );
 		wp_enqueue_style( 'ssp-admin' );
 
-		// Datepicker
+		// Datepicker.
 		wp_register_style( 'jquery-ui-datepicker-wp', esc_url( $this->assets_url . 'css/datepicker' . $this->script_suffix . '.css' ), array(), $this->version );
 		wp_enqueue_style( 'jquery-ui-datepicker-wp' );
 
@@ -83,23 +101,23 @@ class Assets_Controller {
 		wp_enqueue_style( 'ssp-select2-css' );
 
 		/**
-		 * Only load the peekabar styles when adding/editing podcasts
+		 * Only load the peekabar styles when adding/editing podcasts.
 		 */
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			global $post;
-			if ( in_array( $post->post_type, ssp_post_types() ) ) {
+			if ( in_array( $post->post_type, ssp_post_types(), true ) ) {
 				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery-peekabar' . $this->script_suffix . '.css' ), array(), $this->version );
 				wp_enqueue_style( 'jquery-peekabar' );
 			}
 		}
 
 		/**
-		 * Only load the jquery-ui CSS when the import settings screen is loaded
+		 * Only load the jquery-ui CSS when the import settings screen is loaded.
 		 *
 		 * @todo load this locally perhaps? and only the progress bar stuff?
 		 */
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
-			// wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version  );
+			// wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version ).
 
 			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness' . $this->script_suffix . '.css' ), array(), $this->version );
 			wp_enqueue_style( 'jquery-ui-smoothness' );
@@ -111,7 +129,9 @@ class Assets_Controller {
 
 
 	/**
-	 * Load admin JS
+	 * Load admin JS.
+	 *
+	 * @param string $hook Current admin page hook.
 	 *
 	 * @return void
 	 */
@@ -148,17 +168,17 @@ class Assets_Controller {
 
 		// Only enqueue the WordPress Media Library picker for adding and editing SSP tags/terms post types.
 		if ( 'edit-tags.php' === $hook || 'term.php' === $hook ) {
-			if ( ssp_series_taxonomy() === $_REQUEST['taxonomy'] ) {
+			if ( isset( $_REQUEST['taxonomy'] ) && ssp_series_taxonomy() === $_REQUEST['taxonomy'] ) {
 				wp_enqueue_media();
 			}
 		}
 
 		/**
-		 * Only load the upload scripts when adding/editing posts/podcasts
+		 * Only load the upload scripts when adding/editing posts/podcasts.
 		 */
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
 			global $post;
-			if ( in_array( $post->post_type, ssp_post_types() ) ) {
+			if ( in_array( $post->post_type, ssp_post_types(), true ) ) {
 				wp_enqueue_script( 'plupload-all' );
 				$upload_credentials = ssp_setup_upload_credentials();
 				wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );
@@ -170,7 +190,7 @@ class Assets_Controller {
 		}
 
 		/**
-		 * Only load the import js when the import settings screen is loaded
+		 * Only load the import js when the import settings screen is loaded.
 		 */
 		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
 			wp_register_script(
@@ -187,13 +207,20 @@ class Assets_Controller {
 	}
 
 
+	/**
+	 * Determines if admin scripts are needed for the current hook.
+	 *
+	 * @param string $hook Current admin page hook.
+	 *
+	 * @return bool True if scripts are needed, false otherwise.
+	 */
 	protected function need_admin_scripts( $hook ) {
 		$screen = get_current_screen();
 		$ssp    = ssp_post_types();
 
-		return ( in_array( $screen->post_type, $ssp ) && 'post.php' === $hook ) ||
-				( in_array( $screen->post_type, $ssp ) && 'post-new.php' === $hook ) ||
-				( in_array( $screen->post_type, $ssp ) && 'edit.php' === $hook ) ||
+		return ( in_array( $screen->post_type, $ssp, true ) && 'post.php' === $hook ) ||
+				( in_array( $screen->post_type, $ssp, true ) && 'post-new.php' === $hook ) ||
+				( in_array( $screen->post_type, $ssp, true ) && 'edit.php' === $hook ) ||
 				strpos( $hook, 'ssp-onboarding' ) ||
 				$this->is_ssp_admin_page() ||
 				( 'term.php' === $hook && ( ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) ) );

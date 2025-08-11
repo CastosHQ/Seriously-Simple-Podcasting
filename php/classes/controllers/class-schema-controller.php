@@ -1,4 +1,9 @@
 <?php
+/**
+ * Schema controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -22,12 +27,16 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Schema_Controller {
 
 	/**
+	 * Episode repository instance.
+	 *
 	 * @var Episode_Repository
-	 * */
+	 */
 	protected $episode_repository;
 
 	/**
-	 * @param Episode_Repository $episode_repository
+	 * Constructor.
+	 *
+	 * @param Episode_Repository $episode_repository Episode repository instance.
 	 */
 	public function __construct( $episode_repository ) {
 		$this->episode_repository = $episode_repository;
@@ -39,7 +48,7 @@ class Schema_Controller {
 	/**
 	 * Adds pieces to the Yoast SEO graph
 	 *
-	 * @param array $data
+	 * @param array $data Graph pieces data.
 	 *
 	 * @return array
 	 */

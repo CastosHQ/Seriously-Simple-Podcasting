@@ -1,4 +1,9 @@
 <?php
+/**
+ * Widgets controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -26,7 +31,7 @@ class Widgets_Controller extends Controller {
 	 * Constructor
 	 *
 	 * @param string $file Plugin base file.
-	 * @param string $version Plugin version number
+	 * @param string $version Plugin version number.
 	 */
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
@@ -38,7 +43,7 @@ class Widgets_Controller extends Controller {
 	 * Register all relevant front end hooks and filters
 	 */
 	public function register_hooks_and_filters() {
-		// Register widgets
+		// Register widgets.
 		add_action( 'widgets_init', array( $this, 'register_widgets' ) );
 	}
 

@@ -1,12 +1,17 @@
 <?php
+/**
+ * Feed controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
-// Exit if accessed directly.
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
+// Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
@@ -24,29 +29,31 @@ class Feed_Controller {
 	use Useful_Variables;
 
 	/**
-	 * File name of the feed template
+	 * File name of the feed template.
 	 *
 	 * @var string
-	 * */
+	 */
 	public $feed_file_name = 'feed-podcast.php';
 
 	/**
-	 * Feed handler
+	 * Feed handler instance.
 	 *
 	 * @var Feed_Handler
-	 * */
+	 */
 	protected $feed_handler;
 
 	/**
+	 * Renderer instance.
+	 *
 	 * @var Renderer
-	 * */
+	 */
 	protected $renderer;
 
 	/**
-	 * Admin_Controller constructor.
+	 * Feed_Controller constructor.
 	 *
-	 * @param Feed_Handler $feed_handler
-	 * @param Renderer     $renderer
+	 * @param Feed_Handler $feed_handler Handler for feed operations.
+	 * @param Renderer     $renderer     Renderer instance for rendering views.
 	 */
 	public function __construct( $feed_handler, $renderer ) {
 		$this->init_useful_variables();

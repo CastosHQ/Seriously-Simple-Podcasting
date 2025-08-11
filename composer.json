@@ -31,5 +31,11 @@
     "codeception/module-asserts": "^2.0",
     "squizlabs/php_codesniffer": "^3.0",
     "wp-coding-standards/wpcs": "^3.2"
+  },
+  "scripts": {
+    "phpcs": "phpcs --report=summary",
+    "phpcbf": "phpcbf --report=summary",
+    "phpcs:full": "phpcs --report=full",
+    "phpcs:check": "phpcs --report=summary --standard=.phpcs.xml.dist"
   }
 }

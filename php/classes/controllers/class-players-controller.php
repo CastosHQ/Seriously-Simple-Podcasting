@@ -1,4 +1,9 @@
 <?php
+/**
+ * Players controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -25,24 +30,32 @@ class Players_Controller {
 	use Useful_Variables;
 
 	/**
+	 * Renderer instance.
+	 *
 	 * @var Renderer
-	 * */
+	 */
 	public $renderer;
 
 	/**
+	 * Options handler instance.
+	 *
 	 * @var Options_Handler
-	 * */
+	 */
 	public $options_handler;
 
 	/**
+	 * Episode repository instance.
+	 *
 	 * @var Episode_Repository
-	 * */
+	 */
 	public $episode_repository;
 
 	/**
-	 * @param Renderer           $renderer
-	 * @param Options_Handler    $options_handler
-	 * @param Episode_Repository $episode_repository
+	 * Players_Controller constructor.
+	 *
+	 * @param Renderer           $renderer           Renderer instance for rendering views.
+	 * @param Options_Handler    $options_handler    Handler for plugin options.
+	 * @param Episode_Repository $episode_repository Repository for episode data operations.
 	 */
 	public function __construct( $renderer, $options_handler, $episode_repository ) {
 		$this->renderer           = $renderer;
@@ -54,7 +67,7 @@ class Players_Controller {
 	}
 
 	/**
-	 * Registers player assets
+	 * Registers player assets.
 	 *
 	 * @return void
 	 */

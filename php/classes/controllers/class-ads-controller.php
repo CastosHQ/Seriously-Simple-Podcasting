@@ -1,4 +1,9 @@
 <?php
+/**
+ * Ads controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -22,10 +27,17 @@ class Ads_Controller {
 	const ENABLE_ADS_OPTION = 'enable_ads';
 
 	/**
-	 * @var Castos_Handler $castos_handler
-	 * */
+	 * Castos handler instance.
+	 *
+	 * @var Castos_Handler
+	 */
 	protected $castos_handler;
 
+	/**
+	 * Ads_Controller constructor.
+	 *
+	 * @param Castos_Handler $castos_handler Handler for Castos API interactions.
+	 */
 	public function __construct( $castos_handler ) {
 		$this->castos_handler = $castos_handler;
 
@@ -36,7 +48,7 @@ class Ads_Controller {
 
 	/**
 	 * Check ads settings by WP Cron once a day.
-	 * */
+	 */
 	public function check_ads_settings() {
 		if ( ! ssp_is_connected_to_castos() ) {
 			return;
@@ -54,9 +66,9 @@ class Ads_Controller {
 	/**
 	 * Show ads settings if SSP is connected to Castos.
 	 *
-	 * @param $fields
+	 * @param array $fields Feed settings fields.
 	 *
-	 * @return mixed
+	 * @return array
 	 */
 	public function maybe_show_ads_settings( $fields ) {
 
@@ -67,6 +79,7 @@ class Ads_Controller {
 		);
 
 		if ( ! ssp_is_connected_to_castos() ) {
+			/* translators: %s is the URL to learn more about Castos advertising. */
 			$show_ads['description'] = sprintf(
 				__(
 					'Monetize your podcast today when you partner with Castos for podcast hosting. <a target="_blank" href="%s">Learn more.</a>',
@@ -81,6 +94,7 @@ class Ads_Controller {
 		}
 
 		if ( ! $this->is_ads_enabled_in_castos() ) {
+			/* translators: %s is the URL to learn more about enabling Castos ads. */
 			$show_ads['description'] = sprintf(
 				__(
 					'Enable Ads in your Castos account first to get set up. <a target="_blank" href="%s">Learn more.</a>',
@@ -150,13 +164,13 @@ class Ads_Controller {
 	}
 
 	/**
-	 * Replaces current enclosure with ads enclosure
+	 * Replaces current enclosure with ads enclosure.
 	 *
-	 * @param $enclosure
-	 * @param $episode_id
+	 * @param string $enclosure  Original enclosure URL.
+	 * @param int    $episode_id Episode ID.
 	 *
-	 * @return mixed|string
-	 * @throws \Exception
+	 * @return string Modified or original enclosure URL.
+	 * @throws \Exception When episode file data retrieval fails.
 	 */
 	public function maybe_use_ads( $enclosure, $episode_id ) {
 
@@ -180,10 +194,12 @@ class Ads_Controller {
 	}
 
 	/**
-	 * @param int $episode_id
+	 * Gets episode file data from Castos API.
 	 *
-	 * @return Episode_File_Data
-	 * @throws \Exception
+	 * @param int $episode_id Episode ID.
+	 *
+	 * @return Episode_File_Data Episode file data object.
+	 * @throws \Exception When API call fails.
 	 */
 	protected function get_episode_file_data( $episode_id ) {
 		$transient = 'ssp_episode_ads_file_' . $episode_id;
@@ -203,11 +219,11 @@ class Ads_Controller {
 	}
 
 	/**
-	 * Checks if ads enabled for current episode podcast
+	 * Checks if ads enabled for current episode podcast.
 	 *
-	 * @param int $episode_id
+	 * @param int $episode_id Episode ID.
 	 *
-	 * @return bool
+	 * @return bool True if ads are enabled, false otherwise.
 	 */
 	protected function is_episode_ads_enabled( $episode_id ) {
 		$series_id = $this->get_episode_series_id( $episode_id );
@@ -216,11 +232,11 @@ class Ads_Controller {
 	}
 
 	/**
-	 * Checks if ads enabled for series
+	 * Checks if ads enabled for series.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series ID.
 	 *
-	 * @return bool
+	 * @return bool True if ads are enabled, false otherwise.
 	 */
 	protected function is_series_ads_enabled( $series_id ) {
 		return (bool) ssp_get_option( self::ENABLE_ADS_OPTION, false, $series_id );
@@ -228,20 +244,22 @@ class Ads_Controller {
 
 
 	/**
-	 * @param int $series_id
+	 * Disables ads for a series.
 	 *
-	 * @return bool
+	 * @param int $series_id Series ID.
+	 *
+	 * @return bool True on success, false on failure.
 	 */
 	protected function disable_series_ads( $series_id ) {
 		return ssp_update_option( self::ENABLE_ADS_OPTION, '', $series_id );
 	}
 
 	/**
-	 * Gets episode podcast ID, 0 for default one
+	 * Gets episode podcast ID, 0 for default one.
 	 *
-	 * @param $episode_id
+	 * @param int $episode_id Episode ID.
 	 *
-	 * @return int
+	 * @return int Series ID or 0 for default.
 	 */
 	protected function get_episode_series_id( $episode_id ) {
 		$episode_podcasts = ssp_get_episode_podcasts( $episode_id );

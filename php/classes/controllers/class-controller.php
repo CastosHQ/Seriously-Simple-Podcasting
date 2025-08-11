@@ -1,4 +1,9 @@
 <?php
+/**
+ * Main controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -99,6 +104,12 @@ abstract class Controller {
 	 */
 	public $plugin_slug;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string $file    Plugin file path.
+	 * @param string $version Plugin version.
+	 */
 	public function __construct( $file, $version ) {
 		$this->version       = $version;
 		$this->dir           = dirname( $file );

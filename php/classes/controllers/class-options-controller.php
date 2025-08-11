@@ -1,31 +1,49 @@
 <?php
+/**
+ * Options controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 
+/**
+ * Options Controller
+ *
+ * Handles plugin options and settings management.
+ *
+ * @package Seriously Simple Podcasting
+ */
 class Options_Controller extends Controller {
 
 	/**
+	 * Options handler instance.
+	 *
 	 * @var Options_Handler
 	 */
 	protected $options_handler;
 
 	/**
+	 * Options base prefix.
+	 *
 	 * @var string
 	 */
 	protected $options_base;
 
 	/**
+	 * Plugin options array.
+	 *
 	 * @var array
 	 */
 	protected $options;
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
-	 * @param string $file Plugin base file.
-	 * @param string $version Plugin version
+	 * @param string $file    Plugin base file.
+	 * @param string $version Plugin version.
 	 */
 	public function __construct( $file, $version ) {
 		parent::__construct( $file, $version );
@@ -38,9 +56,14 @@ class Options_Controller extends Controller {
 		$this->register_hooks_and_filters();
 	}
 
+	/**
+	 * Registers hooks and filters for the options controller.
+	 *
+	 * @return void
+	 */
 	public function register_hooks_and_filters() {
 
-		// load the options from the Options Handler
+		// Load the options from the Options Handler.
 		add_action( 'init', array( $this, 'load_options' ), 11 );
 
 		// Register podcast options.

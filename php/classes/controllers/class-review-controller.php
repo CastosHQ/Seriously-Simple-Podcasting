@@ -1,16 +1,15 @@
 <?php
+/**
+ * Review controller class file.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
-
-/**
- * SSP Settings
- *
- * @package Seriously Simple Podcasting
- */
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -46,19 +45,24 @@ class Review_Controller {
 
 
 	/**
+	 * Admin notifications handler instance.
+	 *
 	 * @var Admin_Notifications_Handler
-	 * */
+	 */
 	protected $notices_handler;
 
 	/**
+	 * Renderer instance.
+	 *
 	 * @var Renderer
-	 * */
+	 */
 	protected $renderer;
 
 	/**
 	 * Review_Controller constructor.
 	 *
-	 * @param Admin_Notifications_Handler $notices_handler
+	 * @param Admin_Notifications_Handler $notices_handler Handler for admin notifications.
+	 * @param Renderer                    $renderer        Renderer instance for rendering views.
 	 */
 	public function __construct( $notices_handler, $renderer ) {
 		if ( ! is_admin() || ! $this->is_podcast_related_request() ) {
@@ -127,7 +131,9 @@ class Review_Controller {
 
 	/**
 	 * Init frontend part.
-	 * */
+	 *
+	 * @return void
+	 */
 	public function init_frontend() {
 		if ( ! $this->check_review_notice_status() ) {
 			return;
@@ -144,7 +150,9 @@ class Review_Controller {
 
 	/**
 	 * Checks if we need to show the review request or not, and schedules the showing if needed.
-	 * */
+	 *
+	 * @return bool True if notice should be shown, false otherwise.
+	 */
 	public function check_review_notice_status() {
 		$status = ssp_get_option( self::REVIEW_STATUS_OPTION );
 
@@ -165,14 +173,19 @@ class Review_Controller {
 
 	/**
 	 * Displays review notice.
-	 * */
+	 *
+	 * @return void
+	 */
 	public function display_review_notice() {
 		$this->renderer->render( 'review-notice' );
 	}
 
 	/**
 	 * Disables review notice.
-	 * */
+	 *
+	 * @param string $status Review status to set.
+	 * @return void
+	 */
 	protected function update_review_status( $status ) {
 		ssp_update_option( self::REVIEW_STATUS_OPTION, $status );
 	}

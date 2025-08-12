@@ -1,4 +1,10 @@
 <?php
+/**
+ * Episode Repository class.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 2.4.3
+ */
 
 namespace SeriouslySimplePodcasting\Repositories;
 
@@ -25,20 +31,39 @@ class Episode_Repository implements Service {
 
 	use Useful_Variables;
 
+	/**
+	 * Meta sync status constant.
+	 *
+	 * @var string
+	 */
 	const META_SYNC_STATUS = 'sync_status';
 
+	/**
+	 * Meta sync error constant.
+	 *
+	 * @var string
+	 */
 	const META_SYNC_ERROR = 'ssp_sync_episode_error';
 
 	/**
-	 * @var Feed_Handler $feed_handler
-	 * */
+	 * Feed handler instance.
+	 *
+	 * @var Feed_Handler
+	 */
 	protected $feed_handler;
 
 	/**
-	 * @var \wpdb $db
-	 * */
+	 * Database instance.
+	 *
+	 * @var \wpdb
+	 */
 	protected $db;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param Feed_Handler $feed_handler Feed handler instance.
+	 */
 	public function __construct( $feed_handler ) {
 		$this->init_useful_variables();
 		$this->feed_handler = $feed_handler;
@@ -49,6 +74,8 @@ class Episode_Repository implements Service {
 
 
 	/**
+	 * Get scheduled episodes.
+	 *
 	 * @return \WP_Post[]
 	 */
 	public function get_scheduled_episodes() {
@@ -70,7 +97,9 @@ class Episode_Repository implements Service {
 	}
 
 	/**
-	 * @param int $id
+	 * Get episodes by Podmotor episode ID.
+	 *
+	 * @param int $id Podmotor episode ID.
 	 *
 	 * @return int[]
 	 */
@@ -87,7 +116,9 @@ class Episode_Repository implements Service {
 	}
 
 	/**
-	 * @param int $id
+	 * Get episodes by Podmotor file ID.
+	 *
+	 * @param int $id Podmotor file ID.
 	 *
 	 * @return int[]
 	 */

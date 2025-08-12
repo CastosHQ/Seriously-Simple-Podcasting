@@ -1,4 +1,10 @@
 <?php
+/**
+ * Series Repository class.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 3.0.1
+ */
 
 namespace SeriouslySimplePodcasting\Repositories;
 
@@ -21,12 +27,19 @@ class Series_Repository implements Singleton {
 
 	use Useful_Variables;
 
+	/**
+	 * Protected constructor.
+	 *
+	 * Initializes useful variables.
+	 */
 	protected function __construct() {
 		$this->init_useful_variables();
 	}
 
 	/**
-	 * @param WP_Term $term
+	 * Get feed URL for a series.
+	 *
+	 * @param WP_Term $term Series term object.
 	 *
 	 * @return string
 	 */
@@ -50,12 +63,14 @@ class Series_Repository implements Singleton {
 	}
 
 	/**
-	 * @param WP_Term $term
-	 * @param string  $size
+	 * Get image source for a series.
+	 *
+	 * @param WP_Term $term Series term object.
+	 * @param string  $size Image size.
 	 *
 	 * @return string
 	 */
-	function get_image_src( $term, $size = 'thumbnail' ) {
+	public function get_image_src( $term, $size = 'thumbnail' ) {
 
 		if ( ! empty( $term->term_id ) ) {
 			$media_id = get_term_meta( $term->term_id, SSP_CPT_PODCAST . '_series_image_settings', true );

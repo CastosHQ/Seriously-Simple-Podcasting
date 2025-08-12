@@ -1,6 +1,9 @@
 <?php
 /**
  * Settings Renderer class.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 2.9.3
  */
 
 namespace SeriouslySimplePodcasting\Renderers;
@@ -16,31 +19,41 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Settings renderer class for handling form field rendering.
+ *
  * @author Serhiy Zakharchenko
  * @package SeriouslySimplePodcasting
- * */
+ * @since 2.9.3
+ */
 class Settings_Renderer implements Service {
 
 	use Singleton;
 
 	use Useful_Variables;
 
+	/**
+	 * Whether colorpicker dependencies are enabled.
+	 *
+	 * @var bool
+	 */
 	protected $colorpicker_dependencies_enabled;
 
 	/**
 	 * Protected constructor.
+	 *
+	 * Initializes useful variables.
 	 */
 	protected function __construct() {
 		$this->init_useful_variables();
 	}
 
 	/**
-	 * Prints the template.
+	 * Renders a form field based on its type.
 	 *
-	 * @param array        $field
-	 * @param array|string $data
-	 * @param string       $option_name
-	 * @param string       $default_option_name It's needed only for feed images
+	 * @param array        $field                Field configuration array.
+	 * @param array|string $data                 Field data.
+	 * @param string       $option_name          Option name.
+	 * @param string       $default_option_name  Default option name (needed only for feed images).
 	 *
 	 * @return string
 	 * @since 2.9.3 Moved this function from the settings_controller.

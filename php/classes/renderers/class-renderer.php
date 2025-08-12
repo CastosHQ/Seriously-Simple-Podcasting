@@ -1,6 +1,9 @@
 <?php
 /**
  * Renderer class.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 2.0.0
  */
 
 namespace SeriouslySimplePodcasting\Renderers;
@@ -14,30 +17,35 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
+ * Renderer class for handling template rendering.
+ *
  * @author Serhiy Zakharchenko
  * @package SeriouslySimplePodcasting
- * */
+ * @since 2.0.0
+ */
 class Renderer implements Service {
 
 	use Singleton;
 
 	/**
-	 * Todo: get rid of direct instance creating
-	 * */
+	 * Constructor.
+	 *
+	 * @todo Get rid of direct instance creating.
+	 */
 	public function __construct() {
 		return $this;
 	}
 
 	/**
-	 * Renderer function (old)
+	 * Renderer function (old).
 	 *
-	 * @param array  $data
-	 * @param string $template_path
+	 * @param array  $data          Template data array.
+	 * @param string $template_path Template path.
 	 *
 	 * @return string
 	 *
 	 * @deprecated Changed the parameters order. Please use the new fetch() and render() functions.
-	 * Todo: change all the places where it's used to the new fetch() function and remove it.
+	 * @todo Change all the places where it's used to the new fetch() function and remove it.
 	 */
 	public function render_deprecated( $data, $template_path ) {
 		extract( $data, EXTR_OVERWRITE );
@@ -57,8 +65,8 @@ class Renderer implements Service {
 	/**
 	 * Prints the template.
 	 *
-	 * @param string $template_path
-	 * @param array  $data
+	 * @param string $template_path Template path.
+	 * @param array  $data          Template data array.
 	 *
 	 * @return void
 	 */
@@ -78,15 +86,15 @@ class Renderer implements Service {
 	 * 4. Relative plugin path inside templates folder: feed/feed-item.php
 	 * And each path variant can be with and without .php extension.
 	 *
-	 * @param string $template_path
-	 * @param array  $data
+	 * @param string $template_path Template path.
+	 * @param array  $data          Template data array.
 	 *
 	 * @return string
 	 */
 	public function fetch( $template_path, $data = array() ) {
 		$abs_path = '';
 
-		// Check if there is extension in the end. If not, lets add it.
+		// Check if there is extension in the end. If not, let's add it.
 		$ext = pathinfo( $template_path, PATHINFO_EXTENSION );
 
 		if ( ! $ext ) {

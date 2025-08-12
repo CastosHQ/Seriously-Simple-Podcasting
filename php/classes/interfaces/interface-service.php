@@ -2,7 +2,7 @@
 /**
  * Service interface.
  *
- * @package Seriously_Simple_Podcasting
+ * @package SeriouslySimplePodcasting
  * @since   2.0.0
  */
 

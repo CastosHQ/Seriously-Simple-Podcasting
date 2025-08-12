@@ -1,8 +1,9 @@
 <?php
 /**
- * WPSEO plugin file.
+ * Yoast SEO Podcast Series Schema.
  *
- * @package Yoast\WP\SEO\Generators\Schema
+ * @package Seriously Simple Podcasting
+ * @since 2.7.3
  */
 
 namespace SeriouslySimplePodcasting\Integrations\Yoast\Schema;
@@ -29,6 +30,11 @@ class PodcastSeries extends Abstract_Schema_Piece {
 	 * Returns the PodcastSeries Schema data.
 	 *
 	 * @return array $data The PodcastSeries schema.
+	 */
+	/**
+	 * Generate podcast series schema.
+	 *
+	 * @return array
 	 */
 	public function generate() {
 		$series_repository = ssp_series_repository();
@@ -66,7 +72,9 @@ class PodcastSeries extends Abstract_Schema_Piece {
 	}
 
 	/**
-	 * @param \WP_Term $series
+	 * Get series author.
+	 *
+	 * @param \WP_Term $series Series term object.
 	 *
 	 * @return string
 	 */

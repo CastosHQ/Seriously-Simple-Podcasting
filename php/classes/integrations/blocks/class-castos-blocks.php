@@ -1,4 +1,12 @@
 <?php
+/**
+ * Castos Blocks Integration
+ *
+ * Handles Gutenberg blocks integration for Seriously Simple Podcasting.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.0.4
+ */
 
 namespace SeriouslySimplePodcasting\Integrations\Blocks;
 
@@ -29,28 +37,38 @@ class Castos_Blocks {
 	use Useful_Variables;
 
 	/**
-	 * @var array $asset_file
+	 * Asset file array.
+	 *
+	 * @var array
 	 */
 	protected $asset_file;
 
 	/**
-	 * @var Admin_Notifications_Handler $admin_notices_handler
-	 * */
+	 * Admin notifications handler instance.
+	 *
+	 * @var Admin_Notifications_Handler
+	 */
 	protected $admin_notices_handler;
 
 	/**
-	 * @var Episode_Repository $episode_repository
-	 * */
+	 * Episode repository instance.
+	 *
+	 * @var Episode_Repository
+	 */
 	protected $episode_repository;
 
 	/**
-	 * @var Players_Controller $players_controller
-	 * */
+	 * Players controller instance.
+	 *
+	 * @var Players_Controller
+	 */
 	protected $players_controller;
 
 	/**
-	 * @var Renderer $renderer
-	 * */
+	 * Renderer instance.
+	 *
+	 * @var Renderer
+	 */
 	protected $renderer;
 
 	/**
@@ -157,7 +175,7 @@ class Castos_Blocks {
 
 		$query_args = wp_parse_args( $args, $defaults );
 
-		// Fix for the new Default Series, now 0 becomes default series ID
+		// Fix for the new Default Series, now 0 becomes default series ID.
 		if ( ! $query_args['podcast_id'] ) {
 			$query_args['podcast_id'] = ssp_get_default_series_id();
 		}

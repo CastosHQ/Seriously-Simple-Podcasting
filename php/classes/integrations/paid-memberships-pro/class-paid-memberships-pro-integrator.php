@@ -1,6 +1,9 @@
 <?php
 /**
  * Paid Memberships Pro controller.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.9.6
  */
 
 namespace SeriouslySimplePodcasting\Integrations\Paid_Memberships_Pro;
@@ -27,28 +30,63 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 
 	use Singleton;
 
+	/**
+	 * Bulk update started constant.
+	 *
+	 * @var string
+	 */
 	const BULK_UPDATE_STARTED = 'ssp_pmpro_bulk_update_started';
 
+	/**
+	 * Add list option constant.
+	 *
+	 * @var string
+	 */
 	const ADD_LIST_OPTION = 'ssp_pmpro_add_subscribers';
 
+	/**
+	 * Revoke list option constant.
+	 *
+	 * @var string
+	 */
 	const REVOKE_LIST_OPTION = 'ssp_pmpro_revoke_subscribers';
 
+	/**
+	 * Membership series option constant.
+	 *
+	 * @var string
+	 */
 	const MEMBERSHIP_SERIES_OPTION = 'ssp_pmpro_membership_series';
 
+	/**
+	 * Event bulk sync subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_BULK_SYNC_SUBSCRIBERS = 'ssp_pmpro_bulk_sync_subscribers';
 
+	/**
+	 * Event add subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_ADD_SUBSCRIBERS = 'ssp_pmpro_add_subscribers';
 
+	/**
+	 * Event revoke subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_REVOKE_SUBSCRIBERS = 'ssp_pmpro_revoke_subscribers';
 
 
 	/**
-	 * Class Paid_Memberships_Pro_Integrator constructor.
+	 * Initialize the Paid Memberships Pro integrator.
 	 *
-	 * @param Feed_Handler                $feed_handler
-	 * @param Castos_Handler              $castos_handler
-	 * @param Log_Helper                  $logger
-	 * @param Admin_Notifications_Handler $notices_handler
+	 * @param Feed_Handler                $feed_handler    Feed handler instance.
+	 * @param Castos_Handler              $castos_handler  Castos handler instance.
+	 * @param Log_Helper                  $logger          Log helper instance.
+	 * @param Admin_Notifications_Handler $notices_handler Admin notifications handler instance.
 	 */
 	public function init( $feed_handler, $castos_handler, $logger, $notices_handler ) {
 

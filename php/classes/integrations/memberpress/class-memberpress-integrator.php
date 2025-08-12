@@ -1,6 +1,9 @@
 <?php
 /**
  * MemberPress Integrator.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.16.0
  */
 
 namespace SeriouslySimplePodcasting\Integrations\Memberpress;
@@ -28,28 +31,63 @@ class Memberpress_Integrator extends Abstract_Integrator {
 
 	use Singleton;
 
+	/**
+	 * Add list option constant.
+	 *
+	 * @var string
+	 */
 	const ADD_LIST_OPTION = 'ssp_memberpress_add_subscribers';
 
+	/**
+	 * Revoke list option constant.
+	 *
+	 * @var string
+	 */
 	const REVOKE_LIST_OPTION = 'ssp_memberpress_revoke_subscribers';
 
+	/**
+	 * Event bulk sync subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_BULK_SYNC_SUBSCRIBERS = 'ssp_memberpress_bulk_sync_subscribers';
 
+	/**
+	 * Event add subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_ADD_SUBSCRIBERS = 'ssp_memberpress_add_subscribers';
 
+	/**
+	 * Event revoke subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_REVOKE_SUBSCRIBERS = 'ssp_memberpress_revoke_subscribers';
 
+	/**
+	 * Single sync data option constant.
+	 *
+	 * @var string
+	 */
 	const SINGLE_SYNC_DATA_OPTION = 'ssp_memberpress_single_sync_data';
 
+	/**
+	 * Single sync event constant.
+	 *
+	 * @var string
+	 */
 	const SINGLE_SYNC_EVENT = 'ssp_memberpress_single_sync';
 
 
 	/**
-	 * Class Paid_Memberships_Pro_Integrator constructor.
+	 * Initialize the MemberPress integrator.
 	 *
-	 * @param Feed_Handler                $feed_handler
-	 * @param Castos_Handler              $castos_handler
-	 * @param Log_Helper                  $logger
-	 * @param Admin_Notifications_Handler $notices_handler
+	 * @param Feed_Handler                $feed_handler    Feed handler instance.
+	 * @param Castos_Handler              $castos_handler  Castos handler instance.
+	 * @param Log_Helper                  $logger          Log helper instance.
+	 * @param Admin_Notifications_Handler $notices_handler Admin notifications handler instance.
 	 */
 	public function init( $feed_handler, $castos_handler, $logger, $notices_handler ) {
 

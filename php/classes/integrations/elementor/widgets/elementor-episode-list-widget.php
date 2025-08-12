@@ -1,4 +1,12 @@
 <?php
+/**
+ * Elementor Episode List Widget
+ *
+ * Elementor widget for displaying episode lists.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.4.0
+ */
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
@@ -7,31 +15,64 @@ use Elementor\Widget_Base;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Elementor_Widget_Helper;
 
+/**
+ * Episode List Widget Class
+ *
+ * Elementor widget for displaying episode lists.
+ *
+ * @package SeriouslySimplePodcasting\Integrations\Elementor\Widgets
+ * @since 2.4.0
+ */
 class Elementor_Episode_List_Widget extends Widget_Base {
 
 	use Elementor_Widget_Helper;
 
 	/**
+	 * Episode repository instance.
+	 *
 	 * @var Episode_Repository
-	 * */
+	 */
 	protected $episode_repository;
 
+	/**
+	 * Get widget name.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return 'Episode List';
 	}
 
+	/**
+	 * Get widget title.
+	 *
+	 * @return string
+	 */
 	public function get_title() {
 		return __( 'Episode List', 'seriously-simple-podcasting' );
 	}
 
+	/**
+	 * Get widget icon.
+	 *
+	 * @return string
+	 */
 	public function get_icon() {
 		return 'eicon-post-list';
 	}
 
+	/**
+	 * Get widget categories.
+	 *
+	 * @return array
+	 */
 	public function get_categories() {
 		return array( 'podcasting' );
 	}
 
+	/**
+	 * Register widget controls.
+	 */
 	protected function register_controls() {
 
 		$this->start_controls_section(
@@ -72,6 +113,9 @@ class Elementor_Episode_List_Widget extends Widget_Base {
 		$this->add_episodes_query_controls( array( 'episodes_number' => 10 ) );
 	}
 
+	/**
+	 * Render widget output.
+	 */
 	protected function render() {
 		$settings          = $this->get_settings_for_display();
 		$settings['paged'] = get_query_var( 'paged' ) ?: 1;

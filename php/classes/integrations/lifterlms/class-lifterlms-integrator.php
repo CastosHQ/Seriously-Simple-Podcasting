@@ -1,6 +1,9 @@
 <?php
 /**
  * Lifter LMS integrator.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.12.0
  */
 
 namespace SeriouslySimplePodcasting\Integrations\LifterLMS;
@@ -25,39 +28,57 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 class LifterLMS_Integrator extends Abstract_Integrator {
 
+	/**
+	 * Single sync event constant.
+	 *
+	 * @var string
+	 */
 	const SINGLE_SYNC_EVENT = 'ssp_lifterlms_single_sync';
 
+	/**
+	 * Single sync data option constant.
+	 *
+	 * @var string
+	 */
 	const SINGLE_SYNC_DATA_OPTION = 'ssp_lifterlms_single_sync_data';
 
 	use Singleton;
 
 	/**
+	 * Feed handler instance.
+	 *
 	 * @var Feed_Handler
-	 * */
+	 */
 	protected $feed_handler;
 
 	/**
+	 * Castos handler instance.
+	 *
 	 * @var Castos_Handler
-	 * */
+	 */
 	protected $castos_handler;
 
 	/**
+	 * Log helper instance.
+	 *
 	 * @var Log_Helper
-	 * */
+	 */
 	protected $logger;
 
 	/**
+	 * Castos podcasts array.
+	 *
 	 * @var array
-	 * */
+	 */
 	protected $castos_podcasts;
 
 
 	/**
-	 * Class Paid_Memberships_Pro_Integrator constructor.
+	 * Initialize the LifterLMS integrator.
 	 *
-	 * @param Feed_Handler   $feed_handler
-	 * @param Castos_Handler $castos_handler
-	 * @param Log_Helper     $logger
+	 * @param Feed_Handler   $feed_handler   Feed handler instance.
+	 * @param Castos_Handler $castos_handler Castos handler instance.
+	 * @param Log_Helper     $logger         Log helper instance.
 	 */
 	public function init( $feed_handler, $castos_handler, $logger ) {
 		if ( ! $this->check_dependencies( array( 'LifterLMS', 'LLMS_Student' ), array( 'llms_page_restricted' ) ) ) {
@@ -144,6 +165,9 @@ class LifterLMS_Integrator extends Abstract_Integrator {
 		add_action( 'ssp_bulk_sync_lifterlms_subscribers', array( $this, 'bulk_sync_subscribers' ) );
 	}
 
+	/**
+	 * Process single sync events.
+	 */
 	public function process_single_sync_events() {
 		$single_sync_events = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
 

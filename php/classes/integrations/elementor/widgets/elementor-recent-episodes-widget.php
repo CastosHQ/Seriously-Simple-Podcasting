@@ -1,4 +1,12 @@
 <?php
+/**
+ * Elementor Recent Episodes Widget
+ *
+ * Elementor widget for displaying recent episodes.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.4.0
+ */
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
@@ -8,37 +16,74 @@ use Elementor\Widget_Base;
 use SeriouslySimplePodcasting\Traits\Elementor_Widget_Helper;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
+/**
+ * Recent Episodes Widget Class
+ *
+ * Elementor widget for displaying recent episodes.
+ *
+ * @package SeriouslySimplePodcasting\Integrations\Elementor\Widgets
+ * @since 2.4.0
+ */
 class Elementor_Recent_Episodes_Widget extends Widget_Base {
 
 	use Useful_Variables;
 	use Elementor_Widget_Helper;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param array $data Widget data.
+	 * @param array $args Widget arguments.
+	 */
 	public function __construct( $data = array(), $args = null ) {
 		parent::__construct( $data, $args );
 		$this->init_useful_variables();
 
-		// Enqueue styles early in preview mode
+		// Enqueue styles early in preview mode.
 		if ( ElementorPlugin::$instance->preview->is_preview_mode() ) {
 			$this->enqueue_style();
 		}
 	}
 
+	/**
+	 * Get widget name.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return 'Recent Episodes';
 	}
 
+	/**
+	 * Get widget title.
+	 *
+	 * @return string
+	 */
 	public function get_title() {
 		return __( 'Recent Episodes', 'seriously-simple-podcasting' );
 	}
 
+	/**
+	 * Get widget icon.
+	 *
+	 * @return string
+	 */
 	public function get_icon() {
 		return 'eicon-archive-posts';
 	}
 
+	/**
+	 * Get widget categories.
+	 *
+	 * @return array
+	 */
 	public function get_categories() {
 		return array( 'podcasting' );
 	}
 
+	/**
+	 * Register widget controls.
+	 */
 	protected function register_controls() {
 
 		$this->start_controls_section(
@@ -164,6 +209,9 @@ class Elementor_Recent_Episodes_Widget extends Widget_Base {
 		$this->add_episodes_query_controls();
 	}
 
+	/**
+	 * Render widget output.
+	 */
 	protected function render() {
 		$template_data = $this->get_settings_for_display();
 
@@ -184,6 +232,9 @@ class Elementor_Recent_Episodes_Widget extends Widget_Base {
 		echo '';
 	}
 
+	/**
+	 * Enqueue widget styles.
+	 */
 	protected function enqueue_style() {
 		wp_enqueue_style( 'ssp-recent-episodes', $this->assets_url . 'css/recent-episodes.css', array(), $this->version );
 	}

@@ -1,27 +1,68 @@
 <?php
+/**
+ * Elementor Media Player Widget
+ *
+ * Elementor widget for displaying media player.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.4.0
+ */
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use Elementor\Widget_Base;
 
+/**
+ * Media Player Widget Class
+ *
+ * Elementor widget for displaying media player.
+ *
+ * @package SeriouslySimplePodcasting\Integrations\Elementor\Widgets
+ * @since 2.4.0
+ */
 class Elementor_Media_Player_Widget extends Widget_Base {
 
+	/**
+	 * Get widget name.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return 'Media Player';
 	}
 
+	/**
+	 * Get widget title.
+	 *
+	 * @return string
+	 */
 	public function get_title() {
 		return __( 'Media Player', 'seriously-simple-podcasting' );
 	}
 
+	/**
+	 * Get widget icon.
+	 *
+	 * @return string
+	 */
 	public function get_icon() {
 		return 'eicon-play';
 	}
 
+	/**
+	 * Get widget categories.
+	 *
+	 * @return array
+	 */
 	public function get_categories() {
 		return array( 'podcasting' );
 	}
 
+	/**
+	 * Get episodes for widget options.
+	 *
+	 * @return array
+	 */
 	public function get_episodes() {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
@@ -42,6 +83,9 @@ class Elementor_Media_Player_Widget extends Widget_Base {
 		return $episode_options;
 	}
 
+	/**
+	 * Register widget controls.
+	 */
 	protected function register_controls() {
 
 		$this->start_controls_section(
@@ -66,6 +110,9 @@ class Elementor_Media_Player_Widget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Render widget output.
+	 */
 	protected function render() {
 		global $ss_podcasting;
 		$players_controller = $ss_podcasting->players_controller;

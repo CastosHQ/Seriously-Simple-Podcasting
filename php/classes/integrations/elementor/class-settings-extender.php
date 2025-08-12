@@ -1,4 +1,12 @@
 <?php
+/**
+ * Elementor Settings Extender
+ *
+ * Extends Elementor settings with podcast-specific functionality.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.14.0
+ */
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor;
 
@@ -7,6 +15,14 @@ use Elementor\Element_Base;
 use Elementor\Plugin;
 use Elementor\Widget_Text_Editor;
 
+/**
+ * Settings Extender Class
+ *
+ * Extends Elementor settings with podcast-specific functionality.
+ *
+ * @package SeriouslySimplePodcasting\Integrations\Elementor
+ * @since 2.14.0
+ */
 class Settings_Extender {
 
 	/**
@@ -19,6 +35,9 @@ class Settings_Extender {
 	const FEED_HIDDEN_SECTION = 'ssp_feed_hidden_section';
 
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		$this->add_widget_categories();
 
@@ -59,7 +78,9 @@ class Settings_Extender {
 	}
 
 	/**
-	 * @param array $el Element settings
+	 * Filter feed hidden element.
+	 *
+	 * @param array $el Element settings.
 	 *
 	 * @return array
 	 */
@@ -121,10 +142,16 @@ class Settings_Extender {
 	}
 
 
+	/**
+	 * Add widget categories.
+	 */
 	protected function add_widget_categories() {
 		add_action( 'elementor/elements/categories_registered', array( $this, 'add_elementor_widget_categories' ) );
 	}
 
+	/**
+	 * Initialize feed hidden controls.
+	 */
 	protected function init_feed_hidden_controls() {
 		$supported_widgets = array(
 			'text-editor',
@@ -139,6 +166,11 @@ class Settings_Extender {
 		}
 	}
 
+	/**
+	 * Add Elementor widget categories.
+	 *
+	 * @param \Elementor\Elements_Manager $elements_manager Elements manager instance.
+	 */
 	public function add_elementor_widget_categories( $elements_manager ) {
 		$elements_manager->add_category(
 			'podcasting',

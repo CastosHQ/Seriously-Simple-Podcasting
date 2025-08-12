@@ -1,6 +1,11 @@
 <?php
 /**
- * Paid Memberships Pro controller
+ * Abstract Integrator Class
+ *
+ * Base class for all integration implementations.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.9.3
  */
 
 namespace SeriouslySimplePodcasting\Integrations;
@@ -23,52 +28,96 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 abstract class Abstract_Integrator {
 
+	/**
+	 * Bulk update started constant.
+	 *
+	 * @var string
+	 */
 	const BULK_UPDATE_STARTED = '';
 
+	/**
+	 * Add list option constant.
+	 *
+	 * @var string
+	 */
 	const ADD_LIST_OPTION = '';
 
+	/**
+	 * Revoke list option constant.
+	 *
+	 * @var string
+	 */
 	const REVOKE_LIST_OPTION = '';
 
+	/**
+	 * Event bulk sync subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_BULK_SYNC_SUBSCRIBERS = '';
 
+	/**
+	 * Event add subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_ADD_SUBSCRIBERS = '';
 
+	/**
+	 * Event revoke subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_REVOKE_SUBSCRIBERS = '';
 
 
 	/**
+	 * Series podcasts mapping.
+	 *
 	 * @var array
-	 * */
+	 */
 	protected $series_podcasts_map;
 
 	/**
+	 * Series levels mapping.
+	 *
 	 * @var array
-	 * */
+	 */
 	protected $series_levels_map;
 
 	/**
+	 * Feed handler instance.
+	 *
 	 * @var Feed_Handler
-	 * */
+	 */
 	protected $feed_handler;
 
 	/**
+	 * Castos handler instance.
+	 *
 	 * @var Castos_Handler
-	 * */
+	 */
 	protected $castos_handler;
 
 	/**
+	 * Admin notifications handler instance.
+	 *
 	 * @var Admin_Notifications_Handler
-	 * */
+	 */
 	protected $notices_handler;
 
 	/**
+	 * Log helper instance.
+	 *
 	 * @var Log_Helper
-	 * */
+	 */
 	protected $logger;
 
 	/**
+	 * Castos podcasts array.
+	 *
 	 * @var array
-	 * */
+	 */
 	protected $castos_podcasts;
 
 
@@ -140,14 +189,14 @@ abstract class Abstract_Integrator {
 	 * @return \WP_Term[]
 	 */
 	protected function get_current_page_related_series( $post = null ) {
-		// First, lets check if it's series page
+		// First, let's check if it's series page.
 		$queried = get_queried_object();
 
 		if ( isset( $queried->taxonomy ) && ssp_series_taxonomy() === $queried->taxonomy ) {
 			return array( $queried );
 		}
 
-		// If it's episode page, get related series
+		// If it's episode page, get related series.
 		if ( ! $post ) {
 			global $post;
 		}

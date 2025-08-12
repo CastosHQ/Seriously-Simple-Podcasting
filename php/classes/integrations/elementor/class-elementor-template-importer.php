@@ -1,4 +1,12 @@
 <?php
+/**
+ * Elementor Template Importer
+ *
+ * Handles importing of Elementor templates for Seriously Simple Podcasting.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 1.19.18
+ */
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor;
 
@@ -9,7 +17,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Exit if Elementor not installed and activated
+// Exit if Elementor not installed and activated.
 if ( ! did_action( 'elementor/loaded' ) ) {
 	return false;
 }
@@ -24,14 +32,30 @@ if ( ! did_action( 'elementor/loaded' ) ) {
  */
 class Elementor_Template_Importer {
 
+	/**
+	 * Template path for Elementor templates.
+	 *
+	 * @var string
+	 */
 	protected $template_path = SSP_PLUGIN_PATH . 'templates/elementor/';
 
+	/**
+	 * Template library manager instance.
+	 *
+	 * @var \Elementor\TemplateLibrary\Manager
+	 */
 	protected $template_library_manager;
 
+	/**
+	 * Constructor.
+	 */
 	public function __construct() {
 		$this->init();
 	}
 
+	/**
+	 * Initialize the template importer.
+	 */
 	public function init() {
 		add_action( 'init', array( $this, 'process_template_import' ) );
 	}

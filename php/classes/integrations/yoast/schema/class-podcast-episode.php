@@ -1,8 +1,9 @@
 <?php
 /**
- * WPSEO plugin file.
+ * Yoast SEO Podcast Episode Schema.
  *
- * @package Yoast\WP\SEO\Generators\Schema
+ * @package Seriously Simple Podcasting
+ * @since 2.7.3
  */
 
 namespace SeriouslySimplePodcasting\Integrations\Yoast\Schema;
@@ -18,12 +19,16 @@ use Yoast\WP\SEO\Generators\Schema\Abstract_Schema_Piece;
 class PodcastEpisode extends Abstract_Schema_Piece {
 
 	/**
+	 * Episode repository instance.
+	 *
 	 * @var Episode_Repository
-	 * */
+	 */
 	protected $episode_repository;
 
 	/**
-	 * @param Episode_Repository $episode_repository
+	 * Constructor.
+	 *
+	 * @param Episode_Repository $episode_repository Episode repository instance.
 	 */
 	public function __construct( $episode_repository ) {
 		$this->episode_repository = $episode_repository;
@@ -44,6 +49,11 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	 * Returns the Podcast Schema data.
 	 *
 	 * @return array $data The schema data.
+	 */
+	/**
+	 * Generate podcast episode schema.
+	 *
+	 * @return array
 	 */
 	public function generate() {
 		$enclosure = $this->episode_repository->get_enclosure( $this->context->post->ID );

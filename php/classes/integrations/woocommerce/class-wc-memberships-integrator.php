@@ -1,6 +1,9 @@
 <?php
 /**
  * WooCommerce Memberships Integrator.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.16.0
  */
 
 namespace SeriouslySimplePodcasting\Integrations\Woocommerce;
@@ -28,28 +31,63 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 
 	use Singleton;
 
+	/**
+	 * Add list option constant.
+	 *
+	 * @var string
+	 */
 	const ADD_LIST_OPTION = 'ssp_wcmps_add_subscribers';
 
+	/**
+	 * Revoke list option constant.
+	 *
+	 * @var string
+	 */
 	const REVOKE_LIST_OPTION = 'ssp_wcmps_revoke_subscribers';
 
+	/**
+	 * Event bulk sync subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_BULK_SYNC_SUBSCRIBERS = 'ssp_wcmps_bulk_sync_subscribers';
 
+	/**
+	 * Event add subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_ADD_SUBSCRIBERS = 'ssp_wcmps_add_subscribers';
 
+	/**
+	 * Event revoke subscribers constant.
+	 *
+	 * @var string
+	 */
 	const EVENT_REVOKE_SUBSCRIBERS = 'ssp_wcmps_revoke_subscribers';
 
+	/**
+	 * Single sync data option constant.
+	 *
+	 * @var string
+	 */
 	const SINGLE_SYNC_DATA_OPTION = 'ssp_wcmps_single_sync_data';
 
+	/**
+	 * Single sync event constant.
+	 *
+	 * @var string
+	 */
 	const SINGLE_SYNC_EVENT = 'ssp_wcmps_single_sync';
 
 
 	/**
-	 * Class WC_Memberships_Integrator constructor.
+	 * Initialize the WooCommerce Memberships integrator.
 	 *
-	 * @param Feed_Handler                $feed_handler
-	 * @param Castos_Handler              $castos_handler
-	 * @param Log_Helper                  $logger
-	 * @param Admin_Notifications_Handler $notices_handler
+	 * @param Feed_Handler                $feed_handler    Feed handler instance.
+	 * @param Castos_Handler              $castos_handler  Castos handler instance.
+	 * @param Log_Helper                  $logger          Log helper instance.
+	 * @param Admin_Notifications_Handler $notices_handler Admin notifications handler instance.
 	 */
 	public function init( $feed_handler, $castos_handler, $logger, $notices_handler ) {
 
@@ -91,6 +129,9 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 		$this->castos_handler->add_subscriber_to_podcasts( $podcast_ids, $new_email, $user->display_name );
 	}
 
+	/**
+	 * Late initialization.
+	 */
 	public function late_init() {
 		if ( ! $this->check_dependencies( array( 'WC_Memberships_Loader' ) ) ) {
 			return;

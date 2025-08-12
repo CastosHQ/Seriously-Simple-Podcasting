@@ -1,9 +1,25 @@
 <?php
+/**
+ * Elementor HTML Player Widget
+ *
+ * Elementor widget for displaying HTML audio player.
+ *
+ * @package Seriously Simple Podcasting
+ * @since 2.4.0
+ */
 
 namespace SeriouslySimplePodcasting\Integrations\Elementor\Widgets;
 
 use Elementor\Widget_Base;
 
+/**
+ * HTML Player Widget Class
+ *
+ * Elementor widget for displaying HTML audio player.
+ *
+ * @package SeriouslySimplePodcasting\Integrations\Elementor\Widgets
+ * @since 2.4.0
+ */
 class Elementor_Html_Player_Widget extends Widget_Base {
 
 	/**
@@ -29,22 +45,47 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 		}
 	}
 
+	/**
+	 * Get widget name.
+	 *
+	 * @return string
+	 */
 	public function get_name() {
 		return 'Castos Player';
 	}
 
+	/**
+	 * Get widget title.
+	 *
+	 * @return string
+	 */
 	public function get_title() {
 		return __( 'Castos Player', 'seriously-simple-podcasting' );
 	}
 
+	/**
+	 * Get widget icon.
+	 *
+	 * @return string
+	 */
 	public function get_icon() {
 		return 'eicon-play-o';
 	}
 
+	/**
+	 * Get widget categories.
+	 *
+	 * @return array
+	 */
 	public function get_categories() {
 		return array( 'podcasting' );
 	}
 
+	/**
+	 * Get episodes for widget options.
+	 *
+	 * @return array
+	 */
 	public function get_episodes() {
 		$args = array(
 			'fields'         => array( 'post_title, id' ),
@@ -65,6 +106,9 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 		return $episode_options;
 	}
 
+	/**
+	 * Register widget controls.
+	 */
 	protected function register_controls() {
 
 		$this->start_controls_section(
@@ -90,6 +134,9 @@ class Elementor_Html_Player_Widget extends Widget_Base {
 		$this->end_controls_section();
 	}
 
+	/**
+	 * Render widget output.
+	 */
 	protected function render() {
 		$players_controller = ssp_app()->players_controller;
 		$settings           = $this->get_settings_for_display();

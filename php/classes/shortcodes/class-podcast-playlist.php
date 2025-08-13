@@ -1,4 +1,10 @@
 <?php
+/**
+ * Podcast Playlist shortcode class.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 1.15.0
+ */
 
 namespace SeriouslySimplePodcasting\ShortCodes;
 
@@ -24,24 +30,30 @@ class Podcast_Playlist implements Shortcode {
 	const DEFAULT_HEIGHT = 360;
 
 	/**
-	 * @var Frontend_Controller;
-	 * */
+	 * Frontend controller instance.
+	 *
+	 * @var Frontend_Controller
+	 */
 	protected $ss_podcasting;
 
 	/**
+	 * Theme width.
+	 *
 	 * @var int
-	 * */
+	 */
 	protected $theme_width;
 
 	/**
+	 * Theme height.
+	 *
 	 * @var int
-	 * */
+	 */
 	protected $theme_height;
 
 	/**
 	 * Shortcode function to display podcast playlist (copied and modified from wp-includes/media.php)
 	 *
-	 * @param array $params Shortcode paramaters
+	 * @param array $params Shortcode parameters.
 	 *
 	 * @return string         HTML output
 	 */
@@ -62,14 +74,24 @@ class Podcast_Playlist implements Shortcode {
 		}
 	}
 
+	/**
+	 * Render default player.
+	 *
+	 * @param array $episodes Episodes array.
+	 * @param array $atts     Attributes array.
+	 *
+	 * @return string
+	 */
 	protected function render_default_player( $episodes, $atts ) {
 		return $this->ss_podcasting->players_controller->render_playlist_player( $episodes, $atts );
 	}
 
 
 	/**
-	 * @param array $episodes
-	 * @param array $atts
+	 * Render compact player.
+	 *
+	 * @param array $episodes Episodes array.
+	 * @param array $atts     Attributes array.
 	 *
 	 * @return string
 	 */
@@ -79,6 +101,9 @@ class Podcast_Playlist implements Shortcode {
 		return $this->ss_podcasting->players_controller->render_playlist_compact_player( $tracks, $atts, $this->theme_width, $this->theme_height );
 	}
 
+	/**
+	 * Prepare properties.
+	 */
 	protected function prepare_properties() {
 		global $ss_podcasting, $content_width;
 
@@ -88,12 +113,14 @@ class Podcast_Playlist implements Shortcode {
 	}
 
 	/**
-	 * @param array $params
+	 * Prepare attributes.
+	 *
+	 * @param array $params Parameters array.
 	 *
 	 * @return array
 	 */
 	protected function prepare_atts( $params ) {
-		// Get list of episode IDs for display from `episodes` parameter
+		// Get list of episode IDs for display from `episodes` parameter.
 		if ( ! empty( $params['episodes'] ) ) {
 			// 'episodes' is explicitly ordered, unless you specify otherwise.
 			if ( empty( $params['orderby'] ) ) {

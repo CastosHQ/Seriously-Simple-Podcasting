@@ -1,4 +1,10 @@
 <?php
+/**
+ * Podcast Episode shortcode class.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 1.15.0
+ */
 
 namespace SeriouslySimplePodcasting\ShortCodes;
 
@@ -20,7 +26,7 @@ class Podcast_Episode implements Shortcode {
 	/**
 	 * Shortcode function to display single podcast episode
 	 *
-	 * @param  array $params Shortcode paramaters
+	 * @param  array $params Shortcode parameters.
 	 * @return string         HTML output
 	 */
 	public function shortcode( $params ) {
@@ -41,7 +47,7 @@ class Podcast_Episode implements Shortcode {
 		$content = $atts['content'];
 		$style   = $atts['style'];
 
-		// If no episode ID is specified then use the current post's ID
+		// If no episode ID is specified then use the current post's ID.
 		if ( ! $episode ) {
 			global $post;
 
@@ -54,11 +60,11 @@ class Podcast_Episode implements Shortcode {
 			}
 		}
 
-		// Setup array of content items and trim whitespace
+		// Setup array of content items and trim whitespace.
 		$content_items = explode( ',', $content );
 		$content_items = array_map( 'trim', $content_items );
 
-		// Get episode for display
+		// Get episode for display.
 		$html = ssp_frontend_controller()->podcast_episode( $episode, $content_items, 'shortcode', $style );
 
 		return $html;

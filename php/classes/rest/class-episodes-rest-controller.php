@@ -1,4 +1,13 @@
 <?php
+/**
+ * Episodes REST Controller class.
+ *
+ * Custom endpoint for querying multiple post-types for episodes.
+ * Mimics `WP_REST_Posts_Controller` as closely as possible.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 1.19.12
+ */
 
 namespace SeriouslySimplePodcasting\Rest;
 
@@ -32,17 +41,38 @@ use WP_Query;
  */
 class Episodes_Rest_Controller extends WP_REST_Controller {
 
+	/**
+	 * REST API namespace.
+	 *
+	 * @var string
+	 */
 	public $namespace;
+
+	/**
+	 * REST API base.
+	 *
+	 * @var string
+	 */
 	public $rest_base;
+
+	/**
+	 * Post types array.
+	 *
+	 * @var array
+	 */
 	public $post_types;
 
 	/**
-	 * @var Episode_Repository $episode_repository
-	 * */
+	 * Episode repository instance.
+	 *
+	 * @var Episode_Repository
+	 */
 	protected $episode_repository;
 
 	/**
-	 * @param Episode_Repository $episode_repository
+	 * Constructor.
+	 *
+	 * @param Episode_Repository $episode_repository Episode repository instance.
 	 */
 	public function __construct( $episode_repository ) {
 		$this->episode_repository = $episode_repository;
@@ -54,6 +84,8 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 	/**
 	 * Register the routes for the objects of the controller.
+	 *
+	 * Sets up REST API endpoints for episodes.
 	 */
 	public function register_routes() {
 		register_rest_route(

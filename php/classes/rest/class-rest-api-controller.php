@@ -1,4 +1,12 @@
 <?php
+/**
+ * REST API Controller class.
+ *
+ * Extending the WP REST API for Seriously Simple Podcasting.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 1.19.12
+ */
 
 namespace SeriouslySimplePodcasting\Rest;
 
@@ -17,19 +25,23 @@ use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 class Rest_Api_Controller {
 
 	/**
-	 * @var Episode_Repository $episode_repository
-	 * */
+	 * Episode repository instance.
+	 *
+	 * @var Episode_Repository
+	 */
 	protected $episode_repository;
 
 	/**
+	 * Series handler instance.
+	 *
 	 * @var Series_Handler
-	 * */
+	 */
 	protected $series_handler;
 
 	/**
-	 * Gets the default podcast data
+	 * Gets the default podcast data.
 	 *
-	 * @return array Podcast
+	 * @return array Podcast data array.
 	 */
 	private function get_default_podcast_settings() {
 		$series_id = 0;
@@ -57,9 +69,10 @@ class Rest_Api_Controller {
 	}
 
 	/**
-	 * Constructor
+	 * Constructor.
 	 *
-	 * @param Episode_Repository $episode_repository
+	 * @param Episode_Repository $episode_repository Episode repository instance.
+	 * @param Series_Handler     $series_handler     Series handler instance.
 	 */
 	public function __construct( $episode_repository, $series_handler ) {
 

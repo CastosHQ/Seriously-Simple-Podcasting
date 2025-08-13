@@ -1,7 +1,12 @@
 <?php
 /**
+ * Sync status field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var \SeriouslySimplePodcasting\Entities\Sync_Status $status
- * */
+ */
+
 ?>
 <div class="ssp-episode-sync-status">
 	<div>

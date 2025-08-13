@@ -1,12 +1,17 @@
 <?php
 /**
+ * Widget number field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $id
  * @var string $field_id
  * @var string $field_name
  * @var string $placeholder
  * @var string $label
  * @var string $value
- * */
+ */
+
 ?>
 <p><label for="<?php echo $field_id; ?>"><?php _e( $label, 'seriously-simple-podcasting' ); ?></label>
 	<input class="widefat" id="<?php echo $field_id; ?>"

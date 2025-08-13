@@ -16,10 +16,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-// Use `echo` for first line to prevent any extra characters at start of document
+// Use `echo` for first line to prevent any extra characters at start of document.
 echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?>' . "\n";
 
-// Include RSS stylesheet
+// Include RSS stylesheet.
 if ( $stylesheet_url ) {
 	echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( $stylesheet_url ) . '"?>';
 }

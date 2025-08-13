@@ -1,5 +1,9 @@
 <?php
 /**
+ * Widget checkbox field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $id
  * @var string $field_id
  * @var string $field_name
@@ -7,7 +11,8 @@
  * @var string $label
  * @var string $value
  * @var array $items
- * */
+ */
+
 ?>
 
 <p><label for="<?php echo $field_id; ?>"><?php _e( $label, 'seriously-simple-podcasting' ); ?></label>

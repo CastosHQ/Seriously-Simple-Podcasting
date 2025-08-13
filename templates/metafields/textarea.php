@@ -1,10 +1,15 @@
 <?php
 /**
+ * Textarea field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $k
  * @var array $v
  * @var string $data
  * @var string $class
- * */
+ */
+
 ?>
 <p>
 	<label class="ssp-episode-details-label" for="<?php echo esc_attr( $k ); ?>">

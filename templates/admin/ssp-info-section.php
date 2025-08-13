@@ -1,11 +1,15 @@
 <?php
 /**
+ * SSP Info Section template.
+ *
  * @see \SeriouslySimplePodcasting\Controllers\Admin_Controller::render_ssp_info_section()
+ *
+ * @package SeriouslySimplePodcasting
  *
  * @var string $title
  * @var string $plan
  * @var bool $is_connected
- * */
+ */
 
 ?>
 <div class="ssp-admin-header">

@@ -1,11 +1,16 @@
 <?php
 /**
+ * Image field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $label
  * @var string $description
  * @var string $data
  * @var string $k
  * @var string $validator
- * */
+ */
+
 ?>
 <p>
 	<span class="ssp-episode-details-label"><?php echo wp_kses_post( $label ); ?></span><br/>

@@ -1,12 +1,16 @@
 <?php
 /**
+ * Sync label template.
+ *
  * This template is used for both Podcast and Episode sync status labels.
+ *
+ * @package SeriouslySimplePodcasting
  *
  * @var \SeriouslySimplePodcasting\Entities\Sync_Status $status
  * @var string $classes
  * @var string $link
  * @var bool $is_full_label
- * */
+ */
 
 $tooltip = sprintf( __( 'Sync status: %s', 'seriously-simple-podcasting' ), $status->title );
 if ( $status->error ) {

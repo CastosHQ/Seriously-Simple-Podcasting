@@ -1,12 +1,17 @@
 <?php
 /**
+ * Dynamo button template.
+ *
  * @see ssp_dynamo_btn()
+ *
+ * @package SeriouslySimplePodcasting
  *
  * @var string $title
  * @var string $subtitle
- * @var string $description Example: Create a custom cover with our free tool
- * @var string $default_podcast_title Needed to show default podcast title when user didn't check any podcast for episode
- * */
+ * @var string $description Example: Create a custom cover with our free tool.
+ * @var string $default_podcast_title Needed to show default podcast title when user didn't check any podcast for episode.
+ */
+
 ?>
 <p class="ssp-dynamo" data-default-podcast-title="<?php echo esc_attr( $default_podcast_title ); ?>">
 <span class="ssp-dynamo__container">

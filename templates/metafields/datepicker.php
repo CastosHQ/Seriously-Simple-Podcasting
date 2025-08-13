@@ -1,10 +1,14 @@
 <?php
 /**
+ * Datepicker field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var array $v
  * @var string $k
  * @var string $data
  * @var string $class
- * */
+ */
 
 $display_date = '';
 if ( $data ) {

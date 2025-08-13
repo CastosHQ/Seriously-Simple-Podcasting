@@ -1,11 +1,16 @@
 <?php
 /**
+ * Episode file field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $k
  * @var array $v
  * @var string $data
  * @var bool $is_castos
  * @var \SeriouslySimplePodcasting\Entities\Castos_File_Data $file_data
- * */
+ */
+
 ?>
 
 <div>

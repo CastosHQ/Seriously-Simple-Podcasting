@@ -1,8 +1,13 @@
 <?php
 /**
+ * Upsell field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $description
  * @var array $btn
- * */
+ */
+
 ?>
 <p class="upsell-field">
 <span class="upsell-field__container">

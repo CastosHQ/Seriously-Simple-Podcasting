@@ -1,5 +1,9 @@
 <?php
 /**
+ * Podcast upload image template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var bool $mode
  * @var string $series_img_title
  * @var string $taxonomy
@@ -13,7 +17,8 @@
  * @var string $upload_btn_text
  * @var string $upload_btn_value
  * @var string $series_img_desc
- * */
+ */
+
 ?>
 <img alt="<?php echo esc_html( $series_img_title ); ?>" id="<?php echo esc_attr( $taxonomy ); ?>_image_preview"
 	data-src="<?php echo esc_attr( $default_image ); ?>"

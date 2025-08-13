@@ -1,10 +1,15 @@
 <?php
 /**
+ * Checkbox field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $k
  * @var array $v
  * @var string $class
  * @var string $data
- * */
+ */
+
 ?>
 <p><input name="
 <?php

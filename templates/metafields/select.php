@@ -1,10 +1,15 @@
 <?php
 /**
+ * Select field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $k
  * @var array $v
  * @var string $class
  * @var string $data
- * */
+ */
+
 ?>
 <p>
 	<span class="ssp-episode-details-label"><?php echo wp_kses_post( $v['name'] ); ?></span><br/>

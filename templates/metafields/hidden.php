@@ -1,9 +1,14 @@
 <?php
 /**
+ * Hidden field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var string $k
  * @var string $data
  * @var string $class
- * */
+ */
+
 ?>
 <p>
 	<input name="<?php echo esc_attr( $k ); ?>" type="hidden" id="

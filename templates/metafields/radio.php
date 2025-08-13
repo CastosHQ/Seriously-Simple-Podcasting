@@ -1,10 +1,15 @@
 <?php
 /**
+ * Radio field template.
+ *
+ * @package SeriouslySimplePodcasting
+ *
  * @var array $v
  * @var string $k
  * @var string $data
  * @var string $class
- * */
+ */
+
 ?>
 <p>
 	<span class="ssp-episode-details-label"><?php echo wp_kses_post( $v['name'] ); ?></span><br/>

@@ -1,6 +1,12 @@
 <?php
+/**
+ * Feed subcategories configuration.
+ *
+ * Set up available sub-category options.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
-// Set up available sub-category options.
 return array(
 	''                   => __( '-- None --', 'seriously-simple-podcasting' ),
 	'Books'              => array(

@@ -1,8 +1,13 @@
 <?php
 /**
+ * Security settings configuration.
+ *
  * @var callable $protection_password_callback
  * @var callable $validate_message_callback
- * */
+ *
+ * @package SeriouslySimplePodcasting
+ */
+
 return array(
 	'title'       => __( 'Security', 'seriously-simple-podcasting' ),
 	'description' => __( 'Change these settings to ensure that your podcast feed remains private. This will block feed readers (including iTunes) from accessing your feed.', 'seriously-simple-podcasting' ),

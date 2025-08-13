@@ -1,4 +1,9 @@
 <?php
+/**
+ * Extensions settings configuration.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 return array(
 	'title'               => __( 'Extensions', 'seriously-simple-podcasting' ),

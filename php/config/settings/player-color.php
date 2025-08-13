@@ -1,4 +1,9 @@
 <?php
+/**
+ * Player color settings configuration.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 return array(
 	array(

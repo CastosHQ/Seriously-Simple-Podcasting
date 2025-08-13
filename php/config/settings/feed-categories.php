@@ -1,6 +1,12 @@
 <?php
+/**
+ * Feed categories configuration.
+ *
+ * Set up available category options.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
-// Set up available category options.
 return array(
 	''                        => __( '-- None --', 'seriously-simple-podcasting' ),
 	'Arts'                    => __( 'Arts', 'seriously-simple-podcasting' ),

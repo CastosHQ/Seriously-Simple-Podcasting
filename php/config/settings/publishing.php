@@ -1,4 +1,9 @@
 <?php
+/**
+ * Publishing settings configuration.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 return array(
 	'title'       => __( 'Publishing', 'seriously-simple-podcasting' ),

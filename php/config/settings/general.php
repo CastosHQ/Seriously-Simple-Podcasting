@@ -1,7 +1,12 @@
 <?php
 /**
+ * General settings configuration.
+ *
  * @var $post_type_options
- * */
+ *
+ * @package SeriouslySimplePodcasting
+ */
+
 return array(
 	'title'       => __( 'General', 'seriously-simple-podcasting' ),
 	'description' => __( 'General Settings', 'seriously-simple-podcasting' ),
@@ -29,7 +34,7 @@ return array(
 			'default'     => 'on',
 		),
 		array(
-			// After 2.14.0, we renamed Series to Podcasts
+			// After 2.14.0, we renamed Series to Podcasts.
 			'id'          => 'series_slug',
 			'label'       => __( 'Podcasts slug', 'seriously-simple-podcasting' ),
 			'description' => __( 'Podcast permalink base. Please don\'t use reserved slug `podcast`.', 'seriously-simple-podcasting' ),

@@ -1,8 +1,12 @@
 <?php
-
 /**
+ * Hosting settings configuration.
+ *
  * @var array $podcast_options
- * */
+ *
+ * @package SeriouslySimplePodcasting
+ */
+
 return array(
 	'title'        => __( 'Hosting', 'seriously-simple-podcasting' ),
 	'button_text'  => __( 'Connect', 'seriously-simple-podcasting' ),
@@ -19,7 +23,7 @@ return array(
 					'id'          => 'podmotor_account_api_token',
 					'type'        => 'text',
 					'label'       => __( 'Castos API token', 'seriously-simple-podcasting' ),
-					'description' => sprintf( __( 'Your Castos API token. Available from your %s.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . 'integrations/api-details' . '">Castos dashboard</a>' ),
+					'description' => sprintf( __( 'Your Castos API token. Available from your %s.', 'seriously-simple-podcasting' ), '<a target="_blank" href="' . SSP_CASTOS_APP_URL . 'integrations/api-details">Castos dashboard</a>' ),
 					'default'     => '',
 					'placeholder' => __( 'Enter your API token', 'seriously-simple-podcasting' ),
 					'callback'    => 'sanitize_text_field',

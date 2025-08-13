@@ -1,4 +1,9 @@
 <?php
+/**
+ * Seriously Simple Podcasting functions.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 use SeriouslySimplePodcasting\Controllers\App_Controller;
 use SeriouslySimplePodcasting\Controllers\Episode_Controller;
@@ -99,6 +104,8 @@ if ( ! function_exists( 'ssp_is_php_version_ok' ) ) {
 
 if ( ! function_exists( 'ssp_vendor_notice' ) ) {
 	/**
+	 * Displays vendor directory error notice.
+	 *
 	 * @return void
 	 */
 	function ssp_vendor_notice() {
@@ -117,6 +124,8 @@ if ( ! function_exists( 'ssp_vendor_notice' ) ) {
 
 if ( ! function_exists( 'ssp_is_vendor_ok' ) ) {
 	/**
+	 * Checks if vendor directory is ok.
+	 *
 	 * @return bool
 	 */
 	function ssp_is_vendor_ok() {
@@ -136,7 +145,7 @@ if ( ! function_exists( 'ssp_get_upload_directory' ) ) {
 	 * Typically ../wp-content/uploads/ssp
 	 * If it does not already exist, attempts to create it
 	 *
-	 * @param bool $return Whether to return the path or not
+	 * @param bool $return Whether to return the path or not.
 	 *
 	 * @return string|void
 	 */
@@ -170,7 +179,7 @@ if ( ! function_exists( 'ssp_cannot_write_uploads_dir_error' ) ) {
 		$class   = 'notice notice-error';
 		$message = sprintf(
 		/* translators: %s: Error path */
-			__( 'Unable to create directory %s. Is its parent directory writable by the server?' ),
+			__( 'Unable to create directory %s. Is its parent directory writable by the server?', 'seriously-simple-podcasting' ),
 			esc_html( $error_path )
 		);
 		printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
@@ -217,19 +226,19 @@ if ( ! function_exists( 'ss_get_podcast' ) ) {
 		$query = array();
 
 		if ( 'episodes' == $args['content'] ) {
-			// Get selected series
+			// Get selected series.
 			$podcast_series = empty( $args['series'] ) ? null : $args['series'];
 
-			// Get query args
+			// Get query args.
 			$query_args = apply_filters( 'ssp_get_podcast_query_args', ssp_episodes( - 1, $podcast_series, true ) );
 
-			// The Query
+			// The Query.
 			$query = get_posts( $query_args );
 
-			// The Display
+			// The Display.
 			if ( ! is_wp_error( $query ) && is_array( $query ) && count( $query ) > 0 ) {
 				foreach ( $query as $k => $v ) {
-					// Get the URL
+					// Get the URL.
 					$query[ $k ]->url = get_permalink( $v->ID );
 				}
 			} else {
@@ -293,16 +302,16 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		// Allow child themes/plugins to filter here
+		// Allow child themes/plugins to filter here.
 		$args = apply_filters( 'ssp_podcast_args', $args );
 		$html = '';
 
 		do_action( 'ssp_podcast_before', $args );
 
-		// The Query
+		// The Query.
 		$query = ss_get_podcast( $args );
 
-		// The Display
+		// The Display.
 		if ( ! is_wp_error( $query ) && is_array( $query ) && count( $query ) > 0 ) {
 			$html .= $args['before'] . "\n";
 
@@ -378,14 +387,14 @@ if ( ! function_exists( 'ss_podcast' ) ) {
 			wp_reset_postdata();
 		}
 
-		// Allow themes/plugins to filter here
+		// Allow themes/plugins to filter here.
 		$html = apply_filters( 'ssp_podcast_html', $html, $query, $args );
 
 		if ( ! $args['echo'] ) {
 			return $html;
 		}
 
-		// Should only run if "echo" is set to true
+		// Should only run if "echo" is set to true.
 		echo $html;
 
 		do_action( 'ssp_podcast_after', $args );
@@ -403,10 +412,10 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 	function ssp_episode_ids() {
 		global $ss_podcasting;
 
-		// Remove action to prevent infinite loop
+		// Remove action to prevent infinite loop.
 		remove_action( 'pre_get_posts', array( $ss_podcasting, 'add_all_post_types' ) );
 
-		// Setup the default args
+		// Setup the default args.
 		$args = array(
 			'post_type'      => array( SSP_CPT_PODCAST ),
 			'post_status'    => 'publish',
@@ -433,13 +442,13 @@ if ( ! function_exists( 'ssp_episode_ids' ) ) {
 		$group            = 'ssp';
 		$podcast_episodes = wp_cache_get( $key, $group );
 
-		// If nothing in cache then fetch episodes again and store in cache
+		// If nothing in cache then fetch episodes again and store in cache.
 		if ( false === $podcast_episodes ) {
 			$podcast_episodes = get_posts( $args );
 			wp_cache_set( $key, $podcast_episodes, $group, HOUR_IN_SECONDS );
 		}
 
-		// Reinstate action for future queries
+		// Reinstate action for future queries.
 		add_action( 'pre_get_posts', array( $ss_podcasting, 'add_all_post_types' ) );
 
 		return (array) $podcast_episodes;
@@ -463,7 +472,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 	 */
 	function ssp_episodes( $n = 10, $series = '', $return_args = false, $context = '', $exclude_series = array() ) {
 
-		// Get all podcast episodes IDs
+		// Get all podcast episodes IDs.
 		$episode_ids = (array) ssp_episode_ids();
 
 		if ( 'glance' === $context ) {
@@ -474,14 +483,14 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			return array();
 		}
 
-		// Get all valid podcast post types
+		// Get all valid podcast post types.
 		$podcast_post_types = ssp_post_types();
 
 		if ( empty( $podcast_post_types ) ) {
 			return array();
 		}
 
-		// Fetch podcast episodes
+		// Fetch podcast episodes.
 		$args = array(
 			'post_type'           => $podcast_post_types,
 			'post_status'         => 'publish',
@@ -515,7 +524,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			return $args;
 		}
 
-		// Todo: investigate if cache works correctly. For example, for different $n
+		// Todo: investigate if cache works correctly. For example, for different $n.
 		// Todo: Also, can it lead to the fatal errors if there are too many $posts?
 		// Todo: Should we remove or improve the cache here?
 		// Do we have anything in the cache here?
@@ -523,7 +532,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 		$group = 'ssp';
 		$posts = wp_cache_get( $key, $group );
 
-		// If nothing in cache then fetch episodes again and store in cache
+		// If nothing in cache then fetch episodes again and store in cache.
 		if ( false === $posts ) {
 			$posts = get_posts( $args );
 			wp_cache_add( $key, $posts, $group, HOUR_IN_SECONDS * 12 );
@@ -554,7 +563,7 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 			$podcast_post_types = array();
 		}
 
-		// Add `podcast` post type to array if required
+		// Add `podcast` post type to array if required.
 		if ( $include_podcast ) {
 			$podcast_post_types[] = SSP_CPT_PODCAST;
 		}
@@ -562,7 +571,7 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 		if ( $verify ) {
 			$valid_podcast_post_types = array();
 
-			// Check if post types exist
+			// Check if post types exist.
 			if ( ! empty( $podcast_post_types ) ) {
 				foreach ( $podcast_post_types as $type ) {
 					if ( post_type_exists( $type ) ) {
@@ -574,7 +583,7 @@ if ( ! function_exists( 'ssp_post_types' ) ) {
 			$valid_podcast_post_types = $podcast_post_types;
 		}
 
-		// Return only the valid podcast post types
+		// Return only the valid podcast post types.
 		return apply_filters( 'ssp_podcast_post_types', $valid_podcast_post_types, $include_podcast );
 	}
 }
@@ -600,22 +609,22 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 		if ( $series_id ) {
 			$default_series_id = ssp_get_default_series_id();
 
-			// Try to get the series category
+			// Try to get the series category.
 			$category = get_option( 'ss_podcasting_data_category' . $level . '_' . $series_id, 'no-category' );
 
-			// Try to get the default series category if series category was not setup yet
+			// Try to get the default series category if series category was not setup yet.
 			if ( 'no-category' === $category ) {
 				$category = get_option( 'ss_podcasting_data_category' . $level . '_' . $default_series_id, 'no-category' );
 			}
 
-			// Try to get category from the default feed settings (old variant, just for the backwards compatibility)
+			// Try to get category from the default feed settings (old variant, just for the backwards compatibility).
 			if ( 'no-category' === $category ) {
 				$category = get_option( 'ss_podcasting_data_category' . $level, '' );
 			}
 
 			$subcategory = '';
 
-			// Try to get the series subcategory
+			// Try to get the series subcategory.
 			if ( $category ) {
 				$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level . '_' . $series_id, 'no-subcategory' );
 			}
@@ -625,12 +634,12 @@ if ( ! function_exists( 'ssp_get_feed_category_output' ) ) {
 				$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level . '_' . $default_series_id, 'no-subcategory' );
 			}
 
-			// Try to get category from the default feed settings (old variant, just for the backwards compatibility)
+			// Try to get category from the default feed settings (old variant, just for the backwards compatibility).
 			if ( 'no-subcategory' === $subcategory ) {
 				$subcategory = get_option( 'ss_podcasting_data_subcategory' . $level, '' );
 			}
 		} else {
-			// If there is no series ID, it's a deprecated default feed settings, which are not used anymore
+			// If there is no series ID, it's a deprecated default feed settings, which are not used anymore.
 			$category    = get_option( 'ss_podcasting_data_category' . $level, '' );
 			$subcategory = $category ? get_option( 'ss_podcasting_data_subcategory' . $level, '' ) : '';
 		}
@@ -1238,7 +1247,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 			$hidden_by_default = apply_filters(
 				'ssp_hidden_by_default_blocks',
 				array(
-					'core/group', // For backward compatibility, group block should be hidden
+					'core/group', // For backward compatibility, group block should be hidden.
 					'create-block/castos-transcript',
 				)
 			);
@@ -1247,7 +1256,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 				$is_allowed = in_array( $block['blockName'], $allowed_blocks ) &&
 								( ! isset( $block['attrs']['hideFromFeed'] ) || true !== $block['attrs']['hideFromFeed'] );
 
-				// Check for hidden by default blocks
+				// Check for hidden by default blocks.
 				if ( $is_allowed && in_array( $block['blockName'], $hidden_by_default ) &&
 					! isset( $block['attrs']['hideFromFeed'] ) ) {
 					$is_allowed = false;
@@ -1259,7 +1268,7 @@ if ( ! function_exists( 'ssp_get_the_feed_item_content' ) ) {
 
 				$block_content = render_block( $block );
 
-				// Strip tags with content inside (styles, scripts)
+				// Strip tags with content inside (styles, scripts).
 				$strip_tags = array( 'style', 'script' );
 
 				foreach ( $strip_tags as $strip_tag ) {
@@ -1972,7 +1981,7 @@ if ( ! function_exists( 'ssp_iso_duration' ) ) {
 	function ssp_iso_duration( $duration ) {
 		$time = trim( $duration );
 
-		// Check if the input is a valid time format (HH:MM:SS, MM:SS, or H:MM:SS)
+		// Check if the input is a valid time format (HH:MM:SS, MM:SS, or H:MM:SS).
 		if ( ! preg_match( '/^(\d{1,2}:)?\d{1,2}:\d{1,2}$/', $duration ) ) {
 			return 'PT0H0M0S';
 		}
@@ -1980,17 +1989,17 @@ if ( ! function_exists( 'ssp_iso_duration' ) ) {
 		$parts = explode( ':', $duration );
 		$count = count( $parts );
 
-		// Handle different time formats
+		// Handle different time formats.
 		if ( $count === 3 ) {
 			list( $hours, $minutes, $seconds ) = $parts;
 		} elseif ( $count === 2 ) {
 			$hours                     = 0;
 			list( $minutes, $seconds ) = $parts;
 		} else {
-			return ''; // Invalid format
+			return ''; // Invalid format.
 		}
 
-		// Convert to integers
+		// Convert to integers.
 		$hours   = (int) $hours;
 		$minutes = (int) $minutes;
 		$seconds = (int) $seconds;
@@ -2010,28 +2019,28 @@ if ( ! function_exists( 'ssp_duration_seconds' ) ) {
 	 */
 	function ssp_duration_seconds( $duration ) {
 		if ( ! is_string( $duration ) || empty( trim( $duration ) ) ) {
-			return 0; // Return 0 for empty or non-string values
+			return 0; // Return 0 for empty or non-string values.
 		}
 
 		$duration = trim( $duration );
 
-		// Match valid time format: HH:MM:SS, MM:SS, or SS
+		// Match valid time format: HH:MM:SS, MM:SS, or SS.
 		if ( ! preg_match( '/^(\d{1,2}:)?\d{1,2}:\d{1,2}$|^\d+$/', $duration ) ) {
-			return 0; // Return 0 if format is invalid
+			return 0; // Return 0 if format is invalid.
 		}
 
 		$time_parts = explode( ':', $duration );
-		$time_parts = array_reverse( $time_parts ); // Reverse to handle flexible formats
+		$time_parts = array_reverse( $time_parts ); // Reverse to handle flexible formats.
 
 		$seconds = 0;
 		if ( isset( $time_parts[0] ) && is_numeric( $time_parts[0] ) ) {
-			$seconds += (int) $time_parts[0]; // Seconds
+			$seconds += (int) $time_parts[0]; // Seconds.
 		}
 		if ( isset( $time_parts[1] ) && is_numeric( $time_parts[1] ) ) {
-			$seconds += (int) $time_parts[1] * MINUTE_IN_SECONDS; // Minutes
+			$seconds += (int) $time_parts[1] * MINUTE_IN_SECONDS; // Minutes.
 		}
 		if ( isset( $time_parts[2] ) && is_numeric( $time_parts[2] ) ) {
-			$seconds += (int) $time_parts[2] * HOUR_IN_SECONDS; // Hours
+			$seconds += (int) $time_parts[2] * HOUR_IN_SECONDS; // Hours.
 		}
 
 		return $seconds;

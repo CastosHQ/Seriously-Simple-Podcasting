@@ -36,54 +36,63 @@ abstract class Controller {
 	 * @var string
 	 */
 	public $dir;
+
 	/**
 	 * File
 	 *
 	 * @var string
 	 */
 	public $file;
+
 	/**
 	 * Assets Directory
 	 *
 	 * @var string
 	 */
 	public $assets_dir;
+
 	/**
 	 * Assets URI
 	 *
 	 * @var string
 	 */
 	public $assets_url;
+
 	/**
 	 * Home URL
 	 *
 	 * @var string
 	 */
 	public $home_url;
+
 	/**
 	 * Site URL
 	 *
 	 * @var string
 	 */
 	public $site_url;
+
 	/**
 	 * Templates Directory Path
 	 *
 	 * @var string
 	 */
 	public $template_path;
+
 	/**
 	 * Templates Directory URL
 	 *
 	 * @var string
 	 */
 	public $template_url;
+
 	/**
 	 * Token
 	 *
 	 * @var string
 	 */
 	public $token;
+	
 	/**
 	 * Version
 	 *

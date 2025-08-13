@@ -130,7 +130,7 @@ textarea#episode_embed_code {
         padding: 12px; } }
     .ssp-dynamo__container:before, .upsell-field__container:before {
       content: '';
-      background: url("../img/stars-purple.svg");
+      background: url("../img/stars.svg");
       width: 22px;
       height: 22px; }
       @media (max-width: 783px) {
@@ -639,12 +639,23 @@ textarea#episode_embed_code {
     border-color: #853AED;
     background: #FFFFFF; }
   .ssp-admin.post-type-podcast .ssp-dynamo__arrow-up::after {
-    background: url("../img/arrow-up-purple.svg"); }
+    background: url("../img/arrow-up.svg"); }
   .ssp-admin #footer-left {
     font-size: 16px;
     margin-bottom: 20px; }
   .ssp-admin #wpfooter {
     margin-right: 60px; }
+  .ssp-admin .ssp-admin-header__container {
+    margin: 0 80px 0 20px; }
+    @media (max-width: 783px) {
+      .ssp-admin .ssp-admin-header__container {
+        margin: 0 20px; } }
+    @media (max-width: 600px) {
+      .ssp-admin .ssp-admin-header__container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+        padding: 20px 0; } }
 
 .ssp-admin-header {
   display: flex;
@@ -664,7 +675,7 @@ textarea#episode_embed_code {
       height: 180px; } }
   .ssp-admin-header__container {
     display: flex;
-    margin: 0 80px 0 20px;
+    margin: 0 20px 0 20px;
     align-items: center;
     justify-content: space-between;
     width: 100%; }
@@ -1563,12 +1574,6 @@ textarea#episode_embed_code {
 .ssp-episode-meta-sidebar .ssp-sync-message, .ssp-sidebar-panel .ssp-sync-message {
   margin-top: 8px; }
 
-.ssp-episode-meta-sidebar .components-radio-control__input[type=radio]:checked, .ssp-sidebar-panel .components-radio-control__input[type=radio]:checked {
-  background: #853AED;
-  border-color: #853AED; }
-  .ssp-episode-meta-sidebar .components-radio-control__input[type=radio]:checked::before, .ssp-sidebar-panel .components-radio-control__input[type=radio]:checked::before {
-    margin: 0; }
-
 .ssp-sidebar-panel {
   width: 100%; }
   .ssp-sidebar-panel .ssp-accordion {
@@ -1745,21 +1750,6 @@ textarea#episode_embed_code {
       position: relative;
       top: 3px;
       left: 4px; }
-
-.ssp-episode-meta-sidebar .button {
-  border: 1px solid #853AED;
-  transition: .4s;
-  color: #6C25D0; }
-  .ssp-episode-meta-sidebar .button:active {
-    border: 1px solid #853AED;
-    color: #6C25D0; }
-  .ssp-episode-meta-sidebar .button:hover {
-    color: #6C25D0; }
-  .ssp-episode-meta-sidebar .button:hover:not(:disabled), .ssp-episode-meta-sidebar .button:focus {
-    color: #6C25D0;
-    border: 1px solid #853AED;
-    background: #f6f7f7;
-    box-shadow: 1px 1px 3px 0 #dcc6fa; }
 
 .ssp-date-input .components-popover__content {
   padding: 8px; }

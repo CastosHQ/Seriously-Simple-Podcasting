@@ -50,7 +50,7 @@ class Assets_Controller {
 	 * @return string Modified body classes.
 	 */
 	public function maybe_add_ssp_admin_body_class( $class ) {
-		if ( $this->is_ssp_admin_page() || $this->is_ssp_podcast_page() ) {
+		if ( $this->is_ssp_settings_page() ) {
 			$class .= ' ssp-admin';
 		}
 

@@ -59,6 +59,20 @@ trait URL_Helper {
 	}
 
 	/**
+	 * Checks if this is a podcast post type page or not.
+	 *
+	 * @return bool
+	 */
+	protected function is_ssp_settings_page() {
+		$current_screen = get_current_screen();
+		if ( ! $current_screen ) {
+			return false;
+		}
+
+		return 'podcast_page_podcast_settings' === $current_screen->id;
+	}
+
+	/**
 	 * Check if this is any post page.
 	 *
 	 * @return bool

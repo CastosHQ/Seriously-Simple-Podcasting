@@ -1,4 +1,9 @@
 <?php
+/**
+ * Castos Widget abstract class.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 namespace SeriouslySimplePodcasting\Widgets;
 
@@ -19,21 +24,55 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @since     2.7.4
  */
 abstract class Castos_Widget extends WP_Widget {
+	/**
+	 * Widget CSS class.
+	 *
+	 * @var string
+	 */
 	protected $widget_cssclass;
+
+	/**
+	 * Widget description.
+	 *
+	 * @var string
+	 */
 	protected $widget_description;
+
+	/**
+	 * Widget ID base.
+	 *
+	 * @var string
+	 */
 	protected $widget_idbase;
+
+	/**
+	 * Widget title.
+	 *
+	 * @var string
+	 */
 	protected $widget_title;
+
+	/**
+	 * Renderer instance.
+	 *
+	 * @var Renderer
+	 */
 	protected $renderer;
 
+	/**
+	 * Constructor.
+	 *
+	 * @param string $id_base Widget ID base.
+	 */
 	public function __construct( $id_base ) {
-		// Widget variable settings
+		// Widget variable settings.
 		$this->widget_cssclass    = 'widget_podcast_playlist';
 		$this->widget_description = __( 'Display a playlist of episodes.', 'seriously-simple-podcasting' );
 		$this->widget_idbase      = 'ss_podcast';
 		$this->widget_title       = __( 'Podcast: Playlist', 'seriously-simple-podcasting' );
 		$this->renderer           = new Renderer();
 
-		// Widget settings
+		// Widget settings.
 		$widget_ops = array(
 			'classname'                   => $this->widget_cssclass,
 			'description'                 => $this->widget_description,
@@ -47,6 +86,14 @@ abstract class Castos_Widget extends WP_Widget {
 		parent::__construct( $id_base, $this->widget_title, $widget_ops );
 	}
 
+	/**
+	 * Update widget.
+	 *
+	 * @param array $new_instance New instance.
+	 * @param array $old_instance Old instance.
+	 *
+	 * @return array
+	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance = $old_instance;
 
@@ -71,10 +118,18 @@ abstract class Castos_Widget extends WP_Widget {
 		return $instance;
 	}
 
+	/**
+	 * Flush widget cache.
+	 */
 	public function flush_widget_cache() {
 		wp_cache_delete( 'widget_podcast_playlist', 'widget' );
 	}
 
+	/**
+	 * Form.
+	 *
+	 * @param array $instance Widget instance.
+	 */
 	public function form( $instance ) {
 		foreach ( $this->get_fields() as $field ) {
 			$field['value']      = isset( $instance[ $field['id'] ] ) ? esc_attr( $instance[ $field['id'] ] ) : '';
@@ -85,6 +140,13 @@ abstract class Castos_Widget extends WP_Widget {
 		}
 	}
 
+	/**
+	 * Render field.
+	 *
+	 * @param array $field Field data.
+	 *
+	 * @return string
+	 */
 	protected function render_field( $field ) {
 		if ( empty( $field['type'] ) ) {
 			return '';
@@ -93,6 +155,12 @@ abstract class Castos_Widget extends WP_Widget {
 		return $this->renderer->render_deprecated( $field, sprintf( 'widget/fields/%s', $field['type'] ) );
 	}
 
+	/**
+	 * Widget.
+	 *
+	 * @param array $args     Widget arguments.
+	 * @param array $instance Widget instance.
+	 */
 	public function widget( $args, $instance ) {
 		$cache = array();
 		if ( ! $this->is_preview() ) {
@@ -138,7 +206,19 @@ abstract class Castos_Widget extends WP_Widget {
 		}
 	}
 
+	/**
+	 * Get fields.
+	 *
+	 * @return array
+	 */
 	abstract protected function get_fields();
 
+	/**
+	 * Get widget body.
+	 *
+	 * @param array $instance Widget instance.
+	 *
+	 * @return string
+	 */
 	abstract protected function get_widget_body( $instance );
 }

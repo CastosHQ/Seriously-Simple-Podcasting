@@ -1,4 +1,9 @@
 <?php
+/**
+ * Recent Episodes widget class.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 namespace SeriouslySimplePodcasting\Widgets;
 
@@ -20,9 +25,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @todo: Refactoring: use abstract Castos_Widget class
  */
 class Recent_Episodes extends WP_Widget {
+	/**
+	 * Widget CSS class.
+	 *
+	 * @var string
+	 */
 	protected $widget_cssclass;
+
+	/**
+	 * Widget description.
+	 *
+	 * @var string
+	 */
 	protected $widget_description;
+
+	/**
+	 * Widget ID base.
+	 *
+	 * @var string
+	 */
 	protected $widget_idbase;
+
+	/**
+	 * Widget title.
+	 *
+	 * @var string
+	 */
 	protected $widget_title;
 
 	/**
@@ -31,13 +59,13 @@ class Recent_Episodes extends WP_Widget {
 	 * @since  1.8.0
 	 */
 	public function __construct() {
-		// Widget variable settings
+		// Widget variable settings.
 		$this->widget_cssclass    = 'widget_recent_entries widget_recent_episodes';
 		$this->widget_description = __( 'Display a list of your most recent podcast episodes.', 'seriously-simple-podcasting' );
 		$this->widget_idbase      = 'ss_podcast';
 		$this->widget_title       = __( 'Podcast: Recent Episodes', 'seriously-simple-podcasting' );
 
-		// Widget settings
+		// Widget settings.
 		$widget_ops = array(
 			'classname'                   => $this->widget_cssclass,
 			'description'                 => $this->widget_description,
@@ -53,6 +81,12 @@ class Recent_Episodes extends WP_Widget {
 		add_action( 'switch_theme', array( $this, 'flush_widget_cache' ) );
 	} // End __construct()
 
+	/**
+	 * Widget.
+	 *
+	 * @param array $args     Widget arguments.
+	 * @param array $instance Widget instance.
+	 */
 	public function widget( $args, $instance ) {
 		$cache = array();
 		if ( ! $this->is_preview() ) {
@@ -113,7 +147,7 @@ class Recent_Episodes extends WP_Widget {
 		</ul>
 			<?php echo $args['after_widget']; ?>
 			<?php
-			// Reset the global $the_post as this query will have stomped on it
+			// Reset the global $the_post as this query will have stomped on it.
 			wp_reset_postdata();
 		endif;
 
@@ -125,6 +159,14 @@ class Recent_Episodes extends WP_Widget {
 		}
 	}
 
+	/**
+	 * Update widget.
+	 *
+	 * @param array $new_instance New instance.
+	 * @param array $old_instance Old instance.
+	 *
+	 * @return array
+	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance              = $old_instance;
 		$instance['title']     = strip_tags( $new_instance['title'] );
@@ -135,10 +177,18 @@ class Recent_Episodes extends WP_Widget {
 		return $instance;
 	}
 
+	/**
+	 * Flush widget cache.
+	 */
 	public function flush_widget_cache() {
 		wp_cache_delete( 'widget_recent_episodes', 'widget' );
 	}
 
+	/**
+	 * Form.
+	 *
+	 * @param array $instance Widget instance.
+	 */
 	public function form( $instance ) {
 		$title     = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$number    = isset( $instance['number'] ) ? absint( $instance['number'] ) : 5;

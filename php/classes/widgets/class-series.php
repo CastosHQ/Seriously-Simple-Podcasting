@@ -1,4 +1,9 @@
 <?php
+/**
+ * Series widget class.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 namespace SeriouslySimplePodcasting\Widgets;
 
@@ -20,9 +25,32 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @todo: Refactoring: use abstract Castos_Widget class
  */
 class Series extends WP_Widget {
+	/**
+	 * Widget CSS class.
+	 *
+	 * @var string
+	 */
 	protected $widget_cssclass;
+
+	/**
+	 * Widget description.
+	 *
+	 * @var string
+	 */
 	protected $widget_description;
+
+	/**
+	 * Widget ID base.
+	 *
+	 * @var string
+	 */
 	protected $widget_idbase;
+
+	/**
+	 * Widget title.
+	 *
+	 * @var string
+	 */
 	protected $widget_title;
 
 	/**
@@ -31,13 +59,13 @@ class Series extends WP_Widget {
 	 * @since  1.9.0
 	 */
 	public function __construct() {
-		// Widget variable settings
+		// Widget variable settings.
 		$this->widget_cssclass    = 'widget_podcast_series';
 		$this->widget_description = __( 'Display a list of episodes from a single podcast.', 'seriously-simple-podcasting' );
 		$this->widget_idbase      = 'ss_podcast';
 		$this->widget_title       = __( 'Podcast', 'seriously-simple-podcasting' );
 
-		// Widget settings
+		// Widget settings.
 		$widget_ops = array(
 			'classname'                   => $this->widget_cssclass,
 			'description'                 => $this->widget_description,
@@ -53,6 +81,12 @@ class Series extends WP_Widget {
 		add_action( 'switch_theme', array( $this, 'flush_widget_cache' ) );
 	} // End __construct()
 
+	/**
+	 * Widget.
+	 *
+	 * @param array $args     Widget arguments.
+	 * @param array $instance Widget instance.
+	 */
 	public function widget( $args, $instance ) {
 		$cache = array();
 		if ( ! $this->is_preview() ) {
@@ -136,7 +170,7 @@ class Series extends WP_Widget {
 		</ul>
 			<?php echo $args['after_widget']; ?>
 			<?php
-			// Reset the global $the_post as this query will have stomped on it
+			// Reset the global $the_post as this query will have stomped on it.
 			wp_reset_postdata();
 		endif;
 
@@ -148,6 +182,14 @@ class Series extends WP_Widget {
 		}
 	}
 
+	/**
+	 * Update widget.
+	 *
+	 * @param array $new_instance New instance.
+	 * @param array $old_instance Old instance.
+	 *
+	 * @return array
+	 */
 	public function update( $new_instance, $old_instance ) {
 		$instance               = $old_instance;
 		$instance['title']      = strip_tags( $new_instance['title'] );
@@ -161,10 +203,18 @@ class Series extends WP_Widget {
 		return $instance;
 	}
 
+	/**
+	 * Flush widget cache.
+	 */
 	public function flush_widget_cache() {
 		wp_cache_delete( 'widget_podcast_series', 'widget' );
 	}
 
+	/**
+	 * Form.
+	 *
+	 * @param array $instance Widget instance.
+	 */
 	public function form( $instance ) {
 		$title      = isset( $instance['title'] ) ? esc_attr( $instance['title'] ) : '';
 		$series_id  = isset( $instance['series_id'] ) ? $instance['series_id'] : 0;
@@ -173,7 +223,7 @@ class Series extends WP_Widget {
 		$show_desc  = isset( $instance['show_desc'] ) ? (bool) $instance['show_desc'] : false;
 		$show_date  = isset( $instance['show_date'] ) ? (bool) $instance['show_date'] : false;
 
-		// Get all podcast series
+		// Get all podcast series.
 		$series = get_terms( ssp_series_taxonomy() );
 		?>
 		<p><label for="<?php echo $this->get_field_id( 'title' ); ?>"><?php _e( 'Title:', 'seriously-simple-podcasting' ); ?></label>

@@ -1,4 +1,9 @@
 <?php
+/**
+ * Playlist widget class.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 namespace SeriouslySimplePodcasting\Widgets;
 
@@ -33,7 +38,9 @@ class Playlist extends Castos_Widget {
 
 
 	/**
-	 * @param array $instance
+	 * Get widget body.
+	 *
+	 * @param array $instance Widget instance.
 	 *
 	 * @return string
 	 */
@@ -63,6 +70,8 @@ class Playlist extends Castos_Widget {
 	}
 
 	/**
+	 * Get series.
+	 *
 	 * @return array
 	 */
 	protected function get_series() {
@@ -77,6 +86,8 @@ class Playlist extends Castos_Widget {
 	}
 
 	/**
+	 * Get fields.
+	 *
 	 * @return array
 	 */
 	protected function get_fields() {

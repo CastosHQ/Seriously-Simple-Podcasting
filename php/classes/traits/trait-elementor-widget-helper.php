@@ -1,7 +1,10 @@
 <?php
 /**
- * Elementor Widget Helper.
+ * Elementor Widget Helper trait.
+ *
+ * @package SeriouslySimplePodcasting
  */
+
 namespace SeriouslySimplePodcasting\Traits;
 
 use Elementor\Controls_Manager;
@@ -21,18 +24,34 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Elementor_Widget_Helper {
 
+	/**
+	 * Select podcast settings.
+	 *
+	 * @var array
+	 */
 	protected $select_podcast_settings;
 
 	/**
+	 * Renderer instance.
+	 *
 	 * @var Renderer
-	 * */
+	 */
 	protected $renderer;
 
 	/**
-	 * @var Episode_Repository $episode_repository
-	 * */
+	 * Episode repository instance.
+	 *
+	 * @var Episode_Repository
+	 */
 	protected $episode_repository;
 
+	/**
+	 * Get select podcast settings.
+	 *
+	 * @param bool $show_all_podcasts Whether to show all podcasts.
+	 *
+	 * @return array
+	 */
 	protected function get_select_podcast_settings( $show_all_podcasts = true ) {
 		if ( $this->select_podcast_settings ) {
 			return $this->select_podcast_settings;
@@ -70,6 +89,11 @@ trait Elementor_Widget_Helper {
 		return $this->select_podcast_settings;
 	}
 
+	/**
+	 * Add episodes query controls.
+	 *
+	 * @param array $args Arguments array.
+	 */
 	protected function add_episodes_query_controls( $args = array() ) {
 
 		$defaults = array(

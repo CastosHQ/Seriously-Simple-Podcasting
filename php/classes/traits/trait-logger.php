@@ -1,4 +1,9 @@
 <?php
+/**
+ * Logger trait.
+ *
+ * @package SeriouslySimplePodcasting
+ */
 
 namespace SeriouslySimplePodcasting\Traits;
 
@@ -9,13 +14,36 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 trait Logger {
 
+	/**
+	 * Log directory path.
+	 *
+	 * @var string
+	 */
 	private $log_dir_path;
+
+	/**
+	 * Log directory URL.
+	 *
+	 * @var string
+	 */
 	private $log_dir_url;
+
+	/**
+	 * Log file path.
+	 *
+	 * @var string
+	 */
 	public $log_path;
+
+	/**
+	 * Log file URL.
+	 *
+	 * @var string
+	 */
 	public $log_url;
 
 	/**
-	 * Log_Helper constructor.
+	 * Initialize logger.
 	 */
 	public function init() {
 		// Check if this is already initialized.
@@ -49,10 +77,10 @@ trait Logger {
 	}
 
 	/**
-	 * Simple Logging function
+	 * Simple logging function.
 	 *
-	 * @param $message mixed debug message
-	 * @param $data mixed debug data
+	 * @param mixed $message Debug message.
+	 * @param mixed $data    Debug data.
 	 *
 	 * @return bool
 	 */

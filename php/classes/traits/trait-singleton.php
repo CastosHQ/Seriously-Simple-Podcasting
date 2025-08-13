@@ -1,6 +1,8 @@
 <?php
 /**
- * Singleton Trait
+ * Singleton trait.
+ *
+ * @package SeriouslySimplePodcasting
  */
 
 namespace SeriouslySimplePodcasting\Traits;

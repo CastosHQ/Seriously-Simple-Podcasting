@@ -1,6 +1,8 @@
 <?php
 /**
- * Singleton Trait
+ * URL Helper trait.
+ *
+ * @package SeriouslySimplePodcasting
  */
 
 namespace SeriouslySimplePodcasting\Traits;
@@ -56,6 +58,11 @@ trait URL_Helper {
 		return in_array( $current_screen->post_type, array( SSP_CPT_PODCAST ), true );
 	}
 
+	/**
+	 * Check if this is any post page.
+	 *
+	 * @return bool
+	 */
 	protected function is_any_post_page() {
 		$current_screen = get_current_screen();
 		if ( ! $current_screen ) {

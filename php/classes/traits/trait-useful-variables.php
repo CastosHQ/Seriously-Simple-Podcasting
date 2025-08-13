@@ -1,6 +1,8 @@
 <?php
 /**
- * Singleton Trait
+ * Useful Variables trait.
+ *
+ * @package SeriouslySimplePodcasting
  */
 
 namespace SeriouslySimplePodcasting\Traits;
@@ -19,17 +21,88 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 trait Useful_Variables {
 
+	/**
+	 * Plugin version.
+	 *
+	 * @var string
+	 */
 	public $version;
+
+	/**
+	 * Plugin file path.
+	 *
+	 * @var string
+	 */
 	public $file;
+
+	/**
+	 * Plugin directory path.
+	 *
+	 * @var string
+	 */
 	public $dir;
+
+	/**
+	 * Assets directory path.
+	 *
+	 * @var string
+	 */
 	public $assets_dir;
+
+	/**
+	 * Assets URL.
+	 *
+	 * @var string
+	 */
 	public $assets_url;
+
+	/**
+	 * Template path.
+	 *
+	 * @var string
+	 */
 	public $template_path;
+
+	/**
+	 * Template URL.
+	 *
+	 * @var string
+	 */
 	public $template_url;
+
+	/**
+	 * Home URL.
+	 *
+	 * @var string
+	 */
 	public $home_url;
+
+	/**
+	 * Site URL.
+	 *
+	 * @var string
+	 */
 	public $site_url;
+
+	/**
+	 * Plugin token.
+	 *
+	 * @var string
+	 */
 	public $token;
+
+	/**
+	 * Plugin slug.
+	 *
+	 * @var string
+	 */
 	public $plugin_slug;
+
+	/**
+	 * Script suffix.
+	 *
+	 * @var string
+	 */
 	public $script_suffix;
 
 	/**

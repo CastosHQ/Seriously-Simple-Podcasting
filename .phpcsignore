@@ -1,0 +1,28 @@
+# Build and compiled files
+build/
+assets/
+
+# Language files
+languages/
+
+# Legacy and admin includes
+includes/admin/
+includes/legacy/
+
+# Third-party dependencies
+vendor/
+node_modules/
+
+# Test files
+tests/
+
+# Specific file patterns
+*.min.js
+*.min.css
+*.map
+
+# Configuration files that don't need coding standards
+composer.json
+composer.lock
+package.json
+package-lock.json

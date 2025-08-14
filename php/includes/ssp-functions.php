@@ -1153,7 +1153,7 @@ if ( ! function_exists( 'ssp_is_feed_image_valid' ) ) {
 	 * @return bool
 	 */
 	function ssp_is_feed_image_valid( $image_url ) {
-		global $images_handler;
+		$images_handler = ssp_get_service( 'images_handler' );
 
 		/** @var Images_Handler $images_handler */
 		return $images_handler->is_feed_image_valid( $image_url );
@@ -1170,7 +1170,7 @@ if ( ! function_exists( 'ssp_is_image_square' ) ) {
 	 * @return bool
 	 * */
 	function ssp_is_image_square( $image_data_array = array() ) {
-		global $images_handler;
+		$images_handler = ssp_get_service( 'images_handler' );
 
 		/** @var Images_Handler $images_handler */
 		return $images_handler->is_image_square( $image_data_array );
@@ -1189,7 +1189,7 @@ if ( ! function_exists( 'ssp_get_attachment_image_src' ) ) {
 	 * @return array
 	 */
 	function ssp_get_attachment_image_src( $attachment_id, $size = 'full' ) {
-		global $images_handler;
+		$images_handler = ssp_get_service( 'images_handler' );
 
 		/** @var Images_Handler $images_handler */
 		return $images_handler->get_attachment_image_src( $attachment_id, $size );

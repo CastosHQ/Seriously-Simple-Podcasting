@@ -1,4 +1,12 @@
 <?php
+/**
+ * App Controller.
+ *
+ * Main plugin controller that initializes and manages all other controllers and handlers.
+ *
+ * @package SeriouslySimplePodcasting
+ * @since 1.0.0
+ */
 
 namespace SeriouslySimplePodcasting\Controllers;
 
@@ -48,171 +56,237 @@ class App_Controller {
 
 	// Controllers.
 	/**
+	 * Assets controller instance.
+	 *
 	 * @var Assets_Controller $assets_controller
-	 * */
+	 */
 	public $assets_controller;
 
 	/**
+	 * Onboarding controller instance.
+	 *
 	 * @var Onboarding_Controller
 	 */
 	protected $onboarding_controller;
 
 	/**
+	 * Feed controller instance.
+	 *
 	 * @var Feed_Controller
 	 */
 	protected $feed_controller;
 
 	/**
+	 * Cron controller instance.
+	 *
 	 * @var Cron_Controller
 	 */
 	protected $cron_controller;
 
 	/**
+	 * Shortcodes controller instance.
+	 *
 	 * @var Shortcodes_Controller
 	 */
 	protected $shortcodes_controller;
 
 	/**
+	 * Widgets controller instance.
+	 *
 	 * @var Widgets_Controller
 	 */
 	protected $widgets_controller;
 
 	/**
+	 * Database migration controller instance.
+	 *
 	 * @var DB_Migration_Controller
 	 */
 	protected $db_migration_controller;
 
 	/**
+	 * Admin controller instance.
+	 *
 	 * @var Admin_Controller
 	 */
 	public $admin_controller;
 
 	/**
+	 * Players controller instance.
+	 *
 	 * @var Players_Controller
-	 * */
+	 */
 	public $players_controller;
 
 	/**
+	 * Podcast post types controller instance.
+	 *
 	 * @var Podcast_Post_Types_Controller
-	 * */
+	 */
 	public $podcast_post_types_controller;
 
 	/**
+	 * Series controller instance.
+	 *
 	 * @var Series_Controller
-	 * */
+	 */
 	public $series_controller;
 
 	/**
+	 * Settings controller instance.
+	 *
 	 * @var Settings_Controller
-	 * */
+	 */
 	public $settings_controller;
 
 	/**
+	 * Review controller instance.
+	 *
 	 * @var Review_Controller
-	 * */
+	 */
 	public $review_controller;
 
 	/**
+	 * REST API controller instance.
+	 *
 	 * @var Rest_Api_Controller $rest_controller
-	 * */
+	 */
 	public $rest_controller;
 
 	/**
+	 * Ads controller instance.
+	 *
 	 * @var Ads_Controller
-	 * */
+	 */
 	public $ads_controller;
 
 	/**
+	 * Episode controller instance.
+	 *
 	 * @var Episode_Controller
-	 * */
+	 */
 	public $episode_controller;
 
 
 	// Handlers.
 
 	/**
+	 * AJAX handler instance.
+	 *
 	 * @var Ajax_Handler
 	 */
 	protected $ajax_handler;
 
 	/**
+	 * Upgrade handler instance.
+	 *
 	 * @var Upgrade_Handler
 	 */
 	protected $upgrade_handler;
 
 	/**
+	 * Admin notifications handler instance.
+	 *
 	 * @var Admin_Notifications_Handler
 	 */
 	protected $admin_notices_handler;
 
 	/**
+	 * Log helper instance.
+	 *
 	 * @var Log_Helper
-	 * */
+	 */
 	protected $logger;
 
 	/**
+	 * Custom post type podcast handler instance.
+	 *
 	 * @var CPT_Podcast_Handler
 	 */
 	protected $cpt_podcast_handler;
 
 	/**
+	 * Roles handler instance.
+	 *
 	 * @var Roles_Handler
 	 */
 	protected $roles_handler;
 
 	/**
+	 * Feed handler instance.
+	 *
 	 * @var Feed_Handler
-	 * */
+	 */
 	protected $feed_handler;
 
 	/**
+	 * Series handler instance.
+	 *
 	 * @var Series_Handler
-	 * */
+	 */
 	protected $series_handler;
 
 	/**
+	 * Renderer instance.
+	 *
 	 * @var Renderer
 	 * @see ssp_renderer()
-	 * */
+	 */
 	protected $renderer;
 
 	/**
+	 * Settings renderer instance.
+	 *
 	 * @var Settings_Renderer
-	 * */
+	 */
 	protected $settings_renderer;
 
 	/**
+	 * Castos handler instance.
+	 *
 	 * @var Castos_Handler
-	 * */
+	 */
 	protected $castos_handler;
 
 	/**
+	 * Podping handler instance.
+	 *
 	 * @var Podping_Handler
-	 * */
+	 */
 	protected $podping_handler;
 
 	/**
+	 * Settings handler instance.
+	 *
 	 * @var Settings_Handler
-	 * */
+	 */
 	protected $settings_handler;
 
 	/**
+	 * Options handler instance.
+	 *
 	 * @var Settings_Handler
-	 * */
+	 */
 	protected $options_handler;
 
 	/**
+	 * Images handler instance.
+	 *
 	 * @var Images_Handler
-	 * */
+	 */
 	protected $images_handler;
 
 	/**
+	 * Episode repository instance.
+	 *
 	 * @var Episode_Repository
-	 * */
+	 */
 	protected $episode_repository;
 
 	/**
-	 * Admin_Controller constructor.
+	 * App Controller constructor.
+	 *
+	 * Initializes the main plugin controller and sets up all dependencies.
 	 */
 	public function __construct() {
 		if ( ! $this->check() ) {
@@ -226,10 +300,12 @@ class App_Controller {
 	}
 
 	/**
-	 * @return bool
+	 * Check if the plugin should initialize.
+	 *
+	 * @return bool True if the plugin should initialize, false otherwise.
 	 */
 	protected function check() {
-		if ( isset( $_REQUEST['action'] ) && $_REQUEST['action'] === 'heartbeat' ) {
+		if ( isset( $_REQUEST['action'] ) && 'heartbeat' === $_REQUEST['action'] ) {
 			return false;
 		}
 
@@ -245,12 +321,13 @@ class App_Controller {
 	}
 
 	/**
-	 * Set up all hooks and filters for this class
+	 * Set up all hooks and filters for this class.
+	 *
+	 * Initializes all controllers, handlers, and sets up the plugin structure.
 	 */
 	protected function bootstrap() {
 
-		global $images_handler; // Todo: get rid of global here
-		$this->images_handler = $images_handler = new Images_Handler();
+		$this->images_handler = new Images_Handler();
 
 		$this->renderer = new Renderer();
 
@@ -329,7 +406,7 @@ class App_Controller {
 
 		$this->ads_controller = new Ads_Controller( $this->castos_handler );
 
-		// todo: further refactoring - get rid of global here
+		// todo: further refactoring - get rid of global here.
 		global $ss_podcasting;
 		$ss_podcasting = new Frontend_Controller( $this->players_controller, $this->episode_repository );
 

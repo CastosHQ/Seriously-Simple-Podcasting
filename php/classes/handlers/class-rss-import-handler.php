@@ -110,17 +110,38 @@ class RSS_Import_Handler {
 		$this->logger    = new Log_Helper();
 	}
 
+	/**
+	 * Update the import data
+	 *
+	 * @param string $key
+	 * @param mixed  $data
+	 *
+	 * @return void
+	 */
 	public static function update_import_data( $key, $data ) {
 		$feed_data         = self::get_import_data();
 		$feed_data[ $key ] = $data;
 		update_option( self::RSS_IMPORT_DATA_KEY, $feed_data );
 	}
 
+	/**
+	 * Reset the import data
+	 *
+	 * @return void
+	 */
 	public static function reset_import_data() {
 		delete_option( 'ssp_external_rss' );
 		delete_option( self::RSS_IMPORT_DATA_KEY );
 	}
 
+	/**
+	 * Get the import data
+	 *
+	 * @param string $key
+	 * @param mixed  $default
+	 *
+	 * @return mixed
+	 */
 	public static function get_import_data( $key = null, $default = null ) {
 		$data = get_option( self::RSS_IMPORT_DATA_KEY, array() );
 		if ( $key ) {
@@ -130,6 +151,11 @@ class RSS_Import_Handler {
 		return $data;
 	}
 
+	/**
+	 * Load the import data
+	 *
+	 * @return bool
+	 */
 	public function load_import_data() {
 		$feed_content = $this->get_import_data( 'feed_content' );
 		if ( empty( $feed_content ) ) {
@@ -303,8 +329,28 @@ class RSS_Import_Handler {
 		if ( isset( $itunes->type ) ) {
 			ssp_update_option( 'consume_order', (string) $itunes->type, $series_id );
 		}
+
+		// Get the podcast guid and use it as the podcast guid if it exists.
+		$guid = $this->get_podcast_guid();
+
+		if ( $guid ) {
+			ssp_update_option( 'data_guid', $guid, $series_id );
+		}
 	}
 
+	/**
+	 * Get the podcast guid
+	 *
+	 * @return string|null
+	 */
+	protected function get_podcast_guid() {
+		$guid_elements = $this->feed_object->channel->xpath('podcast:guid');
+		if ( empty( $guid_elements ) ) {
+			return null;
+		}
+
+		return (string) $guid_elements[0];
+	}
 
 	protected function create_response( $msg = '', $is_finished = false ) {
 		return array(

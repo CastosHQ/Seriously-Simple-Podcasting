@@ -10,16 +10,12 @@
 	<div class="sidebar-content">
 		<?php echo $img; ?>
 		<form action="https://www.getdrip.com/forms/38739479/submissions" method="post"
-				data-drip-embedded-form="38739479">
+			  data-drip-embedded-form="38739479">
 			<h3 data-drip-attribute="headline"><?php _e( 'Castos Hosting Discount - Get 20% off', 'seriously-simple-podcasting' ); ?></h3>
-			<p data-drip-attribute="description">
-			<?php
-				_e(
-					'Drop in your name and email and we’ll send you a coupon for 20% off your subscription to Castos Podcast Hosting.',
-					'seriously-simple-podcasting'
-				);
-				?>
-				</p>
+			<p data-drip-attribute="description"><?php
+				_e( 'Drop in your name and email and we’ll send you a coupon for 20% off your subscription to Castos Podcast Hosting.',
+					'seriously-simple-podcasting' );
+				?></p>
 			<div>
 				<label for="drip-first-name"><?php _e( 'First Name', 'seriously-simple-podcasting' ); ?></label>
 				<input type="text" id="drip-first-name" name="fields[first_name]" value=""/>
@@ -39,15 +35,8 @@
 			<div>
 				<input type="submit" value="Send me the coupon" data-drip-attribute="sign-up-button"/>
 			</div>
-			<p>
-			<?php
-			_e(
-				'Spam sucks. We will not use your email for anything else and you can unsubscribe with just a click,
-				anytime.',
-				'seriously-simple-podcasting'
-			);
-			?>
-			</p>
+			<p><?php _e( 'Spam sucks. We will not use your email for anything else and you can unsubscribe with just a click,
+				anytime.', 'seriously-simple-podcasting' ); ?></p>
 		</form>
 	</div>
 </div>

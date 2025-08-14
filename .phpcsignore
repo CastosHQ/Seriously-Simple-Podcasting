@@ -16,6 +16,9 @@ node_modules/
 # Test files
 tests/
 
+# Template files
+templates/
+
 # Specific file patterns
 *.min.js
 *.min.css

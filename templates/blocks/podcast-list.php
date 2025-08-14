@@ -28,14 +28,13 @@ use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 <?php if ( $episodes_query->have_posts() ) : ?>
 	<style>
 		:root {
-			--ssp-podcast-list-title-size: <?php echo $title_size; ?>px;
-			--ssp-podcast-list-cols: <?php echo $columns_per_row; ?>;
+			--ssp-podcast-list-title-size: <?php echo $title_size ?>px;
+			--ssp-podcast-list-cols: <?php echo $columns_per_row ?>;
 		}
 	</style>
 	<div class="ssp-podcast-list">
 		<div class="ssp-podcast-list__articles">
-		<?php
-		while ( $episodes_query->have_posts() ) :
+		<?php while ( $episodes_query->have_posts() ) :
 			$episodes_query->the_post();
 			$episode   = get_post();
 			$permalink = get_permalink();
@@ -46,7 +45,7 @@ use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 				$player = $players_controller->load_media_player( $file, $episode->ID, $player_style );
 			}
 			?>
-			<article class="podcast-<?php echo $episode->ID; ?> podcast type-podcast">
+			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
 				<?php if ( $show_title && ! $title_under_img ) : ?>
 				<h3>
 					<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( $permalink ); ?>">
@@ -56,8 +55,8 @@ use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 				<?php endif; ?>
 				<div class="podcast-content">
 					<?php if ( $show_img ) : ?>
-						<a class="podcast-image-link" href="<?php echo esc_url( $permalink ); ?>"
-							aria-hidden="true" tabindex="-1">
+						<a class="podcast-image-link" href="<?php echo esc_url( $permalink ) ?>"
+						   aria-hidden="true" tabindex="-1">
 							<?php echo ssp_episode_image( $episode->ID, $img_size ); ?>
 						</a>
 					<?php endif; ?>
@@ -81,14 +80,12 @@ use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 			</article>
 		<?php endwhile ?>
 		</div>
-		<?php
-		echo is_array( $paginate ) ?
+		<?php echo is_array( $paginate ) ?
 			'<div class="ssp-podcast-list__pagination">' . implode( "\n", $paginate ) . '</div>' :
 			'';
 		?>
 	</div>
-	<?php wp_reset_postdata(); ?>
+<?php wp_reset_postdata(); ?>
 <?php else : ?>
 	<?php _e( 'Sorry, episodes not found', 'seriously-simple-podcasting' ); ?>
-	<?php
-endif;
+<?php endif;

@@ -1137,7 +1137,7 @@ class Castos_Handler implements Service {
 		$podcast['author_name']         = $this->feed_handler->get_podcast_author( $series_id );
 		$podcast['podcast_owner']       = $this->feed_handler->get_podcast_owner_name( $series_id );
 		$podcast['owner_email']         = $this->feed_handler->get_podcast_owner_email( $series_id );
-		$podcast['explicit']            = 'on' == $this->feed_handler->get_feed_item_explicit_flag( $series_id ) ? 1 : 0;
+		$podcast['explicit']            = $this->feed_handler->is_explicit( $series_id ) ? 1 : 0;
 		$podcast['language']            = $this->feed_handler->get_podcast_language( $series_id );
 		$podcast['cover_image']         = $this->feed_handler->get_feed_image( $series_id );
 		$podcast['copyright']           = $this->feed_handler->get_podcast_copyright( $series_id );

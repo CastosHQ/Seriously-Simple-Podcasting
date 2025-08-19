@@ -91,21 +91,53 @@ class Players_Controller {
 
 
 	/**
-	 * Todo: move it to Episode_Repository
-	 * */
+	 * Get AJAX playlist items with improved security.
+	 *
+	 * @return array|void
+	 */
 	public function get_ajax_playlist_items() {
-		$atts      = json_decode( filter_input( INPUT_GET, 'atts' ), ARRAY_A );
-		$page      = filter_input( INPUT_GET, 'page', FILTER_VALIDATE_INT );
-		$nonce     = filter_input( INPUT_GET, 'nonce' );
-		$player_id = filter_input( INPUT_GET, 'player_id' );
+		// Validate and sanitize input parameters
+		$atts_raw = filter_input( INPUT_GET, 'atts', FILTER_UNSAFE_RAW );
+		$page_raw = filter_input( INPUT_GET, 'page', FILTER_VALIDATE_INT );
+		$nonce = filter_input( INPUT_GET, 'nonce', FILTER_UNSAFE_RAW );
+		$player_id_raw = filter_input( INPUT_GET, 'player_id', FILTER_UNSAFE_RAW );
 
-		if ( ! $atts || ! $page || ! wp_verify_nonce( $nonce, 'ssp_castos_player_' . $player_id ) ) {
-			wp_send_json_error();
+		// Validate required parameters
+		if ( empty( $atts_raw ) || empty( $page_raw ) || empty( $nonce ) || empty( $player_id_raw ) ) {
+			wp_send_json_error( array( 'message' => 'Missing required parameters' ) );
 		}
 
-		$episodes = $this->episode_repository->get_episodes( array_merge( $atts, compact( 'page' ) ) );
-		$items    = array();
+		// Sanitize and validate atts
+		$atts_raw = sanitize_text_field( $atts_raw );
+		$atts = json_decode( $atts_raw, true );
+		if ( ! is_array( $atts ) ) {
+			wp_send_json_error( array( 'message' => 'Invalid attributes format' ) );
+		}
 
+		// Validate page number
+		$page = absint( $page_raw );
+		if ( $page < 1 || $page > 1000 ) { // Reasonable upper limit
+			wp_send_json_error( array( 'message' => 'Invalid page number' ) );
+		}
+
+		// Validate player_id format (alphanumeric and hyphens only)
+		$player_id = sanitize_key( $player_id_raw );
+		if ( empty( $player_id ) || ! preg_match( '/^[a-z0-9-]+$/', $player_id ) ) {
+			wp_send_json_error( array( 'message' => 'Invalid player ID format' ) );
+		}
+
+		// Verify nonce
+		if ( ! wp_verify_nonce( $nonce, 'ssp_castos_player_' . $player_id ) ) {
+			wp_send_json_error( array( 'message' => 'Security check failed' ) );
+		}
+
+		// Get episodes with validated parameters
+		$episodes = $this->episode_repository->get_episodes( array_merge( $atts, compact( 'page' ) ) );
+		if ( ! is_array( $episodes ) ) {
+			wp_send_json_error( array( 'message' => 'Failed to retrieve episodes' ) );
+		}
+
+		$items = array();
 		$allowed_keys = array(
 			'episode_id',
 			'album_art',
@@ -118,8 +150,31 @@ class Players_Controller {
 		);
 
 		foreach ( $episodes as $episode ) {
+			if ( ! is_object( $episode ) || ! isset( $episode->ID ) ) {
+				continue;
+			}
+
 			$player_data = $this->episode_repository->get_player_data( $episode->ID );
-			$items[]     = array_intersect_key( $player_data, array_flip( $allowed_keys ) );
+			if ( ! is_array( $player_data ) ) {
+				continue;
+			}
+
+			// Filter to allowed keys and escape output
+			$filtered_data = array_intersect_key( $player_data, array_flip( $allowed_keys ) );
+			
+			// Escape all string values
+			foreach ( $filtered_data as $key => $value ) {
+				if ( is_string( $value ) ) {
+					$filtered_data[ $key ] = esc_html( $value );
+				} elseif ( is_array( $value ) && isset( $value['src'] ) ) {
+					// Handle album_art array
+					$filtered_data[ $key ] = array(
+						'src' => esc_url( $value['src'] ),
+					);
+				}
+			}
+
+			$items[] = $filtered_data;
 		}
 
 		return $items;

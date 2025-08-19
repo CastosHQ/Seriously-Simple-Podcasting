@@ -302,20 +302,35 @@ docReady(function() {
 					playlistScroll.dataset.processing = '';
 				},
 				createListItem = function (item) {
-					let div = document.createElement('div');
+					// Helper function to escape HTML content
+					function escapeHtml(text) {
+						if (!text || typeof text !== 'string') return '';
+						const div = document.createElement('div');
+						div.textContent = text;
+						return div.innerHTML;
+					}
 
+					// Helper function to validate and escape URLs
+					function escapeUrl(url) {
+						if (!url || typeof url !== 'string') return '';
+						// Check for javascript: protocol
+						if (url.toLowerCase().startsWith('javascript:')) return '';
+						return escapeHtml(url);
+					}
+
+					let div = document.createElement('div');
 					div.innerHTML =
-						'<li class="playlist__item" data-episode="' + item.episode_id + '">' +
+						'<li class="playlist__item" data-episode="' + escapeHtml(item.episode_id) + '">' +
 						'<div class="playlist__item__cover">' +
-						'<img src="' + item.album_art.src + '" title="' + item.title + '" alt="' + item.title + '" />' +
+						'<img src="' + escapeUrl(item.album_art?.src) + '" title="' + escapeHtml(item.title) + '" alt="' + escapeHtml(item.title) + '" />' +
 						'</div>' +
 						'<div class="playlist__item__details">' +
-						'<h2 class="playlist__episode-title" data-podcast="' + item.podcast_title + '">' + item.title + '</h2>' +
-						'<p>' + item.date + ' • ' + item.duration + '</p>' +
-						'<p class="playlist__episode-description">' + item.excerpt + '</p>' +
+						'<h2 class="playlist__episode-title" data-podcast="' + escapeHtml(item.podcast_title) + '">' + escapeHtml(item.title) + '</h2>' +
+						'<p>' + escapeHtml(item.date) + ' • ' + escapeHtml(item.duration) + '</p>' +
+						'<p class="playlist__episode-description">' + escapeHtml(item.excerpt) + '</p>' +
 						'</div>' +
-						'<audio preload="none" class="clip clip-' + item.episode_id + '">' +
-						'<source src="' + item.audio_file + '">' +
+						'<audio preload="none" class="clip clip-' + escapeHtml(item.episode_id) + '">' +
+						'<source src="' + escapeUrl(item.audio_file) + '">' +
 						'</audio>' +
 						'</li>';
 

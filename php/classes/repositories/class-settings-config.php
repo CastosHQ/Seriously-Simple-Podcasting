@@ -93,6 +93,7 @@ class Settings_Config implements Service, ArrayAccess, Countable, IteratorAggreg
 	 */
 	#[\ReturnTypeWillChange]
 	public function offsetUnset( $offset ) {
+		$this->config = $this->get_config();
 		unset( $this->config[ $offset ] );
 	}
 

@@ -140,9 +140,7 @@ class Settings_Controller {
 			array(
 				$this,
 				'maybe_disconnect_from_castos',
-			),
-			10,
-			2
+			)
 		);
 
 		// Add podcasts sync status to the sync settings

@@ -750,7 +750,7 @@ class Frontend_Controller {
 			if ( isset( $wp_query->query_vars['podcast_ref'] ) && $wp_query->query_vars['podcast_ref'] ) {
 				$referrer = $wp_query->query_vars['podcast_ref'];
 			} elseif ( isset( $_GET['ref'] ) ) {
-					$referrer = esc_attr( $_GET['ref'] );
+				$referrer = sanitize_text_field( wp_unslash( $_GET['ref'] ) );
 			}
 
 			if ( 'test-nginx' !== $referrer ) {

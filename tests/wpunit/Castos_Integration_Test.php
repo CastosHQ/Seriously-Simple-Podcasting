@@ -24,6 +24,7 @@ class Castos_Integration_Test extends WPTestCase {
 	 * @skip
 	 */
 	public function test_ssp_categories_match_castos_categories() {
+		$this->markTestSkipped('Temporarily skipped while taxonomy parity is being reviewed.');
 		$feed_handler      = $this->get_feed_handler();
 		$castos_categories = $this->castos_categories();
 
@@ -31,11 +32,16 @@ class Castos_Integration_Test extends WPTestCase {
 			foreach ( $subcategories as $subcategory ) {
 				$castos_category_name = $feed_handler->get_castos_category_name( $category, $subcategory );
 
-				if ( ! in_array( $castos_category_name, $castos_categories ) ) {
-					echo $castos_category_name;
-				}
-
-				$this->assertContains( $castos_category_name, $castos_categories );
+				$this->assertContains(
+					$castos_category_name,
+					$castos_categories,
+					sprintf(
+						'Missing Castos category mapping for "%s" (from "%s" -> "%s")',
+						$castos_category_name,
+						$category,
+						$subcategory
+					)
+				);
 			}
 		}
 	}

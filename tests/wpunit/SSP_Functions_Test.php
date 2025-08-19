@@ -142,14 +142,14 @@ class SSP_Functions_Test extends WPTestCase {
 		$this->assertFalse( ssp_is_podcast_download() );
 
 		// Make sure the filter works
-		add_filter(
-			'ssp_is_podcast_download',
-			function () {
-				return true;
-			}
-		);
-
+		$cb = function () {
+		     return true;
+		};
+		
+		add_filter( 'ssp_is_podcast_download', $cb );
+		 
 		$this->assertTrue( ssp_is_podcast_download() );
+		remove_filter( 'ssp_is_podcast_download', $cb );
 	}
 
 	/**
@@ -223,15 +223,15 @@ class SSP_Functions_Test extends WPTestCase {
 		$this->assertCount( $series_number, $terms );
 
 		foreach ( $terms as $term ) {
-			$post_id = $this->factory()->post->create(
-				array(
-					'post_type'     => SSP_CPT_PODCAST,
-					'post_status'   => 'publish',
-					'post_category' => array( $term->term_id ),
-				)
-			);
-
-			wp_set_post_terms( $post_id, $term->term_id, 'series' );
+            $this->factory()->post->create(
+                array(
+                    'post_type'   => SSP_CPT_PODCAST,
+                    'post_status' => 'publish',
+                    'tax_input'   => array( 
+						'series' => array( $term->term_id ) 
+					),
+                )
+            );
 		}
 
 		$series = ss_get_podcast( $args );

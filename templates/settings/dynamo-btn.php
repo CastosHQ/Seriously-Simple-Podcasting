@@ -10,11 +10,21 @@
 ?>
 <p class="ssp-dynamo" data-default-podcast-title="<?php echo esc_attr( $default_podcast_title ); ?>">
 <span class="ssp-dynamo__container">
-	<span class="ssp-dynamo__description"><?php echo $description ?></span>
-	<a class="ssp-dynamo__btn" target="_blank"
-	   href="https://dynamo.castos.com/podcast-covers?utm_source=WordPress&utm_medium=Plugin&utm_campaign=dashboard&t=<?php
-	   echo rawurlencode( $title ) ?>&s=<?php echo rawurlencode( $subtitle ) ?>">
-		<span class="ssp-dynamo__arrow-up"><?php _e('Dynamo', 'seriously-simple-podcasting') ?></span>
+	<span class="ssp-dynamo__description"><?php echo esc_html( $description ); ?></span>
+	<a class="ssp-dynamo__btn" target="_blank" rel="noopener noreferrer"
+		href="<?php echo esc_url(
+			add_query_arg(
+				array(
+					'utm_source'   => 'WordPress',
+					'utm_medium'   => 'Plugin',
+					'utm_campaign' => 'dashboard',
+					't'            => $title,
+					's'            => $subtitle,
+				),
+				'https://dynamo.castos.com/podcast-covers'
+			)
+		); ?>">
+	<span class="ssp-dynamo__arrow-up"><?php esc_html_e( 'Dynamo', 'seriously-simple-podcasting' ); ?></span>
 	</a>
 </span>
 </p>

@@ -104,8 +104,8 @@ class Assets_Controller {
 		 * Only load the peekabar styles when adding/editing podcasts.
 		 */
 		if ( 'post-new.php' === $hook || 'post.php' === $hook ) {
-			global $post;
-			if ( in_array( $post->post_type, ssp_post_types(), true ) ) {
+			$screen = get_current_screen();
+			if ( $screen && in_array( $screen->post_type, ssp_post_types(), true ) ) {
 				wp_register_style( 'jquery-peekabar', esc_url( $this->assets_url . 'css/jquery-peekabar' . $this->script_suffix . '.css' ), array(), $this->version );
 				wp_enqueue_style( 'jquery-peekabar' );
 			}
@@ -116,7 +116,7 @@ class Assets_Controller {
 		 *
 		 * @todo load this locally perhaps? and only the progress bar stuff?
 		 */
-		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
+		if ( 'podcast_page_podcast_settings' === $hook && 'import' === filter_input( INPUT_GET, 'tab' ) ) {
 			// wp_enqueue_style( 'jquery-ui', 'https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css', array(), $this->version ).
 
 			wp_register_style( 'jquery-ui-smoothness', esc_url( $this->assets_url . 'css/jquery-ui-smoothness' . $this->script_suffix . '.css' ), array(), $this->version );
@@ -168,7 +168,8 @@ class Assets_Controller {
 
 		// Only enqueue the WordPress Media Library picker for adding and editing SSP tags/terms post types.
 		if ( 'edit-tags.php' === $hook || 'term.php' === $hook ) {
-			if ( isset( $_REQUEST['taxonomy'] ) && ssp_series_taxonomy() === $_REQUEST['taxonomy'] ) {
+			$taxonomy = filter_input( INPUT_GET, 'taxonomy' );
+			if ( $taxonomy && ssp_series_taxonomy() === $taxonomy ) {
 				wp_enqueue_media();
 			}
 		}
@@ -192,7 +193,7 @@ class Assets_Controller {
 		/**
 		 * Only load the import js when the import settings screen is loaded.
 		 */
-		if ( 'podcast_page_podcast_settings' === $hook && isset( $_GET['tab'] ) && 'import' == $_GET['tab'] ) {
+		if ( 'podcast_page_podcast_settings' === $hook && 'import' === filter_input( INPUT_GET, 'tab' ) ) {	
 			wp_register_script(
 				'ssp-import-rss',
 				esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ),
@@ -216,13 +217,17 @@ class Assets_Controller {
 	 */
 	protected function need_admin_scripts( $hook ) {
 		$screen = get_current_screen();
-		$ssp    = ssp_post_types();
-
-		return ( in_array( $screen->post_type, $ssp, true ) && 'post.php' === $hook ) ||
-				( in_array( $screen->post_type, $ssp, true ) && 'post-new.php' === $hook ) ||
-				( in_array( $screen->post_type, $ssp, true ) && 'edit.php' === $hook ) ||
-				strpos( $hook, 'ssp-onboarding' ) ||
-				$this->is_ssp_admin_page() ||
-				( 'term.php' === $hook && ( ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) ) );
+		if ( ! $screen ) {
+			return false;
+		}
+		$ssp = ssp_post_types();
+		$post_hooks = array( 'post.php', 'post-new.php', 'edit.php' );
+	
+		return (
+			( in_array( $screen->post_type, $ssp, true ) && in_array( $hook, $post_hooks, true ) ) ||
+			( false !== strpos( $hook, 'ssp-onboarding' ) ) ||
+			$this->is_ssp_admin_page() ||
+			( 'term.php' === $hook && ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) )
+		);		
 	}
 }

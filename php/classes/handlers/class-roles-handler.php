@@ -109,12 +109,7 @@ class Roles_Handler implements Service {
 		$podcast_caps = $this->get_podcast_capabilities();
 
 		// Prepare capabilities to the array('capability' => true) structure.
-		$podcast_caps = array_map(
-			function () {
-				return true;
-			},
-			array_flip( $podcast_caps )
-		);
+		$podcast_caps = array_fill_keys( array_values( $podcast_caps ), true );
 
 		$caps = array_merge( $initial_caps, $podcast_caps, $additional_caps );
 

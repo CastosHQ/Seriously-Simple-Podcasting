@@ -8,14 +8,14 @@
 ?>
 
 <div class="ssp-settings ssp-settings-import">
-	<h2><?php _e( 'Import External RSS Feed', 'seriously-simple-podcasting' ) ?></h2>
+	<h2><?php esc_html_e( 'Import External RSS Feed', 'seriously-simple-podcasting' ); ?></h2>
 
-	<p><?php _e( 'If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
-	the RSS Feed in the form below and the plugin will import the episodes for you.', 'seriously-simple-podcasting' ) ?></p>
+	<p><?php esc_html_e( 'If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
+	the RSS Feed in the form below and the plugin will import the episodes for you.', 'seriously-simple-podcasting' ); ?></p>
 	<table class="form-table">
 		<tbody>
 		<tr>
-			<th scope="row"><?php _e( 'RSS feed', 'seriously-simple-podcasting' ) ?></th>
+			<th scope="row"><?php esc_html_e( 'RSS feed', 'seriously-simple-podcasting' ); ?></th>
 			<td>
 				<input id="external_rss" name="external_rss" type="text" placeholder="https://externalservice.com/rss"
 					   value="" class="regular-text">
@@ -23,7 +23,7 @@
 		</tr>
 		<?php if ( count( $post_types ) > 1 ) { ?>
 			<tr>
-				<th scope="row"><?php _e( 'Post Type', 'seriously-simple-podcasting' ) ?></th>
+				<th scope="row"><?php esc_html_e( 'Post Type', 'seriously-simple-podcasting' ); ?></th>
 				<td>
 					<select id="import_post_type" name="import_post_type">
 						<?php foreach ( $post_types as $post_type ) { ?>
@@ -35,7 +35,7 @@
 		<?php } ?>
 		<?php if ( count( $series ) >= 1 ) { ?>
 			<tr>
-				<th scope="row"><?php _e( 'Podcast', 'seriously-simple-podcasting' ) ?></th>
+				<th scope="row"><?php esc_html_e( 'Podcast', 'seriously-simple-podcasting' ); ?></th>
 				<td>
 					<select id="import_series" name="import_series">
 						<?php foreach ( $series as $series_item ) { ?>
@@ -46,12 +46,12 @@
 			</tr>
 		<?php } ?>
 		<tr>
-			<th scope="row"><?php _e( 'Import Podcast Data', 'seriously-simple-podcasting' ) ?></th>
+			<th scope="row"><?php esc_html_e( 'Import Podcast Data', 'seriously-simple-podcasting' ); ?></th>
 			<td>
 				<input id="import_podcast_data" type="checkbox" name="import_podcast_data" value="true" checked="checked">
 				<label for="import_podcast_data">
 				<span
-					class="description"><?php _e( 'Import podcast data (Title, Description, Cover Art etc.).', 'seriously-simple-podcasting' ) ?></span>
+					class="description"><?php esc_html_e( 'Import podcast data (Title, Description, Cover Art etc.).', 'seriously-simple-podcasting' ); ?></span>
 				</label>
 			</td>
 		</tr>

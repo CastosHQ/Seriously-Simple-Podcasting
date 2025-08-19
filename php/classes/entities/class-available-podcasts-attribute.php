@@ -28,10 +28,11 @@ class Available_Podcasts_Attribute implements JsonSerializable {
 	/**
 	 * Handles converting it to strings.
 	 *
-	 * @return false|string
+	 * @return string
 	 */
 	public function __toString() {
-		return wp_json_encode( $this->get_settings() );
+		$json = wp_json_encode( $this->get_settings() );
+		return is_string( $json ) ? $json : '';
 	}
 
 	/**

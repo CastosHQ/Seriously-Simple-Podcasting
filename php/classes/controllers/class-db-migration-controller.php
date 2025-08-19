@@ -81,7 +81,7 @@ class DB_Migration_Controller {
 
 			$time = $date_recorded ? strtotime( $date_recorded ) : strtotime( $post->post_date );
 
-			$date_recorded = gmdate( 'Y-m-d', $time );
+			$date_recorded = wp_date( 'Y-m-d', $time );
 
 			update_post_meta( $post->ID, 'date_recorded', $date_recorded );
 		}

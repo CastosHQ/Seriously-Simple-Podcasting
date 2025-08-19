@@ -102,8 +102,8 @@ class Review_Controller {
 		add_action(
 			'wp_ajax_ssp_review_notice_status',
 			function () {
-				$status = filter_input( INPUT_POST, 'status' );
-				$nonce  = filter_input( INPUT_POST, 'nonce' );
+				$status = sanitize_key( (string) filter_input( INPUT_POST, 'status' ) );
+				$nonce  = (string) filter_input( INPUT_POST, 'nonce' );
 
 				$allowed_statuses = array(
 					self::STATUS_DISMISS,
@@ -112,7 +112,7 @@ class Review_Controller {
 					self::STATUS_LATER,
 				);
 
-				if ( ! wp_verify_nonce( $nonce, 'ssp_review_notice_' . $status ) || ! in_array( $status, $allowed_statuses ) ) {
+				if ( ! wp_verify_nonce( $nonce, 'ssp_review_notice_' . $status ) || ! in_array( $status, $allowed_statuses, true ) ) {
 					wp_send_json_error();
 				}
 

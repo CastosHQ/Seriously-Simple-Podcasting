@@ -168,7 +168,7 @@ class Feed_Controller {
 
 		if ( $series_id ) {
 			$term        = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
-			$series_slug = $term->slug;
+			$series_slug = ( $term && ! is_wp_error( $term ) ) ? $term->slug : '';
 		} else {
 			$series_slug = $this->feed_handler->get_series_slug();
 			$series_id   = $this->feed_handler->get_series_id( $series_slug );

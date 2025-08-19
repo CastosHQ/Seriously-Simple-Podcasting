@@ -23,16 +23,15 @@ class Acceptance extends \Codeception\Module {
 
 		codecept_debug( 'In CI/Container context: waiting for file ' . $file . ' for ' . $waitFor );
 
-		$time = 0;
-		while ( $time < $waitFor ) {
+		$start = microtime( true );
+		while ( ( microtime( true ) - $start ) < $waitFor ) {
 			if ( file_exists( $file ) ) {
 				return;
 			}
-
-			$time += microtime( true );
+			usleep( 200000 ); // 200ms backoff to avoid busy-waiting.
 		}
 
-		throw new \RuntimeException( 'Waited for ' . $waitFor . ' but file still does not exist.' );
+		throw new \RuntimeException( 'Waited for ' . $waitFor . ' seconds but file still does not exist.' );
 	}
 
 	public function waitForElement() {

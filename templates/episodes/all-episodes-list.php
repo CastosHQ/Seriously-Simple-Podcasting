@@ -20,24 +20,24 @@ while ( $episodes_query->have_posts() ) : $episodes_query->the_post();
 		$media_player = $player->render_html_player( get_post()->ID );
 	}
 	?>
-	<article class="podcast-<?php echo get_post()->ID ?> podcast type-podcast">
+	<article class="<?php echo esc_attr( 'podcast-' . get_the_ID() ); ?> podcast type-podcast">	
 		<h2>
-			<a class="entry-title-link" rel="bookmark" href="<?php echo get_post()->guid ?>">
-				<?php echo get_post()->post_title; ?>
+			<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( get_permalink() ); ?>">
+				<?php echo esc_html( get_the_title() ); ?>
 			</a>
 		</h2>
         <div class="podcast-content">
             <?php if ( 'yes' === $show_featured_image ) { ?>
-                <a class="podcast-image-link" href="<?php echo get_post()->guid ?>" aria-hidden="true"
+                <a class="podcast-image-link" href="<?php echo esc_url( get_permalink() ); ?>" aria-hidden="true"
                    tabindex="-1">
-                    <?php echo get_the_post_thumbnail( get_post()->ID, 'full' ); ?>
+                    <?php echo get_the_post_thumbnail( get_the_ID(), 'full' ); ?>
                 </a>
             <?php } ?>
             <?php if ( 'yes' === $show_episode_player ) {
                 echo $media_player;
             } ?>
             <?php if ( 'yes' === $show_episode_excerpt ) { ?>
-                <p><?php echo get_the_excerpt( get_post()->ID ); ?></p>
+                <p><?php echo wp_kses_post( get_the_excerpt( get_the_ID() ) ); ?></p>
             <?php } ?>
         </div>
 	</article>

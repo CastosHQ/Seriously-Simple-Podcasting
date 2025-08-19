@@ -259,7 +259,7 @@ class Castos_Blocks {
 			true
 		);
 
-		$itunes_enabled = ssp_get_option( 'itunes_fields_enabled', 'on' );
+		$itunes_enabled = ssp_get_option( 'itunes_fields_enabled', 'on' ) === 'on';
 
 		wp_localize_script(
 			'ssp-block-script',
@@ -267,7 +267,7 @@ class Castos_Blocks {
 			array(
 				'sspPostTypes'    => ssp_post_types( true, false ),
 				'isCastosUser'    => ssp_is_connected_to_castos(),
-				'isItunesEnabled' => $itunes_enabled && $itunes_enabled == 'on',
+				'isItunesEnabled' => $itunes_enabled,
 			)
 		);
 
@@ -403,7 +403,7 @@ class Castos_Blocks {
 					),
 					'defaultPodcastId'    => array(
 						'type'    => 'string',
-						'default' => $default_series_id,
+						'default' => strval( $default_series_id ),
 					),
 					// Use string everywhere instead of number because of the WP bug.
 					// It doesn't show the saved value in the admin after page refresh.

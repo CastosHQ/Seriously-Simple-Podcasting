@@ -13,9 +13,9 @@
  */
 
 ?>
-<p><label for="<?php echo $field_id; ?>"><?php _e( $label, 'seriously-simple-podcasting' ); ?></label>
-	<input class="widefat" id="<?php echo $field_id; ?>"
-			name="<?php echo $field_name; ?>" type="text"
-			placeholder="<?php _e( $placeholder, 'seriously-simple-podcasting' ); ?>"
-			value="<?php echo $value; ?>"/>
+<p><label for="<?php echo esc_attr( $field_id ); ?>"><?php echo esc_html( $label ); ?></label>
+	<input class="widefat" id="<?php echo esc_attr( $field_id ); ?>"
+			name="<?php echo esc_attr( $field_name ); ?>" type="text"
+			placeholder="<?php echo esc_attr( $placeholder ); ?>"
+			value="<?php echo esc_attr( $value ); ?>"/>
 </p>

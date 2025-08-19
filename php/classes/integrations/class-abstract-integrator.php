@@ -33,42 +33,42 @@ abstract class Abstract_Integrator {
 	 *
 	 * @var string
 	 */
-	const BULK_UPDATE_STARTED = '';
+	const BULK_UPDATE_STARTED = 'ssp_bulk_update_started';
 
 	/**
 	 * Add list option constant.
 	 *
 	 * @var string
 	 */
-	const ADD_LIST_OPTION = '';
+	const ADD_LIST_OPTION = 'ssp_add_list_option';
 
 	/**
 	 * Revoke list option constant.
 	 *
 	 * @var string
 	 */
-	const REVOKE_LIST_OPTION = '';
+	const REVOKE_LIST_OPTION = 'ssp_revoke_list_option';
 
 	/**
 	 * Event bulk sync subscribers constant.
 	 *
 	 * @var string
 	 */
-	const EVENT_BULK_SYNC_SUBSCRIBERS = '';
+	const EVENT_BULK_SYNC_SUBSCRIBERS = 'ssp_event_bulk_sync_subscribers';
 
 	/**
 	 * Event add subscribers constant.
 	 *
 	 * @var string
 	 */
-	const EVENT_ADD_SUBSCRIBERS = '';
+	const EVENT_ADD_SUBSCRIBERS = 'ssp_event_add_subscribers';
 
 	/**
 	 * Event revoke subscribers constant.
 	 *
 	 * @var string
 	 */
-	const EVENT_REVOKE_SUBSCRIBERS = '';
+	const EVENT_REVOKE_SUBSCRIBERS = 'ssp_event_revoke_subscribers';
 
 
 	/**

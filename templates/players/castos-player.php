@@ -178,7 +178,7 @@
 						<div style="height: 10px;">
 							<input type="text" value='<?php echo esc_attr( $embed_code ) ?>'
 								   title="<?php esc_attr_e( 'Embed Code', 'seriously-simple-podcasting' ) ?>"
-								   class="input-embed input-embed-<?php echo $episode_id ?>" readonly/>
+								   class="input-embed input-embed-<?php echo esc_attr( $episode_id ); ?>" readonly/>
 						</div>
 						<button class="copy-embed copy-embed-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Embed Code', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Copy Embed Code', 'seriously-simple-podcasting' ) ?>"></button>
 					</div>

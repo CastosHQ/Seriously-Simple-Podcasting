@@ -14,6 +14,11 @@ class Players_Controller_Test extends WPTestCase {
 	 */
 	protected $tester;
 
+	/**
+	 * @var Players_Controller
+	 */
+	protected $players_controller;
+
 	public function setUp(): void {
 		parent::setUp();
 	}

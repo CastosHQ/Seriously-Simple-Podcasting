@@ -805,7 +805,7 @@ class App_Controller {
 
 			// Change the footer text
 			if ( ! get_option( 'ssp_admin_footer_text_rated' ) ) {
-				$footer_text  = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . __( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
+				$footer_text  = sprintf( __( 'If you like %1$sSeriously Simple Podcasting%2$s please leave a %3$s&#9733;&#9733;&#9733;&#9733;&#9733;%4$s rating. A huge thank you in advance!', 'seriously-simple-podcasting' ), '<strong>', '</strong>', '<a href="https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/?rate=5#new-post" target="_blank" class="ssp-rating-link" data-rated="' . esc_attr__( 'Thanks!', 'seriously-simple-podcasting' ) . '">', '</a>' );
 				$footer_text .= sprintf(
 					"<script type='text/javascript'>
 					(function($){
@@ -843,10 +843,12 @@ class App_Controller {
 	 * Ignore podcast import
 	 */
 	public function ignore_importing_existing_podcasts() {
-		if ( 'ignore' === filter_input( INPUT_GET, 'podcast_import_action' ) &&
+		if (
+			'ignore' === filter_input( INPUT_GET, 'podcast_import_action' ) &&
+			isset( $_GET['nonce'] ) &&
 			wp_verify_nonce( $_GET['nonce'], 'podcast_import_action' ) &&
 			current_user_can( 'manage_podcast' )
-		) {
+		) {	
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		}
 	}
@@ -959,7 +961,10 @@ class App_Controller {
 	public function dismiss_categories_update() {
 		// Check if the ssp_dismiss_categories_update variable exists
 		$ssp_dismiss_categories_update = ( isset( $_GET['ssp_dismiss_categories_update'] ) ? sanitize_text_field( $_GET['ssp_dismiss_categories_update'] ) : '' );
-		if ( ! $ssp_dismiss_categories_update ||
+		
+		if (
+			! $ssp_dismiss_categories_update ||
+			! isset( $_GET['nonce'] ) ||
 			! wp_verify_nonce( $_GET['nonce'], 'dismiss_categories_update' ) ||
 			! current_user_can( 'manage_podcast' )
 		) {

@@ -148,11 +148,11 @@ class Series extends WP_Widget {
 			?>
 
 			<?php if ( $show_title ) { ?>
-			<h3><?php echo $series->name; ?></h3>
+			<h3><?php echo esc_html( $series->name ); ?></h3>
 		<?php } ?>
 
 			<?php if ( $show_desc ) { ?>
-			<p><?php echo $series->description; ?></p>
+			<p><?php echo wp_kses_post( $series->description ); ?></p>
 		<?php } ?>
 
 		<ul>

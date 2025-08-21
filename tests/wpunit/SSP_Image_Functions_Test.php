@@ -130,8 +130,11 @@ class SSP_Image_Functions_Test extends WPTestCase {
 
 		$invalid_attachment_id = 99999;
 		$result = ssp_get_attachment_image_src( $invalid_attachment_id, 'medium' );
-
-		$this->assertIsArray( $result );
+		$this->assertSame(
+			array(),
+			$result,
+			'Invalid attachment ID should yield an empty array.'
+		);
 	}
 
 	/**

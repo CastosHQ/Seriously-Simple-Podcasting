@@ -30,9 +30,9 @@ class Settings_Config implements Service, ArrayAccess, Countable, IteratorAggreg
 	/**
 	 * Configuration array.
 	 *
-	 * @var array
+	 * @var array|null
 	 */
-	private $config;
+	private $config = null;
 
 	/**
 	 * Constructor.
@@ -49,7 +49,7 @@ class Settings_Config implements Service, ArrayAccess, Countable, IteratorAggreg
 	 * @return array|mixed
 	 */
 	public function get_config() {
-		if ( ! $this->config ) {
+		if ( null === $this->config ) {
 			$this->config = call_user_func( $this->config_callback );
 		}
 

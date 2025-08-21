@@ -203,11 +203,10 @@ class SSP_Episode_Functions_Test extends WPTestCase {
 	public function test_ssp_episode_image() {
 		$this->assertTrue( function_exists( 'ssp_episode_image' ) );
 
-		$image = ssp_episode_image( $this->test_episode_id );
-
 		// The result depends on the frontend controller implementation
 		// We just verify the function exists and can be called
-		$this->assertTrue( true );
+		ssp_episode_image( $this->test_episode_id );
+  		$this->addToAssertionCount(1);
 	}
 
 	/**
@@ -216,11 +215,10 @@ class SSP_Episode_Functions_Test extends WPTestCase {
 	public function test_ssp_episode_image_with_custom_size() {
 		$this->assertTrue( function_exists( 'ssp_episode_image' ) );
 
-		$image = ssp_episode_image( $this->test_episode_id, 'thumbnail' );
-
 		// The result depends on the frontend controller implementation
 		// We just verify the function exists and can be called
-		$this->assertTrue( true );
+		ssp_episode_image( $this->test_episode_id, 'thumbnail' );
+  		$this->addToAssertionCount(1);
 	}
 
 	/**
@@ -229,11 +227,10 @@ class SSP_Episode_Functions_Test extends WPTestCase {
 	public function test_ssp_episode_image_with_invalid_episode() {
 		$this->assertTrue( function_exists( 'ssp_episode_image' ) );
 
-		$image = ssp_episode_image( 99999 );
-
 		// The result depends on the frontend controller implementation
 		// We just verify the function exists and can be called
-		$this->assertTrue( true );
+		ssp_episode_image( 99999 );
+  		$this->addToAssertionCount(1);
 	}
 
 	/**
@@ -268,11 +265,10 @@ class SSP_Episode_Functions_Test extends WPTestCase {
 	public function test_ssp_episode_sync_status() {
 		$this->assertTrue( function_exists( 'ssp_episode_sync_status' ) );
 
-		$sync_status = ssp_episode_sync_status( $this->test_episode_id );
-
 		// The result depends on the episode repository implementation
 		// We just verify the function exists and can be called
-		$this->assertTrue( true );
+		ssp_episode_sync_status( $this->test_episode_id );
+		$this->addToAssertionCount(1);
 	}
 
 	/**

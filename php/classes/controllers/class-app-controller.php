@@ -788,6 +788,9 @@ class App_Controller {
 
 			update_option( 'ssp_version', SSP_VERSION );
 			$this->upgrade_handler->run_upgrades( $previous_version );
+
+			// Flush permalinks
+			$this->activate();
 		}
 	}
 

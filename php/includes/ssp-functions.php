@@ -2077,3 +2077,29 @@ if ( ! function_exists( 'ssp_feed_max_episodes' ) ) {
 		return intval( apply_filters( 'ssp_feed_number_of_posts', $max, $series_id ) );
 	}
 }
+
+
+if ( ! function_exists( 'ssp_episode_guid' ) ) {
+	/**
+	 * Gets the episode guid.
+	 * 
+	 * @since 3.13.0
+	 * 
+	 * @param int $episode_id Episode ID.
+	 *
+	 * @return int The episode guid.
+	 */
+	function ssp_episode_guid( $episode_id = 0 ) {
+		if ( ! $episode_id ) {
+			$episode_id = get_the_ID();
+		}
+		
+		$guid = get_post_meta( $episode_id, 'ssp_guid', true );
+		if ( ! $guid ) {
+			$guid = get_the_guid( $episode_id );
+			update_post_meta( $episode_id, 'ssp_guid', $guid );
+		}
+
+		return apply_filters( 'ssp/episode/guid', $guid, $episode_id );
+	}
+}

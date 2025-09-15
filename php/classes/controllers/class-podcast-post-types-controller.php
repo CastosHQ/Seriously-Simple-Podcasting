@@ -7,8 +7,10 @@ use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Handlers\Podping_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
+use SeriouslySimplePodcasting\Handlers\UUID_Handler;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -498,8 +500,7 @@ class Podcast_Post_Types_Controller {
 
 		$old_data = array();
 
-		$enclosure     = '';
-		$old_enclosure = '';
+		$enclosure = '';
 
 		foreach ( $field_data as $k => $field ) {
 			if ( 'embed_code' == $k ) {
@@ -516,8 +517,7 @@ class Podcast_Post_Types_Controller {
 			}
 
 			if ( $k == 'audio_file' ) {
-				$enclosure     = $val;
-				$old_enclosure = get_post_meta( $post_id, $k, true );
+				$enclosure = $val;
 			}
 
 			$old_data[ $k ] = get_post_meta( $post_id, $k, true );
@@ -528,44 +528,18 @@ class Podcast_Post_Types_Controller {
 		}
 
 		if ( $enclosure ) {
-			$is_enclosure_updated = $old_enclosure !== $enclosure;
+			$this->handle_enclosure_update( $post, $enclosure );
 
-			if ( $is_enclosure_updated || get_post_meta( $post_id, 'date_recorded', true ) == '' ) {
-				update_post_meta( $post_id, 'date_recorded', $post->post_date );
-			}
-
-			if ( ! ssp_is_connected_to_castos() ) {
-				// Get file duration
-				if ( $is_enclosure_updated || get_post_meta( $post_id, 'duration', true ) == '' ) {
-					$duration = $this->episode_repository->get_file_duration( $enclosure );
-					if ( $duration ) {
-						update_post_meta( $post_id, 'duration', $duration );
-					}
-				}
-
-				// Get file size
-				if ( $is_enclosure_updated || get_post_meta( $post_id, 'filesize', true ) == '' ) {
-					$filesize = $this->episode_repository->get_file_size( $enclosure );
-					if ( $filesize ) {
-						if ( isset( $filesize['formatted'] ) ) {
-							update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
-						}
-
-						if ( isset( $filesize['raw'] ) ) {
-							update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
-						}
-					}
-				}
-			}
-
-			// Save podcast file to 'enclosure' meta field for standards-sake
-			update_post_meta( $post_id, 'enclosure', $enclosure );
+			// Generate UUID-based GUID for new episodes (backward compatibility)
+			$this->handle_guid( $post_id );
 		}
 
 		return true;
 	}
 
 	/**
+	 * Checks if the post is a podcast post type and has a valid nonce.
+	 * 
 	 * @param \WP_Post $post
 	 *
 	 * @return bool
@@ -588,6 +562,82 @@ class Podcast_Post_Types_Controller {
 		return true;
 	}
 
+	/**
+	 * Handles enclosure file updates and related meta fields.
+	 * 
+	 * @since 3.13.0
+	 *
+	 * @param \WP_Post $post      Post object.
+	 * @param string   $enclosure New enclosure URL.
+	 *
+	 * @return void
+	 */
+	public function handle_enclosure_update( $post, $enclosure ) {
+		$post_id = $post->ID;
+		$old_enclosure = get_post_meta( $post_id, 'audio_file', true );
+		$is_enclosure_updated = $old_enclosure !== $enclosure;
+
+		// Update recorded date if enclosure changed or date is empty
+		if ( $is_enclosure_updated || get_post_meta( $post_id, 'date_recorded', true ) == '' ) {
+			update_post_meta( $post_id, 'date_recorded', $post->post_date );
+		}
+
+		// Only process file metadata if not connected to Castos
+		if ( ! ssp_is_connected_to_castos() ) {
+			// Get file duration
+			if ( $is_enclosure_updated || get_post_meta( $post_id, 'duration', true ) == '' ) {
+				$duration = $this->episode_repository->get_file_duration( $enclosure );
+				if ( $duration ) {
+					update_post_meta( $post_id, 'duration', $duration );
+				}
+			}
+
+			// Get file size
+			if ( $is_enclosure_updated || get_post_meta( $post_id, 'filesize', true ) == '' ) {
+				$filesize = $this->episode_repository->get_file_size( $enclosure );
+				if ( $filesize ) {
+					if ( isset( $filesize['formatted'] ) ) {
+						update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+					}
+
+					if ( isset( $filesize['raw'] ) ) {
+						update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+					}
+				}
+			}
+		}
+
+		// Save podcast file to 'enclosure' meta field for standards-sake
+		update_post_meta( $post_id, 'enclosure', $enclosure );
+	}
+
+	/**
+	 * Handle GUID generation for new episodes if one doesn't exist
+	 *
+	 * @param int $post_id Post ID.
+	 *
+	 * @return void
+	 */
+	public function handle_guid( $post_id ) {
+		// Check if GUID already exists (backward compatibility)
+		$existing_guid = get_post_meta( $post_id, 'ssp_guid', true );
+		if ( $existing_guid ) {
+			return;
+		}
+
+		$episode = get_post( $post_id );
+		if ( ! $episode ) {
+			return;
+		}
+
+		// Create deterministic GUID from stable episode data
+		$episode_data = get_site_url() . '|' . $episode->post_date . '|' . $episode->post_title;
+		
+		$guid = UUID_Handler::v5( Feed_Handler::EPISODE_NAMESPACE_UUID, $episode_data );
+		
+		// Save the GUID
+		update_post_meta( $post_id, 'ssp_guid', $guid );
+	}
 
 	/**
 	 * Create meta box on episode edit screen

@@ -265,6 +265,14 @@ $feed_fields = array(
 		'callback'    => 'wp_strip_all_tags',
 	),
 	array(
+		'id'          => 'blocked',
+		'label'       => __( 'Mark removed', 'seriously-simple-podcasting' ),
+		'description' => __( 'Mark this feed to be removed from iTunes. When enabled, adds the itunes:block tag to the feed.', 'seriously-simple-podcasting' ),
+		'type'        => 'checkbox',
+		'default'     => '',
+		'callback'    => 'wp_strip_all_tags',
+	),
+	array(
 		'id'          => 'publish_date',
 		'label'       => __( 'Source for publish date', 'seriously-simple-podcasting' ),
 		'description' => __( 'Use the "Published date" of the post or use "Date recorded" from the Podcast episode details.', 'seriously-simple-podcasting' ),

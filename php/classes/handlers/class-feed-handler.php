@@ -533,6 +533,23 @@ class Feed_Handler implements Service {
 	}
 
 	/**
+	 * Checks whether the podcast feed is blocked from iTunes.
+	 *
+	 * @since 3.13.0
+	 *
+	 * @param int $series_id
+	 *
+	 * @return bool
+	 */
+	public function is_blocked( $series_id ) {
+		$blocked = ssp_get_option( 'blocked', '', $series_id );
+
+		$is_blocked = 'on' === $blocked;
+
+		return apply_filters( 'ssp_feed_is_blocked', $is_blocked, $series_id );
+	}
+
+	/**
 	 * Gets funding settings
 	 *
 	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#funding

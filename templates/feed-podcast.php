@@ -28,6 +28,7 @@
  * @var $googleplay_explicit
  * @var $exclude_series
  * @var string $locked Yes or no.
+ * @var bool $is_blocked.
  *
  * @var array $funding {
  *      Array of link values.
@@ -101,8 +102,11 @@ if ( $stylesheet_url ) {
 			?>	<itunes:email><?php echo esc_html( $owner_email ); ?></itunes:email>
 		<?php endif; ?></itunes:owner>
 		<itunes:explicit><?php echo esc_html( $itunes_explicit ); ?></itunes:explicit>
-		<?php if ( $complete ) : ?>
-			<itunes:complete><?php echo esc_html( $complete ); ?></itunes:complete>
+		<?php if ( $is_blocked ) :
+			?><itunes:block>yes</itunes:block>
+		<?php endif;
+		if ( $complete ) :
+			?><itunes:complete><?php echo esc_html( $complete ); ?></itunes:complete>
 		<?php endif;
 
 		if ( $image ) :

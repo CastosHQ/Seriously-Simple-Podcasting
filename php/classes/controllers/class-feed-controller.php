@@ -232,6 +232,8 @@ class Feed_Controller {
 
 		$locked = $this->feed_handler->get_locked( $series_id );
 
+		$is_blocked = $this->feed_handler->is_blocked( $series_id );
+
 		$funding = $this->feed_handler->get_funding( $series_id );
 
 		$podcast_value = $this->feed_handler->get_podcast_value( $series_id );
@@ -349,7 +351,7 @@ class Feed_Controller {
 		// Episode block flag
 		$ep_block   = get_post_meta( $post_id, 'block', true );
 		$ep_block   = apply_filters( 'ssp_feed_item_block', $ep_block, $post_id );
-		$block_flag = ( $ep_block && $ep_block == 'on' ) ? 'yes' : 'no';
+		$block_flag = ( $ep_block && 'on' === $ep_block ) ? 'yes' : 'no';
 
 		// Episode author.
 		$author = apply_filters( 'ssp_feed_item_author', $author, $post_id );

@@ -17,9 +17,12 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 	echo '<div class="ssp-podcasts"></div>';
 	return;
 }
+
+// Get columns parameter with default value
+$columns = isset( $columns ) ? intval( $columns ) : 1;
 ?>
 
-<div class="ssp-podcasts">
+<div class="ssp-podcasts ssp-podcasts-columns-<?php echo esc_attr( $columns ); ?>">
 	<?php foreach ( $podcasts as $podcast ) : ?>
 		<div class="ssp-podcast-card">
 			<div class="ssp-podcast-image">
@@ -35,12 +38,6 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 			<div class="ssp-podcast-content">
 				<div class="ssp-podcast-header">
 					<h3 class="ssp-podcast-title"><?php echo esc_html( $podcast['name'] ); ?></h3>
-					
-					<?php if ( ! empty( $podcast['url'] ) ) : ?>
-						<a href="<?php echo esc_url( $podcast['url'] ); ?>" class="ssp-listen-now-button">
-							Listen Now →
-						</a>
-					<?php endif; ?>
 				</div>
 				
 				<div class="ssp-podcast-episode-count">
@@ -56,8 +53,14 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 				
 				<?php if ( ! empty( $podcast['description'] ) ) : ?>
 					<div class="ssp-podcast-description">
-						<?php echo esc_html( $podcast['description'] ); ?>
+						<?php echo wp_kses_post( $podcast['description'] ); ?>
 					</div>
+				<?php endif; ?>
+				
+				<?php if ( ! empty( $podcast['url'] ) ) : ?>
+					<a href="<?php echo esc_url( $podcast['url'] ); ?>" class="ssp-listen-now-button">
+						Listen Now →
+					</a>
 				<?php endif; ?>
 			</div>
 		</div>
@@ -66,10 +69,24 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 
 <style>
 .ssp-podcasts {
-	display: flex;
-	flex-direction: column;
+	display: grid;
 	gap: 20px;
 	max-width: 100%;
+}
+
+/* Single column layout (default) */
+.ssp-podcasts-columns-1 {
+	grid-template-columns: 1fr;
+}
+
+/* Two column layout */
+.ssp-podcasts-columns-2 {
+	grid-template-columns: repeat(2, 1fr);
+}
+
+/* Three column layout */
+.ssp-podcasts-columns-3 {
+	grid-template-columns: repeat(3, 1fr);
 }
 
 .ssp-podcast-card {
@@ -128,7 +145,7 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 	flex: 1;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	justify-content: flex-start;
 }
 
 .ssp-podcast-header {
@@ -153,9 +170,11 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 	font-weight: 600;
 	white-space: nowrap;
 	transition: background-color 0.3s ease;
-	position: absolute;
-	bottom: 16px;
-	right: 16px;
+	display: inline-block;
+	margin-top: auto;
+	margin-left: auto;
+	width: fit-content;
+	box-sizing: border-box;
 }
 
 .ssp-listen-now-button:hover {
@@ -175,19 +194,28 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 	font-size: 16px;
 	color: #6c757d;
 	line-height: 1.5;
-	margin: 0;
+	margin: 0 0 16px 0;
+	text-align: justify;
 }
 
 /* Responsive design */
 @media (max-width: 768px) {
+	/* Force single column layout on mobile for all column configurations */
+	.ssp-podcasts-columns-2,
+	.ssp-podcasts-columns-3 {
+		grid-template-columns: 1fr;
+	}
+	
 	.ssp-podcast-card {
 		flex-direction: column;
 		text-align: center;
 	}
 	
 	.ssp-podcast-image {
-		width: 100px;
-		height: 100px;
+		width: 300px;
+        height: 300px;
+        max-width: 90%;
+        max-height: 90%;
 		margin: 0 auto 15px auto;
 	}
 	
@@ -197,10 +225,13 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 	}
 	
 	.ssp-listen-now-button {
-		bottom: 12px;
-		right: 12px;
 		font-size: 12px;
-		padding: 6px 12px;
+		padding: 12px 12px;
+		max-width: 300px;
+		width: 90%;
+		display: block;
+		margin: auto auto 12px auto;
+		text-align: center;
 	}
 	
 	.ssp-podcast-episode-count {
@@ -209,6 +240,14 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 	
 	.ssp-podcast-description {
 		font-size: 14px;
+	}
+}
+
+/* Tablet responsive design */
+@media (max-width: 1024px) and (min-width: 769px) {
+	/* Reduce 3 columns to 2 columns on tablet */
+	.ssp-podcasts-columns-3 {
+		grid-template-columns: repeat(2, 1fr);
 	}
 }
 </style>

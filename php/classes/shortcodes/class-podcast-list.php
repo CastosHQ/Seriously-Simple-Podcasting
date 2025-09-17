@@ -25,6 +25,20 @@ if ( ! defined( 'ABSPATH' ) ) {
 class Podcast_List implements Shortcode {
 
 	/**
+	 * Minimum number of columns allowed.
+	 *
+	 * @since 3.13.0
+	 */
+	const MIN_COLUMNS = 1;
+
+	/**
+	 * Maximum number of columns allowed.
+	 *
+	 * @since 3.13.0
+	 */
+	const MAX_COLUMNS = 3;
+
+	/**
 	 * Renderer instance.
 	 *
 	 * @var Renderer
@@ -50,10 +64,14 @@ class Podcast_List implements Shortcode {
 	 */
 	public function shortcode( $params ) {
 		$defaults = array(
-			'ids' => '',
+			'ids'     => '',
+			'columns' => 1,
 		);
 
 		$args = shortcode_atts( $defaults, $params, 'ssp_podcasts' );
+
+		// Validate and sanitize columns parameter.
+		$columns = $this->validate_columns_parameter( $args['columns'] );
 
 		// Get podcasts based on IDs parameter.
 		$podcasts = $this->get_podcasts( $args['ids'] );
@@ -61,6 +79,7 @@ class Podcast_List implements Shortcode {
 		// Prepare template data.
 		$template_data = array(
 			'podcasts' => $podcasts,
+			'columns'  => $columns,
 		);
 
 		// Render the template.
@@ -177,5 +196,27 @@ class Podcast_List implements Shortcode {
 
 		// Return the URL or empty string if there's an error.
 		return is_wp_error( $url ) ? '' : $url;
+	}
+
+	/**
+	 * Validates and sanitizes the columns parameter to ensure it's within the allowed range.
+	 *
+	 * @since 3.13.0
+	 *
+	 * @param mixed $columns The columns parameter value.
+	 * @return int Validated columns value (MIN_COLUMNS to MAX_COLUMNS).
+	 */
+	private function validate_columns_parameter( $columns ) {
+		// Convert to integer and ensure it's within valid range.
+		$columns = intval( $columns );
+
+		// Ensure columns is within the allowed range.
+		if ( $columns < self::MIN_COLUMNS ) {
+			$columns = self::MIN_COLUMNS;
+		} elseif ( $columns > self::MAX_COLUMNS ) {
+			$columns = self::MAX_COLUMNS;
+		}
+
+		return $columns;
 	}
 }

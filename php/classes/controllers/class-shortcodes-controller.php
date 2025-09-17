@@ -11,6 +11,7 @@ use SeriouslySimplePodcasting\ShortCodes\Player;
 use SeriouslySimplePodcasting\ShortCodes\Podcast;
 use SeriouslySimplePodcasting\ShortCodes\Podcast_Episode;
 use SeriouslySimplePodcasting\ShortCodes\Podcast_Playlist;
+use SeriouslySimplePodcasting\ShortCodes\Podcast_List;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -57,5 +58,7 @@ class Shortcodes_Controller extends Controller {
 		add_shortcode( 'ss_podcast', array( new Podcast(), 'shortcode' ) );
 		add_shortcode( 'podcast_episode', array( new Podcast_Episode(), 'shortcode' ) );
 		add_shortcode( 'podcast_playlist', array( new Podcast_Playlist(), 'shortcode' ) );
+		add_shortcode( 'ssp_podcasts', array( new Podcast_List(), 'shortcode' ) );
 	}
+
 }

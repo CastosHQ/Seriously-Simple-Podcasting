@@ -64,7 +64,7 @@ Feature: Login
 		# Check items
 		And I can see in source "<title>Episode3</title>"
 		And I can see in source "<dc:creator><![CDATA[My WordPress]]></dc:creator>"
-		And I can see in source "<guid isPermaLink=\"false\">{{base_url}}"
+		And I can see in source "<guid isPermaLink=\"false\">"
 		And I can see in source "<description><![CDATA[Episode3 content]]></description>"
 		And I can see in source "<itunes:subtitle><![CDATA[Episode3 content]]></itunes:subtitle>"
 		And I can see in source "<content:encoded><![CDATA[Episode3 content]]></content:encoded>"

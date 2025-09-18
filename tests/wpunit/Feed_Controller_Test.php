@@ -82,7 +82,7 @@ class Feed_Controller_Test extends WPTestCase {
 			sprintf( '<link>%s</link>', get_post_permalink( $episode_id ) ),
 			sprintf( '<pubDate>%s</pubDate>', mysql2date( 'D, d M Y H:i:s +0000', get_post_time( 'Y-m-d H:i:s', true, $episode_id ) ) ),
 			'<dc:creator><![CDATA[WordPress Test]]></dc:creator>',
-			sprintf( '<guid isPermaLink="false">%s</guid>', get_post_permalink( $episode_id ) ),
+			sprintf( '<guid isPermaLink="false">%s</guid>', ssp_episode_guid( $episode_id ) ),
 			sprintf( '<description><![CDATA[%s]]></description>', $excerpt ),
 			sprintf( '<itunes:subtitle><![CDATA[%s]]></itunes:subtitle>', $excerpt ),
 			sprintf( '<content:encoded><![CDATA[%s]]></content:encoded>', $excerpt ),

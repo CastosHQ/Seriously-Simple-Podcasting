@@ -344,7 +344,7 @@ class RSS_Import_Handler {
 	 * @return string|null
 	 */
 	protected function get_podcast_guid() {
-		$guid_elements = $this->feed_object->channel->xpath('podcast:guid');
+		$guid_elements = $this->feed_object->channel->xpath( 'podcast:guid' );
 		if ( empty( $guid_elements ) ) {
 			return null;
 		}
@@ -410,6 +410,11 @@ class RSS_Import_Handler {
 		$this->save_enclosure( $post_id, $this->get_enclosure_url( $item ) );
 		$this->save_episode_image( $post_id, $this->get_image_url( $item ) );
 
+		// Save original GUID if it exists
+		if ( ! empty( $post_data['original_guid'] ) ) {
+			update_post_meta( $post_id, 'ssp_original_guid', $post_data['original_guid'] );
+		}
+
 		// Set the series, if it is available
 		if ( ! empty( $this->series ) ) {
 			wp_set_post_terms( $post_id, $this->series, ssp_series_taxonomy() );
@@ -462,6 +467,12 @@ class RSS_Import_Handler {
 		$post_data['post_author']  = get_current_user_id();
 		$post_data['post_date']    = date( 'Y-m-d H:i:s', strtotime( (string) $item->pubDate ) ); //phpcs:ignore WordPress.NamingConventions
 		$post_data['post_type']    = $this->post_type;
+
+		// Extract original GUID from RSS feed item
+		$original_guid = trim( (string) $item->guid );
+		if ( ! empty( $original_guid ) ) {
+			$post_data['original_guid'] = $original_guid;
+		}
 
 		return $post_data;
 	}

@@ -2082,9 +2082,9 @@ if ( ! function_exists( 'ssp_feed_max_episodes' ) ) {
 if ( ! function_exists( 'ssp_episode_guid' ) ) {
 	/**
 	 * Gets the episode guid.
-	 * 
+	 *
 	 * @since 3.13.0
-	 * 
+	 *
 	 * @param int $episode_id Episode ID.
 	 *
 	 * @return int The episode guid.
@@ -2093,7 +2093,13 @@ if ( ! function_exists( 'ssp_episode_guid' ) ) {
 		if ( ! $episode_id ) {
 			$episode_id = get_the_ID();
 		}
-		
+
+		// Check for original GUID from RSS import first
+		$original_guid = get_post_meta( $episode_id, 'ssp_original_guid', true );
+		if ( ! empty( $original_guid ) ) {
+			return apply_filters( 'ssp/episode/guid', $original_guid, $episode_id );
+		}
+
 		$guid = get_post_meta( $episode_id, 'ssp_guid', true );
 		if ( ! $guid ) {
 			$guid = get_the_guid( $episode_id );

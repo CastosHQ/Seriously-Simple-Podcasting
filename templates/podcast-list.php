@@ -1,6 +1,11 @@
 <?php
 /**
  * Podcast List Template
+ * 
+ * @see SeriouslySimplePodcasting\ShortCodes\Podcast_List::shortcode()
+ * 
+ * @var array $podcasts
+ * @var int $columns
  *
  * @package SeriouslySimplePodcasting
  * @since 3.13.0

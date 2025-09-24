@@ -180,7 +180,24 @@ class Podcast_List implements Shortcode {
 			return '';
 		}
 
-		return ssp_get_podcast_image_src( $term, 'medium' );
+		// First, try to get the podcast (series taxonomy) image
+		$podcast_image = ssp_get_podcast_image_src( $term, 'medium' );
+		
+		// If podcast image exists and is not the default no-image, use it
+		if ( ! empty( $podcast_image ) && false === strpos( $podcast_image, 'no-image.png' ) ) {
+			return $podcast_image;
+		}
+
+		// Fallback to feed image if podcast image is not available or is default
+		$settings_handler = ssp_get_service( 'settings_handler' );
+		$feed_image = $settings_handler->get_feed_image( $podcast_id );
+		
+		if ( ! empty( $feed_image ) ) {
+			return $feed_image;
+		}
+
+		// Final fallback to podcast image (even if it's the default no-image)
+		return $podcast_image;
 	}
 
 	/**

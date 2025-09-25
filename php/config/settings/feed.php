@@ -267,7 +267,7 @@ $feed_fields = array(
 	array(
 		'id'          => 'blocked',
 		'label'       => __( 'Mark removed', 'seriously-simple-podcasting' ),
-		'description' => __( 'Mark this feed to be removed from iTunes. When enabled, adds the itunes:block tag to the feed.', 'seriously-simple-podcasting' ),
+		'description' => __( 'Mark this feed to be removed from Apple Podcasts. When enabled, adds the itunes:block tag to the feed.', 'seriously-simple-podcasting' ),
 		'type'        => 'checkbox',
 		'default'     => '',
 		'callback'    => 'wp_strip_all_tags',

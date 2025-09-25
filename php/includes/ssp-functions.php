@@ -1710,14 +1710,35 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 	/**
 	 * Gets array of podcast terms.
 	 *
-	 * @param bool $hide_empty
+	 * @param bool  $hide_empty     Whether to hide empty terms.
+	 * @param array $additional_args Additional arguments for get_terms().
 	 *
 	 * @return WP_Term[]
+	 *
+	 * @since 2.20.3
+	 *
+	 * @filter ssp_get_podcasts_args Allows filtering of get_terms() arguments.
 	 */
-	function ssp_get_podcasts( $hide_empty = false ) {
-		$cache_key   = 'ssp_podcasts';
+	function ssp_get_podcasts( $hide_empty = false, $additional_args = array() ) {
+		// Merge default args with additional args.
+		$args = array_merge( array( 'hide_empty' => $hide_empty ), $additional_args );
+
+		// Allow filtering of the arguments before querying.
+		$args = apply_filters( 'ssp_get_podcasts_args', $args, $hide_empty, $additional_args );
+
+		// Create cache key based on filtered arguments.
+		$cache_key   = 'ssp_podcasts_' . md5( serialize( $args ) );
 		$cache_group = 'ssp';
-		$podcasts    = get_terms( ssp_series_taxonomy(), array( 'hide_empty' => $hide_empty ) );
+		$podcasts    = wp_cache_get( $cache_key, $cache_group );
+
+		// Return cached result if available.
+		if ( false !== $podcasts ) {
+			return is_array( $podcasts ) ? $podcasts : array();
+		}
+
+		// Fetch podcasts and store in cache.
+		$podcasts = get_terms( ssp_series_taxonomy(), $args );
+		wp_cache_set( $cache_key, $podcasts, $cache_group, HOUR_IN_SECONDS );
 
 		return is_array( $podcasts ) ? $podcasts : array();
 	}

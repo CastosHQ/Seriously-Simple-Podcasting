@@ -1,11 +1,33 @@
 <?php
 /**
  * Podcast List Template
- * 
+ *
  * @see SeriouslySimplePodcasting\ShortCodes\Podcast_List::shortcode()
- * 
- * @var array $podcasts
- * @var int $columns
+ *
+ * @var array  $podcasts           Array of podcast data with keys: name, url, cover_image, description, episode_count
+ * @var int    $columns            Number of columns for the grid layout (1-3)
+ * @var string $clickable          Clickability mode: 'button', 'card', or 'title'
+ * @var bool   $hide_button        Whether to hide the listen button
+ * @var bool   $show_button        Whether to show the listen button (pre-processed)
+ * @var bool   $show_description   Whether to show podcast descriptions
+ * @var bool   $show_episode_count Whether to show episode counts
+ * @var string $wrapper_class      CSS class for podcast cards (pre-processed)
+ * @var string $columns_class      CSS class for grid columns (pre-processed)
+ * @var int    $description_words  Maximum number of words for descriptions (pre-processed)
+ * @var int    $description_chars  Maximum number of characters for descriptions (pre-processed)
+ *
+ * Available Hooks:
+ * - ssp/podcast_list/before: Before the entire podcast list
+ * - ssp/podcast_list/after: After the entire podcast list
+ * - ssp/podcast_list/card/before: Before each podcast card
+ * - ssp/podcast_list/card/after: After each podcast card
+ * - ssp/podcast_list/image/before: Before each podcast image
+ * - ssp/podcast_list/image/after: After each podcast image
+ * - ssp/podcast_list/content/before: Before each podcast content area
+ * - ssp/podcast_list/content/after: After each podcast content area
+ *
+ * Note: The ssp/podcast_list/card_data filter is applied in the shortcode class
+ * before the data reaches this template.
  *
  * @package SeriouslySimplePodcasting
  * @since 3.13.0
@@ -23,236 +45,89 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 	return;
 }
 
-// Get columns parameter with default value
-$columns = isset( $columns ) ? intval( $columns ) : 1;
+// All display options are now pre-processed in the shortcode class
 ?>
 
-<div class="ssp-podcasts ssp-podcasts-columns-<?php echo esc_attr( $columns ); ?>">
-	<?php foreach ( $podcasts as $podcast ) : ?>
-		<div class="ssp-podcast-card">
-			<div class="ssp-podcast-image">
-				<?php if ( ! empty( $podcast['cover_image'] ) ) : ?>
-					<img src="<?php echo esc_url( $podcast['cover_image'] ); ?>" alt="<?php echo esc_attr( $podcast['name'] ); ?>" />
+<?php do_action( 'ssp/podcast_list/before', $podcasts, $columns ); ?>
+
+<div class="ssp-podcasts <?php echo esc_attr( $columns_class ); ?>" role="region" aria-label="<?php esc_attr_e( 'Podcast List', 'seriously-simple-podcasting' ); ?>">
+	<?php foreach ( $podcasts as $index => $podcast ) : ?>
+		<?php
+		// Get podcast-specific data
+		$podcast_url        = ! empty( $podcast['url'] ) ? $podcast['url'] : '';
+		$title_is_clickable = 'title' === $clickable && ! empty( $podcast_url );
+		$card_is_clickable  = 'card' === $clickable && ! empty( $podcast_url );
+		$cover_image        = ! empty( $podcast['cover_image'] ) ? $podcast['cover_image'] : '';
+		$podcast_name       = isset( $podcast['name'] ) ? $podcast['name'] : '';
+
+		?>
+		<?php do_action( 'ssp/podcast_list/card/before', $podcast, $index ); ?>
+		<div class="<?php echo esc_attr( $wrapper_class ); ?>" role="article">
+			<?php if ( $card_is_clickable ) : ?>
+				<!-- Absolutely positioned link that covers the entire card -->
+				<a href="<?php echo esc_url( $podcast_url ); ?>" 
+					class="ssp-podcast-card-link" 
+					aria-label="<?php echo esc_attr( sprintf( __( 'View %s podcast details', 'seriously-simple-podcasting' ), $podcast_name ) ); ?>"></a>
+			<?php endif; ?>
+			
+			<?php do_action( 'ssp/podcast_list/image/before', $podcast, $index ); ?>
+			<div class="ssp-podcast-image" role="img" aria-label="<?php echo esc_attr( sprintf( __( 'Cover image for %s', 'seriously-simple-podcasting' ), $podcast_name ) ); ?>">
+				<?php if ( $cover_image ) : ?>
+					<img src="<?php echo esc_url( $cover_image ); ?>" 
+						alt="<?php echo esc_attr( sprintf( __( 'Cover image for %s', 'seriously-simple-podcasting' ), $podcast_name ) ); ?>" 
+						loading="lazy" />
 				<?php else : ?>
-					<div class="ssp-podcast-placeholder">
-						<span class="ssp-podcast-placeholder-text"><?php echo esc_html( $podcast['name'] ); ?></span>
+					<div class="ssp-podcast-placeholder" aria-hidden="true">
+						<span class="ssp-podcast-placeholder-text"><?php echo esc_html( $podcast_name ); ?></span>
 					</div>
 				<?php endif; ?>
 			</div>
+			<?php do_action( 'ssp/podcast_list/image/after', $podcast, $index ); ?>
 			
+			<?php do_action( 'ssp/podcast_list/content/before', $podcast, $index ); ?>
 			<div class="ssp-podcast-content">
 				<div class="ssp-podcast-header">
-					<h3 class="ssp-podcast-title"><?php echo esc_html( $podcast['name'] ); ?></h3>
+					<?php if ( $title_is_clickable ) : ?>
+						<a href="<?php echo esc_url( $podcast_url ); ?>" class="ssp-podcast-title-link">
+					<?php endif; ?>
+						<h3 class="ssp-podcast-title"><?php echo esc_html( $podcast_name ); ?></h3>
+					<?php if ( $title_is_clickable ) : ?>
+						</a>
+					<?php endif; ?>
 				</div>
 				
-				<div class="ssp-podcast-episode-count">
-					<?php
-					$episode_count = $podcast['episode_count'];
-					if ( $episode_count === 1 ) {
-						echo esc_html( $episode_count . ' episode' );
-					} else {
-						echo esc_html( $episode_count . ' episodes' );
-					}
-					?>
-				</div>
+				<?php if ( $show_episode_count ) : ?>
+					<div class="ssp-podcast-episode-count" aria-label="<?php esc_attr_e( 'Number of episodes', 'seriously-simple-podcasting' ); ?>">
+						<?php
+						$episode_count = $podcast['episode_count'];
+						/* translators: %d: number of episodes */
+						echo esc_html( sprintf( _n( '%d episode', '%d episodes', $episode_count, 'seriously-simple-podcasting' ), $episode_count ) );
+						?>
+					</div>
+				<?php endif; ?>
 				
-				<?php if ( ! empty( $podcast['description'] ) ) : ?>
-					<div class="ssp-podcast-description">
+				<?php if ( $show_description && ! empty( $podcast['description'] ) ) : ?>
+					<div class="ssp-podcast-description" aria-label="<?php esc_attr_e( 'Podcast description', 'seriously-simple-podcasting' ); ?>">
 						<?php echo wp_kses_post( $podcast['description'] ); ?>
 					</div>
 				<?php endif; ?>
 				
-				<?php if ( ! empty( $podcast['url'] ) ) : ?>
-					<a href="<?php echo esc_url( $podcast['url'] ); ?>" class="ssp-listen-now-button">
-						Listen Now →
+				<?php if ( $show_button && ! empty( $podcast_url ) ) : ?>
+					<a href="<?php echo esc_url( $podcast_url ); ?>" 
+						class="ssp-listen-now-button" 
+						aria-label="<?php echo esc_attr( sprintf( __( 'Listen to %s podcast', 'seriously-simple-podcasting' ), $podcast_name ) ); ?>">
+						<?php
+						/* translators: Button text to listen to a podcast */
+						echo esc_html__( 'Listen Now', 'seriously-simple-podcasting' );
+						?>
+						→
 					</a>
 				<?php endif; ?>
 			</div>
+			<?php do_action( 'ssp/podcast_list/content/after', $podcast, $index ); ?>
 		</div>
+		<?php do_action( 'ssp/podcast_list/card/after', $podcast, $index ); ?>
 	<?php endforeach; ?>
 </div>
 
-<style>
-.ssp-podcasts {
-	display: grid;
-	gap: 20px;
-	max-width: 100%;
-}
-
-/* Single column layout (default) */
-.ssp-podcasts-columns-1 {
-	grid-template-columns: 1fr;
-}
-
-/* Two column layout */
-.ssp-podcasts-columns-2 {
-	grid-template-columns: repeat(2, 1fr);
-}
-
-/* Three column layout */
-.ssp-podcasts-columns-3 {
-	grid-template-columns: repeat(3, 1fr);
-}
-
-.ssp-podcast-card {
-	display: flex;
-	background: #f8f9fa;
-	border-radius: 8px;
-	padding: 16px;
-	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	transition: box-shadow 0.3s ease;
-	position: relative;
-}
-
-.ssp-podcast-card:hover {
-	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
-}
-
-.ssp-podcast-image {
-	flex-shrink: 0;
-	width: 120px;
-	height: 120px;
-	margin-right: 20px;
-	border-radius: 8px;
-	overflow: hidden;
-	background: #e9ecef;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-}
-
-.ssp-podcast-image img {
-	width: 100%;
-	height: 100%;
-	object-fit: cover;
-}
-
-.ssp-podcast-placeholder {
-	width: 100%;
-	height: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: linear-gradient(135deg, #6c5ce7, #a29bfe);
-	color: white;
-	text-align: center;
-	padding: 10px;
-}
-
-.ssp-podcast-placeholder-text {
-	font-size: 14px;
-	font-weight: 600;
-	line-height: 1.2;
-	word-break: break-word;
-}
-
-.ssp-podcast-content {
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-	justify-content: flex-start;
-}
-
-.ssp-podcast-header {
-	margin-bottom: 8px;
-}
-
-.ssp-podcast-title {
-	margin: 0;
-	font-size: 24px;
-	font-weight: 700;
-	color: #6c5ce7;
-	line-height: 1.2;
-}
-
-.ssp-listen-now-button {
-	background: #343a40;
-	color: white;
-	text-decoration: none;
-	padding: 8px 16px;
-	border-radius: 4px;
-	font-size: 14px;
-	font-weight: 600;
-	white-space: nowrap;
-	transition: background-color 0.3s ease;
-	display: inline-block;
-	margin-top: auto;
-	margin-left: auto;
-	width: fit-content;
-	box-sizing: border-box;
-}
-
-.ssp-listen-now-button:hover {
-	background: #495057;
-	color: white;
-	text-decoration: none;
-}
-
-.ssp-podcast-episode-count {
-	font-size: 16px;
-	color: #6c757d;
-	margin-bottom: 8px;
-	font-weight: 500;
-}
-
-.ssp-podcast-description {
-	font-size: 16px;
-	color: #6c757d;
-	line-height: 1.5;
-	margin: 0 0 16px 0;
-	text-align: justify;
-}
-
-/* Responsive design */
-@media (max-width: 768px) {
-	/* Force single column layout on mobile for all column configurations */
-	.ssp-podcasts-columns-2,
-	.ssp-podcasts-columns-3 {
-		grid-template-columns: 1fr;
-	}
-	
-	.ssp-podcast-card {
-		flex-direction: column;
-		text-align: center;
-	}
-	
-	.ssp-podcast-image {
-		width: 300px;
-        height: 300px;
-        max-width: 90%;
-        max-height: 90%;
-		margin: 0 auto 15px auto;
-	}
-	
-	.ssp-podcast-title {
-		font-size: 20px;
-		text-align: center;
-	}
-	
-	.ssp-listen-now-button {
-		font-size: 12px;
-		padding: 12px 12px;
-		max-width: 300px;
-		width: 90%;
-		display: block;
-		margin: auto auto 12px auto;
-		text-align: center;
-	}
-	
-	.ssp-podcast-episode-count {
-		font-size: 14px;
-	}
-	
-	.ssp-podcast-description {
-		font-size: 14px;
-	}
-}
-
-/* Tablet responsive design */
-@media (max-width: 1024px) and (min-width: 769px) {
-	/* Reduce 3 columns to 2 columns on tablet */
-	.ssp-podcasts-columns-3 {
-		grid-template-columns: repeat(2, 1fr);
-	}
-}
-</style>
+<?php do_action( 'ssp/podcast_list/after', $podcasts, $columns ); ?>

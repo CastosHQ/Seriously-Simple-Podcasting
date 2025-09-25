@@ -31,16 +31,17 @@
 
 .ssp-podcast-card {
 	display: flex;
-	background: #f8f9fa;
+	background: var(--ssp-podcast-card-bg, #f8f9fa);
 	border-radius: 8px;
 	padding: 16px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-	transition: box-shadow 0.3s ease;
+	transition: box-shadow 0.3s ease, background-color 0.3s ease;
 	position: relative;
 }
 
 .ssp-podcast-card:hover {
 	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+	background: var(--ssp-podcast-card-hover-bg, #e9ecef);
 }
 
 .ssp-podcast-image {
@@ -96,51 +97,51 @@
 	margin: 0;
 	font-size: 24px;
 	font-weight: 700;
-	color: #6c5ce7;
+	color: var(--ssp-title-color, #6c5ce7);
 	line-height: 1.2;
 }
 
 .ssp-listen-now-button {
-	background: #343a40;
-	color: white;
+	background: var(--ssp-button-bg, #343a40);
+	color: var(--ssp-button-text, #ffffff);
 	text-decoration: none;
 	padding: 8px 16px;
 	border-radius: 4px;
 	font-size: 14px;
 	font-weight: 600;
 	white-space: nowrap;
-	transition: background-color 0.3s ease;
 	display: inline-block;
 	margin-top: auto;
 	margin-left: auto;
 	width: fit-content;
 	box-sizing: border-box;
+	transition: 0.3s ease;
 }
 
 .ssp-listen-now-button:hover,
 .ssp-listen-now-button:focus {
-	background: #495057;
-	color: white;
+	background: var(--ssp-button-hover-bg, #495057);
+	color: var(--ssp-button-text, #ffffff);
 	text-decoration: none;
-	outline: 2px solid #6c5ce7;
-	outline-offset: 2px;
+	outline: 1px solid var(--ssp-button-hover-bg, #495057);
+	outline-offset: 0px;
 }
 
 .ssp-listen-now-button:focus-visible {
-	outline: 2px solid #6c5ce7;
+	outline: 1px solid var(--ssp-title-color, #6c5ce7);
 	outline-offset: 2px;
 }
 
 .ssp-podcast-episode-count {
 	font-size: 16px;
-	color: #6c757d;
+	color: var(--ssp-episode-count-color, #6c757d);
 	margin-bottom: 8px;
 	font-weight: 500;
 }
 
 .ssp-podcast-description {
 	font-size: 16px;
-	color: #6c757d;
+	color: var(--ssp-description-color, #6c757d);
 	line-height: 1.5;
 	margin: 0 0 16px 0;
 	text-align: justify;
@@ -256,7 +257,7 @@
 	margin: 0;
 	font-size: 24px;
 	font-weight: 700;
-	color: #6c5ce7;
+	color: var(--ssp-title-color, #6c5ce7);
 	line-height: 1.2;
 	transition: color 0.3s ease;
 }

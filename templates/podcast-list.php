@@ -15,6 +15,7 @@
  * @var string $columns_class      CSS class for grid columns (pre-processed)
  * @var int    $description_words  Maximum number of words for descriptions (pre-processed)
  * @var int    $description_chars  Maximum number of characters for descriptions (pre-processed)
+ * @var string $css_vars           CSS variables for background colors (pre-processed)
  *
  * Available Hooks:
  * - ssp/podcast_list/before: Before the entire podcast list
@@ -50,7 +51,7 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 
 <?php do_action( 'ssp/podcast_list/before', $podcasts, $columns ); ?>
 
-<div class="ssp-podcasts <?php echo esc_attr( $columns_class ); ?>" role="region" aria-label="<?php esc_attr_e( 'Podcast List', 'seriously-simple-podcasting' ); ?>">
+<div class="ssp-podcasts <?php echo esc_attr( $columns_class ); ?>" role="region" aria-label="<?php esc_attr_e( 'Podcast List', 'seriously-simple-podcasting' ); ?>"<?php echo ! empty( $css_vars ) ? ' style="' . esc_attr( $css_vars ) . '"' : ''; ?>>
 	<?php foreach ( $podcasts as $index => $podcast ) : ?>
 		<?php
 		// Get podcast-specific data

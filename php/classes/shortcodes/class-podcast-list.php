@@ -96,16 +96,24 @@ class Podcast_List implements Shortcode {
 	 */
 	public function shortcode( $params ) {
 		$defaults = array(
-			'ids'                => '',
-			'columns'            => 1,
-			'sort_by'            => 'id',
-			'sort'               => 'asc',
-			'clickable'          => 'button',
-			'hide_button'        => 'false',
-			'show_description'   => 'true',
-			'show_episode_count' => 'true',
-			'description_words'  => 0,
-			'description_chars'  => 0,
+			'ids'                 => '',
+			'columns'             => 1,
+			'sort_by'             => 'id',
+			'sort'                => 'asc',
+			'clickable'           => 'button',
+			'hide_button'         => 'false',
+			'show_description'    => 'true',
+			'show_episode_count'  => 'true',
+			'description_words'   => 0,
+			'description_chars'   => 0,
+			'background'          => '#f8f9fa',
+			'background_hover'    => '#e9ecef',
+			'button_color'        => '#343a40',
+			'button_hover_color'  => '#495057',
+			'button_text_color'   => '#ffffff',
+			'title_color'         => '#6c5ce7',
+			'episode_count_color' => '#6c757d',
+			'description_color'   => '#6c757d',
 		);
 
 		$args = shortcode_atts( $defaults, $params, 'ssp_podcasts' );
@@ -114,15 +122,23 @@ class Podcast_List implements Shortcode {
 		$this->enqueue_assets();
 
 		// Validate and sanitize parameters.
-		$columns            = $this->validate_columns_parameter( $args['columns'] );
-		$sort_by            = $this->validate_sort_by_parameter( $args['sort_by'] );
-		$sort               = $this->validate_sort_parameter( $args['sort'] );
-		$clickable          = $this->validate_clickable_parameter( $args['clickable'] );
-		$hide_button        = $this->validate_hide_button_parameter( $args['hide_button'] );
-		$show_description   = $this->validate_show_description_parameter( $args['show_description'] );
-		$show_episode_count = $this->validate_show_episode_count_parameter( $args['show_episode_count'] );
-		$description_words  = $this->validate_description_words_parameter( $args['description_words'] );
-		$description_chars  = $this->validate_description_chars_parameter( $args['description_chars'] );
+		$columns             = $this->validate_columns_parameter( $args['columns'] );
+		$sort_by             = $this->validate_sort_by_parameter( $args['sort_by'] );
+		$sort                = $this->validate_sort_parameter( $args['sort'] );
+		$clickable           = $this->validate_clickable_parameter( $args['clickable'] );
+		$hide_button         = $this->validate_hide_button_parameter( $args['hide_button'] );
+		$show_description    = $this->validate_show_description_parameter( $args['show_description'] );
+		$show_episode_count  = $this->validate_show_episode_count_parameter( $args['show_episode_count'] );
+		$description_words   = $this->validate_description_words_parameter( $args['description_words'] );
+		$description_chars   = $this->validate_description_chars_parameter( $args['description_chars'] );
+		$background          = $this->validate_background_parameter( $args['background'] );
+		$background_hover    = $this->validate_background_parameter( $args['background_hover'] );
+		$button_color        = $this->validate_background_parameter( $args['button_color'] );
+		$button_hover_color  = $this->validate_background_parameter( $args['button_hover_color'] );
+		$button_text_color   = $this->validate_background_parameter( $args['button_text_color'] );
+		$title_color         = $this->validate_background_parameter( $args['title_color'] );
+		$episode_count_color = $this->validate_background_parameter( $args['episode_count_color'] );
+		$description_color   = $this->validate_background_parameter( $args['description_color'] );
 
 		// Auto-adjustment: if hide_button=true and clickable=button, set clickable=title.
 		if ( $hide_button && 'button' === $clickable ) {
@@ -154,6 +170,9 @@ class Podcast_List implements Shortcode {
 			$podcasts = $this->truncate_descriptions( $podcasts, $description_words, $description_chars );
 		}
 
+		// Generate CSS variables for all colors.
+		$css_vars = $this->generate_css_variables( $background, $background_hover, $button_color, $button_hover_color, $button_text_color, $title_color, $episode_count_color, $description_color );
+
 		// Prepare template data.
 		$template_data = array(
 			'podcasts'           => $podcasts,
@@ -165,6 +184,7 @@ class Podcast_List implements Shortcode {
 			'show_episode_count' => $show_episode_count,
 			'wrapper_class'      => $wrapper_class,
 			'columns_class'      => $columns_class,
+			'css_vars'           => $css_vars,
 		);
 
 		// Render the template.
@@ -197,7 +217,7 @@ class Podcast_List implements Shortcode {
 		}
 
 		// Get podcasts using existing function with additional args.
-		$podcasts = ssp_get_podcasts( false, $additional_args );
+		$podcasts = ssp_get_podcasts( true, $additional_args );
 
 		// Process each podcast into our data structure.
 		$podcasts_data = $this->process_podcasts_data( $podcasts );
@@ -272,43 +292,6 @@ class Podcast_List implements Shortcode {
 		return $podcasts_data;
 	}
 
-	/**
-	 * Sorts podcasts by the exact order of IDs provided.
-	 *
-	 * @since 3.13.0
-	 *
-	 * @param array  $podcasts_data Array of podcast data.
-	 * @param string $ids           Comma-separated podcast IDs.
-	 * @return array Sorted array of podcast data.
-	 */
-	private function sort_podcasts_by_ids_order( $podcasts_data, $ids ) {
-		if ( empty( $ids ) || empty( $podcasts_data ) ) {
-			return $podcasts_data;
-		}
-
-		$podcast_ids = array_map( 'intval', explode( ',', $ids ) );
-		$podcast_ids = array_filter( $podcast_ids );
-
-		if ( empty( $podcast_ids ) ) {
-			return $podcasts_data;
-		}
-
-		// Create a mapping of podcast ID to podcast data.
-		$podcasts_by_id = array();
-		foreach ( $podcasts_data as $podcast ) {
-			$podcasts_by_id[ $podcast['id'] ] = $podcast;
-		}
-
-		// Sort podcasts according to the order of IDs provided.
-		$sorted_podcasts = array();
-		foreach ( $podcast_ids as $id ) {
-			if ( isset( $podcasts_by_id[ $id ] ) ) {
-				$sorted_podcasts[] = $podcasts_by_id[ $id ];
-			}
-		}
-
-		return $sorted_podcasts;
-	}
 
 	/**
 	 * Filters podcast collection to include only specified IDs.
@@ -672,5 +655,65 @@ class Podcast_List implements Shortcode {
 	private function truncate_by_words( $text, $limit ) {
 		// Use WordPress native wp_trim_words function for proper word truncation.
 		return wp_trim_words( $text, $limit, '…' );
+	}
+
+	/**
+	 * Validates and sanitizes the background parameter to ensure it's a valid color value.
+	 *
+	 * @since 3.13.0
+	 *
+	 * @param mixed $background The background parameter value.
+	 * @return string Validated background color value.
+	 */
+	private function validate_background_parameter( $background ) {
+		// Sanitize the color value using WordPress sanitize_hex_color function.
+		$sanitized_color = sanitize_hex_color( $background );
+
+		// If sanitize_hex_color returns empty, try to validate as CSS color.
+		if ( empty( $sanitized_color ) ) {
+			// Allow common CSS color formats: hex, rgb, rgba, hsl, hsla, named colors.
+			$background = trim( $background );
+			if ( preg_match( '/^(#[0-9a-fA-F]{3,6}|rgb\([^)]+\)|rgba\([^)]+\)|hsl\([^)]+\)|hsla\([^)]+\)|[a-zA-Z]+)$/', $background ) ) {
+				return $background;
+			}
+		}
+
+		// Return sanitized hex color or default if invalid.
+		return ! empty( $sanitized_color ) ? $sanitized_color : '#f8f9fa';
+	}
+
+	/**
+	 * Generates CSS variables for all color parameters.
+	 *
+	 * @since 3.13.0
+	 *
+	 * @param string $background         Background color value.
+	 * @param string $background_hover   Hover background color value.
+	 * @param string $button_color       Button background color value.
+	 * @param string $button_hover_color Button hover background color value.
+	 * @param string $button_text_color  Button text color value.
+	 * @param string $title_color        Title color value.
+	 * @param string $episode_count_color Episode count color value.
+	 * @param string $description_color  Description color value.
+	 * @return string CSS variables string.
+	 */
+	private function generate_css_variables( $background, $background_hover, $button_color, $button_hover_color, $button_text_color, $title_color, $episode_count_color, $description_color ) {
+		$css_vars = array(
+			'--ssp-podcast-card-bg'       => $background,
+			'--ssp-podcast-card-hover-bg' => $background_hover,
+			'--ssp-button-bg'             => $button_color,
+			'--ssp-button-hover-bg'       => $button_hover_color,
+			'--ssp-button-text'           => $button_text_color,
+			'--ssp-title-color'           => $title_color,
+			'--ssp-episode-count-color'   => $episode_count_color,
+			'--ssp-description-color'     => $description_color,
+		);
+
+		$css_string = '';
+		foreach ( $css_vars as $var => $value ) {
+			$css_string .= sprintf( '%s: %s; ', $var, esc_attr( $value ) );
+		}
+
+		return trim( $css_string );
 	}
 }

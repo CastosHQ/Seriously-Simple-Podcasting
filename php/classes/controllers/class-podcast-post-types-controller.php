@@ -567,14 +567,18 @@ class Podcast_Post_Types_Controller {
 	 * 
 	 * @since 3.13.0
 	 *
-	 * @param \WP_Post $post      Post object.
-	 * @param string   $enclosure New enclosure URL.
+	 * @param \WP_Post $post           Post object.
+	 * @param string   $enclosure      New enclosure URL.
+	 * @param string   $old_enclosure  Optional. Old enclosure URL for comparison.
 	 *
 	 * @return void
 	 */
-	public function handle_enclosure_update( $post, $enclosure ) {
+	public function handle_enclosure_update( $post, $enclosure, $old_enclosure = null ) {
 		$post_id = $post->ID;
-		$old_enclosure = get_post_meta( $post_id, 'audio_file', true );
+		// Prefer the caller-provided pre-save value; fall back to DB if missing.
+		if ( null === $old_enclosure ) {
+			$old_enclosure = get_post_meta( $post_id, 'audio_file', true );
+		}
 		$is_enclosure_updated = $old_enclosure !== $enclosure;
 
 		// Update recorded date if enclosure changed or date is empty
@@ -582,33 +586,38 @@ class Podcast_Post_Types_Controller {
 			update_post_meta( $post_id, 'date_recorded', $post->post_date );
 		}
 
-		// Only process file metadata if not connected to Castos
-		if ( ! ssp_is_connected_to_castos() ) {
-			// Get file duration
-			if ( $is_enclosure_updated || get_post_meta( $post_id, 'duration', true ) == '' ) {
-				$duration = $this->episode_repository->get_file_duration( $enclosure );
-				if ( $duration ) {
-					update_post_meta( $post_id, 'duration', $duration );
-				}
-			}
-
-			// Get file size
-			if ( $is_enclosure_updated || get_post_meta( $post_id, 'filesize', true ) == '' ) {
-				$filesize = $this->episode_repository->get_file_size( $enclosure );
-				if ( $filesize ) {
-					if ( isset( $filesize['formatted'] ) ) {
-						update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
-					}
-
-					if ( isset( $filesize['raw'] ) ) {
-						update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
-					}
-				}
-			}
-		}
-
 		// Save podcast file to 'enclosure' meta field for standards-sake
 		update_post_meta( $post_id, 'enclosure', $enclosure );
+
+		// Only process file metadata if not connected to Castos
+		if ( ssp_is_connected_to_castos() ) {
+			return;
+		}
+
+		// Get file duration
+		if ( $is_enclosure_updated || get_post_meta( $post_id, 'duration', true ) == '' ) {
+			$duration = $this->episode_repository->get_file_duration( $enclosure );
+			if ( ! $duration ) {
+				return;
+			}
+			update_post_meta( $post_id, 'duration', $duration );
+		}
+
+		// Get file size
+		if ( $is_enclosure_updated || get_post_meta( $post_id, 'filesize', true ) == '' ) {
+			$filesize = $this->episode_repository->get_file_size( $enclosure );
+			if ( ! $filesize ) {
+				return;
+			}
+
+			if ( isset( $filesize['formatted'] ) ) {
+				update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+			}
+
+			if ( isset( $filesize['raw'] ) ) {
+				update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+			}
+		}
 	}
 
 	/**

@@ -150,8 +150,7 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns ); ?>
 						echo esc_attr( sprintf( __( 'Listen to %s podcast', 'seriously-simple-podcasting' ), $podcast_name ) ); ?>">
 					<?php endif; ?>
 						<span class="ssp-listen-now-button-content">
-							<?php echo esc_html( $button_text ); ?>
-							→
+							<?php echo esc_html( $button_text ); ?> →
 						</span>
 					<?php if ( ! $card_is_clickable ) : ?></a><?php endif; ?>
 				<?php endif; ?>

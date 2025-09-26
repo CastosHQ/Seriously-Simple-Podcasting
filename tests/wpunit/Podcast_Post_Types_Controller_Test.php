@@ -5,6 +5,11 @@ namespace wpunit;
 use Codeception\TestCase\WPTestCase;
 use SeriouslySimplePodcasting\Controllers\Podcast_Post_Types_Controller;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
+use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
+use SeriouslySimplePodcasting\Handlers\Podping_Handler;
+use SeriouslySimplePodcasting\Handlers\Series_Handler;
 
 class Podcast_Post_Types_Controller_Test extends WPTestCase {
 
@@ -47,17 +52,23 @@ class Podcast_Post_Types_Controller_Test extends WPTestCase {
 			'post_date' => '2024-01-01 12:00:00',
 		) );
 
-		// Mock the episode repository
+		// Create mocks for all required dependencies
+		$mock_cpt_podcast_handler = $this->createMock( CPT_Podcast_Handler::class );
+		$mock_castos_handler = $this->createMock( Castos_Handler::class );
+		$mock_admin_notices_handler = $this->createMock( Admin_Notifications_Handler::class );
+		$mock_podping_handler = $this->createMock( Podping_Handler::class );
 		$this->mock_episode_repository = $this->createMock( Episode_Repository::class );
+		$mock_series_handler = $this->createMock( Series_Handler::class );
 
-		// Create controller instance
-		$this->controller = new Podcast_Post_Types_Controller();
-		
-		// Inject the mock repository
-		$reflection = new ReflectionClass( $this->controller );
-		$property = $reflection->getProperty( 'episode_repository' );
-		$property->setAccessible( true );
-		$property->setValue( $this->controller, $this->mock_episode_repository );
+		// Create controller instance with all required dependencies
+		$this->controller = new Podcast_Post_Types_Controller(
+			$mock_cpt_podcast_handler,
+			$mock_castos_handler,
+			$mock_admin_notices_handler,
+			$mock_podping_handler,
+			$this->mock_episode_repository,
+			$mock_series_handler
+		);
 	}
 
 	/**

@@ -295,35 +295,6 @@ class Podcast_List implements Shortcode {
 
 
 	/**
-	 * Filters podcast collection to include only specified IDs.
-	 *
-	 * @since 3.13.0
-	 *
-	 * @param array  $podcasts Array of podcast term objects.
-	 * @param string $ids      Comma-separated podcast IDs.
-	 * @return array Filtered array of podcast term objects.
-	 */
-	private function filter_podcasts_by_ids( $podcasts, $ids ) {
-		if ( empty( $ids ) ) {
-			return $podcasts;
-		}
-
-		$podcast_ids = array_map( 'intval', explode( ',', $ids ) );
-		$podcast_ids = array_filter( $podcast_ids );
-
-		if ( empty( $podcast_ids ) ) {
-			return array();
-		}
-
-		return array_filter(
-			$podcasts,
-			function ( $podcast ) use ( $podcast_ids ) {
-				return in_array( $podcast->term_id, $podcast_ids, true );
-			}
-		);
-	}
-
-	/**
 	 * Counts published episodes for a specific podcast.
 	 *
 	 * @since 3.13.0
@@ -458,12 +429,13 @@ class Podcast_List implements Shortcode {
 	 * @return bool Validated show_button value.
 	 */
 	private function validate_show_button_parameter( $show_button ) {
-		// Convert string values to boolean.
-		if ( 'true' === $show_button || true === $show_button || '1' === $show_button || 1 === $show_button ) {
-			return true;
+		// Explicitly false values
+		if ( 'false' === $show_button || false === $show_button || '0' === $show_button || 0 === $show_button ) {
+			return false;
 		}
 
-		return false;
+		// For everything else (true values, invalid values, empty values), fall back to default (true)
+		return true;
 	}
 
 	/**

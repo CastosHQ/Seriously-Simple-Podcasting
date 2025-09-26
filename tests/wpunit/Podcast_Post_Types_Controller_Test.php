@@ -40,10 +40,19 @@ class Podcast_Post_Types_Controller_Test extends WPTestCase {
 	private $post_id;
 
 	/**
+	 * Original Castos connection token.
+	 *
+	 * @var mixed
+	 */
+	private $original_castos_token;
+
+	/**
 	 * Set up test environment.
 	 */
 	public function setUp(): void {
 		parent::setUp();
+
+		$this->original_castos_token = get_option( 'ss_podcasting_podmotor_account_api_token', null );
 
 		// Create a test post
 		$this->post_id = $this->factory->post->create( array(
@@ -75,6 +84,12 @@ class Podcast_Post_Types_Controller_Test extends WPTestCase {
 	 * Clean up after tests.
 	 */
 	public function tearDown(): void {
+		if ( null === $this->original_castos_token ) {
+			delete_option( 'ss_podcasting_podmotor_account_api_token' );
+		} else {
+			update_option( 'ss_podcasting_podmotor_account_api_token', $this->original_castos_token );
+		}
+
 		parent::tearDown();
 	}
 

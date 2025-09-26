@@ -7,10 +7,10 @@
  * @var array  $podcasts           Array of podcast data with keys: name, url, cover_image, description, episode_count
  * @var int    $columns            Number of columns for the grid layout (1-3)
  * @var string $clickable          Clickability mode: 'button', 'card', or 'title'
- * @var bool   $hide_button        Whether to hide the listen button
  * @var bool   $show_button        Whether to show the listen button (pre-processed)
  * @var bool   $show_description   Whether to show podcast descriptions
  * @var bool   $show_episode_count Whether to show episode counts
+ * @var string $button_text        Custom text for the listen button
  * @var string $wrapper_class      CSS class for podcast cards (pre-processed)
  * @var string $columns_class      CSS class for grid columns (pre-processed)
  * @var int    $description_words  Maximum number of words for descriptions (pre-processed)
@@ -117,10 +117,7 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 					<a href="<?php echo esc_url( $podcast_url ); ?>" 
 						class="ssp-listen-now-button" 
 						aria-label="<?php echo esc_attr( sprintf( __( 'Listen to %s podcast', 'seriously-simple-podcasting' ), $podcast_name ) ); ?>">
-						<?php
-						/* translators: Button text to listen to a podcast */
-						echo esc_html__( 'Listen Now', 'seriously-simple-podcasting' );
-						?>
+						<?php echo esc_html( $button_text ); ?>
 						→
 					</a>
 				<?php endif; ?>

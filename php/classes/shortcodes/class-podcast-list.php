@@ -101,7 +101,7 @@ class Podcast_List implements Shortcode {
 			'sort_by'             => 'id',
 			'sort'                => 'asc',
 			'clickable'           => 'button',
-			'hide_button'         => 'false',
+			'show_button'         => 'true',
 			'show_description'    => 'true',
 			'show_episode_count'  => 'true',
 			'description_words'   => 0,
@@ -111,6 +111,7 @@ class Podcast_List implements Shortcode {
 			'button_color'        => '#343a40',
 			'button_hover_color'  => '#495057',
 			'button_text_color'   => '#ffffff',
+			'button_text'         => __( 'Listen Now', 'seriously-simple-podcasting' ),
 			'title_color'         => '#6c5ce7',
 			'episode_count_color' => '#6c757d',
 			'description_color'   => '#6c757d',
@@ -126,7 +127,7 @@ class Podcast_List implements Shortcode {
 		$sort_by             = $this->validate_sort_by_parameter( $args['sort_by'] );
 		$sort                = $this->validate_sort_parameter( $args['sort'] );
 		$clickable           = $this->validate_clickable_parameter( $args['clickable'] );
-		$hide_button         = $this->validate_hide_button_parameter( $args['hide_button'] );
+		$show_button         = $this->validate_show_button_parameter( $args['show_button'] );
 		$show_description    = $this->validate_show_description_parameter( $args['show_description'] );
 		$show_episode_count  = $this->validate_show_episode_count_parameter( $args['show_episode_count'] );
 		$description_words   = $this->validate_description_words_parameter( $args['description_words'] );
@@ -136,18 +137,19 @@ class Podcast_List implements Shortcode {
 		$button_color        = $this->validate_background_parameter( $args['button_color'] );
 		$button_hover_color  = $this->validate_background_parameter( $args['button_hover_color'] );
 		$button_text_color   = $this->validate_background_parameter( $args['button_text_color'] );
+		$button_text         = $this->validate_button_text_parameter( $args['button_text'] );
 		$title_color         = $this->validate_background_parameter( $args['title_color'] );
 		$episode_count_color = $this->validate_background_parameter( $args['episode_count_color'] );
 		$description_color   = $this->validate_background_parameter( $args['description_color'] );
 
-		// Auto-adjustment: if hide_button=true and clickable=button, set clickable=title.
-		if ( $hide_button && 'button' === $clickable ) {
+		// Auto-adjustment: if show_button=false and clickable=button, set clickable=title.
+		if ( ! $show_button && 'button' === $clickable ) {
 			$clickable = 'title';
 		}
 
 		// Process display options for template.
-		$show_button   = ! $hide_button && 'button' === $clickable;
-		$wrapper_class = 'ssp-podcast-card';
+		$show_button_template = $show_button && 'button' === $clickable;
+		$wrapper_class        = 'ssp-podcast-card';
 		if ( 'card' === $clickable ) {
 			$wrapper_class .= ' ssp-podcast-card-clickable';
 		}
@@ -178,10 +180,10 @@ class Podcast_List implements Shortcode {
 			'podcasts'           => $podcasts,
 			'columns'            => $columns,
 			'clickable'          => $clickable,
-			'hide_button'        => $hide_button,
-			'show_button'        => $show_button,
+			'show_button'        => $show_button_template,
 			'show_description'   => $show_description,
 			'show_episode_count' => $show_episode_count,
+			'button_text'        => $button_text,
 			'wrapper_class'      => $wrapper_class,
 			'columns_class'      => $columns_class,
 			'css_vars'           => $css_vars,
@@ -438,16 +440,16 @@ class Podcast_List implements Shortcode {
 	}
 
 	/**
-	 * Validates and sanitizes the hide_button parameter to ensure it's a boolean.
+	 * Validates and sanitizes the show_button parameter to ensure it's a boolean.
 	 *
 	 * @since 3.13.0
 	 *
-	 * @param mixed $hide_button The hide_button parameter value.
-	 * @return bool Validated hide_button value.
+	 * @param mixed $show_button The show_button parameter value.
+	 * @return bool Validated show_button value.
 	 */
-	private function validate_hide_button_parameter( $hide_button ) {
+	private function validate_show_button_parameter( $show_button ) {
 		// Convert string values to boolean.
-		if ( 'true' === $hide_button || true === $hide_button || '1' === $hide_button || 1 === $hide_button ) {
+		if ( 'true' === $show_button || true === $show_button || '1' === $show_button || 1 === $show_button ) {
 			return true;
 		}
 
@@ -680,6 +682,22 @@ class Podcast_List implements Shortcode {
 
 		// Return sanitized hex color or default if invalid.
 		return ! empty( $sanitized_color ) ? $sanitized_color : '#f8f9fa';
+	}
+
+	/**
+	 * Validates and sanitizes the button text parameter.
+	 *
+	 * @since 3.13.0
+	 *
+	 * @param string $button_text The button text parameter.
+	 * @return string Sanitized button text.
+	 */
+	private function validate_button_text_parameter( $button_text ) {
+		// Sanitize the button text using WordPress sanitize_text_field function.
+		$sanitized_text = sanitize_text_field( $button_text );
+
+		// Return sanitized text or translatable default if empty.
+		return ! empty( $sanitized_text ) ? $sanitized_text : __( 'Listen Now', 'seriously-simple-podcasting' );
 	}
 
 	/**

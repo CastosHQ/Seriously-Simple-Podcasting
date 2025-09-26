@@ -563,22 +563,16 @@ class Podcast_Post_Types_Controller {
 	}
 
 	/**
-	 * Handles enclosure file updates and related meta fields.
+	 * Handle enclosure update for podcast episodes
 	 * 
-	 * @since 3.13.0
-	 *
-	 * @param \WP_Post $post           Post object.
-	 * @param string   $enclosure      New enclosure URL.
-	 * @param string   $old_enclosure  Optional. Old enclosure URL for comparison.
+	 * @param \WP_Post $post      Post object.
+	 * @param string   $enclosure New enclosure URL.
 	 *
 	 * @return void
 	 */
-	public function handle_enclosure_update( $post, $enclosure, $old_enclosure = null ) {
+	public function handle_enclosure_update( $post, $enclosure ) {
 		$post_id = $post->ID;
-		// Prefer the caller-provided pre-save value; fall back to DB if missing.
-		if ( null === $old_enclosure ) {
-			$old_enclosure = get_post_meta( $post_id, 'audio_file', true );
-		}
+		$old_enclosure = get_post_meta( $post_id, 'audio_file', true );
 		$is_enclosure_updated = $old_enclosure !== $enclosure;
 
 		// Update recorded date if enclosure changed or date is empty
@@ -597,25 +591,22 @@ class Podcast_Post_Types_Controller {
 		// Get file duration
 		if ( $is_enclosure_updated || get_post_meta( $post_id, 'duration', true ) == '' ) {
 			$duration = $this->episode_repository->get_file_duration( $enclosure );
-			if ( ! $duration ) {
-				return;
+			if ( $duration ) {
+				update_post_meta( $post_id, 'duration', $duration );
 			}
-			update_post_meta( $post_id, 'duration', $duration );
 		}
 
 		// Get file size
 		if ( $is_enclosure_updated || get_post_meta( $post_id, 'filesize', true ) == '' ) {
 			$filesize = $this->episode_repository->get_file_size( $enclosure );
-			if ( ! $filesize ) {
-				return;
-			}
+			if ( $filesize ) {
+				if ( isset( $filesize['formatted'] ) ) {
+					update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
+				}
 
-			if ( isset( $filesize['formatted'] ) ) {
-				update_post_meta( $post_id, 'filesize', $filesize['formatted'] );
-			}
-
-			if ( isset( $filesize['raw'] ) ) {
-				update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+				if ( isset( $filesize['raw'] ) ) {
+					update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+				}
 			}
 		}
 	}

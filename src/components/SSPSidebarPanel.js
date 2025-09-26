@@ -1,7 +1,7 @@
 import { PluginPostStatusInfo } from '@wordpress/editor';
 import { __ } from '@wordpress/i18n';
 import classnames from 'classnames';
-import { useState } from '@wordpress/element';
+import { useState, useRef, useEffect } from '@wordpress/element';
 import { Button } from '@wordpress/components';
 import FileIsUploadedSvg from '../img/file-is-uploaded.svg';
 import FileNotUploadedSvg from '../img/file-not-uploaded.svg';
@@ -14,6 +14,23 @@ const SSPSidebarPanel = () => {
 	}
 
 	const [isSSPSectionOpen, setSSPSectionOpen] = useState(true);
+	
+	// Track post save state to refresh meta data
+	const isSavingPost = useSelect((select) => select('core/editor').isSavingPost(), []);
+	const previousIsSaving = useRef(isSavingPost);
+	const isPostJustSaved = previousIsSaving.current && !isSavingPost;
+	previousIsSaving.current = isSavingPost;
+	
+	// Force re-render when post is saved to refresh meta data
+	const [refreshTrigger, setRefreshTrigger] = useState(0);
+	
+	useEffect(() => {
+		if (isPostJustSaved) {
+			// Trigger a re-render to refresh the post meta data
+			setRefreshTrigger(prev => prev + 1);
+		}
+	}, [isPostJustSaved]);
+	
 	const postMeta = editor.getEditedPostAttribute('meta');
 
 	if ( ! postMeta ) {

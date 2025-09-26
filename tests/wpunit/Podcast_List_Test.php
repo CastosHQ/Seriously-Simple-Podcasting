@@ -228,6 +228,14 @@ class Podcast_List_Test extends WPTestCase {
 			'slug'     => 'test-podcast'
 		) );
 
+		// Create test episode for the series
+		$episode = $this->factory->post->create( array(
+			'post_type'   => 'podcast',
+			'post_status' => 'publish',
+			'post_title'  => 'Test Episode'
+		) );
+		wp_set_post_terms( $episode, array( $series ), 'series' );
+
 		// Create the shortcode instance
 		$podcast_list = new Podcast_List();
 		
@@ -253,6 +261,14 @@ class Podcast_List_Test extends WPTestCase {
 			'name'     => 'Test Podcast',
 			'slug'     => 'test-podcast'
 		) );
+
+		// Create test episode for the series
+		$episode = $this->factory->post->create( array(
+			'post_type'   => 'podcast',
+			'post_status' => 'publish',
+			'post_title'  => 'Test Episode'
+		) );
+		wp_set_post_terms( $episode, array( $series ), 'series' );
 
 		// Create the shortcode instance
 		$podcast_list = new Podcast_List();
@@ -521,9 +537,9 @@ class Podcast_List_Test extends WPTestCase {
 
 	/**
 	 * @covers Podcast_List::shortcode()
-	 * Test auto-adjustment: if hide_button=true and clickable=button, set clickable=title
+	 * Test auto-adjustment: if show_button=false and clickable=button, set clickable=title
 	 */
-	public function test_auto_adjustment_hide_button_and_clickable_button() {
+	public function test_auto_adjustment_show_button_false_and_clickable_button() {
 		// Create test podcast series
 		$series = $this->factory->term->create( array(
 			'taxonomy' => 'series',
@@ -531,17 +547,25 @@ class Podcast_List_Test extends WPTestCase {
 			'slug'     => 'test-podcast'
 		) );
 
+		// Create test episode for the series
+		$episode = $this->factory->post->create( array(
+			'post_type'   => 'podcast',
+			'post_status' => 'publish',
+			'post_title'  => 'Test Episode'
+		) );
+		wp_set_post_terms( $episode, array( $series ), 'series' );
+
 		// Create the shortcode instance
 		$podcast_list = new Podcast_List();
 		
-		// Test auto-adjustment when hide_button=true and clickable=button
+		// Test auto-adjustment when show_button=false and clickable=button
 		$output = $podcast_list->shortcode( array( 
 			'ids' => $series,
 			'clickable' => 'button',
-			'hide_button' => 'true'
+			'show_button' => 'false'
 		) );
 		
-		// Should not contain the actual listen now button element (because hide_button=true)
+		// Should not contain the actual listen now button element (because show_button=false)
 		$this->assertStringNotContainsString( 'Listen Now →', $output );
 		// Should contain title clickability instead
 		$this->assertStringContainsString( 'ssp-podcast-title-link', $output );
@@ -924,6 +948,14 @@ class Podcast_List_Test extends WPTestCase {
 			'description' => 'This is a très long podcast description with spécial characters like café, naïve, and résumé for testing UTF-8 handling'
 		) );
 
+		// Create test episode for the series
+		$episode = $this->factory->post->create( array(
+			'post_type'   => 'podcast',
+			'post_status' => 'publish',
+			'post_title'  => 'Test Episode'
+		) );
+		wp_set_post_terms( $episode, array( $series ), 'series' );
+
 		// Create the shortcode instance
 		$podcast_list = new Podcast_List();
 		
@@ -934,6 +966,6 @@ class Podcast_List_Test extends WPTestCase {
 		) );
 		
 		// Should handle UTF-8 characters properly
-		$this->assertStringContainsString( 'This is a très long podcast description with spé…', $output_chars );
+		$this->assertStringContainsString( 'This is a très long podcast description with spéc…', $output_chars );
 	}
 }

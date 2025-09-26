@@ -103,7 +103,7 @@ if ( $stylesheet_url ) {
 		<?php endif; ?></itunes:owner>
 		<itunes:explicit><?php echo esc_html( $itunes_explicit ); ?></itunes:explicit>
 		<?php if ( $is_blocked ) :
-			?><itunes:block>yes</itunes:block>
+			?><itunes:block>Yes</itunes:block>
 		<?php endif;
 		if ( $complete ) :
 			?><itunes:complete><?php echo esc_html( $complete ); ?></itunes:complete>

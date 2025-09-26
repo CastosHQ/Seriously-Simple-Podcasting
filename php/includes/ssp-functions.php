@@ -2108,7 +2108,7 @@ if ( ! function_exists( 'ssp_episode_guid' ) ) {
 	 *
 	 * @param int $episode_id Episode ID.
 	 *
-	 * @return int The episode guid.
+	 * @return string The episode guid.
 	 */
 	function ssp_episode_guid( $episode_id = 0 ) {
 		if ( ! $episode_id ) {

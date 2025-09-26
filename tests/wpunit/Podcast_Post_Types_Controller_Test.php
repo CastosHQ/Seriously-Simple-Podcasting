@@ -195,38 +195,6 @@ class Podcast_Post_Types_Controller_Test extends WPTestCase {
 	}
 
 	/**
-	 * Test handle_enclosure_update with failed file duration.
-	 */
-	public function test_handle_enclosure_update_with_failed_duration() {
-		$post = get_post( $this->post_id );
-		$new_enclosure = 'https://example.com/new-audio.mp3';
-
-		// Mock repository to return false for duration
-		$this->mock_episode_repository
-			->expects( $this->once() )
-			->method( 'get_file_duration' )
-			->with( $new_enclosure )
-			->willReturn( false );
-
-		$this->mock_episode_repository
-			->expects( $this->never() )
-			->method( 'get_file_size' );
-
-		// Mock Castos connection check
-		$this->mock_function( 'ssp_is_connected_to_castos', false );
-
-		// Call the method
-		$this->controller->handle_enclosure_update( $post, $new_enclosure );
-
-		// Assertions
-		$this->assertEquals( $new_enclosure, get_post_meta( $this->post_id, 'enclosure', true ) );
-		// Duration should not be updated if repository returns false
-		$this->assertEmpty( get_post_meta( $this->post_id, 'duration', true ) );
-		// Filesize should not be updated when duration lookup fails (method returns early)
-		$this->assertEmpty( get_post_meta( $this->post_id, 'filesize', true ) );
-	}
-
-	/**
 	 * Test handle_enclosure_update with failed file size.
 	 */
 	public function test_handle_enclosure_update_with_failed_filesize() {

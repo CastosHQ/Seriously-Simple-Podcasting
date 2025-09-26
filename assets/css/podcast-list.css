@@ -47,7 +47,7 @@
 .ssp-podcast-image {
 	flex-shrink: 0;
 	width: 120px;
-	height: 120px;
+	aspect-ratio: 1 / 1;
 	margin-right: 20px;
 	border-radius: 8px;
 	overflow: hidden;
@@ -55,6 +55,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	align-self: flex-start;
 }
 
 .ssp-podcast-image img {
@@ -101,7 +102,7 @@
 	line-height: 1.2;
 }
 
-.ssp-listen-now-button {
+.ssp-listen-now-button-content {
 	background: var(--ssp-button-bg, #343a40);
 	color: var(--ssp-button-text, #ffffff);
 	text-decoration: none;
@@ -118,8 +119,17 @@
 	transition: 0.3s ease;
 }
 
-.ssp-listen-now-button:hover,
-.ssp-listen-now-button:focus {
+/* When wrapped in <a> tag, the <a> tag should get the auto margins */
+a.ssp-listen-now-button {
+	margin-top: auto;
+	margin-left: auto;
+	width: fit-content;
+	text-decoration: none;
+}
+
+/* Hover animations only apply when there's a wrapper <a> tag */
+a.ssp-listen-now-button:hover .ssp-listen-now-button-content,
+a.ssp-listen-now-button:focus .ssp-listen-now-button-content {
 	background: var(--ssp-button-hover-bg, #495057);
 	color: var(--ssp-button-text, #ffffff);
 	text-decoration: none;
@@ -127,7 +137,7 @@
 	outline-offset: 0px;
 }
 
-.ssp-listen-now-button:focus-visible {
+a.ssp-listen-now-button:focus-visible .ssp-listen-now-button-content {
 	outline: 1px solid var(--ssp-title-color, #6c5ce7);
 	outline-offset: 2px;
 }
@@ -161,10 +171,9 @@
 	}
 	
 	.ssp-podcast-image {
-		width: 300px;
-		height: 300px;
-		max-width: 90%;
-		max-height: 90%;
+		width: 100%;
+		max-width: 300px;
+		aspect-ratio: 1 / 1;
 		margin: 0 auto 15px auto;
 	}
 	
@@ -173,11 +182,20 @@
 		text-align: center;
 	}
 	
-	.ssp-listen-now-button {
+	.ssp-listen-now-button-content {
 		font-size: 12px;
 		padding: 12px 12px;
+		width: 100%;
 		max-width: 300px;
-		width: 90%;
+		display: block;
+		margin: auto auto 12px auto;
+		text-align: center;
+	}
+	
+	/* When wrapped in <a> tag on mobile */
+	a.ssp-listen-now-button {
+		width: 100%;
+		max-width: 300px;
 		display: block;
 		margin: auto auto 12px auto;
 		text-align: center;
@@ -197,6 +215,21 @@
 	/* Reduce 3 columns to 2 columns on tablet */
 	.ssp-podcasts-columns-3 {
 		grid-template-columns: repeat(2, 1fr);
+	}
+}
+
+/* Middle screen range - force mobile layout for better image handling */
+@media (max-width: 900px) {
+	.ssp-podcast-card {
+		flex-direction: column;
+		text-align: center;
+	}
+	
+	.ssp-podcast-image {
+		width: 100%;
+		max-width: 300px;
+		aspect-ratio: 1 / 1;
+		margin: 0 auto 15px auto;
 	}
 }
 

@@ -8,6 +8,7 @@
 
 namespace SeriouslySimplePodcasting\ShortCodes;
 
+use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 
 // Exit if accessed directly.
@@ -158,15 +159,6 @@ class Podcast_List implements Shortcode {
 		// Get podcasts based on IDs parameter.
 		$podcasts = $this->get_podcasts( $args['ids'], $sort_by, $sort );
 
-		// Allow themes to filter podcast data before rendering.
-		$podcasts = array_map(
-			function ( $podcast, $index ) {
-				return apply_filters( 'ssp/podcast_list/card_data', $podcast, $index );
-			},
-			$podcasts,
-			array_keys( $podcasts )
-		);
-
 		// Process descriptions with truncation if needed.
 		if ( $show_description && ( $description_words > 0 || $description_chars > 0 ) ) {
 			$podcasts = $this->truncate_descriptions( $podcasts, $description_words, $description_chars );
@@ -176,18 +168,25 @@ class Podcast_List implements Shortcode {
 		$css_vars = $this->generate_css_variables( $background, $background_hover, $button_color, $button_hover_color, $button_text_color, $title_color, $episode_count_color, $description_color );
 
 		// Prepare template data.
-		$template_data = array(
-			'podcasts'           => $podcasts,
-			'columns'            => $columns,
-			'clickable'          => $clickable,
-			'show_button'        => $show_button_template,
-			'show_description'   => $show_description,
-			'show_episode_count' => $show_episode_count,
-			'button_text'        => $button_text,
-			'wrapper_class'      => $wrapper_class,
-			'columns_class'      => $columns_class,
-			'css_vars'           => $css_vars,
+		$template_data = compact(
+			'podcasts',
+			'columns',
+			'clickable',
+			'show_button',
+			'show_description',
+			'show_episode_count',
+			'button_text',
+			'wrapper_class',
+			'columns_class',
+			'css_vars'
 		);
+
+		/**
+		 * @filter `ssp/podcast_list/template_data` Allow themes and plugins to modify template data before rendering
+		 * @param array $template_data Template data array containing all variables passed to the template
+		 * @param array $args Original shortcode arguments
+		 */
+		$template_data = apply_filters( 'ssp/podcast_list/template_data', $template_data, $args );
 
 		// Render the template.
 		return $this->renderer->fetch( 'podcast-list', $template_data );
@@ -338,6 +337,17 @@ class Podcast_List implements Shortcode {
 	}
 
 	/**
+	 * Retrieves the settings handler service.
+	 *
+	 * @since 3.13.1
+	 *
+	 * @return Settings_Handler Settings handler instance.
+	 */
+	private function get_settings_handler() {
+		return ssp_get_service( 'settings_handler' );
+	}
+
+	/**
 	 * Retrieves the cover image URL for a specific podcast.
 	 *
 	 * @since 3.13.0
@@ -360,7 +370,7 @@ class Podcast_List implements Shortcode {
 		}
 
 		// Fallback to feed image if podcast image is not available or is default.
-		$settings_handler = ssp_get_service( 'settings_handler' );
+		$settings_handler = $this->get_settings_handler();
 		$feed_image       = $settings_handler->get_feed_image( $podcast_id );
 
 		if ( ! empty( $feed_image ) ) {

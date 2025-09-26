@@ -37,14 +37,13 @@
 				<element key="0" value="seriously-simple-podcasting"/>
 				<element key="1" value="SSP"/>
 				<element key="2" value="SeriouslySimplePodcasting"/>
+				<element key="3" value="ssp"/>
 			</property>
 		</properties>
 		<!-- Exclude constants as SSP prefix is legacy and widely used -->
 		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound"/>
 		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed"/>
 		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.InvalidPrefixPassed"/>
-		<!-- Allow custom hook naming convention with slashes -->
-		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound"/>
 	</rule>
 	<rule ref="WordPress.NamingConventions.ValidHookName">
 		<!-- Allow custom hook naming convention with slashes for better organization -->

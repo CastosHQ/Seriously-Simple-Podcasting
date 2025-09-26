@@ -508,10 +508,10 @@ class Podcast_List_Test extends WPTestCase {
 	}
 
 	/**
-	 * @covers Podcast_List::validate_hide_button_parameter()
-	 * Test hide_button parameter validation with various boolean values
+	 * @covers Podcast_List::validate_show_button_parameter()
+	 * Test show_button parameter validation with various boolean values
 	 */
-	public function test_hide_button_parameter_validation() {
+	public function test_show_button_parameter_validation() {
 		// Create test podcast series
 		$series = $this->factory->term->create( array(
 			'taxonomy' => 'series',
@@ -519,20 +519,170 @@ class Podcast_List_Test extends WPTestCase {
 			'slug'     => 'test-podcast'
 		) );
 
+		// Create test episode for the series
+		$episode = $this->factory->post->create( array(
+			'post_type'   => 'podcast',
+			'post_status' => 'publish',
+			'post_title'  => 'Test Episode'
+		) );
+		wp_set_post_terms( $episode, array( $series ), 'series' );
+
 		// Create the shortcode instance
 		$podcast_list = new Podcast_List();
 		
 		// Test shortcode output with various boolean values
-		$output_true = $podcast_list->shortcode( array( 'hide_button' => 'true' ) );
-		$output_false = $podcast_list->shortcode( array( 'hide_button' => 'false' ) );
-		$output_1 = $podcast_list->shortcode( array( 'hide_button' => '1' ) );
-		$output_0 = $podcast_list->shortcode( array( 'hide_button' => '0' ) );
+		$output_true = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => 'true' 
+		) );
+		$output_false = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => 'false' 
+		) );
+		$output_1 = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => '1' 
+		) );
+		$output_0 = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => '0' 
+		) );
+		
+		// Test that button is shown when true
+		$this->assertStringContainsString( 'Listen Now →', $output_true );
+		$this->assertStringContainsString( 'Listen Now →', $output_1 );
+		
+		// Test that button is hidden when false
+		$this->assertStringNotContainsString( 'Listen Now →', $output_false );
+		$this->assertStringNotContainsString( 'Listen Now →', $output_0 );
 		
 		// All should work without errors
 		$this->assertStringContainsString( 'ssp-podcasts', $output_true );
 		$this->assertStringContainsString( 'ssp-podcasts', $output_false );
 		$this->assertStringContainsString( 'ssp-podcasts', $output_1 );
 		$this->assertStringContainsString( 'ssp-podcasts', $output_0 );
+	}
+
+	/**
+	 * @covers Podcast_List::validate_show_button_parameter()
+	 * Test show_button parameter validation with invalid values (should fall back to default)
+	 */
+	public function test_show_button_parameter_invalid_values() {
+		// Create test podcast series
+		$series = $this->factory->term->create( array(
+			'taxonomy' => 'series',
+			'name'     => 'Test Podcast',
+			'slug'     => 'test-podcast'
+		) );
+
+		// Create test episode for the series
+		$episode = $this->factory->post->create( array(
+			'post_type'   => 'podcast',
+			'post_status' => 'publish',
+			'post_title'  => 'Test Episode'
+		) );
+		wp_set_post_terms( $episode, array( $series ), 'series' );
+
+		// Create the shortcode instance
+		$podcast_list = new Podcast_List();
+		
+		// Test shortcode output with invalid show_button values (should fall back to 'true')
+		$output_invalid = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => 'invalid' 
+		) );
+		$output_empty = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => '' 
+		) );
+		$output_number = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => '123' 
+		) );
+		
+		// All should work without errors and fall back to default (show_button=true)
+		$this->assertStringContainsString( 'ssp-podcasts', $output_invalid );
+		$this->assertStringContainsString( 'ssp-podcasts', $output_empty );
+		$this->assertStringContainsString( 'ssp-podcasts', $output_number );
+		
+		// Should show button by default when invalid values are provided
+		$this->assertStringContainsString( 'Listen Now →', $output_invalid );
+		$this->assertStringContainsString( 'Listen Now →', $output_empty );
+		$this->assertStringContainsString( 'Listen Now →', $output_number );
+	}
+
+	/**
+	 * @covers Podcast_List::shortcode()
+	 * Test show_button=true displays the button correctly
+	 */
+	public function test_show_button_true_displays_button() {
+		// Create test podcast series
+		$series = $this->factory->term->create( array(
+			'taxonomy' => 'series',
+			'name'     => 'Test Podcast',
+			'slug'     => 'test-podcast'
+		) );
+
+		// Create test episode for the series
+		$episode = $this->factory->post->create( array(
+			'post_type'   => 'podcast',
+			'post_status' => 'publish',
+			'post_title'  => 'Test Episode'
+		) );
+		wp_set_post_terms( $episode, array( $series ), 'series' );
+
+		// Create the shortcode instance
+		$podcast_list = new Podcast_List();
+		
+		// Test shortcode output with show_button=true
+		$output = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => 'true',
+			'clickable' => 'button'
+		) );
+		
+		// Should contain the listen now button
+		$this->assertStringContainsString( 'Listen Now →', $output );
+		$this->assertStringContainsString( 'ssp-listen-now-button-content', $output );
+		// Should work without errors
+		$this->assertStringContainsString( 'ssp-podcasts', $output );
+	}
+
+	/**
+	 * @covers Podcast_List::shortcode()
+	 * Test show_button=false hides the button correctly
+	 */
+	public function test_show_button_false_hides_button() {
+		// Create test podcast series
+		$series = $this->factory->term->create( array(
+			'taxonomy' => 'series',
+			'name'     => 'Test Podcast',
+			'slug'     => 'test-podcast'
+		) );
+
+		// Create test episode for the series
+		$episode = $this->factory->post->create( array(
+			'post_type'   => 'podcast',
+			'post_status' => 'publish',
+			'post_title'  => 'Test Episode'
+		) );
+		wp_set_post_terms( $episode, array( $series ), 'series' );
+
+		// Create the shortcode instance
+		$podcast_list = new Podcast_List();
+		
+		// Test shortcode output with show_button=false
+		$output = $podcast_list->shortcode( array( 
+			'ids' => $series,
+			'show_button' => 'false',
+			'clickable' => 'button'
+		) );
+		
+		// Should not contain the listen now button
+		$this->assertStringNotContainsString( 'Listen Now →', $output );
+		$this->assertStringNotContainsString( 'ssp-listen-now-button-content', $output );
+		// Should work without errors
+		$this->assertStringContainsString( 'ssp-podcasts', $output );
 	}
 
 	/**

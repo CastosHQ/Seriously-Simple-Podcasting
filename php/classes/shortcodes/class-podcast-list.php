@@ -651,8 +651,12 @@ class Podcast_List implements Shortcode {
 		// Strip HTML tags for accurate character counting.
 		$stripped_text = wp_strip_all_tags( $text );
 
-		// Use WordPress native mb_strimwidth function for proper UTF-8 character truncation.
-		return mb_strimwidth( $stripped_text, 0, $limit, '…' );
+		// Prefer mb_strimwidth when available; otherwise fall back to wp_html_excerpt.
+		if ( function_exists( 'mb_strimwidth' ) ) {
+			return mb_strimwidth( $stripped_text, 0, $limit, '…' );
+		}
+		// wp_html_excerpt handles multibyte safely and appends the specified ellipsis.
+		return wp_html_excerpt( $stripped_text, $limit, '…' );
 	}
 
 	/**

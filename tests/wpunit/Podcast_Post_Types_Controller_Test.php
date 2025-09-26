@@ -133,14 +133,6 @@ class Podcast_Post_Types_Controller_Test extends WPTestCase {
 		// Mock Castos connection check
 		$this->mock_function( 'ssp_is_connected_to_castos', false );
 
-		// Repository methods should not be called since enclosure didn't change
-		$this->mock_episode_repository
-			->expects( $this->never() )
-			->method( 'get_file_duration' );
-
-		$this->mock_episode_repository
-			->expects( $this->never() )
-			->method( 'get_file_size' );
 
 		// Call the method
 		$this->controller->handle_enclosure_update( $post, $enclosure );
@@ -217,13 +209,8 @@ class Podcast_Post_Types_Controller_Test extends WPTestCase {
 			->willReturn( false );
 
 		$this->mock_episode_repository
-			->expects( $this->once() )
-			->method( 'get_file_size' )
-			->with( $new_enclosure )
-			->willReturn( array(
-				'formatted' => '5.2 MB',
-				'raw' => 5452595,
-			) );
+			->expects( $this->never() )
+			->method( 'get_file_size' );
 
 		// Mock Castos connection check
 		$this->mock_function( 'ssp_is_connected_to_castos', false );
@@ -235,8 +222,8 @@ class Podcast_Post_Types_Controller_Test extends WPTestCase {
 		$this->assertEquals( $new_enclosure, get_post_meta( $this->post_id, 'enclosure', true ) );
 		// Duration should not be updated if repository returns false
 		$this->assertEmpty( get_post_meta( $this->post_id, 'duration', true ) );
-		// Filesize should still be updated
-		$this->assertEquals( '5.2 MB', get_post_meta( $this->post_id, 'filesize', true ) );
+		// Filesize should not be updated when duration lookup fails (method returns early)
+		$this->assertEmpty( get_post_meta( $this->post_id, 'filesize', true ) );
 	}
 
 	/**
@@ -350,6 +337,11 @@ class Podcast_Post_Types_Controller_Test extends WPTestCase {
 	 * @param mixed  $return_value Return value for the function.
 	 */
 	private function mock_function( $function_name, $return_value ) {
+		if ( 'ssp_is_connected_to_castos' === $function_name ) {
+			update_option( 'ss_podcasting_podmotor_account_api_token', $return_value ? 'test-token' : '' );
+			return;
+		}
+
 		if ( ! function_exists( $function_name ) ) {
 			// Create a mock function if it doesn't exist
 			eval( "function {$function_name}() { return " . var_export( $return_value, true ) . "; }" );

@@ -359,7 +359,7 @@ class Settings_Handler implements Service {
 
 		// For empty values, propagate some settings from the default feed
 		if ( ! isset( $data ) ) {
-			$propagate_exclusions = array( 'exclude_feed', 'redirect_feed' );
+			$propagate_exclusions = array( 'exclude_feed', 'redirect_feed', 'blocked' );
 			$propagated_types     = array( 'checkbox', 'select' );
 			$propagate            = in_array( $field['type'], $propagated_types, true ) &&
 									! in_array( $field['id'], $propagate_exclusions, true );

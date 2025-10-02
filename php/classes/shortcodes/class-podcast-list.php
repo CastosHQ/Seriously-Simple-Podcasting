@@ -182,6 +182,8 @@ class Podcast_List implements Shortcode {
 		);
 
 		/**
+		 * Allow themes and plugins to modify template data before rendering.
+		 *
 		 * @filter `ssp/podcast_list/template_data` Allow themes and plugins to modify template data before rendering
 		 * @param array $template_data Template data array containing all variables passed to the template
 		 * @param array $args Original shortcode arguments
@@ -280,7 +282,7 @@ class Podcast_List implements Shortcode {
 			$podcast_data = array(
 				'id'            => $podcast->term_id,
 				'name'          => $podcast->name,
-				'description'   => $podcast->description,
+				'description'   => $this->get_podcast_description( $podcast->term_id, $podcast->description ),
 				'slug'          => $podcast->slug,
 				'episode_count' => $this->get_episode_count( $podcast->term_id ),
 				'cover_image'   => $this->get_cover_image( $podcast->term_id ),
@@ -350,6 +352,30 @@ class Podcast_List implements Shortcode {
 
 		// Final fallback to podcast image (even if it's the default no-image).
 		return $podcast_image;
+	}
+
+	/**
+	 * Retrieves the description for a specific podcast with fallback logic.
+	 *
+	 * @since 3.13.0
+	 *
+	 * @param int    $podcast_id Podcast term ID.
+	 * @param string $term_description Term description from the podcast taxonomy.
+	 * @return string Podcast description with fallback logic applied.
+	 */
+	private function get_podcast_description( $podcast_id, $term_description = '' ) {
+		// First, check if term description exists and is not just whitespace.
+		$term_description = trim( $term_description );
+		if ( ! empty( $term_description ) ) {
+			return $term_description;
+		}
+
+		// Fallback to feed description if term description is empty or whitespace.
+		$settings_handler = $this->get_settings_handler();
+		$feed_description = $settings_handler->get_feed_option( 'data_description', $podcast_id, '' );
+
+		// Return feed description if it's not empty, otherwise return empty string.
+		return trim( $feed_description );
 	}
 
 	/**
@@ -429,12 +455,12 @@ class Podcast_List implements Shortcode {
 	 * @return bool Validated show_button value.
 	 */
 	private function validate_show_button_parameter( $show_button ) {
-		// Explicitly false values
+		// Explicitly false values.
 		if ( 'false' === $show_button || false === $show_button || '0' === $show_button || 0 === $show_button ) {
 			return false;
 		}
 
-		// For everything else (true values, invalid values, empty values), fall back to default (true)
+		// For everything else (true values, invalid values, empty values), fall back to default (true).
 		return true;
 	}
 

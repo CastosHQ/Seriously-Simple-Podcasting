@@ -642,9 +642,9 @@ class Castos_Blocks {
 	 * @return string Rendered block output.
 	 */
 	public function ssp_podcasts_block_render_callback( $attributes ) {
-		// Ensure shortcodes are registered.
+		// Shortcode should be registered during plugin init. If missing, bail safely.
 		if ( ! shortcode_exists( 'ssp_podcasts' ) ) {
-			do_action( 'init' );
+			return '';
 		}
 
 		// Convert block attributes to shortcode parameters.
@@ -654,16 +654,9 @@ class Castos_Blocks {
 			$shortcode_params[ $key ] = $value;
 		}
 
-		// Build the shortcode string.
-		$shortcode_string = '[ssp_podcasts';
-		foreach ( $shortcode_params as $key => $value ) {
-			$shortcode_string .= ' ' . $key . '="' . esc_attr( $value ) . '"';
-		}
-		$shortcode_string .= ']';
-
-		// Use do_shortcode to render the output.
-		// The shortcode will handle parameter validation, CSS class generation, and CSS enqueueing.
-		return do_shortcode( $shortcode_string );
+		// Call the shortcode handler directly for better performance.
+		$podcast_list = new \SeriouslySimplePodcasting\ShortCodes\Podcast_List();
+		return $podcast_list->shortcode( $shortcode_params );
 	}
 
 	/**

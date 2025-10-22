@@ -115,7 +115,7 @@ class Castos_Blocks {
 		$query_args = array(
 			'post_type'      => ssp_post_types(),
 			'podcast_id'     => ( '' === $attributes['selectedPodcast'] ) ? -1 : intval( $attributes['selectedPodcast'] ),
-			'posts_per_page' => intval( ! empty( $attributes['postsPerPage'] ) ? $attributes['postsPerPage'] : get_option( 'posts_per_page', 10 ) ),
+			'posts_per_page' => intval( isset( $attributes['postsPerPage'] ) ? $attributes['postsPerPage'] : get_option( 'posts_per_page', 10 ) ),
 			'paged'          => $paged,
 			'orderby'        => in_array( $attributes['orderBy'], $allowed_order_by, true ) ? $attributes['orderBy'] : 'date',
 			'order'          => 'asc' === $attributes['order'] ? 'asc' : 'desc',

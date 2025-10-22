@@ -41,8 +41,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Ensure we have podcasts data
 if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
-	// Output empty wrapper for consistency
-	echo '<div class="ssp-podcasts"></div>';
+	// Output empty wrapper with CSS classes for consistency
+	echo '<div class="ssp-podcasts ' . esc_attr( $columns_class ) . '"></div>';
 	return;
 }
 

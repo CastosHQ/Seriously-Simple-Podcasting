@@ -11,6 +11,7 @@ import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
 import EditCastosHTMLPlayer from './components/EditCastosHTMLPlayer';
 import EditPodcastList from "./components/EditPodcastList";
+import EditSSPPodcasts from "./components/EditSSPPodcasts";
 import PostPublishPanel from "./components/PostPublishPanel";
 import './settingsExtender.js';
 import EditPlaylistPlayer from "./components/EditPlaylistPlayer";
@@ -142,6 +143,19 @@ registerBlockType('seriously-simple-podcasting/playlist-player', {
 	icon: 'controls-volumeon',
 	category: 'widgets',
 	edit: EditPlaylistPlayer
+});
+
+/**
+ * SSP Podcasts block
+ */
+registerBlockType('seriously-simple-podcasting/ssp-podcasts', {
+	title: __('SSP Podcasts', 'seriously-simple-podcasting'),
+	icon: 'megaphone',
+	category: 'widgets',
+	supports: {
+		multiple: false,
+	},
+	edit: EditSSPPodcasts
 });
 
 registerPlugin( 'post-publish-panel', {

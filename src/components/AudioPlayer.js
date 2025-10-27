@@ -1,6 +1,6 @@
 import {Component} from '@wordpress/element';
 
-import Interweave from 'interweave';
+import { Interweave } from 'interweave';
 
 class AudioPlayer extends Component {
 	render() {

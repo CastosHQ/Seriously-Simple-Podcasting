@@ -1,5 +1,5 @@
 module.exports = function (a) {
-	const sass = require('node-sass');
+	const sass = require('sass');
 
 	a.initConfig({
 		pkg: a.file.readJSON("package.json"),

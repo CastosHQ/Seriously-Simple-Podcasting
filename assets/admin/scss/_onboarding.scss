@@ -379,7 +379,7 @@
 				text-align: center;
 
 				&:hover {
-					background: $clr_red_400 + 10;
+					background: lighten($clr_red_400, 10%);
 					transition: 0.2s;
 				}
 			}
@@ -395,7 +395,7 @@
 		&__accordion {
 			height: 99px;
 			background: $clr_blue_100;
-			color: $clr_gray_600 - 10;
+			color: darken($clr_gray_600, 10%);
 			border-radius: 0 0 8px 8px;
 			display: flex;
 			justify-content: center;
@@ -408,7 +408,7 @@
 			z-index: 1;
 
 			&:hover {
-				background: $clr_blue_100 + 4;
+				background: lighten($clr_blue_100, 4%);
 				transition: .2s;
 			}
 			span {

@@ -99,7 +99,7 @@
 			align-self: stretch;
 
 			&:hover {
-				background: $clr_blue_50 - 7;
+				background: darken($clr_blue_50, 7%);
 			}
 		}
 	}

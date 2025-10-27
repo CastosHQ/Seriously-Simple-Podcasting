@@ -240,8 +240,8 @@ class EditSSPPodcasts extends Component {
 
 					{/* Styling Panel */}
 					<PanelBody key="ssp-podcasts-styling" title={__('Styling', 'seriously-simple-podcasting')}>
-						<PanelRow>
-							<label htmlFor="ssp-podcasts-background">
+						<div style={{ marginBottom: '32px' }}>
+							<label htmlFor="ssp-podcasts-background" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
 								{__('Background Color', 'seriously-simple-podcasting')}
 							</label>
 							<ColorPicker
@@ -249,10 +249,10 @@ class EditSSPPodcasts extends Component {
 								onChangeComplete={(color) => setAttributes({ background: color.hex })}
 								disableAlpha
 							/>
-						</PanelRow>
+						</div>
 						
-						<PanelRow>
-							<label htmlFor="ssp-podcasts-background-hover">
+						<div style={{ marginBottom: '32px' }}>
+							<label htmlFor="ssp-podcasts-background-hover" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
 								{__('Background Hover Color', 'seriously-simple-podcasting')}
 							</label>
 							<ColorPicker
@@ -260,10 +260,10 @@ class EditSSPPodcasts extends Component {
 								onChangeComplete={(color) => setAttributes({ background_hover: color.hex })}
 								disableAlpha
 							/>
-						</PanelRow>
+						</div>
 						
-						<PanelRow>
-							<label htmlFor="ssp-podcasts-title-color">
+						<div style={{ marginBottom: '32px' }}>
+							<label htmlFor="ssp-podcasts-title-color" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
 								{__('Title Color', 'seriously-simple-podcasting')}
 							</label>
 							<ColorPicker
@@ -271,10 +271,10 @@ class EditSSPPodcasts extends Component {
 								onChangeComplete={(color) => setAttributes({ title_color: color.hex })}
 								disableAlpha
 							/>
-						</PanelRow>
+						</div>
 						
-						<PanelRow>
-							<label htmlFor="ssp-podcasts-episode-count-color">
+						<div style={{ marginBottom: '32px' }}>
+							<label htmlFor="ssp-podcasts-episode-count-color" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
 								{__('Episode Count Color', 'seriously-simple-podcasting')}
 							</label>
 							<ColorPicker
@@ -282,10 +282,10 @@ class EditSSPPodcasts extends Component {
 								onChangeComplete={(color) => setAttributes({ episode_count_color: color.hex })}
 								disableAlpha
 							/>
-						</PanelRow>
+						</div>
 						
-						<PanelRow>
-							<label htmlFor="ssp-podcasts-description-color">
+						<div style={{ marginBottom: '32px' }}>
+							<label htmlFor="ssp-podcasts-description-color" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
 								{__('Description Color', 'seriously-simple-podcasting')}
 							</label>
 							<ColorPicker
@@ -293,12 +293,12 @@ class EditSSPPodcasts extends Component {
 								onChangeComplete={(color) => setAttributes({ description_color: color.hex })}
 								disableAlpha
 							/>
-						</PanelRow>
+						</div>
 						
 						{show_button === 'true' && (
 							<>
-								<PanelRow>
-									<label htmlFor="ssp-podcasts-button-color">
+								<div style={{ marginBottom: '32px' }}>
+									<label htmlFor="ssp-podcasts-button-color" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
 										{__('Button Color', 'seriously-simple-podcasting')}
 									</label>
 									<ColorPicker
@@ -306,10 +306,10 @@ class EditSSPPodcasts extends Component {
 										onChangeComplete={(color) => setAttributes({ button_color: color.hex })}
 										disableAlpha
 									/>
-								</PanelRow>
+								</div>
 								
-								<PanelRow>
-									<label htmlFor="ssp-podcasts-button-hover-color">
+								<div style={{ marginBottom: '32px' }}>
+									<label htmlFor="ssp-podcasts-button-hover-color" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
 										{__('Button Hover Color', 'seriously-simple-podcasting')}
 									</label>
 									<ColorPicker
@@ -317,10 +317,10 @@ class EditSSPPodcasts extends Component {
 										onChangeComplete={(color) => setAttributes({ button_hover_color: color.hex })}
 										disableAlpha
 									/>
-								</PanelRow>
+								</div>
 								
-								<PanelRow>
-									<label htmlFor="ssp-podcasts-button-text-color">
+								<div style={{ marginBottom: '32px' }}>
+									<label htmlFor="ssp-podcasts-button-text-color" style={{ display: 'block', marginBottom: '8px', fontWeight: '500' }}>
 										{__('Button Text Color', 'seriously-simple-podcasting')}
 									</label>
 									<ColorPicker
@@ -328,7 +328,7 @@ class EditSSPPodcasts extends Component {
 										onChangeComplete={(color) => setAttributes({ button_text_color: color.hex })}
 										disableAlpha
 									/>
-								</PanelRow>
+								</div>
 							</>
 						)}
 					</PanelBody>

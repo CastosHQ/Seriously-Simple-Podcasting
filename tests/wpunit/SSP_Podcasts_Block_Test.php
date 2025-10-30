@@ -102,6 +102,7 @@ class SSP_Podcasts_Block_Test extends WPTestCase {
 		// Test that all required attributes are defined
 		$expected_attributes = array(
 			'ids',
+			'availablePodcasts',
 			'columns',
 			'sort_by',
 			'sort',
@@ -125,9 +126,12 @@ class SSP_Podcasts_Block_Test extends WPTestCase {
 		foreach ( $expected_attributes as $attribute ) {
 			$this->assertArrayHasKey( $attribute, $block->attributes, "Attribute '{$attribute}' should be defined" );
 		}
+
+		// availablePodcasts should default to an array of options
+		$this->assertIsArray( $block->attributes['availablePodcasts']['default'] );
 		
 		// Test default values match shortcode defaults
-		$this->assertEquals( '', $block->attributes['ids']['default'] );
+		$this->assertEquals( array( '-1' ), $block->attributes['ids']['default'] );
 		$this->assertEquals( 1, $block->attributes['columns']['default'] );
 		$this->assertEquals( 'id', $block->attributes['sort_by']['default'] );
 		$this->assertEquals( 'asc', $block->attributes['sort']['default'] );
@@ -224,7 +228,7 @@ class SSP_Podcasts_Block_Test extends WPTestCase {
 		
 		// Test render callback with specific attributes
 		$attributes = array(
-			'ids' => strval( $series ),
+			'ids' => array( strval( $series ) ),
 			'columns' => 2,
 			'sort_by' => 'name',
 			'clickable' => 'card',
@@ -261,7 +265,7 @@ class SSP_Podcasts_Block_Test extends WPTestCase {
 		
 		// Test render callback with color attributes
 		$attributes = array(
-			'ids' => strval( $series ),
+			'ids' => array( strval( $series ) ),
 			'background' => '#ff0000',
 			'button_color' => '#00ff00',
 			'title_color' => '#0000ff',
@@ -298,7 +302,7 @@ class SSP_Podcasts_Block_Test extends WPTestCase {
 		
 		// Test render callback with word truncation
 		$attributes = array(
-			'ids' => strval( $series ),
+			'ids' => array( strval( $series ) ),
 			'description_words' => 5
 		);
 		
@@ -310,7 +314,7 @@ class SSP_Podcasts_Block_Test extends WPTestCase {
 		
 		// Test render callback with character truncation
 		$attributes_chars = array(
-			'ids' => strval( $series ),
+			'ids' => array( strval( $series ) ),
 			'description_chars' => 30
 		);
 		
@@ -386,7 +390,7 @@ class SSP_Podcasts_Block_Test extends WPTestCase {
 		
 		// Test render callback with invalid podcast IDs
 		$attributes = array(
-			'ids' => '999,998' // Non-existent podcast IDs
+			'ids' => array( '999', '998' ) // Non-existent podcast IDs
 		);
 		
 		$output = call_user_func( $block->render_callback, $attributes );

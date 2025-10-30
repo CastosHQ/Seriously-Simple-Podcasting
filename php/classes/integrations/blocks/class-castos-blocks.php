@@ -319,7 +319,7 @@ class Castos_Blocks {
 
 		$this->register_podcast_list();
 		$this->register_playlist_player();
-		$this->register_ssp_podcasts_block();
+		(new Ssp_Podcasts_Block())->register();
 	}
 
 
@@ -526,138 +526,6 @@ class Castos_Blocks {
 		);
 	}
 
-	/**
-	 * Registers the SSP Podcasts block.
-	 *
-	 * @since 3.14.0
-	 */
-	protected function register_ssp_podcasts_block() {
-		// Register CSS assets for the block (but don't enqueue by default).
-		wp_register_style(
-			'ssp-podcast-list-shortcode',
-			esc_url( SSP_PLUGIN_URL . 'assets/css/podcast-list.css' ),
-			array(),
-			SSP_VERSION
-		);
-
-		// Register the block.
-		register_block_type(
-			'seriously-simple-podcasting/ssp-podcasts',
-			array(
-				'editor_script'   => 'ssp-block-script',
-				// Load both the small editor helper styles and the full shortcode styles in the editor
-				'editor_style'    => array( 'ssp-block-style', 'ssp-podcast-list-shortcode' ),
-				'attributes'      => array(
-					'ids'                 => array(
-						'type'    => 'string',
-						'default' => '',
-					),
-					'columns'             => array(
-						'type'    => 'number',
-						'default' => 1,
-					),
-					'sort_by'             => array(
-						'type'    => 'string',
-						'default' => 'id',
-					),
-					'sort'                => array(
-						'type'    => 'string',
-						'default' => 'asc',
-					),
-					'clickable'           => array(
-						'type'    => 'string',
-						'default' => 'button',
-					),
-					'show_button'         => array(
-						'type'    => 'string',
-						'default' => 'true',
-					),
-					'show_description'    => array(
-						'type'    => 'string',
-						'default' => 'true',
-					),
-					'show_episode_count'  => array(
-						'type'    => 'string',
-						'default' => 'true',
-					),
-					'description_words'   => array(
-						'type'    => 'number',
-						'default' => 0,
-					),
-					'description_chars'   => array(
-						'type'    => 'number',
-						'default' => 0,
-					),
-					'background'          => array(
-						'type'    => 'string',
-						'default' => '#f8f9fa',
-					),
-					'background_hover'    => array(
-						'type'    => 'string',
-						'default' => '#e9ecef',
-					),
-					'button_color'        => array(
-						'type'    => 'string',
-						'default' => '#343a40',
-					),
-					'button_hover_color'  => array(
-						'type'    => 'string',
-						'default' => '#495057',
-					),
-					'button_text_color'   => array(
-						'type'    => 'string',
-						'default' => '#ffffff',
-					),
-					'button_text'         => array(
-						'type'    => 'string',
-						'default' => __( 'Listen Now', 'seriously-simple-podcasting' ),
-					),
-					'title_color'         => array(
-						'type'    => 'string',
-						'default' => '#6c5ce7',
-					),
-					'episode_count_color' => array(
-						'type'    => 'string',
-						'default' => '#6c757d',
-					),
-					'description_color'   => array(
-						'type'    => 'string',
-						'default' => '#6c757d',
-					),
-				),
-				'render_callback' => array(
-					$this,
-					'ssp_podcasts_block_render_callback',
-				),
-			)
-		);
-	}
-
-	/**
-	 * Render callback for the SSP Podcasts block.
-	 *
-	 * @since 3.14.0
-	 *
-	 * @param array $attributes Block attributes.
-	 * @return string Rendered block output.
-	 */
-	public function ssp_podcasts_block_render_callback( $attributes ) {
-		// Shortcode should be registered during plugin init. If missing, bail safely.
-		if ( ! shortcode_exists( 'ssp_podcasts' ) ) {
-			return '';
-		}
-
-		// Convert block attributes to shortcode parameters.
-		$shortcode_params = array();
-
-		foreach ( $attributes as $key => $value ) {
-			$shortcode_params[ $key ] = $value;
-		}
-
-		// Call the shortcode handler directly for better performance.
-		$podcast_list = new \SeriouslySimplePodcasting\ShortCodes\Podcast_List();
-		return $podcast_list->shortcode( $shortcode_params );
-	}
 
 	/**
 	 * Gets term slug by ID.

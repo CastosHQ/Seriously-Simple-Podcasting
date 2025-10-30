@@ -7,10 +7,12 @@ class ExampleTest extends \Codeception\TestCase\WPTestCase {
 	 */
 	protected $tester;
 
-	protected function _before() {
+	protected function setUp(): void {
+		parent::setUp();
 	}
 
-	protected function _after() {
+	protected function tearDown(): void {
+		parent::tearDown();
 	}
 
 	// tests

@@ -1,0 +1,9 @@
+--- vendor/lucatume/wp-browser/src/TestCase/WPTestCase.php.orig
++++ vendor/lucatume/wp-browser/src/TestCase/WPTestCase.php
+@@ -251,6 +251,7 @@ class WPTestCase extends TestCase
+         $backupStaticProperties = property_exists($this, 'backupStaticProperties') ?
+             $this->backupStaticProperties :
+             $_wpTestsBackupStaticAttributes;
++        $backupStaticProperties = $backupStaticProperties ?? false;
+         // @phpstan-ignore-next-line exists in PHPUnit >= 10.0.0
+         $this->setBackupStaticProperties($backupStaticProperties);

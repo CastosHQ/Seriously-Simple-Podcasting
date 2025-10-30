@@ -26,7 +26,7 @@ jobs:
         options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
@@ -36,12 +36,17 @@ jobs:
           tools: wp-cli
 
       - name: Install Composer dependencies
-        run: composer install
+        run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
       - name: Setup Node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v4
         with:
-          node-version: '17'
+          node-version: '18'
+
+      - name: Run PHPCS (Code Quality Check)
+        run: |
+          cd wp-content/plugins/seriously-simple-podcasting
+          vendor/bin/phpcs --standard=.phpcs.xml.dist --report=summary
 
       - name: Prepare testing environment
         run: |
@@ -67,6 +72,9 @@ jobs:
           npm install
           npm rebuild node-sass
           grunt uglify && grunt cssmin && npm run build
+
+      - name: Run PHPUnit tests
+        run: cd wp-content/plugins/seriously-simple-podcasting && vendor/bin/phpunit --configuration phpunit.xml.dist
 
       - name: Run Unit tests
         run: cd wp-content/plugins/seriously-simple-podcasting && vendor/bin/codecept run wpunit

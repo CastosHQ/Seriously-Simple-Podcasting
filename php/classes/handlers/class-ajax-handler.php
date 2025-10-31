@@ -219,6 +219,7 @@ class Ajax_Handler {
 
 	public function disconnect_castos() {
 		try {
+			$this->nonce_check( 'ss_podcasting_castos-hosting' );
 			$this->user_capability_check();
 
 			$this->castos_handler->remove_api_credentials();

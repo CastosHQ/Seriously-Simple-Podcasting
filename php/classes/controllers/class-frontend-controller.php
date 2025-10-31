@@ -729,11 +729,11 @@ class Frontend_Controller {
 
 		if ( isset( $episode_id ) && $episode_id ) {
 
-			// Get episode post object
+			// Get episode post object and validate access
 			$episode = get_post( $episode_id );
 
-			// Make sure we have a valid episode post object
-			if ( ! $episode || ! is_object( $episode ) || is_wp_error( $episode ) || ! isset( $episode->ID ) ) {
+			// Check episode access - returns false if access denied (error response handled internally)
+			if ( ! $this->check_episode_file_access( $episode_id, $episode ) ) {
 				return;
 			}
 
@@ -834,6 +834,69 @@ class Frontend_Controller {
 			// Exit to prevent other processes running later on
 			exit;
 		}
+	}
+
+	/**
+	 * Checks if the current user has access to the specified episode for file download
+	 *
+	 * Validates episode existence, post type, post status, and user permissions.
+	 * Returns false if access is denied (error response is handled internally).
+	 *
+	 * @param int            $episode_id Episode ID to check.
+	 * @param \WP_Post|false $episode    Episode post object, or false if not found.
+	 *
+	 * @return bool True if access allowed, false if access denied (error response sent).
+	 */
+	protected function check_episode_file_access( $episode_id, $episode ) {
+		// Make sure we have a valid episode post object
+		if ( ! $episode || ! is_object( $episode ) || is_wp_error( $episode ) || ! isset( $episode->ID ) ) {
+			// Return 404 to hide episode existence
+			status_header( 404 );
+			nocache_headers();
+			return false;
+		}
+
+		// Check if episode is a valid podcast post type
+		$podcast_post_types = ssp_post_types();
+		if ( ! in_array( $episode->post_type, $podcast_post_types, true ) ) {
+			// Invalid post type - return 404 to hide existence
+			status_header( 404 );
+			nocache_headers();
+			return false;
+		}
+
+		// Check post status and user authorization
+		$post_status_obj = get_post_status_object( $episode->post_status );
+
+		// Use WordPress's built-in permission system which handles author checks and capabilities
+		if ( 'private' === $episode->post_status ) {
+			// For private posts, check if user can read this specific post
+			// This handles: author check, read_private_posts capability, etc.
+			if ( ! current_user_can( 'read_post', $episode_id ) ) {
+				// User not authorized - return 403 Forbidden
+				status_header( 403 );
+				nocache_headers();
+				wp_die( esc_html__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ), '', array( 'response' => 403 ) );
+			}
+		} elseif ( 'draft' === $episode->post_status || 'pending' === $episode->post_status ) {
+			// Check if user can edit the post
+			if ( ! current_user_can( 'edit_post', $episode_id ) ) {
+				// User not authorized - return 403 Forbidden
+				status_header( 403 );
+				nocache_headers();
+				wp_die( esc_html__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ), '', array( 'response' => 403 ) );
+			}
+		} elseif ( ! $post_status_obj || ! $post_status_obj->public ) {
+			// Reject other non-public statuses
+			if ( ! current_user_can( 'read_post', $episode_id ) ) {
+				// User not authorized - return 403 Forbidden
+				status_header( 403 );
+				nocache_headers();
+				wp_die( esc_html__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ), '', array( 'response' => 403 ) );
+			}
+		}
+
+		return true;
 	}
 
 	/**

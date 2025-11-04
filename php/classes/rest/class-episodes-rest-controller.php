@@ -136,12 +136,14 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 * Checks if the request has valid Castos authentication headers (X-Castos-Signature and X-Castos-Timestamp)
 	 * and validates the signature against the stored API token.
 	 *
+	 * Static method for use in filters and other contexts.
+	 *
 	 * @param \WP_REST_Request $request     Full data about the request.
 	 * @param array            $request_data Request data to use for signature calculation (typically JSON body or empty array for GET).
 	 *
 	 * @return bool|\WP_Error True if authentication is valid, WP_Error if invalid (with appropriate error code).
 	 */
-	protected function validate_castos_authentication( $request, $request_data = array() ) {
+	public static function validate_castos_authentication( $request, $request_data = array() ) {
 		$signature  = $request->get_header( 'X-Castos-Signature' );
 		$timestamp  = $request->get_header( 'X-Castos-Timestamp' );
 		$status_401 = array( 'status' => 401 );
@@ -194,36 +196,6 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		return $request['status'] ?? array( 'publish', 'private' );
 	}
 
-	/**
-	 * Conditionally hides meta field if episode belongs to a private podcast series.
-	 *
-	 * @param \WP_REST_Response $data              Response data object.
-	 * @param \WP_Post          $post              Post object.
-	 * @param bool              $castos_authenticated Whether request has valid Castos authentication.
-	 *
-	 * @return void Modifies $data in place.
-	 */
-	protected function maybe_hide_meta( $data, $post, $castos_authenticated ) {
-		if ( $castos_authenticated || current_user_can( 'edit_post', $post->ID ) ) {
-			return;
-		}
-
-		$terms = wp_get_post_terms( $post->ID, ssp_series_taxonomy() );
-
-		// Check default podcast privacy if no series
-		if ( empty( $terms ) && 'yes' === ssp_get_option( 'is_podcast_private' ) ) {
-			unset( $data->data['meta'] );
-			return;
-		}
-
-		// Check if any series is private
-		foreach ( $terms as $term ) {
-			if ( 'yes' === ssp_get_option( 'is_podcast_private', '', $term->term_id ) ) {
-				unset( $data->data['meta'] );
-				break;
-			}
-		}
-	}
 
 	/**
 	 * @param $request
@@ -232,7 +204,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 */
 	public function update_item_permissions_check( $request ) {
 		$request_data = $request->get_json_params();
-		return $this->validate_castos_authentication( $request, $request_data );
+		return static::validate_castos_authentication( $request, $request_data );
 	}
 
 	/**
@@ -368,7 +340,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		Rest_Api_Controller::authenticate_user_from_cookie();
 
 		// Check if request has valid Castos authentication (optional for GET requests)
-		$castos_authenticated = true === $this->validate_castos_authentication( $request, array() );
+		$castos_authenticated = true === static::validate_castos_authentication( $request, array() );
 
 		$args                        = array();
 		$args['author__in']          = $request['author'];
@@ -477,11 +449,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 				continue;
 			}
 
-			$data = $posts_controller->prepare_item_for_response( $post, $request );
-			
-			// Remove meta field if episode belongs to a private podcast series
-			$this->maybe_hide_meta( $data, $post, $castos_authenticated );
-			
+			$data    = $posts_controller->prepare_item_for_response( $post, $request );
 			$posts[] = $posts_controller->prepare_response_for_collection( $data );
 		}
 

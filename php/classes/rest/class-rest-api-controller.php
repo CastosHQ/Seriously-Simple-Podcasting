@@ -39,6 +39,20 @@ class Rest_Api_Controller {
 	protected $series_handler;
 
 	/**
+	 * Whether cookie authentication has been checked for current request.
+	 *
+	 * @var bool
+	 */
+	private $cookie_authenticated = false;
+
+	/**
+	 * Whether Castos authentication is valid for current request.
+	 *
+	 * @var bool|null
+	 */
+	private $castos_authenticated = null;
+
+	/**
 	 * Gets the default podcast data.
 	 *
 	 * @return array Podcast data array.
@@ -103,6 +117,7 @@ class Rest_Api_Controller {
 		$post_types = ssp_post_types( true, false );
 		foreach ( $post_types as $post_type ) {
 			add_filter( 'rest_prepare_' . $post_type, array( $this, 'rest_prepare_excerpt' ), 10, 3 );
+			add_filter( 'rest_prepare_' . $post_type, array( $this, 'maybe_hide_meta_for_private_podcast' ), 10, 3 );
 		}
 
 		$series_taxonomy = ssp_series_taxonomy();
@@ -168,6 +183,53 @@ class Rest_Api_Controller {
 		if ( $response && isset( $response->data['excerpt']['rendered'] ) &&
 			'excerpt' === $response->data['excerpt']['rendered'] ) {
 			$response->data['excerpt']['rendered'] = get_the_excerpt();
+		}
+
+		return $response;
+	}
+
+	/**
+	 * Conditionally hides meta field if episode belongs to a private podcast series.
+	 *
+	 * Works for both custom SSP endpoints and WordPress core REST API endpoints.
+	 *
+	 * @param \WP_REST_Response $response Response data object.
+	 * @param \WP_Post         $post     Post object.
+	 * @param \WP_REST_Request $request  Request object.
+	 *
+	 * @return \WP_REST_Response Modified response.
+	 */
+	public function maybe_hide_meta_for_private_podcast( $response, $post, $request ) {
+		// Authenticate user from cookie if needed (only once per request)
+		if ( ! $this->cookie_authenticated ) {
+			static::authenticate_user_from_cookie();
+			$this->cookie_authenticated = true;
+		}
+
+		// Check if request has valid Castos authentication (only once per request)
+		if ( null === $this->castos_authenticated ) {
+			$this->castos_authenticated = true === Episodes_Rest_Controller::validate_castos_authentication( $request, array() );
+		}
+
+		// If Castos-authenticated or user has edit permission, show meta
+		if ( $this->castos_authenticated || current_user_can( 'edit_post', $post->ID ) ) {
+			return $response;
+		}
+
+		$terms = wp_get_post_terms( $post->ID, ssp_series_taxonomy() );
+
+		// Check default podcast privacy if no series
+		if ( empty( $terms ) && 'yes' === ssp_get_option( 'is_podcast_private' ) ) {
+			unset( $response->data['meta'] );
+			return $response;
+		}
+
+		// Check if any series is private
+		foreach ( $terms as $term ) {
+			if ( 'yes' === ssp_get_option( 'is_podcast_private', '', $term->term_id ) ) {
+				unset( $response->data['meta'] );
+				break;
+			}
 		}
 
 		return $response;

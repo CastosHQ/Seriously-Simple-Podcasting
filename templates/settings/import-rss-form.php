@@ -1,10 +1,14 @@
 <?php
 /**
+ * Import RSS form template.
+ *
+ * @package Seriously Simple Podcasting
+ *
  * @see Settings_Controller::render_external_import_form()
  *
  * @var array $post_types
  * @var array $series
- * */
+ */
 ?>
 
 <div class="ssp-settings ssp-settings-import">

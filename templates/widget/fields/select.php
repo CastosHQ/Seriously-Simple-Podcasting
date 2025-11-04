@@ -2,7 +2,7 @@
 /**
  * Widget select field template.
  *
- * @package SeriouslySimplePodcasting
+ * @package Seriously Simple Podcasting
  *
  * @var string $id
  * @var string $field_id

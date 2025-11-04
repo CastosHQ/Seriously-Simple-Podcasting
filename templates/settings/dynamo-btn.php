@@ -1,5 +1,9 @@
 <?php
 /**
+ * Dynamo button template.
+ *
+ * @package Seriously Simple Podcasting
+ *
  * @see ssp_dynamo_btn()
  *
  * @var string $title

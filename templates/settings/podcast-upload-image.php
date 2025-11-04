@@ -1,5 +1,9 @@
 <?php
 /**
+ * Podcast upload image template.
+ *
+ * @package Seriously Simple Podcasting
+ *
  * @var bool $mode
  * @var string $series_img_title
  * @var string $taxonomy

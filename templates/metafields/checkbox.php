@@ -1,10 +1,14 @@
 <?php
 /**
+ * Checkbox metafield template.
+ *
+ * @package Seriously Simple Podcasting
+ *
  * @var string $k
  * @var array $v
  * @var string $class
  * @var string $data
- * */
+ */
 ?>
 <p><input name="
 <?php

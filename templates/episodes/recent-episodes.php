@@ -1,5 +1,9 @@
 <?php
 /**
+ * Recent episodes template.
+ *
+ * @package Seriously Simple Podcasting
+ *
  * @var WP_Post[] $episodes
  * @var bool $show_episode_image
  * @var bool $show_episode_title

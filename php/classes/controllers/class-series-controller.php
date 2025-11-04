@@ -275,7 +275,7 @@ class Series_Controller {
 		unset( $columns['description'] );
 		unset( $columns['posts'] );
 
-		$columns['series_id']       = __( 'Podcast ID', 'seriously-simple-podcasting' );
+		$columns['series_id']       = __( 'ID', 'seriously-simple-podcasting' );
 		$columns['series_image']    = __( 'Podcast Image', 'seriously-simple-podcasting' );
 		$columns['series_feed_url'] = __( 'Podcast feed URL', 'seriously-simple-podcasting' );
 		$columns['posts']           = __( 'Episodes', 'seriously-simple-podcasting' );

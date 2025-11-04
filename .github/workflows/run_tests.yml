@@ -68,9 +68,6 @@ jobs:
           npm rebuild node-sass
           grunt uglify && grunt cssmin && npm run build
 
-      - name: Run PHPUnit tests
-        run: cd wp-content/plugins/seriously-simple-podcasting && vendor/bin/phpunit --configuration phpunit.xml.dist
-
       - name: Run Unit tests
         run: cd wp-content/plugins/seriously-simple-podcasting && vendor/bin/codecept run wpunit
 

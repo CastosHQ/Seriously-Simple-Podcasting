@@ -400,6 +400,7 @@ class Podcast_Post_Types_Controller {
 						'itunes_episode_number',
 						'sync_status',
 						'transcript_file',
+						'ssp_guid',
 					);
 
 					foreach ( $exclusions as $exclusion ) {

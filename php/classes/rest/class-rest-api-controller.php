@@ -280,6 +280,26 @@ class Rest_Api_Controller {
 
 
 	/**
+	 * Authenticates WordPress user from cookie for REST API requests.
+	 *
+	 * WordPress REST API sets current user to 0 if no nonce is provided (CSRF protection).
+	 * This method manually authenticates from cookie if present to allow logged-in users
+	 * to access their content via REST API.
+	 *
+	 * Can be called statically from any REST controller class.
+	 *
+	 * @return void
+	 */
+	public static function authenticate_user_from_cookie() {
+		if ( get_current_user_id() === 0 && isset( $_COOKIE[ LOGGED_IN_COOKIE ] ) ) {
+			$user_id = wp_validate_auth_cookie( $_COOKIE[ LOGGED_IN_COOKIE ], 'logged_in' );
+			if ( $user_id && $user_id > 0 ) {
+				wp_set_current_user( $user_id );
+			}
+		}
+	}
+
+	/**
 	 * Permission callback for audio player REST endpoint
 	 *
 	 * Sets up user authentication context before authorization checks run.
@@ -299,16 +319,6 @@ class Rest_Api_Controller {
 	 * @return bool Always returns true to allow the request, but sets up user context
 	 */
 	public function audio_player_permissions_check( $request ) {
-		// WordPress REST API sets current user to 0 if no nonce is provided (CSRF protection)
-		// Manually authenticate from cookie if present to allow logged-in users to access their content
-		if ( get_current_user_id() === 0 && isset( $_COOKIE[ LOGGED_IN_COOKIE ] ) ) {
-			// Validate the auth cookie and get user ID directly
-			$user_id = wp_validate_auth_cookie( $_COOKIE[ LOGGED_IN_COOKIE ], 'logged_in' );
-			if ( $user_id && $user_id > 0 ) {
-				wp_set_current_user( $user_id );
-			}
-		}
-		
 		// Always return true to allow the request
 		// The actual authorization is checked in get_episode_audio_player() using check_episode_access()
 		return true;
@@ -349,6 +359,9 @@ class Rest_Api_Controller {
 	 * @return true|\WP_Error True if access allowed, WP_Error if access denied
 	 */
 	protected function check_episode_access( $episode_id ) {
+
+		$this->authenticate_user_from_cookie();
+
 		// Validate episode ID
 		if ( empty( $episode_id ) ) {
 			return new \WP_Error(

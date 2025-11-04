@@ -179,7 +179,7 @@ class Admin_Notifications_Handler implements Service {
 	/**
 	 * Gets host (domain) from the url.
 	 *
-	 * @param $url
+	 * @param string $url URL to extract host from.
 	 *
 	 * @return string
 	 */

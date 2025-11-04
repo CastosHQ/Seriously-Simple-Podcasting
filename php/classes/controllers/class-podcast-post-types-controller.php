@@ -357,7 +357,7 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Delete the podcast from Castos
 	 *
-	 * @param $post_id
+	 * @param int $post_id Post ID.
 	 */
 	public function delete_post( $post_id ) {
 		$post = get_post( $post_id );
@@ -814,7 +814,7 @@ class Podcast_Post_Types_Controller {
 	 *
 	 * @since 3.8.0
 	 *
-	 * @param $post_id
+	 * @param int $post_id Post ID.
 	 *
 	 * @return void
 	 */
@@ -855,7 +855,7 @@ class Podcast_Post_Types_Controller {
 	 *
 	 * @since 3.8.0
 	 *
-	 * @param $post_id
+	 * @param int $post_id Post ID.
 	 *
 	 * @return void
 	 */
@@ -925,7 +925,7 @@ class Podcast_Post_Types_Controller {
 	 *
 	 * @since 3.8.0
 	 *
-	 * @param $post
+	 * @param \WP_Post $post Post object.
 	 *
 	 * @return void
 	 */

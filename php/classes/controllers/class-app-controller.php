@@ -613,8 +613,8 @@ class App_Controller {
 	/**
 	 * Generate the dashboard widget content
 	 *
-	 * @param $widget_id
-	 * @param $feeds
+	 * @param string $widget_id Widget ID.
+	 * @param array  $feeds RSS feeds array.
 	 *
 	 * @return string the RSS feed output
 	 */

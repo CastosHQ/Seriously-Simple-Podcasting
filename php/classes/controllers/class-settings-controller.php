@@ -169,8 +169,8 @@ class Settings_Controller {
 	}
 
 	/**
-	 * @param $data
-	 * @param $args
+	 * @param array $data Field data.
+	 * @param array $args Field arguments.
 	 *
 	 * @return array
 	 * @throws \Exception

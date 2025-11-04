@@ -201,7 +201,7 @@ class Onboarding_Controller {
 	}
 
 	/**
-	 * @param $step_number
+	 * @param int $step_number Step number.
 	 *
 	 * @return array
 	 */
@@ -236,7 +236,7 @@ class Onboarding_Controller {
 	}
 
 	/**
-	 * @param $step_number
+	 * @param int $step_number Step number.
 	 *
 	 * @return string[]
 	 */
@@ -315,8 +315,8 @@ class Onboarding_Controller {
 	}
 
 	/**
-	 * @param $data
-	 * @param $template
+	 * @param array  $data Template data.
+	 * @param string $template Template path.
 	 */
 	protected function render( $data, $template ) {
 		echo $this->renderer->render_deprecated( $data, $template );

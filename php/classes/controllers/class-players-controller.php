@@ -313,8 +313,8 @@ class Players_Controller {
 	 * Renders the Playlist player, based on the attributes sent to the method
 	 * If the player assets are registered but not already enqueued, this will enqueue them
 	 *
-	 * @param $episodes
-	 * @param $atts
+	 * @param array $episodes Array of WP_Post episode objects.
+	 * @param array $atts Player attributes.
 	 *
 	 * @return string
 	 */
@@ -448,7 +448,7 @@ class Players_Controller {
 	/**
 	 * Renders the Subscribe Buttons, based on the attributes sent to the method
 	 *
-	 * @param $episode_id
+	 * @param int $episode_id Episode post ID.
 	 *
 	 * @return mixed|void
 	 */

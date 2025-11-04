@@ -340,7 +340,7 @@ HTML;
 	/**
 	 * Store the Series Feed title as the Series name
 	 *
-	 * @param $term_id
+	 * @param int $term_id Term ID.
 	 */
 	public function save_series_data_to_castos( $term_id ) {
 		if ( ! ssp_is_connected_to_castos() ) {
@@ -462,8 +462,8 @@ HTML;
 	}
 
 	/**
-	 * @param $actions
-	 * @param $tag
+	 * @param array  $actions Actions array.
+	 * @param string $tag Tag name.
 	 *
 	 * @return mixed
 	 */

@@ -133,8 +133,8 @@ class Castos_Handler implements Service {
 	 *
 	 * @since 3.4.1
 	 *
-	 * @param $args
-	 * @param $url
+	 * @param array  $args Request arguments.
+	 * @param string $url Request URL.
 	 *
 	 * @return mixed
 	 */
@@ -178,8 +178,8 @@ class Castos_Handler implements Service {
 	/**
 	 * Updates the response array
 	 *
-	 * @param $key
-	 * @param $value
+	 * @param string $key Response key.
+	 * @param mixed  $value Response value.
 	 */
 	protected function update_response( $key, $value ) {
 		$this->response[ $key ] = $value;
@@ -441,7 +441,7 @@ class Castos_Handler implements Service {
 	/**
 	 * Gets cover image url
 	 *
-	 * @param $post
+	 * @param \WP_Post $post Post object.
 	 *
 	 * @return string
 	 */
@@ -705,7 +705,7 @@ class Castos_Handler implements Service {
 	}
 
 	/**
-	 * @param $series_id
+	 * @param int $series_id Series ID.
 	 *
 	 * @return API_Podcast|null
 	 */
@@ -723,7 +723,7 @@ class Castos_Handler implements Service {
 
 
 	/**
-	 * @param $series_id
+	 * @param int $series_id Series ID.
 	 *
 	 * @return Sync_Status
 	 * @throws Exception

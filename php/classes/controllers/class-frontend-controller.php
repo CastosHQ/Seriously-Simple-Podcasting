@@ -115,9 +115,9 @@ class Frontend_Controller {
 	 * Remove class filters.
 	 *
 	 * @since 2.11.0
-	 * @param $filter_name
-	 * @param $function_name
-	 * @param int $priority
+	 * @param string $filter_name Filter name.
+	 * @param string $function_name Function name.
+	 * @param int    $priority Filter priority.
 	 *
 	 * @return bool
 	 */
@@ -337,9 +337,8 @@ class Frontend_Controller {
 	/**
 	 * Runs checks to see if the player should be rendered or not
 	 *
-	 * @param $episode_id
-	 *
-	 * @param bool $show_player default true
+	 * @param int  $episode_id Episode post ID.
+	 * @param bool $show_player Default true.
 	 *
 	 * @return boolean
 	 */

@@ -131,15 +131,20 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	}
 
 	/**
-	 * @param $request
+	 * Validates Castos authentication headers.
 	 *
-	 * @return bool|\WP_Error
+	 * Checks if the request has valid Castos authentication headers (X-Castos-Signature and X-Castos-Timestamp)
+	 * and validates the signature against the stored API token.
+	 *
+	 * @param \WP_REST_Request $request     Full data about the request.
+	 * @param array            $request_data Request data to use for signature calculation (typically JSON body or empty array for GET).
+	 *
+	 * @return bool|\WP_Error True if authentication is valid, WP_Error if invalid (with appropriate error code).
 	 */
-	public function update_item_permissions_check( $request ) {
-		$request_data = $request->get_json_params();
-		$signature    = $request->get_header( 'X-Castos-Signature' );
-		$timestamp    = $request->get_header( 'X-Castos-Timestamp' );
-		$status_401   = array( 'status' => 401 );
+	protected function validate_castos_authentication( $request, $request_data = array() ) {
+		$signature  = $request->get_header( 'X-Castos-Signature' );
+		$timestamp  = $request->get_header( 'X-Castos-Timestamp' );
+		$status_401 = array( 'status' => 401 );
 
 		if ( empty( $signature ) || empty( $timestamp ) ) {
 			return new \WP_Error( 'missing_signature', 'No signature or timestamp provided.', $status_401 );
@@ -151,6 +156,10 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 		$stored_key = ssp_get_option( 'podmotor_account_api_token' );
 
+		if ( empty( $stored_key ) ) {
+			return new \WP_Error( 'invalid_signature', 'Request signature invalid.', $status_401 );
+		}
+
 		$expected_signature = hash_hmac( 'sha256', json_encode( $request_data ) . $timestamp, $stored_key );
 
 		if ( $signature !== $expected_signature ) {
@@ -158,6 +167,41 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		}
 
 		return true;
+	}
+
+	/**
+	 * Determines the appropriate post_status for WP_Query based on authentication.
+	 *
+	 * For Castos-authenticated requests, ensures 'private' is included in the status array
+	 * to allow fetching private episodes. For WordPress-authenticated users (via cookies)
+	 * with edit_posts capability, respects the $request['status'] parameter. For completely
+	 * unauthenticated requests, hardcodes to 'publish' for security.
+	 *
+	 * @param \WP_REST_Request $request            Full data about the request.
+	 * @param bool             $castos_authenticated Whether the request has valid Castos authentication.
+	 *
+	 * @return string|array Post status(es) to use in WP_Query.
+	 */
+	protected function get_post_status_for_query( $request, $castos_authenticated ) {
+		// Check if user can edit posts (WordPress authenticated OR Castos authenticated)
+		$can_edit_posts = $castos_authenticated || current_user_can( 'edit_posts' );
+
+		if ( ! $can_edit_posts ) {
+			return 'publish';
+		}
+
+		// Return early if request status is empty with private and publish
+		return $request['status'] ?? array( 'publish', 'private' );
+	}
+
+	/**
+	 * @param $request
+	 *
+	 * @return bool|\WP_Error
+	 */
+	public function update_item_permissions_check( $request ) {
+		$request_data = $request->get_json_params();
+		return $this->validate_castos_authentication( $request, $request_data );
 	}
 
 	/**
@@ -272,7 +316,9 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	/**
 	 * Check if a given request has access to get items
 	 *
-	 * @return bool
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool Always returns true to allow public access.
 	 */
 	public function get_items_permissions_check( $request ) {
 		return true;
@@ -286,6 +332,9 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response
 	 */
 	public function get_items( $request ) {
+		// Check if request has valid Castos authentication (optional for GET requests)
+		$castos_authenticated = true === $this->validate_castos_authentication( $request, array() );
+
 		$args                        = array();
 		$args['author__in']          = $request['author'];
 		$args['author__not_in']      = $request['author_exclude'];
@@ -301,7 +350,10 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		$args['post_type']           = $this->post_types;
 		$args['post_parent__in']     = $request['parent'];
 		$args['post_parent__not_in'] = $request['parent_exclude'];
-		$args['post_status']         = $request['status'];
+
+		// Handle post_status: if Castos authenticated, include private episodes in query
+		$args['post_status'] = $this->get_post_status_for_query( $request, $castos_authenticated );
+
 		$args['s']                   = $request['search'];
 
 		$args['date_query'] = array();
@@ -383,7 +435,10 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			// Get PostController for Post Type
 			$posts_controller = new WP_REST_Posts_Controller( $post->post_type );
 
-			if ( ! $posts_controller->check_read_permission( $post ) ) {
+			// If Castos-authenticated, skip WordPress permission checks entirely
+			// (Castos authentication already validated the request)
+			// For unauthenticated requests, check WordPress permissions
+			if ( ! $castos_authenticated && ! $posts_controller->check_read_permission( $post ) ) {
 				continue;
 			}
 

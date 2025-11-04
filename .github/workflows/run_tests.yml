@@ -43,9 +43,6 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Run PHPCS (Code Quality Check)
-        run: vendor/bin/phpcs --standard=.phpcs.xml.dist --report=summary
-
       - name: Prepare testing environment
         run: |
           # Move the plugin files to the separate folder

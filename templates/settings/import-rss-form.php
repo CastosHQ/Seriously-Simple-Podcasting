@@ -1,35 +1,24 @@
 <?php
 /**
- * Import RSS form template.
- *
- * @package Seriously Simple Podcasting
- *
  * @see Settings_Controller::render_external_import_form()
  *
  * @var array $post_types
  * @var array $series
- */
+ * */
 ?>
 
 <div class="ssp-settings ssp-settings-import">
 	<h2><?php esc_html_e( 'Import External RSS Feed', 'seriously-simple-podcasting' ); ?></h2>
 
-	<p>
-	<?php
-	esc_html_e(
-		'If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
-	the RSS Feed in the form below and the plugin will import the episodes for you.',
-		'seriously-simple-podcasting'
-	);
-	?>
-	</p>
+	<p><?php esc_html_e( 'If you have a podcast hosted on an external service (like Libsyn, Soundcloud or Simplecast) enter the url to
+	the RSS Feed in the form below and the plugin will import the episodes for you.', 'seriously-simple-podcasting' ); ?></p>
 	<table class="form-table">
 		<tbody>
 		<tr>
 			<th scope="row"><?php esc_html_e( 'RSS feed', 'seriously-simple-podcasting' ); ?></th>
 			<td>
 				<input id="external_rss" name="external_rss" type="text" placeholder="https://externalservice.com/rss"
-						value="" class="regular-text">
+					   value="" class="regular-text">
 			</td>
 		</tr>
 		<?php if ( count( $post_types ) > 1 ) { ?>
@@ -70,6 +59,6 @@
 	</table>
 	<p class="submit">
 		<input id="ssp-settings-submit" name="Submit" type="submit" class="button-primary"
-				value="<?php echo esc_attr( __( 'Begin Import Now', 'seriously-simple-podcasting' ) ); ?>"/>
+			   value="<?php echo esc_attr( __( 'Begin Import Now', 'seriously-simple-podcasting' ) ) ?>"/>
 	</p>
 </div>

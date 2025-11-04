@@ -10,8 +10,7 @@
  * @var \SeriouslySimplePodcasting\Controllers\Players_Controller $player
  * */
 
-while ( $episodes_query->have_posts() ) :
-	$episodes_query->the_post();
+while ( $episodes_query->have_posts() ) : $episodes_query->the_post();
 
 	$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
 
@@ -27,41 +26,38 @@ while ( $episodes_query->have_posts() ) :
 				<?php echo esc_html( get_the_title() ); ?>
 			</a>
 		</h2>
-		<div class="podcast-content">
-			<?php if ( 'yes' === $show_featured_image ) { ?>
-				<a class="podcast-image-link" href="<?php echo esc_url( get_permalink() ); ?>" aria-hidden="true"
-					tabindex="-1">
-					<?php echo get_the_post_thumbnail( get_the_ID(), 'full' ); ?>
-				</a>
-			<?php } ?>
-			<?php
-			if ( 'yes' === $show_episode_player ) {
-				echo $media_player;
-			}
-			?>
-			<?php if ( 'yes' === $show_episode_excerpt ) { ?>
-				<p><?php echo wp_kses_post( get_the_excerpt( get_the_ID() ) ); ?></p>
-			<?php } ?>
-		</div>
+        <div class="podcast-content">
+            <?php if ( 'yes' === $show_featured_image ) { ?>
+                <a class="podcast-image-link" href="<?php echo esc_url( get_permalink() ); ?>" aria-hidden="true"
+                   tabindex="-1">
+                    <?php echo get_the_post_thumbnail( get_the_ID(), 'full' ); ?>
+                </a>
+            <?php } ?>
+            <?php if ( 'yes' === $show_episode_player ) {
+                echo $media_player;
+            } ?>
+            <?php if ( 'yes' === $show_episode_excerpt ) { ?>
+                <p><?php echo wp_kses_post( get_the_excerpt( get_the_ID() ) ); ?></p>
+            <?php } ?>
+        </div>
 	</article>
-	<?php
+<?php
 endwhile;
 
 $total_pages = $episodes_query->max_num_pages;
 
 if ( $total_pages > 1 ) {
+
 	$current_page = max( 1, get_query_var( 'paged' ) );
 
-	echo paginate_links(
-		array(
-			'base'      => get_pagenum_link() . '%_%',
-			'format'    => '/page/%#%',
-			'current'   => $current_page,
-			'total'     => $total_pages,
-			'prev_text' => __( '« prev' ),
-			'next_text' => __( 'next »' ),
-		)
-	);
+	echo paginate_links( array(
+		'base'      => get_pagenum_link() . '%_%',
+		'format'    => '/page/%#%',
+		'current'   => $current_page,
+		'total'     => $total_pages,
+		'prev_text' => __( '« prev' ),
+		'next_text' => __( 'next »' ),
+	) );
 }
 
 wp_reset_postdata();

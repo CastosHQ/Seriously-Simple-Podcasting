@@ -55,8 +55,7 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
  * @param array $podcasts Array of podcast data
  * @param int   $columns  Number of columns in the grid
  */
-do_action( 'ssp/podcast_list/before', $podcasts, $columns );
-?>
+do_action( 'ssp/podcast_list/before', $podcasts, $columns ); ?>
 
 <div class="ssp-podcasts <?php echo esc_attr( $columns_class ); ?>" role="region" aria-label="<?php esc_attr_e( 'Podcast List', 'seriously-simple-podcasting' ); ?>"<?php echo ! empty( $css_vars ) ? ' style="' . esc_attr( $css_vars ) . '"' : ''; ?>>
 	<?php foreach ( $podcasts as $index => $podcast ) : ?>
@@ -75,8 +74,7 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns );
 		 * @param array $podcast Podcast data array
 		 * @param int   $index   Current podcast index in the loop
 		 */
-		do_action( 'ssp/podcast_list/card/before', $podcast, $index );
-		?>
+		do_action( 'ssp/podcast_list/card/before', $podcast, $index ); ?>
 		<div class="<?php echo esc_attr( $wrapper_class ); ?>" role="article">
 			<?php if ( $card_is_clickable ) : ?>
 				<!-- Absolutely positioned link that covers the entire card -->
@@ -91,8 +89,7 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns );
 			 * @param array $podcast Podcast data array
 			 * @param int   $index   Current podcast index in the loop
 			 */
-			do_action( 'ssp/podcast_list/image/before', $podcast, $index );
-			?>
+			do_action( 'ssp/podcast_list/image/before', $podcast, $index ); ?>
 			<div class="ssp-podcast-image" role="img" aria-label="<?php echo esc_attr( sprintf( __( 'Cover image for %s', 'seriously-simple-podcasting' ), $podcast_name ) ); ?>">
 				<?php if ( $cover_image ) : ?>
 					<img src="<?php echo esc_url( $cover_image ); ?>" 
@@ -110,8 +107,7 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns );
 			 * @param array $podcast Podcast data array
 			 * @param int   $index   Current podcast index in the loop
 			 */
-			do_action( 'ssp/podcast_list/image/after', $podcast, $index );
-			?>
+			do_action( 'ssp/podcast_list/image/after', $podcast, $index ); ?>
 			
 			<?php
 			/**
@@ -119,8 +115,7 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns );
 			 * @param array $podcast Podcast data array
 			 * @param int   $index   Current podcast index in the loop
 			 */
-			do_action( 'ssp/podcast_list/content/before', $podcast, $index );
-			?>
+			do_action( 'ssp/podcast_list/content/before', $podcast, $index ); ?>
 			<div class="ssp-podcast-content">
 				<div class="ssp-podcast-header">
 					<?php if ( $title_is_clickable ) : ?>
@@ -150,23 +145,14 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns );
 				
 				<?php if ( $show_button && ! empty( $podcast_url ) ) : ?>
 					<?php if ( ! $card_is_clickable ) : ?>
-						<a href="
-						<?php
-						echo esc_url( $podcast_url );
-						?>
-						" class="ssp-listen-now-button" aria-label="
-						<?php
-						echo esc_attr( sprintf( __( 'Listen to %s podcast', 'seriously-simple-podcasting' ), $podcast_name ) );
-						?>
-						">
+						<a href="<?php echo esc_url( $podcast_url ); 
+						?>" class="ssp-listen-now-button" aria-label="<?php 
+						echo esc_attr( sprintf( __( 'Listen to %s podcast', 'seriously-simple-podcasting' ), $podcast_name ) ); ?>">
 					<?php endif; ?>
 						<span class="ssp-listen-now-button-content">
 							<?php echo esc_html( $button_text ); ?> →
 						</span>
-					<?php
-					if ( ! $card_is_clickable ) :
-						?>
-						</a><?php endif; ?>
+					<?php if ( ! $card_is_clickable ) : ?></a><?php endif; ?>
 				<?php endif; ?>
 			</div>
 			<?php
@@ -175,8 +161,7 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns );
 			 * @param array $podcast Podcast data array
 			 * @param int   $index   Current podcast index in the loop
 			 */
-			do_action( 'ssp/podcast_list/content/after', $podcast, $index );
-			?>
+			do_action( 'ssp/podcast_list/content/after', $podcast, $index ); ?>
 		</div>
 		<?php
 		/**
@@ -184,8 +169,7 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns );
 		 * @param array $podcast Podcast data array
 		 * @param int   $index   Current podcast index in the loop
 		 */
-		do_action( 'ssp/podcast_list/card/after', $podcast, $index );
-		?>
+		do_action( 'ssp/podcast_list/card/after', $podcast, $index ); ?>
 	<?php endforeach; ?>
 </div>
 

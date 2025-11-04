@@ -2,7 +2,7 @@
 /**
  * Widget select field template.
  *
- * @package Seriously Simple Podcasting
+ * @package SeriouslySimplePodcasting
  *
  * @var string $id
  * @var string $field_id
@@ -15,7 +15,7 @@
 
 ?>
 <p><label for="<?php echo esc_attr( $field_id ); ?>"><?php echo esc_html( $label ); ?></label>
-	<select id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $field_name ); ?>">		
+    <select id="<?php echo esc_attr( $field_id ); ?>" name="<?php echo esc_attr( $field_name ); ?>">		
 		<?php if ( $placeholder ) : ?>
 			<option value=""><?php _e( $placeholder, 'seriously-simple-podcasting' ); ?></option>
 		<?php endif; ?>

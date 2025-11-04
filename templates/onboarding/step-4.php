@@ -19,7 +19,7 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 ?>
 
 <div class="ssp-onboarding ssp-onboarding-step-4">
-	<?php require __DIR__ . '/steps-header.php'; ?>
+	<?php include __DIR__ . '/steps-header.php'; ?>
 
 	<div class="ssp-onboarding__settings">
 		<div class="ssp-onboarding__settings-header">
@@ -33,22 +33,22 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 		<div class="ssp-onboarding-step-4__info">
 			<div class="ssp-onboarding-step-4__sync-img">
 				<a href="<?php echo $trial_url; ?>">
-					<img alt="<?php _e( 'Sync between SSP and Castos', 'seriously-simple-podcasting' ); ?>"
-						src="<?php echo SSP_PLUGIN_URL . '/assets/admin/img/onboarding-sync.svg'; ?>">
+					<img alt="<?php _e( 'Sync between SSP and Castos', 'seriously-simple-podcasting' ) ?>"
+						 src="<?php echo SSP_PLUGIN_URL . '/assets/admin/img/onboarding-sync.svg'; ?>">
 				</a>
 			</div>
 			<div class="ssp-onboarding-step-4__benefits">
 				<h2><?php _e( 'Benefits of connecting SSP to your Castos account', 'seriously-simple-podcasting' ); ?></h2>
 				<ul>
 					<?php foreach ( $benefits as $benefit ) : ?>
-						<?php $benefit = preg_replace( '/\*\*(.+)\*\*/sU', '<b>$1</b>', $benefit ); ?>
+						<?php $benefit = preg_replace('/\*\*(.+)\*\*/sU', '<b>$1</b>', $benefit); ?>
 						<li><?php echo $benefit; ?></li>
 					<?php endforeach; ?>
 				</ul>
 			</div>
 			<div class="ssp-onboarding-step-4__start-trial">
 				<a target="_blank" rel="noopener" href="<?php echo $trial_url; ?>">
-					<?php _e( 'Start Free Trial on Castos', 'seriously-simple-podcasting' ); ?>
+					<?php _e( 'Start Free Trial on Castos', 'seriously-simple-podcasting' ) ?>
 					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
 						<path d="M21.5 12H3.5M14.5 5L21.5 12L14.5 5ZM21.5 12L14.5 19L21.5 12Z" stroke="#F3C2C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 					</svg>
@@ -56,7 +56,7 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 			</div>
 		</div>
 		<div class="ssp-onboarding-step-4__accordion js-accordion">
-			<span><?php _e( 'Enter my API details to connect Castos', 'seriously-simple-podcasting' ); ?></span>
+			<span><?php _e( 'Enter my API details to connect Castos', 'seriously-simple-podcasting' ) ?></span>
 		</div>
 		<div class="ssp-onboarding-step-4__form js-hosting-form">
 			<div class="ssp-onboarding__hosting-steps">
@@ -82,37 +82,30 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 					</a>
 				</div>
 			</div>
-			<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ]; ?>" method="post">
+			<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
 				<div class="ssp-onboarding__settings-item">
 					<h2><?php _e( 'Castos API Token', 'seriously-simple-podcasting' ); ?></h2>
 					<label for="podmotor_account_api_token" class="description">
 						<?php _e( 'Available from your Castos account dashboard.', 'seriously-simple-podcasting' ); ?>
 					</label>
-					<input id="podmotor_account_api_token" type="text" class="js-onboarding-castos-connect-field" name="podmotor_account_api_token" value="<?php echo $podmotor_account_api_token; ?>" <?php disabled( (bool) $podmotor_account_api_token ); ?>>
+					<input id="podmotor_account_api_token" type="text" class="js-onboarding-castos-connect-field" name="podmotor_account_api_token" value="<?php echo $podmotor_account_api_token ?>" <?php disabled( !! $podmotor_account_api_token ) ?>>
 				</div>
 
 				<div class="ssp-onboarding__submit">
 					<?php wp_nonce_field( 'ssp_onboarding_' . $step_number, 'nonce', false ); ?>
-					<button id="castos-connect" type="button" class="button castos-connect js-onboarding-castos-connect 
-					<?php
-					if ( $podmotor_account_api_token ) :
-						?>
-						connected<?php endif ?>" data-connected-txt="<?php _e( 'Connected', 'seriously-simple-podcasting' ); ?>" data-connecting-txt="
-					<?php
-						_e( 'Connecting Castos', 'seriously-simple-podcasting' )
-					?>
-					" data-no-reload="true" data-initial-txt="<?php _e( 'Connect Castos', 'seriously-simple-podcasting' ); ?>" disabled >
-						<?php echo $podmotor_account_api_token ? __( 'Connected', 'seriously-simple-podcasting' ) : __( 'Connect Castos', 'seriously-simple-podcasting' ); ?>
+					<button id="castos-connect" type="button" class="button castos-connect js-onboarding-castos-connect <?php if( $podmotor_account_api_token ) : ?>connected<?php endif ?>" data-connected-txt="<?php _e('Connected', 'seriously-simple-podcasting') ?>" data-connecting-txt="<?php
+						_e('Connecting Castos', 'seriously-simple-podcasting') ?>" data-no-reload="true" data-initial-txt="<?php _e('Connect Castos', 'seriously-simple-podcasting') ?>" disabled >
+						<?php echo $podmotor_account_api_token ? __('Connected', 'seriously-simple-podcasting') : __( 'Connect Castos', 'seriously-simple-podcasting' ) ?>
 					</button>
 					<?php wp_nonce_field( 'ss_podcasting_castos-hosting', 'podcast_settings_tab_nonce', false ); ?>
-					<button type="submit" <?php disabled( ! $podmotor_account_api_token ); ?>><?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?></button>
+					<button type="submit" <?php disabled( ! $podmotor_account_api_token ) ?>><?php _e( 'Proceed', 'seriously-simple-podcasting' ); ?></button>
 					<span class="connect-castos-message"></span>
 				</div>
 			</form>
 		</div>
 	</div>
 	<div class="ssp-onboarding-step-4__skip-step">
-		<a href="<?php echo $step_urls[5]; ?>"><?php _e( 'Skip Step', 'seriously-simple-podcasting' ); ?></a>
+		<a href="<?php echo $step_urls[ 5 ] ?>"><?php _e( 'Skip Step', 'seriously-simple-podcasting' ); ?></a>
 	</div>
-	<?php require __DIR__ . '/steps-footer.php'; ?>
+	<?php include __DIR__ . '/steps-footer.php'; ?>
 </div>

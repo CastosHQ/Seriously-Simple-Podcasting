@@ -7,21 +7,12 @@
  * */
 ?>
 <p>
-	<label class="ssp-episode-details-label" for="<?php echo esc_attr( $k ); ?>">
-	<?php
-		echo wp_kses_post( $v['name'] )
-	?>
-	</label>
+	<label class="ssp-episode-details-label" for="<?php echo esc_attr( $k ) ?>"><?php
+		echo wp_kses_post( $v['name'] ) ?></label>
 	<br/>
-	<input name="<?php echo esc_attr( $k ); ?>" type="text" id="
-	<?php
-	echo esc_attr( $k )
-	?>
-	" class="ssp-sync ssp-field-
-	<?php
-	echo esc_attr( $k )
-	?>
-	<?php echo esc_attr( $class ); ?>" value="<?php echo esc_attr( $data ); ?>"/>
+	<input name="<?php echo esc_attr( $k ) ?>" type="text" id="<?php
+	echo esc_attr( $k ) ?>" class="ssp-sync ssp-field-<?php echo esc_attr( $k )
+	?> <?php echo esc_attr( $class ) ?>" value="<?php echo esc_attr( $data ) ?>"/>
 	<br/>
-	<span class="description"><?php echo wp_kses_post( $v['description'] ); ?></span>
+	<span class="description"><?php echo wp_kses_post( $v['description'] ) ?></span>
 </p>

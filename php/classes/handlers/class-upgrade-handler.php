@@ -43,8 +43,8 @@ class Upgrade_Handler implements Service {
 	 * Upgrade_Handler constructor.
 	 *
 	 * @param Episode_Repository $episode_repository Episode repository instance.
-	 * @param Castos_Handler    $castos_handler     Castos handler instance.
-	 * @param Series_Handler    $series_handler     Series handler instance.
+	 * @param Castos_Handler     $castos_handler     Castos handler instance.
+	 * @param Series_Handler     $series_handler     Series handler instance.
 	 */
 	public function __construct( $episode_repository, $castos_handler, $series_handler ) {
 		$this->episode_repository = $episode_repository;
@@ -139,7 +139,7 @@ class Upgrade_Handler implements Service {
 	 * Set sync status for multiple episodes.
 	 *
 	 * @param Failed_Sync_Episode[] $episodes Array of failed sync episodes.
-	 * @param string               $status   New sync status to set.
+	 * @param string                $status   New sync status to set.
 	 *
 	 * @return void
 	 */

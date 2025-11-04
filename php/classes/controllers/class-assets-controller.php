@@ -193,7 +193,7 @@ class Assets_Controller {
 		/**
 		 * Only load the import js when the import settings screen is loaded.
 		 */
-		if ( 'podcast_page_podcast_settings' === $hook && 'import' === filter_input( INPUT_GET, 'tab' ) ) {	
+		if ( 'podcast_page_podcast_settings' === $hook && 'import' === filter_input( INPUT_GET, 'tab' ) ) {
 			wp_register_script(
 				'ssp-import-rss',
 				esc_url( $this->assets_url . 'js/import.rss' . $this->script_suffix . '.js' ),
@@ -220,14 +220,14 @@ class Assets_Controller {
 		if ( ! $screen ) {
 			return false;
 		}
-		$ssp = ssp_post_types();
+		$ssp        = ssp_post_types();
 		$post_hooks = array( 'post.php', 'post-new.php', 'edit.php' );
-	
+
 		return (
 			( in_array( $screen->post_type, $ssp, true ) && in_array( $hook, $post_hooks, true ) ) ||
 			( false !== strpos( $hook, 'ssp-onboarding' ) ) ||
 			$this->is_ssp_admin_page() ||
 			( 'term.php' === $hook && ssp_series_taxonomy() === filter_input( INPUT_GET, 'taxonomy' ) )
-		);		
+		);
 	}
 }

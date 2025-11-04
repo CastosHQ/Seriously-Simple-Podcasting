@@ -97,9 +97,9 @@ class Players_Controller {
 	 */
 	public function get_ajax_playlist_items() {
 		// Validate and sanitize input parameters
-		$atts_raw = filter_input( INPUT_GET, 'atts', FILTER_UNSAFE_RAW );
-		$page_raw = filter_input( INPUT_GET, 'page', FILTER_VALIDATE_INT );
-		$nonce = filter_input( INPUT_GET, 'nonce', FILTER_UNSAFE_RAW );
+		$atts_raw      = filter_input( INPUT_GET, 'atts', FILTER_UNSAFE_RAW );
+		$page_raw      = filter_input( INPUT_GET, 'page', FILTER_VALIDATE_INT );
+		$nonce         = filter_input( INPUT_GET, 'nonce', FILTER_UNSAFE_RAW );
 		$player_id_raw = filter_input( INPUT_GET, 'player_id', FILTER_UNSAFE_RAW );
 
 		// Validate required parameters
@@ -109,7 +109,7 @@ class Players_Controller {
 
 		// Sanitize and validate atts
 		$atts_raw = sanitize_text_field( $atts_raw );
-		$atts = json_decode( $atts_raw, true );
+		$atts     = json_decode( $atts_raw, true );
 		if ( ! is_array( $atts ) ) {
 			wp_send_json_error( array( 'message' => 'Invalid attributes format' ) );
 		}
@@ -137,7 +137,7 @@ class Players_Controller {
 			wp_send_json_error( array( 'message' => 'Failed to retrieve episodes' ) );
 		}
 
-		$items = array();
+		$items        = array();
 		$allowed_keys = array(
 			'episode_id',
 			'album_art',
@@ -161,7 +161,7 @@ class Players_Controller {
 
 			// Filter to allowed keys and escape output
 			$filtered_data = array_intersect_key( $player_data, array_flip( $allowed_keys ) );
-			
+
 			// Escape all string values
 			foreach ( $filtered_data as $key => $value ) {
 				if ( is_string( $value ) ) {

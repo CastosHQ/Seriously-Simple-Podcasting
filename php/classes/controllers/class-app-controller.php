@@ -851,7 +851,7 @@ class App_Controller {
 			isset( $_GET['nonce'] ) &&
 			wp_verify_nonce( $_GET['nonce'], 'podcast_import_action' ) &&
 			current_user_can( 'manage_podcast' )
-		) {	
+		) {
 			update_option( 'ss_podcasting_podmotor_import_podcasts', 'false' );
 		}
 	}
@@ -964,7 +964,7 @@ class App_Controller {
 	public function dismiss_categories_update() {
 		// Check if the ssp_dismiss_categories_update variable exists
 		$ssp_dismiss_categories_update = ( isset( $_GET['ssp_dismiss_categories_update'] ) ? sanitize_text_field( $_GET['ssp_dismiss_categories_update'] ) : '' );
-		
+
 		if (
 			! $ssp_dismiss_categories_update ||
 			! isset( $_GET['nonce'] ) ||

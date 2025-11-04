@@ -361,7 +361,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		// Handle post_status: if Castos authenticated, include private episodes in query
 			$args['post_status'] = $this->get_post_status_for_query( $request, $castos_authenticated );
 
-		$args['s']                   = $request['search'];
+		$args['s'] = $request['search'];
 
 		$args['date_query'] = array();
 		// Set before into date query. Date query must be specified as an array

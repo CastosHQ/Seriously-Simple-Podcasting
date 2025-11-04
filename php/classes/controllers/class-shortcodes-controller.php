@@ -60,5 +60,4 @@ class Shortcodes_Controller extends Controller {
 		add_shortcode( 'podcast_playlist', array( new Podcast_Playlist(), 'shortcode' ) );
 		add_shortcode( 'ssp_podcasts', array( new Podcast_List(), 'shortcode' ) );
 	}
-
 }

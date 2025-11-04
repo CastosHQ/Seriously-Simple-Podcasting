@@ -319,7 +319,7 @@ class Castos_Blocks {
 
 		$this->register_podcast_list();
 		$this->register_playlist_player();
-		(new Ssp_Podcasts_Block())->register();
+		( new Ssp_Podcasts_Block() )->register();
 	}
 
 

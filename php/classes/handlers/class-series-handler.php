@@ -77,10 +77,10 @@ class Series_Handler implements Service {
 	 * Series_Handler constructor.
 	 *
 	 * @param Admin_Notifications_Handler $notices_handler     Admin notifications handler instance.
-	 * @param Roles_Handler              $roles_handler       Roles handler instance.
-	 * @param Castos_Handler             $castos_handler      Castos handler instance.
-	 * @param Settings_Handler           $settings_handler    Settings handler instance.
-	 * @param Episode_Repository         $episode_repository  Episode repository instance.
+	 * @param Roles_Handler               $roles_handler       Roles handler instance.
+	 * @param Castos_Handler              $castos_handler      Castos handler instance.
+	 * @param Settings_Handler            $settings_handler    Settings handler instance.
+	 * @param Episode_Repository          $episode_repository  Episode repository instance.
 	 */
 	public function __construct( $notices_handler, $roles_handler, $castos_handler, $settings_handler, $episode_repository ) {
 		$this->notices_handler    = $notices_handler;

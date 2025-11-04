@@ -1726,7 +1726,7 @@ if ( ! function_exists( 'ssp_get_podcasts' ) ) {
 		// Allow filtering of the arguments before querying.
 		$args = apply_filters( 'ssp_get_podcasts_args', $args, $hide_empty, $additional_args );
 
-		$taxonomy    = ssp_series_taxonomy();
+		$taxonomy = ssp_series_taxonomy();
 		// Create cache key based on taxonomy + filtered arguments.
 		$cache_key   = 'ssp_podcasts_' . $taxonomy . '_' . md5( serialize( $args ) );
 		$cache_group = 'ssp';

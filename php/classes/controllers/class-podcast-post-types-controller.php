@@ -540,7 +540,7 @@ class Podcast_Post_Types_Controller {
 
 	/**
 	 * Checks if the post is a podcast post type and has a valid nonce.
-	 * 
+	 *
 	 * @param \WP_Post $post
 	 *
 	 * @return bool
@@ -565,15 +565,15 @@ class Podcast_Post_Types_Controller {
 
 	/**
 	 * Handle enclosure update for podcast episodes
-	 * 
+	 *
 	 * @param \WP_Post $post      Post object.
 	 * @param string   $enclosure New enclosure URL.
 	 *
 	 * @return void
 	 */
 	public function handle_enclosure_update( $post, $enclosure ) {
-		$post_id = $post->ID;
-		$old_enclosure = get_post_meta( $post_id, 'audio_file', true );
+		$post_id              = $post->ID;
+		$old_enclosure        = get_post_meta( $post_id, 'audio_file', true );
 		$is_enclosure_updated = $old_enclosure !== $enclosure;
 
 		// Update recorded date if enclosure changed or date is empty
@@ -633,9 +633,9 @@ class Podcast_Post_Types_Controller {
 
 		// Create deterministic GUID from stable episode data
 		$episode_data = get_site_url() . '|' . $episode->post_date . '|' . $episode->post_title;
-		
+
 		$guid = UUID_Handler::v5( Feed_Handler::EPISODE_NAMESPACE_UUID, $episode_data );
-		
+
 		// Save the GUID
 		update_post_meta( $post_id, 'ssp_guid', $guid );
 	}

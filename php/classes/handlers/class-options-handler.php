@@ -125,6 +125,7 @@ class Options_Handler implements Service {
 
 	/**
 	 * Builds the array of field settings for the subscribe links, based on the options stored in the options table.
+	 *
 	 * @todo This is duplicated from the settings handler, so it should probably be placed in its own class somewhere.
 	 *
 	 * @return array

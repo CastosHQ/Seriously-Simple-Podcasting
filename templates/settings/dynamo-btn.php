@@ -12,7 +12,9 @@
 <span class="ssp-dynamo__container">
 	<span class="ssp-dynamo__description"><?php echo esc_html( $description ); ?></span>
 	<a class="ssp-dynamo__btn" target="_blank" rel="noopener noreferrer"
-		href="<?php echo esc_url(
+		href="
+		<?php
+		echo esc_url(
 			add_query_arg(
 				array(
 					'utm_source'   => 'WordPress',
@@ -23,7 +25,9 @@
 				),
 				'https://dynamo.castos.com/podcast-covers'
 			)
-		); ?>">
+		);
+		?>
+		">
 	<span class="ssp-dynamo__arrow-up"><?php esc_html_e( 'Dynamo', 'seriously-simple-podcasting' ); ?></span>
 	</a>
 </span>

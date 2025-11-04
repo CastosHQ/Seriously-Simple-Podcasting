@@ -194,8 +194,8 @@ class Rest_Api_Controller {
 	 * Works for both custom SSP endpoints and WordPress core REST API endpoints.
 	 *
 	 * @param \WP_REST_Response $response Response data object.
-	 * @param \WP_Post         $post     Post object.
-	 * @param \WP_REST_Request $request  Request object.
+	 * @param \WP_Post          $post     Post object.
+	 * @param \WP_REST_Request  $request  Request object.
 	 *
 	 * @return \WP_REST_Response Modified response.
 	 */

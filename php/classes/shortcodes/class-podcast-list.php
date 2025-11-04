@@ -95,7 +95,7 @@ class Podcast_List implements Shortcode {
 	 * @param  array $params  Shortcode attributes.
 	 * @return string          HTML output
 	 */
-    public function shortcode( $params ) {
+	public function shortcode( $params ) {
 		$defaults = array(
 			'ids'                 => '',
 			'columns'             => 1,
@@ -118,7 +118,7 @@ class Podcast_List implements Shortcode {
 			'description_color'   => '#6c757d',
 		);
 
-        $args = shortcode_atts( $defaults, $params, 'ssp_podcasts' );
+		$args = shortcode_atts( $defaults, $params, 'ssp_podcasts' );
 
 		// Enqueue CSS only when shortcode is used.
 		$this->enqueue_assets();
@@ -157,7 +157,7 @@ class Podcast_List implements Shortcode {
 		$columns_class = 'ssp-podcasts-columns-' . $columns;
 
 		// Get podcasts based on IDs parameter.
-        $podcasts = $this->get_podcasts( $args['ids'], $sort_by, $sort );
+		$podcasts = $this->get_podcasts( $args['ids'], $sort_by, $sort );
 
 		// Process descriptions with truncation if needed.
 		if ( $show_description && ( $description_words > 0 || $description_chars > 0 ) ) {
@@ -204,18 +204,18 @@ class Podcast_List implements Shortcode {
 	 * @param string $sort    Sort direction (asc, desc).
 	 * @return array Array of podcast data.
 	 */
-    private function get_podcasts( $ids = '', $sort_by = 'id', $sort = 'asc' ) {
-        // If specific IDs provided
-        if ( ! empty( $ids ) ) {
-            $podcasts_data = $this->get_podcasts_by_ids( $ids, $sort_by, $sort );
+	private function get_podcasts( $ids = '', $sort_by = 'id', $sort = 'asc' ) {
+		// If specific IDs provided
+		if ( ! empty( $ids ) ) {
+			$podcasts_data = $this->get_podcasts_by_ids( $ids, $sort_by, $sort );
 
-            // Episode count sorting is not supported by DB ordering; sort in PHP
-            if ( 'episode_count' === $sort_by ) {
-                $podcasts_data = $this->sort_podcasts( $podcasts_data, $sort_by, $sort );
-            }
+			// Episode count sorting is not supported by DB ordering; sort in PHP
+			if ( 'episode_count' === $sort_by ) {
+				$podcasts_data = $this->sort_podcasts( $podcasts_data, $sort_by, $sort );
+			}
 
-            return $podcasts_data;
-        }
+			return $podcasts_data;
+		}
 
 		// Prepare additional arguments for get_terms() based on sort_by parameter.
 		$additional_args = array();
@@ -248,7 +248,7 @@ class Podcast_List implements Shortcode {
 	 * @param string $ids Comma-separated podcast IDs.
 	 * @return array Array of podcast data in the exact order of provided IDs.
 	 */
-    private function get_podcasts_by_ids( $ids, $sort_by = 'id', $sort = 'asc' ) {
+	private function get_podcasts_by_ids( $ids, $sort_by = 'id', $sort = 'asc' ) {
 		if ( empty( $ids ) ) {
 			return array();
 		}
@@ -260,24 +260,24 @@ class Podcast_List implements Shortcode {
 			return array();
 		}
 
-        // Get podcasts by specific IDs using include; choose order strategy based on sort_by
-        $additional_args = array(
-            'include' => $podcast_ids,
-        );
+		// Get podcasts by specific IDs using include; choose order strategy based on sort_by
+		$additional_args = array(
+			'include' => $podcast_ids,
+		);
 
-        $orderby_map = array(
-            'id'   => 'term_id',
-            'name' => 'name',
-        );
+		$orderby_map = array(
+			'id'   => 'term_id',
+			'name' => 'name',
+		);
 
-        if ( isset( $orderby_map[ $sort_by ] ) ) {
-            $additional_args['orderby'] = $orderby_map[ $sort_by ];
-            $additional_args['order']   = strtoupper( $sort ) === 'ASC' ? 'ASC' : 'DESC';
-        } else {
-            // Default to include order when not sorting by DB-supported fields
-            $additional_args['orderby'] = 'include';
-        }
-		$podcasts        = ssp_get_podcasts( false, $additional_args );
+		if ( isset( $orderby_map[ $sort_by ] ) ) {
+			$additional_args['orderby'] = $orderby_map[ $sort_by ];
+			$additional_args['order']   = strtoupper( $sort ) === 'ASC' ? 'ASC' : 'DESC';
+		} else {
+			// Default to include order when not sorting by DB-supported fields
+			$additional_args['orderby'] = 'include';
+		}
+		$podcasts = ssp_get_podcasts( false, $additional_args );
 
 		// Process each podcast into our data structure.
 		return $this->process_podcasts_data( $podcasts );

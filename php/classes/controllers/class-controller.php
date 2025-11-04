@@ -92,7 +92,7 @@ abstract class Controller {
 	 * @var string
 	 */
 	public $token;
-	
+
 	/**
 	 * Version
 	 *

@@ -140,7 +140,7 @@ class Ssp_Podcasts_Block {
 		}
 
 		$shortcode_params = array();
-		$is_manual_sort = isset( $attributes['sort_by'] ) && 'manual' === $attributes['sort_by'];
+		$is_manual_sort   = isset( $attributes['sort_by'] ) && 'manual' === $attributes['sort_by'];
 
 		foreach ( $attributes as $key => $value ) {
 			if ( ! $this->is_attribute_allowed( $key ) ) {
@@ -242,9 +242,14 @@ class Ssp_Podcasts_Block {
 		$ids_array = array_map( 'strval', $value );
 
 		if ( $is_manual_sort ) {
-			$ids_array = array_values( array_filter( $ids_array, function ( $v ) {
-				return '' !== $v && '-1' !== $v;
-			} ) );
+			$ids_array = array_values(
+				array_filter(
+					$ids_array,
+					function ( $v ) {
+						return '' !== $v && '-1' !== $v;
+					}
+				)
+			);
 		}
 
 		if ( empty( $ids_array ) ) {
@@ -289,5 +294,3 @@ class Ssp_Podcasts_Block {
 		);
 	}
 }
-
-

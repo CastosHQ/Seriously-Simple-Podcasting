@@ -37,64 +37,85 @@
 	<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
 <?php
 
-if ( $itunes_episode_type ) : ?>
+if ( $itunes_episode_type ) :
+	?>
 	<itunes:episodeType><?php echo $itunes_episode_type; ?></itunes:episodeType>
-<?php endif;
+	<?php
+endif;
 
-if ( $itunes_title ): ?>
+if ( $itunes_title ) :
+	?>
 	<itunes:title><![CDATA[<?php echo $itunes_title; ?>]]></itunes:title>
-<?php endif;
+	<?php
+endif;
 
-if ( $itunes_episode_number ): ?>
+if ( $itunes_episode_number ) :
+	?>
 	<itunes:episode><?php echo $itunes_episode_number; ?></itunes:episode>
-<?php endif;
+	<?php
+endif;
 
-if ( $itunes_season_number ): ?>
+if ( $itunes_season_number ) :
+	?>
 	<itunes:season><?php echo $itunes_season_number; ?></itunes:season>
-<?php endif;
+	<?php
+endif;
 
-if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) : ?>
+if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) :
+	?>
 	<content:encoded><![CDATA[<?php echo $description; ?>]]></content:encoded>
-<?php endif;
+	<?php
+endif;
 
 ?>
 	<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 <?php
 
-if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) : ?>
+if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) :
+	?>
 	<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
-<?php endif;
+	<?php
+endif;
 
-if ( $episode_image ) : ?>
+if ( $episode_image ) :
+	?>
 	<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
 	<image>
 		<url><?php echo esc_url( $episode_image ); ?></url>
 		<title><?php echo esc_attr( $title ); ?></title>
 	</image>
-<?php endif;
+	<?php
+endif;
 
 ?>
 	<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
 	<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
 	<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
-	<itunes:author><![CDATA[<?php echo $author; ?>]]></itunes:author><?php
+	<itunes:author><![CDATA[<?php echo $author; ?>]]></itunes:author>
+	<?php
 
-if ( ! $turbo_post_count ) : ?>
+	if ( ! $turbo_post_count ) :
+		?>
 	<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
-<?php endif;
+		<?php
+	endif;
 
-if ( $episode_image ) : ?>
+	if ( $episode_image ) :
+		?>
 	<googleplay:image href="<?php echo esc_url( $episode_image ); ?>"></googleplay:image>
-<?php endif;
+		<?php
+	endif;
 
-?>
+	?>
 	<googleplay:explicit><?php echo esc_html( $googleplay_explicit_flag ); ?></googleplay:explicit>
 	<googleplay:block><?php echo esc_html( $block_flag ); ?></googleplay:block>
 <?php
 
-if ( $transcript_url && $transcript_mime ) : ?>
-	<podcast:transcript url="<?php echo esc_url( $transcript_url ) ?>" type="<?php echo esc_attr( $transcript_mime ) ?>"/>
-<?php endif;
+if ( $transcript_url && $transcript_mime ) :
+	?>
+	<podcast:transcript url="<?php echo esc_url( $transcript_url ); ?>" type="<?php echo esc_attr( $transcript_mime ); ?>"/>
+	<?php
+endif;
 
 ?>
 </item>

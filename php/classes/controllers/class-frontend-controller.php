@@ -849,19 +849,17 @@ class Frontend_Controller {
 	protected function check_episode_file_access( $episode_id, $episode ) {
 		// Make sure we have a valid episode post object
 		if ( ! $episode || ! is_object( $episode ) || is_wp_error( $episode ) || ! isset( $episode->ID ) ) {
-			// Return 404 to hide episode existence
 			status_header( 404 );
 			nocache_headers();
-			return false;
+			wp_die( esc_html__( 'Episode not found.', 'seriously-simple-podcasting' ), '', array( 'response' => 404 ) );
 		}
 
 		// Check if episode is a valid podcast post type
 		$podcast_post_types = ssp_post_types();
 		if ( ! in_array( $episode->post_type, $podcast_post_types, true ) ) {
-			// Invalid post type - return 404 to hide existence
 			status_header( 404 );
 			nocache_headers();
-			return false;
+			wp_die( esc_html__( 'Episode not found.', 'seriously-simple-podcasting' ), '', array( 'response' => 404 ) );
 		}
 
 		// Check post status and user authorization

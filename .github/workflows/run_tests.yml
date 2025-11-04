@@ -44,9 +44,7 @@ jobs:
           node-version: '18'
 
       - name: Run PHPCS (Code Quality Check)
-        run: |
-          cd wp-content/plugins/seriously-simple-podcasting
-          vendor/bin/phpcs --standard=.phpcs.xml.dist --report=summary
+        run: vendor/bin/phpcs --standard=.phpcs.xml.dist --report=summary
 
       - name: Prepare testing environment
         run: |

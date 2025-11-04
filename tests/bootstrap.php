@@ -14,12 +14,22 @@ if ( ! defined( 'WP_TESTS_DIR' ) ) {
 }
 
 if ( ! defined( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH' ) ) {
-	define( 'WP_TESTS_POLYFILLS_PATH', dirname( __DIR__ ) . '/vendor/yoast/phpunit-polyfills/' );
+	define( 'WP_TESTS_PHPUNIT_POLYFILLS_PATH', dirname( __DIR__ ) . '/vendor/yoast/phpunit-polyfills/' );
 }
 
 // Load WordPress test functions
 if ( file_exists( WP_TESTS_DIR . 'includes/functions.php' ) ) {
 	require_once WP_TESTS_DIR . 'includes/functions.php';
+}
+
+// Load the plugin before WordPress finishes bootstrapping.
+if ( file_exists( dirname( __DIR__ ) . '/seriously-simple-podcasting.php' ) && function_exists( 'tests_add_filter' ) ) {
+	tests_add_filter(
+		'muplugins_loaded',
+		static function () {
+			require dirname( __DIR__ ) . '/seriously-simple-podcasting.php';
+		}
+	);
 }
 
 // Load WordPress test bootstrap
@@ -34,9 +44,4 @@ if ( file_exists( WP_TESTS_DIR . 'includes/abstract-testcase.php' ) ) {
 
 if ( file_exists( WP_TESTS_DIR . 'includes/testcase.php' ) ) {
 	require_once WP_TESTS_DIR . 'includes/testcase.php';
-}
-
-// Load the plugin
-if ( file_exists( dirname( __DIR__ ) . '/seriously-simple-podcasting.php' ) ) {
-	require_once dirname( __DIR__ ) . '/seriously-simple-podcasting.php';
 }

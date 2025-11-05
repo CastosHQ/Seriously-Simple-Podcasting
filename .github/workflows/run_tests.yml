@@ -69,7 +69,7 @@ jobs:
           grunt uglify && grunt cssmin && npm run build
 
       - name: Run Unit tests
-        run: cd wp-content/plugins/seriously-simple-podcasting && vendor/bin/codecept run wpunit
+        run: cd wp-content/plugins/seriously-simple-podcasting && vendor/bin/codecept run WPUnit
 
       - name: Run Acceptance tests
         run: |
@@ -89,7 +89,7 @@ jobs:
           wp theme activate twentytwentyfour --allow-root
           wp plugin install classic-editor --allow-root
           curl -I http://localhost:8000/wp-login.php
-          vendor/bin/codecept run acceptance --steps
+          vendor/bin/codecept run Acceptance --steps
 
       - name: Upload codeception output on failure
         if: failure()

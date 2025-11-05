@@ -27,7 +27,7 @@ Feature: Login
 
 		# Check XML elements
 		And I can see in source "<?xml version"
-		And I can see in source "<?xml-stylesheet type=\"text/xsl\" href=\"{{base_url}}/wp-content/plugins/seriously-simple-podcasting-public/templates/feed-stylesheet.xsl\"?>"
+		And I can see in source "<?xml-stylesheet type=\"text/xsl\" href=\"{{base_url}}/wp-content/plugins/seriously-simple-podcasting/templates/feed-stylesheet.xsl\"?>"
 		And I can see in source "<rss version=\"2.0\""
 		And I can see in source "xmlns:content=\"http://purl.org/rss/1.0/modules/content/\""
 		And I can see in source "xmlns:wfw=\"http://wellformedweb.org/CommentAPI/\""

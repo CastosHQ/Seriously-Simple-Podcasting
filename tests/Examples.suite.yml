@@ -1,0 +1,14 @@
+# Codeception Test Suite Configuration
+#
+# Suite for example/demo tests that show different testing patterns.
+
+actor: UnitTester
+modules:
+    enabled:
+        - Asserts
+step_decorators: ~
+
+
+
+
+

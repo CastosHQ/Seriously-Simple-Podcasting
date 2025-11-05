@@ -1,0 +1,22 @@
+actor: WPUnitTester
+suite_namespace: Tests\WPUnit
+modules:
+    enabled:
+        - WPLoader
+        - Asserts
+    config:
+        WPLoader:
+            wpRootFolder: "%TEST_WP_ROOT%"
+            dbName: "%TEST_DB_NAME%"
+            dbHost: "%TEST_DB_HOST%"
+            dbUser: "%TEST_DB_USER%"
+            dbPassword: "%TEST_DB_PASSWORD%"
+            domain: "%TEST_DOMAIN%"
+            tablePrefix: "test_"
+            adminEmail: "castostesting@castos.com"
+            title: "WordPress Test"
+            plugins: [ 'seriously-simple-podcasting/seriously-simple-podcasting.php' ]
+            activatePlugins: [ 'seriously-simple-podcasting/seriously-simple-podcasting.php' ]
+            installDb: true
+            loadOnly: false
+            populator: true

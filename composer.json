@@ -26,13 +26,13 @@
     "classmap": ["php/"]
   },
   "require-dev": {
-    "lucatume/wp-browser": "dev-master",
-    "codeception/codeception": "^5.0",
-    "codeception/module-phpbrowser": "^3.0",
-    "codeception/module-asserts": "^3.0",
-    "phpunit/phpunit": "^10.0",
     "squizlabs/php_codesniffer": "^3.13",
-    "wp-coding-standards/wpcs": "^3.2"
+    "wp-coding-standards/wpcs": "^3.2",
+    "phpunit/phpunit": "^9.6",
+    "yoast/phpunit-polyfills": "^2.0",
+    "codeception/codeception": "^5.0",
+    "lucatume/wp-browser": "^4.0",
+    "codeception/module-asserts": "^3.0"
   },
   "config": {
     "allow-plugins": {

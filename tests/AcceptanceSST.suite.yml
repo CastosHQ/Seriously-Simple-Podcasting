@@ -1,0 +1,24 @@
+# Codeception AcceptanceSST Test Suite Configuration
+#
+# Suite for acceptance tests that require Seriously Simple Transcripts plugin.
+# Perform tests in browser using the WebDriver or PhpBrowser.
+# These tests are separate from the main Acceptance suite because they require
+# the SST plugin to be installed and activated.
+
+actor: AcceptanceSSTTester
+bootstrap: ../_bootstrap.php
+modules:
+    enabled:
+        - PhpBrowser:
+        - \Tests\Support\Helper\Acceptance
+    config:
+      PhpBrowser:
+        url: '%SITE_URL%'
+        adminPath: '%SITE_URL%/wp-admin'
+        podcastGuid: '%PODCAST_GUID%'
+
+step_decorators:
+    - Codeception\Step\ConditionalAssertion
+    - Codeception\Step\TryTo
+    - Codeception\Step\Retry
+

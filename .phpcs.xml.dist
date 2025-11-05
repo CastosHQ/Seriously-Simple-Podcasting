@@ -5,10 +5,7 @@
 	<!-- What to scan -->
 	<file>.</file>
 	<exclude-pattern>/vendor/</exclude-pattern>
-	<exclude-pattern>/tests/</exclude-pattern>
 	<exclude-pattern>/node_modules/</exclude-pattern>
-	<exclude-pattern>/build/</exclude-pattern>
-	<exclude-pattern>/templates/</exclude-pattern>
 
 	<!-- How to scan -->
 	<!-- Usage instructions: https://github.com/squizlabs/PHP_CodeSniffer/wiki/Usage -->
@@ -21,41 +18,25 @@
 
 	<!-- Rules: Check PHP version compatibility -->
 	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
-	<config name="testVersion" value="8.1-"/>
-	<!-- Note: PHPCompatibilityWP removed from newer WordPress Coding Standards -->
+	<config name="testVersion" value="5.6-"/>
+	<!-- https://github.com/PHPCompatibility/PHPCompatibilityWP -->
+	<rule ref="PHPCompatibilityWP"/>
 
 	<!-- Rules: WordPress Coding Standards -->
 	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards -->
 	<!-- https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/wiki/Customizable-sniff-properties -->
 	<config name="minimum_supported_wp_version" value="4.6"/>
-	<rule ref="WordPress">
-		<!-- WordPress.VIP removed from newer WordPress Coding Standards -->
-	</rule>
+	<rule ref="WordPress"/>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
 			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-			<property name="prefixes" type="array">
-				<element key="0" value="seriously-simple-podcasting"/>
-				<element key="1" value="SSP"/>
-				<element key="2" value="SeriouslySimplePodcasting"/>
-				<element key="3" value="ssp"/>
-			</property>
+			<property name="prefixes" type="array" value="my-plugin"/>
 		</properties>
-		<!-- Exclude constants as SSP prefix is legacy and widely used -->
-		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedConstantFound"/>
-		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.ShortPrefixPassed"/>
-		<exclude name="WordPress.NamingConventions.PrefixAllGlobals.InvalidPrefixPassed"/>
-	</rule>
-	<rule ref="WordPress.NamingConventions.ValidHookName">
-		<!-- Allow custom hook naming convention with slashes for better organization -->
-		<exclude name="WordPress.NamingConventions.ValidHookName.UseUnderscores"/>
 	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
 			<!-- Value: replace the text domain used. -->
-			<property name="text_domain" type="array">
-				<element key="0" value="seriously-simple-podcasting"/>
-			</property>
+			<property name="text_domain" type="array" value="my-plugin"/>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">

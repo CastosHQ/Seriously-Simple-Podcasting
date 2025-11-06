@@ -2131,3 +2131,32 @@ if ( ! function_exists( 'ssp_episode_guid' ) ) {
 		return apply_filters( 'ssp/episode/guid', $guid, $episode_id );
 	}
 }
+
+if ( ! function_exists( 'ssp_generate_episode_guid' ) ) {
+	/**
+	 * Generates a deterministic GUID for an episode using UUID v5.
+	 *
+	 * @since 3.14.0
+	 *
+	 * @param \WP_Post|int $episode Episode post object or episode ID.
+	 *
+	 * @return string|false Generated GUID or false on failure.
+	 */
+	function ssp_generate_episode_guid( $episode ) {
+		if ( is_numeric( $episode ) ) {
+			$episode = get_post( $episode );
+		}
+
+		if ( ! $episode || ! isset( $episode->post_date ) || ! isset( $episode->post_title ) ) {
+			return false;
+		}
+
+		// Create deterministic GUID from stable episode data
+		$episode_data = get_site_url() . '|' . $episode->post_date . '|' . $episode->post_title;
+
+		return \SeriouslySimplePodcasting\Handlers\UUID_Handler::v5(
+			\SeriouslySimplePodcasting\Handlers\Feed_Handler::EPISODE_NAMESPACE_UUID,
+			$episode_data
+		);
+	}
+}

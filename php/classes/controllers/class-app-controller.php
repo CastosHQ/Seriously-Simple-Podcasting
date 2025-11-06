@@ -347,7 +347,7 @@ class App_Controller {
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
-		$this->db_migration_controller = DB_Migration_Controller::instance()->init();
+		$this->db_migration_controller = DB_Migration_Controller::instance()->init( $this->admin_notices_handler );
 
 		$this->roles_handler = new Roles_Handler();
 

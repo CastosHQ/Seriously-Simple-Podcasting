@@ -401,6 +401,7 @@ class Podcast_Post_Types_Controller {
 						'sync_status',
 						'transcript_file',
 						'ssp_guid',
+						'ssp_original_guid',
 					);
 
 					foreach ( $exclusions as $exclusion ) {
@@ -631,13 +632,12 @@ class Podcast_Post_Types_Controller {
 			return;
 		}
 
-		// Create deterministic GUID from stable episode data
-		$episode_data = get_site_url() . '|' . $episode->post_date . '|' . $episode->post_title;
+		$guid = ssp_generate_episode_guid( $episode );
 
-		$guid = UUID_Handler::v5( Feed_Handler::EPISODE_NAMESPACE_UUID, $episode_data );
-
-		// Save the GUID
-		update_post_meta( $post_id, 'ssp_guid', $guid );
+		if ( $guid ) {
+			// Save the GUID
+			update_post_meta( $post_id, 'ssp_guid', $guid );
+		}
 	}
 
 	/**

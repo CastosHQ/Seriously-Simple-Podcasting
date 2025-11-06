@@ -265,17 +265,17 @@ class Admin_Notifications_Handler implements Service {
 	/**
 	 * @uses Ajax_Handler::remove_constant_notice;
 	 *
-	 * @param string $id
+	 * @param string $hash Notice hash identifier.
 	 *
 	 * @return bool
 	 */
-	public function remove_constant_notice( $id ) {
+	public function remove_constant_notice( $hash ) {
 		$notices = $this->get_constant_notices();
 
 		$res = false;
 
-		if ( array_key_exists( $id, $notices ) ) {
-			unset( $notices[ $id ] );
+		if ( array_key_exists( $hash, $notices ) ) {
+			unset( $notices[ $hash ] );
 			$res = update_option( self::CONSTANT_NOTICES_KEY, $notices );
 		}
 
@@ -359,8 +359,16 @@ class Admin_Notifications_Handler implements Service {
 	 */
 	public function get_constant_notices() {
 		$notices = get_option( self::CONSTANT_NOTICES_KEY, array() );
+		$notices = is_array( $notices ) ? $notices : array();
 
-		return is_array( $notices ) ? $notices : array();
+		/**
+		 * Filter constant notices before they are displayed.
+		 *
+		 * @since 3.14.0
+		 *
+		 * @param array $notices Array of constant notices.
+		 */
+		return apply_filters( 'ssp_constant_notices', $notices );
 	}
 
 	/**

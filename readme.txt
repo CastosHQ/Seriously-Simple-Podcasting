@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 3.13.0
+Stable tag: 3.14.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,17 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.14.0 =
+2025-11-10
+[NEW] Introduced Gutenberg block for podcast list functionality (similar to the [ssp_podcasts] shortcode)
+[NEW] Added an ID column to the Podcasts overview page
+[UPDATE] Improved Castos synchronization logic
+[UPDATE] Added checks to detect and repair duplicated episode GUIDs
+[UPDATE] Updated code dependencies
+[FIX] Resolved playlist player issue where some loaded items failed to play
+[FIX] Fixed GUID duplication problem when using duplicator plugins
+[FIX] Implemented security enhancements and fixes
 
 = 3.13.0 =
 2025-10-06

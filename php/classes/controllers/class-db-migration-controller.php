@@ -258,8 +258,8 @@ class DB_Migration_Controller {
 
 		return sprintf(
 			// translators: %1$s is the link to fix duplicate GUIDs
-			__( 'Since version 3.13.0, episode GUIDs are stored as meta fields. We noticed some episodes have duplicate GUIDs, likely from post duplicator plugins. %1$s', 'seriously-simple-podcasting' ),
-			'<a href="' . esc_url( $fix_url ) . '">' . __( 'Click here to fix', 'seriously-simple-podcasting' ) . '</a>'
+			__( 'We noticed some of your episodes have duplicate GUIDs, likely from post duplicator plugins. Episodes having duplicate GUIDs are ignored by podcast directories. %1$s', 'seriously-simple-podcasting' ),
+			'<a href="' . esc_url( $fix_url ) . '">' . __( 'Click here to automatically update these episodes with unique GUIDs.', 'seriously-simple-podcasting' ) . '</a>'
 		);
 	}
 

@@ -1129,7 +1129,7 @@ class Frontend_Controller {
 	 * This is used in the SeriouslySimplePodcasting\Widgets\Single_Episode widget
 	 * as well as the SeriouslySimplePodcasting\ShortCodes\Podcast_Episode shortcode
 	 *
-	 * @param  integer $episode_id    ID of episode post
+	 * @param  int     $episode_id    ID of episode post
 	 * @param  array   $content_items Ordered array of content items to display
 	 * @return string                 HTML of episode with specified content items
 	 */
@@ -1143,6 +1143,9 @@ class Frontend_Controller {
 		if ( '-1' == $episode_id ) {
 			$episode_id = $this->episode_repository->get_latest_episode_id();
 		}
+
+		// Ensure episode_id is a positive integer for security and type safety
+		$episode_id = absint( $episode_id );
 
 		// Get episode object
 		$episode = get_post( $episode_id );
@@ -1179,7 +1182,7 @@ class Frontend_Controller {
 						$file = $this->get_episode_download_link( $episode_id );
 					}
 
-					$html .= '<div id="podcast_player_' . $episode_id . '" class="podcast_player">' . $this->media_player( $file, $episode_id, $style, 'podcast_episode' ) . '</div>' . "\n";
+					$html .= '<div id="podcast_player_' . esc_attr( $episode_id ) . '" class="podcast_player">' . $this->media_player( $file, $episode_id, $style, 'podcast_episode' ) . '</div>' . "\n";
 					break;
 
 				case 'details':

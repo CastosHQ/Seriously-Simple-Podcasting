@@ -1100,9 +1100,7 @@ class Episode_Repository implements Service {
 				}
 			}
 
-			if ( $data ) {
-				return apply_filters( 'ssp_file_duration', $duration, $file );
-			}
+			return apply_filters( 'ssp_file_duration', $duration, $file );
 		}
 
 		return false;

@@ -1111,17 +1111,17 @@ class Frontend_Controller {
 		if ( null === $trusted_domains ) {
 			$trusted_domains = array();
 			
-			// Add current WordPress site domain (most common case).
+			// Add current WordPress site domain if it meets validation requirements.
 			$site_url = parse_url( home_url(), PHP_URL_HOST );
-			if ( $site_url ) {
+			if ( $site_url && $this->is_public_domain( $site_url ) ) {
 				$trusted_domains[] = strtolower( $site_url );
 			}
-			
-			// Add upload directory domain (may be different if using CDN).
+		
+			// Add upload directory domain if it meets validation requirements.
 			$upload_dir = wp_upload_dir();
 			if ( ! empty( $upload_dir['baseurl'] ) ) {
 				$upload_host = parse_url( $upload_dir['baseurl'], PHP_URL_HOST );
-				if ( $upload_host && $upload_host !== $site_url ) {
+				if ( $upload_host && $upload_host !== $site_url && $this->is_public_domain( $upload_host ) ) {
 					$trusted_domains[] = strtolower( $upload_host );
 				}
 			}
@@ -1169,6 +1169,47 @@ class Frontend_Controller {
 		}
 		
 		return false;
+	}
+
+	/**
+	 * Check if a domain is publicly accessible
+	 *
+	 * Validates that the domain is suitable for external file access.
+	 * Internal and reserved addresses are excluded from trusted sources.
+	 *
+	 * @since 3.14.2
+	 * @param string $host The hostname to check.
+	 * @return bool True if public, false if private/localhost.
+	 */
+	protected function is_public_domain( $host ) {
+		// Check localhost patterns.
+		if ( in_array( strtolower( $host ), $this->get_localhost_patterns(), true ) ) {
+			return false;
+		}
+		
+		// Check IP address ranges.
+		if ( filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			return ! $this->is_private_ip( $host );
+		}
+		
+		// Domain name - proceed with validation.
+		return true;
+	}
+
+	/**
+	 * Check if an IP address is private or reserved
+	 *
+	 * @since 3.14.2
+	 * @param string $ip The IP address to check.
+	 * @return bool True if private/reserved, false if public.
+	 */
+	protected function is_private_ip( $ip ) {
+		// Check IP address using PHP filters.
+		return ! filter_var(
+			$ip,
+			FILTER_VALIDATE_IP,
+			FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+		);
 	}
 
 	/**

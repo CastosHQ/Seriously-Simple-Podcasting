@@ -840,11 +840,12 @@ class FrontendControllerTest extends WPTestCase {
 		// Clear any existing cache
 		$this->frontend_controller->clear_validation_cache();
 
+		// Test with localhost URL
 		$url = 'http://localhost/admin';
 		
 		// First call should validate and cache
 		$result1 = $this->frontend_controller->validate_file_url( $url );
-		$this->assertFalse( $result1 );
+		$this->assertFalse( $result1, 'Localhost should not pass validation' );
 
 		// Check that result was cached
 		$cache_key = 'ssp_url_valid_' . md5( $url );
@@ -954,6 +955,96 @@ class FrontendControllerTest extends WPTestCase {
 		$result = $this->frontend_controller->validate_file_url( $url );
 		
 		$this->assertTrue( $result, 'Trusted CDN domain should be validated quickly' );
+	}
+
+	/**
+	 * Test localhost validation in trusted domain check
+	 *
+	 * @group validation
+	 * @group trusted-domains
+	 */
+	public function test_localhost_validation() {
+		$reflection = new \ReflectionClass( $this->frontend_controller );
+		$method     = $reflection->getMethod( 'is_trusted_domain' );
+		$method->setAccessible( true );
+
+		$localhost_variants = array( 'localhost', '127.0.0.1', '::1' );
+		
+		foreach ( $localhost_variants as $host ) {
+			$result = $method->invoke( $this->frontend_controller, $host );
+			$this->assertFalse( $result, "Localhost ({$host}) should not be in trusted domains" );
+		}
+	}
+
+	/**
+	 * Test private IP address validation
+	 *
+	 * @group validation
+	 * @group trusted-domains
+	 */
+	public function test_private_ip_validation() {
+		$reflection = new \ReflectionClass( $this->frontend_controller );
+		$method     = $reflection->getMethod( 'is_trusted_domain' );
+		$method->setAccessible( true );
+
+		$private_ips = array(
+			'10.0.0.1',
+			'172.16.0.1',
+			'192.168.1.1',
+			'169.254.1.1',
+		);
+		
+		foreach ( $private_ips as $ip ) {
+			$result = $method->invoke( $this->frontend_controller, $ip );
+			$this->assertFalse( $result, "Private IP ({$ip}) should not be in trusted domains" );
+		}
+	}
+
+	/**
+	 * Test is_public_domain helper method
+	 *
+	 * @group validation
+	 * @group helpers
+	 */
+	public function test_is_public_domain() {
+		$reflection = new \ReflectionClass( $this->frontend_controller );
+		$method     = $reflection->getMethod( 'is_public_domain' );
+		$method->setAccessible( true );
+
+		// Public domains should return true
+		$this->assertTrue( $method->invoke( $this->frontend_controller, 'example.com' ) );
+		$this->assertTrue( $method->invoke( $this->frontend_controller, 'castos.com' ) );
+		$this->assertTrue( $method->invoke( $this->frontend_controller, '8.8.8.8' ) );
+
+		// Internal addresses should return false
+		$this->assertFalse( $method->invoke( $this->frontend_controller, 'localhost' ) );
+		$this->assertFalse( $method->invoke( $this->frontend_controller, '127.0.0.1' ) );
+		$this->assertFalse( $method->invoke( $this->frontend_controller, '192.168.1.1' ) );
+		$this->assertFalse( $method->invoke( $this->frontend_controller, '10.0.0.1' ) );
+		$this->assertFalse( $method->invoke( $this->frontend_controller, '::1' ) );
+	}
+
+	/**
+	 * Test is_private_ip helper method
+	 *
+	 * @group validation
+	 * @group helpers
+	 */
+	public function test_is_private_ip() {
+		$reflection = new \ReflectionClass( $this->frontend_controller );
+		$method     = $reflection->getMethod( 'is_private_ip' );
+		$method->setAccessible( true );
+
+		// Private range IPs should return true
+		$this->assertTrue( $method->invoke( $this->frontend_controller, '127.0.0.1' ) );
+		$this->assertTrue( $method->invoke( $this->frontend_controller, '10.0.0.1' ) );
+		$this->assertTrue( $method->invoke( $this->frontend_controller, '172.16.0.1' ) );
+		$this->assertTrue( $method->invoke( $this->frontend_controller, '192.168.1.1' ) );
+		$this->assertTrue( $method->invoke( $this->frontend_controller, '169.254.1.1' ) );
+
+		// Public IPs should return false
+		$this->assertFalse( $method->invoke( $this->frontend_controller, '8.8.8.8' ) );
+		$this->assertFalse( $method->invoke( $this->frontend_controller, '1.1.1.1' ) );
 	}
 
 	// ========================================

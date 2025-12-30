@@ -283,17 +283,18 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
-     * Test handle_enclosure_update with existing duration and filesize.
+     * Test handle_enclosure_update with existing duration and BOTH filesize fields.
      */
     public function testHandleEnclosureUpdateWithExistingMetadata()
     {
         $post = get_post($this->post_id);
         $enclosure = 'https://example.com/audio.mp3';
 
-        // Set up existing metadata
+        // Set up existing metadata - BOTH filesize and filesize_raw must exist
         update_post_meta($this->post_id, 'audio_file', $enclosure);
         update_post_meta($this->post_id, 'duration', '00:10:00');
-        update_post_meta($this->post_id, 'filesize', '10.0 MB');
+        update_post_meta($this->post_id, 'filesize', '10M');
+        update_post_meta($this->post_id, 'filesize_raw', '10485760');
 
         // Mock Castos connection check
         $this->mock_function('ssp_is_connected_to_castos', false);
@@ -312,7 +313,111 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
 
         // Assertions - existing metadata should remain unchanged
         $this->assertEquals('00:10:00', get_post_meta($this->post_id, 'duration', true));
-        $this->assertEquals('10.0 MB', get_post_meta($this->post_id, 'filesize', true));
+        $this->assertEquals('10M', get_post_meta($this->post_id, 'filesize', true));
+        $this->assertEquals('10485760', get_post_meta($this->post_id, 'filesize_raw', true));
+    }
+
+    /**
+     * Test handle_enclosure_update recalculates when only filesize exists.
+     * Ensures we don't mix frontend data (filesize) with backend data (filesize_raw).
+     */
+    public function testHandleEnclosureUpdateRecalculatesWhenOnlyFilesizeExists()
+    {
+        $post = get_post($this->post_id);
+        $enclosure = 'https://example.com/audio.mp3';
+
+        // Set up existing metadata - only filesize, no filesize_raw
+        update_post_meta($this->post_id, 'audio_file', $enclosure);
+        update_post_meta($this->post_id, 'filesize', '10M');
+        // filesize_raw is missing
+
+        // Mock Castos connection check
+        $this->mock_function('ssp_is_connected_to_castos', false);
+
+        // Repository methods SHOULD be called to recalculate both fields
+        $this->mock_episode_repository
+            ->expects($this->once())
+            ->method('get_file_size')
+            ->with($enclosure)
+            ->willReturn([
+                'formatted' => '10M',
+                'raw' => 10485760,
+            ]);
+
+        // Call the method
+        $this->controller->handle_enclosure_update($post, $enclosure);
+
+        // Assertions - both fields should be updated from backend
+        $this->assertEquals('10M', get_post_meta($this->post_id, 'filesize', true));
+        $this->assertEquals(10485760, get_post_meta($this->post_id, 'filesize_raw', true));
+    }
+
+    /**
+     * Test handle_enclosure_update recalculates when only filesize_raw exists.
+     * Ensures data consistency between both fields.
+     */
+    public function testHandleEnclosureUpdateRecalculatesWhenOnlyFilesizeRawExists()
+    {
+        $post = get_post($this->post_id);
+        $enclosure = 'https://example.com/audio.mp3';
+
+        // Set up existing metadata - only filesize_raw, no filesize
+        update_post_meta($this->post_id, 'audio_file', $enclosure);
+        update_post_meta($this->post_id, 'filesize_raw', '10485760');
+        // filesize is missing
+
+        // Mock Castos connection check
+        $this->mock_function('ssp_is_connected_to_castos', false);
+
+        // Repository methods SHOULD be called to recalculate both fields
+        $this->mock_episode_repository
+            ->expects($this->once())
+            ->method('get_file_size')
+            ->with($enclosure)
+            ->willReturn([
+                'formatted' => '10M',
+                'raw' => 10485760,
+            ]);
+
+        // Call the method
+        $this->controller->handle_enclosure_update($post, $enclosure);
+
+        // Assertions - both fields should be updated from backend
+        $this->assertEquals('10M', get_post_meta($this->post_id, 'filesize', true));
+        $this->assertEquals(10485760, get_post_meta($this->post_id, 'filesize_raw', true));
+    }
+
+    /**
+     * Test handle_enclosure_update recalculates when neither field exists.
+     */
+    public function testHandleEnclosureUpdateRecalculatesWhenBothFieldsMissing()
+    {
+        $post = get_post($this->post_id);
+        $enclosure = 'https://example.com/audio.mp3';
+
+        // Set up existing metadata - neither filesize nor filesize_raw
+        update_post_meta($this->post_id, 'audio_file', $enclosure);
+        // Both fields are missing
+
+        // Mock Castos connection check
+        $this->mock_function('ssp_is_connected_to_castos', false);
+
+        // Repository methods SHOULD be called to calculate both fields
+        $this->mock_episode_repository
+            ->expects($this->once())
+            ->method('get_file_size')
+            ->with($enclosure)
+            ->willReturn([
+                'formatted' => '10M',
+                'raw' => 10485760,
+            ]);
+
+        // Call the method
+        $this->controller->handle_enclosure_update($post, $enclosure);
+
+        // Assertions - both fields should be set from backend
+        $this->assertEquals('10M', get_post_meta($this->post_id, 'filesize', true));
+        $this->assertEquals(10485760, get_post_meta($this->post_id, 'filesize_raw', true));
     }
 
     /**

@@ -599,7 +599,12 @@ class Podcast_Post_Types_Controller {
 		}
 
 		// Get file size
-		if ( $is_enclosure_updated || get_post_meta( $post_id, 'filesize', true ) == '' ) {
+		// Only skip if BOTH filesize and filesize_raw exist (ensures data consistency)
+		// If either is missing, recalculate both to avoid mixing frontend/backend data
+		$has_filesize     = get_post_meta( $post_id, 'filesize', true ) != '';
+		$has_filesize_raw = get_post_meta( $post_id, 'filesize_raw', true ) != '';
+		
+		if ( $is_enclosure_updated || ! $has_filesize || ! $has_filesize_raw ) {
 			$filesize = $this->episode_repository->get_file_size( $enclosure );
 			if ( $filesize ) {
 				if ( isset( $filesize['formatted'] ) ) {

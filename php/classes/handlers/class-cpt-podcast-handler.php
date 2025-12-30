@@ -129,13 +129,8 @@ class CPT_Podcast_Handler implements Service {
 			return;
 		}
 
-		// Get all displayed custom fields
+		// Get all custom fields (including filesize_raw).
 		$fields = $this->custom_fields();
-
-		// Add 'filesize_raw' as this is not included in the displayed field options
-		$fields['filesize_raw'] = array(
-			'meta_description' => __( 'The raw file size of the podcast episode media file in bytes.', 'seriously-simple-podcasting' ),
-		);
 
 		foreach ( $fields as $key => $data ) {
 			$args = array(
@@ -263,14 +258,13 @@ class CPT_Podcast_Handler implements Service {
 			'meta_description' => __( 'The size of the podcast episode for display purposes.', 'seriously-simple-podcasting' ),
 		);
 
-		if ( $is_connected_to_castos || $all ) {
-			$fields['filesize_raw'] = array(
-				'type'             => 'hidden',
-				'default'          => '',
-				'section'          => 'info',
-				'meta_description' => __( 'Raw size of the podcast episode.', 'seriously-simple-podcasting' ),
-			);
-		}
+		
+		$fields['filesize_raw'] = array(
+			'type'             => 'hidden',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Raw size of the podcast episode in bytes (required for RSS feed).', 'seriously-simple-podcasting' ),
+		);
 
 		$fields['date_recorded'] = array(
 			'name'             => __( 'Date recorded:', 'seriously-simple-podcasting' ),

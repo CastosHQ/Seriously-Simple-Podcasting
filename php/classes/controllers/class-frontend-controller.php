@@ -43,6 +43,25 @@ class Frontend_Controller {
 	 * */
 	protected $removed_filters;
 
+	/**
+	 * Cache TTL for valid URL validation results (15 minutes).
+	 */
+	const CACHE_TTL_VALID = 900; // 15 * MINUTE_IN_SECONDS
+
+	/**
+	 * Cache TTL for invalid URL validation results (5 minutes).
+	 */
+	const CACHE_TTL_INVALID = 300; // 5 * MINUTE_IN_SECONDS
+
+	/**
+	 * Cache TTL for trusted domain validation results (1 hour).
+	 */
+	const CACHE_TTL_TRUSTED = 3600; // HOUR_IN_SECONDS
+
+	/**
+	 * Allowed URL schemes for file downloads.
+	 */
+	const ALLOWED_SCHEMES = array( 'http', 'https' );
 
 	/**
 	 * Frontend_Controller constructor.
@@ -711,128 +730,288 @@ class Frontend_Controller {
 	}
 
 	/**
+	 * Get episode ID from WordPress query
+	 *
+	 * @since 3.14.2
+	 * @return int Episode ID or 0 if not found.
+	 */
+	protected function get_episode_id_from_query() {
+		global $wp_query;
+		return isset( $wp_query->query_vars['podcast_episode'] ) ? intval( $wp_query->query_vars['podcast_episode'] ) : 0;
+	}
+
+	/**
+	 * Clean file URL by removing newlines
+	 *
+	 * File URLs may contain newlines which need to be removed before processing.
+	 *
+	 * @since 3.14.2
+	 * @param string $file File URL to clean.
+	 * @return string Cleaned file URL.
+	 */
+	protected function clean_file_url( $file ) {
+		if ( false !== strpos( $file, "\n" ) ) {
+			$parts = explode( "\n", $file );
+			$file  = $parts[0];
+		}
+		return $file;
+	}
+
+	/**
+	 * Encode file URL for safe transmission
+	 *
+	 * Encodes spaces and removes newlines from file URLs to ensure
+	 * safe transmission over HTTP.
+	 *
+	 * @since 3.14.2
+	 * @param string $file File URL to encode.
+	 * @return string Encoded file URL.
+	 */
+	protected function encode_file_url( $file ) {
+		$file = str_replace( ' ', '%20', $file );
+		$file = str_replace( PHP_EOL, '', $file );
+		return $file;
+	}
+
+	/**
+	 * Get download referrer from request
+	 *
+	 * Checks query vars and GET parameters for referrer information.
+	 *
+	 * @since 3.14.2
+	 * @return string Referrer value or empty string.
+	 */
+	protected function get_download_referrer() {
+		global $wp_query;
+
+		$referrer = '';
+		if ( isset( $wp_query->query_vars['podcast_ref'] ) && $wp_query->query_vars['podcast_ref'] ) {
+			$referrer = $wp_query->query_vars['podcast_ref'];
+		} elseif ( isset( $_GET['ref'] ) ) {
+			$referrer = sanitize_text_field( wp_unslash( $_GET['ref'] ) );
+		}
+
+		return $referrer;
+	}
+
+	/**
+	 * Trigger download action hook
+	 *
+	 * Allows other plugins to hook into the download process.
+	 * Skipped for test-nginx referrer to avoid interference with testing.
+	 *
+	 * @since 3.14.2
+	 * @param string   $file     File URL being downloaded.
+	 * @param \WP_Post $episode  Episode post object.
+	 * @param string   $referrer Download referrer.
+	 * @return void
+	 */
+	protected function trigger_download_action( $file, $episode, $referrer ) {
+		if ( 'test-nginx' !== $referrer ) {
+			// Allow other actions - functions hooked on here must not output any data
+			do_action( 'ssp_file_download', $file, $episode, $referrer );
+		}
+	}
+
+	/**
+	 * Set cache control headers
+	 *
+	 * Sets HTTP headers to prevent caching of download responses.
+	 *
+	 * @since 3.14.2
+	 * @return void
+	 */
+	protected function set_cache_control_headers() {
+		header( 'Pragma: no-cache' );
+		header( 'Expires: 0' );
+		header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
+		header( 'Robots: none' );
+	}
+
+	/**
+	 * Get file size with caching
+	 *
+	 * Attempts to get file size from multiple sources in order:
+	 * 1. WordPress cache
+	 * 2. Post meta
+	 * 3. Filesystem (for local attachments)
+	 *
+	 * @since 3.14.2
+	 * @param int    $episode_id Episode post ID.
+	 * @param string $file       File URL.
+	 * @return int|false File size in bytes or false if not determinable.
+	 */
+	protected function get_file_size( $episode_id, $file ) {
+		// Check cache first.
+		$size = wp_cache_get( $episode_id, 'filesize_raw' );
+
+		$this->log( __METHOD__ . ': Cached size: ' . $size );
+
+		// Nothing in the cache, let's see if we can figure it out.
+		if ( false === $size ) {
+
+			// Check post meta.
+			$size = get_post_meta( $episode_id, 'filesize_raw', true );
+
+			$this->log( __METHOD__ . ': Size raw: ' . $size );
+
+			if ( empty( $size ) ) {
+
+				// Try to get size from filesystem for local attachments.
+				$attachment_id = $this->get_attachment_id_from_url( $file );
+
+				if ( ! empty( $attachment_id ) ) {
+					$attached_file = get_attached_file( $attachment_id );
+					if ( $attached_file && file_exists( $attached_file ) ) {
+						$size = filesize( $attached_file );
+						$this->log( __METHOD__ . ': Estimated size: ' . $size );
+						update_post_meta( $episode_id, 'filesize_raw', $size );
+					}
+				}
+			}
+
+			// Update the cache.
+			wp_cache_set( $episode_id, $size, 'filesize_raw' );
+		}
+
+		return $size;
+	}
+
+	/**
+	 * Set download headers
+	 *
+	 * Sets HTTP headers required for file downloads.
+	 *
+	 * @since 3.14.2
+	 * @param int      $episode_id Episode post ID.
+	 * @param int|bool $size       File size in bytes or false.
+	 * @return void
+	 */
+	protected function set_download_headers( $episode_id, $size ) {
+		// Send Content-Length header if size is known.
+		if ( ! empty( $size ) ) {
+			header( 'Content-Length: ' . $size );
+		}
+
+		// Force file download.
+		header( 'Content-Type: application/force-download' );
+
+		// Set other relevant headers.
+		header( 'Content-Description: File Transfer' );
+		header( 'Content-Disposition: attachment; filename="' . esc_html( $this->get_file_name( $episode_id ) ) . '";' );
+		header( 'Content-Transfer-Encoding: binary' );
+	}
+
+	/**
+	 * Serve file as direct download
+	 *
+	 * Handles the actual file serving for direct downloads with proper headers
+	 * and file size detection.
+	 *
+	 * @since 3.14.2
+	 * @param int    $episode_id Episode post ID.
+	 * @param string $file       File URL to serve.
+	 * @return void Exits after serving file.
+	 */
+	protected function serve_download_file( $episode_id, $file ) {
+		// Get file size with caching.
+		$size = $this->get_file_size( $episode_id, $file );
+
+		// Set download headers.
+		$this->set_download_headers( $episode_id, $size );
+
+		// Encode file URL for safe transmission.
+		$file = $this->encode_file_url( $file );
+
+		// Re-validate URL immediately before file access.
+		if ( ! $this->validate_file_url( $file ) ) {
+			$this->block_invalid_url( $file, 'Pre-access validation failed' );
+		}
+
+		// Use ssp_readfile_chunked() if allowed on the server or simply access file directly.
+		@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
+	}
+
+	/**
+	 * Serve file as redirect
+	 *
+	 * Redirects to the file URL for non-download referrers.
+	 *
+	 * @since 3.14.2
+	 * @param string $file File URL to redirect to.
+	 * @return void Exits after redirect.
+	 */
+	protected function serve_redirect_file( $file ) {
+		// Encode file URL for safe transmission.
+		$file = $this->encode_file_url( $file );
+
+		// Re-validate URL immediately before redirect.
+		if ( ! $this->validate_file_url( $file ) ) {
+			$this->block_invalid_url( $file, 'Pre-redirect validation failed' );
+		}
+
+		// For all other referrers redirect to the raw file.
+		wp_redirect( $file, 302 );
+	}
+
+	/**
 	 * Download file from `podcast_episode` query variable
 	 *
+	 * This method orchestrates the file download process:
+	 * 1. Validates the download request
+	 * 2. Checks episode access permissions
+	 * 3. Prepares and validates file URL
+	 * 4. Sets appropriate headers
+	 * 5. Serves file or redirects based on referrer
+	 *
+	 * @since 1.0.0
+	 * @since 3.14.2 Refactored for better maintainability and testability.
 	 * @return void
 	 */
 	public function download_file() {
-
+		// Early return if not a download request.
 		if ( ! ssp_is_podcast_download() ) {
 			return;
 		}
 
-		global $wp_query;
-
-		// Get requested episode ID
-		$episode_id = intval( $wp_query->query_vars['podcast_episode'] );
-
-		if ( isset( $episode_id ) && $episode_id ) {
-
-			// Get episode post object and validate access
-			$episode = get_post( $episode_id );
-
-			// Check episode access - returns false if access denied (error response handled internally)
-			if ( ! $this->check_episode_file_access( $episode_id, $episode ) ) {
-				return;
-			}
-
-			$file = $this->get_enclosure( $episode_id );
-			if ( false !== strpos( $file, "\n" ) ) {
-				$parts = explode( "\n", $file );
-				$file  = $parts[0];
-			}
-
-			$this->validate_file( $file );
-
-			// Get file referrer
-			$referrer = '';
-			if ( isset( $wp_query->query_vars['podcast_ref'] ) && $wp_query->query_vars['podcast_ref'] ) {
-				$referrer = $wp_query->query_vars['podcast_ref'];
-			} elseif ( isset( $_GET['ref'] ) ) {
-				$referrer = sanitize_text_field( wp_unslash( $_GET['ref'] ) );
-			}
-
-			if ( 'test-nginx' !== $referrer ) {
-				// Allow other actions - functions hooked on here must not output any data
-				do_action( 'ssp_file_download', $file, $episode, $referrer );
-			}
-
-			// Set necessary headers
-			header( 'Pragma: no-cache' );
-			header( 'Expires: 0' );
-			header( 'Cache-Control: must-revalidate, post-check=0, pre-check=0' );
-			header( 'Robots: none' );
-
-			$original_file = $file;
-
-			// Dynamically change the file URL. Is used internally for Ads.
-			$file = apply_filters( 'ssp_enclosure_url', $file, $episode_id, $referrer );
-			$this->validate_file( $file );
-
-			// Check file referrer
-			if ( 'download' == $referrer && $file == $original_file ) {
-
-				// Set size of file
-				// Do we have anything in Cache/DB?
-				$size = wp_cache_get( $episode_id, 'filesize_raw' );
-
-				$this->log( __METHOD__ . ': Cached size: ' . $size );
-
-				// Nothing in the cache, let's see if we can figure it out.
-				if ( false === $size ) {
-
-					// Do we have anything in post_meta?
-					$size = get_post_meta( $episode_id, 'filesize_raw', true );
-
-					$this->log( __METHOD__ . ': Size raw: ' . $size );
-
-					if ( empty( $size ) ) {
-
-						// Let's see if we can figure out the path...
-						$attachment_id = $this->get_attachment_id_from_url( $file );
-
-						if ( ! empty( $attachment_id ) ) {
-							$size = filesize( get_attached_file( $attachment_id ) );
-							$this->log( __METHOD__ . ': Estimated size: ' . $size );
-							update_post_meta( $episode_id, 'filesize_raw', $size );
-						}
-					}
-
-					// Update the cache
-					wp_cache_set( $episode_id, $size, 'filesize_raw' );
-				}
-
-				// Send Content-Length header
-				if ( ! empty( $size ) ) {
-					header( 'Content-Length: ' . $size );
-				}
-
-				// Force file download
-				header( 'Content-Type: application/force-download' );
-
-				// Set other relevant headers
-				header( 'Content-Description: File Transfer' );
-				header( 'Content-Disposition: attachment; filename="' . esc_html( $this->get_file_name( $episode_id ) ) . '";' );
-				header( 'Content-Transfer-Encoding: binary' );
-
-				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
-				$file = str_replace( ' ', '%20', $file );
-				$file = str_replace( PHP_EOL, '', $file );
-
-				// Use ssp_readfile_chunked() if allowed on the server or simply access file directly
-				@ssp_readfile_chunked( $file ) or header( 'Location: ' . $file );
-			} else {
-
-				// Encode spaces in file names until this is fixed in core (https://core.trac.wordpress.org/ticket/36998)
-				$file = str_replace( ' ', '%20', $file );
-
-				// For all other referrers redirect to the raw file
-				wp_redirect( $file, 302 );
-			}
-
-			// Exit to prevent other processes running later on
-			exit;
+		// Get and validate episode ID.
+		$episode_id = $this->get_episode_id_from_query();
+		if ( ! $episode_id ) {
+			return;
 		}
+
+		// Get episode post object and validate access.
+		$episode = get_post( $episode_id );
+		if ( ! $this->check_episode_file_access( $episode_id, $episode ) ) {
+			return;
+		}
+
+		// Get and prepare file URL.
+		$file = $this->get_enclosure( $episode_id );
+		$file = $this->clean_file_url( $file );
+		$this->validate_file( $file );
+
+		// Get referrer and trigger download hooks.
+		$referrer = $this->get_download_referrer();
+		$this->trigger_download_action( $file, $episode, $referrer );
+
+		// Set cache control headers.
+		$this->set_cache_control_headers();
+
+		// Apply filters to allow dynamic URL modification (used for ads, etc.).
+		$original_file = $file;
+		$file          = apply_filters( 'ssp_enclosure_url', $file, $episode_id, $referrer );
+		$this->validate_file( $file );
+
+		// Serve file based on referrer type.
+		if ( 'download' === $referrer && $file === $original_file ) {
+			$this->serve_download_file( $episode_id, $file );
+		} else {
+			$this->serve_redirect_file( $file );
+		}
+
+		// Exit to prevent other processes running later on.
+		exit;
 	}
 
 	/**
@@ -916,18 +1095,606 @@ class Frontend_Controller {
 	}
 
 	/**
-	 * @param string $file
+	 * Check if URL is from a trusted domain
 	 *
+	 * Trusted domains are well-known CDNs and podcast hosting providers that are
+	 * considered safe. URLs from these domains bypass expensive validation checks.
+	 *
+	 * @since 3.14.2
+	 * @param string $host The hostname to check.
+	 * @return bool True if trusted, false otherwise.
+	 */
+	protected function is_trusted_domain( $host ) {
+		static $trusted_domains = null;
+		
+		// Initialize once per request.
+		if ( null === $trusted_domains ) {
+			$trusted_domains = array();
+			
+			// Add current WordPress site domain (most common case).
+			$site_url = parse_url( home_url(), PHP_URL_HOST );
+			if ( $site_url ) {
+				$trusted_domains[] = strtolower( $site_url );
+			}
+			
+			// Add upload directory domain (may be different if using CDN).
+			$upload_dir = wp_upload_dir();
+			if ( ! empty( $upload_dir['baseurl'] ) ) {
+				$upload_host = parse_url( $upload_dir['baseurl'], PHP_URL_HOST );
+				if ( $upload_host && $upload_host !== $site_url ) {
+					$trusted_domains[] = strtolower( $upload_host );
+				}
+			}
+			
+			// Add well-known CDNs and podcast hosting providers.
+			$cdn_domains = array(
+				// Castos CDN.
+				'castos.com',
+				
+				// Major podcast hosting providers.
+				'blubrry.com',
+				
+				// Amazon S3/CloudFront.
+				's3.amazonaws.com',
+				'cloudfront.net',
+				
+				// Google Cloud Storage.
+				'storage.googleapis.com',
+				'storage.cloud.google.com',
+				
+				// WordPress.com.
+				'files.wordpress.com',
+				
+				// Common CDNs.
+				'akamaized.net',
+				'fastly.net',
+			);
+			
+			$trusted_domains = array_merge( $trusted_domains, $cdn_domains );
+			
+			// Allow filtering for extensibility.
+			$trusted_domains = apply_filters( 'ssp_trusted_cdn_domains', $trusted_domains );
+		}
+		
+		// Check exact match.
+		if ( in_array( $host, $trusted_domains, true ) ) {
+			return true;
+		}
+		
+		// Check if subdomain of trusted domain.
+		foreach ( $trusted_domains as $trusted ) {
+			if ( substr( $host, - strlen( '.' . $trusted ) ) === '.' . $trusted ) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	/**
+	 * Get validation cache key for a URL
+	 *
+	 * @since 3.14.2
+	 * @param string $url The URL to generate cache key for.
+	 * @return string Cache key.
+	 */
+	protected function get_validation_cache_key( $url ) {
+		return 'ssp_url_valid_' . md5( $url );
+	}
+
+	/**
+	 * Cache URL validation result
+	 *
+	 * @since 3.14.2
+	 * @param string $cache_key Cache key.
+	 * @param bool   $is_valid  Whether URL is valid.
+	 * @param int    $duration  Cache duration in seconds.
 	 * @return void
 	 */
+	protected function cache_validation_result( $cache_key, $is_valid, $duration ) {
+		set_transient( $cache_key, $is_valid ? 1 : 0, $duration );
+	}
+
+	/**
+	 * Check if URL matches blocked patterns
+	 *
+	 * Performs quick validation checks against blocked patterns that don't require DNS resolution.
+	 * Checks for: user credentials, suspicious fragments, non-HTTP protocols, localhost,
+	 * special TLDs, and cloud metadata endpoints.
+	 *
+	 * @since 3.14.2
+	 * @param string $url URL to check.
+	 * @return bool True if URL matches blocked patterns, false otherwise.
+	 */
+	protected function url_matches_blocked_patterns( $url ) {
+		// Parse URL.
+		$parsed = wp_parse_url( $url );
+		if ( ! $parsed || ! isset( $parsed['host'] ) ) {
+			return true;
+		}
+
+		$host = strtolower( $parsed['host'] );
+
+		// Block URLs with user info.
+		if ( isset( $parsed['user'] ) || isset( $parsed['pass'] ) ) {
+			return true;
+		}
+
+		// Block suspicious fragments.
+		if ( isset( $parsed['fragment'] ) && strpos( $parsed['fragment'], '@' ) !== false ) {
+			return true;
+		}
+
+		// Only allow HTTP and HTTPS protocols.
+		if ( ! isset( $parsed['scheme'] ) || ! in_array( strtolower( $parsed['scheme'] ), self::ALLOWED_SCHEMES, true ) ) {
+			return true;
+		}
+
+		// Block localhost variations.
+		$localhost_patterns = $this->get_localhost_patterns();
+		if ( in_array( $host, $localhost_patterns, true ) ) {
+			return true;
+		}
+
+		// Block special TLDs.
+		$blocked_tlds = $this->get_blocked_tlds();
+		foreach ( $blocked_tlds as $tld ) {
+			if ( substr( $host, - strlen( $tld ) ) === $tld ) {
+				return true;
+			}
+		}
+
+		// Block cloud metadata hostnames.
+		$metadata_hosts = $this->get_metadata_hosts();
+		if ( in_array( $host, $metadata_hosts, true ) ) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
+	 * Get localhost patterns to block
+	 *
+	 * @since 3.14.2
+	 * @return array Localhost patterns.
+	 */
+	protected function get_localhost_patterns() {
+		$patterns = array(
+			'localhost',
+			'localhost.localdomain',
+		);
+
+		return apply_filters( 'ssp_blocked_localhost_patterns', $patterns );
+	}
+
+	/**
+	 * Get blocked TLDs
+	 *
+	 * @since 3.14.2
+	 * @return array Blocked TLDs.
+	 */
+	protected function get_blocked_tlds() {
+		$tlds = array( '.local', '.internal', '.private', '.lan' );
+
+		return apply_filters( 'ssp_blocked_tlds', $tlds );
+	}
+
+	/**
+	 * Get cloud metadata hostnames to block
+	 *
+	 * @since 3.14.2
+	 * @return array Metadata hostnames.
+	 */
+	protected function get_metadata_hosts() {
+		$hosts = array(
+			'metadata.google.internal',
+			'169.254.169.254',
+		);
+
+		return apply_filters( 'ssp_blocked_metadata_hosts', $hosts );
+	}
+
+	/**
+	 * Validate URL IP address
+	 *
+	 * Handles both direct IP URLs and hostname resolution.
+	 *
+	 * @since 3.14.2
+	 * @param string $host Hostname to validate.
+	 * @return bool True if valid, false otherwise.
+	 */
+	protected function validate_url_ip( $host ) {
+		// Extract IP from host (handles encoded formats).
+		$ip = $this->extract_ip_from_host( $host );
+		
+		if ( ! $ip ) {
+			// Not a valid IP, could be a hostname - resolve and validate it.
+			$resolved_ips = $this->resolve_hostname( $host );
+			
+			if ( empty( $resolved_ips ) ) {
+				// Could not resolve - check if it looks like a valid external hostname.
+				if ( ! filter_var( $host, FILTER_VALIDATE_DOMAIN, FILTER_FLAG_HOSTNAME ) ) {
+					return false;
+				}
+				// Hostname appears valid but couldn't resolve - allow it.
+				return true;
+			}
+
+			// Validate all resolved IPs.
+			foreach ( $resolved_ips as $resolved_ip ) {
+				if ( ! $this->validate_ip_address( $resolved_ip ) ) {
+					return false;
+				}
+			}
+			
+			return true;
+		}
+
+		// Validate the extracted IP.
+		return $this->validate_ip_address( $ip );
+	}
+
+	/**
+	 * Validate file URL for download requests
+	 *
+	 * Validates URLs to ensure they meet security requirements for podcast file access.
+	 * Uses result caching and trusted domain whitelist for performance optimization.
+	 * Checks protocol, hostname format, IP ranges, and performs DNS validation.
+	 *
+	 * @since 3.14.2
+	 * @param string $url The URL to validate.
+	 * @return bool True if URL is valid, false otherwise.
+	 */
+	public function validate_file_url( $url ) {
+		// Basic validation.
+		if ( ! is_string( $url ) || empty( $url ) ) {
+			return false;
+		}
+
+		// Parse URL for trusted domain check.
+		$parsed = wp_parse_url( $url );
+		if ( ! $parsed || ! isset( $parsed['host'] ) ) {
+			return false;
+		}
+
+		$host = strtolower( $parsed['host'] );
+
+		// Fast path: Trusted domain bypass for performance.
+		if ( $this->is_trusted_domain( $host ) ) {
+			$cache_key = $this->get_validation_cache_key( $url );
+			$this->cache_validation_result( $cache_key, true, self::CACHE_TTL_TRUSTED );
+			return true;
+		}
+
+		// Check cache after trusted domain check (cache key generation is deferred).
+		$cache_key = $this->get_validation_cache_key( $url );
+		$cached_result = get_transient( $cache_key );
+		if ( false !== $cached_result ) {
+			return (bool) $cached_result;
+		}
+
+		// Fast rejections before expensive operations.
+		if ( $this->url_matches_blocked_patterns( $url ) ) {
+			$this->cache_validation_result( $cache_key, false, self::CACHE_TTL_INVALID );
+			return false;
+		}
+
+		// Use WordPress's built-in URL validation (moderately expensive).
+		if ( function_exists( 'wp_http_validate_url' ) ) {
+			if ( ! wp_http_validate_url( $url ) ) {
+				$this->cache_validation_result( $cache_key, false, self::CACHE_TTL_INVALID );
+				return false;
+			}
+		}
+
+		// Validate IP address (expensive: DNS resolution may occur).
+		$is_valid = $this->validate_url_ip( $host );
+		$cache_duration = $is_valid ? self::CACHE_TTL_VALID : self::CACHE_TTL_INVALID;
+		$this->cache_validation_result( $cache_key, $is_valid, $cache_duration );
+		
+		return $is_valid;
+	}
+
+	/**
+	 * Resolve hostname to IP addresses
+	 *
+	 * Performs DNS lookup for both IPv4 and IPv6 addresses with caching.
+	 * Cache duration is intentionally short (5 minutes) to balance performance
+	 * with protection against DNS rebinding attacks.
+	 *
+	 * @since 3.14.2
+	 * @since 3.14.2 Added DNS result caching for performance.
+	 * @param string $host The hostname to resolve.
+	 * @return array Array of resolved IP addresses, empty array if resolution fails.
+	 */
+	protected function resolve_hostname( $host ) {
+		// Check DNS cache first.
+		$cache_key = 'ssp_dns_' . md5( $host );
+		$cached_ips = get_transient( $cache_key );
+		
+		if ( false !== $cached_ips && is_array( $cached_ips ) ) {
+			return $cached_ips;
+		}
+
+		$resolved_ips = array();
+
+		// Try DNS lookup for both IPv4 and IPv6.
+		$dns_records = @dns_get_record( $host, DNS_A + DNS_AAAA );
+		
+		if ( ! empty( $dns_records ) && is_array( $dns_records ) ) {
+			foreach ( $dns_records as $record ) {
+				if ( isset( $record['ip'] ) ) {
+					// IPv4 record.
+					$resolved_ips[] = $record['ip'];
+				} elseif ( isset( $record['ipv6'] ) ) {
+					// IPv6 record.
+					$resolved_ips[] = $record['ipv6'];
+				}
+			}
+		} else {
+			// Fallback to gethostbyname for IPv4 only.
+			$ip = @gethostbyname( $host );
+			// gethostbyname returns the hostname if it fails.
+			if ( $ip !== $host && filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+				$resolved_ips[] = $ip;
+			}
+		}
+
+		$resolved_ips = array_unique( $resolved_ips );
+		
+		// Cache DNS results for 5 minutes.
+		// Intentionally short to prevent DNS rebinding attacks while improving performance.
+		set_transient( $cache_key, $resolved_ips, 5 * MINUTE_IN_SECONDS );
+		
+		return $resolved_ips;
+	}
+
+	/**
+	 * Extract IP address from hostname
+	 *
+	 * Handles IPv4, IPv6, and various IP encoding formats (decimal, hex, octal).
+	 *
+	 * @since 3.14.2
+	 * @param string $host The hostname to parse.
+	 * @return string|false IP address or false if not an IP.
+	 */
+	protected function extract_ip_from_host( $host ) {
+		// Handle IPv6 in brackets [::1].
+		if ( preg_match( '/^\[(.*)\]$/', $host, $matches ) ) {
+			$ipv6 = $matches[1];
+			// Validate IPv6.
+			if ( filter_var( $ipv6, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6 ) ) {
+				return $ipv6;
+			}
+			return false;
+		}
+
+		// Check if it's a standard IPv4 or IPv6.
+		if ( filter_var( $host, FILTER_VALIDATE_IP ) ) {
+			return $host;
+		}
+
+		// Handle decimal IP (e.g., 2130706433 = 127.0.0.1).
+		if ( ctype_digit( $host ) && $host[0] !== '0' ) {
+			$long = (int) $host;
+			// Convert to standard IPv4.
+			return long2ip( $long );
+		}
+
+		// Handle octal IP (e.g., 017700000001 = 127.0.0.1).
+		if ( preg_match( '/^0[0-7]+$/', $host ) ) {
+			$long = octdec( $host );
+			return long2ip( $long );
+		}
+
+		// Handle hex IP (e.g., 0x7f.0x00.0x00.0x01 = 127.0.0.1 or 0x7f000001).
+		if ( preg_match( '/^0x[\da-f]+$/i', $host ) ) {
+			$long = hexdec( $host );
+			return long2ip( $long );
+		}
+
+		// Handle dotted decimal/hex/octal notation.
+		if ( strpos( $host, '.' ) !== false ) {
+			$parts = explode( '.', $host );
+			if ( count( $parts ) === 4 ) {
+				$bytes = array();
+				foreach ( $parts as $part ) {
+					// Hex.
+					if ( preg_match( '/^0x[\da-f]+$/i', $part ) ) {
+						$bytes[] = hexdec( $part );
+					} elseif ( preg_match( '/^0\d+$/', $part ) ) {
+						// Octal.
+						$bytes[] = octdec( $part );
+					} elseif ( ctype_digit( $part ) ) {
+						// Decimal.
+						$bytes[] = (int) $part;
+					} else {
+						// Not a valid IP format.
+						return false;
+					}
+				}
+				// Validate bytes are in range.
+				foreach ( $bytes as $byte ) {
+					if ( $byte < 0 || $byte > 255 ) {
+						return false;
+					}
+				}
+				return implode( '.', $bytes );
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Validate IP address for external access
+	 *
+	 * Checks if an IP address is valid for external file access requests.
+	 * Validates against private/reserved IP ranges.
+	 *
+	 * @since 3.14.2
+	 * @param string $ip The IP address to check.
+	 * @return bool True if IP is valid, false if it's private/reserved.
+	 */
+	protected function validate_ip_address( $ip ) {
+		// Validate it's a proper IP.
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+			return false;
+		}
+
+		// Use PHP's built-in check for private/reserved IPs.
+		// This covers: 10.0.0.0/8, 172.16.0.0/12, 192.168.0.0/16, 127.0.0.0/8, etc.
+		if ( ! filter_var( $ip, FILTER_VALIDATE_IP, FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE ) ) {
+			return false;
+		}
+
+		// Additional check for IPv6 localhost.
+		$ipv6_localhost = array( '::1', '0:0:0:0:0:0:0:1' );
+		if ( in_array( $ip, $ipv6_localhost, true ) ) {
+			return false;
+		}
+
+		// Check for IPv4-mapped IPv6 localhost (::ffff:127.0.0.1).
+		if ( strpos( $ip, '::ffff:127.' ) === 0 ) {
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Validate a download file URL
+	 *
+	 * @since 3.14.2
+	 * @param string $file File path.
+	 * @return string|void Error message if validation fails, void on success.
+	 */
 	protected function validate_file( $file ) {
-		// Ensure that $file is a URL
+		// Ensure that $file is a URL.
 		$is_url = is_string( $file ) && ( 0 === strpos( $file, 'http' ) );
 
-		// Exit if file is not URL
+		// Exit if file is not URL.
 		if ( ! $is_url ) {
 			$this->send_404();
 		}
+
+		// Validate URL format and accessibility.
+		if ( ! $this->validate_file_url( $file ) ) {
+			$this->block_invalid_url( $file, 'URL validation failed' );
+		}
+	}
+
+	/**
+	 * Block invalid URL and log access attempt
+	 *
+	 * Terminates the request when URL validation fails.
+	 * Logs the attempt for monitoring and returns 403 Forbidden.
+	 *
+	 * @since 3.14.2
+	 * @param string $url     The blocked URL.
+	 * @param string $context Context where the block occurred.
+	 * @return void Terminates execution with wp_die().
+	 */
+	protected function block_invalid_url( $url, $context = 'Invalid URL' ) {
+		// Get client IP address with proxy support.
+		$client_ip = $this->get_client_ip();
+		
+		// Log the blocked attempt for monitoring.
+		error_log(
+			sprintf(
+				'SSP: Blocked URL access - URL: %s, User ID: %d, IP: %s, Reason: %s, Context: %s',
+				$url,
+				get_current_user_id(),
+				$client_ip,
+				$context,
+				wp_json_encode( array(
+					'user_agent' => isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : 'unknown',
+					'referer'    => isset( $_SERVER['HTTP_REFERER'] ) ? esc_url_raw( wp_unslash( $_SERVER['HTTP_REFERER'] ) ) : 'unknown',
+				) )
+			)
+		);
+
+		// Return 403 Forbidden for blocked URLs.
+		status_header( 403 );
+		nocache_headers();
+		wp_die(
+			esc_html__( 'Access to this resource is not permitted.', 'seriously-simple-podcasting' ),
+			esc_html__( 'Forbidden', 'seriously-simple-podcasting' ),
+			array( 'response' => 403 )
+		);
+	}
+
+	/**
+	 * Get client IP address with proxy support
+	 *
+	 * Attempts to get the real client IP address even when behind proxies.
+	 * Falls back to REMOTE_ADDR if proxy headers are not available.
+	 *
+	 * @since 3.14.2
+	 * @return string Client IP address or 'unknown' if not available.
+	 */
+	protected function get_client_ip() {
+		// Check for proxy headers in order of reliability.
+		$headers = array(
+			'HTTP_CF_CONNECTING_IP', // Cloudflare
+			'HTTP_X_REAL_IP',        // Nginx proxy
+			'HTTP_X_FORWARDED_FOR',  // Standard proxy header
+			'REMOTE_ADDR',           // Direct connection
+		);
+
+		foreach ( $headers as $header ) {
+			if ( ! empty( $_SERVER[ $header ] ) ) {
+				$ip = sanitize_text_field( wp_unslash( $_SERVER[ $header ] ) );
+				
+				// X-Forwarded-For can contain multiple IPs (client, proxy1, proxy2...)
+				// Use the first one (the original client).
+				if ( 'HTTP_X_FORWARDED_FOR' === $header && strpos( $ip, ',' ) !== false ) {
+					$ips = array_map( 'trim', explode( ',', $ip ) );
+					$ip  = $ips[0];
+				}
+				
+				// Validate it's a proper IP address.
+				if ( filter_var( $ip, FILTER_VALIDATE_IP ) ) {
+					return $ip;
+				}
+			}
+		}
+
+		return 'unknown';
+	}
+
+	/**
+	 * Clear all URL validation and DNS caches
+	 *
+	 * Useful for debugging or after security updates.
+	 * Clears both URL validation results and DNS resolution caches.
+	 *
+	 * @since 3.14.2
+	 * @return int Number of cache entries deleted.
+	 */
+	public function clear_validation_cache() {
+		global $wpdb;
+		
+		// Delete all transients matching our patterns.
+		$deleted = $wpdb->query(
+			$wpdb->prepare(
+				"DELETE FROM {$wpdb->options} 
+				 WHERE option_name LIKE %s 
+				 OR option_name LIKE %s
+				 OR option_name LIKE %s
+				 OR option_name LIKE %s",
+				'_transient_ssp_url_valid_%',
+				'_transient_timeout_ssp_url_valid_%',
+				'_transient_ssp_dns_%',
+				'_transient_timeout_ssp_dns_%'
+			)
+		);
+		
+		// Flush object cache if available.
+		wp_cache_flush();
+		
+		return $deleted;
 	}
 
 	/**
@@ -1204,3 +1971,4 @@ class Frontend_Controller {
 		return $html;
 	}
 }
+

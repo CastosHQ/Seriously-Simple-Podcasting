@@ -700,7 +700,7 @@ if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
 	 *
 	 * @param $formatted_size
 	 *
-	 * @return string
+	 * @return int
 	 */
 	function convert_human_readable_to_bytes( $formatted_size ) {
 
@@ -708,18 +708,23 @@ if ( ! function_exists( 'convert_human_readable_to_bytes' ) ) {
 		$formatted_size_value = trim( str_replace( $formatted_size_type, '', $formatted_size ) );
 
 		switch ( strtoupper( $formatted_size_type ) ) {
-			case 'KB':
-				return $formatted_size_value * 1024;
-			case 'MB':
-				return $formatted_size_value * pow( 1024, 2 );
-			case 'GB':
-				return $formatted_size_value * pow( 1024, 3 );
-			case 'TB':
-				return $formatted_size_value * pow( 1024, 4 );
-			case 'PB':
-				return $formatted_size_value * pow( 1024, 5 );
+			case 'K':   // Single letter (from format_bytes).
+			case 'KB':  // Two letters (standard).
+				return (int) ( $formatted_size_value * 1024 );
+			case 'M':   // Single letter (from format_bytes).
+			case 'MB':  // Two letters (standard).
+				return (int) ( $formatted_size_value * pow( 1024, 2 ) );
+			case 'G':   // Single letter (from format_bytes).
+			case 'GB':  // Two letters (standard).
+				return (int) ( $formatted_size_value * pow( 1024, 3 ) );
+			case 'T':   // Single letter (from format_bytes).
+			case 'TB':  // Two letters (standard).
+				return (int) ( $formatted_size_value * pow( 1024, 4 ) );
+			case 'P':   // Single letter (from format_bytes).
+			case 'PB':  // Two letters (standard).
+				return (int) ( $formatted_size_value * pow( 1024, 5 ) );
 			default:
-				return $formatted_size_value;
+				return (int) $formatted_size_value;
 		}
 	}
 }

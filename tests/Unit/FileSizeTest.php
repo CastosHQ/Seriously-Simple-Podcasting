@@ -19,29 +19,50 @@ class FileSizeTest extends \Codeception\Test\Unit
         // Test the core logic of convert_human_readable_to_bytes() without WordPress dependencies
         
         $test_cases = [
-            // Kilobytes
+            // Kilobytes (two-letter suffix)
             '1 KB' => 1024,
             '10KB' => 10240,
             '280 kb' => 286720,
             '1.5KB' => 1536,
             
-            // Megabytes
+            // Kilobytes (single-letter suffix from format_bytes)
+            '1k' => 1024,
+            '10k' => 10240,
+            '280K' => 286720,
+            
+            // Megabytes (two-letter suffix)
             '1 MB' => 1048576,
             '10MB' => 10485760,
             '2.5 mb' => 2621440,
             '100 Mb' => 104857600,
             
-            // Gigabytes
+            // Megabytes (single-letter suffix from format_bytes)
+            '1M' => 1048576,
+            '10M' => 10485760,
+            '2.5m' => 2621440,
+            
+            // Gigabytes (two-letter suffix)
             '1 GB' => 1073741824,
             '2GB' => 2147483648,
             '1.5 gb' => 1610612736,
             
-            // Terabytes
+            // Gigabytes (single-letter suffix from format_bytes)
+            '1G' => 1073741824,
+            '2g' => 2147483648,
+            
+            // Terabytes (two-letter suffix)
             '1 TB' => 1099511627776,
             '2TB' => 2199023255552,
             
-            // Petabytes
+            // Terabytes (single-letter suffix from format_bytes)
+            '1T' => 1099511627776,
+            '2t' => 2199023255552,
+            
+            // Petabytes (two-letter suffix)
             '1 PB' => 1125899906842624,
+            
+            // Petabytes (single-letter suffix from format_bytes)
+            '1P' => 1125899906842624,
             
             // No unit (bytes)
             '1024' => 1024,
@@ -134,6 +155,25 @@ class FileSizeTest extends \Codeception\Test\Unit
         foreach ($decimal_cases as $input => $expected) {
             $result = $this->simulateHumanReadableToBytes($input);
             $this->assertEquals($expected, $result, "Decimal value failed for: '{$input}'");
+            $this->assertIsInt($result, "Result should be integer for: '{$input}'");
+        }
+    }
+
+    public function testReturnsIntegerNotFloat()
+    {
+        // Ensure function returns integers, not floats
+        
+        $test_cases = [
+            '1.5 KB',
+            '2.5 MB',
+            '10M',
+            '5G',
+            '1024',
+        ];
+        
+        foreach ($test_cases as $input) {
+            $result = $this->simulateHumanReadableToBytes($input);
+            $this->assertIsInt($result, "Result must be integer for: '{$input}', got: " . gettype($result));
         }
     }
 
@@ -181,18 +221,23 @@ class FileSizeTest extends \Codeception\Test\Unit
         $formatted_size_value = trim(str_replace($formatted_size_type, '', $formatted_size));
 
         switch (strtoupper($formatted_size_type)) {
-            case 'KB':
-                return $formatted_size_value * 1024;
-            case 'MB':
-                return $formatted_size_value * pow(1024, 2);
-            case 'GB':
-                return $formatted_size_value * pow(1024, 3);
-            case 'TB':
-                return $formatted_size_value * pow(1024, 4);
-            case 'PB':
-                return $formatted_size_value * pow(1024, 5);
+            case 'K':   // Single letter (from format_bytes).
+            case 'KB':  // Two letters (standard).
+                return (int) ( $formatted_size_value * 1024 );
+            case 'M':   // Single letter (from format_bytes).
+            case 'MB':  // Two letters (standard).
+                return (int) ( $formatted_size_value * pow(1024, 2) );
+            case 'G':   // Single letter (from format_bytes).
+            case 'GB':  // Two letters (standard).
+                return (int) ( $formatted_size_value * pow(1024, 3) );
+            case 'T':   // Single letter (from format_bytes).
+            case 'TB':  // Two letters (standard).
+                return (int) ( $formatted_size_value * pow(1024, 4) );
+            case 'P':   // Single letter (from format_bytes).
+            case 'PB':  // Two letters (standard).
+                return (int) ( $formatted_size_value * pow(1024, 5) );
             default:
-                return $formatted_size_value;
+                return (int) $formatted_size_value;
         }
     }
 

@@ -873,7 +873,7 @@ class FrontendControllerTest extends WPTestCase {
 	}
 
 	/**
-	 * Test that current WordPress site domain is trusted
+	 * Test that public WordPress site domain is trusted
 	 *
 	 * @group performance
 	 * @group trusted-domains
@@ -889,11 +889,22 @@ class FrontendControllerTest extends WPTestCase {
 		$this->assertNotEmpty( $site_host, 'Site should have a hostname' );
 		
 		$result = $method->invoke( $this->frontend_controller, $site_host );
-		$this->assertTrue( $result, "Current site domain should be trusted: {$site_host}" );
+		
+		// If WordPress runs on localhost/private IP, it should NOT be trusted (security fix)
+		// Only public domains should be trusted
+		$is_public_method = $reflection->getMethod( 'is_public_domain' );
+		$is_public_method->setAccessible( true );
+		$is_public = $is_public_method->invoke( $this->frontend_controller, $site_host );
+		
+		if ( $is_public ) {
+			$this->assertTrue( $result, "Public site domain should be trusted: {$site_host}" );
+		} else {
+			$this->assertFalse( $result, "Internal site domain should NOT be trusted: {$site_host}" );
+		}
 	}
 
 	/**
-	 * Test that upload directory domain is trusted
+	 * Test that public upload directory domain is trusted
 	 *
 	 * @group performance
 	 * @group trusted-domains
@@ -910,7 +921,18 @@ class FrontendControllerTest extends WPTestCase {
 			
 			if ( $upload_host ) {
 				$result = $method->invoke( $this->frontend_controller, $upload_host );
-				$this->assertTrue( $result, "Upload directory domain should be trusted: {$upload_host}" );
+				
+				// If upload directory is on localhost/private IP, it should NOT be trusted (security fix)
+				// Only public domains should be trusted
+				$is_public_method = $reflection->getMethod( 'is_public_domain' );
+				$is_public_method->setAccessible( true );
+				$is_public = $is_public_method->invoke( $this->frontend_controller, $upload_host );
+				
+				if ( $is_public ) {
+					$this->assertTrue( $result, "Public upload domain should be trusted: {$upload_host}" );
+				} else {
+					$this->assertFalse( $result, "Internal upload domain should NOT be trusted: {$upload_host}" );
+				}
 			} else {
 				$this->markTestSkipped( 'Upload directory does not have a hostname' );
 			}
@@ -920,7 +942,7 @@ class FrontendControllerTest extends WPTestCase {
 	}
 
 	/**
-	 * Test local file URL validation performance
+	 * Test local file URL validation behavior
 	 *
 	 * @group performance
 	 * @group trusted-domains
@@ -933,10 +955,25 @@ class FrontendControllerTest extends WPTestCase {
 		$upload_dir = wp_upload_dir();
 		$local_url = $upload_dir['baseurl'] . '/podcasts/episode.mp3';
 		
-		// Validate - should hit trusted domain fast path
+		// Get the host to check if it's public
+		$upload_host = parse_url( $upload_dir['baseurl'], PHP_URL_HOST );
+		
+		$reflection = new \ReflectionClass( $this->frontend_controller );
+		$is_public_method = $reflection->getMethod( 'is_public_domain' );
+		$is_public_method->setAccessible( true );
+		$is_public = $is_public_method->invoke( $this->frontend_controller, $upload_host );
+		
+		// Validate
 		$result = $this->frontend_controller->validate_file_url( $local_url );
 		
-		$this->assertTrue( $result, 'Local file URL should be validated as trusted domain' );
+		if ( $is_public ) {
+			// Public domains should validate quickly via trusted domain path
+			$this->assertTrue( $result, 'Public domain file URL should be validated as trusted' );
+		} else {
+			// Internal domains (localhost/private IPs) should NOT validate via trusted path
+			// They go through full validation, which will fail for non-existent URLs
+			$this->assertFalse( $result, 'Internal domain file URL should undergo full validation' );
+		}
 	}
 
 	/**

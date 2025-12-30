@@ -6,7 +6,7 @@
  * download functionality, and security features.
  *
  * @package seriously-simple-podcasting
- * @since 3.14.3
+ * @since 3.14.2
  */
 
 namespace SeriouslySimplePodcasting\Tests\WPUnit;

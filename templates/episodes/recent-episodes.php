@@ -57,7 +57,7 @@ $ssp_episode_repository = ssp_episode_repository();
 						<p class="ssp-recent-episode-post__date"><?php echo $date; ?></p>
 						<?php endif; ?>
 						<?php if ( $show_episode_excerpt ) : ?>
-						<p class="ssp-recent-episode-post__excerpt"><?php echo $episode->post_excerpt ?></p>
+						<p class="ssp-recent-episode-post__excerpt"><?php echo wp_kses_post( $episode->post_excerpt ) ?></p>
 						<?php endif; ?>
 
 

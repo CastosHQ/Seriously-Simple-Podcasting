@@ -17,6 +17,6 @@
 		<span class="js-ssp-sync-message"><?php echo esc_html( $status->message ) ?></span>
 	</div>
 	<div class="ssp-episode-sync-status__description js-ssp-sync-description">
-		<?php echo $status->error; ?>
+		<?php echo esc_html( $status->error ); ?>
 	</div>
 </div>

@@ -61,7 +61,7 @@
 					</div>
 					<div>
 						<audio preload="none" class="clip clip-<?php esc_attr_e( $episode_id ) ?>">
-							<source src="<?php echo $audio_file ?>">
+							<source src="<?php echo esc_url( $audio_file ) ?>">
 						</audio>
 						<div class="ssp-progress" role="progressbar" title="<?php
 						esc_attr_e( 'Seek', 'seriously-simple-podcasting' )

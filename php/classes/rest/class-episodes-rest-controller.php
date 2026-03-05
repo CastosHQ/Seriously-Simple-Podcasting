@@ -377,7 +377,9 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		}
 
 		if ( is_array( $request['filter'] ) ) {
-			$args = array_merge( $args, $request['filter'] );
+			$can_edit = $castos_authenticated || current_user_can( 'edit_posts' );
+			$filter   = $this->sanitize_filter_args( $request['filter'], $can_edit );
+			$args     = array_merge( $args, $filter );
 			unset( $args['filter'] );
 		}
 
@@ -453,11 +455,13 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			$posts[] = $posts_controller->prepare_response_for_collection( $data );
 		}
 
-		// Calc total post count
+		// Calc total post count.
+		// Safe to use found_posts for all requests because sanitize_filter_args()
+		// prevents unauthenticated users from overriding post_status via the allowlist.
 		$page        = (int) $query_args['paged'];
 		$total_posts = $posts_query->found_posts;
 
-		// Out-of-bounds, run the query again without LIMIT for total count
+		// Out-of-bounds, run the query again without LIMIT for total count.
 		if ( $total_posts < 1 ) {
 			unset( $query_args['paged'] );
 			$count_query = new WP_Query();
@@ -524,6 +528,35 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		}
 
 		return $response;
+	}
+
+	/**
+	 * Sanitize filter args based on authentication status.
+	 *
+	 * Uses an allowlist for unauthenticated requests to prevent query injection.
+	 * Authenticated users and Castos requests pass through unfiltered.
+	 *
+	 * @param array $filter   Raw filter arguments from the request.
+	 * @param bool  $can_edit Whether the user has edit_posts capability or Castos auth.
+	 *
+	 * @return array Sanitized filter arguments.
+	 */
+	protected function sanitize_filter_args( array $filter, bool $can_edit ): array {
+		if ( $can_edit ) {
+			return $filter;
+		}
+
+		$allowed_keys = array(
+			's',
+			'orderby',
+			'order',
+			'posts_per_page',
+			'paged',
+			'offset',
+			'date_query',
+		);
+
+		return array_intersect_key( $filter, array_flip( $allowed_keys ) );
 	}
 
 	/**

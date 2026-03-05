@@ -254,6 +254,8 @@ class Rest_Api_Controller {
 
 		/**
 		 * Setting up custom route for podcast
+		 *
+		 * @deprecated Use PUT /ssp/v1/episodes/{id} instead.
 		 */
 		register_rest_route(
 			'ssp/v1',
@@ -299,7 +301,7 @@ class Rest_Api_Controller {
 	/**
 	 * Updates a podcast after a Castos import
 	 *
-	 * @deprecated
+	 * @deprecated Use PUT /ssp/v1/episodes/{id} instead.
 	 *
 	 * @return array
 	 */

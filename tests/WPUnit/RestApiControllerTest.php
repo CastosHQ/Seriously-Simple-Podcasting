@@ -22,18 +22,25 @@ class RestApiControllerTest extends \Codeception\TestCase\WPTestCase {
 	 * Test that deprecated podcast_update endpoint returns deprecation response.
 	 */
 	public function testPodcastUpdateReturnsDeprecationResponse() {
+		$this->setExpectedDeprecated( 'SeriouslySimplePodcasting\Rest\Rest_Api_Controller::update_rest_podcast' );
+
 		$response = $this->controller->update_rest_podcast();
 
-		$this->assertIsArray( $response );
-		$this->assertSame( 'false', $response['updated'] );
-		$this->assertStringContainsString( 'deprecated', strtolower( $response['message'] ) );
-		$this->assertStringContainsString( 'PUT /ssp/v1/episodes/{id}', $response['message'] );
+		$this->assertInstanceOf( \WP_REST_Response::class, $response );
+		$this->assertSame( 410, $response->get_status() );
+
+		$data = $response->get_data();
+		$this->assertFalse( $data['updated'] );
+		$this->assertStringContainsString( 'deprecated', strtolower( $data['message'] ) );
+		$this->assertStringContainsString( 'PUT /ssp/v1/episodes/{id}', $data['message'] );
 	}
 
 	/**
 	 * Test that deprecated endpoint no longer processes tokens or files.
 	 */
 	public function testPodcastUpdateIgnoresTokenAndFilePayload() {
+		$this->setExpectedDeprecated( 'SeriouslySimplePodcasting\Rest\Rest_Api_Controller::update_rest_podcast' );
+
 		// Set up a valid token in the database.
 		update_option( 'ss_podcasting_podmotor_account_api_token', 'test-token-123' );
 
@@ -45,8 +52,9 @@ class RestApiControllerTest extends \Codeception\TestCase\WPTestCase {
 
 		$response = $this->controller->update_rest_podcast();
 
-		$this->assertSame( 'false', $response['updated'], 'Deprecated endpoint must never process uploads' );
-		$this->assertStringContainsString( 'deprecated', strtolower( $response['message'] ) );
+		$data = $response->get_data();
+		$this->assertFalse( $data['updated'], 'Deprecated endpoint must never process uploads' );
+		$this->assertStringContainsString( 'deprecated', strtolower( $data['message'] ) );
 
 		// Clean up superglobals.
 		unset( $_POST['ssp_podcast_api_token'], $_FILES['ssp_podcast_file'] );

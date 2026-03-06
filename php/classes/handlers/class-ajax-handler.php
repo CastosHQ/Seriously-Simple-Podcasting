@@ -293,7 +293,7 @@ class Ajax_Handler {
 
 			$html = get_post_embed_html( $width, $height, $post_id );
 
-			wp_send_json_success( wp_kses_post( $html ) );
+			wp_send_json_success( $html );
 		} catch ( \Exception $e ) {
 			$this->send_json_error( $e->getMessage() );
 		}

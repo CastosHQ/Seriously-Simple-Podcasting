@@ -323,7 +323,7 @@ class Rest_Api_Controller {
 		_deprecated_function( __METHOD__, '3.14.3', 'PUT /ssp/v1/episodes/{id}' );
 
 		return array(
-			'updated' => 'false',
+			'updated' => false,
 			'message' => 'This endpoint is deprecated. Use PUT /ssp/v1/episodes/{id} to update episodes.',
 		);
 	}

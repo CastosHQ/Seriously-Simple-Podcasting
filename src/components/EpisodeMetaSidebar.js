@@ -420,7 +420,7 @@ const EpisodeMetaSidebar = () => {
 								value={ dateRecorded }
 								onChange={ ( value ) => {
 									handleFieldChange('date_recorded', value, true);
-									const dateOnly = value ? new Date(value + 'Z').toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+									const dateOnly = value ? new Date(value.replace(' ', 'T') + 'Z').toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 									document.dispatchEvent(new CustomEvent('changedSSPGutField', {
 										'detail': { field: 'date_recorded_display', value: dateOnly },
 									}));

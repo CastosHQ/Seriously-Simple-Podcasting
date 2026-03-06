@@ -556,7 +556,42 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			'date_query',
 		);
 
-		return array_intersect_key( $filter, array_flip( $allowed_keys ) );
+		$sanitized = array_intersect_key( $filter, array_flip( $allowed_keys ) );
+
+		if ( isset( $sanitized['s'] ) ) {
+			$sanitized['s'] = sanitize_text_field( $sanitized['s'] );
+		}
+
+		if ( isset( $sanitized['order'] ) ) {
+			$sanitized['order'] = in_array( strtolower( (string) $sanitized['order'] ), array( 'asc', 'desc' ), true )
+				? strtolower( $sanitized['order'] )
+				: 'desc';
+		}
+
+		if ( isset( $sanitized['orderby'] ) ) {
+			$allowed_orderby = array( 'date', 'id', 'include', 'title', 'slug', 'menu_order' );
+			if ( ! in_array( (string) $sanitized['orderby'], $allowed_orderby, true ) ) {
+				$sanitized['orderby'] = 'date';
+			}
+		}
+
+		if ( isset( $sanitized['posts_per_page'] ) ) {
+			$sanitized['posts_per_page'] = min( 500, max( 1, absint( $sanitized['posts_per_page'] ) ) );
+		}
+
+		if ( isset( $sanitized['paged'] ) ) {
+			$sanitized['paged'] = max( 1, absint( $sanitized['paged'] ) );
+		}
+
+		if ( isset( $sanitized['offset'] ) ) {
+			$sanitized['offset'] = max( 0, absint( $sanitized['offset'] ) );
+		}
+
+		if ( isset( $sanitized['date_query'] ) && ! is_array( $sanitized['date_query'] ) ) {
+			unset( $sanitized['date_query'] );
+		}
+
+		return $sanitized;
 	}
 
 	/**

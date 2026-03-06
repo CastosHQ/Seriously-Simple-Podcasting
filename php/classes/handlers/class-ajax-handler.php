@@ -279,13 +279,17 @@ class Ajax_Handler {
 			$this->nonce_check( 'update_episode_embed_code' );
 			$this->user_capability_check();
 
-			if ( empty( $_POST['post_id'] ) ) {
-				throw new \Exception( 'Missing post ID' );
+			if ( empty( $_POST['post_id'] ) || ! isset( $_POST['width'], $_POST['height'] ) ) {
+				throw new \Exception( 'Missing embed parameters' );
 			}
 
-			$post_id = (int) $_POST['post_id'];
-			$width   = (int) $_POST['width'];
-			$height  = (int) $_POST['height'];
+			$post_id = absint( $_POST['post_id'] );
+			$width   = absint( $_POST['width'] );
+			$height  = absint( $_POST['height'] );
+
+			if ( $post_id < 1 || $width < 1 || $height < 1 ) {
+				throw new \Exception( 'Invalid embed parameters' );
+			}
 
 			$html = get_post_embed_html( $width, $height, $post_id );
 

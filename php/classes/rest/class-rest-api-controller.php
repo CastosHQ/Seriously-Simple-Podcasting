@@ -320,7 +320,7 @@ class Rest_Api_Controller {
 	 * @return array Deprecation response.
 	 */
 	public function update_rest_podcast() {
-		error_log( 'SSP: Deprecated endpoint POST /ssp/v1/podcast_update was called. Caller IP: ' . sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? 'unknown' ) );
+		_deprecated_function( __METHOD__, '3.14.3', 'PUT /ssp/v1/episodes/{id}' );
 
 		return array(
 			'updated' => 'false',

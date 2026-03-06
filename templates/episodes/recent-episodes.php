@@ -29,7 +29,7 @@ $ssp_episode_repository = ssp_episode_repository();
 				<?php foreach ( $episodes as $episode ) { ?>
 					<div class="ssp-recent-episode-post">
 						<?php if ( $show_episode_image ) : ?>
-						<a href="<?php echo get_the_permalink( $episode->ID ); ?>" title="<?php echo esc_attr( $episode->post_title ) ?>">
+						<a href="<?php echo esc_url( get_the_permalink( $episode->ID ) ); ?>" title="<?php echo esc_attr( $episode->post_title ) ?>">
 							<?php $album_art = $ssp_episode_repository->$get_image_func( $episode->ID, 'medium' ); ?>
 							<img src="<?php echo esc_url( $album_art['src'] ); ?>" alt="<?php echo esc_attr( $episode->post_title ) ?>">
 						</a>
@@ -37,7 +37,7 @@ $ssp_episode_repository = ssp_episode_repository();
 
 						<?php if ( $show_episode_title ) : ?>
 						<h4>
-							<a href="<?php echo get_the_permalink( $episode->ID ); ?>"
+							<a href="<?php echo esc_url( get_the_permalink( $episode->ID ) ); ?>"
 							   title="<?php echo esc_attr( $episode->post_title ) ?>"><?php echo wp_kses_post( $episode->post_title ) ?></a>
 						</h4>
 						<?php endif; ?>
@@ -62,7 +62,7 @@ $ssp_episode_repository = ssp_episode_repository();
 
 
 						<?php if ( $show_read_more ) : ?>
-						<a href="<?php echo get_the_permalink( $episode->ID ); ?>"
+						<a href="<?php echo esc_url( get_the_permalink( $episode->ID ) ); ?>"
 						   title="<?php echo esc_attr( $episode->post_title ) ?>" class="view-episode"><?php echo $read_more_text; ?></a>
 						<?php endif; ?>
 					</div>

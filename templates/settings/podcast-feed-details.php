@@ -32,7 +32,7 @@
 				}
 				?>
 				<tr>
-					<th><?php echo $field['label']; ?>:</th>
+					<th><?php echo esc_html( $field['label'] ); ?>:</th>
 					<td><?php echo $value; ?></td>
 				</tr>
 			<?php endforeach; ?>

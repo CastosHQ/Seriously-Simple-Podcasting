@@ -20,14 +20,14 @@
 				<label for="show_name">
 					<?php _e( 'This will be the title shown to listeners. You can always change it later.', 'seriously-simple-podcasting' ); ?>
 				</label>
-				<input id="show_name" class="js-onboarding-field" type="text" name="data_title" value="<?php echo $data_title ?>">
+				<input id="show_name" class="js-onboarding-field" type="text" name="data_title" value="<?php echo esc_attr( $data_title ) ?>">
 			</div>
 			<div class="ssp-onboarding__settings-item">
 				<h2><?php _e( 'What\'s your show about?', 'seriously-simple-podcasting' ); ?></h2>
 				<label for="show_description">
 					<?php _e( 'Pique listeners\' interest with a few details about your podcast.', 'seriously-simple-podcasting' ); ?>
 				</label>
-				<textarea id="show_description" class="js-onboarding-field" name="data_description" rows="7"><?php echo $data_description ?></textarea>
+				<textarea id="show_description" class="js-onboarding-field" name="data_description" rows="7"><?php echo esc_textarea( $data_description ) ?></textarea>
 			</div>
 			<div class="ssp-onboarding__submit">
 				<?php wp_nonce_field( 'ssp_onboarding_' . $step_number, 'nonce', false ); ?>

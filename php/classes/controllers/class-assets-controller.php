@@ -158,6 +158,9 @@ class Assets_Controller {
 			),
 			$this->version
 		);
+		wp_localize_script( 'ssp-admin', 'ssp_admin', array(
+			'nonce' => wp_create_nonce( 'update_episode_embed_code' ),
+		) );
 		wp_enqueue_script( 'ssp-admin' );
 
 		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );

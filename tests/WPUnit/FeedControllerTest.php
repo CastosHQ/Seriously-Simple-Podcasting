@@ -59,7 +59,7 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
             '<description>',
             '<lastBuildDate>',
             '<language>en-US</language>',
-            '<copyright>&#xA9; 2025 WordPress Test</copyright>',
+            '<copyright>&#xA9; ' . date( 'Y' ) . ' WordPress Test</copyright>',
             '<itunes:subtitle>',
             '<itunes:author>WordPress Test</itunes:author>',
             '<itunes:summary>',

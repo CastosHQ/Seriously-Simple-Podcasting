@@ -190,15 +190,22 @@ class CPT_Podcast_Handler implements Service {
 			'meta_description' => __( 'The full URL for the podcast episode media file.', 'seriously-simple-podcasting' ),
 		);
 
+		$fields['podmotor_file_id'] = array(
+			'type'             => 'hidden',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Seriously Simple Hosting file id.', 'seriously-simple-podcasting' ),
+		);
+		$fields['podmotor_episode_id'] = array(
+			'type'             => 'hidden',
+			'default'          => '',
+			'section'          => 'info',
+			'meta_description' => __( 'Seriously Simple Hosting episode id.', 'seriously-simple-podcasting' ),
+		);
+
 		if ( $is_connected_to_castos || $all ) {
 			$fields['castos_file_data'] = array(
 				'type' => 'hidden',
-			);
-			$fields['podmotor_file_id'] = array(
-				'type'             => 'hidden',
-				'default'          => '',
-				'section'          => 'info',
-				'meta_description' => __( 'Seriously Simple Hosting file id.', 'seriously-simple-podcasting' ),
 			);
 		} else {
 			$description = __( 'Get advanced analytics and unlimited file storage when hosting with Castos.', 'seriously-simple-podcasting' );

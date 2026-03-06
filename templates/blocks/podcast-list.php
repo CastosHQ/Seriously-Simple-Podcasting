@@ -49,7 +49,7 @@ use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 				<?php if ( $show_title && ! $title_under_img ) : ?>
 				<h3>
 					<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( $permalink ); ?>">
-						<?php echo the_title(); ?>
+						<?php echo wp_kses_post( get_the_title() ); ?>
 					</a>
 				</h3>
 				<?php endif; ?>
@@ -63,7 +63,7 @@ use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
 					<?php if ( $show_title && $title_under_img ) : ?>
 						<h3>
 							<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( $permalink ); ?>">
-								<?php echo the_title(); ?>
+								<?php echo wp_kses_post( get_the_title() ); ?>
 							</a>
 						</h3>
 					<?php endif; ?>

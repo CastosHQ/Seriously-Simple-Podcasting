@@ -213,13 +213,14 @@ jQuery(document).ready(function($) {
 		    ajaxurl,
 		    {
 		        'action': 'update_episode_embed_code',
+		        'nonce': ssp_admin.nonce,
 		        'width': width,
 		        'height': height,
 		        'post_id': post_id,
 		    },
 		    function( response ){
-		        if( response ) {
-		        	$( '#episode_embed_code' ).val( response );
+		        if( response && response.success ) {
+		        	$( '#episode_embed_code' ).val( response.data );
 		        	$( '#episode_embed_code' ).select();
 		        }
 		    }

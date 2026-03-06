@@ -292,6 +292,10 @@ class Ajax_Handler {
 			}
 
 			$html = get_post_embed_html( $width, $height, $post_id );
+			if ( false === $html ) {
+				throw new \Exception( 'Could not generate embed code.' );
+			}
+
 
 			wp_send_json_success( $html );
 		} catch ( \Exception $e ) {

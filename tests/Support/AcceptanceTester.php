@@ -846,7 +846,7 @@ class AcceptanceTester extends \Codeception\Actor
      *
      * @since 3.14.3
      *
-     * @param string $arg1 Content to verify (supports {{base_url}}, {{base_url_without_port}}, {{podcast_guid}}).
+     * @param string $arg1 Content to verify (supports {{base_url}}, {{base_url_without_port}}, {{podcast_guid}}, {{current_year}}).
      * @return void
      */
     public function iCanSeeInSource(string $arg1): void
@@ -860,6 +860,9 @@ class AcceptanceTester extends \Codeception\Actor
             $arg1 = str_replace('{{base_url_without_port}}', $url, $arg1);
         } elseif (false !== strpos($arg1, '{{podcast_guid}}')) {
             $arg1 = str_replace('{{podcast_guid}}', $this->getConfig('podcastGuid'), $arg1);
+        }
+        if (false !== strpos($arg1, '{{current_year}}')) {
+            $arg1 = str_replace('{{current_year}}', date('Y'), $arg1);
         }
         $this->seeInSource($arg1);
     }

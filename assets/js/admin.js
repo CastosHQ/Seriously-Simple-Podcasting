@@ -82,19 +82,26 @@ jQuery(document).ready(function($) {
 		var $dateRecorded = $( '#date_recorded' );
 		if ( $dateRecorded.length ) {
 			var attachmentDate = attachment.date ? new Date( attachment.date ) : new Date();
-			// Format date in local timezone (YYYY-MM-DD) to avoid UTC conversion issues
-			// attachment.date is a UTC timestamp, but we want the local date
 			var year = attachmentDate.getFullYear();
 			var month = String( attachmentDate.getMonth() + 1 ).padStart( 2, '0' );
 			var day = String( attachmentDate.getDate() ).padStart( 2, '0' );
-			var isoDate = year + '-' + month + '-' + day;
-			$dateRecorded.val( isoDate ).trigger( 'change' );
+			var hours = String( attachmentDate.getHours() ).padStart( 2, '0' );
+			var minutes = String( attachmentDate.getMinutes() ).padStart( 2, '0' );
+			var seconds = String( attachmentDate.getSeconds() ).padStart( 2, '0' );
+			var isoDatetime = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+			$dateRecorded.val( isoDatetime ).trigger( 'change' );
 
-			// Also update display field if present (datepicker display)
+			// Update datepicker display field
 			var $dateRecordedDisplay = $( '#date_recorded_display' );
 			if ( $dateRecordedDisplay.length ) {
 				var display = attachmentDate.toLocaleDateString( undefined, { day: 'numeric', month: 'long', year: 'numeric' } );
 				$dateRecordedDisplay.val( display );
+			}
+
+			// Update time input
+			var $dateRecordedTime = $( '#date_recorded_time' );
+			if ( $dateRecordedTime.length ) {
+				$dateRecordedTime.val( hours + ':' + minutes );
 			}
 		}
 	}
@@ -227,30 +234,49 @@ jQuery(document).ready(function($) {
 		);
 	});
 
-	/* DATEPICKER */
+	/* DATEPICKER + TIME */
+
+	/**
+	 * Combine date and time inputs into the hidden storage field.
+	 *
+	 * @param {jQuery} $datepickerDisplay The visible datepicker text input.
+	 */
+	function updateDatetimeHiddenField( $datepickerDisplay ) {
+		var save_field = $datepickerDisplay.attr( 'id' ).replace( '_display', '' );
+		var $hidden    = $( '#' + save_field );
+		var $time      = $( '#' + save_field + '_time' );
+		var dateText   = $datepickerDisplay.val();
+
+		if ( ! dateText ) {
+			$hidden.val( '' ).trigger( 'change' );
+			return;
+		}
+
+		var d    = $.datepicker.parseDate( 'd MM, yy', dateText );
+		var date = $.datepicker.formatDate( 'yy-mm-dd', d );
+		var time = $time.length && $time.val() ? $time.val() + ':00' : '00:00:00';
+
+		$hidden.val( date + ' ' + time ).trigger( 'change' );
+	}
 
 	$('.ssp-datepicker').datepicker({
 		changeMonth: true,
-      	changeYear: true,
-      	showAnim: 'slideDown',
-      	dateFormat: 'd MM, yy',
-      	altField: '#date_recorded',
-      	altFormat: 'yy-mm-dd',
-      	onClose : function ( dateText, obj ) {
-		    var d = $.datepicker.parseDate("d MM, yy", dateText);
-		    var date = $.datepicker.formatDate("yy-mm-dd", d);
-		    var save_field = $(this).attr('id').replace( '_display', '' );
-		    $( '#' + save_field ).val( date ).trigger('change');
+		changeYear: true,
+		showAnim: 'slideDown',
+		dateFormat: 'd MM, yy',
+		onClose: function () {
+			updateDatetimeHiddenField( $( this ) );
 		}
 	});
 
 	$('.ssp-datepicker').change( function () {
-		var value = $( this ).val();
-		if( !value ) {
-			var id = $( this ).attr( 'id' );
-			var save_field = id.replace( '_display', '' );
-			$( '#' + save_field ).val( '' );
-		}
+		updateDatetimeHiddenField( $( this ) );
+	});
+
+	$('.ssp-timepicker').on( 'change', function () {
+		var save_field_id = $( this ).attr( 'id' ).replace( '_time', '' );
+		var $datepickerDisplay = $( '#' + save_field_id + '_display' );
+		updateDatetimeHiddenField( $datepickerDisplay );
 	});
 
 	/* SETTINGS PAGE */
@@ -392,6 +418,7 @@ jQuery(document).ready(function($) {
 			$('input.ssp-sync[type="text"][name="' + data.field + '"]').val(data.value);
 			$('input.ssp-sync[type="number"][name="' + data.field + '"]').val(data.value);
 			$('input.ssp-sync[type="hidden"][name="' + data.field + '"]').val(data.value);
+			$('input.ssp-sync[type="time"][name="' + data.field + '"]').val(data.value);
 			$('input.ssp-sync[type="radio"][name="' + data.field + '"][value="' + data.value + '"]').prop('checked', true);
 			$('select.ssp-sync[name="' + data.field + '"] option[value="' + data.value + '"]').prop('selected', true);
 			$('input.ssp-sync[type="checkbox"][name="' + data.field + '"]').prop('checked', 'on' === data.value);

@@ -268,6 +268,20 @@ class Rest_Api_Controller {
 		);
 
 		/**
+		 * Castos status endpoint.
+		 * Uses HMAC authentication — the API token is never transmitted.
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/status',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_connection_status' ),
+				'permission_callback' => array( $this, 'validate_connection_request' ),
+			)
+		);
+
+		/**
 		 * Setting up custom route for the wp_audio_shortcode for a podcast
 		 */
 		register_rest_route(
@@ -299,49 +313,45 @@ class Rest_Api_Controller {
 	}
 
 	/**
-	 * Updates a podcast after a Castos import
+	 * Deprecated endpoint — returns deprecation notice for all requests.
 	 *
 	 * @deprecated Use PUT /ssp/v1/episodes/{id} instead.
 	 *
-	 * @return array
+	 * @return array Deprecation response.
 	 */
 	public function update_rest_podcast() {
-		$response = array(
+		error_log( 'SSP: Deprecated endpoint POST /ssp/v1/podcast_update was called. Caller IP: ' . sanitize_text_field( $_SERVER['REMOTE_ADDR'] ?? 'unknown' ) );
+
+		return array(
 			'updated' => 'false',
-			'message' => '',
+			'message' => 'This endpoint is deprecated. Use PUT /ssp/v1/episodes/{id} to update episodes.',
 		);
-
-		$ssp_podcast_api_token = ( isset( $_POST['ssp_podcast_api_token'] ) ? filter_var( $_POST['ssp_podcast_api_token'], FILTER_DEFAULT ) : '' );
-		if ( empty( $ssp_podcast_api_token ) ) {
-			$response['message'] = 'No Castos API key set';
-			return $response;
-		}
-
-		$podmotor_api_token = get_option( 'ss_podcasting_podmotor_account_api_token', '' );
-		if ( $ssp_podcast_api_token !== $podmotor_api_token ) {
-			$response['message'] = 'Castos API invalid';
-			return $response;
-		}
-
-		if ( ! isset( $_FILES['ssp_podcast_file'] ) ) {
-			$response['message'] = 'No podcast file exists';
-			return $response;
-		}
-
-		$episode_data_array = array_map( 'str_getcsv', file( $_FILES['ssp_podcast_file']['tmp_name'] ) );
-		foreach ( $episode_data_array as $episode_data ) {
-			// add check to make sure url being added is valid first
-			update_post_meta( $episode_data[0], 'podmotor_episode_id', $episode_data[1] );
-			update_post_meta( $episode_data[0], 'audio_file', $episode_data[2] );
-		}
-		ssp_email_podcasts_imported();
-
-		$response['updated'] = 'true';
-		$response['message'] = 'Podcast updated successfully';
-
-		return $response;
 	}
 
+	/**
+	 * Permission callback for the connection validation endpoint.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool|\WP_Error True if HMAC authentication is valid, WP_Error otherwise.
+	 */
+	public function validate_connection_request( $request ) {
+		return Episodes_Rest_Controller::validate_castos_authentication( $request, array() );
+	}
+
+	/**
+	 * Returns connection status for Castos HMAC-authenticated requests.
+	 *
+	 * @return \WP_REST_Response Connection status response.
+	 */
+	public function get_connection_status() {
+		return rest_ensure_response(
+			array(
+				'connected'   => true,
+				'ssp_version' => ssp_version(),
+			)
+		);
+	}
 
 	/**
 	 * Authenticates WordPress user from cookie for REST API requests.

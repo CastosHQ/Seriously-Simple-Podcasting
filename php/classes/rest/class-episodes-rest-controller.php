@@ -164,7 +164,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 		$expected_signature = hash_hmac( 'sha256', json_encode( $request_data ) . $timestamp, $stored_key );
 
-		if ( $signature !== $expected_signature ) {
+		if ( ! hash_equals( $expected_signature, $signature ) ) {
 			return new \WP_Error( 'invalid_signature', 'Request signature invalid.', $status_401 );
 		}
 

@@ -317,14 +317,17 @@ class Rest_Api_Controller {
 	 *
 	 * @deprecated Use PUT /ssp/v1/episodes/{id} instead.
 	 *
-	 * @return array Deprecation response.
+	 * @return \WP_REST_Response Deprecation response with 410 Gone status.
 	 */
 	public function update_rest_podcast() {
 		_deprecated_function( __METHOD__, '3.14.3', 'PUT /ssp/v1/episodes/{id}' );
 
-		return array(
-			'updated' => false,
-			'message' => 'This endpoint is deprecated. Use PUT /ssp/v1/episodes/{id} to update episodes.',
+		return new \WP_REST_Response(
+			array(
+				'updated' => false,
+				'message' => 'This endpoint is deprecated. Use PUT /ssp/v1/episodes/{id} to update episodes.',
+			),
+			410
 		);
 	}
 

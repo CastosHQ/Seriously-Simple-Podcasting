@@ -842,13 +842,22 @@ class Feed_Handler implements Service {
 	/**
 	 * Get feed item publication date.
 	 *
-	 * @param $pub_date_type
-	 * @param $post_id
+	 * @param string $pub_date_type 'published' or 'recorded'.
+	 * @param int    $post_id
 	 *
-	 * @return mixed|void
+	 * @return string RFC 2822 formatted date string.
 	 */
 	public function get_feed_item_pub_date( $pub_date_type, $post_id ) {
-		$pub_date = ( 'published' === $pub_date_type ) ? get_post_time( 'Y-m-d H:i:s', true ) : get_post_meta( $post_id, 'date_recorded', true );
+		$post_timestamp = get_post_time( 'U', true, $post_id );
+		$pub_date       = ( 'published' === $pub_date_type )
+			? gmdate( 'Y-m-d H:i:s', $post_timestamp )
+			: get_post_meta( $post_id, 'date_recorded', true );
+
+		// For date-only recorded values, append post publish time for unique feed pubDates.
+		if ( $pub_date && preg_match( '/^\d{4}-\d{2}-\d{2}$/', $pub_date ) ) {
+			$pub_date = $pub_date . ' ' . gmdate( 'H:i:s', $post_timestamp );
+		}
+
 		$pub_date = esc_html( mysql2date( 'D, d M Y H:i:s +0000', $pub_date, false ) );
 
 		return apply_filters( 'ssp_feed_item_pub_date', $pub_date, $post_id, $pub_date_type );

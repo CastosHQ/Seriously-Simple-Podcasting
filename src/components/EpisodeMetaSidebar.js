@@ -230,8 +230,11 @@ const EpisodeMetaSidebar = () => {
 		const year = fileDate.getFullYear();
 		const month = String( fileDate.getMonth() + 1 ).padStart( 2, '0' );
 		const day = String( fileDate.getDate() ).padStart( 2, '0' );
-		const isoDate = year + '-' + month + '-' + day;
-		handleFieldChange('date_recorded', isoDate, true);
+		const hours = String( fileDate.getHours() ).padStart( 2, '0' );
+		const minutes = String( fileDate.getMinutes() ).padStart( 2, '0' );
+		const seconds = String( fileDate.getSeconds() ).padStart( 2, '0' );
+		const isoDatetime = year + '-' + month + '-' + day + ' ' + hours + ':' + minutes + ':' + seconds;
+		handleFieldChange('date_recorded', isoDatetime, true);
 	};
 
 	const removeCoverImage = ( event ) => {
@@ -415,10 +418,14 @@ const EpisodeMetaSidebar = () => {
 
 							<DateInput
 								value={ dateRecorded }
-								onChange={ ( value, displayedValue ) => {
+								onChange={ ( value ) => {
 									handleFieldChange('date_recorded', value, true);
+									const dateOnly = value ? new Date(value.replace(' ', 'T') + 'Z').toLocaleDateString(undefined, { day: 'numeric', month: 'long', year: 'numeric' }) : '';
 									document.dispatchEvent(new CustomEvent('changedSSPGutField', {
-										'detail': { field: 'date_recorded_display', value: displayedValue },
+										'detail': { field: 'date_recorded_display', value: dateOnly },
+									}));
+									document.dispatchEvent(new CustomEvent('changedSSPGutField', {
+										'detail': { field: 'date_recorded_time', value: value ? value.slice(11, 16) : '' },
 									}));
 								} }
 							/>

@@ -2125,9 +2125,6 @@ textarea#episode_embed_code {
 .ssp-date-input .components-popover__content {
   padding: 8px;
 }
-.ssp-date-input .components-datetime__time fieldset:first-child {
-  display: none;
-}
 
 .ssp-calendar-icon {
   position: relative;

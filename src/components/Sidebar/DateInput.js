@@ -5,11 +5,11 @@ import moment from 'moment';
 
 const DateInput = ({value, onChange}) => {
 	const displayedDateFormat = (val) => {
-		return val ? dateI18n('j F, Y', moment.utc(val)) : '';
+		return val ? dateI18n('j F, Y H:i', moment.utc(val)) : '';
 	}
 
 	const dateFormat = (val) => {
-		return val ? moment.utc(val).format('YYYY-MM-DD') : '';
+		return val ? moment.utc(val).format('YYYY-MM-DD HH:mm:ss') : '';
 	}
 
 	const [isCalendarOpen, setIsCalendarOpen] = useState(false);

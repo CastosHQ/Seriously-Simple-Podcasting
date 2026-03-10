@@ -144,7 +144,7 @@ class RestApiControllerTest extends \Codeception\TestCase\WPTestCase {
 
 		$result = $this->controller->validate_connection_request( $request );
 		$this->assertWPError( $result );
-		$this->assertSame( 'invalid_signature', $result->get_error_code() );
+		$this->assertSame( 'no_api_key', $result->get_error_code() );
 	}
 
 	/**

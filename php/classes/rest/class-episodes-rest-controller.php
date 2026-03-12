@@ -159,7 +159,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		$stored_key = ssp_get_option( 'podmotor_account_api_token' );
 
 		if ( empty( $stored_key ) ) {
-			return new \WP_Error( 'invalid_signature', 'Request signature invalid.', $status_401 );
+			return new \WP_Error( 'no_api_key', 'Request signature invalid.', $status_401 );
 		}
 
 		$expected_signature = hash_hmac( 'sha256', json_encode( $request_data ) . $timestamp, $stored_key );

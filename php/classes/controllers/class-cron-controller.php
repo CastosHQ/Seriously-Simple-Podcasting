@@ -128,6 +128,9 @@ class Cron_Controller {
 			$response = $this->castos_handler->upload_episode_to_castos( $episode );
 
 			if ( $response->success ) {
+				if ( $response->castos_episode_id ) {
+					update_post_meta( $episode->ID, 'podmotor_episode_id', $response->castos_episode_id );
+				}
 				$this->unschedule_episode( $episode->ID );
 				$this->episodes_respository->update_episode_sync_status( $episode->ID, Sync_Status::SYNC_STATUS_SYNCED );
 				$this->episodes_respository->delete_episode_sync_error( $episode->ID );

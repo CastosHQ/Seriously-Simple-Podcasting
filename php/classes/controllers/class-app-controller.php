@@ -12,6 +12,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Ajax_Handler;
+use SeriouslySimplePodcasting\Handlers\Archive_Page_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
@@ -206,6 +207,13 @@ class App_Controller {
 	protected $cpt_podcast_handler;
 
 	/**
+	 * Archive page handler instance.
+	 *
+	 * @var Archive_Page_Handler
+	 */
+	protected $archive_page_handler;
+
+	/**
 	 * Roles handler instance.
 	 *
 	 * @var Roles_Handler
@@ -341,17 +349,19 @@ class App_Controller {
 
 		$this->episode_repository = new Episode_Repository( $this->feed_handler );
 
-		$this->admin_notices_handler = new Admin_Notifications_Handler();
+		$this->roles_handler = new Roles_Handler();
+
+		$this->cpt_podcast_handler = new CPT_Podcast_Handler( $this->roles_handler, $this->feed_handler );
+
+		$this->archive_page_handler = new Archive_Page_Handler();
+
+		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->archive_page_handler, $this->renderer );
 
 		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger, $this->admin_notices_handler );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
 		$this->db_migration_controller = DB_Migration_Controller::instance()->init( $this->admin_notices_handler );
-
-		$this->roles_handler = new Roles_Handler();
-
-		$this->cpt_podcast_handler = new CPT_Podcast_Handler( $this->roles_handler, $this->feed_handler );
 
 		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version );
 
@@ -408,7 +418,7 @@ class App_Controller {
 
 		// todo: further refactoring - get rid of global here.
 		global $ss_podcasting;
-		$ss_podcasting = new Frontend_Controller( $this->players_controller, $this->episode_repository );
+		$ss_podcasting = new Frontend_Controller( $this->players_controller, $this->episode_repository, $this->archive_page_handler );
 
 		$this->init_integrations();
 		$this->init_rest_api();
@@ -749,6 +759,11 @@ class App_Controller {
 	 * @return void
 	 */
 	public function activate() {
+		// On fresh install, create the podcast archive page.
+		if ( false === get_option( 'ssp_version' ) ) {
+			$this->archive_page_handler->create_podcast_archive_page();
+		}
+
 		// Setup all custom URL rules
 		$this->podcast_post_types_controller->register_post_type();
 		$this->series_controller->register_taxonomy();

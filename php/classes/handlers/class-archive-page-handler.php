@@ -215,7 +215,16 @@ class Archive_Page_Handler implements Service {
 	 * @return string
 	 */
 	protected function get_podcast_archive_page_content() {
-		return '<!-- wp:seriously-simple-podcasting/podcast-list {"featuredImage":false,"excerpt":true,"player":true,"titleSize":"48"} /-->';
+		$content = '<!-- wp:seriously-simple-podcasting/podcast-list {"featuredImage":false,"excerpt":true,"player":true,"titleSize":"48"} /-->';
+
+		/**
+		 * Filters the default block content for newly created podcast archive pages.
+		 *
+		 * @since 3.15.0
+		 *
+		 * @param string $content Default block markup.
+		 */
+		return apply_filters( 'ssp_podcast_archive_page_content', $content );
 	}
 
 	/**
@@ -368,14 +377,40 @@ class Archive_Page_Handler implements Service {
 
 			update_option( self::OPTION_PODCAST_PAGE_ID, $page_id );
 
+			$this->fire_page_created_action( $page_id );
+
 			return $page_id;
 		}
 
-		return $this->create_page(
+		$page_id = $this->create_page(
 			self::OPTION_PODCAST_PAGE_ID,
 			$slug,
 			__( 'Podcast', 'seriously-simple-podcasting' ),
 			$this->get_podcast_archive_page_content()
 		);
+
+		if ( $page_id ) {
+			$this->fire_page_created_action( $page_id );
+		}
+
+		return $page_id;
+	}
+
+	/**
+	 * Fires the archive page created action.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param int $page_id Created or assigned page ID.
+	 */
+	protected function fire_page_created_action( $page_id ) {
+		/**
+		 * Fires after the podcast archive page has been created or assigned.
+		 *
+		 * @since 3.15.0
+		 *
+		 * @param int $page_id The archive page ID.
+		 */
+		do_action( 'ssp_archive_page_created', $page_id );
 	}
 }

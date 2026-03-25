@@ -25,6 +25,7 @@ use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
+use SeriouslySimplePodcasting\Presenters\Episode_List_Presenter;
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
 use SeriouslySimplePodcasting\Integrations\LifterLMS\LifterLMS_Integrator;
 use SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator;
@@ -434,7 +435,8 @@ class App_Controller {
 		 * Only load Blocks if the WordPress version is newer than 5.0.
 		 */
 		if ( version_compare( $this->get_wp_version(), '5.0', '>=' ) ) {
-			new Castos_Blocks( $this->admin_notices_handler, $this->episode_repository, $this->players_controller, $this->renderer );
+			$episode_list_renderer = new Episode_List_Presenter( $this->episode_repository, $this->players_controller, $this->renderer );
+			new Castos_Blocks( $this->admin_notices_handler, $episode_list_renderer );
 		}
 
 		// Elementor integration.

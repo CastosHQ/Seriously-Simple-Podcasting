@@ -86,6 +86,13 @@ class App_Controller {
 	protected $cron_controller;
 
 	/**
+	 * Episode list presenter instance.
+	 *
+	 * @var Episode_List_Presenter
+	 */
+	protected $episode_list_presenter;
+
+	/**
 	 * Shortcodes controller instance.
 	 *
 	 * @var Shortcodes_Controller
@@ -364,8 +371,6 @@ class App_Controller {
 
 		$this->db_migration_controller = DB_Migration_Controller::instance()->init( $this->admin_notices_handler );
 
-		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version );
-
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
 		$this->ajax_handler = new Ajax_Handler( $this->castos_handler, $this->admin_notices_handler );
@@ -402,6 +407,8 @@ class App_Controller {
 
 		$this->admin_controller              = new Admin_Controller( $this->renderer, $this->castos_handler );
 		$this->players_controller            = new Players_Controller( $this->renderer, $this->options_handler, $this->episode_repository );
+		$this->episode_list_presenter        = new Episode_List_Presenter( $this->episode_repository, $this->players_controller, $this->renderer );
+		$this->shortcodes_controller         = new Shortcodes_Controller( $this->file, $this->version, $this->episode_list_presenter );
 		$this->podcast_post_types_controller = new Podcast_Post_Types_Controller(
 			$this->cpt_podcast_handler,
 			$this->castos_handler,
@@ -435,8 +442,7 @@ class App_Controller {
 		 * Only load Blocks if the WordPress version is newer than 5.0.
 		 */
 		if ( version_compare( $this->get_wp_version(), '5.0', '>=' ) ) {
-			$episode_list_renderer = new Episode_List_Presenter( $this->episode_repository, $this->players_controller, $this->renderer );
-			new Castos_Blocks( $this->admin_notices_handler, $episode_list_renderer );
+			new Castos_Blocks( $this->admin_notices_handler, $this->episode_list_presenter );
 		}
 
 		// Elementor integration.

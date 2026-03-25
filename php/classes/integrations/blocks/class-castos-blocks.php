@@ -41,21 +41,21 @@ class Castos_Blocks {
 	protected $admin_notices_handler;
 
 	/**
-	 * Episode list renderer instance.
+	 * Episode list presenter instance.
 	 *
 	 * @var Episode_List_Presenter
 	 */
-	protected $episode_list_renderer;
+	protected $episode_list_presenter;
 
 	/**
 	 * Castos_Blocks constructor.
 	 *
 	 * @param Admin_Notifications_Handler $admin_notices_handler Admin notifications handler instance.
-	 * @param Episode_List_Presenter       $episode_list_renderer Episode list renderer instance.
+	 * @param Episode_List_Presenter       $episode_list_presenter Episode list presenter instance.
 	 */
-	public function __construct( $admin_notices_handler, $episode_list_renderer ) {
+	public function __construct( $admin_notices_handler, $episode_list_presenter ) {
 		$this->admin_notices_handler = $admin_notices_handler;
-		$this->episode_list_renderer = $episode_list_renderer;
+		$this->episode_list_presenter = $episode_list_presenter;
 
 		if ( ! file_exists( SSP_PLUGIN_PATH . 'build/index.asset.php' ) ) {
 			if ( is_admin() ) {
@@ -80,7 +80,7 @@ class Castos_Blocks {
 		$this->register_deprecated_blocks();
 
 		( new Castos_Html_Player_Block() )->register();
-		( new Podcast_List_Block( $this->episode_list_renderer ) )->register();
+		( new Podcast_List_Block( $this->episode_list_presenter ) )->register();
 		( new Playlist_Player_Block() )->register();
 		( new Ssp_Podcasts_Block() )->register();
 	}

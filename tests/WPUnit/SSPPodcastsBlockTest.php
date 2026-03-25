@@ -51,7 +51,7 @@ class SSPPodcastsBlockTest extends \Codeception\TestCase\WPTestCase
         $this->players_controller = ssp_get_service('players_controller');
         $this->renderer = ssp_get_service('renderer');
 
-        $episode_list_renderer = new \SeriouslySimplePodcasting\Presenters\Episode_List_Presenter(
+        $episode_list_presenter = new \SeriouslySimplePodcasting\Presenters\Episode_List_Presenter(
             $this->episode_repository,
             $this->players_controller,
             $this->renderer
@@ -60,7 +60,7 @@ class SSPPodcastsBlockTest extends \Codeception\TestCase\WPTestCase
         // Initialize the Castos_Blocks class
         $this->castos_blocks = new Castos_Blocks(
             $this->admin_notices_handler,
-            $episode_list_renderer
+            $episode_list_presenter
         );
     }
 

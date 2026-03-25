@@ -3,6 +3,7 @@
 namespace Tests\WPUnit;
 
 use SeriouslySimplePodcasting\Controllers\Shortcodes_Controller;
+use SeriouslySimplePodcasting\Presenters\Episode_List_Presenter;
 use SeriouslySimplePodcasting\ShortCodes\Podcast_List;
 
 class PodcastListTest extends \Codeception\TestCase\WPTestCase
@@ -17,9 +18,11 @@ class PodcastListTest extends \Codeception\TestCase\WPTestCase
         parent::setUp();
 
         // Initialize the shortcodes controller
+        $episode_list_presenter = $this->createMock(Episode_List_Presenter::class);
         $this->shortcodes_controller = new Shortcodes_Controller(
             dirname(dirname(__DIR__)) . '/seriously-simple-podcasting.php',
-            '3.13.0'
+            '3.13.0',
+            $episode_list_presenter
         );
     }
 

@@ -18,13 +18,13 @@ class Podcast_List_Block {
 	/**
 	 * @var Episode_List_Presenter
 	 */
-	protected $episode_list_renderer;
+	protected $episode_list_presenter;
 
 	/**
-	 * @param Episode_List_Presenter $episode_list_renderer Episode list renderer instance.
+	 * @param Episode_List_Presenter $episode_list_presenter Episode list presenter instance.
 	 */
-	public function __construct( $episode_list_renderer ) {
-		$this->episode_list_renderer = $episode_list_renderer;
+	public function __construct( $episode_list_presenter ) {
+		$this->episode_list_presenter = $episode_list_presenter;
 		$this->init_useful_variables();
 	}
 
@@ -156,7 +156,7 @@ class Podcast_List_Block {
 	 * @return string Rendered block output.
 	 */
 	public function render_callback( $attributes ) {
-		return $this->episode_list_renderer->render( $attributes );
+		return $this->episode_list_presenter->render( $attributes );
 	}
 
 	/**

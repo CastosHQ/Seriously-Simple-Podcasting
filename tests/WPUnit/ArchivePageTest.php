@@ -93,7 +93,7 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 			'post_status'  => 'publish',
 			'post_name'    => 'ssp-podcast-archive',
 			'post_title'   => 'Podcast',
-			'post_content' => '<!-- wp:seriously-simple-podcasting/podcast-list {"featuredImage":false,"excerpt":true,"player":true,"titleSize":"48"} /-->',
+			'post_content' => '<!-- wp:seriously-simple-podcasting/podcast-list {"featuredImage":false,"excerpt":true,"player":true,"titleSize":"24"} /-->',
 		] );
 
 		// Trash it — WordPress mangles slug to ssp-podcast-archive__trashed.
@@ -179,7 +179,7 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 		$page    = get_post( $page_id );
 
 		$this->assertStringContainsString(
-			'<!-- wp:seriously-simple-podcasting/podcast-list {"featuredImage":false,"excerpt":true,"player":true,"titleSize":"48"} /-->',
+			'<!-- wp:seriously-simple-podcasting/podcast-list {"featuredImage":false,"excerpt":true,"player":true,"titleSize":"24"} /-->',
 			$page->post_content
 		);
 	}
@@ -195,6 +195,36 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 		$this->assertEquals( 'page', $page->post_type );
 		$this->assertEquals( 'publish', $page->post_status );
 		$this->assertEquals( 'closed', $page->comment_status );
+	}
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::get_podcast_archive_page_content()
+	 */
+	public function testPageUsesShortcodeWhenBlockEditorDisabled()
+	{
+		// Simulate Classic Editor — disable block editor for pages.
+		add_filter( 'use_block_editor_for_post_type', '__return_false' );
+
+		$page_id = $this->get_archive_page_handler()->create_podcast_archive_page();
+		$page    = get_post( $page_id );
+
+		$this->assertStringContainsString( '[ssp_episode_list', $page->post_content );
+		$this->assertStringContainsString( 'display_player="true"', $page->post_content );
+		$this->assertStringNotContainsString( '<!-- wp:', $page->post_content );
+
+		remove_filter( 'use_block_editor_for_post_type', '__return_false' );
+	}
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::get_podcast_archive_page_content()
+	 */
+	public function testPageUsesBlockWhenBlockEditorEnabled()
+	{
+		$page_id = $this->get_archive_page_handler()->create_podcast_archive_page();
+		$page    = get_post( $page_id );
+
+		$this->assertStringContainsString( '<!-- wp:seriously-simple-podcasting/podcast-list', $page->post_content );
+		$this->assertStringNotContainsString( '[ssp_episode_list', $page->post_content );
 	}
 
 	// =========================================================================

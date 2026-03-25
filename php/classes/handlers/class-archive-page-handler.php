@@ -167,6 +167,10 @@ class Archive_Page_Handler implements Service {
 
 		$wp_query->rewind_posts();
 
+		// Enqueue podcast list styles — wp_enqueue_scripts has already fired,
+		// so this outputs in the footer.
+		wp_enqueue_style( 'ssp-podcast-list' );
+
 		// Resolve the page template.
 		$page_template_slug = get_page_template_slug( $page_id );
 
@@ -208,21 +212,28 @@ class Archive_Page_Handler implements Service {
 	}
 
 	/**
-	 * Returns the default block content for the podcast archive page.
+	 * Returns the default content for the podcast archive page.
+	 *
+	 * Uses the Gutenberg block when the block editor is available,
+	 * falls back to the [ssp_episode_list] shortcode for Classic Editor.
 	 *
 	 * @since 3.15.0
 	 *
 	 * @return string
 	 */
 	protected function get_podcast_archive_page_content() {
-		$content = '<!-- wp:seriously-simple-podcasting/podcast-list {"featuredImage":false,"excerpt":true,"player":true,"titleSize":"48"} /-->';
+		if ( function_exists( 'use_block_editor_for_post_type' ) && use_block_editor_for_post_type( 'page' ) ) {
+			$content = '<!-- wp:seriously-simple-podcasting/podcast-list {"featuredImage":false,"excerpt":true,"player":true,"titleSize":"24"} /-->';
+		} else {
+			$content = '[ssp_episode_list display_image="false" display_excerpt="true" display_player="true" title_size="24"]';
+		}
 
 		/**
-		 * Filters the default block content for newly created podcast archive pages.
+		 * Filters the default content for newly created podcast archive pages.
 		 *
 		 * @since 3.15.0
 		 *
-		 * @param string $content Default block markup.
+		 * @param string $content Default block markup or shortcode.
 		 */
 		return apply_filters( 'ssp_podcast_archive_page_content', $content );
 	}

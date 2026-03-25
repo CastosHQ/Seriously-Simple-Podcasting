@@ -71,7 +71,7 @@ class Playlist_Player_Block {
 		$podcast_id = ( '' === $attributes['selectedPodcast'] ) ? -1 : intval( $attributes['selectedPodcast'] );
 		$args       = array();
 
-		if ( $podcast_id ) {
+		if ( $podcast_id > 0 ) {
 			$args['series'] = $this->get_term_slug_by_id( $podcast_id );
 		}
 

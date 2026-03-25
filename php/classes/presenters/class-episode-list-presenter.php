@@ -195,8 +195,8 @@ class Episode_List_Presenter {
 			'format'    => '?podcast_page=%#%',
 			'total'     => $episodes_query->max_num_pages,
 			'current'   => $current_page,
-			'prev_text' => __( '&laquo; Newer Episodes' ),
-			'next_text' => __( 'Older Episodes &raquo;' ),
+			'prev_text' => __( '&laquo; Newer Episodes', 'seriously-simple-podcasting' ),
+			'next_text' => __( 'Older Episodes &raquo;', 'seriously-simple-podcasting' ),
 			'type'      => 'array',
 		);
 

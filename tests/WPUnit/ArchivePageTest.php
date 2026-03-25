@@ -428,6 +428,7 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 	{
 		update_option( Archive_Page_Handler::OPTION_NOTICE_DISMISSED, true );
 		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
+		set_current_screen( 'edit-podcast' );
 
 		$handler = new \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler( $this->get_archive_page_handler(), new \SeriouslySimplePodcasting\Renderers\Renderer() );
 
@@ -444,6 +445,7 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 	public function testArchivePageNoticeNotShownWhenPageAssigned()
 	{
 		delete_option( Archive_Page_Handler::OPTION_NOTICE_DISMISSED );
+		set_current_screen( 'edit-podcast' );
 
 		$page_id = $this->factory()->post->create( [
 			'post_type'   => 'page',

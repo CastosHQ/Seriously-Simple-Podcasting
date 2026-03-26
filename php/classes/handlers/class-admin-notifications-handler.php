@@ -11,6 +11,7 @@
 namespace SeriouslySimplePodcasting\Handlers;
 
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Traits\URL_Helper;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -66,13 +67,27 @@ class Admin_Notifications_Handler implements Service {
 	const ERROR   = 'error';
 	const SUCCESS = 'success';
 
+	/**
+	 * @var Archive_Page_Handler
+	 */
+	protected $archive_page_handler;
+
+	/**
+	 * @var Renderer
+	 */
+	protected $renderer;
 
 	/**
 	 * Admin_Notifications_Handler constructor.
 	 *
+	 * @param Archive_Page_Handler $archive_page_handler
+	 * @param Renderer             $renderer
+	 *
 	 * @return void
 	 */
-	public function __construct() {
+	public function __construct( $archive_page_handler, $renderer ) {
+		$this->archive_page_handler = $archive_page_handler;
+		$this->renderer             = $renderer;
 		$this->init_useful_variables();
 
 		return $this;
@@ -97,6 +112,11 @@ class Admin_Notifications_Handler implements Service {
 
 		// Print flash notices
 		add_action( 'admin_notices', array( $this, 'display_notices' ), 12 );
+
+		// Archive page upgrade notice for existing installs.
+		add_action( 'admin_notices', array( $this, 'maybe_show_archive_page_notice' ), 12 );
+
+		add_action( 'admin_init', array( $this, 'handle_archive_page_notice_action' ) );
 
 		return $this;
 	}
@@ -609,5 +629,77 @@ class Admin_Notifications_Handler implements Service {
 		);
 
 		return apply_filters( 'ssp_predefined_notices', $notices );
+	}
+
+	/**
+	 * Shows the archive page upgrade notice for existing installs.
+	 *
+	 * @return void
+	 * @since 3.15.0
+	 */
+	public function maybe_show_archive_page_notice() {
+		if ( ! $this->is_ssp_post_page() && ! $this->is_ssp_admin_page() ) {
+			return;
+		}
+
+		if ( ! $this->archive_page_handler->should_show_archive_page_notice() ) {
+			return;
+		}
+
+		$this->render_archive_page_notice();
+	}
+
+	/**
+	 * Renders the archive page upgrade notice HTML.
+	 *
+	 * @return void
+	 * @since 3.15.0
+	 */
+	protected function render_archive_page_notice() {
+		$this->renderer->render( 'archive-page-notice', array(
+			'setup_url'   => wp_nonce_url(
+				add_query_arg( 'ssp_archive_page_action', 'setup', admin_url( 'admin.php' ) ),
+				'ssp_archive_page_action'
+			),
+			'dismiss_url' => wp_nonce_url(
+				add_query_arg( 'ssp_archive_page_action', 'dismiss', admin_url( 'admin.php' ) ),
+				'ssp_archive_page_action'
+			),
+			'archive_url' => get_post_type_archive_link( SSP_CPT_PODCAST ),
+		) );
+	}
+
+	/**
+	 * Dispatches archive page notice actions to the handler.
+	 *
+	 * @return void
+	 * @since 3.15.0
+	 */
+	public function handle_archive_page_notice_action() {
+		if ( empty( $_GET['ssp_archive_page_action'] ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		$action = sanitize_text_field( $_GET['ssp_archive_page_action'] );
+
+		if ( ! in_array( $action, array( 'setup', 'dismiss' ), true ) ) {
+			return;
+		}
+
+		check_admin_referer( 'ssp_archive_page_action' );
+
+		if ( 'setup' === $action ) {
+			$result = $this->archive_page_handler->handle_setup_action();
+			$this->add_flash_notice( $result['message'], $result['success'] ? self::SUCCESS : self::ERROR );
+		} else {
+			$result = $this->archive_page_handler->handle_dismiss_action();
+		}
+
+		wp_safe_redirect( $result['redirect'] );
+		exit;
 	}
 }

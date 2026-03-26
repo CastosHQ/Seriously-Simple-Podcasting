@@ -3,6 +3,7 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Entities\Castos_File_Data;
+use SeriouslySimplePodcasting\Handlers\Archive_Page_Handler;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Logger;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
@@ -39,6 +40,11 @@ class Frontend_Controller {
 	public $episode_repository;
 
 	/**
+	 * @var Archive_Page_Handler
+	 */
+	protected $archive_page_handler;
+
+	/**
 	 * @var array
 	 * */
 	protected $removed_filters;
@@ -66,14 +72,16 @@ class Frontend_Controller {
 	/**
 	 * Frontend_Controller constructor.
 	 *
-	 * @param Players_Controller $players_controller
-	 * @param Episode_Repository $episode_repository
+	 * @param Players_Controller  $players_controller
+	 * @param Episode_Repository  $episode_repository
+	 * @param Archive_Page_Handler $archive_page_handler
 	 */
-	public function __construct( $players_controller, $episode_repository ) {
+	public function __construct( $players_controller, $episode_repository, $archive_page_handler ) {
 		$this->init_useful_variables();
 
-		$this->players_controller = $players_controller;
-		$this->episode_repository = $episode_repository;
+		$this->players_controller   = $players_controller;
+		$this->episode_repository   = $episode_repository;
+		$this->archive_page_handler = $archive_page_handler;
 
 		$this->register_hooks_and_filters();
 		$this->register_ajax_actions();
@@ -123,6 +131,15 @@ class Frontend_Controller {
 		add_action( 'wp', array( $this, 'download_file' ), 1 );
 
 		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
+
+		// When a podcast archive page is assigned, serve the page instead of the CPT archive template.
+		add_filter( 'template_include', array( $this, 'maybe_serve_archive_page' ), 99 );
+
+		// Redirect the archive page's own URL to the podcast archive URL.
+		add_action( 'template_redirect', array( $this, 'redirect_archive_page_to_podcast_url' ) );
+
+		// Flush rewrite rules when the podcast archive page setting changes.
+		add_action( 'update_option_' . Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, 'flush_rewrite_rules' );
 
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
@@ -627,6 +644,24 @@ class Frontend_Controller {
 				$query->set( 'post_type', $podcast_post_types );
 			}
 		}
+	}
+
+	/**
+	 * @see Archive_Page_Handler::serve_archive_page()
+	 */
+	public function maybe_serve_archive_page( $template ) {
+		if ( ! is_post_type_archive( SSP_CPT_PODCAST ) ) {
+			return $template;
+		}
+
+		return $this->archive_page_handler->serve_archive_page( $template );
+	}
+
+	/**
+	 * @see Archive_Page_Handler::redirect_archive_page_to_podcast_url()
+	 */
+	public function redirect_archive_page_to_podcast_url() {
+		$this->archive_page_handler->redirect_archive_page_to_podcast_url();
 	}
 
 	public function add_all_post_types_for_tag_archive( $query ) {

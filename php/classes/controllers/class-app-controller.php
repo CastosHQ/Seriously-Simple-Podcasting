@@ -12,6 +12,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Ajax_Handler;
+use SeriouslySimplePodcasting\Handlers\Archive_Page_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
@@ -24,6 +25,7 @@ use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Handlers\Upgrade_Handler;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Integrations\Blocks\Castos_Blocks;
+use SeriouslySimplePodcasting\Presenters\Episode_List_Presenter;
 use SeriouslySimplePodcasting\Integrations\Elementor\Elementor_Widgets;
 use SeriouslySimplePodcasting\Integrations\LifterLMS\LifterLMS_Integrator;
 use SeriouslySimplePodcasting\Integrations\Memberpress\Memberpress_Integrator;
@@ -82,6 +84,13 @@ class App_Controller {
 	 * @var Cron_Controller
 	 */
 	protected $cron_controller;
+
+	/**
+	 * Episode list presenter instance.
+	 *
+	 * @var Episode_List_Presenter
+	 */
+	protected $episode_list_presenter;
 
 	/**
 	 * Shortcodes controller instance.
@@ -204,6 +213,13 @@ class App_Controller {
 	 * @var CPT_Podcast_Handler
 	 */
 	protected $cpt_podcast_handler;
+
+	/**
+	 * Archive page handler instance.
+	 *
+	 * @var Archive_Page_Handler
+	 */
+	protected $archive_page_handler;
 
 	/**
 	 * Roles handler instance.
@@ -341,19 +357,19 @@ class App_Controller {
 
 		$this->episode_repository = new Episode_Repository( $this->feed_handler );
 
-		$this->admin_notices_handler = new Admin_Notifications_Handler();
+		$this->roles_handler = new Roles_Handler();
+
+		$this->cpt_podcast_handler = new CPT_Podcast_Handler( $this->roles_handler, $this->feed_handler );
+
+		$this->archive_page_handler = new Archive_Page_Handler();
+
+		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->archive_page_handler, $this->renderer );
 
 		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger, $this->admin_notices_handler );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
 		$this->db_migration_controller = DB_Migration_Controller::instance()->init( $this->admin_notices_handler );
-
-		$this->roles_handler = new Roles_Handler();
-
-		$this->cpt_podcast_handler = new CPT_Podcast_Handler( $this->roles_handler, $this->feed_handler );
-
-		$this->shortcodes_controller = new Shortcodes_Controller( $this->file, $this->version );
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 
@@ -391,6 +407,8 @@ class App_Controller {
 
 		$this->admin_controller              = new Admin_Controller( $this->renderer, $this->castos_handler );
 		$this->players_controller            = new Players_Controller( $this->renderer, $this->options_handler, $this->episode_repository );
+		$this->episode_list_presenter        = new Episode_List_Presenter( $this->episode_repository, $this->players_controller, $this->renderer );
+		$this->shortcodes_controller         = new Shortcodes_Controller( $this->file, $this->version, $this->episode_list_presenter );
 		$this->podcast_post_types_controller = new Podcast_Post_Types_Controller(
 			$this->cpt_podcast_handler,
 			$this->castos_handler,
@@ -408,7 +426,7 @@ class App_Controller {
 
 		// todo: further refactoring - get rid of global here.
 		global $ss_podcasting;
-		$ss_podcasting = new Frontend_Controller( $this->players_controller, $this->episode_repository );
+		$ss_podcasting = new Frontend_Controller( $this->players_controller, $this->episode_repository, $this->archive_page_handler );
 
 		$this->init_integrations();
 		$this->init_rest_api();
@@ -424,7 +442,7 @@ class App_Controller {
 		 * Only load Blocks if the WordPress version is newer than 5.0.
 		 */
 		if ( version_compare( $this->get_wp_version(), '5.0', '>=' ) ) {
-			new Castos_Blocks( $this->admin_notices_handler, $this->episode_repository, $this->players_controller, $this->renderer );
+			new Castos_Blocks( $this->admin_notices_handler, $this->episode_list_presenter );
 		}
 
 		// Elementor integration.
@@ -749,6 +767,11 @@ class App_Controller {
 	 * @return void
 	 */
 	public function activate() {
+		// On fresh install, create the podcast archive page.
+		if ( false === get_option( 'ssp_version' ) ) {
+			$this->archive_page_handler->create_podcast_archive_page();
+		}
+
 		// Setup all custom URL rules
 		$this->podcast_post_types_controller->register_post_type();
 		$this->series_controller->register_taxonomy();

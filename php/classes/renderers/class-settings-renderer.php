@@ -120,6 +120,10 @@ class Settings_Renderer implements Service {
 				break;
 			case 'podcasts_sync':
 				$html .= $this->render_sync_podcasts( $field, $data, $option_name );
+				break;
+			case 'single_select_page':
+				$html .= $this->render_single_select_page( $field, $data, $option_name );
+				break;
 		}
 
 		if ( ! in_array(
@@ -453,6 +457,45 @@ class Settings_Renderer implements Service {
 						'" class="' . $this->get_field_class( $field ) . '"> ' . $v . '</option>';
 		}
 		$html .= '</select>';
+
+		return $html;
+	}
+
+	/**
+	 * Renders a searchable page dropdown using wp_dropdown_pages with Select2.
+	 *
+	 * @param array  $field       Field configuration array.
+	 * @param string $data        Current field value (page ID).
+	 * @param string $option_name Option name for form submission.
+	 *
+	 * @return string
+	 * @since 3.15.0
+	 */
+	protected function render_single_select_page( $field, $data, $option_name ) {
+		$args = array(
+			'name'             => esc_attr( $option_name ),
+			'id'               => esc_attr( $field['id'] ),
+			'sort_column'      => 'menu_order',
+			'sort_order'       => 'ASC',
+			'show_option_none' => __( '— Select a page —', 'seriously-simple-podcasting' ),
+			'option_none_value' => '',
+			'echo'             => false,
+			'selected'         => absint( $data ),
+			'post_status'      => 'publish,private,draft',
+		);
+
+		$html = wp_dropdown_pages( $args );
+
+		// Append page IDs to option labels (e.g. "Podcast (ID: 42)") for clarity.
+		$html = preg_replace_callback(
+			'/(<option[^>]*value="(\d+)"[^>]*>)([^<]+)/',
+			function ( $matches ) {
+				return $matches[1] . $matches[3] . ' (ID: ' . $matches[2] . ')';
+			},
+			$html
+		);
+
+		$html = str_replace( '<select', '<select class="js-ssp-select2"', $html );
 
 		return $html;
 	}

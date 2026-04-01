@@ -35,7 +35,7 @@ class EpisodeListShortcodeTest extends \Codeception\TestCase\WPTestCase
 
 		$this->presenter = new Episode_List_Presenter(
 			ssp_get_service( 'episode_repository' ),
-			ssp_get_service( 'players_controller' ),
+			ssp_app()->players_controller,
 			ssp_get_service( 'renderer' )
 		);
 
@@ -60,6 +60,21 @@ class EpisodeListShortcodeTest extends \Codeception\TestCase\WPTestCase
 		}
 
 		return $episode_id;
+	}
+
+	/**
+	 * Strips volatile values from render output before comparing two renders.
+	 *
+	 * The instance CSS class (ssp-el-N) and player-generated IDs differ between
+	 * separate render calls, so they must be normalized for parity assertions.
+	 */
+	protected function normalize_render_output( string $html ): string {
+		// Remove the per-instance <style> block (contains ssp-el-N selector).
+		$html = preg_replace( '/<style>.*?<\/style>/s', '', $html );
+		// Normalize non-deterministic player attributes.
+		$html = preg_replace( '/data-player_id="[^"]*"/', 'data-player_id=""', $html );
+		$html = preg_replace( '/data-secret="[^"]*"/', 'data-secret=""', $html );
+		return $html;
 	}
 
 	// =========================================================================
@@ -240,22 +255,25 @@ class EpisodeListShortcodeTest extends \Codeception\TestCase\WPTestCase
 			'orderBy'            => 'date',
 			'order'              => 'desc',
 			'columnsPerRow'      => '1',
-			'player'             => false,
-			'excerpt'            => false,
+			'player'             => true,
+			'excerpt'            => true,
 			'showTitle'          => true,
-			'featuredImage'      => true,
-			'featuredImageSize'  => 'full',
-			'titleSize'          => '16',
+			'featuredImage'      => false,
+			'featuredImageSize'  => 'medium',
+			'titleSize'          => '24',
 			'titleUnderImage'    => false,
 			'playerBelowExcerpt' => false,
 			'paginationType'     => 'full',
 			'titleColor'         => '',
 			'layout'             => 'list',
 			'clickable'          => 'button',
-			'buttonText'         => 'Listen Now',
+			'buttonText'         => __( 'Listen Now', 'seriously-simple-podcasting' ),
 		) );
 
-		$this->assertEquals( $presenter_output, $shortcode_output );
+		$this->assertEquals(
+			$this->normalize_render_output( $presenter_output ),
+			$this->normalize_render_output( $shortcode_output )
+		);
 	}
 
 	// =========================================================================

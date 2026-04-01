@@ -32,14 +32,15 @@
 	$is_card_clickable = $is_cards && 'card' === $clickable;
 	$is_title_link     = $is_cards ? 'title' === $clickable : true;
 	$show_listen_btn   = $is_cards && 'title' !== $clickable;
-	$wrapper_class     = 'ssp-podcast-list' . ( $is_cards ? ' ssp-podcast-list--cards' : '' );
+	$instance_class    = 'ssp-el-' . wp_unique_id();
+	$wrapper_class     = 'ssp-podcast-list ' . $instance_class . ( $is_cards ? ' ssp-podcast-list--cards' : '' );
 	if ( $columns_per_row >= 2 ) {
 		$wrapper_class .= ' ssp-podcast-list--col-2';
 	}
 	$pagination_class  = 'ssp-podcast-list__pagination' . ( 'full' === $pagination_type ? ' ssp-podcast-list__pagination--full' : '' );
 	?>
 	<style>
-		.ssp-podcast-list {
+		.<?php echo esc_attr( $instance_class ); ?> {
 			--ssp-episode-list-title-size: <?php echo intval( $title_size ); ?>px;
 			--ssp-episode-list-cols: <?php echo intval( $columns_per_row ); ?>;
 			<?php if ( $title_color ) : ?>
@@ -59,8 +60,8 @@
 			<?php endif; ?>
 		}
 		<?php if ( ! empty( $link_color ) ) : ?>
-		.ssp-podcast-list a:not(.entry-title-link),
-		.ssp-podcast-list__pagination a {
+		.<?php echo esc_attr( $instance_class ); ?> a:not(.entry-title-link),
+		.<?php echo esc_attr( $instance_class ); ?> .ssp-podcast-list__pagination a {
 			color: <?php echo esc_attr( $link_color ); ?>;
 		}
 		<?php endif; ?>

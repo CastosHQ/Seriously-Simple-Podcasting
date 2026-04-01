@@ -130,16 +130,16 @@ class Episode_List_Presenter {
 			'columns_per_row'     => intval( $attributes['columnsPerRow'] ),
 			'title_size'          => intval( $attributes['titleSize'] ),
 			'title_under_img'     => intval( $attributes['titleUnderImage'] ),
-			'title_color'         => ! empty( $attributes['titleColor'] ) ? sanitize_hex_color( $attributes['titleColor'] ) : '',
+			'title_color'         => sanitize_hex_color( $attributes['titleColor'] ?? '' ) ?? '',
 			'layout'              => $layout,
 			'clickable'           => $clickable,
 			'pagination_type'     => $pagination_type,
 			'button_text'         => ! empty( $attributes['buttonText'] ) ? strval( $attributes['buttonText'] ) : __( 'Listen Now', 'seriously-simple-podcasting' ),
-			'text_color'          => ! empty( $attributes['textColor'] ) ? sanitize_hex_color( $attributes['textColor'] ) : '',
-			'link_color'          => ! empty( $attributes['linkColor'] ) ? sanitize_hex_color( $attributes['linkColor'] ) : '',
-			'card_bg'             => ! empty( $attributes['cardBackground'] ) ? sanitize_hex_color( $attributes['cardBackground'] ) : '',
-			'button_color'        => ! empty( $attributes['buttonColor'] ) ? sanitize_hex_color( $attributes['buttonColor'] ) : '',
-			'button_bg'           => ! empty( $attributes['buttonBackground'] ) ? sanitize_hex_color( $attributes['buttonBackground'] ) : '',
+			'text_color'          => sanitize_hex_color( $attributes['textColor'] ?? '' ) ?? '',
+			'link_color'          => sanitize_hex_color( $attributes['linkColor'] ?? '' ) ?? '',
+			'card_bg'             => sanitize_hex_color( $attributes['cardBackground'] ?? '' ) ?? '',
+			'button_color'        => sanitize_hex_color( $attributes['buttonColor'] ?? '' ) ?? '',
+			'button_bg'           => sanitize_hex_color( $attributes['buttonBackground'] ?? '' ) ?? '',
 		);
 	}
 

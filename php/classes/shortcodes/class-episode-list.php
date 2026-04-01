@@ -173,7 +173,7 @@ class Episode_List implements Shortcode {
 			'title_color'          => '',
 			'layout'               => 'list',
 			'clickable'            => 'button',
-			'button_text'          => 'Listen Now',
+			'button_text'          => __( 'Listen Now', 'seriously-simple-podcasting' ),
 			'text_color'           => '',
 			'link_color'           => '',
 			'card_background'      => '',

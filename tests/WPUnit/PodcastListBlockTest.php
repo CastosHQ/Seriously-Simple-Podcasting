@@ -24,7 +24,7 @@ class PodcastListBlockTest extends \Codeception\TestCase\WPTestCase
 
 		$this->renderer = new Episode_List_Presenter(
 			ssp_get_service( 'episode_repository' ),
-			ssp_get_service( 'players_controller' ),
+			ssp_app()->players_controller,
 			ssp_get_service( 'renderer' )
 		);
 	}

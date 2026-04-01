@@ -209,7 +209,7 @@
 /* Compact player for multi-column cards — mirrors castos-player.css @media (max-width: 768px) */
 .ssp-podcast-list--cards.ssp-podcast-list--col-2 .castos-player .player__main {
   grid-template-columns: 60px 1fr;
-  grid-gap: 0;
+  gap: 0;
   height: 150px;
 }
 .ssp-podcast-list--cards.ssp-podcast-list--col-2 .castos-player .player__artwork img {
@@ -222,7 +222,7 @@
   padding: 12px 12px 4px 12px;
 }
 .ssp-podcast-list--cards.ssp-podcast-list--col-2 .castos-player .play-progress {
-  grid-gap: 18px;
+  gap: 18px;
   margin-left: -60px;
   margin-top: 4px;
 }
@@ -251,7 +251,7 @@
 }
 .ssp-podcast-list--cards.ssp-podcast-list--col-2 .castos-player .playback .playback__controls {
   grid-template-columns: repeat(3, auto);
-  grid-gap: 8px;
+  gap: 8px;
   justify-content: flex-start;
 }
 .ssp-podcast-list--cards.ssp-podcast-list--col-2 .castos-player .player-panels-nav {

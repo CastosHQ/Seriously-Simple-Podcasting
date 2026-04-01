@@ -56,10 +56,13 @@ class Episode_List_Presenter {
 	 * @return string Rendered HTML.
 	 */
 	public function render( $attributes ) {
-		$query_args     = $this->normalize_attributes( $attributes );
-		$episodes_query = $this->build_query( $query_args );
-		$paginate       = $this->paginate( $episodes_query, $query_args['paged'] );
-		$template_args  = $this->prepare_template_args( $attributes, $episodes_query, $paginate );
+		$query_args      = $this->normalize_attributes( $attributes );
+		$episodes_query  = $this->build_query( $query_args );
+		$allowed_pagination = array( 'simple', 'full' );
+		$pagination_type = ! empty( $attributes['paginationType'] ) && in_array( $attributes['paginationType'], $allowed_pagination, true )
+			? $attributes['paginationType'] : 'simple';
+		$paginate        = $this->paginate( $episodes_query, $query_args['paged'], $pagination_type );
+		$template_args   = $this->prepare_template_args( $attributes, $episodes_query, $paginate, $pagination_type );
 
 		$html = $this->renderer->fetch( 'blocks/podcast-list', $template_args );
 
@@ -95,13 +98,22 @@ class Episode_List_Presenter {
 	 *
 	 * @since 3.15.0
 	 *
-	 * @param array     $attributes     Raw attributes from block or shortcode.
-	 * @param \WP_Query $episodes_query Episodes query result.
-	 * @param array     $paginate       Pagination links.
+	 * @param array     $attributes      Raw attributes from block or shortcode.
+	 * @param \WP_Query $episodes_query  Episodes query result.
+	 * @param array     $paginate        Pagination links.
+	 * @param string    $pagination_type Validated pagination type.
 	 *
 	 * @return array Template arguments for the episode list template.
 	 */
-	protected function prepare_template_args( $attributes, $episodes_query, $paginate ) {
+	protected function prepare_template_args( $attributes, $episodes_query, $paginate, $pagination_type = 'simple' ) {
+		$allowed_layouts   = array( 'list', 'cards' );
+		$allowed_clickable = array( 'button', 'card', 'title' );
+
+		$layout    = ! empty( $attributes['layout'] ) && in_array( $attributes['layout'], $allowed_layouts, true )
+			? $attributes['layout'] : 'list';
+		$clickable = ! empty( $attributes['clickable'] ) && in_array( $attributes['clickable'], $allowed_clickable, true )
+			? $attributes['clickable'] : 'button';
+
 		return array(
 			'episode_repository'  => $this->episode_repository,
 			'players_controller'  => $this->players_controller,
@@ -118,6 +130,16 @@ class Episode_List_Presenter {
 			'columns_per_row'     => intval( $attributes['columnsPerRow'] ),
 			'title_size'          => intval( $attributes['titleSize'] ),
 			'title_under_img'     => intval( $attributes['titleUnderImage'] ),
+			'title_color'         => ! empty( $attributes['titleColor'] ) ? sanitize_hex_color( $attributes['titleColor'] ) : '',
+			'layout'              => $layout,
+			'clickable'           => $clickable,
+			'pagination_type'     => $pagination_type,
+			'button_text'         => ! empty( $attributes['buttonText'] ) ? strval( $attributes['buttonText'] ) : __( 'Listen Now', 'seriously-simple-podcasting' ),
+			'text_color'          => ! empty( $attributes['textColor'] ) ? sanitize_hex_color( $attributes['textColor'] ) : '',
+			'link_color'          => ! empty( $attributes['linkColor'] ) ? sanitize_hex_color( $attributes['linkColor'] ) : '',
+			'card_bg'             => ! empty( $attributes['cardBackground'] ) ? sanitize_hex_color( $attributes['cardBackground'] ) : '',
+			'button_color'        => ! empty( $attributes['buttonColor'] ) ? sanitize_hex_color( $attributes['buttonColor'] ) : '',
+			'button_bg'           => ! empty( $attributes['buttonBackground'] ) ? sanitize_hex_color( $attributes['buttonBackground'] ) : '',
 		);
 	}
 
@@ -185,12 +207,13 @@ class Episode_List_Presenter {
 	 *
 	 * @since 3.15.0
 	 *
-	 * @param \WP_Query $episodes_query Episodes query object.
-	 * @param int       $current_page   Current page number.
+	 * @param \WP_Query $episodes_query  Episodes query object.
+	 * @param int       $current_page    Current page number.
+	 * @param string    $pagination_type Pagination type: 'simple' or 'full'.
 	 *
 	 * @return array Paginate links array.
 	 */
-	public function paginate( $episodes_query, $current_page ) {
+	public function paginate( $episodes_query, $current_page, $pagination_type = 'simple' ) {
 		$args = array(
 			'format'    => '?podcast_page=%#%',
 			'total'     => $episodes_query->max_num_pages,
@@ -200,20 +223,27 @@ class Episode_List_Presenter {
 			'type'      => 'array',
 		);
 
+		// Filter name uses "podcast_list" (the original Gutenberg block name) rather than
+		// "episode_list" (the shortcode added later) for backward compatibility — introduced in 2.24.0.
 		$args = apply_filters( 'ssp_podcast_list_paginate_args', $args, $episodes_query );
 
 		$all_links = paginate_links( $args );
 
-		$links = array();
+		if ( 'full' === $pagination_type ) {
+			$links = is_array( $all_links ) ? $all_links : array();
+		} else {
+			$links = array();
 
-		if ( is_array( $all_links ) ) {
-			foreach ( $all_links as $item ) {
-				if ( strpos( $item, 'class="next' ) || strpos( $item, 'class="prev' ) ) {
-					$links[] = $item;
+			if ( is_array( $all_links ) ) {
+				foreach ( $all_links as $item ) {
+					if ( strpos( $item, 'class="next' ) || strpos( $item, 'class="prev' ) ) {
+						$links[] = $item;
+					}
 				}
 			}
 		}
 
-		return apply_filters( 'ssp_podcast_list_paginate_links', $links, $all_links, $episodes_query );
+		/** @see ssp_podcast_list_paginate_args for the filter naming rationale. */
+		return apply_filters( 'ssp_podcast_list_paginate_links', $links, $all_links, $episodes_query, $pagination_type );
 	}
 }

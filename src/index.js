@@ -135,6 +135,13 @@ registerBlockType('seriously-simple-podcasting/podcast-list', {
 	supports: {
 		multiple: false,
 	},
+	variations: [
+		{
+			name: 'default',
+			isDefault: true,
+			attributes: { paginationType: 'full', featuredImageSize: 'medium' },
+		}
+	],
 	edit: EditPodcastList
 });
 

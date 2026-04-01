@@ -396,7 +396,7 @@ class Archive_Page_Handler implements Service {
 		$page_id = $this->create_page(
 			self::OPTION_PODCAST_PAGE_ID,
 			$slug,
-			__( 'Podcast', 'seriously-simple-podcasting' ),
+			__( 'Episode List', 'seriously-simple-podcasting' ),
 			$this->get_podcast_archive_page_content()
 		);
 

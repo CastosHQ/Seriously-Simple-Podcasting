@@ -248,6 +248,11 @@ class EpisodeListShortcodeTest extends \Codeception\TestCase\WPTestCase
 			'titleSize'          => '16',
 			'titleUnderImage'    => false,
 			'playerBelowExcerpt' => false,
+			'paginationType'     => 'full',
+			'titleColor'         => '',
+			'layout'             => 'list',
+			'clickable'          => 'button',
+			'buttonText'         => 'Listen Now',
 		) );
 
 		$this->assertEquals( $presenter_output, $shortcode_output );

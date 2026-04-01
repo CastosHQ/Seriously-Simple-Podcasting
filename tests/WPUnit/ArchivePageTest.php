@@ -15,6 +15,8 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 	protected function tearDown(): void
 	{
 		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
+		// Reset request state set by go_to() to avoid polluting later tests (e.g. self_link()).
+		$this->go_to( home_url( '/' ) );
 		parent::tearDown();
 	}
 

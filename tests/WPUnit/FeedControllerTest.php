@@ -54,7 +54,7 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
             'xmlns:podcast="https://podcastindex.org/namespace/1.0"',
             '<channel>',
             '<title>WordPress Test</title>',
-            sprintf('<atom:link href="%s" rel="self" type="application/rss+xml"/>', $site_url),
+            sprintf('<atom:link href="%s" rel="self" type="application/rss+xml"/>', trailingslashit( $site_url )),
             sprintf('<link>%s</link>', get_term_link($series_id, ssp_series_taxonomy())),
             '<description>',
             '<lastBuildDate>',

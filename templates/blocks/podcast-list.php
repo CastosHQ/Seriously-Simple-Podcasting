@@ -32,8 +32,8 @@
 	<?php
 	$is_cards          = 'cards' === $layout;
 	$is_card_clickable = $is_cards && 'card' === $clickable;
-	$is_title_link     = $is_cards ? 'title' === $clickable : true;
-	$show_listen_btn   = $is_cards && 'title' !== $clickable;
+	$is_title_link     = $is_cards ? ( 'title' === $clickable && $show_title ) : true;
+	$show_listen_btn   = $is_cards && ( 'title' !== $clickable || ! $show_title );
 	$instance_class    = 'ssp-el-' . wp_unique_id();
 	$wrapper_class     = 'ssp-podcast-list ' . $instance_class . ( $is_cards ? ' ssp-podcast-list--cards' : '' );
 	if ( $columns_per_row >= 2 ) {

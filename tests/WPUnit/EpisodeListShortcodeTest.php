@@ -71,9 +71,16 @@ class EpisodeListShortcodeTest extends \Codeception\TestCase\WPTestCase
 	protected function normalize_render_output( string $html ): string {
 		// Remove the per-instance <style> block (contains ssp-el-N selector).
 		$html = preg_replace( '/<style>.*?<\/style>/s', '', $html );
+		// Normalize per-instance class (ssp-el-N) in wrapper div.
+		$html = preg_replace( '/ssp-el-\d+/', 'ssp-el-0', $html );
 		// Normalize non-deterministic player attributes.
 		$html = preg_replace( '/data-player_id="[^"]*"/', 'data-player_id=""', $html );
 		$html = preg_replace( '/data-secret="[^"]*"/', 'data-secret=""', $html );
+		// Normalize embed secrets (raw and HTML-encoded variants).
+		$html = preg_replace( '/#\?secret=[a-zA-Z0-9]+/', '#?secret=', $html );
+		$html = preg_replace( '/data-secret=&quot;[^&]*&quot;/', 'data-secret=&quot;&quot;', $html );
+		// Normalize castos-player element IDs.
+		$html = preg_replace( '/id="\d+" class="castos-player/', 'id="" class="castos-player', $html );
 		return $html;
 	}
 

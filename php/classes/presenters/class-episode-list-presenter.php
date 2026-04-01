@@ -140,6 +140,8 @@ class Episode_List_Presenter {
 			'card_bg'             => sanitize_hex_color( $attributes['cardBackground'] ?? '' ) ?? '',
 			'button_color'        => sanitize_hex_color( $attributes['buttonColor'] ?? '' ) ?? '',
 			'button_bg'           => sanitize_hex_color( $attributes['buttonBackground'] ?? '' ) ?? '',
+			'pagination_color'    => sanitize_hex_color( $attributes['paginationColor'] ?? '' ) ?? '',
+			'pagination_active'   => sanitize_hex_color( $attributes['paginationActiveColor'] ?? '' ) ?? '',
 		);
 	}
 

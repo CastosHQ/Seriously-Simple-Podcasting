@@ -125,6 +125,14 @@ class Episode_List implements Shortcode {
 			'key'  => 'buttonBackground',
 			'type' => 'string',
 		),
+		'pagination_color'     => array(
+			'key'  => 'paginationColor',
+			'type' => 'string',
+		),
+		'pagination_active_color' => array(
+			'key'  => 'paginationActiveColor',
+			'type' => 'string',
+		),
 	);
 
 	/**
@@ -179,6 +187,8 @@ class Episode_List implements Shortcode {
 			'card_background'      => '',
 			'button_color'         => '',
 			'button_background'    => '',
+			'pagination_color'     => '',
+			'pagination_active_color' => '',
 		);
 
 		$atts = shortcode_atts( $defaults, $params, 'ssp_episode_list' );

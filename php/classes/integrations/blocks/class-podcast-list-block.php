@@ -175,6 +175,12 @@ class Podcast_List_Block {
 					'buttonBackground'    => array(
 						'type' => 'string',
 					),
+					'paginationColor'     => array(
+						'type' => 'string',
+					),
+					'paginationActiveColor' => array(
+						'type' => 'string',
+					),
 				),
 				'render_callback' => array( $this, 'render_callback' ),
 			)

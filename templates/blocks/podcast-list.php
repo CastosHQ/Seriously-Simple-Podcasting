@@ -23,6 +23,8 @@
  * @var string   $layout
  * @var string   $clickable
  * @var string   $pagination_type
+ * @var string   $pagination_color
+ * @var string   $pagination_active
  */
 ?>
 
@@ -58,13 +60,16 @@
 			<?php if ( ! empty( $button_bg ) ) : ?>
 			--ssp-episode-list-btn-bg: <?php echo esc_attr( $button_bg ); ?>;
 			<?php endif; ?>
+			<?php if ( ! empty( $link_color ) ) : ?>
+			--ssp-episode-list-link-color: <?php echo esc_attr( $link_color ); ?>;
+			<?php endif; ?>
+			<?php if ( ! empty( $pagination_color ) ) : ?>
+			--ssp-episode-list-pagination-color: <?php echo esc_attr( $pagination_color ); ?>;
+			<?php endif; ?>
+			<?php if ( ! empty( $pagination_active ) ) : ?>
+			--ssp-episode-list-pagination-active: <?php echo esc_attr( $pagination_active ); ?>;
+			<?php endif; ?>
 		}
-		<?php if ( ! empty( $link_color ) ) : ?>
-		.<?php echo esc_attr( $instance_class ); ?> a:not(.entry-title-link),
-		.<?php echo esc_attr( $instance_class ); ?> .ssp-podcast-list__pagination a {
-			color: <?php echo esc_attr( $link_color ); ?>;
-		}
-		<?php endif; ?>
 	</style>
 	<div class="<?php echo esc_attr( $wrapper_class ); ?>">
 		<div class="ssp-podcast-list__articles">
@@ -90,12 +95,12 @@
 					<a href="<?php echo esc_url( $permalink ); ?>" class="ssp-episode-card-link"
 					   aria-label="<?php echo esc_attr( get_the_title() ); ?>"></a>
 				<?php endif; ?>
-				<?php if ( $show_img ) : ?>
+				<div class="ssp-episode-card-header<?php echo $show_img && 'full' === $img_size ? ' ssp-episode-card-header--img-full' : ''; ?>">
+					<?php if ( $show_img ) : ?>
 					<div class="ssp-episode-card-image">
 						<?php echo ssp_episode_image( $episode->ID, $img_size ); ?>
 					</div>
-				<?php endif; ?>
-				<div class="ssp-episode-card-body">
+					<?php endif; ?>
 					<?php if ( $show_title ) : ?>
 					<h3 class="ssp-episode-title">
 						<?php if ( $is_title_link ) : ?>
@@ -107,11 +112,13 @@
 						<?php endif; ?>
 					</h3>
 					<?php endif; ?>
+				</div>
+				<div class="ssp-episode-card-body">
 					<?php if ( $player && ! $is_player_below ) : ?>
 						<p><?php echo $player; ?></p>
 					<?php endif; ?>
 					<?php if ( $show_excerpt ) : ?>
-						<p><?php echo get_the_excerpt(); ?></p>
+						<p class="ssp-episode-list-content"><?php echo get_the_excerpt(); ?></p>
 					<?php endif; ?>
 					<?php if ( $player && $is_player_below ) : ?>
 						<p><?php echo $player; ?></p>
@@ -155,7 +162,7 @@
 						<p><?php echo $player; ?></p>
 					<?php endif; ?>
 					<?php if ( $show_excerpt ) : ?>
-						<p><?php echo get_the_excerpt(); ?></p>
+						<p class="ssp-episode-list-content"><?php echo get_the_excerpt(); ?></p>
 					<?php endif; ?>
 					<?php if ( $player && $is_player_below ) : ?>
 						<p><?php echo $player; ?></p>

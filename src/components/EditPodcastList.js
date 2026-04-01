@@ -44,6 +44,8 @@ class EditPodcastList extends Component {
 			cardBackground,
 			buttonColor,
 			buttonBackground,
+			paginationColor,
+			paginationActiveColor,
 		} = attributes;
 
 		let {selectedPodcast} = attributes;
@@ -353,6 +355,16 @@ class EditPodcastList extends Component {
 								label: __('Link Color', 'seriously-simple-podcasting'),
 								value: linkColor,
 								onChange: (value) => setAttributes({linkColor: value || ''}),
+							},
+							{
+								label: __('Pagination Link Color', 'seriously-simple-podcasting'),
+								value: paginationColor,
+								onChange: (value) => setAttributes({paginationColor: value || ''}),
+							},
+							{
+								label: __('Pagination Active Color', 'seriously-simple-podcasting'),
+								value: paginationActiveColor,
+								onChange: (value) => setAttributes({paginationActiveColor: value || ''}),
 							},
 							...(isCards ? [
 								{

@@ -210,12 +210,6 @@ class Settings_Handler implements Service {
 	protected function get_podcasts_list() {
 		$default_podcast_id = $this->default_series_id();
 		$podcasts           = ssp_get_podcasts();
-		foreach ( $podcasts as $podcast ) {
-			if ( $default_podcast_id === $podcast->term_id ) {
-				$podcast->name = ssp_get_default_series_name( $podcast->name );
-				break;
-			}
-		}
 
 		return array_combine(
 			array_map(
@@ -225,8 +219,10 @@ class Settings_Handler implements Service {
 				$podcasts
 			),
 			array_map(
-				function ( $i ) {
-					return $i->name;
+				function ( $i ) use ( $default_podcast_id ) {
+					return $i->term_id === $default_podcast_id
+						? ssp_get_default_series_name( $i->name )
+						: $i->name;
 				},
 				$podcasts
 			)

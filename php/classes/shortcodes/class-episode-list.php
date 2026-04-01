@@ -85,6 +85,54 @@ class Episode_List implements Shortcode {
 			'key'  => 'playerBelowExcerpt',
 			'type' => 'bool',
 		),
+		'pagination'           => array(
+			'key'  => 'paginationType',
+			'type' => 'string',
+		),
+		'title_color'          => array(
+			'key'  => 'titleColor',
+			'type' => 'string',
+		),
+		'layout'               => array(
+			'key'  => 'layout',
+			'type' => 'string',
+		),
+		'clickable'            => array(
+			'key'  => 'clickable',
+			'type' => 'string',
+		),
+		'button_text'          => array(
+			'key'  => 'buttonText',
+			'type' => 'string',
+		),
+		'text_color'           => array(
+			'key'  => 'textColor',
+			'type' => 'string',
+		),
+		'link_color'           => array(
+			'key'  => 'linkColor',
+			'type' => 'string',
+		),
+		'card_background'      => array(
+			'key'  => 'cardBackground',
+			'type' => 'string',
+		),
+		'button_color'         => array(
+			'key'  => 'buttonColor',
+			'type' => 'string',
+		),
+		'button_background'    => array(
+			'key'  => 'buttonBackground',
+			'type' => 'string',
+		),
+		'pagination_color'     => array(
+			'key'  => 'paginationColor',
+			'type' => 'string',
+		),
+		'pagination_active_color' => array(
+			'key'  => 'paginationActiveColor',
+			'type' => 'string',
+		),
 	);
 
 	/**
@@ -121,14 +169,26 @@ class Episode_List implements Shortcode {
 			'order_by'             => 'date',
 			'order'                => 'desc',
 			'columns'              => '1',
-			'display_player'       => 'false',
-			'display_excerpt'      => 'false',
+			'display_player'       => 'true',
+			'display_excerpt'      => 'true',
 			'display_title'        => 'true',
-			'display_image'        => 'true',
-			'image_size'           => 'full',
-			'title_size'           => '16',
+			'display_image'        => 'false',
+			'image_size'           => 'medium',
+			'title_size'           => '24',
 			'title_under_image'    => 'false',
 			'player_below_excerpt' => 'false',
+			'pagination'           => 'full',
+			'title_color'          => '',
+			'layout'               => 'list',
+			'clickable'            => 'button',
+			'button_text'          => __( 'Listen Now', 'seriously-simple-podcasting' ),
+			'text_color'           => '',
+			'link_color'           => '',
+			'card_background'      => '',
+			'button_color'         => '',
+			'button_background'    => '',
+			'pagination_color'     => '',
+			'pagination_active_color' => '',
 		);
 
 		$atts = shortcode_atts( $defaults, $params, 'ssp_episode_list' );

@@ -142,6 +142,45 @@ class Podcast_List_Block {
 						'type'    => 'boolean',
 						'default' => false,
 					),
+					'paginationType'      => array(
+						'type' => 'string',
+					),
+					'titleColor'          => array(
+						'type' => 'string',
+					),
+					'layout'              => array(
+						'type'    => 'string',
+						'default' => 'list',
+					),
+					'clickable'           => array(
+						'type'    => 'string',
+						'default' => 'button',
+					),
+					'buttonText'          => array(
+						'type'    => 'string',
+						'default' => __( 'Listen Now', 'seriously-simple-podcasting' ),
+					),
+					'cardBackground'      => array(
+						'type' => 'string',
+					),
+					'textColor'           => array(
+						'type' => 'string',
+					),
+					'linkColor'           => array(
+						'type' => 'string',
+					),
+					'buttonColor'         => array(
+						'type' => 'string',
+					),
+					'buttonBackground'    => array(
+						'type' => 'string',
+					),
+					'paginationColor'     => array(
+						'type' => 'string',
+					),
+					'paginationActiveColor' => array(
+						'type' => 'string',
+					),
 				),
 				'render_callback' => array( $this, 'render_callback' ),
 			)

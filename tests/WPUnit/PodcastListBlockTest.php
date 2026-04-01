@@ -24,7 +24,7 @@ class PodcastListBlockTest extends \Codeception\TestCase\WPTestCase
 
 		$this->renderer = new Episode_List_Presenter(
 			ssp_get_service( 'episode_repository' ),
-			ssp_get_service( 'players_controller' ),
+			ssp_app()->players_controller,
 			ssp_get_service( 'renderer' )
 		);
 	}
@@ -183,8 +183,8 @@ class PodcastListBlockTest extends \Codeception\TestCase\WPTestCase
 			$this->get_default_attributes( array( 'titleSize' => 48, 'columnsPerRow' => 2 ) )
 		);
 
-		$this->assertStringContainsString( '--ssp-podcast-list-title-size: 48px', $output );
-		$this->assertStringContainsString( '--ssp-podcast-list-cols: 2', $output );
+		$this->assertStringContainsString( '--ssp-episode-list-title-size: 48px', $output );
+		$this->assertStringContainsString( '--ssp-episode-list-cols: 2', $output );
 	}
 
 	// =========================================================================
@@ -301,8 +301,8 @@ class PodcastListBlockTest extends \Codeception\TestCase\WPTestCase
 			$this->get_default_attributes( array( 'postsPerPage' => '10' ) )
 		);
 
-		// Pagination wrapper is always rendered, but empty when all episodes fit on one page.
-		$this->assertStringContainsString( 'ssp-podcast-list__pagination', $output );
+		// Pagination wrapper is omitted entirely when all episodes fit on one page.
+		$this->assertStringNotContainsString( 'ssp-podcast-list__pagination', $output );
 		$this->assertStringNotContainsString( 'class="next', $output );
 		$this->assertStringNotContainsString( 'class="prev', $output );
 	}

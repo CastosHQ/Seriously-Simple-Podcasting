@@ -723,6 +723,8 @@
 }
 .castos-player .play-pause-controls button {
     position: absolute;
+    left: 0;
+    top: 0;
 }
 .castos-player .play-progress .play-pause-controls .play-btn {
 	background: var(--ssp-play-btn-color) no-repeat 14px 11px;

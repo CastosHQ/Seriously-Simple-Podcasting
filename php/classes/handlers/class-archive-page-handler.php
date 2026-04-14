@@ -125,31 +125,35 @@ class Archive_Page_Handler implements Service {
 	}
 
 	/**
-	 * Replaces the main query with the assigned archive page.
+	 * Replaces the main query with the assigned archive page when the request
+	 * is the podcast CPT archive.
 	 *
-	 * Caller is responsible for checking that we're on the correct archive.
-	 * Returns the original template if no page is assigned or published.
+	 * Fires on `template_redirect`, before WP's tag-template dispatch — swapping
+	 * `is_post_type_archive` → `is_page` causes core to naturally resolve the
+	 * page template (via `get_page_template()`), which handles block themes,
+	 * classic themes, and `_wp_page_template` meta out of the box.
 	 *
 	 * @since 3.15.0
 	 *
-	 * @param string $template The path of the template to include.
-	 *
-	 * @return string
+	 * @return void
 	 */
-	public function serve_archive_page( $template ) {
+	public function maybe_serve_archive_page() {
+		if ( ! is_post_type_archive( SSP_CPT_PODCAST ) ) {
+			return;
+		}
+
 		$page_id = $this->get_podcast_page_id();
 
 		if ( ! $page_id ) {
-			return $template;
+			return;
 		}
 
 		$page = get_post( $page_id );
 
 		if ( ! $page || 'page' !== $page->post_type || 'publish' !== $page->post_status ) {
-			return $template;
+			return;
 		}
 
-		// Replace the main query with the page.
 		global $wp_query;
 
 		$wp_query->posts             = array( $page );
@@ -167,22 +171,7 @@ class Archive_Page_Handler implements Service {
 
 		$wp_query->rewind_posts();
 
-		// Enqueue podcast list styles — wp_enqueue_scripts has already fired,
-		// so this outputs in the footer.
 		wp_enqueue_style( 'ssp-podcast-list' );
-
-		// Resolve the page template.
-		$page_template_slug = get_page_template_slug( $page_id );
-
-		if ( $page_template_slug ) {
-			$resolved = locate_template( $page_template_slug );
-
-			if ( $resolved ) {
-				return $resolved;
-			}
-		}
-
-		return locate_template( array( 'page.php', 'singular.php', 'index.php' ) ) ?: $template;
 	}
 
 	/**
@@ -196,7 +185,7 @@ class Archive_Page_Handler implements Service {
 	 *
 	 * @return void
 	 */
-	public function redirect_archive_page_to_podcast_url() {
+	public function maybe_redirect_archive_page_to_podcast_url() {
 		$page_id = $this->get_podcast_page_id();
 
 		if ( ! $page_id || ! is_page( $page_id ) ) {

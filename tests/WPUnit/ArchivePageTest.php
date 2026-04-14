@@ -371,51 +371,67 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 	}
 
 	// =========================================================================
-	// Template override: serve page instead of CPT archive
+	// Query swap: template_redirect action
 	// =========================================================================
 
 	/**
-	 * @covers \SeriouslySimplePodcasting\Controllers\Frontend_Controller::maybe_serve_archive_page()
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_serve_archive_page()
 	 */
-	public function testServeArchivePageReturnsOriginalTemplateWhenNoPageAssigned()
+	public function testServeArchivePageDoesNothingWhenNoPageAssigned()
 	{
 		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
 
-		$this->go_to( home_url( '/podcast/' ) );
+		$this->go_to( home_url( '?post_type=podcast' ) );
+		$this->assertTrue( is_post_type_archive( SSP_CPT_PODCAST ) );
 
-		// The filter is already registered by the plugin bootstrap.
-		$result = apply_filters( 'template_include', '/some/archive-podcast.php' );
+		$this->get_archive_page_handler()->maybe_serve_archive_page();
 
-		$this->assertEquals( '/some/archive-podcast.php', $result );
+		global $wp_query;
+		$this->assertTrue( $wp_query->is_post_type_archive, 'Query must not be swapped when no page is assigned.' );
+		$this->assertFalse( $wp_query->is_page );
 	}
 
 	/**
-	 * @covers \SeriouslySimplePodcasting\Controllers\Frontend_Controller::maybe_serve_archive_page()
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_serve_archive_page()
+	 */
+	public function testServeArchivePageDoesNothingWhenNotOnPodcastArchive()
+	{
+		$page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
+
+		$this->go_to( home_url( '/' ) );
+		$this->assertFalse( is_post_type_archive( SSP_CPT_PODCAST ) );
+
+		$this->get_archive_page_handler()->maybe_serve_archive_page();
+
+		global $wp_query;
+		$this->assertNotEquals( $page_id, $wp_query->queried_object_id );
+	}
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_serve_archive_page()
 	 */
 	public function testServeArchivePageReplacesQueryWhenPageAssigned()
 	{
-		global $wpdb;
-
 		$page_id = $this->factory()->post->create( [
 			'post_type'   => 'page',
 			'post_status' => 'publish',
 			'post_title'  => 'Podcast',
 		] );
-
-		$wpdb->update( $wpdb->posts, [ 'post_name' => 'podcast-archive-test' ], [ 'ID' => $page_id ] );
-		clean_post_cache( $page_id );
-
 		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
 
-		// Use query string to simulate CPT archive (rewrite rules may not be loaded in tests).
 		$this->go_to( home_url( '?post_type=podcast' ) );
 		$this->assertTrue( is_post_type_archive( SSP_CPT_PODCAST ), 'Should be podcast archive' );
 
-		apply_filters( 'template_include', '/some/archive-podcast.php' );
+		$this->get_archive_page_handler()->maybe_serve_archive_page();
 
 		global $wp_query;
 		$this->assertTrue( $wp_query->is_page );
 		$this->assertFalse( $wp_query->is_archive );
+		$this->assertFalse( $wp_query->is_post_type_archive );
 		$this->assertEquals( $page_id, $wp_query->queried_object_id );
 	}
 

@@ -145,6 +145,10 @@ class Frontend_Controller {
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 
 		add_filter( 'archive_template_hierarchy', array( $this, 'fix_template_hierarchy' ) );
+
+		// When a podcast archive page is assigned, redirect block/classic template
+		// resolution to the page hierarchy so the page's blocks render at /podcast/.
+		add_filter( 'archive_template_hierarchy', array( $this, 'maybe_swap_archive_hierarchy' ) );
 	}
 
 	/**
@@ -662,6 +666,13 @@ class Frontend_Controller {
 	 */
 	public function redirect_archive_page_to_podcast_url() {
 		$this->archive_page_handler->redirect_archive_page_to_podcast_url();
+	}
+
+	/**
+	 * @see Archive_Page_Handler::maybe_swap_archive_hierarchy()
+	 */
+	public function maybe_swap_archive_hierarchy( $templates ) {
+		return $this->archive_page_handler->maybe_swap_archive_hierarchy( $templates );
 	}
 
 	public function add_all_post_types_for_tag_archive( $query ) {

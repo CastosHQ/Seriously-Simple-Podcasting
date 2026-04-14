@@ -420,6 +420,111 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 	}
 
 	// =========================================================================
+	// Block-theme hierarchy swap: archive_template_hierarchy filter
+	// =========================================================================
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
+	 */
+	public function testHierarchySwapReturnsOriginalWhenNoPageAssigned()
+	{
+		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
+
+		$this->go_to( home_url( '?post_type=podcast' ) );
+		$this->assertTrue( is_post_type_archive( SSP_CPT_PODCAST ) );
+
+		$original = array( 'archive-podcast.php', 'archive.php' );
+		$result   = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( $original );
+
+		$this->assertEquals( $original, $result );
+	}
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
+	 */
+	public function testHierarchySwapReturnsOriginalWhenNotOnPodcastArchive()
+	{
+		$page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
+
+		$this->go_to( home_url( '/' ) );
+		$this->assertFalse( is_post_type_archive( SSP_CPT_PODCAST ) );
+
+		$original = array( 'archive.php' );
+		$result   = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( $original );
+
+		$this->assertEquals( $original, $result );
+	}
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
+	 */
+	public function testHierarchySwapReturnsPageHierarchyWhenTriggered()
+	{
+		$page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
+
+		$this->go_to( home_url( '?post_type=podcast' ) );
+		$this->assertTrue( is_post_type_archive( SSP_CPT_PODCAST ) );
+
+		$original = array( 'archive-podcast.php', 'archive.php' );
+		$result   = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( $original );
+
+		$this->assertEquals( array( 'page.php', 'singular.php', 'index.php' ), $result );
+	}
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
+	 */
+	public function testHierarchySwapPrependsPageTemplateMetaSlug()
+	{
+		$page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+		update_post_meta( $page_id, '_wp_page_template', 'templates/full-width.php' );
+		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
+
+		$this->go_to( home_url( '?post_type=podcast' ) );
+
+		$result = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( array( 'archive-podcast.php' ) );
+
+		$this->assertEquals(
+			array( 'templates/full-width.php', 'page.php', 'singular.php', 'index.php' ),
+			$result
+		);
+	}
+
+	/**
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
+	 */
+	public function testHierarchySwapIgnoresDefaultTemplateMetaValue()
+	{
+		$page_id = $this->factory()->post->create( [
+			'post_type'   => 'page',
+			'post_status' => 'publish',
+		] );
+		update_post_meta( $page_id, '_wp_page_template', 'default' );
+		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
+
+		$this->go_to( home_url( '?post_type=podcast' ) );
+
+		$result = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( array( 'archive-podcast.php' ) );
+
+		$this->assertEquals(
+			array( 'page.php', 'singular.php', 'index.php' ),
+			$result,
+			'Meta value "default" resolves via get_page_template_slug() to an empty slug and must not be prepended.'
+		);
+	}
+
+	// =========================================================================
 	// Admin notice for existing installs
 	// =========================================================================
 

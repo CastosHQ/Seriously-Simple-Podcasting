@@ -186,6 +186,46 @@ class Archive_Page_Handler implements Service {
 	}
 
 	/**
+	 * Swaps the archive template hierarchy to the page hierarchy when the podcast
+	 * archive page is assigned.
+	 *
+	 * On block themes this causes `locate_block_template()` to resolve the theme's
+	 * `page` block template (instead of `archive-podcast` / `archive`), so
+	 * `$_wp_current_template_content` is populated with page-appropriate HTML.
+	 * Classic themes gain `page.php` as the primary candidate, matching the
+	 * fallback chain the `template_include` hook already uses.
+	 *
+	 * @since 3.15.0
+	 *
+	 * @param string[] $templates Template hierarchy in descending priority order.
+	 *
+	 * @return string[]
+	 */
+	public function maybe_swap_archive_hierarchy( $templates ) {
+		if ( ! is_post_type_archive( SSP_CPT_PODCAST ) ) {
+			return $templates;
+		}
+
+		if ( ! $this->is_podcast_page_assigned() ) {
+			return $templates;
+		}
+
+		$hierarchy = array();
+
+		$meta_slug = get_page_template_slug( $this->get_podcast_page_id() );
+
+		if ( $meta_slug ) {
+			$hierarchy[] = $meta_slug;
+		}
+
+		$hierarchy[] = 'page.php';
+		$hierarchy[] = 'singular.php';
+		$hierarchy[] = 'index.php';
+
+		return $hierarchy;
+	}
+
+	/**
 	 * Redirects the archive page's own URL to the podcast archive URL.
 	 *
 	 * The archive page uses a non-public slug (e.g. "ssp-podcast-archive") to avoid

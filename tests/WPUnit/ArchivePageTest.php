@@ -371,78 +371,30 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 	}
 
 	// =========================================================================
-	// Template override: serve page instead of CPT archive
+	// Query swap: template_redirect action
 	// =========================================================================
 
 	/**
-	 * @covers \SeriouslySimplePodcasting\Controllers\Frontend_Controller::maybe_serve_archive_page()
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_serve_archive_page()
 	 */
-	public function testServeArchivePageReturnsOriginalTemplateWhenNoPageAssigned()
-	{
-		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
-
-		$this->go_to( home_url( '/podcast/' ) );
-
-		// The filter is already registered by the plugin bootstrap.
-		$result = apply_filters( 'template_include', '/some/archive-podcast.php' );
-
-		$this->assertEquals( '/some/archive-podcast.php', $result );
-	}
-
-	/**
-	 * @covers \SeriouslySimplePodcasting\Controllers\Frontend_Controller::maybe_serve_archive_page()
-	 */
-	public function testServeArchivePageReplacesQueryWhenPageAssigned()
-	{
-		global $wpdb;
-
-		$page_id = $this->factory()->post->create( [
-			'post_type'   => 'page',
-			'post_status' => 'publish',
-			'post_title'  => 'Podcast',
-		] );
-
-		$wpdb->update( $wpdb->posts, [ 'post_name' => 'podcast-archive-test' ], [ 'ID' => $page_id ] );
-		clean_post_cache( $page_id );
-
-		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
-
-		// Use query string to simulate CPT archive (rewrite rules may not be loaded in tests).
-		$this->go_to( home_url( '?post_type=podcast' ) );
-		$this->assertTrue( is_post_type_archive( SSP_CPT_PODCAST ), 'Should be podcast archive' );
-
-		apply_filters( 'template_include', '/some/archive-podcast.php' );
-
-		global $wp_query;
-		$this->assertTrue( $wp_query->is_page );
-		$this->assertFalse( $wp_query->is_archive );
-		$this->assertEquals( $page_id, $wp_query->queried_object_id );
-	}
-
-	// =========================================================================
-	// Block-theme hierarchy swap: archive_template_hierarchy filter
-	// =========================================================================
-
-	/**
-	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
-	 */
-	public function testHierarchySwapReturnsOriginalWhenNoPageAssigned()
+	public function testServeArchivePageDoesNothingWhenNoPageAssigned()
 	{
 		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
 
 		$this->go_to( home_url( '?post_type=podcast' ) );
 		$this->assertTrue( is_post_type_archive( SSP_CPT_PODCAST ) );
 
-		$original = array( 'archive-podcast.php', 'archive.php' );
-		$result   = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( $original );
+		$this->get_archive_page_handler()->maybe_serve_archive_page();
 
-		$this->assertEquals( $original, $result );
+		global $wp_query;
+		$this->assertTrue( $wp_query->is_post_type_archive, 'Query must not be swapped when no page is assigned.' );
+		$this->assertFalse( $wp_query->is_page );
 	}
 
 	/**
-	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_serve_archive_page()
 	 */
-	public function testHierarchySwapReturnsOriginalWhenNotOnPodcastArchive()
+	public function testServeArchivePageDoesNothingWhenNotOnPodcastArchive()
 	{
 		$page_id = $this->factory()->post->create( [
 			'post_type'   => 'page',
@@ -453,75 +405,34 @@ class ArchivePageTest extends \Codeception\TestCase\WPTestCase
 		$this->go_to( home_url( '/' ) );
 		$this->assertFalse( is_post_type_archive( SSP_CPT_PODCAST ) );
 
-		$original = array( 'archive.php' );
-		$result   = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( $original );
+		$this->get_archive_page_handler()->maybe_serve_archive_page();
 
-		$this->assertEquals( $original, $result );
+		global $wp_query;
+		$this->assertNotEquals( $page_id, $wp_query->queried_object_id );
 	}
 
 	/**
-	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
+	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_serve_archive_page()
 	 */
-	public function testHierarchySwapReturnsPageHierarchyWhenTriggered()
+	public function testServeArchivePageReplacesQueryWhenPageAssigned()
 	{
 		$page_id = $this->factory()->post->create( [
 			'post_type'   => 'page',
 			'post_status' => 'publish',
+			'post_title'  => 'Podcast',
 		] );
 		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
 
 		$this->go_to( home_url( '?post_type=podcast' ) );
-		$this->assertTrue( is_post_type_archive( SSP_CPT_PODCAST ) );
+		$this->assertTrue( is_post_type_archive( SSP_CPT_PODCAST ), 'Should be podcast archive' );
 
-		$original = array( 'archive-podcast.php', 'archive.php' );
-		$result   = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( $original );
+		$this->get_archive_page_handler()->maybe_serve_archive_page();
 
-		$this->assertEquals( array( 'page.php', 'singular.php', 'index.php' ), $result );
-	}
-
-	/**
-	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
-	 */
-	public function testHierarchySwapPrependsPageTemplateMetaSlug()
-	{
-		$page_id = $this->factory()->post->create( [
-			'post_type'   => 'page',
-			'post_status' => 'publish',
-		] );
-		update_post_meta( $page_id, '_wp_page_template', 'templates/full-width.php' );
-		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
-
-		$this->go_to( home_url( '?post_type=podcast' ) );
-
-		$result = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( array( 'archive-podcast.php' ) );
-
-		$this->assertEquals(
-			array( 'templates/full-width.php', 'page.php', 'singular.php', 'index.php' ),
-			$result
-		);
-	}
-
-	/**
-	 * @covers \SeriouslySimplePodcasting\Handlers\Archive_Page_Handler::maybe_swap_archive_hierarchy()
-	 */
-	public function testHierarchySwapIgnoresDefaultTemplateMetaValue()
-	{
-		$page_id = $this->factory()->post->create( [
-			'post_type'   => 'page',
-			'post_status' => 'publish',
-		] );
-		update_post_meta( $page_id, '_wp_page_template', 'default' );
-		update_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, $page_id );
-
-		$this->go_to( home_url( '?post_type=podcast' ) );
-
-		$result = $this->get_archive_page_handler()->maybe_swap_archive_hierarchy( array( 'archive-podcast.php' ) );
-
-		$this->assertEquals(
-			array( 'page.php', 'singular.php', 'index.php' ),
-			$result,
-			'Meta value "default" resolves via get_page_template_slug() to an empty slug and must not be prepended.'
-		);
+		global $wp_query;
+		$this->assertTrue( $wp_query->is_page );
+		$this->assertFalse( $wp_query->is_archive );
+		$this->assertFalse( $wp_query->is_post_type_archive );
+		$this->assertEquals( $page_id, $wp_query->queried_object_id );
 	}
 
 	// =========================================================================

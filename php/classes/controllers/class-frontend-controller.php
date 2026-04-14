@@ -132,11 +132,12 @@ class Frontend_Controller {
 
 		add_filter( 'feed_content_type', array( $this, 'feed_content_type' ), 10, 2 );
 
-		// When a podcast archive page is assigned, serve the page instead of the CPT archive template.
-		add_filter( 'template_include', array( $this, 'maybe_serve_archive_page' ), 99 );
-
 		// Redirect the archive page's own URL to the podcast archive URL.
-		add_action( 'template_redirect', array( $this, 'redirect_archive_page_to_podcast_url' ) );
+		add_action( 'template_redirect', array( $this, 'maybe_redirect_archive_page_to_podcast_url' ) );
+
+		// When a podcast archive page is assigned, swap the main query so WP's
+		// natural template dispatch picks the page template instead of the CPT archive.
+		add_action( 'template_redirect', array( $this, 'maybe_serve_archive_page' ) );
 
 		// Flush rewrite rules when the podcast archive page setting changes.
 		add_action( 'update_option_' . Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, 'flush_rewrite_rules' );
@@ -145,10 +146,6 @@ class Frontend_Controller {
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );
 
 		add_filter( 'archive_template_hierarchy', array( $this, 'fix_template_hierarchy' ) );
-
-		// When a podcast archive page is assigned, redirect block/classic template
-		// resolution to the page hierarchy so the page's blocks render at /podcast/.
-		add_filter( 'archive_template_hierarchy', array( $this, 'maybe_swap_archive_hierarchy' ) );
 	}
 
 	/**
@@ -651,28 +648,17 @@ class Frontend_Controller {
 	}
 
 	/**
-	 * @see Archive_Page_Handler::serve_archive_page()
+	 * @see Archive_Page_Handler::maybe_serve_archive_page()
 	 */
-	public function maybe_serve_archive_page( $template ) {
-		if ( ! is_post_type_archive( SSP_CPT_PODCAST ) ) {
-			return $template;
-		}
-
-		return $this->archive_page_handler->serve_archive_page( $template );
+	public function maybe_serve_archive_page() {
+		$this->archive_page_handler->maybe_serve_archive_page();
 	}
 
 	/**
-	 * @see Archive_Page_Handler::redirect_archive_page_to_podcast_url()
+	 * @see Archive_Page_Handler::maybe_redirect_archive_page_to_podcast_url()
 	 */
-	public function redirect_archive_page_to_podcast_url() {
-		$this->archive_page_handler->redirect_archive_page_to_podcast_url();
-	}
-
-	/**
-	 * @see Archive_Page_Handler::maybe_swap_archive_hierarchy()
-	 */
-	public function maybe_swap_archive_hierarchy( $templates ) {
-		return $this->archive_page_handler->maybe_swap_archive_hierarchy( $templates );
+	public function maybe_redirect_archive_page_to_podcast_url() {
+		$this->archive_page_handler->maybe_redirect_archive_page_to_podcast_url();
 	}
 
 	public function add_all_post_types_for_tag_archive( $query ) {

@@ -24,6 +24,14 @@ const EpisodeSyncStatus = () => {
 		try {
 			const updatedPost = await fetchPostData(currentPost);
 
+			if ( updatedPost ) {
+				// Some meta fields (e.g. podmotor_episode_id) are set server-side
+				// by Castos sync after save. The editor store still holds the
+				// pre-save value, so refresh it to prevent the next save from
+				// overwriting it via REST API.
+				refreshCastosMeta(updatedPost, currentPost);
+			}
+
 			if (updatedPost && updatedPost[ 'episode_data' ]) {
 				let syncStatus = updatedPost[ 'episode_data' ].syncStatus
 				if ( ! syncStatus ||  'none' === syncStatus.status ) {
@@ -40,6 +48,44 @@ const EpisodeSyncStatus = () => {
 		} catch (error) {
 			console.error('Error:', error)
 			return null
+		}
+	}
+
+	const refreshCastosMeta = (updatedPost, currentPost) => {
+		const castosMetaKeys = ['podmotor_episode_id'];
+		const meta = updatedPost.meta;
+		if ( ! meta ) {
+			return;
+		}
+
+		for ( const key of castosMetaKeys ) {
+			if ( ! ( key in meta ) ) {
+				continue;
+			}
+
+			// Update the hidden input in the metabox form.
+			const input = document.querySelector('input[name="' + key + '"]');
+			if ( input ) {
+				input.value = meta[key];
+			}
+		}
+
+		const existingRecord = wp.data.select('core').getEntityRecord(
+			'postType', currentPost.type, currentPost.id
+		);
+		if ( existingRecord ) {
+			const updatedMeta = {};
+			for ( const key of castosMetaKeys ) {
+				if ( key in meta ) {
+					updatedMeta[key] = meta[key];
+				}
+			}
+			wp.data.dispatch('core').receiveEntityRecords(
+				'postType', currentPost.type, [{
+					...existingRecord,
+					meta: { ...existingRecord.meta, ...updatedMeta },
+				}]
+			);
 		}
 	}
 

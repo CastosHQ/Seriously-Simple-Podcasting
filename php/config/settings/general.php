@@ -41,5 +41,16 @@ return array(
 			'type'        => 'text',
 			'default'     => ssp_series_slug(),
 		),
+		array(
+			'id'          => 'podcast_page_id',
+			'label'       => __( 'Podcast archive page', 'seriously-simple-podcasting' ),
+			'description' => sprintf(
+				/* translators: %s: podcast archive URL */
+				__( 'Select a page for your episodes list (%s). When set, you can customize the layout with the block editor or any page builder.', 'seriously-simple-podcasting' ),
+				'<a href="' . esc_url( get_post_type_archive_link( SSP_CPT_PODCAST ) ) . '" target="_blank">' . esc_html( get_post_type_archive_link( SSP_CPT_PODCAST ) ) . '</a>'
+			),
+			'type'        => 'single_select_page',
+			'default'     => '',
+		),
 	),
 );

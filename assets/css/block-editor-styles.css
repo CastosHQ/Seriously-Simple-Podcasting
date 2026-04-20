@@ -4,3 +4,8 @@
 .wp-block-seriously-simple-podcasting-podcast-list p.hide-player {
 	display: none;
 }
+
+.wp-block-seriously-simple-podcasting-podcast-list .ssp-podcast-list a,
+.wp-block-seriously-simple-podcasting-podcast-list .ssp-podcast-list button {
+	pointer-events: none;
+}

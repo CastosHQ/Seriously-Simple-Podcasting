@@ -1,7 +1,7 @@
 import {__} from '@wordpress/i18n';
 import {Component} from '@wordpress/element';
-import {InspectorControls} from '@wordpress/block-editor';
-import {PanelBody, PanelRow, FormToggle, SelectControl, __experimentalNumberControl as NumberControl, Tooltip} from '@wordpress/components';
+import {InspectorControls, PanelColorSettings} from '@wordpress/block-editor';
+import {PanelBody, PanelRow, FormToggle, SelectControl, TextControl, __experimentalNumberControl as NumberControl, Tooltip} from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
 class EditPodcastList extends Component {
@@ -34,12 +34,26 @@ class EditPodcastList extends Component {
 			titleSize,
 			titleUnderImage,
 			defaultPodcastId,
+			paginationType,
+			titleColor,
+			layout,
+			clickable,
+			buttonText,
+			textColor,
+			linkColor,
+			cardBackground,
+			buttonColor,
+			buttonBackground,
+			paginationColor,
+			paginationActiveColor,
 		} = attributes;
 
 		let {selectedPodcast} = attributes;
 
 		// In version 3.0.0 default 0 was changed to the real Podcast(Series) term
 		selectedPodcast = '0' === selectedPodcast ? defaultPodcastId : selectedPodcast;
+
+		const isCards = layout === 'cards';
 
 		const toggleFeaturedImage = () => {
 			setAttributes({
@@ -208,6 +222,60 @@ class EditPodcastList extends Component {
 							/>
 						</PanelRow>
 					</PanelBody>
+
+					<PanelBody key="ssp-podcast-list-layout" title={__('Layout', 'seriously-simple-podcasting')}>
+						<PanelRow>
+							<label htmlFor="ssp-podcast-list-layout-select">
+								{__('Layout', 'seriously-simple-podcasting')}
+							</label>
+							<SelectControl
+								id="ssp-podcast-list-layout-select"
+								value={layout || 'list'}
+								options={[
+									{label: __('List', 'seriously-simple-podcasting'), value: 'list'},
+									{label: __('Cards', 'seriously-simple-podcasting'), value: 'cards'},
+								]}
+								onChange={(layout) => setAttributes({layout})}
+							/>
+						</PanelRow>
+						{isCards && <PanelRow>
+							<TextControl
+								label={__('Button Text', 'seriously-simple-podcasting')}
+								value={buttonText || __('Listen Now', 'seriously-simple-podcasting')}
+								onChange={(buttonText) => setAttributes({buttonText})}
+							/>
+						</PanelRow>}
+						{isCards && <PanelRow>
+							<label htmlFor="ssp-podcast-list-clickable">
+								{__('Clickable', 'seriously-simple-podcasting')}
+							</label>
+							<SelectControl
+								id="ssp-podcast-list-clickable"
+								value={clickable || 'button'}
+								options={[
+									{label: __('Button', 'seriously-simple-podcasting'), value: 'button'},
+									{label: __('Card', 'seriously-simple-podcasting'), value: 'card'},
+									{label: __('Title', 'seriously-simple-podcasting'), value: 'title'},
+								]}
+								onChange={(clickable) => setAttributes({clickable})}
+							/>
+						</PanelRow>}
+						<PanelRow>
+							<label htmlFor="ssp-podcast-list-pagination-type">
+								{__('Pagination', 'seriously-simple-podcasting')}
+							</label>
+							<SelectControl
+								id="ssp-podcast-list-pagination-type"
+								value={paginationType || 'simple'}
+								options={[
+									{label: __('Simple (Prev/Next)', 'seriously-simple-podcasting'), value: 'simple'},
+									{label: __('Full (Numbered)', 'seriously-simple-podcasting'), value: 'full'},
+								]}
+								onChange={(paginationType) => setAttributes({paginationType})}
+							/>
+						</PanelRow>
+					</PanelBody>
+
 					<PanelBody key="ssp-podcast-list-style" title={__('Style', 'seriously-simple-podcasting')}>
 						<PanelRow>
 							<label htmlFor="ssp-podcast-list-columns-per-row">
@@ -217,7 +285,7 @@ class EditPodcastList extends Component {
 								id="ssp-podcast-list-columns-per-row"
 								value={columnsPerRow}
 								min={1}
-								max={6}
+								max={2}
 								onChange={(columnsPerRow) => {
 									setAttributes({
 										columnsPerRow: columnsPerRow
@@ -241,7 +309,7 @@ class EditPodcastList extends Component {
 								}}
 							/>
 						</PanelRow>}
-						{showTitle && featuredImage && <PanelRow>
+						{showTitle && featuredImage && !isCards && <PanelRow>
 							<label htmlFor="ssp-podcast-list-title-under-image">
 								{__('Show Title Under Image', 'seriously-simple-podcasting')}
 							</label>
@@ -268,6 +336,55 @@ class EditPodcastList extends Component {
 							/>
 						</PanelRow>}
 					</PanelBody>
+
+					<PanelColorSettings
+						title={__('Colors', 'seriously-simple-podcasting')}
+						initialOpen={false}
+						colorSettings={[
+							{
+								label: __('Title Color', 'seriously-simple-podcasting'),
+								value: titleColor,
+								onChange: (value) => setAttributes({titleColor: value || ''}),
+							},
+							{
+								label: __('Text Color', 'seriously-simple-podcasting'),
+								value: textColor,
+								onChange: (value) => setAttributes({textColor: value || ''}),
+							},
+							{
+								label: __('Link Color', 'seriously-simple-podcasting'),
+								value: linkColor,
+								onChange: (value) => setAttributes({linkColor: value || ''}),
+							},
+							{
+								label: __('Pagination Link Color', 'seriously-simple-podcasting'),
+								value: paginationColor,
+								onChange: (value) => setAttributes({paginationColor: value || ''}),
+							},
+							{
+								label: __('Pagination Active Color', 'seriously-simple-podcasting'),
+								value: paginationActiveColor,
+								onChange: (value) => setAttributes({paginationActiveColor: value || ''}),
+							},
+							...(isCards ? [
+								{
+									label: __('Card Background', 'seriously-simple-podcasting'),
+									value: cardBackground,
+									onChange: (value) => setAttributes({cardBackground: value || ''}),
+								},
+								{
+									label: __('Button Color', 'seriously-simple-podcasting'),
+									value: buttonColor,
+									onChange: (value) => setAttributes({buttonColor: value || ''}),
+								},
+								{
+									label: __('Button Background', 'seriously-simple-podcasting'),
+									value: buttonBackground,
+									onChange: (value) => setAttributes({buttonBackground: value || ''}),
+								},
+							] : []),
+						]}
+					/>
 				</div>
 			</InspectorControls>
 		);

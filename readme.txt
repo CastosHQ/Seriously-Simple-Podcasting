@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 3.14.4
+Stable tag: 3.15.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,15 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.15.0 =
+2026-04-20
+[NEW] Added customizable podcast archive pages — `/podcast/` archives are now powered by editable WordPress pages instead of theme templates
+[NEW] Added `ssp_episode_list` shortcode for displaying episode lists with cards layout, images, and color customization
+[UPDATE] Enhanced episode list block with cards layout, pagination colors, and multiple shortcode support
+[FIX] Fixed episode sync ID being cleared on subsequent Gutenberg saves
+[FIX] Fixed "(default)" label appearing twice in the Publishing settings tab
+[FIX] Fixed player play button icon offset on some themes
 
 = 3.14.4 =
 2026-03-18

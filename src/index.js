@@ -19,13 +19,15 @@ import EditPlaylistPlayer from "./components/EditPlaylistPlayer";
 
 /**
  * Standard Audio Player Block
+ * @deprecated Use 'seriously-simple-podcasting/castos-html-player' instead
  */
 registerBlockType('seriously-simple-podcasting/audio-player', {
-	title: __('Audio Player', 'seriously-simple-podcasting'),
+	title: __('Audio Player (deprecated)', 'seriously-simple-podcasting'),
 	icon: 'controls-volumeon',
 	category: 'layout',
 	supports: {
 		multiple: false,
+		inserter: false,
 	},
 	attributes: {
 		id: {
@@ -51,11 +53,12 @@ registerBlockType('seriously-simple-podcasting/audio-player', {
  * @deprecated Use 'seriously-simple-podcasting/castos-html-player' instead
  */
 registerBlockType('seriously-simple-podcasting/castos-player', {
-	title: __('Castos Player (OLD)', 'seriously-simple-podcasting'),
+	title: __('Castos Player (deprecated)', 'seriously-simple-podcasting'),
 	icon: 'controls-volumeon',
 	category: 'layout',
 	supports: {
 		multiple: false,
+		inserter: false,
 	},
 	attributes: {
 		id: {
@@ -132,6 +135,13 @@ registerBlockType('seriously-simple-podcasting/podcast-list', {
 	supports: {
 		multiple: false,
 	},
+	variations: [
+		{
+			name: 'default',
+			isDefault: true,
+			attributes: { paginationType: 'full', featuredImageSize: 'medium' },
+		}
+	],
 	edit: EditPodcastList
 });
 

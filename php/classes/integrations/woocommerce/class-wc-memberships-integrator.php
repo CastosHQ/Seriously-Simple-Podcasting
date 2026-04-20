@@ -240,52 +240,114 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	}
 
 	/**
-	 * Do single sync as the separate event to not interfere with the DB update process.
+	 * Queues a Castos add or revoke for a single membership based on its current status.
+	 *
+	 * @param \WC_Memberships_User_Membership $membership
 	 *
 	 * @return void
-	 * @see listen_user_membership_update()
+	 */
+	protected function sync_membership( $membership ) {
+		if ( 'active' === $membership->get_status() ) {
+			$this->prepare_single_sync( $membership->get_user_id(), $membership->get_plan_id(), null );
+		} else {
+			$this->prepare_single_sync( $membership->get_user_id(), null, $membership->get_plan_id() );
+		}
+	}
+
+	/**
+	 * Registers the single-sync cron callback.
+	 *
+	 * @return void
 	 */
 	protected function listen_single_sync() {
-		add_action(
-			self::SINGLE_SYNC_EVENT,
-			function () {
-				$single_update_data = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
-				if ( empty( $single_update_data['users'] ) ) {
-					return;
-				}
+		add_action( self::SINGLE_SYNC_EVENT, array( $this, 'process_single_sync' ) );
+	}
 
-				foreach ( $single_update_data['users'] as $user_id => $actions ) {
-					$revoked_memberships = $actions['revoked_memberships'];
-					$revoke_series_ids   = $this->convert_membership_ids_into_series_ids( $revoked_memberships );
+	/**
+	 * Processes queued single-sync users and performs race-safe cleanup.
+	 *
+	 * Takes a snapshot of the queue, syncs each user with Castos while
+	 * removing synced users from a $pending working copy. Hands both
+	 * snapshot and pending to cleanup, which detects concurrent writes
+	 * and preserves them (Scenario E).
+	 *
+	 * @return void
+	 */
+	public function process_single_sync() {
+		$snapshot = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
+		if ( empty( $snapshot['users'] ) ) {
+			return;
+		}
 
-					// Make sure user doesn't have other memberships that allow them to use this series
-					$user_membership_ids = $this->get_user_membership_ids( $user_id );
-					$allowed_series_ids  = $this->convert_membership_ids_into_series_ids( $user_membership_ids );
-					$revoke_series_ids   = array_diff( $revoke_series_ids, $allowed_series_ids );
+		if ( isset( $snapshot['attempts'] ) && (int) $snapshot['attempts'] >= 10 ) {
+			$this->logger->log( __METHOD__ . ': Giving up after 10 failed attempts.' );
+			return;
+		}
 
-					$added_memberships = $actions['added_memberships'];
-					$add_series_ids    = $this->convert_membership_ids_into_series_ids( $added_memberships );
+		$pending = $snapshot;
 
-					$res = $this->sync_user( $user_id, $revoke_series_ids, $add_series_ids );
+		foreach ( $snapshot['users'] as $user_id => $actions ) {
+			$revoke_series_ids = $this->convert_membership_ids_into_series_ids( $actions['revoked_memberships'] );
 
-					if ( ! $res ) {
-						// Let's make sure there won't be an infinite number of attempts.
-						if ( $single_update_data['attempts'] < 10 ) {
-							$this->logger->log( __METHOD__ . sprintf( ': Error! Could not sync user %s.', $user_id ) );
-						} else {
-							$this->logger->log( __METHOD__ . sprintf( ': Error! Failed to sync user %s. Will try again later.', $user_id ) );
-							$single_update_data['attempts'] = $single_update_data['attempts'] + 1;
-							update_option( self::SINGLE_SYNC_DATA_OPTION, $single_update_data );
-							$this->schedule_single_sync( 20 );
-						}
+			// Exclude series the user still has access to via other active memberships.
+			$user_membership_ids = $this->get_user_membership_ids( $user_id );
+			$allowed_series_ids  = $this->convert_membership_ids_into_series_ids( $user_membership_ids );
+			$revoke_series_ids   = array_diff( $revoke_series_ids, $allowed_series_ids );
 
-						return;
-					}
-				}
+			$add_series_ids = $this->convert_membership_ids_into_series_ids( $actions['added_memberships'] );
 
-				delete_option( self::SINGLE_SYNC_DATA_OPTION );
+			if ( $this->sync_user( $user_id, $revoke_series_ids, $add_series_ids ) ) {
+				unset( $pending['users'][ $user_id ] );
+			} else {
+				$this->logger->log( __METHOD__ . sprintf( ': Failed to sync user %s.', $user_id ) );
 			}
-		);
+		}
+
+		$updated = $this->reconcile_sync_data( $snapshot, $pending );
+
+		// Users remain (pending failures or concurrent writes) — save and reschedule.
+		if ( ! empty( $updated['users'] ) ) {
+			$updated['attempts'] = ( isset( $updated['attempts'] ) ? (int) $updated['attempts'] : 0 ) + 1;
+			update_option( self::SINGLE_SYNC_DATA_OPTION, $updated, false );
+			$had_sync_failures = count( $pending['users'] );
+			$this->schedule_single_sync( $had_sync_failures ? 20 : 0 );
+			return;
+		}
+
+		// Queue fully drained.
+		delete_option( self::SINGLE_SYNC_DATA_OPTION );
+	}
+
+	/**
+	 * Reconciles the sync option against the current DB state.
+	 *
+	 * Re-reads the option from DB (bypassing object cache), removes
+	 * successfully processed users whose data hasn't changed since the
+	 * snapshot, and preserves entries added or modified by concurrent
+	 * requests. Castos API is idempotent, so re-processing is safe.
+	 *
+	 * @param array $snapshot Option data as read before processing began.
+	 * @param array $pending  Working copy — only users that failed or weren't reached.
+	 *
+	 * @return array Reconciled option data ready to be persisted.
+	 */
+	protected function reconcile_sync_data( array $snapshot, array $pending ) {
+		// Bypass the object cache — concurrent requests write to DB directly;
+		// our in-process cache still holds the stale snapshot value.
+		wp_cache_delete( self::SINGLE_SYNC_DATA_OPTION, 'options' );
+		$stored = get_option( self::SINGLE_SYNC_DATA_OPTION, array() );
+
+		$updated = $stored;
+		foreach ( $snapshot['users'] as $uid => $actions ) {
+			if ( isset( $pending['users'][ $uid ] ) ) {
+				continue;
+			}
+			if ( isset( $updated['users'][ $uid ] ) && $updated['users'][ $uid ] === $actions ) {
+				unset( $updated['users'][ $uid ] );
+			}
+		}
+
+		return $updated;
 	}
 
 	/**
@@ -315,11 +377,7 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 
 				$user_membership = $this->get_user_membership( $user_membership_id );
 
-				if ( 'active' === $user_membership->get_status() ) {
-					$this->prepare_single_sync( $user_data['user_id'], $user_membership->get_plan_id(), null );
-				} else {
-					$this->prepare_single_sync( $user_data['user_id'], null, $user_membership->get_plan_id() );
-				}
+				$this->sync_membership( $user_membership );
 			},
 			10,
 			2
@@ -362,14 +420,25 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 			$single_sync_data['users'][ $user_id ]['revoked_memberships'] : array();
 
 		$single_sync_data['users'][ $user_id ] = array(
-			'added_memberships'   => array_unique( array_merge( $added_memberships, array( $added_membership ) ) ),
-			'revoked_memberships' => array_unique( array_merge( $revoked_memberships, array( $revoked_membership ) ) ),
+			'added_memberships'   => $this->clean_id_list( array_merge( $added_memberships, array( $added_membership ) ) ),
+			'revoked_memberships' => $this->clean_id_list( array_merge( $revoked_memberships, array( $revoked_membership ) ) ),
 		);
 
 		$single_sync_data['attempts'] = 0;
 
 		update_option( self::SINGLE_SYNC_DATA_OPTION, $single_sync_data, false );
 		$this->schedule_single_sync( 0 );
+	}
+
+	/**
+	 * Deduplicates an ID list, drops falsy values (null, 0, ''), and re-indexes sequentially.
+	 *
+	 * @param array $ids
+	 *
+	 * @return array
+	 */
+	protected function clean_id_list( array $ids ) {
+		return array_values( array_unique( array_filter( $ids ) ) );
 	}
 
 	/**

@@ -241,7 +241,7 @@ class EditPodcastList extends Component {
 						{isCards && <PanelRow>
 							<TextControl
 								label={__('Button Text', 'seriously-simple-podcasting')}
-								value={buttonText || 'Listen Now'}
+								value={buttonText || __('Listen Now', 'seriously-simple-podcasting')}
 								onChange={(buttonText) => setAttributes({buttonText})}
 							/>
 						</PanelRow>}

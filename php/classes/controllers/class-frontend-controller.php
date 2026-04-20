@@ -140,7 +140,12 @@ class Frontend_Controller {
 		add_action( 'template_redirect', array( $this, 'maybe_serve_archive_page' ) );
 
 		// Flush rewrite rules when the podcast archive page setting changes.
-		add_action( 'update_option_' . Archive_Page_Handler::OPTION_PODCAST_PAGE_ID, 'flush_rewrite_rules' );
+		add_action(
+			'update_option_' . Archive_Page_Handler::OPTION_PODCAST_PAGE_ID,
+			function () {
+				flush_rewrite_rules( false );
+			}
+		);
 
 		// Handle localisation
 		add_action( 'plugins_loaded', array( $this, 'load_localisation' ) );

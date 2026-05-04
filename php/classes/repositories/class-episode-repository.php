@@ -857,7 +857,19 @@ class Episode_Repository implements Service {
 		}
 
 		/**
-		 * Option 5: None of the above passed, return the no-album-art image
+		 * Option 5: if the post has a featured image, use that (no squareness check —
+		 * the HTML5 player handles non-square images via CSS)
+		 */
+		$thumb_id = get_post_thumbnail_id( $episode_id );
+		if ( ! empty( $thumb_id ) ) {
+			$image_data_array = ssp_get_attachment_image_src( $thumb_id, $size );
+			if ( ! empty( $image_data_array['src'] ) ) {
+				return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'featured_image' );
+			}
+		}
+
+		/**
+		 * Option 6: None of the above passed, return the no-album-art image
 		 */
 		$image_data_array = $this->get_no_album_art_image_array();
 

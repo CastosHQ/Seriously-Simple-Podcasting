@@ -408,6 +408,15 @@ class Players_Controller {
 			wp_enqueue_style( 'ssp-castos-player' );
 		}
 
+		static $i18n_localized = false;
+		if ( ! $i18n_localized && wp_script_is( 'ssp-castos-player', 'enqueued' ) ) {
+			wp_localize_script( 'ssp-castos-player', 'ssp_player_i18n', array(
+				'playback_speed' => __( 'Playback speed, currently %sx', 'seriously-simple-podcasting' ),
+				'copied'         => __( 'Copied', 'seriously-simple-podcasting' ),
+			) );
+			$i18n_localized = true;
+		}
+
 		$is_player_custom_colors_enabled = ssp_app()->get_settings_handler()->is_player_custom_colors_enabled();
 
 		if ( $is_player_custom_colors_enabled && ! wp_style_is( 'ssp-dynamic-style', 'enqueued' ) ) {

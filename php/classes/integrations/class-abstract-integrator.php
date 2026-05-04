@@ -290,6 +290,10 @@ abstract class Abstract_Integrator {
 			return false;
 		}
 
+		// If a series is both revoked and added, add wins — don't revoke
+		// what we're about to re-add. Avoids redundant API calls.
+		$revoke_series_ids = array_diff( $revoke_series_ids, $add_series_ids );
+
 		if ( $revoke_series_ids ) {
 			$this->logger->log( __METHOD__ . sprintf( ': Revoke user %s from series %s', $user->user_email, json_encode( $revoke_series_ids ) ) );
 			$revoke_res = $this->revoke_subscriber_from_podcasts( $user, $revoke_series_ids );

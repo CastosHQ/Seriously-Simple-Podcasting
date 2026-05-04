@@ -335,6 +335,7 @@ jQuery(document).ready(function($) {
 
 	$('.ssp-image-delete').on('click', function(){
 		$('.' + $(this).data('field')).val('').trigger('change');
+		$('.' + $(this).data('field') + '_id').val('').trigger('change');
 		$('.' + $(this).data('preview')).attr('src', '').trigger('change');
 	});
 

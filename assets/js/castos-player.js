@@ -13,6 +13,8 @@ docReady(function() {
 	/* Get Our Elements */
 	let players = document.querySelectorAll('.castos-player');
 
+	let i18n = window.ssp_player_i18n || {};
+
 	players.forEach(function (player) {
 		let playerId = player.dataset.player_id,
 			playerData = window['ssp_castos_player_' + playerId],
@@ -138,9 +140,11 @@ docReady(function() {
 			if (audio.volume === 1) {
 				audio.volume = 0;
 				volumeBtn.classList.add('off');
+				volumeBtn.setAttribute('aria-pressed', 'true');
 			} else {
 				audio.volume = 1;
 				volumeBtn.classList.remove('off');
+				volumeBtn.setAttribute('aria-pressed', 'false');
 			}
 		}
 
@@ -156,6 +160,7 @@ docReady(function() {
 
 			speedBtn.setAttribute('data-speed', speed);
 			speedBtn.innerHTML = speed + 'x';
+			speedBtn.setAttribute('aria-label', (i18n.playback_speed || 'Playback speed, currently %sx').replace('%s', speed));
 			audio.playbackRate = speed;
 		}
 
@@ -187,6 +192,7 @@ docReady(function() {
 				}
 
 				currentActiveItem.classList.remove('active');
+				currentActiveItem.removeAttribute('aria-selected');
 
 				let	nextItem = currentActiveItem.nextElementSibling;
 				if (nextItem) {
@@ -249,18 +255,41 @@ docReady(function() {
 			rssCopyBtn = player.querySelector('.copy-rss');
 
 		/* Build out functions */
-		function togglePanel(panel) {
+		function togglePanel(panel, triggerBtn) {
 			if(panel.classList.contains('open')){
 				panel.classList.remove('open');
+				if (triggerBtn) {
+					triggerBtn.setAttribute('aria-expanded', 'false');
+				}
 				return;
 			}
 			panel.classList.add('open');
+			if (triggerBtn) {
+				triggerBtn.setAttribute('aria-expanded', 'true');
+			}
 			panel.focus();
 		}
 
 		function copyLink(elm) {
 			elm.select();
 			document.execCommand('Copy');
+			announceToScreenReader(i18n.copied || 'Copied');
+		}
+
+		function announceToScreenReader(message) {
+			let announcer = player.querySelector('.ssp-sr-announce');
+			if (!announcer) {
+				announcer = document.createElement('div');
+				announcer.className = 'ssp-sr-announce';
+				announcer.setAttribute('aria-live', 'polite');
+				announcer.setAttribute('role', 'status');
+				announcer.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;';
+				player.appendChild(announcer);
+			}
+			announcer.textContent = '';
+			setTimeout(function() {
+				announcer.textContent = message;
+			}, 100);
 		}
 
  		function handleChangePlaylistItem() {
@@ -269,10 +298,12 @@ docReady(function() {
 			}
 
 			playlistItems.querySelectorAll('.playlist__item').forEach(function (item) {
-				item.classList.remove('active')
+				item.classList.remove('active');
+				item.removeAttribute('aria-selected');
 			});
 
 			this.classList.add('active');
+			this.setAttribute('aria-selected', 'true');
 
 			let playlistEpisodeTitle = this.querySelector('.playlist__episode-title'),
 				episodeCover = this.querySelector('.playlist__item__cover img');
@@ -320,7 +351,7 @@ docReady(function() {
 
 					let div = document.createElement('div');
 					div.innerHTML =
-						'<li class="playlist__item" data-episode="' + escapeHtml(item.episode_id) + '">' +
+						'<li class="playlist__item" data-episode="' + escapeHtml(item.episode_id) + '" tabindex="0" role="option">' +
 						'<div class="playlist__item__cover">' +
 						'<img src="' + escapeUrl(item.album_art && item.album_art.src ? item.album_art.src : '') + '" title="' + escapeHtml(item.title) + '" alt="' + escapeHtml(item.title) + '" />' +
 						'</div>' +
@@ -387,25 +418,25 @@ docReady(function() {
 			/* Hook up the event listeners */
 			if (subscribeBtn) {
 				subscribeBtn.addEventListener('click', function () {
-					return togglePanel(subscribePanel);
+					return togglePanel(subscribePanel, subscribeBtn);
 				});
 			}
 
 			if (subscribePanelClose) {
 				subscribePanelClose.addEventListener('click', function () {
-					return togglePanel(subscribePanel);
+					return togglePanel(subscribePanel, subscribeBtn);
 				});
 			}
 
 			if (shareBtn) {
 				shareBtn.addEventListener('click', function () {
-					return togglePanel(sharePanel);
+					return togglePanel(sharePanel, shareBtn);
 				});
 			}
 
 			if (sharePanelClose) {
 				sharePanelClose.addEventListener('click', function () {
-					return togglePanel(sharePanel);
+					return togglePanel(sharePanel, shareBtn);
 				});
 			}
 
@@ -469,6 +500,16 @@ docReady(function() {
 					setSpeed( speed.toFixed( 1 ) );
 				} else if ( e.shiftKey && e.code === 'Digit0' ) { // Reset speed to 1x
 					setSpeed( 1 );
+				} else if ( 'Escape' === e.key ) {
+					e.preventDefault();
+					if ( subscribePanel && subscribePanel.classList.contains( 'open' ) ) {
+						togglePanel( subscribePanel, subscribeBtn );
+						subscribeBtn.focus();
+					}
+					if ( sharePanel && sharePanel.classList.contains( 'open' ) ) {
+						togglePanel( sharePanel, shareBtn );
+						shareBtn.focus();
+					}
 				}
 			} );
 		}

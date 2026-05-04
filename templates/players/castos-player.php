@@ -25,7 +25,7 @@
 
 ?>
 <div id="<?php echo esc_attr( $player_id ); ?>" class="castos-player <?php echo esc_attr( $player_mode ) ?>-mode <?php echo esc_attr( $class )
-     ?>" tabindex="0" data-episode="<?php echo esc_attr( $episode_id ) ?>" data-player_id="<?php echo esc_attr( $player_id ); ?>">
+     ?>" role="region" aria-label="<?php esc_attr_e( 'Podcast player', 'seriously-simple-podcasting' ) ?>" data-episode="<?php echo esc_attr( $episode_id ) ?>" data-player_id="<?php echo esc_attr( $player_id ); ?>">
 	<div class="player">
 		<div class="player__main">
 			<div class="player__artwork player__artwork-<?php echo esc_attr( $episode_id ) ?>">
@@ -73,19 +73,16 @@
 						</div>
 						<div class="ssp-playback playback">
 							<div class="playback__controls">
-								<button class="player-btn player-btn__volume" title="<?php esc_attr_e( 'Mute/Unmute', 'seriously-simple-podcasting' ) ?>">
-									<span class="screen-reader-text"><?php esc_attr_e( 'Mute/Unmute Episode', 'seriously-simple-podcasting' ) ?></span>
+								<button class="player-btn player-btn__volume" title="<?php esc_attr_e( 'Mute/Unmute', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Mute audio', 'seriously-simple-podcasting' ) ?>" aria-pressed="false">
 								</button>
-								<button data-skip="-10" class="player-btn player-btn__rwd" title="<?php esc_attr_e( 'Rewind 10 seconds', 'seriously-simple-podcasting' ) ?>">
-									<span class="screen-reader-text"><?php esc_attr_e( 'Rewind 10 Seconds', 'seriously-simple-podcasting' ) ?></span>
+								<button data-skip="-10" class="player-btn player-btn__rwd" title="<?php esc_attr_e( 'Rewind 10 seconds', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Rewind 10 seconds', 'seriously-simple-podcasting' ) ?>">
 								</button>
-								<button data-speed="1" class="player-btn player-btn__speed" title="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>">1x</button>
-								<button data-skip="30" class="player-btn player-btn__fwd" title="<?php esc_attr_e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?>">
-									<span class="screen-reader-text"><?php esc_attr_e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?></span>
+								<button data-speed="1" class="player-btn player-btn__speed" title="<?php esc_attr_e( 'Playback Speed', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Playback speed, currently 1x', 'seriously-simple-podcasting' ) ?>">1x</button>
+								<button data-skip="30" class="player-btn player-btn__fwd" title="<?php esc_attr_e( 'Fast Forward 30 seconds', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Fast forward 30 seconds', 'seriously-simple-podcasting' ) ?>">
 								</button>
 							</div>
 							<div class="playback__timers">
-								<time class="ssp-timer">00:00</time>
+								<time class="ssp-timer" aria-live="off">00:00</time>
 								<span>/</span>
 								<!-- We need actual duration here from the server -->
 								<time class="ssp-duration" datetime="<?php echo ssp_iso_duration( $duration ) ?>"><?php echo esc_html( $duration ) ?></time>
@@ -96,10 +93,10 @@
 				<?php if ( $show_subscribe_button || $show_share_button ) : ?>
 					<nav class="player-panels-nav">
 						<?php if ( $show_subscribe_button ) : ?>
-							<button class="subscribe-btn" id="subscribe-btn-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Subscribe', 'seriously-simple-podcasting' ) ?>"><?php esc_attr_e( 'Subscribe', 'seriously-simple-podcasting' ) ?></button>
+							<button class="subscribe-btn" id="subscribe-btn-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Subscribe', 'seriously-simple-podcasting' ) ?>" aria-expanded="false"><?php esc_attr_e( 'Subscribe', 'seriously-simple-podcasting' ) ?></button>
 						<?php endif; ?>
 						<?php if ( $show_share_button ) : ?>
-							<button class="share-btn" id="share-btn-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Share', 'seriously-simple-podcasting' ) ?>"><?php esc_attr_e( 'Share', 'seriously-simple-podcasting' ) ?></button>
+							<button class="share-btn" id="share-btn-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Share', 'seriously-simple-podcasting' ) ?>" aria-expanded="false"><?php esc_attr_e( 'Share', 'seriously-simple-podcasting' ) ?></button>
 						<?php endif; ?>
 					</nav>
 				<?php endif; ?>
@@ -110,10 +107,10 @@
 		<div class="player-panels player-panels-<?php echo esc_attr( $episode_id ) ?>">
 			<?php if ( $show_subscribe_button ) : ?>
 				<div class="subscribe player-panel subscribe-<?php echo esc_attr( $episode_id ) ?>">
-					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>">
+					<button class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>" aria-label="<?php esc_attr_e( 'Close', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 						<span></span>
-					</div>
+					</button>
 					<div class="panel__inner">
 						<div class="subscribe-icons">
 							<?php foreach ( $subscribe_links as $key => $subscribe_link ) : ?>
@@ -139,25 +136,25 @@
 			<?php endif ?>
 			<?php if ( $show_share_button ) : ?>
 				<div class="share share-<?php echo esc_attr( $episode_id ) ?> player-panel">
-					<div class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>">
+					<button class="close-btn close-btn-<?php echo esc_attr( $episode_id ) ?>" aria-label="<?php esc_attr_e( 'Close', 'seriously-simple-podcasting' ) ?>">
 						<span></span>
 						<span></span>
-					</div>
+					</button>
 					<div class="player-panel-row">
 						<div class="title">
 							<?php esc_attr_e( 'Share', 'seriously-simple-podcasting' ) ?>
 						</div>
 						<div class="icons-holder">
 							<a href="https://www.facebook.com/sharer/sharer.php?u=<?php echo esc_attr( $current_url ); ?>&t=<?php echo esc_attr( $episode->post_title ); ?>"
-							   target="_blank" rel="noopener noreferrer" class="share-icon facebook" title="<?php esc_attr_e( 'Share on Facebook', 'seriously-simple-podcasting' ) ?>">
+							   target="_blank" rel="noopener noreferrer" class="share-icon facebook" title="<?php esc_attr_e( 'Share on Facebook', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Share on Facebook', 'seriously-simple-podcasting' ) ?>">
 								<span></span>
 							</a>
 							<a href="https://twitter.com/intent/tweet?text=<?php echo esc_attr( $current_url ); ?>&url=<?php echo esc_attr( $episode->post_title ); ?>"
-							   target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="<?php esc_attr_e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
+							   target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="<?php esc_attr_e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
 								<span></span>
 							</a>
 							<a href="<?php echo esc_url( $audio_file ) ?>"
-							   target="_blank" rel="noopener noreferrer" class="share-icon download" title="<?php esc_attr_e( 'Download', 'seriously-simple-podcasting' ) ?>" download>
+							   target="_blank" rel="noopener noreferrer" class="share-icon download" title="<?php esc_attr_e( 'Download', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Download', 'seriously-simple-podcasting' ) ?>" download>
 								<span></span>
 							</a>
 						</div>
@@ -190,10 +187,11 @@
 	<?php if ( ! empty( $playlist ) ) : ?>
 		<div class="playlist__wrapper" data-page="1">
 			<div class="loader"></div>
-			<ul class="playlist__items">
+			<ul class="playlist__items" role="listbox">
 				<?php foreach ( $playlist as $k => $item ) : ?>
 					<li class="playlist__item<?php if ( 0 === $k ): ?> active<?php endif ?>"
-						data-episode="<?php echo esc_attr( $item['episode_id'] ); ?>">
+						data-episode="<?php echo esc_attr( $item['episode_id'] ); ?>"
+						tabindex="0" role="option"<?php if ( 0 === $k ): ?> aria-selected="true"<?php endif ?>>
 						<div class="playlist__item__cover">
 							<img src="<?php echo esc_attr( $item['album_art']['src'] ) ?>" title="<?php echo esc_attr( strip_tags( $item['title'] ) ); ?>" alt="<?php echo esc_attr( strip_tags( $item['title'] ) ) ?>"/>
 						</div>

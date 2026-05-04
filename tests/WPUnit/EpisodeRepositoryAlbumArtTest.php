@@ -15,6 +15,7 @@ class EpisodeRepositoryAlbumArtTest extends \Codeception\TestCase\WPTestCase
     {
         parent::setUp();
         $this->episode_repository = ssp_get_service('episode_repository');
+        delete_option('ss_podcasting_data_image');
     }
 
     protected function tearDown(): void
@@ -77,8 +78,9 @@ class EpisodeRepositoryAlbumArtTest extends \Codeception\TestCase\WPTestCase
         $result = $this->episode_repository->get_album_art($episode_id);
 
         $this->assertIsArray($result);
-        $this->assertNotEmpty($result['src']);
-        $this->assertStringNotContainsString('no-album-art', $result['src']);
+        $featured_src = wp_get_attachment_image_src($attachment_id, 'full');
+        $this->assertNotFalse($featured_src, 'Featured attachment must resolve to an image URL.');
+        $this->assertSame($featured_src[0], $result['src']);
     }
 
     /**
@@ -116,8 +118,9 @@ class EpisodeRepositoryAlbumArtTest extends \Codeception\TestCase\WPTestCase
 
         // Should return the non-square featured image instead of placeholder.
         $this->assertIsArray($result);
-        $this->assertNotEmpty($result['src']);
-        $this->assertStringNotContainsString('no-album-art', $result['src']);
+        $featured_src = wp_get_attachment_image_src($attachment_id, 'full');
+        $this->assertNotFalse($featured_src, 'Featured attachment must resolve to an image URL.');
+        $this->assertSame($featured_src[0], $result['src']);
     }
 
     /**

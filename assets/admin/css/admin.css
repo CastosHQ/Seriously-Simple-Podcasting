@@ -121,6 +121,57 @@ textarea#episode_embed_code {
   }
 }
 
+.ssp-default-podcast-label {
+  font-style: italic;
+  color: #64748B;
+  margin: 0;
+}
+
+.ssp-toggle {
+  position: relative;
+  display: inline-block;
+  width: 36px;
+  height: 20px;
+  vertical-align: middle;
+}
+.ssp-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+.ssp-toggle__slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background-color: #ccc;
+  border-radius: 20px;
+  transition: background-color 0.2s;
+}
+.ssp-toggle__slider:before {
+  content: "";
+  position: absolute;
+  height: 14px;
+  width: 14px;
+  left: 3px;
+  bottom: 3px;
+  background-color: #fff;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+input:checked + .ssp-toggle__slider {
+  background-color: #2271b1;
+}
+input:checked + .ssp-toggle__slider:before {
+  transform: translateX(16px);
+}
+input:focus + .ssp-toggle__slider {
+  box-shadow: 0 0 0 2px #2271b1;
+}
+.ssp-toggle__label {
+  margin-left: 8px;
+  vertical-align: middle;
+}
+
 .ssp-error {
   background: #fff;
   border: 1px solid #c3c4c7;

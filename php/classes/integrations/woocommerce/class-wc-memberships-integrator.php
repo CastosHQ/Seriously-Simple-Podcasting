@@ -286,7 +286,19 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 
 		if ( isset( $snapshot['attempts'] ) && (int) $snapshot['attempts'] >= 10 ) {
 			$this->logger->log( __METHOD__ . ': Giving up after 10 failed attempts.' );
-			delete_option( self::SINGLE_SYNC_DATA_OPTION );
+
+			// Drop capped snapshot users but preserve any concurrent writes.
+			$empty_pending = array( 'users' => array() );
+			$updated       = $this->reconcile_sync_data( $snapshot, $empty_pending );
+
+			if ( empty( $updated['users'] ) ) {
+				delete_option( self::SINGLE_SYNC_DATA_OPTION );
+			} else {
+				$updated['attempts'] = 0;
+				update_option( self::SINGLE_SYNC_DATA_OPTION, $updated, false );
+				$this->schedule_single_sync( 0 );
+			}
+
 			return;
 		}
 

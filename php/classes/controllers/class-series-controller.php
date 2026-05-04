@@ -171,7 +171,26 @@ class Series_Controller {
 	public function edit_series_term_meta_fields( $term, $taxonomy ) {
 		// Add series image edit/upload metabox.
 		$this->series_image_uploader( $taxonomy, 'UPDATE', $term );
+		$this->show_default_podcast_toggle( $term );
 		$this->show_feed_info( $term );
+	}
+
+	/**
+	 * Renders the "Set as default podcast" toggle or a label if already default.
+	 *
+	 * @param \WP_Term $term
+	 */
+	protected function show_default_podcast_toggle( $term ) {
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return;
+		}
+
+		$is_default = (int) $term->term_id === ssp_get_default_series_id();
+
+		ssp_renderer()->render(
+			'settings/podcast-default-toggle',
+			compact( 'is_default' )
+		);
 	}
 
 	/**
@@ -334,7 +353,29 @@ HTML;
 	 */
 	public function save_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
+		$this->maybe_set_default_series( $term_id );
 		$this->save_series_data_to_castos( $term_id );
+	}
+
+	/**
+	 * Sets this series as the default podcast if the toggle was checked.
+	 *
+	 * @param int $term_id
+	 */
+	protected function maybe_set_default_series( $term_id ) {
+		if ( empty( $_POST['ssp_default_podcast'] ) ) {
+			return;
+		}
+
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return;
+		}
+
+		if ( (int) $term_id === ssp_get_default_series_id() ) {
+			return;
+		}
+
+		ssp_update_option( 'default_series', (int) $term_id );
 	}
 
 	/**

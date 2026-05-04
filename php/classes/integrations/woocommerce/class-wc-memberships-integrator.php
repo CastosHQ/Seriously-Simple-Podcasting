@@ -247,11 +247,6 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 	 * @return void
 	 */
 	protected function sync_membership( $membership ) {
-		if ( ! $membership ) {
-			$this->logger->log( __METHOD__ . ': Membership lookup failed.' );
-			return;
-		}
-
 		if ( 'active' === $membership->get_status() ) {
 			$this->prepare_single_sync( $membership->get_user_id(), $membership->get_plan_id(), null );
 		} else {
@@ -286,7 +281,6 @@ class WC_Memberships_Integrator extends Abstract_Integrator {
 
 		if ( isset( $snapshot['attempts'] ) && (int) $snapshot['attempts'] >= 10 ) {
 			$this->logger->log( __METHOD__ . ': Giving up after 10 failed attempts.' );
-			delete_option( self::SINGLE_SYNC_DATA_OPTION );
 			return;
 		}
 

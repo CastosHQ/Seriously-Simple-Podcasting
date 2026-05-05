@@ -312,6 +312,7 @@ class Admin_Notifications_Handler implements Service {
 	 */
 	public function add_constant_notice( $notice, $type, $key = '' ) {
 		$notices         = $this->get_constant_notices();
+		$key             = $key ? sanitize_key( $key ) : '';
 		$key             = $key ?: $this->get_notice_hash( $notice );
 		$notices[ $key ] = array(
 			'notice'      => $notice,

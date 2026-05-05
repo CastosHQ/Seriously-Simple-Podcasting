@@ -65,6 +65,13 @@ class Castos_Handler implements Service {
 	const API_TOKEN_OPTION = 'ss_podcasting_podmotor_account_api_token';
 
 	/**
+	 * Key used to store and remove the disconnect constant notice.
+	 *
+	 * @const string
+	 */
+	const DISCONNECT_NOTICE_KEY = 'castos_disconnected';
+
+	/**
 	 * Transient name for storing cached podcasts data.
 	 *
 	 * @const string
@@ -1116,7 +1123,7 @@ class Castos_Handler implements Service {
 		$this->remove_api_credentials();
 
 		if ( $notification ) {
-			$this->notifications_handler->add_constant_notice( $notification, Admin_Notifications_Handler::WARNING );
+			$this->notifications_handler->add_constant_notice( $notification, Admin_Notifications_Handler::WARNING, self::DISCONNECT_NOTICE_KEY );
 		}
 	}
 

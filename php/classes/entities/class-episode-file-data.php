@@ -34,6 +34,13 @@ class Episode_File_Data extends Abstract_API_Entity {
 	public $ads_enabled;
 
 	/**
+	 * Whether campaigns are enabled.
+	 *
+	 * @var bool
+	 */
+	public $campaigns_enabled;
+
+	/**
 	 * Constructor.
 	 *
 	 * @param array $properties Entity properties.
@@ -43,6 +50,10 @@ class Episode_File_Data extends Abstract_API_Entity {
 
 		if ( isset( $properties['podcast.ads_enabled'] ) ) {
 			$this->ads_enabled = $properties['podcast.ads_enabled'];
+		}
+
+		if ( isset( $properties['podcast.campaigns_enabled'] ) ) {
+			$this->campaigns_enabled = $properties['podcast.campaigns_enabled'];
 		}
 
 		$this->success = isset( $properties['code'] ) && ( 200 === $properties['code'] );

@@ -11,6 +11,7 @@
 
 namespace SeriouslySimplePodcasting\Rest;
 
+use SeriouslySimplePodcasting\Controllers\Passthrough_Controller;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use WP_REST_Controller;
@@ -125,6 +126,19 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			array(
 				'methods'             => 'PUT',
 				'callback'            => array( $this, 'update_episode' ),
+				'permission_callback' => array( $this, 'update_item_permissions_check' ),
+			)
+		);
+
+		/**
+		 * Update podcast passthrough settings (ads, campaigns).
+		 */
+		register_rest_route(
+			$this->namespace,
+			'/podcasts/(?P<series_id>[\d]+)',
+			array(
+				'methods'             => 'PUT',
+				'callback'            => array( $this, 'update_podcast' ),
 				'permission_callback' => array( $this, 'update_item_permissions_check' ),
 			)
 		);
@@ -269,6 +283,65 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			);
 		} catch ( \Exception $e ) {
 			return new \WP_Error( $e->getCode(), $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Updates podcast passthrough settings (ads, campaigns).
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return \WP_REST_Response Response indicating success or failure.
+	 */
+	public function update_podcast( $request ) {
+		$series_id         = (int) $request->get_param( 'series_id' );
+		$ads_enabled       = $request->get_param( 'ads_enabled' );
+		$campaigns_enabled = $request->get_param( 'campaigns_enabled' );
+
+		if ( null !== $ads_enabled ) {
+			ssp_update_option( Passthrough_Controller::ENABLE_ADS_OPTION, $ads_enabled ? 'on' : '', $series_id );
+		}
+
+		if ( null !== $campaigns_enabled ) {
+			ssp_update_option( Passthrough_Controller::ENABLE_CAMPAIGNS_OPTION, $campaigns_enabled ? 'on' : '', $series_id );
+		}
+
+		$this->flush_episode_file_data_transients( $series_id );
+
+		return rest_ensure_response(
+			array(
+				'updated'   => true,
+				'series_id' => $series_id,
+			)
+		);
+	}
+
+	/**
+	 * Flushes cached episode file data transients for all episodes in a series.
+	 *
+	 * @param int $series_id Series ID.
+	 */
+	protected function flush_episode_file_data_transients( $series_id ) {
+		$args = array(
+			'post_type'      => ssp_post_types(),
+			'posts_per_page' => -1,
+			'fields'         => 'ids',
+		);
+
+		if ( $series_id ) {
+			$args['tax_query'] = array(
+				array(
+					'taxonomy' => ssp_series_taxonomy(),
+					'field'    => 'term_id',
+					'terms'    => $series_id,
+				),
+			);
+		}
+
+		$episode_ids = get_posts( $args );
+
+		foreach ( $episode_ids as $episode_id ) {
+			delete_transient( 'ssp_episode_file_data_' . $episode_id );
 		}
 	}
 

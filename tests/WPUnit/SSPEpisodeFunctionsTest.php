@@ -358,5 +358,52 @@ class SSPEpisodeFunctionsTest extends \Codeception\TestCase\WPTestCase
 
         $this->assertIsBool($required);
     }
+
+    /**
+     * @covers ssp_series_passthrough_required()
+     */
+    public function testSeriesPassthroughRequiredWithAdsEnabled()
+    {
+        ssp_update_option('enable_ads', 'on', $this->test_series_id);
+
+        $this->assertTrue(ssp_series_passthrough_required($this->test_series_id));
+
+        ssp_update_option('enable_ads', '', $this->test_series_id);
+    }
+
+    /**
+     * @covers ssp_series_passthrough_required()
+     */
+    public function testSeriesPassthroughRequiredWithCampaignsEnabled()
+    {
+        ssp_update_option('enable_campaigns', 'on', $this->test_series_id);
+
+        $this->assertTrue(ssp_series_passthrough_required($this->test_series_id));
+
+        ssp_update_option('enable_campaigns', '', $this->test_series_id);
+    }
+
+    /**
+     * @covers ssp_series_passthrough_required()
+     */
+    public function testSeriesPassthroughNotRequiredWithNothingEnabled()
+    {
+        ssp_update_option('enable_ads', '', $this->test_series_id);
+        ssp_update_option('enable_campaigns', '', $this->test_series_id);
+
+        $this->assertFalse(ssp_series_passthrough_required($this->test_series_id));
+    }
+
+    /**
+     * @covers ssp_episode_passthrough_required()
+     */
+    public function testEpisodePassthroughRequiredWithCampaignsEnabled()
+    {
+        ssp_update_option('enable_campaigns', 'on', $this->test_series_id);
+
+        $this->assertTrue(ssp_episode_passthrough_required($this->test_episode_id));
+
+        ssp_update_option('enable_campaigns', '', $this->test_series_id);
+    }
 }
 

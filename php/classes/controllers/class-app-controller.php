@@ -163,11 +163,11 @@ class App_Controller {
 	public $rest_controller;
 
 	/**
-	 * Ads controller instance.
+	 * Passthrough controller instance.
 	 *
-	 * @var Ads_Controller
+	 * @var Passthrough_Controller
 	 */
-	public $ads_controller;
+	public $passthrough_controller;
 
 	/**
 	 * Episode controller instance.
@@ -422,7 +422,7 @@ class App_Controller {
 
 		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );
 
-		$this->ads_controller = new Ads_Controller( $this->castos_handler );
+		$this->passthrough_controller = new Passthrough_Controller( $this->castos_handler );
 
 		// todo: further refactoring - get rid of global here.
 		global $ss_podcasting;

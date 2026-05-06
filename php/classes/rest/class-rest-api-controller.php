@@ -78,6 +78,7 @@ class Rest_Api_Controller {
 		$podcast['category3']       = ssp_get_feed_category_output( 3, $series_id );
 		$podcast['guid']            = get_option( 'ss_podcasting_data_guid', '' );
 		$podcast['ads_enabled']     = 'on' === ssp_get_option( 'enable_ads', 'off' );
+		$podcast['campaigns_enabled'] = 'on' === ssp_get_option( 'enable_campaigns', 'off' );
 
 		return $podcast;
 	}

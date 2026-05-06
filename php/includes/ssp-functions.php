@@ -1989,8 +1989,9 @@ if ( ! function_exists( 'ssp_series_passthrough_required' ) ) {
 			return apply_filters( 'ssp_episode_passthrough_required', true, $series_id );
 		}
 
-		// Require passthrough if ads are enabled for this series.
-		$required = 'on' === ssp_get_option( 'enable_ads', 'off', $series_id );
+		// Require passthrough if ads or campaigns are enabled for this series.
+		$required = 'on' === ssp_get_option( 'enable_ads', 'off', $series_id )
+			|| 'on' === ssp_get_option( 'enable_campaigns', 'off', $series_id );
 
 		return apply_filters( 'ssp_series_passthrough_required', $required, $series_id );
 	}

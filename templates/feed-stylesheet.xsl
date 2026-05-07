@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+<xsl:stylesheet version="2.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:ssp="https://castos.com/seriously-simple-podcasting/namespace/1.0">
     <xsl:output method="html" version="1.0" encoding="UTF-8" indent="yes"/>
     <xsl:template match="/">
         <html xmlns="http://www.w3.org/1999/xhtml">
@@ -124,13 +124,13 @@
                                     <xsl:value-of select="title"/>
                                 </a>
                             </h2>
-							<xsl:if test="image">
+							<xsl:if test="ssp:image">
 							<img>
 								<xsl:attribute name="src">
-									<xsl:value-of select="image/url"/>
+									<xsl:value-of select="ssp:image/ssp:url"/>
 								</xsl:attribute>
 								<xsl:attribute name="title">
-									<xsl:value-of select="image/title"/>
+									<xsl:value-of select="ssp:image/ssp:title"/>
 								</xsl:attribute>
 							</img>
 							</xsl:if>

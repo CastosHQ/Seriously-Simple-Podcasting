@@ -516,7 +516,7 @@ class Feed_Handler implements Service {
 			return '';
 		}
 
-		return apply_filters( 'ssp_rss_stylesheet', $this->template_url . 'feed-stylesheet.xsl' );
+		return apply_filters( 'ssp_rss_stylesheet', $this->template_url . 'feed-stylesheet.xsl?v=2' );
 	}
 
 	/**

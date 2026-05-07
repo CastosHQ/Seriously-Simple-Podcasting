@@ -260,6 +260,7 @@ docReady(function() {
 				panel.classList.remove('open');
 				if (triggerBtn) {
 					triggerBtn.setAttribute('aria-expanded', 'false');
+					triggerBtn.focus();
 				}
 				return;
 			}
@@ -272,8 +273,9 @@ docReady(function() {
 
 		function copyLink(elm) {
 			elm.select();
-			document.execCommand('Copy');
-			announceToScreenReader(i18n.copied || 'Copied');
+			if (document.execCommand('Copy')) {
+				announceToScreenReader(i18n.copied || 'Copied');
+			}
 		}
 
 		function announceToScreenReader(message) {
@@ -290,6 +292,13 @@ docReady(function() {
 			setTimeout(function() {
 				announcer.textContent = message;
 			}, 100);
+		}
+
+		function handlePlaylistItemKeydown(e) {
+			if (e.key === 'Enter' || e.key === ' ') {
+				e.preventDefault();
+				handleChangePlaylistItem.call(this);
+			}
 		}
 
  		function handleChangePlaylistItem() {
@@ -390,7 +399,8 @@ docReady(function() {
 								response.data.forEach(function (e) {
 										let item = createListItem(e);
 										playlistItems.appendChild(item);
-										item.addEventListener('click', handleChangePlaylistItem)
+										item.addEventListener('click', handleChangePlaylistItem);
+										item.addEventListener('keydown', handlePlaylistItemKeydown);
 									}
 								);
 							} else {
@@ -464,7 +474,8 @@ docReady(function() {
 
 			if (items) {
 				items.forEach(function (item) {
-					item.addEventListener('click', handleChangePlaylistItem)
+					item.addEventListener('click', handleChangePlaylistItem);
+					item.addEventListener('keydown', handlePlaylistItemKeydown);
 				});
 			}
 

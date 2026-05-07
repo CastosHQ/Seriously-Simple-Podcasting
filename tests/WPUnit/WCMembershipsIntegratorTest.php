@@ -9,6 +9,7 @@ class WCMembershipsIntegratorTest extends \Codeception\TestCase\WPTestCase {
 	protected function setUp(): void {
 		parent::setUp();
 		delete_option( WC_Memberships_Integrator::SINGLE_SYNC_DATA_OPTION );
+		wp_clear_scheduled_hook( WC_Memberships_Integrator::SINGLE_SYNC_EVENT );
 	}
 
 	protected function tearDown(): void {

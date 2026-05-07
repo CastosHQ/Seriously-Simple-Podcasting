@@ -115,7 +115,8 @@ class Passthrough_Controller {
 
 		$castos_episode_id = get_post_meta( $episode_id, 'podmotor_episode_id', true );
 		$file_data         = $this->castos_handler->get_episode_file_data( $castos_episode_id );
-		set_transient( $transient, $file_data, WEEK_IN_SECONDS );
+		$ttl               = $file_data->success ? WEEK_IN_SECONDS : 5 * MINUTE_IN_SECONDS;
+		set_transient( $transient, $file_data, $ttl );
 
 		return $file_data;
 	}

@@ -41,7 +41,7 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
 
         $test_parts = [
             '<?xml version="1.0" encoding="UTF-8"?>',
-            sprintf('<?xml-stylesheet type="text/xsl" href="%s/wp-content/plugins/seriously-simple-podcasting/templates/feed-stylesheet.xsl"?>', $site_url),
+            sprintf('<?xml-stylesheet type="text/xsl" href="%s/wp-content/plugins/seriously-simple-podcasting/templates/feed-stylesheet.xsl?v=2"?>', $site_url),
             '<rss version="2.0"',
             'xmlns:content="http://purl.org/rss/1.0/modules/content/"',
             'xmlns:wfw="http://wellformedweb.org/CommentAPI/"',
@@ -52,6 +52,7 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
             'xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"',
             'xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"',
             'xmlns:podcast="https://podcastindex.org/namespace/1.0"',
+            'xmlns:ssp="https://castos.com/seriously-simple-podcasting/namespace/1.0"',
             '<channel>',
             '<title>WordPress Test</title>',
             sprintf('<atom:link href="%s" rel="self" type="application/rss+xml"/>', trailingslashit( $site_url )),

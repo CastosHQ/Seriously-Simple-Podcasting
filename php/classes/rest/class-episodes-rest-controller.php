@@ -324,6 +324,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	protected function flush_episode_file_data_transients( $series_id ) {
 		$args = array(
 			'post_type'      => ssp_post_types(),
+			'post_status'    => 'any',
 			'posts_per_page' => -1,
 			'fields'         => 'ids',
 		);

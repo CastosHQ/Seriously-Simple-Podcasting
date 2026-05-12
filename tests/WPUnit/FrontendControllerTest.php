@@ -1135,8 +1135,121 @@ class FrontendControllerTest extends WPTestCase {
 		
 		// Clear validation cache to avoid test interference
 		$this->frontend_controller->clear_validation_cache();
-		
+
+		remove_all_filters('ssp_use_featured_image_for_feed');
+
 		parent::tearDown();
+	}
+
+	// ========================================
+	// SECTION: EPISODE IMAGE URL TESTS
+	// ========================================
+
+	/**
+	 * Creates a test episode post.
+	 *
+	 * @return int Post ID.
+	 */
+	protected function createEpisode() {
+		return $this->factory()->post->create( [
+			'post_status' => 'publish',
+			'post_type'   => SSP_CPT_PODCAST,
+		] );
+	}
+
+	/**
+	 * Creates an attachment post with image metadata.
+	 *
+	 * @param int $width  Image width.
+	 * @param int $height Image height.
+	 *
+	 * @return int Attachment ID.
+	 */
+	protected function createAttachment( $width = 800, $height = 800 ) {
+		$filename = 'test-image-' . wp_rand() . '.png';
+
+		$attachment_id = $this->factory()->attachment->create( [
+			'post_mime_type' => 'image/png',
+			'post_type'     => 'attachment',
+		] );
+
+		update_post_meta( $attachment_id, '_wp_attached_file', $filename );
+		wp_update_attachment_metadata( $attachment_id, [
+			'width'  => $width,
+			'height' => $height,
+			'file'   => $filename,
+			'sizes'  => [],
+		] );
+
+		return $attachment_id;
+	}
+
+	/**
+	 * @covers Frontend_Controller::get_episode_image_url()
+	 */
+	public function testEpisodeImageReturnsFeaturedImageByDefault() {
+		$episode_id    = $this->createEpisode();
+		$attachment_id = $this->createAttachment( 800, 600 );
+
+		set_post_thumbnail( $episode_id, $attachment_id );
+
+		$result = $this->frontend_controller->get_episode_image_url( $episode_id );
+
+		$featured_src = wp_get_attachment_image_src( $attachment_id, 'full' );
+		$this->assertSame( $featured_src[0], $result );
+	}
+
+	/**
+	 * @covers Frontend_Controller::get_episode_image_url()
+	 */
+	public function testEpisodeImageFilterDisablesFeaturedImageFallback() {
+		$episode_id    = $this->createEpisode();
+		$attachment_id = $this->createAttachment( 800, 600 );
+
+		set_post_thumbnail( $episode_id, $attachment_id );
+
+		add_filter( 'ssp_use_featured_image_for_feed', '__return_false' );
+
+		$result = $this->frontend_controller->get_episode_image_url( $episode_id );
+
+		$this->assertSame( '', $result );
+	}
+
+	/**
+	 * @covers Frontend_Controller::get_episode_image_url()
+	 */
+	public function testEpisodeImageFilterReceivesEpisodeId() {
+		$episode_id    = $this->createEpisode();
+		$attachment_id = $this->createAttachment( 800, 600 );
+
+		set_post_thumbnail( $episode_id, $attachment_id );
+
+		$received_id = null;
+		add_filter( 'ssp_use_featured_image_for_feed', function ( $use, $id ) use ( &$received_id ) {
+			$received_id = $id;
+			return $use;
+		}, 10, 2 );
+
+		$this->frontend_controller->get_episode_image_url( $episode_id );
+
+		$this->assertSame( $episode_id, $received_id );
+	}
+
+	/**
+	 * @covers Frontend_Controller::get_episode_image_url()
+	 */
+	public function testEpisodeImageFilterDoesNotAffectCoverImage() {
+		$episode_id    = $this->createEpisode();
+		$attachment_id = $this->createAttachment( 800, 800 );
+
+		update_post_meta( $episode_id, 'cover_image_id', $attachment_id );
+
+		add_filter( 'ssp_use_featured_image_for_feed', '__return_false' );
+
+		$result = $this->frontend_controller->get_episode_image_url( $episode_id );
+
+		$cover_src = wp_get_attachment_image_src( $attachment_id, 'full' );
+		$this->assertSame( $cover_src[0], $result );
 	}
 }
 

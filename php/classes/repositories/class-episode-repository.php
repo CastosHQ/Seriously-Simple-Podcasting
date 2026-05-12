@@ -859,12 +859,19 @@ class Episode_Repository implements Service {
 		/**
 		 * Option 5: if the post has a featured image, use that (no squareness check —
 		 * the HTML5 player handles non-square images via CSS)
+		 *
+		 * @param bool $use_featured Whether to use the featured image. Default true.
+		 * @param int  $episode_id   The episode post ID.
 		 */
-		$thumb_id = get_post_thumbnail_id( $episode_id );
-		if ( ! empty( $thumb_id ) ) {
-			$image_data_array = ssp_get_attachment_image_src( $thumb_id, $size );
-			if ( ! empty( $image_data_array['src'] ) ) {
-				return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'featured_image' );
+		$use_featured_image = apply_filters( 'ssp_use_featured_image_for_player', true, $episode_id );
+
+		if ( $use_featured_image ) {
+			$thumb_id = get_post_thumbnail_id( $episode_id );
+			if ( ! empty( $thumb_id ) ) {
+				$image_data_array = ssp_get_attachment_image_src( $thumb_id, $size );
+				if ( ! empty( $image_data_array['src'] ) ) {
+					return apply_filters( 'ssp_album_art', $image_data_array, $episode_id, $size, 'featured_image' );
+				}
 			}
 		}
 

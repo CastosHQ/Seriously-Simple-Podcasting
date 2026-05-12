@@ -20,6 +20,7 @@ class EpisodeRepositoryAlbumArtTest extends \Codeception\TestCase\WPTestCase
 
     protected function tearDown(): void
     {
+        remove_all_filters('ssp_use_featured_image_for_player');
         parent::tearDown();
     }
 
@@ -134,5 +135,44 @@ class EpisodeRepositoryAlbumArtTest extends \Codeception\TestCase\WPTestCase
 
         $this->assertIsArray($result);
         $this->assertStringContainsString('no-album-art', $result['src']);
+    }
+
+    /**
+     * @covers Episode_Repository::get_album_art()
+     */
+    public function testFilterDisablesFeaturedImageFallback()
+    {
+        $episode_id    = $this->createEpisode();
+        $attachment_id = $this->createAttachment(1200, 800);
+
+        set_post_thumbnail($episode_id, $attachment_id);
+
+        add_filter('ssp_use_featured_image_for_player', '__return_false');
+
+        $result = $this->episode_repository->get_album_art($episode_id);
+
+        $this->assertIsArray($result);
+        $this->assertStringContainsString('no-album-art', $result['src']);
+    }
+
+    /**
+     * @covers Episode_Repository::get_album_art()
+     */
+    public function testFilterReceivesEpisodeId()
+    {
+        $episode_id    = $this->createEpisode();
+        $attachment_id = $this->createAttachment(1200, 800);
+
+        set_post_thumbnail($episode_id, $attachment_id);
+
+        $received_id = null;
+        add_filter('ssp_use_featured_image_for_player', function ($use, $id) use (&$received_id) {
+            $received_id = $id;
+            return $use;
+        }, 10, 2);
+
+        $this->episode_repository->get_album_art($episode_id);
+
+        $this->assertSame($episode_id, $received_id);
     }
 }

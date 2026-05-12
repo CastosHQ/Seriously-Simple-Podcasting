@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 6.9
 Requires PHP: 7.4
-Stable tag: 3.16.0-alpha
+Stable tag: 3.16.0-alpha.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,10 +165,12 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 3.16.0-alpha =
-2026-05-07
+= 3.16.0-alpha.2 =
+2026-05-12
 [NEW] Added ability to change the default podcast from the series edit page
 [NEW] Added campaign support for Castos users
+[NEW] Added filters to control featured image fallback in Castos sync, player, and feed
+[UPDATE] Removing an episode image now clears the image on Castos
 [UPDATE] Removed Castos Ads settings from feed — ad insertion now works out of the box
 [UPDATE] Improved Castos player accessibility with ARIA attributes, keyboard navigation, and screen reader support
 [UPDATE] Featured image now used as player album art fallback when no dedicated cover image exists

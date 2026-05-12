@@ -253,6 +253,7 @@ class Ajax_Handler {
 			}
 
 			$this->castos_handler->set_token( $account_api_token );
+			$this->admin_notices_handler->remove_constant_notice( Castos_Handler::DISCONNECT_NOTICE_KEY );
 
 			$this->admin_notices_handler->add_flash_notice( $response->message, Admin_Notifications_Handler::SUCCESS );
 

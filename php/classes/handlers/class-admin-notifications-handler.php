@@ -310,9 +310,11 @@ class Admin_Notifications_Handler implements Service {
 	 *
 	 * @return void
 	 */
-	public function add_constant_notice( $notice, $type ) {
-		$notices                                      = $this->get_constant_notices();
-		$notices[ $this->get_notice_hash( $notice ) ] = array(
+	public function add_constant_notice( $notice, $type, $key = '' ) {
+		$notices         = $this->get_constant_notices();
+		$key             = $key ? sanitize_key( $key ) : '';
+		$key             = $key ?: $this->get_notice_hash( $notice );
+		$notices[ $key ] = array(
 			'notice'      => $notice,
 			'type'        => $type,
 			'dismissible' => 'is-dismissible is-constant',

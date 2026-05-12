@@ -80,6 +80,7 @@ if ( $stylesheet_url ) {
 	 xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd"
 	 xmlns:googleplay="http://www.google.com/schemas/play-podcasts/1.0"
 	 xmlns:podcast="https://podcastindex.org/namespace/1.0"
+	 xmlns:ssp="https://castos.com/seriously-simple-podcasting/namespace/1.0"
 	<?php do_action( 'rss2_ns' ); ?>>
 	<?php do_action( 'ssp_feed_before_channel_tag' ) ?>
 	<channel>

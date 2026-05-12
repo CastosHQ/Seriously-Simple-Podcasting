@@ -754,7 +754,15 @@ class Frontend_Controller {
 		$image_url = '';
 		$image_id  = get_post_meta( $post_id, 'cover_image_id', true );
 
-		if ( ! $image_id ) {
+		/**
+		 * Controls whether the featured image is used as a fallback for feed/episode images.
+		 *
+		 * @param bool $use_featured Whether to use the featured image. Default true.
+		 * @param int  $post_id      The episode post ID.
+		 */
+		$use_featured_image = apply_filters( 'ssp_use_featured_image_for_feed', true, $post_id );
+
+		if ( ! $image_id && $use_featured_image ) {
 			$image_id = get_post_thumbnail_id( $post_id );
 		}
 

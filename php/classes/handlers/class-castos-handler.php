@@ -393,9 +393,9 @@ class Castos_Handler implements Service {
 
 			$this->logger->log( 'API URL', $api_url );
 
-			$episode_image_url = $this->get_episode_image_url( $post );
-			if ( ! empty( $episode_image_url ) ) {
-				$post_body['featured_image_url'] = $episode_image_url;
+			$image_payload = $this->get_image_for_castos( $post, $podmotor_episode_id );
+			if ( $image_payload !== null ) {
+				$post_body['featured_image_url'] = $image_payload;
 			}
 
 			$this->logger->log( 'Post body', $post_body );
@@ -465,8 +465,18 @@ class Castos_Handler implements Service {
 		}
 
 		if ( ! $episode_image || ! $this->is_valid_episode_image( $attachment_id ) ) {
-			$episode_image = get_the_post_thumbnail_url( $post, 'full' );
-			$attachment_id = get_post_thumbnail_id( $post );
+			/**
+			 * Controls whether the featured image is used as a fallback for the Castos sync image.
+			 *
+			 * @param bool $use_featured Whether to use the featured image. Default true.
+			 * @param int  $episode_id   The episode post ID.
+			 */
+			$use_featured = apply_filters( 'ssp_use_featured_image_for_castos', true, $post->ID );
+
+			if ( $use_featured ) {
+				$episode_image = get_the_post_thumbnail_url( $post, 'full' );
+				$attachment_id = get_post_thumbnail_id( $post );
+			}
 		}
 
 		if ( ! $episode_image || ! $this->is_valid_episode_image( $attachment_id ) ) {
@@ -474,6 +484,40 @@ class Castos_Handler implements Service {
 		}
 
 		return $episode_image;
+	}
+
+	/**
+	 * Resolves the featured_image_url value for the Castos API payload.
+	 *
+	 * @param \WP_Post   $post                Post object.
+	 * @param string|int $podmotor_episode_id  Castos episode ID (empty for new episodes).
+	 *
+	 * @return string|null Image URL, empty string to clear, or null to omit the key.
+	 */
+	private function get_image_for_castos( $post, $podmotor_episode_id ) {
+		$image_url           = $this->get_episode_image_url( $post );
+		$is_existing_episode = ! empty( $podmotor_episode_id );
+
+		// Has a valid image — always send it
+		if ( ! empty( $image_url ) ) {
+			return $image_url;
+		}
+
+		// New episode — nothing to clear on Castos
+		if ( ! $is_existing_episode ) {
+			return null;
+		}
+
+		// Existing episode with no image — clear if allowed
+		/**
+		 * Controls whether SSP sends an empty image value to Castos to clear a stale image.
+		 *
+		 * @param bool $allow   Whether to allow image removal. Default true.
+		 * @param int  $post_id The episode post ID.
+		 */
+		$allow_removal = apply_filters( 'ssp_allow_castos_image_removal', true, $post->ID );
+
+		return $allow_removal ? '' : null;
 	}
 
 	/**

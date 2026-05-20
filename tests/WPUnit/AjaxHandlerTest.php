@@ -15,7 +15,7 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	protected function tearDown(): void {
-		unset( $_POST['post_id'], $_POST['width'], $_POST['height'], $_REQUEST['nonce'] );
+		unset( $_POST['post_id'], $_POST['width'], $_POST['height'], $_REQUEST['nonce'], $_GET['api_token'] );
 		parent::tearDown();
 	}
 
@@ -118,6 +118,37 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertNotNull( $decoded, 'Response should be valid JSON. Got: ' . $output );
 
 		return $decoded;
+	}
+
+	/**
+	 * Test that connect_castos removes the disconnect notice on successful reconnection.
+	 */
+	public function testConnectCastosRemovesDisconnectNoticeOnSuccess() {
+		$user_id = $this->factory()->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_id );
+		$user = wp_get_current_user();
+		$user->add_cap( 'manage_podcast' );
+
+		$_REQUEST['nonce'] = wp_create_nonce( 'ss_podcasting_castos-hosting' );
+		$_GET['api_token'] = 'test_token_123';
+
+		$response          = new \SeriouslySimplePodcasting\Entities\Castos_Response();
+		$response->success = true;
+		$response->message = 'Connected successfully.';
+		$response->status  = 'success';
+
+		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
+		$castos_handler->method( 'connect' )->willReturn( $response );
+
+		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
+		$admin_notices_handler->expects( $this->once() )
+			->method( 'remove_constant_notice' )
+			->with( \SeriouslySimplePodcasting\Handlers\Castos_Handler::DISCONNECT_NOTICE_KEY );
+
+		$handler       = new Ajax_Handler( $castos_handler, $admin_notices_handler );
+		$json_response = $this->capture_json_response( array( $handler, 'connect_castos' ) );
+
+		$this->assertSame( 'success', $json_response['status'] );
 	}
 
 	private function make_handler() {

@@ -78,6 +78,7 @@ class Rest_Api_Controller {
 		$podcast['category3']       = ssp_get_feed_category_output( 3, $series_id );
 		$podcast['guid']            = get_option( 'ss_podcasting_data_guid', '' );
 		$podcast['ads_enabled']     = 'on' === ssp_get_option( 'enable_ads', 'off' );
+		$podcast['campaigns_enabled'] = 'on' === ssp_get_option( 'enable_campaigns', 'off' );
 
 		return $podcast;
 	}
@@ -542,6 +543,15 @@ class Rest_Api_Controller {
 		if ( in_array( $field_name, array( 'category1', 'category2', 'category3' ) ) ) {
 			$res = $this->get_podcast_categories( $field_name, $series_id );
 			return $res;
+		}
+
+		// Passthrough fields use ssp_get_option with different option key names.
+		if ( 'ads_enabled' === $field_name ) {
+			return 'on' === ssp_get_option( 'enable_ads', 'off', $series_id );
+		}
+
+		if ( 'campaigns_enabled' === $field_name ) {
+			return 'on' === ssp_get_option( 'enable_campaigns', 'off', $series_id );
 		}
 
 		$series_field_value = get_option( 'ss_podcasting_data_' . $field_name . '_' . $series_id, '' );

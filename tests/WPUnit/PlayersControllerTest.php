@@ -58,6 +58,7 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
 
         $player_parts = [
             'class="castos-player dark-mode',
+            'role="region" aria-label="Podcast player"',
             '<div class="currently-playing">',
             sprintf('<div class="episode-title player__episode-title">%s</div>', $episode->post_title),
             '<div class="play-progress">',
@@ -73,24 +74,21 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
 
             '<div class="ssp-playback playback">',
             '<div class="playback__controls">',
-            '<button class="player-btn player-btn__volume" title="Mute/Unmute">',
-            '<span class="screen-reader-text">Mute/Unmute Episode</span>',
+            '<button class="player-btn player-btn__volume" title="Mute/Unmute" aria-label="Mute audio" aria-pressed="false">',
 
-            '<button data-skip="-10" class="player-btn player-btn__rwd" title="Rewind 10 seconds">',
-            '<span class="screen-reader-text">Rewind 10 Seconds</span>',
-            '<button data-speed="1" class="player-btn player-btn__speed" title="Playback Speed" aria-label="Playback Speed">1x</button>',
-            '<button data-skip="30" class="player-btn player-btn__fwd" title="Fast Forward 30 seconds">',
-            '<span class="screen-reader-text">Fast Forward 30 seconds</span>',
+            '<button data-skip="-10" class="player-btn player-btn__rwd" title="Rewind 10 seconds" aria-label="Rewind 10 seconds">',
+            '<button data-speed="1" class="player-btn player-btn__speed" title="Playback Speed" aria-label="Playback speed, currently 1x">1x</button>',
+            '<button data-skip="30" class="player-btn player-btn__fwd" title="Fast Forward 30 seconds" aria-label="Fast forward 30 seconds">',
             '<div class="playback__timers">',
-            '<time class="ssp-timer">00:00</time>',
+            '<time class="ssp-timer" aria-live="off">00:00</time>',
             '<time class="ssp-duration" datetime="PT0H0M0S"></time>',
 
             '<nav class="player-panels-nav">',
-            sprintf('<button class="subscribe-btn" id="subscribe-btn-%s" title="Subscribe">Subscribe</button>', $episode_id),
-            sprintf('<button class="share-btn" id="share-btn-%s" title="Share">Share</button>', $episode_id),
+            sprintf('<button class="subscribe-btn" id="subscribe-btn-%s" title="Subscribe" aria-expanded="false">Subscribe</button>', $episode_id),
+            sprintf('<button class="share-btn" id="share-btn-%s" title="Share" aria-expanded="false">Share</button>', $episode_id),
             sprintf('<div class="player-panels player-panels-%s">', $episode_id),
             sprintf('<div class="subscribe player-panel subscribe-%s">', $episode_id),
-            sprintf('<div class="close-btn close-btn-%s">', $episode_id),
+            sprintf('<button class="close-btn close-btn-%s" aria-label="Close">', $episode_id),
 
             '<div class="panel__inner">',
             '<div class="subscribe-icons">',
@@ -103,7 +101,7 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
             sprintf('<button class="copy-rss copy-rss-%s" title="Copy RSS Feed URL" aria-label="Copy RSS Feed URL"></button>', $episode_id),
 
             sprintf('<div class="share share-%s player-panel">', $episode_id),
-            sprintf('<div class="close-btn close-btn-%s">', $episode_id),
+            sprintf('<button class="close-btn close-btn-%s" aria-label="Close">', $episode_id),
 
             '<div class="player-panel-row">',
 
@@ -114,14 +112,14 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
                 $permalink,
                 $episode->post_title
             ),
-            'target="_blank" rel="noopener noreferrer" class="share-icon facebook" title="Share on Facebook"',
+            'target="_blank" rel="noopener noreferrer" class="share-icon facebook" title="Share on Facebook" aria-label="Share on Facebook"',
             sprintf(
                 '<a href="https://twitter.com/intent/tweet?text=%s&url=%s"',
                 $permalink,
                 $episode->post_title
             ),
-            'target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="Share on Twitter">',
-            'target="_blank" rel="noopener noreferrer" class="share-icon download" title="Download" download>',
+            'target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="Share on Twitter" aria-label="Share on Twitter">',
+            'target="_blank" rel="noopener noreferrer" class="share-icon download" title="Download" aria-label="Download" download>',
             '<div class="title">',
             'Link',
             sprintf('<input value="%s" class="input-link input-link-%d" title="Episode URL" readonly />', $permalink, $episode_id),

@@ -56,4 +56,11 @@ class API_Podcast extends Abstract_API_Entity {
 	 * @var bool
 	 */
 	public $ads_enabled;
+
+	/**
+	 * Whether campaigns are enabled for the podcast.
+	 *
+	 * @var bool
+	 */
+	public $campaigns_enabled;
 }

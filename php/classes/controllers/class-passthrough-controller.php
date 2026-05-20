@@ -87,7 +87,11 @@ class Passthrough_Controller {
 			return $enclosure;
 		}
 
-		$file_data = $this->get_episode_file_data( $episode_id );
+		try {
+			$file_data = $this->get_episode_file_data( $episode_id );
+		} catch ( \Throwable $e ) {
+			return $enclosure;
+		}
 
 		if ( ! $file_data->success ) {
 			return $enclosure;

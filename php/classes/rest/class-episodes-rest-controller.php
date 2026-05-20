@@ -299,11 +299,11 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		$campaigns_enabled = $request->get_param( 'campaigns_enabled' );
 
 		if ( null !== $ads_enabled ) {
-			ssp_update_option( Passthrough_Controller::ENABLE_ADS_OPTION, $ads_enabled ? 'on' : '', $series_id );
+			ssp_update_option( Passthrough_Controller::ENABLE_ADS_OPTION, rest_sanitize_boolean( $ads_enabled ) ? 'on' : '', $series_id );
 		}
 
 		if ( null !== $campaigns_enabled ) {
-			ssp_update_option( Passthrough_Controller::ENABLE_CAMPAIGNS_OPTION, $campaigns_enabled ? 'on' : '', $series_id );
+			ssp_update_option( Passthrough_Controller::ENABLE_CAMPAIGNS_OPTION, rest_sanitize_boolean( $campaigns_enabled ) ? 'on' : '', $series_id );
 		}
 
 		$this->flush_episode_file_data_transients( $series_id );

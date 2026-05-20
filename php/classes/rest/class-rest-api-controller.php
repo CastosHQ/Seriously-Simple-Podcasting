@@ -545,6 +545,15 @@ class Rest_Api_Controller {
 			return $res;
 		}
 
+		// Passthrough fields use ssp_get_option with different option key names.
+		if ( 'ads_enabled' === $field_name ) {
+			return 'on' === ssp_get_option( 'enable_ads', 'off', $series_id );
+		}
+
+		if ( 'campaigns_enabled' === $field_name ) {
+			return 'on' === ssp_get_option( 'enable_campaigns', 'off', $series_id );
+		}
+
 		$series_field_value = get_option( 'ss_podcasting_data_' . $field_name . '_' . $series_id, '' );
 		if ( $series_field_value ) {
 			$field_value = $series_field_value;

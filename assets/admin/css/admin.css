@@ -499,6 +499,10 @@ input:focus + .ssp-toggle__slider {
   margin: 5px 0 10px;
 }
 
+body.ssp-admin {
+  --wp-admin-theme-color: #853AED;
+}
+
 .ssp-admin {
   background-color: #F1F5F9;
   font-family: Roboto, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif;
@@ -627,6 +631,20 @@ input:focus + .ssp-toggle__slider {
 }
 .ssp-admin select:hover, .ssp-admin select:focus, .ssp-admin select option {
   color: #853AED;
+}
+.ssp-admin input[type=checkbox]:checked {
+  background: #853AED;
+  border-color: #853AED;
+}
+.ssp-admin input[type=checkbox]:checked::before {
+  content: url("data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2020%2020%27%3E%3Cpath%20d%3D%27M14.83%204.89l1.34.94-5.81%208.38H9.02L5.78%209.67l1.34-1.25%202.57%202.4z%27%20fill%3D%27%23ffffff%27%2F%3E%3C%2Fsvg%3E");
+}
+.ssp-admin input[type=radio]:checked {
+  background: #853AED;
+  border-color: #853AED;
+}
+.ssp-admin input[type=radio]:checked::before {
+  background-color: #FFFFFF;
 }
 .ssp-admin select:focus {
   border-color: #853AED;

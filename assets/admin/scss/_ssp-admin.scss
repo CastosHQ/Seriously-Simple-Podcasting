@@ -416,6 +416,28 @@ body.ssp-admin {
 
 	}
 
+	&.podcast_page_podcast_settings {
+		.ssp-dynamo,
+		.upsell-field {
+			&__container {
+				background: #F5F0FF;
+
+				&::before {
+					background: url('../img/stars-purple.svg');
+				}
+			}
+
+			&__btn {
+				border-color: $clr_purple_600;
+				color: $clr_purple_600;
+			}
+		}
+
+		.ssp-dynamo__arrow-up::after {
+			background: url('../img/arrow-up-purple.svg');
+		}
+	}
+
 	#footer-left {
 		font-size: 16px;
 		margin-bottom: 20px;

@@ -823,6 +823,22 @@ body.ssp-admin {
 .ssp-admin.post-type-podcast .ssp-dynamo__arrow-up::after {
   background: url("../img/arrow-up.svg");
 }
+.ssp-admin.podcast_page_podcast_settings .ssp-dynamo__container,
+.ssp-admin.podcast_page_podcast_settings .upsell-field__container {
+  background: #F5F0FF;
+}
+.ssp-admin.podcast_page_podcast_settings .ssp-dynamo__container::before,
+.ssp-admin.podcast_page_podcast_settings .upsell-field__container::before {
+  background: url("../img/stars-purple.svg");
+}
+.ssp-admin.podcast_page_podcast_settings .ssp-dynamo__btn,
+.ssp-admin.podcast_page_podcast_settings .upsell-field__btn {
+  border-color: #853AED;
+  color: #853AED;
+}
+.ssp-admin.podcast_page_podcast_settings .ssp-dynamo__arrow-up::after {
+  background: url("../img/arrow-up-purple.svg");
+}
 .ssp-admin #footer-left {
   font-size: 16px;
   margin-bottom: 20px;

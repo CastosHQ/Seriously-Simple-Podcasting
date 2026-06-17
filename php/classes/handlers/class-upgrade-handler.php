@@ -89,6 +89,10 @@ class Upgrade_Handler implements Service {
 			$this->enable_elementor_template_notice();
 		}
 
+		if ( version_compare( $previous_version, '2.9.3', '<' ) ) {
+			$this->update_date_recorded();
+		}
+
 		if ( version_compare( $previous_version, '2.20.0', '<' ) ) {
 			$this->update_enclosures();
 		}
@@ -99,6 +103,52 @@ class Upgrade_Handler implements Service {
 
 		if ( version_compare( $previous_version, '3.0.0', '<' ) ) {
 			$this->enable_default_series();
+		}
+
+		if ( version_compare( $previous_version, '3.16.2', '<' ) ) {
+			$this->cleanup_duplicate_guids_options();
+			// ssp_db_version is defunct after DB_Migration_Controller was removed in 3.16.2.
+			delete_option( 'ssp_db_version' );
+		}
+	}
+
+	/**
+	 * Removes options left behind by the removed duplicate-GUID check feature.
+	 * The feature ran a WP_Query on every admin_init and was dropped in 3.16.2.
+	 *
+	 * @return void
+	 */
+	public function cleanup_duplicate_guids_options() {
+		delete_option( 'ssp_duplicate_guids_found' );
+		delete_option( 'ssp_duplicate_guids_fix_completed' );
+		delete_option( 'ssp_duplicate_guids_notice_dismissed' );
+	}
+
+	/**
+	 * Converts the date_recorded meta from dd-mm-YYYY to YYYY-mm-dd for all published episodes.
+	 *
+	 * The old dd-mm-YYYY format doesn't allow ordering episodes by date in the query,
+	 * so it is normalized to YYYY-mm-dd. Introduced in 2.9.3.
+	 *
+	 * @return void
+	 */
+	public function update_date_recorded() {
+		$args = array(
+			'post_type'      => ssp_post_types(),
+			'post_status'    => 'publish',
+			'posts_per_page' => - 1,
+		);
+
+		$query = new \WP_Query( $args );
+
+		foreach ( $query->posts as $post ) {
+			$date_recorded = get_post_meta( $post->ID, 'date_recorded', true );
+
+			$time = $date_recorded ? strtotime( $date_recorded ) : strtotime( $post->post_date );
+
+			$date_recorded = wp_date( 'Y-m-d', $time );
+
+			update_post_meta( $post->ID, 'date_recorded', $date_recorded );
 		}
 	}
 

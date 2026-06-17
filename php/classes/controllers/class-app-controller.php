@@ -107,13 +107,6 @@ class App_Controller {
 	protected $widgets_controller;
 
 	/**
-	 * Database migration controller instance.
-	 *
-	 * @var DB_Migration_Controller
-	 */
-	protected $db_migration_controller;
-
-	/**
 	 * Admin controller instance.
 	 *
 	 * @var Admin_Controller
@@ -368,8 +361,6 @@ class App_Controller {
 		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger, $this->admin_notices_handler );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
-
-		$this->db_migration_controller = DB_Migration_Controller::instance()->init();
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 

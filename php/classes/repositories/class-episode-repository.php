@@ -638,7 +638,7 @@ class Episode_Repository implements Service {
 			$episode          = isset( $post ) ? $post : get_post( $id );
 			$current_post     = $current_post ?: $episode;
 			$episode_duration = get_post_meta( $id, 'duration', true );
-			$current_url      = get_post_permalink( $current_post->ID );
+			$current_url      = get_permalink( $current_post->ID );
 
 			if ( ssp_episode_passthrough_required( $id ) ) {
 				$audio_file = $this->get_passthrough_url( $id );

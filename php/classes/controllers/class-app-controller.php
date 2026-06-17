@@ -369,7 +369,7 @@ class App_Controller {
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
-		$this->db_migration_controller = DB_Migration_Controller::instance()->init( $this->admin_notices_handler );
+		$this->db_migration_controller = DB_Migration_Controller::instance()->init();
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
 

@@ -64,6 +64,14 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
         $this->mock_episode_repository = $this->createMock(Episode_Repository::class);
         $mock_series_handler = $this->createMock(Series_Handler::class);
 
+        // Mirror the real Episode_Repository::format_enclosure() so the controller stores a
+        // WP-standard "url\nsize\nmime\n" value (the mocked repository would otherwise return null).
+        $this->mock_episode_repository
+            ->method('format_enclosure')
+            ->willReturnCallback(function ($url, $size = 0, $mime = '') {
+                return $url ? $url . "\n" . intval($size) . "\n" . ($mime ?: 'audio/mpeg') . "\n" : '';
+            });
+
         // Create controller instance with all required dependencies
         $this->controller = new Podcast_Post_Types_Controller(
             $mock_cpt_podcast_handler,
@@ -124,7 +132,8 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
         $this->controller->handle_enclosure_update($post, $new_enclosure);
 
         // Assertions
-        $this->assertEquals($new_enclosure, get_post_meta($this->post_id, 'enclosure', true));
+        // Enclosure is refreshed after filesize_raw is calculated, so it carries the real size.
+        $this->assertEquals("$new_enclosure\n5452595\naudio/mpeg\n", get_post_meta($this->post_id, 'enclosure', true));
         $this->assertEquals('2024-01-01 12:00:00', get_post_meta($this->post_id, 'date_recorded', true));
         $this->assertEquals('00:05:30', get_post_meta($this->post_id, 'duration', true));
         $this->assertEquals('5.2 MB', get_post_meta($this->post_id, 'filesize', true));
@@ -150,7 +159,8 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
         $this->controller->handle_enclosure_update($post, $enclosure);
 
         // Assertions
-        $this->assertEquals($enclosure, get_post_meta($this->post_id, 'enclosure', true));
+        // No filesize_raw available, so size defaults to 0 in the formatted value.
+        $this->assertEquals("$enclosure\n0\naudio/mpeg\n", get_post_meta($this->post_id, 'enclosure', true));
         // date_recorded should not change since enclosure didn't change
         $this->assertEquals('2023-12-01 10:00:00', get_post_meta($this->post_id, 'date_recorded', true));
     }
@@ -179,7 +189,8 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
         $this->controller->handle_enclosure_update($post, $new_enclosure);
 
         // Assertions
-        $this->assertEquals($new_enclosure, get_post_meta($this->post_id, 'enclosure', true));
+        // Castos path writes the enclosure before the early return; size unknown here, so 0.
+        $this->assertEquals("$new_enclosure\n0\naudio/mpeg\n", get_post_meta($this->post_id, 'enclosure', true));
         $this->assertEquals('2024-01-01 12:00:00', get_post_meta($this->post_id, 'date_recorded', true));
         // File metadata should not be updated when connected to Castos
         $this->assertEmpty(get_post_meta($this->post_id, 'duration', true));
@@ -236,7 +247,8 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
         $this->controller->handle_enclosure_update($post, $new_enclosure);
 
         // Assertions
-        $this->assertEquals($new_enclosure, get_post_meta($this->post_id, 'enclosure', true));
+        // get_file_size returns false, so no filesize_raw and size stays 0 in the formatted value.
+        $this->assertEquals("$new_enclosure\n0\naudio/mpeg\n", get_post_meta($this->post_id, 'enclosure', true));
         // Duration should still be updated
         $this->assertEquals('00:05:30', get_post_meta($this->post_id, 'duration', true));
         // Filesize should not be updated if repository returns false
@@ -275,7 +287,8 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
         $this->controller->handle_enclosure_update($post, $new_enclosure);
 
         // Assertions
-        $this->assertEquals($new_enclosure, get_post_meta($this->post_id, 'enclosure', true));
+        // filesize_raw not provided (no 'raw' key), so size stays 0 in the formatted value.
+        $this->assertEquals("$new_enclosure\n0\naudio/mpeg\n", get_post_meta($this->post_id, 'enclosure', true));
         $this->assertEquals('00:05:30', get_post_meta($this->post_id, 'duration', true));
         $this->assertEquals('5.2 MB', get_post_meta($this->post_id, 'filesize', true));
         // filesize_raw should not be set if not provided

@@ -107,6 +107,7 @@ class Upgrade_Handler implements Service {
 
 		if ( version_compare( $previous_version, '3.16.2', '<' ) ) {
 			$this->cleanup_duplicate_guids_options();
+			$this->format_enclosures();
 			// ssp_db_version is defunct after DB_Migration_Controller was removed in 3.16.2.
 			delete_option( 'ssp_db_version' );
 		}
@@ -278,6 +279,36 @@ class Upgrade_Handler implements Service {
 		$this->episode_repository->update_failed_sync_episodes_option( array_values( $episodes ) );
 	}
 
+
+	/**
+	 * Rewrites legacy bare-URL `enclosure` meta into WordPress's standard
+	 * "url\nsize\nmime\n" format so WP core rss_enclosure() and other podcasting
+	 * plugins can parse it. Size comes from the stored filesize_raw meta. (#855)
+	 *
+	 * @return void
+	 */
+	public function format_enclosures() {
+		ignore_user_abort( true );
+
+		/**
+		 * @var Episode_Repository $episode_repository
+		 * */
+		$episode_repository = ssp_get_service( 'episode_repository' );
+
+		foreach ( ssp_episode_ids() as $episode_id ) {
+			$url = $episode_repository->get_enclosure( $episode_id );
+			if ( ! $url ) {
+				continue;
+			}
+
+			$size      = get_post_meta( $episode_id, 'filesize_raw', true );
+			$formatted = $episode_repository->format_enclosure( $url, $size );
+
+			if ( get_post_meta( $episode_id, 'enclosure', true ) !== $formatted ) {
+				update_post_meta( $episode_id, 'enclosure', $formatted );
+			}
+		}
+	}
 
 	/**
 	 * Update enclosures to remove AWS file references.

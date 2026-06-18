@@ -38,4 +38,27 @@ class UpgradeHandlerTest extends \Codeception\TestCase\WPTestCase
             $this->assertEquals($expected, $updated);
         }
     }
+
+    /**
+     * @covers \SeriouslySimplePodcasting\Handlers\Upgrade_Handler::format_enclosures
+     */
+    public function testFormatEnclosuresBackfillsLegacyBareUrlMeta()
+    {
+        $episode_id = $this->factory()->post->create([
+            'post_status' => 'publish',
+            'post_type'   => SSP_CPT_PODCAST,
+        ]);
+
+        // Legacy state: audio_file holds the URL, enclosure is a bare URL, size is known.
+        update_post_meta($episode_id, 'audio_file', 'https://episodes.castos.com/show.mp3');
+        update_post_meta($episode_id, 'enclosure', 'https://episodes.castos.com/show.mp3');
+        update_post_meta($episode_id, 'filesize_raw', 24680);
+
+        $this->upgrade_handler->format_enclosures();
+
+        $this->assertEquals(
+            "https://episodes.castos.com/show.mp3\n24680\naudio/mpeg\n",
+            get_post_meta($episode_id, 'enclosure', true)
+        );
+    }
 }

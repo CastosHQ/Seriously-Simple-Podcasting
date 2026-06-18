@@ -582,8 +582,10 @@ class Podcast_Post_Types_Controller {
 			update_post_meta( $post_id, 'date_recorded', $post->post_date );
 		}
 
-		// Save podcast file to 'enclosure' meta field for standards-sake
-		update_post_meta( $post_id, 'enclosure', $enclosure );
+		// Save podcast file to the 'enclosure' meta field (WP-standard format) for standards-sake.
+		// Uses the size already stored in meta; for Castos sites this is the value the REST sync
+		// callback later refreshes, for self-hosted it is refreshed below once filesize_raw is known.
+		$this->update_enclosure_meta( $post_id, $enclosure );
 
 		// Only process file metadata if not connected to Castos
 		if ( ssp_is_connected_to_castos() ) {
@@ -603,7 +605,7 @@ class Podcast_Post_Types_Controller {
 		// If either is missing, recalculate both to avoid mixing frontend/backend data
 		$has_filesize     = get_post_meta( $post_id, 'filesize', true ) != '';
 		$has_filesize_raw = get_post_meta( $post_id, 'filesize_raw', true ) != '';
-		
+
 		if ( $is_enclosure_updated || ! $has_filesize || ! $has_filesize_raw ) {
 			$filesize = $this->episode_repository->get_file_size( $enclosure );
 			if ( $filesize ) {
@@ -613,9 +615,29 @@ class Podcast_Post_Types_Controller {
 
 				if ( isset( $filesize['raw'] ) ) {
 					update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
+
+					// Refresh the enclosure meta now that the real file size is known.
+					$this->update_enclosure_meta( $post_id, $enclosure );
 				}
 			}
 		}
+	}
+
+	/**
+	 * Writes the 'enclosure' meta in WordPress's standard "url\nsize\nmime\n" format.
+	 *
+	 * Pulls the raw size from the filesize_raw meta (populated for both self-hosted
+	 * and Castos episodes), so the value stays parseable by external podcasting tools.
+	 *
+	 * @param int    $post_id Episode post ID.
+	 * @param string $url     Enclosure file URL.
+	 *
+	 * @return void
+	 */
+	protected function update_enclosure_meta( $post_id, $url ) {
+		$size      = get_post_meta( $post_id, 'filesize_raw', true );
+		$enclosure = $this->episode_repository->format_enclosure( $url, $size );
+		update_post_meta( $post_id, 'enclosure', $enclosure );
 	}
 
 	/**

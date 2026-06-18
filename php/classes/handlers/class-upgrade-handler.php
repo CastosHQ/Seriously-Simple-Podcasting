@@ -144,7 +144,11 @@ class Upgrade_Handler implements Service {
 		foreach ( $query->posts as $post ) {
 			$date_recorded = get_post_meta( $post->ID, 'date_recorded', true );
 
-			$time = $date_recorded ? strtotime( $date_recorded ) : strtotime( $post->post_date );
+			// Fall back to post_date when date_recorded is empty or unparsable; skip if both fail.
+			$time = strtotime( $date_recorded ) ?: strtotime( $post->post_date );
+			if ( false === $time ) {
+				continue;
+			}
 
 			$date_recorded = wp_date( 'Y-m-d', $time );
 

@@ -583,9 +583,10 @@ class Podcast_Post_Types_Controller {
 		}
 
 		// Save podcast file to the 'enclosure' meta field (WP-standard format) for standards-sake.
-		// Uses the size already stored in meta; for Castos sites this is the value the REST sync
-		// callback later refreshes, for self-hosted it is refreshed below once filesize_raw is known.
-		$this->update_enclosure_meta( $post_id, $enclosure );
+		// When the URL changed, force size 0 so the previous file's size is not paired with the new
+		// URL; self-hosted refreshes it below once filesize_raw is recalculated, and the Castos REST
+		// sync callback refreshes it for Castos sites.
+		$this->update_enclosure_meta( $post_id, $enclosure, $is_enclosure_updated ? 0 : null );
 
 		// Only process file metadata if not connected to Castos
 		if ( ssp_is_connected_to_castos() ) {
@@ -617,7 +618,7 @@ class Podcast_Post_Types_Controller {
 					update_post_meta( $post_id, 'filesize_raw', $filesize['raw'] );
 
 					// Refresh the enclosure meta now that the real file size is known.
-					$this->update_enclosure_meta( $post_id, $enclosure );
+					$this->update_enclosure_meta( $post_id, $enclosure, $filesize['raw'] );
 				}
 			}
 		}
@@ -626,16 +627,21 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Writes the 'enclosure' meta in WordPress's standard "url\nsize\nmime\n" format.
 	 *
-	 * Pulls the raw size from the filesize_raw meta (populated for both self-hosted
-	 * and Castos episodes), so the value stays parseable by external podcasting tools.
+	 * When $size is null, falls back to the stored filesize_raw meta (populated for both
+	 * self-hosted and Castos episodes). Callers pass an explicit size to avoid pairing a
+	 * stale size with a changed URL, keeping the value parseable by external podcasting tools.
 	 *
-	 * @param int    $post_id Episode post ID.
-	 * @param string $url     Enclosure file URL.
+	 * @param int             $post_id Episode post ID.
+	 * @param string          $url     Enclosure file URL.
+	 * @param int|string|null $size    Raw file size; null reads it from the filesize_raw meta.
 	 *
 	 * @return void
 	 */
-	protected function update_enclosure_meta( $post_id, $url ) {
-		$size      = get_post_meta( $post_id, 'filesize_raw', true );
+	protected function update_enclosure_meta( $post_id, $url, $size = null ) {
+		if ( null === $size ) {
+			$size = get_post_meta( $post_id, 'filesize_raw', true );
+		}
+
 		$enclosure = $this->episode_repository->format_enclosure( $url, $size );
 		update_post_meta( $post_id, 'enclosure', $enclosure );
 	}

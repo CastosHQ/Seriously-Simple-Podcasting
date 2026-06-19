@@ -257,6 +257,35 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * Test that a changed URL does not inherit the previous file's size in the enclosure
+     * when the new file's size cannot be fetched (would otherwise serialize a stale size).
+     */
+    public function testHandleEnclosureUpdateResetsStaleSizeOnUrlChangeWhenFilesizeFails()
+    {
+        $post = get_post($this->post_id);
+        $old_enclosure = 'https://example.com/old-audio.mp3';
+        $new_enclosure = 'https://example.com/new-audio.mp3';
+
+        // Existing state: old URL with a known (now stale) size.
+        update_post_meta($this->post_id, 'audio_file', $old_enclosure);
+        update_post_meta($this->post_id, 'filesize_raw', 9999999);
+
+        // New file's size lookup fails.
+        $this->mock_episode_repository
+            ->expects($this->once())
+            ->method('get_file_size')
+            ->with($new_enclosure)
+            ->willReturn(false);
+
+        $this->mock_function('ssp_is_connected_to_castos', false);
+
+        $this->controller->handle_enclosure_update($post, $new_enclosure);
+
+        // Enclosure must pair the new URL with size 0, not the old file's 9999999.
+        $this->assertEquals("$new_enclosure\n0\naudio/mpeg\n", get_post_meta($this->post_id, 'enclosure', true));
+    }
+
+    /**
      * Test handle_enclosure_update with partial filesize data.
      */
     public function testHandleEnclosureUpdateWithPartialFilesizeData()

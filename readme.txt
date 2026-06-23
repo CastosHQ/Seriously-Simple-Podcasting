@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 3.16.2-alpha
+Stable tag: 3.16.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,7 +165,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 3.16.2-alpha =
+= 3.16.2 =
 2026-06-19
 [FIX] Player Share link now uses the pretty permalink for episodes published as standard posts
 [FIX] Removed a duplicate-GUID check that ran on every admin request and could exhaust server resources

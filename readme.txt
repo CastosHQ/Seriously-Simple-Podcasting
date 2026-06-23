@@ -166,7 +166,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 3.16.2 =
-2026-06-19
+2026-06-23
 [FIX] Player Share link now uses the pretty permalink for episodes published as standard posts
 [FIX] Removed a duplicate-GUID check that ran on every admin request and could exhaust server resources
 [FIX] Episode enclosure data is now stored in WordPress's standard format for better plugin compatibility

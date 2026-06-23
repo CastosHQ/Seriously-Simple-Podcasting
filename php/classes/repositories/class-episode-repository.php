@@ -638,7 +638,7 @@ class Episode_Repository implements Service {
 			$episode          = isset( $post ) ? $post : get_post( $id );
 			$current_post     = $current_post ?: $episode;
 			$episode_duration = get_post_meta( $id, 'duration', true );
-			$current_url      = get_post_permalink( $current_post->ID );
+			$current_url      = get_permalink( $current_post->ID );
 
 			if ( ssp_episode_passthrough_required( $id ) ) {
 				$audio_file = $this->get_passthrough_url( $id );
@@ -1144,6 +1144,49 @@ class Episode_Repository implements Service {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Builds the WordPress-standard enclosure meta value: "url\nsize\nmime\n".
+	 *
+	 * Mirrors core do_enclose() so the `enclosure` meta stays parseable by WP core's
+	 * rss_enclosure() and by other podcasting plugins. The size is always numeric
+	 * (0 when unknown) and the MIME type is always derived from the file extension,
+	 * so the value always carries three newline-separated parts.
+	 *
+	 * @param string     $url  Enclosure file URL.
+	 * @param int|string $size Raw file size in bytes; 0/empty when unknown.
+	 * @param string     $mime Optional MIME type; derived from the URL when empty.
+	 *
+	 * @return string Formatted enclosure value, or empty string when no URL is given.
+	 */
+	public function format_enclosure( $url, $size = 0, $mime = '' ) {
+		if ( ! $url ) {
+			return '';
+		}
+
+		if ( ! $mime ) {
+			$mime = $this->get_file_mime_type( $url );
+		}
+
+		return $url . "\n" . intval( $size ) . "\n" . $mime . "\n";
+	}
+
+	/**
+	 * Derives a MIME type from a file URL's extension, defaulting to audio/mpeg.
+	 *
+	 * Keeps the enclosure value's third part non-empty even for URLs WordPress
+	 * can't map, matching the audio-first default of Feed_Handler::get_feed_item_mime_type().
+	 *
+	 * @param string $url File URL.
+	 *
+	 * @return string MIME type.
+	 */
+	public function get_file_mime_type( $url ) {
+		$filetype = wp_check_filetype( $url );
+		$mime     = empty( $filetype['type'] ) ? '' : $filetype['type'];
+
+		return apply_filters( 'ssp_enclosure_mime_type', $mime ? $mime : 'audio/mpeg', $url );
 	}
 
 	/**

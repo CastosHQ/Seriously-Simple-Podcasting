@@ -254,8 +254,15 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 
 				update_post_meta( $episode_id, $audio_file_meta_key, $new_data['file']['url'] );
 
-				// Also, update 'enclosure' field for easy moving from/to other plugins
-				update_post_meta( $episode_id, 'enclosure', $new_data['file']['url'] );
+				// Also, update the 'enclosure' field (WP-standard "url\nsize\nmime\n" format) for
+				// easy moving from/to other plugins. Size/MIME come from the Castos payload when
+				// present, falling back to the stored filesize_raw meta, then 0 + extension MIME.
+				$file_size = ! empty( $new_data['file']['size'] )
+					? $new_data['file']['size']
+					: get_post_meta( $episode_id, 'filesize_raw', true );
+				$mime_type = empty( $new_data['file']['mime_type'] ) ? '' : $new_data['file']['mime_type'];
+				$enclosure = $this->episode_repository->format_enclosure( $new_data['file']['url'], $file_size, $mime_type );
+				update_post_meta( $episode_id, 'enclosure', $enclosure );
 			}
 
 			// Update Castos episode ID

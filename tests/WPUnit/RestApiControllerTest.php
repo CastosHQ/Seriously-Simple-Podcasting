@@ -148,18 +148,26 @@ class RestApiControllerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
-	 * Creates a WP_REST_Request with valid HMAC headers for the given token.
+	 * Creates a WP_REST_Request with valid action-bound HMAC headers for the given token.
+	 *
+	 * Mirrors the Castos signer: signs METHOD\nPATH\njson_body\ntimestamp\nnonce, where PATH
+	 * is the canonical `{home path}/{rest-prefix}{route}` the verifier reconstructs.
 	 *
 	 * @param string $api_token API token to sign with.
 	 *
 	 * @return \WP_REST_Request
 	 */
 	private function make_hmac_request( $api_token ) {
+		$route     = '/ssp/v1/status';
 		$timestamp = (string) time();
-		$signature = hash_hmac( 'sha256', json_encode( array() ) . $timestamp, $api_token );
+		$nonce     = bin2hex( random_bytes( 32 ) );
+		$path      = rtrim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' ) . '/' . trim( rest_get_url_prefix(), '/' ) . $route;
+		$message   = implode( "\n", array( 'GET', $path, json_encode( array() ), $timestamp, $nonce ) );
+		$signature = hash_hmac( 'sha256', $message, $api_token );
 
-		$request = new \WP_REST_Request( 'GET', '/ssp/v1/status' );
+		$request = new \WP_REST_Request( 'GET', $route );
 		$request->set_header( 'X-Castos-Timestamp', $timestamp );
+		$request->set_header( 'X-Castos-Nonce', $nonce );
 		$request->set_header( 'X-Castos-Signature', $signature );
 
 		return $request;

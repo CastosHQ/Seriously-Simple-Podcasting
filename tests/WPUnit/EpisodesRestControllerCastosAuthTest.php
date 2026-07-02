@@ -5,12 +5,12 @@ namespace Tests\WPUnit;
 use SeriouslySimplePodcasting\Rest\Episodes_Rest_Controller;
 
 /**
- * Verifies Castos webhook signature authentication, including the action-bound
- * signature scheme (CastosHQ/ssp-issues#859) and the retained legacy scheme.
+ * Verifies Castos webhook signature authentication via the action-bound
+ * signature scheme (CastosHQ/ssp-issues#859).
  *
  * The action-bound signing format is mirrored from the Castos client
  * (App\Services\SSP\SspRequestSigner): METHOD\nPATH\njson_body\ntimestamp\nnonce,
- * where PATH is the path of rest_url() for the matched route.
+ * where PATH is the canonical `{home path}/{rest-prefix}{route}`.
  */
 class EpisodesRestControllerCastosAuthTest extends \Codeception\TestCase\WPTestCase {
 

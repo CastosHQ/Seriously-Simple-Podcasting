@@ -167,7 +167,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			return new \WP_Error( 'missing_signature', 'No signature or timestamp provided.', $status_401 );
 		}
 
-		if ( abs( time() - $timestamp ) > self::signature_freshness() ) {
+		if ( ! ctype_digit( (string) $timestamp ) || abs( time() - (int) $timestamp ) > self::signature_freshness() ) {
 			return new \WP_Error( 'invalid_timestamp', 'Invalid timestamp provided.', $status_401 );
 		}
 
@@ -182,7 +182,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		// Require the action-bound nonce. Castos sends it for every authenticated request to
 		// SSP >= 3.16.2, so a missing nonce is never a legitimate request to this version.
 		if ( empty( $nonce ) ) {
-			return new \WP_Error( 'missing_nonce', 'No request nonce provided.', $status_401 );
+			return new \WP_Error( 'missing_nonce', 'Request signature invalid.', $status_401 );
 		}
 
 		$expected_signature = self::action_bound_signature( $request, $request_data, $timestamp, $nonce, $stored_key );
@@ -194,7 +194,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		// Reject nonce reuse within the freshness window. Checked after signature verification so
 		// the nonce store can only ever hold values an attacker could not have forged.
 		if ( self::is_nonce_used( $nonce ) ) {
-			return new \WP_Error( 'replayed_nonce', 'Request nonce already used.', $status_401 );
+			return new \WP_Error( 'replayed_nonce', 'Request signature invalid.', $status_401 );
 		}
 
 		return true;
@@ -207,9 +207,12 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 * cannot be flooded with forged values. The TTL matches the signature
 	 * freshness window, after which the timestamp check rejects the request anyway.
 	 *
-	 * Backed by a transient: if an external object cache evicts the key before
-	 * its TTL, the residual risk is replay of the *same* request only — the
-	 * action binding (method/path/body) already prevents retargeting.
+	 * The first claim is atomic via wp_cache_add(), which fails if the key already
+	 * exists — closing the read-then-write race between concurrent replays on sites
+	 * with a persistent object cache. A transient provides the durable record (and
+	 * the store itself on sites without a persistent object cache, where wp_cache_add
+	 * is per-request only; there the residual replay is of the *same* request, which
+	 * the action binding already renders idempotent).
 	 *
 	 * @param string $nonce Per-request nonce header value.
 	 *
@@ -217,6 +220,10 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 */
 	protected static function is_nonce_used( $nonce ) {
 		$key = 'ssp_castos_nonce_' . md5( $nonce );
+
+		if ( ! wp_cache_add( $key, 1, 'ssp_castos_nonce', self::signature_freshness() ) ) {
+			return true;
+		}
 
 		if ( false !== get_transient( $key ) ) {
 			return true;

@@ -124,7 +124,7 @@
 								<?php endif ?>
 							<?php endforeach ?>
 						</div>
-						<div class="player-panel-row" aria-label="RSS Feed URL">
+						<div class="player-panel-row" role="group" aria-label="<?php esc_attr_e( 'RSS Feed URL', 'seriously-simple-podcasting' ) ?>">
 							<div class="title"><?php esc_attr_e( 'RSS Feed', 'seriously-simple-podcasting' ) ?></div>
 							<div>
 								<input value="<?php echo esc_attr( $feed_url ) ?>" class="input-rss input-rss-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'RSS Feed URL', 'seriously-simple-podcasting' ) ?>" readonly />
@@ -166,16 +166,16 @@
 						<div>
 							<input value="<?php echo esc_url( $current_url ) ?>" class="input-link input-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Episode URL', 'seriously-simple-podcasting' ) ?>" readonly />
 						</div>
-						<button class="copy-link copy-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>" readonly=""></button>
+						<button class="copy-link copy-link-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Copy Episode URL', 'seriously-simple-podcasting' ) ?>"></button>
 					</div>
 					<div class="player-panel-row">
 						<div class="title">
 							<?php esc_attr_e( 'Embed', 'seriously-simple-podcasting' ) ?>
 						</div>
-						<div style="height: 10px;">
-							<input type="text" value='<?php echo esc_attr( $embed_code ) ?>'
-								   title="<?php esc_attr_e( 'Embed Code', 'seriously-simple-podcasting' ) ?>"
-								   class="input-embed input-embed-<?php echo esc_attr( $episode_id ); ?>" readonly/>
+						<div>
+							<textarea rows="1"
+									  title="<?php esc_attr_e( 'Embed Code', 'seriously-simple-podcasting' ) ?>"
+									  class="input-embed input-embed-<?php echo esc_attr( $episode_id ); ?>" readonly><?php echo esc_textarea( $embed_code ) ?></textarea>
 						</div>
 						<button class="copy-embed copy-embed-<?php echo esc_attr( $episode_id ) ?>" title="<?php esc_attr_e( 'Copy Embed Code', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Copy Embed Code', 'seriously-simple-podcasting' ) ?>"></button>
 					</div>

@@ -398,7 +398,7 @@
 .castos-player .share-icon:hover {
     background-color: #df4e4f !important;
 }
-.castos-player .player-panel .player-panel-row input {
+.castos-player .player-panel .player-panel-row :is(input, textarea) {
     border: none;
     padding: 7px;
     margin: 0;
@@ -408,6 +408,15 @@
     width: calc(100% - 14px);
     border-radius: 2px;
     text-overflow: ellipsis;
+}
+.castos-player .player-panel .player-panel-row textarea {
+    resize: none;
+    height: 16px;
+    line-height: 16px;
+    white-space: nowrap;
+    overflow: hidden;
+    vertical-align: middle;
+    font-family: inherit;
 }
 .castos-player .subscribe-icons {
     display: grid;
@@ -963,11 +972,11 @@
     color: var(--ssp-light-mode-text-color);
 }
 .castos-player.light-mode .share-icon,
-.castos-player.light-mode .player-panel .player-panel-row input {
+.castos-player.light-mode .player-panel .player-panel-row :is(input, textarea) {
     background-color: #f1f1f1;
     background-color: var(--ssp-light-mode-player-panel-input-bg);
 }
-.castos-player.light-mode .player-panel .player-panel-row input {
+.castos-player.light-mode .player-panel .player-panel-row :is(input, textarea) {
     color: #5f596e;
 }
 .castos-player.light-mode .player-panels-nav button {
@@ -1029,10 +1038,10 @@
         color: #4b4659;
     }
     .castos-player .share-icon,
-    .castos-player .player-panel .player-panel-row input {
+    .castos-player .player-panel .player-panel-row :is(input, textarea) {
         background-color: #f1f1f1;
     }
-    .castos-player .player-panel .player-panel-row input {
+    .castos-player .player-panel .player-panel-row :is(input, textarea) {
         color: #5f596e;
     }
     .castos-player .player-panels-nav button {
@@ -1278,7 +1287,7 @@
 	color: var(--ssp-dark-mode-text-color);
 }
 .castos-player.dark-mode .share-icon,
-.castos-player.dark-mode .player-panel .player-panel-row input {
+.castos-player.dark-mode .player-panel .player-panel-row :is(input, textarea) {
     color: #d4c9c9;
     background-color: #423d4c;
     background-color: var(--ssp-dark-mode-player-panel-input-bg);

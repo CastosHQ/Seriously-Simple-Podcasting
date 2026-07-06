@@ -78,8 +78,8 @@ class CastosPlayerPanels extends Component {
 						<div className="title">
 							Embed
 						</div>
-						<div style={{height: '10px'}}>
-							<input readOnly value={embedCode} className={'input-embed input-embed-' + episodeId}/>
+						<div>
+							<textarea readOnly rows="1" value={embedCode} className={'input-embed input-embed-' + episodeId}/>
 						</div>
 						<button className={'copy-embed copy-embed-' + episodeId}></button>
 					</div>

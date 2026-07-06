@@ -150,8 +150,9 @@ class RestApiControllerTest extends \Codeception\TestCase\WPTestCase {
 	/**
 	 * Creates a WP_REST_Request with valid action-bound HMAC headers for the given token.
 	 *
-	 * Mirrors the Castos signer: signs METHOD\nPATH\njson_body\ntimestamp\nnonce, where PATH
-	 * is the canonical `{home path}/{rest-prefix}{route}` the verifier reconstructs.
+	 * Mirrors the Castos signer: signs METHOD\nPATH\ncanonical_query\njson_body\ntimestamp\nnonce,
+	 * where PATH is the canonical `{home path}/{rest-prefix}{route}` the verifier reconstructs and
+	 * canonical_query is '' here (the status request carries no query params).
 	 *
 	 * @param string $api_token API token to sign with.
 	 *
@@ -162,7 +163,7 @@ class RestApiControllerTest extends \Codeception\TestCase\WPTestCase {
 		$timestamp = (string) time();
 		$nonce     = bin2hex( random_bytes( 32 ) );
 		$path      = rtrim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' ) . '/' . trim( rest_get_url_prefix(), '/' ) . $route;
-		$message   = implode( "\n", array( 'GET', $path, json_encode( array() ), $timestamp, $nonce ) );
+		$message   = implode( "\n", array( 'GET', $path, '', json_encode( array() ), $timestamp, $nonce ) );
 		$signature = hash_hmac( 'sha256', $message, $api_token );
 
 		$request = new \WP_REST_Request( 'GET', $route );

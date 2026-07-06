@@ -10,7 +10,7 @@ import AudioPlayer from "./components/AudioPlayer";
 import CastosPlayer from "./components/CastosPlayer";
 import EditCastosPlayer from './components/EditCastosPlayer';
 import EditCastosHTMLPlayer from './components/EditCastosHTMLPlayer';
-import EditPodcastList from "./components/EditPodcastList";
+import EditEpisodeList from "./components/EditEpisodeList";
 import EditSSPPodcasts from "./components/EditSSPPodcasts";
 import PostPublishPanel from "./components/PostPublishPanel";
 import './settingsExtender.js';
@@ -142,7 +142,7 @@ registerBlockType('seriously-simple-podcasting/podcast-list', {
 			attributes: { paginationType: 'full', featuredImageSize: 'medium' },
 		}
 	],
-	edit: EditPodcastList
+	edit: EditEpisodeList
 });
 
 /**

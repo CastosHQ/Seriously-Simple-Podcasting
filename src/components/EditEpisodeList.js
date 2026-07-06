@@ -4,7 +4,7 @@ import {InspectorControls, PanelColorSettings} from '@wordpress/block-editor';
 import {PanelBody, PanelRow, FormToggle, SelectControl, TextControl, __experimentalNumberControl as NumberControl, Tooltip} from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
-class EditPodcastList extends Component {
+class EditEpisodeList extends Component {
 	constructor({className}) {
 		super(...arguments);
 		this.state = {
@@ -421,4 +421,4 @@ class EditPodcastList extends Component {
 	}
 }
 
-export default EditPodcastList;
+export default EditEpisodeList;

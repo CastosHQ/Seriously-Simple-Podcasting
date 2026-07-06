@@ -33,6 +33,10 @@ class EpisodesRestControllerTest extends \Codeception\TestCase\WPTestCase {
 		$invalid->set_header( 'X-WP-Nonce', 'not-a-real-nonce' );
 		$this->assertFalse( $method->invoke( null, $invalid ), 'An invalid nonce must not grant privilege' );
 
+		$non_scalar = new \WP_REST_Request( 'GET', '/ssp/v1/episodes' );
+		$non_scalar->set_param( '_wpnonce', array( 'x' ) );
+		$this->assertFalse( $method->invoke( null, $non_scalar ), 'A non-scalar _wpnonce must not grant privilege' );
+
 		$valid = new \WP_REST_Request( 'GET', '/ssp/v1/episodes' );
 		$valid->set_header( 'X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
 		$this->assertTrue( $method->invoke( null, $valid ), 'A valid wp_rest nonce must grant privilege' );

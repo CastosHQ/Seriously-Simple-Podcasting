@@ -114,6 +114,7 @@ class Podcast_List implements Shortcode {
 			'button_text_color'   => '#ffffff',
 			'button_text'         => __( 'Listen Now', 'seriously-simple-podcasting' ),
 			'title_color'         => '#6c5ce7',
+			'title_level'         => 'h2',
 			'episode_count_color' => '#6c757d',
 			'description_color'   => '#6c757d',
 		);
@@ -140,6 +141,7 @@ class Podcast_List implements Shortcode {
 		$button_text_color   = $this->validate_background_parameter( $args['button_text_color'] );
 		$button_text         = $this->validate_button_text_parameter( $args['button_text'] );
 		$title_color         = $this->validate_background_parameter( $args['title_color'] );
+		$title_level         = in_array( $args['title_level'], array( 'h2', 'h3', 'h4', 'h5', 'h6' ), true ) ? $args['title_level'] : 'h2';
 		$episode_count_color = $this->validate_background_parameter( $args['episode_count_color'] );
 		$description_color   = $this->validate_background_parameter( $args['description_color'] );
 
@@ -176,6 +178,7 @@ class Podcast_List implements Shortcode {
 			'show_description',
 			'show_episode_count',
 			'button_text',
+			'title_level',
 			'wrapper_class',
 			'columns_class',
 			'css_vars'

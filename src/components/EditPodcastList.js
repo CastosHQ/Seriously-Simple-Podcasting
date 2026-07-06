@@ -32,6 +32,7 @@ class EditPodcastList extends Component {
 			order,
 			columnsPerRow,
 			titleSize,
+			titleLevel,
 			titleUnderImage,
 			defaultPodcastId,
 			paginationType,
@@ -305,6 +306,27 @@ class EditPodcastList extends Component {
 								onChange={(titleSize) => {
 									setAttributes({
 										titleSize: titleSize
+									});
+								}}
+							/>
+						</PanelRow>}
+						{showTitle && <PanelRow>
+							<label htmlFor="ssp-podcast-list-title-level">
+								{__('Title Heading Level', 'seriously-simple-podcasting')}
+							</label>
+							<SelectControl
+								id="ssp-podcast-list-title-level"
+								value={titleLevel}
+								options={[
+									{label: 'H2', value: 'h2'},
+									{label: 'H3', value: 'h3'},
+									{label: 'H4', value: 'h4'},
+									{label: 'H5', value: 'h5'},
+									{label: 'H6', value: 'h6'},
+								]}
+								onChange={(titleLevel) => {
+									setAttributes({
+										titleLevel: titleLevel
 									});
 								}}
 							/>

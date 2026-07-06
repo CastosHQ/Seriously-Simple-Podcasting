@@ -138,6 +138,10 @@ class Podcast_List_Block {
 						'type'    => 'string',
 						'default' => 16,
 					),
+					'titleLevel'          => array(
+						'type'    => 'string',
+						'default' => 'h2',
+					),
 					'titleUnderImage'     => array(
 						'type'    => 'boolean',
 						'default' => false,

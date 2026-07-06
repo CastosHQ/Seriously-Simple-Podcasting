@@ -104,7 +104,7 @@
 					</div>
 					<?php endif; ?>
 					<?php if ( $show_title ) : ?>
-					<<?php echo esc_html( $title_level ) ?> class="ssp-episode-title">
+					<<?php echo esc_html( $title_level ); ?> class="ssp-episode-title">
 						<?php if ( $is_title_link ) : ?>
 						<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( $permalink ); ?>">
 							<?php echo wp_kses_post( get_the_title() ); ?>
@@ -112,7 +112,7 @@
 						<?php else : ?>
 							<?php echo wp_kses_post( get_the_title() ); ?>
 						<?php endif; ?>
-					</<?php echo esc_html( $title_level ) ?>>
+					</<?php echo esc_html( $title_level ); ?>>
 					<?php endif; ?>
 				</div>
 				<div class="ssp-episode-card-body">
@@ -140,11 +140,11 @@
 			<?php else : ?>
 			<article class="podcast-<?php echo $episode->ID ?> podcast type-podcast">
 				<?php if ( $show_title && ! $title_under_img ) : ?>
-				<<?php echo esc_html( $title_level ) ?> class="ssp-episode-title">
+				<<?php echo esc_html( $title_level ); ?> class="ssp-episode-title">
 					<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( $permalink ); ?>">
 						<?php echo wp_kses_post( get_the_title() ); ?>
 					</a>
-				</<?php echo esc_html( $title_level ) ?>>
+				</<?php echo esc_html( $title_level ); ?>>
 				<?php endif; ?>
 				<div class="podcast-content">
 					<?php if ( $show_img ) : ?>
@@ -154,11 +154,11 @@
 						</a>
 					<?php endif; ?>
 					<?php if ( $show_title && $title_under_img ) : ?>
-						<<?php echo esc_html( $title_level ) ?> class="ssp-episode-title">
+						<<?php echo esc_html( $title_level ); ?> class="ssp-episode-title">
 							<a class="entry-title-link" rel="bookmark" href="<?php echo esc_url( $permalink ); ?>">
 								<?php echo wp_kses_post( get_the_title() ); ?>
 							</a>
-						</<?php echo esc_html( $title_level ) ?>>
+						</<?php echo esc_html( $title_level ); ?>>
 					<?php endif; ?>
 					<?php if ( $player && ! $is_player_below ) : ?>
 						<p><?php echo $player; ?></p>

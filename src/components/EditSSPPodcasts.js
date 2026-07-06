@@ -215,9 +215,28 @@ const DisplayPanel = ({
     button_text,
     description_words,
     description_chars,
+    title_level,
     setAttributes,
 }) => (
     <PanelBody key="ssp-podcasts-display" title={__('Display', 'seriously-simple-podcasting')}>
+        <PanelRow>
+            <label htmlFor="ssp-podcasts-title-level">
+                {__('Title Heading Level', 'seriously-simple-podcasting')}
+            </label>
+            <SelectControl
+                id="ssp-podcasts-title-level"
+                value={title_level}
+                options={[
+                    { label: 'H2', value: 'h2' },
+                    { label: 'H3', value: 'h3' },
+                    { label: 'H4', value: 'h4' },
+                    { label: 'H5', value: 'h5' },
+                    { label: 'H6', value: 'h6' },
+                ]}
+                onChange={(value) => setAttributes({ title_level: value })}
+            />
+        </PanelRow>
+
         <PanelRow>
             <label htmlFor="ssp-podcasts-show-description">
                 {__('Show Description', 'seriously-simple-podcasting')}
@@ -507,6 +526,7 @@ class EditSSPPodcasts extends Component {
 			button_text_color,
 			button_text,
 			title_color,
+			title_level,
 			episode_count_color,
 			description_color,
 		} = attributes;
@@ -592,6 +612,7 @@ class EditSSPPodcasts extends Component {
 						button_text={button_text}
 						description_words={description_words}
 						description_chars={description_chars}
+						title_level={title_level}
 						setAttributes={setAttributes}
 					/>
 

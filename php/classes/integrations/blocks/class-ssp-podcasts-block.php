@@ -112,6 +112,10 @@ class Ssp_Podcasts_Block {
 						'type'    => 'string',
 						'default' => '#6c5ce7',
 					),
+					'title_level'         => array(
+						'type'    => 'string',
+						'default' => 'h2',
+					),
 					'episode_count_color' => array(
 						'type'    => 'string',
 						'default' => '#6c757d',
@@ -193,6 +197,7 @@ class Ssp_Podcasts_Block {
 			'button_text_color',
 			'button_text',
 			'title_color',
+			'title_level',
 			'episode_count_color',
 			'description_color',
 		);

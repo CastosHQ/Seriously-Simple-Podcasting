@@ -553,7 +553,13 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			$nonce = $request->get_param( '_wpnonce' );
 		}
 
-		return ! empty( $nonce ) && (bool) wp_verify_nonce( $nonce, 'wp_rest' );
+		// A malformed request can supply a non-scalar _wpnonce (e.g. `?_wpnonce[]=x`);
+		// wp_verify_nonce() would choke on it, so treat anything non-scalar as no nonce.
+		if ( empty( $nonce ) || ! is_scalar( $nonce ) ) {
+			return false;
+		}
+
+		return (bool) wp_verify_nonce( $nonce, 'wp_rest' );
 	}
 
 	/**

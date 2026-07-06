@@ -251,9 +251,9 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 * Builds the expected HMAC for the action-bound signature scheme.
 	 *
 	 * Binds the signature to the HTTP method, full request path (including the
-	 * REST prefix and any sub-directory), body, timestamp and per-request nonce,
-	 * matching the Castos client signer. The canonical message is
-	 * METHOD\nPATH\njson_body\ntimestamp\nnonce.
+	 * REST prefix and any sub-directory), URL query, body, timestamp and per-request
+	 * nonce, matching the Castos client signer. The canonical message is
+	 * METHOD\nPATH\ncanonical_query\njson_body\ntimestamp\nnonce.
 	 *
 	 * PATH is reconstructed as the canonical `{home path}/{rest-prefix}{route}`
 	 * the Castos signer builds (it always signs the literal `/wp-json/` path),
@@ -278,6 +278,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			array(
 				strtoupper( $request->get_method() ),
 				$path,
+				self::canonical_query( $request->get_query_params() ),
 				json_encode( $request_data ),
 				$timestamp,
 				$nonce,
@@ -285,6 +286,30 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 		);
 
 		return hash_hmac( 'sha256', $message, $stored_key );
+	}
+
+	/**
+	 * Canonicalizes the URL query so signer and verifier hash byte-for-byte identical bytes:
+	 * keys sorted, RFC3986 encoding (space as %20, not '+'), empty query collapses to ''.
+	 * Mirrors App\Services\SSP\SspRequestSigner::canonicalQuery() in the Castos backend.
+	 *
+	 * Every received query param is bound — including Castos's `castos-nonce` cache-buster.
+	 * Any param an attacker adds or alters on a signed GET therefore changes the signed
+	 * message and fails verification: the query is authenticated, never trusted from the
+	 * URL alone. Only flat params are signed (Castos never sends bracket/array notation).
+	 *
+	 * @param array $query Query parameters as received (WP_REST_Request::get_query_params()).
+	 *
+	 * @return string
+	 */
+	protected static function canonical_query( $query ) {
+		if ( empty( $query ) ) {
+			return '';
+		}
+
+		ksort( $query );
+
+		return http_build_query( $query, '', '&', PHP_QUERY_RFC3986 );
 	}
 
 	/**
@@ -511,6 +536,27 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Reports whether the request carries a valid WordPress REST nonce.
+	 *
+	 * Cookie-derived privilege (private statuses, unfiltered filter args) is granted only when
+	 * this passes, so a cross-site request that rides the login cookie without the nonce cannot
+	 * elevate. @wordpress/api-fetch sends the nonce (X-WP-Nonce) for block-editor callers.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	protected static function has_valid_rest_nonce( $request ) {
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+
+		if ( empty( $nonce ) ) {
+			$nonce = $request->get_param( '_wpnonce' );
+		}
+
+		return ! empty( $nonce ) && (bool) wp_verify_nonce( $nonce, 'wp_rest' );
+	}
+
+	/**
 	 * Get a collection of items
 	 *
 	 * @param \WP_REST_Request $request Full data about the request.
@@ -518,9 +564,13 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		// WordPress REST API resets current user to 0 if no nonce is provided (CSRF protection)
-		// Manually authenticate from cookie if present to allow logged-in users to access their content
-		Rest_Api_Controller::authenticate_user_from_cookie();
+		// WordPress REST API resets the current user to 0 when a cookie request arrives without a
+		// valid REST nonce (CSRF protection). Only restore that identity when a valid nonce is
+		// present — otherwise the request stays public. Block-editor callers use
+		// @wordpress/api-fetch, which sends X-WP-Nonce, so legitimate editor use is unaffected.
+		if ( self::has_valid_rest_nonce( $request ) ) {
+			Rest_Api_Controller::authenticate_user_from_cookie();
+		}
 
 		// Check if request has valid Castos authentication (optional for GET requests)
 		$castos_authenticated = true === static::validate_castos_authentication( $request, array() );

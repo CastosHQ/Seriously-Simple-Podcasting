@@ -80,7 +80,7 @@ class Castos_Blocks {
 		$this->register_deprecated_blocks();
 
 		( new Castos_Html_Player_Block() )->register();
-		( new Podcast_List_Block( $this->episode_list_presenter ) )->register();
+		( new Episode_List_Block( $this->episode_list_presenter ) )->register();
 		( new Playlist_Player_Block() )->register();
 		( new Ssp_Podcasts_Block() )->register();
 	}

@@ -6,12 +6,13 @@ use SeriouslySimplePodcasting\Presenters\Episode_List_Presenter;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
- * Handles registration and rendering of the `seriously-simple-podcasting/podcast-list` block.
+ * Handles registration and rendering of the "Episode List" block
+ * (block ID `seriously-simple-podcasting/podcast-list`, kept for backward compatibility).
  *
  * @package Seriously Simple Podcasting
  * @since 2.0.4
  */
-class Podcast_List_Block {
+class Episode_List_Block {
 
 	use Useful_Variables;
 

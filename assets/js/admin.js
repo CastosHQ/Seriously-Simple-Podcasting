@@ -339,7 +339,7 @@ jQuery(document).ready(function($) {
 		$('.' + $(this).data('preview')).attr('src', '').trigger('change');
 	});
 
-	$('.js-ssp-select2').select2();
+	$('.js-ssp-select2').select2({ width: '100%' });
 
 	/**
 	* Provides possibility to dynamically change the dynamo URL when the episode title or episode podcast is changed.

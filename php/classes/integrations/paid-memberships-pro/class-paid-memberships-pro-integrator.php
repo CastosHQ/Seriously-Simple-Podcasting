@@ -692,7 +692,10 @@ class Paid_Memberships_Pro_Integrator extends Abstract_Integrator {
 		$is_admin   = is_admin() && ! ssp_is_ajax();
 		$is_podcast = in_array( $post->post_type, ssp_post_types() );
 
-		if ( $is_admin || ! $is_podcast || ! $access ) {
+		// Users who can edit the episode must not be blocked.
+		$can_edit = user_can( $user, 'edit_post', $post->ID );
+
+		if ( $is_admin || $can_edit || ! $is_podcast || ! $access ) {
 			return $access;
 		}
 

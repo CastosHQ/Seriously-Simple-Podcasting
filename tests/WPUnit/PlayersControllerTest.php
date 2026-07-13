@@ -95,6 +95,8 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
 
             '<div class="player-panel-row">',
 
+            '<div class="player-panel-row" role="group" aria-label="RSS Feed URL">',
+
             'RSS Feed',
             sprintf('<input value="%s/?feed=podcast&amp;podcast_series=wordpress-test" class="input-rss input-rss-%s" title="RSS Feed URL" readonly />', $site_url, $episode_id),
 
@@ -123,9 +125,10 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
             '<div class="title">',
             'Link',
             sprintf('<input value="%s" class="input-link input-link-%d" title="Episode URL" readonly />', $permalink, $episode_id),
-            sprintf('<button class="copy-link copy-link-%s" title="Copy Episode URL" aria-label="Copy Episode URL" readonly=""></button>', $episode_id),
+            sprintf('<button class="copy-link copy-link-%s" title="Copy Episode URL" aria-label="Copy Episode URL"></button>', $episode_id),
             '<div class="player-panel-row">',
             'Embed',
+            sprintf('class="input-embed input-embed-%s" readonly>', $episode_id),
             sprintf('<button class="copy-embed copy-embed-%s" title="Copy Embed Code" aria-label="Copy Embed Code"></button>', $episode_id),
         ];
 

@@ -147,8 +147,9 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	/**
 	 * Validates Castos authentication headers.
 	 *
-	 * Checks if the request has valid Castos authentication headers (X-Castos-Signature and X-Castos-Timestamp)
-	 * and validates the signature against the stored API token.
+	 * Requires the action-bound headers (X-Castos-Signature, X-Castos-Timestamp, X-Castos-Nonce),
+	 * verifies the signature against the stored API token over the method/path/body/timestamp/nonce
+	 * canonical message, and rejects reused nonces.
 	 *
 	 * Static method for use in filters and other contexts.
 	 *
@@ -166,7 +167,7 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			return new \WP_Error( 'missing_signature', 'No signature or timestamp provided.', $status_401 );
 		}
 
-		if ( abs( time() - $timestamp ) > 10 * MINUTE_IN_SECONDS ) {
+		if ( ! ctype_digit( (string) $timestamp ) || abs( time() - (int) $timestamp ) > self::signature_freshness() ) {
 			return new \WP_Error( 'invalid_timestamp', 'Invalid timestamp provided.', $status_401 );
 		}
 
@@ -176,13 +177,139 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 			return new \WP_Error( 'no_api_key', 'Request signature invalid.', $status_401 );
 		}
 
-		$expected_signature = hash_hmac( 'sha256', json_encode( $request_data ) . $timestamp, $stored_key );
+		$nonce = $request->get_header( 'X-Castos-Nonce' );
+
+		// Require the action-bound nonce. Castos sends it for every authenticated request to
+		// SSP >= 3.16.2, so a missing nonce is never a legitimate request to this version.
+		if ( empty( $nonce ) ) {
+			return new \WP_Error( 'missing_nonce', 'Request signature invalid.', $status_401 );
+		}
+
+		$expected_signature = self::action_bound_signature( $request, $request_data, $timestamp, $nonce, $stored_key );
 
 		if ( ! hash_equals( $expected_signature, $signature ) ) {
 			return new \WP_Error( 'invalid_signature', 'Request signature invalid.', $status_401 );
 		}
 
+		// Reject nonce reuse within the freshness window. Checked after signature verification so
+		// the nonce store can only ever hold values an attacker could not have forged.
+		if ( self::is_nonce_used( $nonce ) ) {
+			return new \WP_Error( 'replayed_nonce', 'Request signature invalid.', $status_401 );
+		}
+
 		return true;
+	}
+
+	/**
+	 * Records a verified nonce and reports whether it was already seen.
+	 *
+	 * Only valid (signature-verified) nonces reach this point, so the store
+	 * cannot be flooded with forged values. The TTL matches the signature
+	 * freshness window, after which the timestamp check rejects the request anyway.
+	 *
+	 * The first claim is atomic via wp_cache_add(), which fails if the key already
+	 * exists — closing the read-then-write race between concurrent replays on sites
+	 * with a persistent object cache. A transient provides the durable record (and
+	 * the store itself on sites without a persistent object cache, where wp_cache_add
+	 * is per-request only; there the residual replay is of the *same* request, which
+	 * the action binding already renders idempotent).
+	 *
+	 * @param string $nonce Per-request nonce header value.
+	 *
+	 * @return bool True if the nonce was already used (replay), false on first use.
+	 */
+	protected static function is_nonce_used( $nonce ) {
+		$key = 'ssp_castos_nonce_' . md5( $nonce );
+
+		if ( ! wp_cache_add( $key, 1, 'ssp_castos_nonce', self::signature_freshness() ) ) {
+			return true;
+		}
+
+		if ( false !== get_transient( $key ) ) {
+			return true;
+		}
+
+		set_transient( $key, 1, self::signature_freshness() );
+
+		return false;
+	}
+
+	/**
+	 * Returns the freshness window (in seconds) for Castos request timestamps and nonces.
+	 *
+	 * 5 minutes, per the Castos signer team's recommendation (no shorter than ~5 min) to
+	 * tolerate WordPress host clock skew. Replay is handled by the one-time nonce, so this
+	 * is a secondary guard rather than the primary defense.
+	 *
+	 * @return int
+	 */
+	protected static function signature_freshness() {
+		return 5 * MINUTE_IN_SECONDS;
+	}
+
+	/**
+	 * Builds the expected HMAC for the action-bound signature scheme.
+	 *
+	 * Binds the signature to the HTTP method, full request path (including the
+	 * REST prefix and any sub-directory), URL query, body, timestamp and per-request
+	 * nonce, matching the Castos client signer. The canonical message is
+	 * METHOD\nPATH\ncanonical_query\njson_body\ntimestamp\nnonce.
+	 *
+	 * PATH is reconstructed as the canonical `{home path}/{rest-prefix}{route}`
+	 * the Castos signer builds (it always signs the literal `/wp-json/` path),
+	 * rather than the raw request URI or `rest_url()`. This matches regardless of
+	 * the site's permalink structure, sub-directory install, or a reverse-proxy
+	 * path prefix.
+	 *
+	 * @param \WP_REST_Request $request      Full data about the request.
+	 * @param array            $request_data Request body used for signing.
+	 * @param string           $timestamp    Request timestamp header value.
+	 * @param string           $nonce        Per-request nonce header value.
+	 * @param string           $stored_key   Shared API token used as the HMAC secret.
+	 *
+	 * @return string Hex-encoded HMAC-SHA256 signature.
+	 */
+	protected static function action_bound_signature( $request, $request_data, $timestamp, $nonce, $stored_key ) {
+		$home_path = rtrim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
+		$path      = $home_path . '/' . trim( rest_get_url_prefix(), '/' ) . $request->get_route();
+
+		$message = implode(
+			"\n",
+			array(
+				strtoupper( $request->get_method() ),
+				$path,
+				self::canonical_query( $request->get_query_params() ),
+				json_encode( $request_data ),
+				$timestamp,
+				$nonce,
+			)
+		);
+
+		return hash_hmac( 'sha256', $message, $stored_key );
+	}
+
+	/**
+	 * Canonicalizes the URL query so signer and verifier hash byte-for-byte identical bytes:
+	 * keys sorted, RFC3986 encoding (space as %20, not '+'), empty query collapses to ''.
+	 * Mirrors App\Services\SSP\SspRequestSigner::canonicalQuery() in the Castos backend.
+	 *
+	 * Every received query param is bound — including Castos's `castos-nonce` cache-buster.
+	 * Any param an attacker adds or alters on a signed GET therefore changes the signed
+	 * message and fails verification: the query is authenticated, never trusted from the
+	 * URL alone. Only flat params are signed (Castos never sends bracket/array notation).
+	 *
+	 * @param array $query Query parameters as received (WP_REST_Request::get_query_params()).
+	 *
+	 * @return string
+	 */
+	protected static function canonical_query( $query ) {
+		if ( empty( $query ) ) {
+			return '';
+		}
+
+		ksort( $query );
+
+		return http_build_query( $query, '', '&', PHP_QUERY_RFC3986 );
 	}
 
 	/**
@@ -409,6 +536,33 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	}
 
 	/**
+	 * Reports whether the request carries a valid WordPress REST nonce.
+	 *
+	 * Cookie-derived privilege (private statuses, unfiltered filter args) is granted only when
+	 * this passes, so a cross-site request that rides the login cookie without the nonce cannot
+	 * elevate. @wordpress/api-fetch sends the nonce (X-WP-Nonce) for block-editor callers.
+	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
+	 * @return bool
+	 */
+	protected static function has_valid_rest_nonce( $request ) {
+		$nonce = $request->get_header( 'X-WP-Nonce' );
+
+		if ( empty( $nonce ) ) {
+			$nonce = $request->get_param( '_wpnonce' );
+		}
+
+		// A malformed request can supply a non-scalar _wpnonce (e.g. `?_wpnonce[]=x`);
+		// wp_verify_nonce() would choke on it, so treat anything non-scalar as no nonce.
+		if ( empty( $nonce ) || ! is_scalar( $nonce ) ) {
+			return false;
+		}
+
+		return (bool) wp_verify_nonce( $nonce, 'wp_rest' );
+	}
+
+	/**
 	 * Get a collection of items
 	 *
 	 * @param \WP_REST_Request $request Full data about the request.
@@ -416,9 +570,13 @@ class Episodes_Rest_Controller extends WP_REST_Controller {
 	 * @return \WP_Error|\WP_REST_Response
 	 */
 	public function get_items( $request ) {
-		// WordPress REST API resets current user to 0 if no nonce is provided (CSRF protection)
-		// Manually authenticate from cookie if present to allow logged-in users to access their content
-		Rest_Api_Controller::authenticate_user_from_cookie();
+		// WordPress REST API resets the current user to 0 when a cookie request arrives without a
+		// valid REST nonce (CSRF protection). Only restore that identity when a valid nonce is
+		// present — otherwise the request stays public. Block-editor callers use
+		// @wordpress/api-fetch, which sends X-WP-Nonce, so legitimate editor use is unaffected.
+		if ( self::has_valid_rest_nonce( $request ) ) {
+			Rest_Api_Controller::authenticate_user_from_cookie();
+		}
 
 		// Check if request has valid Castos authentication (optional for GET requests)
 		$castos_authenticated = true === static::validate_castos_authentication( $request, array() );

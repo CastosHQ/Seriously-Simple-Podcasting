@@ -4,7 +4,7 @@ import {InspectorControls, PanelColorSettings} from '@wordpress/block-editor';
 import {PanelBody, PanelRow, FormToggle, SelectControl, TextControl, __experimentalNumberControl as NumberControl, Tooltip} from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
 
-class EditPodcastList extends Component {
+class EditEpisodeList extends Component {
 	constructor({className}) {
 		super(...arguments);
 		this.state = {
@@ -32,6 +32,7 @@ class EditPodcastList extends Component {
 			order,
 			columnsPerRow,
 			titleSize,
+			titleLevel,
 			titleUnderImage,
 			defaultPodcastId,
 			paginationType,
@@ -309,6 +310,27 @@ class EditPodcastList extends Component {
 								}}
 							/>
 						</PanelRow>}
+						{showTitle && <PanelRow>
+							<label htmlFor="ssp-podcast-list-title-level">
+								{__('Title Heading Level', 'seriously-simple-podcasting')}
+							</label>
+							<SelectControl
+								id="ssp-podcast-list-title-level"
+								value={titleLevel}
+								options={[
+									{label: 'H2', value: 'h2'},
+									{label: 'H3', value: 'h3'},
+									{label: 'H4', value: 'h4'},
+									{label: 'H5', value: 'h5'},
+									{label: 'H6', value: 'h6'},
+								]}
+								onChange={(titleLevel) => {
+									setAttributes({
+										titleLevel: titleLevel
+									});
+								}}
+							/>
+						</PanelRow>}
 						{showTitle && featuredImage && !isCards && <PanelRow>
 							<label htmlFor="ssp-podcast-list-title-under-image">
 								{__('Show Title Under Image', 'seriously-simple-podcasting')}
@@ -399,4 +421,4 @@ class EditPodcastList extends Component {
 	}
 }
 
-export default EditPodcastList;
+export default EditEpisodeList;

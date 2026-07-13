@@ -77,6 +77,10 @@ class Episode_List implements Shortcode {
 			'key'  => 'titleSize',
 			'type' => 'string',
 		),
+		'title_level'          => array(
+			'key'  => 'titleLevel',
+			'type' => 'string',
+		),
 		'title_under_image'    => array(
 			'key'  => 'titleUnderImage',
 			'type' => 'bool',
@@ -175,6 +179,7 @@ class Episode_List implements Shortcode {
 			'display_image'        => 'false',
 			'image_size'           => 'medium',
 			'title_size'           => '24',
+			'title_level'          => 'h2',
 			'title_under_image'    => 'false',
 			'player_below_excerpt' => 'false',
 			'pagination'           => 'full',

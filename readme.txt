@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 3.16.2
+Stable tag: 3.16.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.16.3 =
+2026-07-07
+[NEW] Added an episode-title heading-level setting to the podcast and episode list blocks and shortcodes
+[UPDATE] Hardened authentication and requests between the plugin and Castos
+[FIX] Allow editor access to episodes restricted by the Paid Memberships Pro integration
+[FIX] Corrected HTML validation and accessibility issues in the Castos player and podcast list
+[FIX] Corrected the styling of multi-select fields on the podcast settings pages
 
 = 3.16.2 =
 2026-06-23

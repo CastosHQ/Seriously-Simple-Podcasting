@@ -108,11 +108,14 @@ class Episode_List_Presenter {
 	protected function prepare_template_args( $attributes, $episodes_query, $paginate, $pagination_type = 'simple' ) {
 		$allowed_layouts   = array( 'list', 'cards' );
 		$allowed_clickable = array( 'button', 'card', 'title' );
+		$allowed_levels    = array( 'h2', 'h3', 'h4', 'h5', 'h6' );
 
-		$layout    = ! empty( $attributes['layout'] ) && in_array( $attributes['layout'], $allowed_layouts, true )
+		$layout      = ! empty( $attributes['layout'] ) && in_array( $attributes['layout'], $allowed_layouts, true )
 			? $attributes['layout'] : 'list';
-		$clickable = ! empty( $attributes['clickable'] ) && in_array( $attributes['clickable'], $allowed_clickable, true )
+		$clickable   = ! empty( $attributes['clickable'] ) && in_array( $attributes['clickable'], $allowed_clickable, true )
 			? $attributes['clickable'] : 'button';
+		$title_level = ! empty( $attributes['titleLevel'] ) && in_array( $attributes['titleLevel'], $allowed_levels, true )
+			? $attributes['titleLevel'] : 'h2';
 
 		return array(
 			'episode_repository'  => $this->episode_repository,
@@ -129,6 +132,7 @@ class Episode_List_Presenter {
 			'show_excerpt'        => boolval( $attributes['excerpt'] ),
 			'columns_per_row'     => intval( $attributes['columnsPerRow'] ),
 			'title_size'          => intval( $attributes['titleSize'] ),
+			'title_level'         => $title_level,
 			'title_under_img'     => intval( $attributes['titleUnderImage'] ),
 			'title_color'         => sanitize_hex_color( $attributes['titleColor'] ?? '' ) ?? '',
 			'layout'              => $layout,

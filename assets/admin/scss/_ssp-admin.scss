@@ -2,6 +2,26 @@
 
 body.ssp-admin {
 	--wp-admin-theme-color: #{$clr_purple_600};
+
+	// Select2 4.1.0-rc.0 renders the chip list as `display: inline` with a
+	// scrolling parent, so chips spill outside the box and align to the bottom.
+	// Make the list a wrapping flexbox so the box grows with its content and
+	// the chips + search cursor stay vertically centered.
+	.select2-container--default .select2-selection--multiple {
+		overflow: visible;
+		min-height: 2.5rem;
+
+		.select2-selection__rendered {
+			display: flex;
+			flex-wrap: wrap;
+			align-items: center;
+			line-height: 1.5rem;
+		}
+
+		.select2-selection__choice {
+			padding-right: 8px;
+		}
+	}
 }
 
 .ssp-admin {

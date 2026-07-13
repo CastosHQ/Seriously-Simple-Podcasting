@@ -502,6 +502,19 @@ input:focus + .ssp-toggle__slider {
 body.ssp-admin {
   --wp-admin-theme-color: #853AED;
 }
+body.ssp-admin .select2-container--default .select2-selection--multiple {
+  overflow: visible;
+  min-height: 2.5rem;
+}
+body.ssp-admin .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  line-height: 1.5rem;
+}
+body.ssp-admin .select2-container--default .select2-selection--multiple .select2-selection__choice {
+  padding-right: 8px;
+}
 
 .ssp-admin {
   background-color: #F1F5F9;

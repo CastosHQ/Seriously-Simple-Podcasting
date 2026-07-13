@@ -11,6 +11,7 @@
  * @var bool   $show_description   Whether to show podcast descriptions
  * @var bool   $show_episode_count Whether to show episode counts
  * @var string $button_text        Custom text for the listen button
+ * @var string $title_level        Heading level for podcast titles: h2-h6 (pre-processed)
  * @var string $wrapper_class      CSS class for podcast cards (pre-processed)
  * @var string $columns_class      CSS class for grid columns (pre-processed)
  * @var int    $description_words  Maximum number of words for descriptions (pre-processed)
@@ -47,6 +48,7 @@ if ( empty( $podcasts ) || ! is_array( $podcasts ) ) {
 }
 
 // All display options are now pre-processed in the shortcode class
+$title_level = ! empty( $title_level ) ? $title_level : 'h2';
 ?>
 
 <?php
@@ -121,7 +123,7 @@ do_action( 'ssp/podcast_list/before', $podcasts, $columns ); ?>
 					<?php if ( $title_is_clickable ) : ?>
 						<a href="<?php echo esc_url( $podcast_url ); ?>" class="ssp-podcast-title-link">
 					<?php endif; ?>
-						<h3 class="ssp-podcast-title"><?php echo esc_html( $podcast_name ); ?></h3>
+						<<?php echo esc_html( $title_level ); ?> class="ssp-podcast-title"><?php echo esc_html( $podcast_name ); ?></<?php echo esc_html( $title_level ); ?>>
 					<?php if ( $title_is_clickable ) : ?>
 						</a>
 					<?php endif; ?>

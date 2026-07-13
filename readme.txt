@@ -166,7 +166,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 == Changelog ==
 
 = 3.16.3 =
-2026-07-07
+2026-07-13
 [NEW] Added an episode-title heading-level setting to the podcast and episode list blocks and shortcodes
 [UPDATE] Hardened authentication and requests between the plugin and Castos
 [FIX] Allow editor access to episodes restricted by the Paid Memberships Pro integration

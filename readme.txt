@@ -167,6 +167,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 3.17.0-alpha =
 2026-08-10
+[NEW] Warn before syncing a podcast that already exists in your Castos account, with a confirmation step to prevent accidental duplicates
 [UPDATE] The playlist player's tag selector is now a searchable dropdown that loads matching tags as you type
 [FIX] Podcast feeds no longer fail to generate on shows with a large number of episodes
 [FIX] Editor, site editor and widgets screens no longer slow down or fail to load on sites with a large number of tags

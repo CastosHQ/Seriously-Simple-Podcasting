@@ -176,21 +176,15 @@ jQuery(document).ready(function($) {
 			updateSyncBtn();
 		});
 
-		$syncBtn.on('click', function(){
+		var doSync = function (podcasts, confirmedPodcasts) {
 			$syncBtn.addClass('loader');
 
-			var $msg = $('.ssp-sync-msg'),
-				$checked = getCheckedPodcasts(),
-				podcasts = [];
+			var $msg = $('.ssp-sync-msg');
 
 			if (!$msg.length) {
 				$msg = $('<span class="ssp-sync-msg"></span>');
 				$syncBtn.parent().append($msg);
 			}
-
-			$checked.each(function () {
-				podcasts.push($(this).val());
-			});
 
 			$.ajax({
 				method: "GET",
@@ -198,20 +192,42 @@ jQuery(document).ready(function($) {
 				data: {
 					action: "sync_castos",
 					nonce: nonce,
-					podcasts: podcasts
+					podcasts: podcasts,
+					confirmed_podcasts: confirmedPodcasts || []
 				}
 			}).done(function (response) {
-				var msg = '<div class="sync-overview">' + response.data.msg + '</div>';
+				var msg = '<div class="sync-overview">' + response.data.msg + '</div>',
+					confirmed = [];
+
 				$.each(response.data.podcasts, function (id, status) {
 					changeStatus($('#podcasts_sync_' + id), status.status, status.title);
 					msg += '<div class="sync-msg">' + status.msg + '</div>';
+
+					if (status.needs_confirmation && window.confirm(status.confirm_msg)) {
+						confirmed.push(id);
+					}
 				});
 
 				$syncBtn.removeClass('loader');
 				$msg.addClass(response.success ? 'success' : 'error');
 
 				$msg.html(msg);
+
+				if (confirmed.length) {
+					doSync(confirmed, confirmed);
+				}
 			});
+		};
+
+		$syncBtn.on('click', function(){
+			var $checked = getCheckedPodcasts(),
+				podcasts = [];
+
+			$checked.each(function () {
+				podcasts.push($(this).val());
+			});
+
+			doSync(podcasts);
 		});
 	}
 

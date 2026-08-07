@@ -260,6 +260,8 @@ class SspEpisodesQueryTest extends \Codeception\TestCase\WPTestCase {
 
 		$ids = $this->feed_ids();
 
+		$this->assertContains( $older, $ids );
+		$this->assertContains( $newer, $ids );
 		$this->assertLessThan(
 			array_search( $older, $ids, true ),
 			array_search( $newer, $ids, true ),
@@ -282,6 +284,8 @@ class SspEpisodesQueryTest extends \Codeception\TestCase\WPTestCase {
 
 		$ids = $this->feed_ids( '', array(), 'recorded' );
 
+		$this->assertContains( $a, $ids );
+		$this->assertContains( $b, $ids );
 		$this->assertLessThan(
 			array_search( $b, $ids, true ),
 			array_search( $a, $ids, true ),
@@ -387,6 +391,8 @@ class SspEpisodesQueryTest extends \Codeception\TestCase\WPTestCase {
 		$ids = $this->feed_ids( '', array(), 'recorded' );
 
 		$this->assertNotContains( $no_audio, $ids, 'audio_file filter still applies under recorded ordering' );
+		$this->assertContains( $early, $ids );
+		$this->assertContains( $late, $ids );
 		$this->assertLessThan(
 			array_search( $early, $ids, true ),
 			array_search( $late, $ids, true ),

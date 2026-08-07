@@ -32,7 +32,8 @@
     "yoast/phpunit-polyfills": "^2.0",
     "codeception/codeception": "^5.0",
     "lucatume/wp-browser": "^4.0",
-    "codeception/module-asserts": "^3.0"
+    "codeception/module-asserts": "^3.0",
+    "phpcompatibility/phpcompatibility-wp": "*"
   },
   "config": {
     "allow-plugins": {

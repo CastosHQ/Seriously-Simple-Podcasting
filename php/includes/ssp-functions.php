@@ -472,15 +472,8 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 	 */
 	function ssp_episodes( $n = 10, $series = '', $return_args = false, $context = '', $exclude_series = array() ) {
 
-		// Get all podcast episodes IDs.
-		$episode_ids = (array) ssp_episode_ids();
-
 		if ( 'glance' === $context ) {
-			return $episode_ids;
-		}
-
-		if ( empty( $episode_ids ) && ! $return_args ) {
-			return array();
+			return (array) ssp_episode_ids();
 		}
 
 		// Get all valid podcast post types.
@@ -496,8 +489,21 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			'post_status'         => 'publish',
 			'posts_per_page'      => $n,
 			'ignore_sticky_posts' => true,
-			'post__in'            => $episode_ids,
 		);
+
+		// When additional episode post types are enabled, restrict to items that have an
+		// audio file (mirrors ssp_episode_ids()).
+		// Todo: revisit — should the audio_file filter apply unconditionally (podcast CPT
+		// included), not only when extra post types are enabled? Likely a latent bug. (#865)
+		if ( ssp_post_types( false ) ) {
+			$args['meta_query'] = array(
+				array(
+					'key'     => apply_filters( 'ssp_audio_file_meta_key', 'audio_file' ),
+					'compare' => '!=',
+					'value'   => '',
+				),
+			);
+		}
 
 		if ( $exclude_series ) {
 			$args['tax_query'] = array(

@@ -1111,11 +1111,20 @@ class Episode_Repository implements Service {
 
 			$duration = false;
 
-			if ( $data ) {
-				if ( isset( $data['length_formatted'] ) && strlen( $data['length_formatted'] ) > 0 ) {
-					$duration = $data['length_formatted'];
-				} elseif ( isset( $data['length'] ) && strlen( $data['length'] ) > 0 ) {
-						$duration = gmdate( 'H:i:s', $data['length'] );
+			if ( isset( $data['length_formatted'] ) && strlen( $data['length_formatted'] ) > 0 ) {
+				$duration = $data['length_formatted'];
+			} elseif ( isset( $data['length'] ) && strlen( $data['length'] ) > 0 ) {
+				$duration = gmdate( 'H:i:s', $data['length'] );
+			}
+
+			// getID3 reports half the real duration for some mono MP3s. Working it out from
+			// the frame count is a no-op for the rest, so every mono file takes this path
+			// rather than us second-guessing which ones getID3 got wrong.
+			if ( $this->is_mono_mp3( $data ) ) {
+				$frame_duration = $this->get_mp3_frame_based_duration( $file );
+
+				if ( false !== $frame_duration ) {
+					$duration = $frame_duration;
 				}
 			}
 
@@ -1123,6 +1132,125 @@ class Episode_Repository implements Service {
 		}
 
 		return false;
+	}
+
+	/**
+	 * Checks whether audio metadata describes a mono MP3, the case getID3 mis-times.
+	 *
+	 * @since 3.17.0
+	 *
+	 * @param array $data Metadata as returned by wp_read_audio_metadata().
+	 *
+	 * @return bool
+	 */
+	protected function is_mono_mp3( $data ) {
+		return ! empty( $data['dataformat'] )
+			&& 'mp3' === $data['dataformat']
+			&& isset( $data['channels'] )
+			&& 1 === (int) $data['channels'];
+	}
+
+	/**
+	 * Loads WordPress's bundled getID3, unless a copy is already available.
+	 *
+	 * @since 3.17.0
+	 *
+	 * @return bool Whether the getID3 class can be used.
+	 */
+	protected function ensure_getid3() {
+		// Mirrors the guard in wp_read_audio_metadata() — another plugin may have
+		// loaded its own copy, and redeclaring the class is fatal.
+		if ( class_exists( 'getID3', false ) ) {
+			return true;
+		}
+
+		$getid3 = ABSPATH . WPINC . '/ID3/getid3.php';
+
+		// A failed require is a fatal, and fatals cannot be caught.
+		if ( ! file_exists( $getid3 ) ) {
+			return false;
+		}
+
+		require_once $getid3;
+
+		return true;
+	}
+
+	/**
+	 * Calculates MP3 duration from the frame count in the Xing/Info header.
+	 *
+	 * @since 3.17.0
+	 *
+	 * @param string $file Local file path.
+	 *
+	 * @return string|false Formatted duration, or false if it cannot be calculated.
+	 */
+	protected function get_mp3_frame_based_duration( $file ) {
+		if ( ! is_readable( $file ) ) {
+			return false;
+		}
+
+		if ( ! $this->ensure_getid3() ) {
+			return false;
+		}
+
+		try {
+			$id3  = new \getID3();
+			$info = $id3->analyze( $file );
+
+			if ( empty( $info['fileformat'] ) || 'mp3' !== $info['fileformat'] ) {
+				return false;
+			}
+
+			$mpeg = isset( $info['mpeg']['audio'] ) ? $info['mpeg']['audio'] : array();
+
+			$frames      = isset( $mpeg['VBR_frames'] ) ? (int) $mpeg['VBR_frames'] : 0;
+			$sample_rate = isset( $info['audio']['sample_rate'] ) ? (int) $info['audio']['sample_rate'] : 0;
+
+			$samples_per_frame = $this->mp3_samples_per_frame(
+				isset( $mpeg['version'] ) ? (string) $mpeg['version'] : '',
+				isset( $mpeg['layer'] ) ? (string) $mpeg['layer'] : ''
+			);
+
+			if ( $frames <= 0 || ! $sample_rate || ! $samples_per_frame ) {
+				return false;
+			}
+
+			// new \getID3() above should have loaded getid3_lib, but a foreign build may not.
+			if ( ! method_exists( 'getid3_lib', 'PlaytimeString' ) ) {
+				return false;
+			}
+
+			return \getid3_lib::PlaytimeString( (int) round( $frames * $samples_per_frame / $sample_rate ) );
+		} catch ( \Throwable $e ) {
+			return false;
+		}
+	}
+
+	/**
+	 * Returns the samples-per-frame for an MPEG audio version and layer.
+	 *
+	 * @since 3.17.0
+	 *
+	 * @param string $version MPEG version ('1', '2' or '2.5').
+	 * @param string $layer   MPEG layer ('1', '2' or '3').
+	 *
+	 * @return int Samples per frame, or 0 when unknown.
+	 */
+	protected function mp3_samples_per_frame( $version, $layer ) {
+		if ( '1' === $layer ) {
+			return 384;
+		}
+
+		if ( '2' === $layer ) {
+			return 1152;
+		}
+
+		if ( '3' === $layer ) {
+			return '1' === $version ? 1152 : 576;
+		}
+
+		return 0;
 	}
 
 	/**

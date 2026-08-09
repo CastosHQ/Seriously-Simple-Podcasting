@@ -336,6 +336,12 @@ class EpisodeRepositoryDurationTest extends \Codeception\TestCase\WPTestCase {
 			array( '2', '3', 576 ),
 			array( '2.5', '3', 576 ),
 			array( '1', '', 0 ),
+			// Layers 1 and 2 do not depend on the version, so they still resolve.
+			array( '', '1', 384 ),
+			array( '', '2', 1152 ),
+			// Layer 3 does, and guessing would halve an MPEG-1 duration.
+			array( '', '3', 0 ),
+			array( '9', '3', 0 ),
 		);
 
 		foreach ( $cases as list( $version, $layer, $expected ) ) {

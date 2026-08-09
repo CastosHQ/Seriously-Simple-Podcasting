@@ -1238,6 +1238,7 @@ class Episode_Repository implements Service {
 	 * @return int Samples per frame, or 0 when unknown.
 	 */
 	protected function mp3_samples_per_frame( $version, $layer ) {
+		// Layers 1 and 2 are the same across every MPEG version.
 		if ( '1' === $layer ) {
 			return 384;
 		}
@@ -1247,7 +1248,12 @@ class Episode_Repository implements Service {
 		}
 
 		if ( '3' === $layer ) {
-			return '1' === $version ? 1152 : 576;
+			if ( '1' === $version ) {
+				return 1152;
+			}
+
+			// Guessing here would halve the duration of an MPEG-1 file.
+			return in_array( $version, array( '2', '2.5' ), true ) ? 576 : 0;
 		}
 
 		return 0;

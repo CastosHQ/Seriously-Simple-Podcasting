@@ -49,4 +49,12 @@
 			<property name="blank_line_check" value="true"/>
 		</properties>
 	</rule>
+
+	<!-- Yoast schema pieces are named after the schema.org type they emit, following
+		Yoast's own convention for its graph pieces (Article, WebPage, HowTo). The
+		WP class-file-naming rule would force class-podcastepisode.php and break that
+		mirroring, so it does not apply here. -->
+	<rule ref="WordPress.Files.FileName.InvalidClassFileName">
+		<exclude-pattern>/php/classes/integrations/yoast/schema/*</exclude-pattern>
+	</rule>
 </ruleset>

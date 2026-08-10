@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 3.16.3
+Stable tag: 3.17.0-alpha
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.17.0-alpha =
+2026-08-10
+[UPDATE] The playlist player's tag selector is now a searchable dropdown that loads matching tags as you type
+[FIX] Podcast feeds no longer fail to generate on shows with a large number of episodes
+[FIX] Editor, site editor and widgets screens no longer slow down or fail to load on sites with a large number of tags
+[FIX] Corrected episode duration for mono MP3 files, which could be published at half their real length
+[FIX] Episode duration is now included in the Yoast SEO podcast schema and reported to the second
 
 = 3.16.3 =
 2026-07-13

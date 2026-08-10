@@ -55,7 +55,9 @@ class EditPlaylistPlayer extends Component {
 
 		fetchTagOptionBySlug(slug)
 			.then((selectedTagOption) => {
-				if (this.isActive) {
+				// The editor may have picked a different tag while this was in flight; pinning the
+				// stale one would blank the field the next time the options refresh.
+				if (this.isActive && this.props.attributes.selectedTag === slug) {
 					this.setState({selectedTagOption: selectedTagOption || {label: slug, value: slug}});
 				}
 			})

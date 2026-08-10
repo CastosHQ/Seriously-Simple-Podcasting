@@ -30,14 +30,18 @@
 	<rule ref="WordPress"/>
 	<rule ref="WordPress.NamingConventions.PrefixAllGlobals">
 		<properties>
-			<!-- Value: replace the function, class, and variable prefixes used. Separate multiple prefixes with a comma. -->
-			<property name="prefixes" type="array" value="seriously-simple-podcasting"/>
+			<!-- Value: replace the function, class, and variable prefixes used. Add an element per prefix. -->
+			<property name="prefixes" type="array">
+				<element value="SeriouslySimplePodcasting"/>
+			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WP.I18n">
 		<properties>
-			<!-- Value: replace the text domain used. -->
-			<property name="text_domain" type="array" value="seriously-simple-podcasting"/>
+			<!-- Value: replace the text domain used. Add an element per domain. -->
+			<property name="text_domain" type="array">
+				<element value="seriously-simple-podcasting"/>
+			</property>
 		</properties>
 	</rule>
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">

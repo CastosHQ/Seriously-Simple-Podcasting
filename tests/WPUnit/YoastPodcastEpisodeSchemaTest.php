@@ -126,20 +126,19 @@ class YoastPodcastEpisodeSchemaTest extends \Codeception\TestCase\WPTestCase {
 
 	public function storedDurationProvider() {
 		return array(
-			'unpadded seconds only'         => array( '0:27', 'PT1M' ),
-			'padded seconds only'           => array( '00:27', 'PT1M' ),
-			'minutes rounding up'           => array( '13:38', 'PT14M' ),
-			'minutes rounding down'         => array( '27:16', 'PT27M' ),
-			'seconds exactly on the half'   => array( '13:30', 'PT13M' ),
-			'seconds one past the half'     => array( '13:31', 'PT14M' ),
-			'seconds just over the half'    => array( '2:31', 'PT3M' ),
-			'unpadded hours'                => array( '1:13:38', 'PT1H14M' ),
-			'padded hours'                  => array( '01:13:38', 'PT1H14M' ),
-			'hours with padded minutes'     => array( '2:05:09', 'PT2H5M' ),
-			'whole hour'                    => array( '1:00:00', 'PT1H' ),
-			'hour with trailing seconds'    => array( '1:00:20', 'PT1H' ),
-			'rounding up into a whole hour' => array( '59:45', 'PT1H' ),
-			'rounding up into the next hour' => array( '1:59:45', 'PT2H' ),
+			'unpadded seconds only'      => array( '0:27', 'PT27S' ),
+			'padded seconds only'        => array( '00:27', 'PT27S' ),
+			'minutes and seconds'        => array( '13:38', 'PT13M38S' ),
+			'minutes with low seconds'   => array( '27:16', 'PT27M16S' ),
+			'a couple of minutes'        => array( '2:31', 'PT2M31S' ),
+			'unpadded hours'             => array( '1:13:38', 'PT1H13M38S' ),
+			'padded hours'               => array( '01:13:38', 'PT1H13M38S' ),
+			'hours with padded minutes'  => array( '2:05:09', 'PT2H5M9S' ),
+			'whole hour'                 => array( '1:00:00', 'PT1H' ),
+			'hour with trailing seconds' => array( '1:00:20', 'PT1H20S' ),
+			'just under an hour'         => array( '59:45', 'PT59M45S' ),
+			'just under two hours'       => array( '1:59:45', 'PT1H59M45S' ),
+			'seconds beyond sixty'       => array( '0:99', 'PT1M39S' ),
 		);
 	}
 

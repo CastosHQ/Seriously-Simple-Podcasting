@@ -146,21 +146,17 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 
 		list( $hours, $minutes, $seconds ) = $time_parts;
 
-		// Round the minute up past the half, and lift a sub-minute duration to one
-		// minute so it is not reported as zero.
-		if ( $seconds > 30 || ( ! $hours && ! $minutes && $seconds ) ) {
-			++$minutes;
-		}
+		// Rebuild from the elapsed total so components carry — a stored `0:99`
+		// becomes one minute and 39 seconds rather than 99 of them.
+		$total = $hours * HOUR_IN_SECONDS + $minutes * MINUTE_IN_SECONDS + $seconds;
 
-		// Rounding the 59th minute up makes a whole hour, not a 60th minute.
-		if ( 60 === $minutes ) {
-			++$hours;
-			$minutes = 0;
-		}
-
-		if ( ! $hours && ! $minutes ) {
+		if ( ! $total ) {
 			return '';
 		}
+
+		$hours   = (int) ( $total / HOUR_IN_SECONDS );
+		$minutes = (int) ( $total % HOUR_IN_SECONDS / MINUTE_IN_SECONDS );
+		$seconds = $total % MINUTE_IN_SECONDS;
 
 		$time = 'PT';
 
@@ -169,6 +165,9 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		}
 		if ( $minutes ) {
 			$time .= $minutes . 'M';
+		}
+		if ( $seconds ) {
+			$time .= $seconds . 'S';
 		}
 
 		return $time;

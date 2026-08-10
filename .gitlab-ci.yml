@@ -79,7 +79,7 @@ build:
     - mv composer.phar /usr/local/bin/composer
 
     # Install NPM and its dependencies
-    - curl -fsSL https://deb.nodesource.com/setup_17.x | bash -
+    - curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
     - apt-get update -y
     - apt-get install -y nodejs
     - npm install --ignore-scripts
@@ -87,7 +87,6 @@ build:
 
     # Build the plugin
     - export NODE_OPTIONS=--openssl-legacy-provider
-    - npm rebuild node-sass
     - npm run predeploy
 
     # Create the dist plugin folder for the deployment

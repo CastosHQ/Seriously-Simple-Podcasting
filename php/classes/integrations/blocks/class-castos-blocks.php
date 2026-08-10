@@ -116,7 +116,7 @@ class Castos_Blocks {
 				'isItunesEnabled' => $itunes_enabled,
 				// The editor fetches podcasts itself, so registration stays free of term queries.
 				// It needs the route to fetch them from; the labels arrive ready to display.
-				'seriesRestBase'  => $this->get_series_rest_base(),
+				'seriesRestRoute' => $this->get_series_rest_route(),
 			)
 		);
 
@@ -133,21 +133,20 @@ class Castos_Blocks {
 	}
 
 	/**
-	 * Resolves the REST route segment the editor uses to fetch podcasts.
+	 * Resolves the full REST route the editor uses to fetch podcasts.
 	 *
-	 * The series taxonomy name and its registration args are both filterable, so the base is read
-	 * back from the registered taxonomy rather than assumed.
+	 * The series taxonomy name and its registration args are both filterable, so the namespace and
+	 * base are read back from the registered taxonomy rather than assumed. Sending the whole route
+	 * keeps the editor from having to reassemble it.
 	 *
 	 * @return string
 	 */
-	protected function get_series_rest_base() {
-		$taxonomy = get_taxonomy( ssp_series_taxonomy() );
+	protected function get_series_rest_route() {
+		$taxonomy  = get_taxonomy( ssp_series_taxonomy() );
+		$namespace = $taxonomy && ! empty( $taxonomy->rest_namespace ) ? $taxonomy->rest_namespace : 'wp/v2';
+		$base      = $taxonomy && ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : ssp_series_taxonomy();
 
-		if ( $taxonomy && ! empty( $taxonomy->rest_base ) ) {
-			return $taxonomy->rest_base;
-		}
-
-		return ssp_series_taxonomy();
+		return sprintf( '/%s/%s', $namespace, $base );
 	}
 
 	/**

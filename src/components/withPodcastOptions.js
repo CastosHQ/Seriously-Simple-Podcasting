@@ -2,6 +2,34 @@ import {Component} from '@wordpress/element';
 import {fetchPodcastOptions, logRequestFailure} from '../utils/taxonomyOptions';
 
 /**
+ * Shared request, so every block on the page reuses one walk through the podcast list.
+ *
+ * A post can hold several Playlist Players, and each one would otherwise page through the whole
+ * taxonomy by itself.
+ *
+ * @type {Promise|null}
+ */
+let podcastOptionsRequest = null;
+
+/**
+ * Starts the shared request, or joins the one already running.
+ *
+ * A failed request is discarded rather than cached, so the next block to mount can try again.
+ *
+ * @return {Promise<Array>} Podcast options.
+ */
+const getPodcastOptions = () => {
+	if (!podcastOptionsRequest) {
+		podcastOptionsRequest = fetchPodcastOptions().catch((error) => {
+			podcastOptionsRequest = null;
+			throw error;
+		});
+	}
+
+	return podcastOptionsRequest;
+};
+
+/**
  * Supplies the podcast option list to a block edit component.
  *
  * Three blocks need the same list, and none of them can carry it as an attribute default without
@@ -29,7 +57,7 @@ const withPodcastOptions = (WrappedComponent) => class WithPodcastOptions extend
 	componentDidMount() {
 		this.isActive = true;
 
-		fetchPodcastOptions()
+		getPodcastOptions()
 			.then((availablePodcasts) => {
 				if (this.isActive) {
 					this.setState({availablePodcasts, isLoadingPodcasts: false});

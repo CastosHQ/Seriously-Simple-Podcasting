@@ -183,7 +183,7 @@ class BlockRegistrationQueryTest extends \Codeception\TestCase\WPTestCase {
 				'name'     => 'Default Show',
 			)
 		);
-		$other_id   = $this->factory()->term->create(
+		$this->factory()->term->create(
 			array(
 				'taxonomy' => ssp_series_taxonomy(),
 				'name'     => 'Other Show',
@@ -202,28 +202,74 @@ class BlockRegistrationQueryTest extends \Codeception\TestCase\WPTestCase {
 	/**
 	 * The editor fetches podcasts over REST, so it needs the route the taxonomy is exposed on.
 	 */
-	public function test_series_rest_base_matches_the_registered_taxonomy() {
-		$this->register_shared_assets();
+	public function test_series_rest_route_matches_the_registered_taxonomy() {
+		$this->seed_series( 2 );
 
-		$data      = wp_scripts()->get_data( 'ssp-block-script', 'data' );
-		$rest_base = get_taxonomy( ssp_series_taxonomy() )->rest_base;
+		$data = $this->localized_editor_data();
 
 		$this->assertIsString( $data, 'ssp-block-script should carry localized data.' );
-		$this->assertStringContainsString( '"seriesRestBase":"' . $rest_base . '"', $data );
+		$this->assertStringContainsString( '"seriesRestRoute":"' . $this->series_rest_route() . '"', $data );
 
-		// The route the editor builds from that base has to actually answer.
+		// The route the editor is handed has to actually answer.
 		$this->assertNotEmpty( $this->request_series() );
 	}
 
 	/**
-	 * Requests the podcast list the way the editor does.
+	 * A taxonomy filtered onto its own REST namespace must still be reachable.
+	 *
+	 * `rest_namespace` and `rest_base` both come from `ssp_register_taxonomy_args`, so neither can
+	 * be assumed — hard-coding `wp/v2` would send the editor to a 404.
+	 */
+	public function test_series_rest_route_honours_a_custom_namespace() {
+		$taxonomy = ssp_series_taxonomy();
+		$original = get_taxonomy( $taxonomy );
+
+		register_taxonomy(
+			$taxonomy,
+			ssp_post_types(),
+			array_merge(
+				get_object_vars( $original ),
+				array( 'rest_namespace' => 'ssp/v9' )
+			)
+		);
+
+		try {
+			$this->assertSame( '/ssp/v9/' . $original->rest_base, $this->series_rest_route() );
+			$this->assertStringContainsString( '"seriesRestRoute":"/ssp/v9/', $this->localized_editor_data() );
+		} finally {
+			register_taxonomy( $taxonomy, ssp_post_types(), get_object_vars( $original ) );
+		}
+	}
+
+	/**
+	 * The REST route the editor is told to use.
+	 *
+	 * @return string
+	 */
+	protected function series_rest_route() {
+		$taxonomy = get_taxonomy( ssp_series_taxonomy() );
+
+		return sprintf( '/%s/%s', $taxonomy->rest_namespace, $taxonomy->rest_base );
+	}
+
+	/**
+	 * Re-runs shared asset registration and returns the data handed to the editor bundle.
+	 *
+	 * @return string|false
+	 */
+	protected function localized_editor_data() {
+		$this->register_shared_assets();
+
+		return wp_scripts()->get_data( 'ssp-block-script', 'data' );
+	}
+
+	/**
+	 * Requests the podcast list the way the editor does — from the localized route, not a guess.
 	 *
 	 * @return array Response data.
 	 */
 	protected function request_series() {
-		$rest_base = get_taxonomy( ssp_series_taxonomy() )->rest_base;
-
-		$request = new \WP_REST_Request( 'GET', '/wp/v2/' . $rest_base );
+		$request = new \WP_REST_Request( 'GET', $this->series_rest_route() );
 		$request->set_param( 'per_page', 100 );
 		$request->set_param( '_fields', 'id,name' );
 

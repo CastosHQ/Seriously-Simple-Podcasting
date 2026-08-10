@@ -44,9 +44,10 @@ const allTagsOption = () => ({
 const sspAdmin = () => (typeof window !== 'undefined' && window.sspAdmin) || {};
 
 /**
- * The podcast taxonomy name is filterable, so its REST route is passed in rather than assumed.
+ * The podcast taxonomy's name, REST base and REST namespace are all filterable, so the whole
+ * route is passed in from PHP rather than reassembled here.
  */
-const seriesRoute = () => `/wp/v2/${sspAdmin().seriesRestBase || 'series'}`;
+const seriesRoute = () => sspAdmin().seriesRestRoute || '/wp/v2/series';
 
 /**
  * Term names arrive ready to display.
@@ -103,15 +104,9 @@ function fetchPodcastPage(page) {
  * @return {Promise<Array<{label: string, value: number}>>} Podcast options.
  */
 export function fetchPodcastOptions() {
-	const collect = (page, collected) => fetchPodcastPage(page).catch((error) => {
-		// A list ending exactly on a page boundary answers the next request with a 400 rather than
-		// an empty page, so past the first page that rejection means "no more podcasts".
-		if (page > 1) {
-			return [];
-		}
-
-		throw error;
-	}).then((terms) => {
+	// An out-of-range page is answered with an empty 200 by the terms controller, so the short-page
+	// check below ends pagination on its own and every rejection here is a genuine failure.
+	const collect = (page, collected) => fetchPodcastPage(page).then((terms) => {
 		const all = [...collected, ...terms];
 
 		// A short page is the last page; otherwise keep going until the ceiling.

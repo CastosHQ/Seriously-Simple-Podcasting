@@ -536,8 +536,8 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   font-size: 14px;
 }
 .ssp-admin .page-title-action:hover, .ssp-admin .page-title-action:active, .ssp-admin .page-title-action:focus {
-  background: rgb(147.4697674419, 81.3651162791, 239.1348837209);
-  border-color: rgb(147.4697674419, 81.3651162791, 239.1348837209);
+  background: rgb(57.8312813497%, 31.9078887369%, 93.7783857729%);
+  border-color: rgb(57.8312813497%, 31.9078887369%, 93.7783857729%);
   color: #FFFFFF;
   font-weight: bold;
 }
@@ -548,7 +548,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 }
 .ssp-admin a:hover,
 .ssp-admin .button-link:hover {
-  color: rgb(161.9395348837, 104.7302325581, 241.2697674419);
+  color: rgb(63.5056999544%, 41.0706794346%, 94.6155950752%);
 }
 .ssp-admin .wp-list-table th {
   color: #334155;
@@ -590,13 +590,13 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 .ssp-admin .button:hover, .ssp-admin .button:focus,
 .ssp-admin .button-secondary:hover,
 .ssp-admin .button-secondary:focus {
-  color: rgb(147.4697674419, 81.3651162791, 239.1348837209);
-  border-color: rgb(147.4697674419, 81.3651162791, 239.1348837209);
-  background: rgb(248.7581395349, 244.9209302326, 254.0790697674);
+  color: rgb(57.8312813497%, 31.9078887369%, 93.7783857729%);
+  border-color: rgb(57.8312813497%, 31.9078887369%, 93.7783857729%);
+  background: rgb(97.5522115823%, 96.0474236206%, 99.6388508892%);
 }
 .ssp-admin .button:focus,
 .ssp-admin .button-secondary:focus {
-  box-shadow: 0 0 0 1px rgb(161.9395348837, 104.7302325581, 241.2697674419);
+  box-shadow: 0 0 0 1px rgb(63.5056999544%, 41.0706794346%, 94.6155950752%);
 }
 .ssp-admin .button-secondary {
   font-weight: 500;
@@ -612,14 +612,14 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 .ssp-admin ul.striped > :nth-child(odd) .check-column input:hover + label,
 .ssp-admin .alternate .check-column label:hover,
 .ssp-admin .alternate .check-column input:hover + label {
-  background: rgb(233.86, 239.9, 245.94);
+  background: rgb(91.7098039216%, 94.0784313725%, 96.4470588235%);
 }
 .ssp-admin .widefat .check-column {
   width: 3em;
 }
 .ssp-admin .check-column label:hover,
 .ssp-admin .check-column input:hover + label {
-  background: rgb(244.57, 247.55, 250.53);
+  background: rgb(95.9098039216%, 97.0784313725%, 98.2470588235%);
   transition: 0.3s;
 }
 .ssp-admin .notice-info {
@@ -661,7 +661,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 }
 .ssp-admin select:focus {
   border-color: #853AED;
-  box-shadow: 0 0 0 1px rgb(161.9395348837, 104.7302325581, 241.2697674419);
+  box-shadow: 0 0 0 1px rgb(63.5056999544%, 41.0706794346%, 94.6155950752%);
   outline: 1px solid transparent;
 }
 .ssp-admin input,
@@ -711,7 +711,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 }
 .ssp-admin #ssp-settings-submit:hover {
   color: #FFFFFF;
-  background: rgb(121.0755102041, 51.6693877551, 218.8306122449);
+  background: rgb(47.4805922369%, 20.262505002%, 85.8159263705%);
 }
 .ssp-admin #ssp-settings-submit:focus {
   box-shadow: 0 0 0 1px #FFFFFF, 0 0 0 3px #853AED;
@@ -723,8 +723,8 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   border-radius: 6px;
 }
 .ssp-admin .trigger-sync:hover, .ssp-admin .trigger-sync:focus {
-  background: rgb(147.4697674419, 81.3651162791, 239.1348837209);
-  border-color: rgb(147.4697674419, 81.3651162791, 239.1348837209);
+  background: rgb(57.8312813497%, 31.9078887369%, 93.7783857729%);
+  border-color: rgb(57.8312813497%, 31.9078887369%, 93.7783857729%);
 }
 .ssp-admin .trigger-sync:focus {
   box-shadow: 0 0 0 1px #FFFFFF, 0 0 0 3px #853AED;
@@ -737,7 +737,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 }
 .ssp-admin .wp-color-result:hover {
   border-color: #ccc;
-  box-shadow: 0px 0px 6px -1px rgb(190.8790697674, 151.4604651163, 245.5395348837);
+  box-shadow: 0px 0px 6px -1px rgb(74.8545371637%, 59.3962608299%, 96.2900136799%);
 }
 .ssp-admin.post-type-podcast .button,
 .ssp-admin.post-type-podcast .button-secondary {
@@ -747,28 +747,28 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   color: #6C25D0;
 }
 .ssp-admin.post-type-podcast .components-button.is-tertiary:hover:not(:disabled), .ssp-admin.post-type-podcast .components-button.is-link:hover:not(:disabled) {
-  color: rgb(121.0755102041, 51.6693877551, 218.8306122449);
-  background-color: rgb(248.7581395349, 244.9209302326, 254.0790697674);
+  color: rgb(47.4805922369%, 20.262505002%, 85.8159263705%);
+  background-color: rgb(97.5522115823%, 96.0474236206%, 99.6388508892%);
 }
 .ssp-admin.post-type-podcast .components-button.is-primary {
   background-color: #853AED;
   transition: 0.3s;
 }
 .ssp-admin.post-type-podcast .components-button.is-primary:hover:not(:disabled) {
-  background-color: rgb(147.4697674419, 81.3651162791, 239.1348837209);
+  background-color: rgb(57.8312813497%, 31.9078887369%, 93.7783857729%);
 }
 .ssp-admin.post-type-podcast .components-button.is-primary[aria-disabled=true] {
-  background-color: rgb(161.9395348837, 104.7302325581, 241.2697674419);
+  background-color: rgb(63.5056999544%, 41.0706794346%, 94.6155950752%);
 }
 .ssp-admin.post-type-podcast .components-button.is-primary[aria-disabled=true]:hover {
-  background-color: rgb(161.9395348837, 104.7302325581, 241.2697674419);
+  background-color: rgb(63.5056999544%, 41.0706794346%, 94.6155950752%);
 }
 .ssp-admin.post-type-podcast .components-button[aria-expanded=true] {
   color: #6C25D0;
 }
 .ssp-admin.post-type-podcast .components-button.is-secondary:hover {
   color: #853AED;
-  background-color: rgb(248.7581395349, 244.9209302326, 254.0790697674);
+  background-color: rgb(97.5522115823%, 96.0474236206%, 99.6388508892%);
 }
 .ssp-admin.post-type-podcast .components-button.is-destructive {
   background: rgba(0, 0, 0, 0);
@@ -785,7 +785,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   background: #ffffff;
 }
 .ssp-admin.post-type-podcast .components-button.is-pressed:not(:disabled):focus {
-  box-shadow: 0 0 0 2px rgb(161.9395348837, 104.7302325581, 241.2697674419);
+  box-shadow: 0 0 0 2px rgb(63.5056999544%, 41.0706794346%, 94.6155950752%);
 }
 .ssp-admin.post-type-podcast .components-form-toggle.is-checked .ssp-admin.post-type-podcast .components-form-toggle__track {
   background-color: #853AED;
@@ -827,7 +827,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 .ssp-admin.post-type-podcast .block-editor-block-list__empty-block-inserter .block-editor-inserter__toggle.components-button.has-icon:hover:focus,
 .ssp-admin.post-type-podcast .block-editor-block-list__insertion-point-indicator:focus,
 .ssp-admin.post-type-podcast .block-editor-block-list__insertion-point-inserter:focus {
-  box-shadow: 0 0 0 2px rgb(161.9395348837, 104.7302325581, 241.2697674419);
+  box-shadow: 0 0 0 2px rgb(63.5056999544%, 41.0706794346%, 94.6155950752%);
 }
 .ssp-admin.post-type-podcast .upsell-field__btn, .ssp-admin.post-type-podcast .ssp-dynamo__btn {
   border-color: #853AED;
@@ -963,7 +963,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   }
 }
 .ssp-admin-header__logo-text a:hover {
-  color: rgb(219.8186046512, 198.1906976744, 249.8093023256);
+  color: rgb(86.203374373%, 77.7218422253%, 97.9644322845%);
 }
 .ssp-admin-header__logo-text a:after {
   content: url("../img/logo-arrow-up.svg");
@@ -1027,7 +1027,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 }
 .ssp-admin-header__info-buttons a:hover {
   color: #FFFFFF;
-  background: rgb(121.0755102041, 51.6693877551, 218.8306122449);
+  background: rgb(47.4805922369%, 20.262505002%, 85.8159263705%);
 }
 .ssp-admin-header a:focus {
   box-shadow: 0 0 0 2px #853AED;
@@ -1348,7 +1348,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   text-align: center;
 }
 .ssp-onboarding-step-4__start-trial a:hover {
-  background: rgb(230.8086124402, 121.1913875598, 121.9473684211);
+  background: rgb(90.5131813491%, 47.5260343372%, 47.82249742%);
   transition: 0.2s;
 }
 .ssp-onboarding-step-4__start-trial svg {
@@ -1360,7 +1360,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 .ssp-onboarding-step-4__accordion {
   height: 99px;
   background: #ccd6e2;
-  color: rgb(50.4261363636, 60.3693181818, 74.5738636364);
+  color: rgb(19.7749554367%, 23.6742424242%, 29.2446524064%);
   border-radius: 0 0 8px 8px;
   display: flex;
   justify-content: center;
@@ -1373,7 +1373,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   z-index: 1;
 }
 .ssp-onboarding-step-4__accordion:hover {
-  background: rgb(217.005, 224.455, 233.395);
+  background: rgb(85.1%, 88.0215686275%, 91.5274509804%);
   transition: 0.2s;
 }
 .ssp-onboarding-step-4__accordion span {
@@ -1933,7 +1933,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   align-self: stretch;
 }
 .ssp-post-publish__btn a:hover {
-  background: rgb(227.1, 230.2, 230.2);
+  background: rgb(89.0588235294%, 90.2745098039%, 90.2745098039%);
 }
 
 #ssp-episode-meta-sidebar\:ssp-episode-meta-sidebar .interface-complementary-area-header__title {
@@ -1949,7 +1949,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   padding: 16px;
   font-weight: 500;
   margin: 0;
-  background: rgb(248.14, 250.1, 252.06);
+  background: rgb(97.3098039216%, 98.0784313725%, 98.8470588235%);
   transition: 0.4s;
 }
 .ssp-episode-meta-sidebar .ssp-accordion:hover, .ssp-sidebar-panel .ssp-accordion:hover {
@@ -2138,7 +2138,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 .ssp-episode-meta-sidebar .ssp-promo-sidebar {
   margin-right: -16px;
   margin-left: -16px;
-  background: rgb(248.7581395349, 244.9209302326, 254.0790697674);
+  background: rgb(97.5522115823%, 96.0474236206%, 99.6388508892%);
   padding: 16px;
   margin-bottom: -24px;
 }
@@ -2154,7 +2154,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   width: 40px;
   min-width: 40px;
   height: 40px;
-  background: rgb(219.8186046512, 198.1906976744, 249.8093023256);
+  background: rgb(86.203374373%, 77.7218422253%, 97.9644322845%);
   border-radius: 4px;
 }
 .ssp-episode-meta-sidebar .ssp-promo-sidebar__bell img {
@@ -2173,7 +2173,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   color: #6C25D0;
 }
 .ssp-episode-meta-sidebar .ssp-promo-sidebar__btn:hover {
-  background: rgb(248.7581395349, 244.9209302326, 254.0790697674);
+  background: rgb(97.5522115823%, 96.0474236206%, 99.6388508892%);
   box-shadow: 1px 1px 8px 0 rgba(0, 0, 20, 0.3);
 }
 .ssp-episode-meta-sidebar .ssp-promo-sidebar__btn img {

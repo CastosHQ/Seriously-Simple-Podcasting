@@ -4,7 +4,7 @@ on:
   pull_request:
     branches:
       - develop
-      - master
+      - main
 
 permissions:
   contents: read
@@ -47,7 +47,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Prepare testing environment
         run: |
@@ -71,7 +71,6 @@ jobs:
           cd wp-content/plugins/seriously-simple-podcasting
           npm install -g grunt-cli
           npm install
-          npm rebuild node-sass
           grunt uglify && grunt cssmin && npm run build
 
       - name: Run Unit tests

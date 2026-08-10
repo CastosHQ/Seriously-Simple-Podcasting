@@ -44,10 +44,6 @@ class Ssp_Podcasts_Block {
 						'items'   => array( 'type' => 'string' ),
 						'default' => array( '-1' ),
 					),
-					'availablePodcasts'   => array(
-						'type'    => 'array',
-						'default' => $this->get_podcast_settings(),
-					),
 					'columns'             => array(
 						'type'    => 'number',
 						'default' => 1,
@@ -266,36 +262,5 @@ class Ssp_Podcasts_Block {
 		}
 
 		return implode( ',', $ids_array );
-	}
-
-	/**
-	 * Gets podcast settings for block attributes (availablePodcasts list).
-	 *
-	 * @return array
-	 */
-	protected function get_podcast_settings() {
-		$default_series_id = ssp_get_default_series_id();
-
-		return array_merge(
-			array(
-				array(
-					'label' => __( '-- All --', 'seriously-simple-podcasting' ),
-					'value' => - 1,
-				),
-			),
-			array_map(
-				function ( $item ) use ( $default_series_id ) {
-					$label = $default_series_id === $item->term_id ?
-						ssp_get_default_series_name( $item->name ) :
-						$item->name;
-
-					return array(
-						'label' => $label,
-						'value' => $item->term_id,
-					);
-				},
-				ssp_get_podcasts()
-			)
-		);
 	}
 }

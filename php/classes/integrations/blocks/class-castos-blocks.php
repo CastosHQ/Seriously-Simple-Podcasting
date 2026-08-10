@@ -114,8 +114,15 @@ class Castos_Blocks {
 				'sspPostTypes'    => ssp_post_types( true, false ),
 				'isCastosUser'    => ssp_is_connected_to_castos(),
 				'isItunesEnabled' => $itunes_enabled,
+				// The editor fetches podcasts itself, so registration stays free of term queries.
+				// It needs the route to fetch them from; the labels arrive ready to display.
+				'seriesRestBase'  => $this->get_series_rest_base(),
 			)
 		);
+
+		// The editor builds the podcast and tag option labels itself now, so its strings need
+		// translations on the JS side too.
+		wp_set_script_translations( 'ssp-block-script', 'seriously-simple-podcasting' );
 
 		wp_register_style(
 			'ssp-block-style',
@@ -123,6 +130,24 @@ class Castos_Blocks {
 			array(),
 			$this->asset_file['version']
 		);
+	}
+
+	/**
+	 * Resolves the REST route segment the editor uses to fetch podcasts.
+	 *
+	 * The series taxonomy name and its registration args are both filterable, so the base is read
+	 * back from the registered taxonomy rather than assumed.
+	 *
+	 * @return string
+	 */
+	protected function get_series_rest_base() {
+		$taxonomy = get_taxonomy( ssp_series_taxonomy() );
+
+		if ( $taxonomy && ! empty( $taxonomy->rest_base ) ) {
+			return $taxonomy->rest_base;
+		}
+
+		return ssp_series_taxonomy();
 	}
 
 	/**

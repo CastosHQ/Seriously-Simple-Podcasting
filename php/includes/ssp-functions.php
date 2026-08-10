@@ -1763,7 +1763,12 @@ if ( ! function_exists( 'ssp_get_tags' ) ) {
 	/**
 	 * Gets array of tags.
 	 *
-	 * @param bool $hide_empty
+	 * @deprecated 3.17.0 Loads every tag on the site in one query, which hosting environments
+	 *                    terminate once a site has thousands of them. Fetch tags on demand from
+	 *                    the REST API instead — the block editor uses `/wp/v2/tags` with a search
+	 *                    term and a bounded `per_page`.
+	 *
+	 * @param bool $hide_empty Whether to exclude tags with no assigned posts.
 	 *
 	 * @return WP_Term[]
 	 */

@@ -176,4 +176,123 @@ class YoastPodcastEpisodeSchemaTest extends \Codeception\TestCase\WPTestCase {
 			'zero hours'          => array( '0:00:00' ),
 		);
 	}
+
+	/**
+	 * An episode with no media attached contributes nothing to the graph.
+	 */
+	public function testEpisodeWithoutEnclosureGeneratesNothing() {
+		$episode_id = $this->factory()->post->create( array(
+			'post_status' => 'publish',
+			'post_type'   => SSP_CPT_PODCAST,
+		) );
+
+		$this->assertSame( array(), $this->generateSchema( $episode_id ) );
+	}
+
+	/**
+	 * Identity and metadata keys are wired from the Yoast context and the post.
+	 */
+	public function testSchemaCarriesEpisodeIdentityAndMetadata() {
+		$episode_id = $this->createEpisode( '13:38' );
+		wp_update_post( array(
+			'ID'           => $episode_id,
+			'post_date'    => '2026-03-04 09:15:00',
+			'post_excerpt' => 'An episode about testing.',
+		) );
+
+		$schema    = $this->generateSchema( $episode_id );
+		$permalink = get_permalink( $episode_id );
+
+		$this->assertSame( 'PodcastEpisode', $schema['@type'] );
+		$this->assertSame( $permalink . '#/schema/podcast', $schema['@id'] );
+		$this->assertSame( $permalink, $schema['url'] );
+		$this->assertSame( get_the_title( $episode_id ), $schema['name'] );
+		$this->assertSame( '2026-03-04', $schema['datePublished'] );
+		$this->assertSame( 'An episode about testing.', $schema['description'] );
+	}
+
+	/**
+	 * The enclosure is exposed under the graph key matching the episode's media type.
+	 *
+	 * @dataProvider episodeTypeProvider
+	 */
+	public function testEnclosureIsExposedUnderTheKeyMatchingItsType( $episode_type, $expected_key, $expected_type ) {
+		$episode_id = $this->createEpisode( '13:38' );
+		update_post_meta( $episode_id, 'filesize', '12 MB' );
+		update_post_meta( $episode_id, 'episode_type', $episode_type );
+
+		$schema = $this->generateSchema( $episode_id );
+
+		$this->assertArrayHasKey( $expected_key, $schema );
+		$this->assertSame( $expected_type, $schema[ $expected_key ]['@type'] );
+		$this->assertSame( self::ENCLOSURE, $schema[ $expected_key ]['contentUrl'] );
+		$this->assertSame( '12 MB', $schema[ $expected_key ]['contentSize'] );
+	}
+
+	public function episodeTypeProvider() {
+		return array(
+			'audio'             => array( 'audio', 'audio', 'AudioObject' ),
+			'video'             => array( 'video', 'video', 'VideoObject' ),
+			'unrecognised type' => array( 'something-else', 'associatedMedia', 'MediaObject' ),
+			'no type recorded'  => array( '', 'audio', 'AudioObject' ),
+		);
+	}
+
+	/**
+	 * An episode belonging to no series emits no partOfSeries key.
+	 */
+	public function testPartOfSeriesIsAbsentWhenTheEpisodeHasNoSeries() {
+		$episode_id = $this->createEpisode( '13:38' );
+		wp_set_object_terms( $episode_id, array(), ssp_series_taxonomy() );
+
+		$schema = $this->generateSchema( $episode_id );
+
+		$this->assertArrayNotHasKey( 'partOfSeries', $schema );
+	}
+
+	/**
+	 * Each series the episode belongs to becomes a PodcastSeries node.
+	 */
+	public function testPartOfSeriesCarriesEachAssignedSeries() {
+		$episode_id = $this->createEpisode( '13:38' );
+		$term_id    = $this->factory()->term->create( array(
+			'taxonomy' => ssp_series_taxonomy(),
+			'name'     => 'Season One',
+		) );
+		wp_set_object_terms( $episode_id, array( $term_id ), ssp_series_taxonomy() );
+
+		$schema = $this->generateSchema( $episode_id );
+		$url    = get_term_link( $term_id, ssp_series_taxonomy() );
+
+		$series = null;
+		foreach ( $schema['partOfSeries'] as $node ) {
+			if ( 'Season One' === $node['name'] ) {
+				$series = $node;
+			}
+		}
+
+		$this->assertNotNull( $series, 'The assigned series is missing from partOfSeries.' );
+		$this->assertSame( 'PodcastSeries', $series['@type'] );
+		$this->assertSame( $url, $series['url'] );
+		$this->assertSame( $url . '#/schema/podcastSeries', $series['id'] );
+	}
+
+	/**
+	 * A series whose permalink cannot be resolved is skipped rather than emitted broken.
+	 */
+	public function testSeriesWithAnUnresolvableLinkIsSkipped() {
+		$episode_id = $this->createEpisode( '13:38' );
+
+		// A term ID that resolves to nothing makes get_term_link() return WP_Error.
+		$inject_missing_term = function () {
+			return array( 999999999 );
+		};
+		add_filter( 'wp_get_object_terms', $inject_missing_term );
+
+		$schema = $this->generateSchema( $episode_id );
+
+		remove_filter( 'wp_get_object_terms', $inject_missing_term );
+
+		$this->assertArrayNotHasKey( 'partOfSeries', $schema );
+	}
 }

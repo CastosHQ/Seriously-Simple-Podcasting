@@ -12,9 +12,11 @@ import {
 	CheckboxControl,
 	Dropdown,
 	Button,
+	Spinner,
 	TextControl
 } from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
+import withPodcastOptions from './withPodcastOptions';
 
 // Reusable color picker field
 const ColorField = ({ id, label, value, onChange }) => (
@@ -27,7 +29,7 @@ const ColorField = ({ id, label, value, onChange }) => (
 );
 
 // Podcasts multi-select dropdown
-const PodcastsSelector = ({ availablePodcasts, ids, setAttributes }) => {
+const PodcastsSelector = ({ availablePodcasts, isLoadingPodcasts, ids, setAttributes }) => {
 	const list = Array.isArray(availablePodcasts) ? availablePodcasts : [];
 	const allOpt = list.find((o) => String(o.value) === '-1' || String(o.value) === '') || { value: -1 };
 	const allVal = String(allOpt.value);
@@ -66,6 +68,7 @@ const PodcastsSelector = ({ availablePodcasts, ids, setAttributes }) => {
 			)}
 			renderContent={() => (
 				<div style={{ padding: '8px 12px', maxHeight: '260px', overflow: 'auto', minWidth: '240px' }}>
+					{isLoadingPodcasts && <Spinner />}
 					{list.map((opt) => {
 						const idValue = String(opt.value);
 						const isChecked = Array.isArray(ids) && ids.includes(idValue);
@@ -88,6 +91,7 @@ const PodcastsSelector = ({ availablePodcasts, ids, setAttributes }) => {
 const ContentPanel = ({
     ids,
     availablePodcasts,
+    isLoadingPodcasts,
     sort_by,
     sort,
     columns,
@@ -135,7 +139,7 @@ const ContentPanel = ({
                 </label>
             </PanelRow>
 
-            <PodcastsSelector availablePodcasts={availablePodcasts} ids={ids} setAttributes={setAttributes} />
+            <PodcastsSelector availablePodcasts={availablePodcasts} isLoadingPodcasts={isLoadingPodcasts} ids={ids} setAttributes={setAttributes} />
 
             <PanelRow>
                 <label htmlFor="ssp-podcasts-sort-by">
@@ -447,28 +451,33 @@ class EditSSPPodcasts extends Component {
 		super(...arguments);
 		this.state = {
 			className,
-			availablePodcasts: [],
 			dragIndex: null,
 			dragOverIndex: null,
 		};
 	}
 
-	componentDidMount() {
-		// Get available podcasts from the localized script data
-		if (window.sspAdmin && window.sspAdmin.sspPostTypes) {
-			// For now, we'll use a simple approach - in a real implementation,
-			// we might want to fetch this via REST API
-			this.setState({
-				availablePodcasts: [
-					{ label: __('-- All --', 'seriously-simple-podcasting'), value: '' }
-				]
-			});
+	componentDidUpdate(prevProps) {
+		if (prevProps.availablePodcasts !== this.props.availablePodcasts) {
+			this.maybeSelectAllPodcasts();
+		}
+	}
+
+	/**
+	 * Selects every podcast on a block that has not been configured yet.
+	 *
+	 * The list arrives asynchronously, so this runs when the fetch resolves rather than on mount.
+	 * An empty list means the request failed or returned nothing — selecting from it would wipe a
+	 * selection rather than seed one, so it is left alone.
+	 */
+	maybeSelectAllPodcasts() {
+		const { attributes, setAttributes, availablePodcasts } = this.props;
+
+		const available = Array.isArray(availablePodcasts) ? availablePodcasts : [];
+
+		if (available.length === 0) {
+			return;
 		}
 
-		// Ensure default selection includes "-- All --" and every podcast on insert
-		const { attributes, setAttributes } = this.props;
-
-		const available = Array.isArray(attributes.availablePodcasts) ? attributes.availablePodcasts : [];
 		const idsSelected = Array.isArray(attributes.ids) ? attributes.ids : [];
 
 		// Detect the special “All” option and normalize its value as a string
@@ -488,28 +497,12 @@ class EditSSPPodcasts extends Component {
 		}
 	}
 
-	componentDidUpdate(prevProps) {
-		const prevAP = prevProps.attributes && Array.isArray(prevProps.attributes.availablePodcasts) ? prevProps.attributes.availablePodcasts : [];
-		const currAP = this.props.attributes && Array.isArray(this.props.attributes.availablePodcasts) ? this.props.attributes.availablePodcasts : [];
-		if (prevAP !== currAP) {
-			const { attributes, setAttributes } = this.props;
-		const allOpt = currAP.find((o) => String(o.value) === '-1' || String(o.value) === '') || { value: -1 };
-			const allVal = String(allOpt.value);
-			if (!Array.isArray(attributes.ids) || attributes.ids.length === 0 || 
-				(attributes.ids.length === 1 && (attributes.ids[0] === '-1' || attributes.ids[0] === '')) ) {
-				const realIds = currAP.filter((o) => String(o.value) !== allVal).map((o) => String(o.value));
-				setAttributes({ ids: [ allVal, ...realIds ] });
-			}
-		}
-	}
-
 	render() {
 		const {className} = this.state;
-		const {attributes, setAttributes} = this.props;
+		const {attributes, setAttributes, availablePodcasts, isLoadingPodcasts} = this.props;
 
 		const {
 			ids,
-			availablePodcasts,
 			columns,
 			sort_by,
 			sort,
@@ -530,31 +523,6 @@ class EditSSPPodcasts extends Component {
 			episode_count_color,
 			description_color,
 		} = attributes;
-
-		// Sort options
-		const sortByOptions = [
-			{ label: __('ID', 'seriously-simple-podcasting'), value: 'id' },
-			{ label: __('Name', 'seriously-simple-podcasting'), value: 'name' },
-			{ label: __('Episode Count', 'seriously-simple-podcasting'), value: 'episode_count' },
-			{ label: __('Manual order', 'seriously-simple-podcasting'), value: 'manual' },
-		];
-
-		const sortOptions = [
-			{ label: __('Ascending', 'seriously-simple-podcasting'), value: 'asc' },
-			{ label: __('Descending', 'seriously-simple-podcasting'), value: 'desc' },
-		];
-
-		const clickableOptions = [
-			{ label: __('Button', 'seriously-simple-podcasting'), value: 'button' },
-			{ label: __('Card', 'seriously-simple-podcasting'), value: 'card' },
-			{ label: __('Title', 'seriously-simple-podcasting'), value: 'title' },
-		];
-
-		const getLabelById = (id) => {
-			const list = Array.isArray(availablePodcasts) ? availablePodcasts : [];
-			const found = list.find((o) => String(o.value) === String(id));
-			return found ? found.label : String(id);
-		};
 
 		const onDragStartItem = (index) => {
 			this.setState({ dragIndex: index, dragOverIndex: null });
@@ -580,17 +548,13 @@ class EditSSPPodcasts extends Component {
 			setAttributes({ ids: current });
 		};
 
-		// Detect the "All" option value from availablePodcasts by value (-1 or empty)
-		const apList = Array.isArray(availablePodcasts) ? availablePodcasts : [];
-		const allOptGlobal = apList.find((o) => String(o.value) === '-1' || String(o.value) === '') || { value: -1 };
-		const allValGlobal = String(allOptGlobal.value);
-
 		const controls = (
 			<InspectorControls key="inspector-controls">
 				<div className="ssp-controls ssp-edit-ssp-podcasts">
 					<ContentPanel
 						ids={ids}
 						availablePodcasts={availablePodcasts}
+						isLoadingPodcasts={isLoadingPodcasts}
 						sort_by={sort_by}
 						sort={sort}
 						columns={columns}
@@ -644,4 +608,4 @@ class EditSSPPodcasts extends Component {
 	}
 }
 
-export default EditSSPPodcasts;
+export default withPodcastOptions(EditSSPPodcasts);

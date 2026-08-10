@@ -2,8 +2,6 @@
 
 namespace SeriouslySimplePodcasting\Integrations\Blocks;
 
-use SeriouslySimplePodcasting\Entities\Available_Podcasts_Attribute;
-use SeriouslySimplePodcasting\Entities\Available_Tags_Attribute;
 use SeriouslySimplePodcasting\ShortCodes\Podcast_Playlist;
 
 /**
@@ -24,33 +22,25 @@ class Playlist_Player_Block {
 			'seriously-simple-podcasting/playlist-player',
 			array(
 				'attributes'      => array(
-					'availablePodcasts' => array(
-						'type'    => 'array',
-						'default' => new Available_Podcasts_Attribute(),
-					),
-					'selectedPodcast'   => array(
+					'selectedPodcast' => array(
 						'type'    => 'string',
 						'default' => '-1',
 					),
-					'availableTags'     => array(
-						'type'    => 'array',
-						'default' => new Available_Tags_Attribute(),
-					),
-					'selectedTag'       => array(
+					'selectedTag'     => array(
 						'type'    => 'string',
 						'default' => '',
 					),
 					// Use string everywhere instead of number because of the WP bug.
 					// It doesn't show the saved value in the admin after page refresh.
-					'limit'             => array(
+					'limit'           => array(
 						'type'    => 'string',
 						'default' => -1,
 					),
-					'orderBy'           => array(
+					'orderBy'         => array(
 						'type'    => 'string',
 						'default' => 'date',
 					),
-					'order'             => array(
+					'order'           => array(
 						'type'    => 'string',
 						'default' => 'desc',
 					),

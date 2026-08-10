@@ -146,7 +146,6 @@ class SSPPodcastsBlockTest extends \Codeception\TestCase\WPTestCase
         // Test that all required attributes are defined
         $expected_attributes = [
             'ids',
-            'availablePodcasts',
             'columns',
             'sort_by',
             'sort',
@@ -171,8 +170,8 @@ class SSPPodcastsBlockTest extends \Codeception\TestCase\WPTestCase
             $this->assertArrayHasKey($attribute, $block->attributes, "Attribute '{$attribute}' should be defined");
         }
 
-        // availablePodcasts should default to an array of options
-        $this->assertIsArray($block->attributes['availablePodcasts']['default']);
+        // Podcast options are fetched from the REST API by the editor, never embedded here
+        $this->assertArrayNotHasKey('availablePodcasts', $block->attributes);
 
         // Test default values match shortcode defaults
         $this->assertEquals(['-1'], $block->attributes['ids']['default']);

@@ -3,6 +3,7 @@ import {Component} from '@wordpress/element';
 import {InspectorControls, PanelColorSettings} from '@wordpress/block-editor';
 import {PanelBody, PanelRow, FormToggle, SelectControl, TextControl, __experimentalNumberControl as NumberControl, Tooltip} from '@wordpress/components';
 import ServerSideRender from '@wordpress/server-side-render';
+import withPodcastOptions from './withPodcastOptions';
 
 class EditEpisodeList extends Component {
 	constructor({className}) {
@@ -16,7 +17,7 @@ class EditEpisodeList extends Component {
 	render() {
 		const {className} = this.state;
 
-		const {attributes, setAttributes} = this.props;
+		const {attributes, setAttributes, availablePodcasts, isLoadingPodcasts} = this.props;
 
 		const {
 			showTitle,
@@ -25,7 +26,6 @@ class EditEpisodeList extends Component {
 			excerpt,
 			player,
 			playerBelowExcerpt,
-			availablePodcasts,
 			postsPerPage,
 			availableImageSizes,
 			orderBy,
@@ -53,6 +53,10 @@ class EditEpisodeList extends Component {
 
 		// In version 3.0.0 default 0 was changed to the real Podcast(Series) term
 		selectedPodcast = '0' === selectedPodcast ? defaultPodcastId : selectedPodcast;
+
+		const podcastOptions = isLoadingPodcasts
+			? [{label: __('Loading…', 'seriously-simple-podcasting'), value: selectedPodcast}]
+			: availablePodcasts;
 
 		const isCards = layout === 'cards';
 
@@ -158,7 +162,7 @@ class EditEpisodeList extends Component {
 							<SelectControl
 								id="ssp-podcast-list-podcast"
 								value={selectedPodcast}
-								options={availablePodcasts}
+								options={podcastOptions}
 								onChange={(selectedPodcast) => {
 									setAttributes({
 										selectedPodcast: selectedPodcast
@@ -421,4 +425,4 @@ class EditEpisodeList extends Component {
 	}
 }
 
-export default EditEpisodeList;
+export default withPodcastOptions(EditEpisodeList);

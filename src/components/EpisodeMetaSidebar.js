@@ -1,4 +1,5 @@
 import { __ } from '@wordpress/i18n';
+import apiFetch from '@wordpress/api-fetch';
 import { PluginSidebar } from '@wordpress/editor'; // Ensure you're using edit-post for PluginSidebar
 import { useSelect, useDispatch } from '@wordpress/data';
 import {
@@ -8,7 +9,7 @@ import {
 	CheckboxControl,
 	SelectControl,
 } from '@wordpress/components';
-import { useState, useEffect } from '@wordpress/element';
+import { useState, useEffect, useRef } from '@wordpress/element';
 import SSPIcon from '../img/ssp-icon.svg';
 import classnames from 'classnames';
 import ImageUploader from './Sidebar/ImageUploader';
@@ -41,31 +42,23 @@ const formatBytes = ( size, precision = 2 ) => {
 };
 
 /**
- * Normalize duration string to SSP format (H:i:s with hours always included).
- * WordPress Media Library may provide "0:28" (no hours), but SSP uses "00:00:28" format.
- * If duration already has 3 parts, it's already in the correct format.
+ * Fetch SSP's duration calculation for a Media Library attachment.
  *
- * @param {string} duration Duration string (e.g., "0:28" or "00:42:17")
- * @return {string} Normalized duration in H:i:s format (e.g., "00:00:28")
+ * The attachment's own fileLength is WordPress's getID3 reading, which is half the real
+ * length for some mono MP3s. Resolves to an empty string when the file has no readable
+ * duration or the request fails — the save path recalculates whenever duration is empty.
+ *
+ * @param {number} attachmentId Media Library attachment ID.
+ * @return {Promise<string>} Duration string, empty when unavailable.
  */
-const normalizeDurationToSspFormat = ( duration ) => {
-	if ( ! duration || typeof duration !== 'string' ) {
-		return '';
-	}
+const fetchAttachmentDuration = ( attachmentId ) => {
+	return apiFetch( { path: `/ssp/v1/file-duration?attachment_id=${ attachmentId }` } )
+		.then( ( response ) => response?.duration || '' )
+		.catch( ( error ) => {
+			window.console.warn( 'SSP: could not calculate the episode duration.', error );
 
-	// Parse the duration string
-	const parts = duration.split(':');
-
-	if ( parts.length !== 2 ) {
-		// This is either H:MM:SS or unknown format - return as-is
-		return duration;
-	}
-	
-	// Format: "M:SS" - add hours as "00" to match SSP format
-	const minutes = parseInt( parts[0], 10 );
-	const seconds = parseInt( parts[1], 10 );
-	const pad = ( num ) => num.toString().padStart(2, '0');
-	return `00:${pad(minutes)}:${pad(seconds)}`;
+			return '';
+		} );
 };
 
 const EpisodeMetaSidebar = () => {
@@ -134,6 +127,10 @@ const EpisodeMetaSidebar = () => {
 	const [itunesTitle, setItunesTitle] = useState(itunesTitleMeta);
 	const [itunesSeasonNumber, setItunesSeasonNumber] = useState(itunesSeasonNumberMeta);
 	const [itunesEpisodeType, setItunesEpisodeType] = useState(itunesEpisodeTypeMeta);
+
+	// Attachment the duration field is waiting on, so a slow response for a previously
+	// selected file cannot overwrite a newer one.
+	const pendingDurationId = useRef( 0 );
 
 	// Manage sync status
 	const [syncStatus, setSyncStatus] = useState(syncStatusAttr);
@@ -213,14 +210,18 @@ const EpisodeMetaSidebar = () => {
 			handleFieldChange('filesize', formattedSize || media.filesizeHumanReadable, true);
 		}
 
-		// Extract duration from Media Library metadata if available
-		// WordPress provides fileLength at top level for audio/video files
-		// Media Library format may be "0:28" or "00:42:17", but SSP uses "00:00:28" (always with hours)
-		if ( media?.fileLength ) {
-			const normalizedDuration = normalizeDurationToSspFormat( media.fileLength );
-			if ( normalizedDuration ) {
-				handleFieldChange('duration', normalizedDuration, true);
-			}
+		// Duration comes from SSP rather than the Media Library metadata — clear it first
+		// so a stale value is never left showing while the request is in flight.
+		if ( media?.id ) {
+			handleFieldChange('duration', '', true);
+			pendingDurationId.current = media.id;
+
+			fetchAttachmentDuration( media.id ).then( ( duration ) => {
+				// A newer selection may have overtaken this request.
+				if ( duration && pendingDurationId.current === media.id ) {
+					handleFieldChange('duration', duration, true);
+				}
+			} );
 		}
 
 		// If the file has a date, always update Date Recorded to that date; otherwise fall back to today.

@@ -25,34 +25,45 @@ jQuery(document).ready(function($) {
 		return formattedSize;
 	}
 
+	// Attachment the duration field is currently waiting on, so a slow response for a
+	// previously selected file cannot overwrite a newer one.
+	var pendingDurationAttachmentId = 0;
+
 	/**
-	 * Normalize duration string to SSP format (H:i:s with hours always included).
-	 * WordPress Media Library may provide "0:28" (no hours), but SSP uses "00:00:28" format.
-	 * If duration already has 3 parts, it's already in the correct format.
+	 * Fill the duration field with SSP's calculation for an attachment.
 	 *
-	 * @param {string} duration Duration string (e.g., "0:28" or "00:42:17")
-	 * @return {string} Normalized duration in H:i:s format (e.g., "00:00:28")
+	 * The attachment's own fileLength is WordPress's getID3 reading, which is half the
+	 * real length for some mono MP3s. The field is cleared first and left empty if the
+	 * request fails — the save path recalculates whenever the duration is empty.
+	 *
+	 * @param {number} attachmentId Media Library attachment ID.
 	 */
-	function normalizeDurationToSspFormat( duration ) {
-		if ( ! duration || typeof duration !== 'string' ) {
-			return '';
+	function populateDurationFromAttachment( attachmentId ) {
+		var $duration = $( '#duration' );
+
+		$duration.val( '' ).trigger( 'change' );
+
+		if ( ! wp.apiFetch ) {
+			window.console.warn( 'SSP: wp.apiFetch is unavailable, duration was not calculated.' );
+			return;
 		}
 
-		// Parse the duration string
-		var parts = duration.split(':');
+		pendingDurationAttachmentId = attachmentId;
 
-		if ( parts.length !== 2 ) {
-			// This is either H:MM:SS or unknown format - return as-is
-			return duration;
-		}
+		wp.apiFetch( {
+			path: '/ssp/v1/file-duration?attachment_id=' + attachmentId
+		} ).then( function( response ) {
+			if ( attachmentId !== pendingDurationAttachmentId ) {
+				return;
+			}
 
-		// Format: "M:SS" - add hours as "00" to match SSP format
-		var minutes = parseInt( parts[0], 10 );
-		var seconds = parseInt( parts[1], 10 );
-		var pad = function( num ) {
-			return num.toString().padStart( 2, '0' );
-		};
-		return '00:' + pad( minutes ) + ':' + pad( seconds );
+			if ( response && response.duration ) {
+				$duration.val( response.duration ).trigger( 'change' );
+			}
+		} ).catch( function( error ) {
+			// The field stays empty; on self-hosted sites the save path fills it in.
+			window.console.warn( 'SSP: could not calculate the episode duration.', error );
+		} );
 	}
 
 	/**
@@ -71,11 +82,8 @@ jQuery(document).ready(function($) {
 		}
 
 		// Duration
-		if ( attachment.fileLength ) {
-			var normalizedDuration = normalizeDurationToSspFormat( attachment.fileLength );
-			if ( normalizedDuration ) {
-				$( '#duration' ).val( normalizedDuration ).trigger( 'change' );
-			}
+		if ( attachment.id ) {
+			populateDurationFromAttachment( attachment.id );
 		}
 
 		// Date recorded

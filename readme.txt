@@ -167,11 +167,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 3.17.0-alpha =
 2026-08-10
-[UPDATE] The playlist player's tag selector is now a searchable dropdown that loads matching tags as you type
 [FIX] Podcast feeds no longer fail to generate on shows with a large number of episodes
-[FIX] Editor, site editor and widgets screens no longer slow down or fail to load on sites with a large number of tags
+[FIX] Removed tag and podcast lookups that ran on every page load and could break the editor on sites with many tags
 [FIX] Corrected episode duration for mono MP3 files, which could be published at half their real length
-[FIX] Episode duration is now included in the Yoast SEO podcast schema and reported to the second
+[FIX] Fixed episode duration in the Yoast SEO podcast schema, which was missing for most episodes and rounded to the nearest minute
 
 = 3.16.3 =
 2026-07-13

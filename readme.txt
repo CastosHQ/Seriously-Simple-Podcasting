@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 7.0
 Requires PHP: 7.4
-Stable tag: 3.17.0-alpha
+Stable tag: 3.17.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,8 +165,8 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 3.17.0-alpha =
-2026-08-10
+= 3.17.0 =
+2026-08-12
 [FIX] Podcast feeds no longer fail to generate on shows with a large number of episodes
 [FIX] Removed tag and podcast lookups that ran on every page load and could break the editor on sites with many tags
 [FIX] Corrected episode duration for mono MP3 files, which could be published at half their real length

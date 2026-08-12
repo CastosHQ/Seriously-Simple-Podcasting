@@ -62,11 +62,15 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 		}
 
 		$series_parts = array();
-		$series       = wp_get_post_terms( $this->context->post->ID, ssp_series_taxonomy() );
+
+		/**
+		 * Series terms attached to this episode.
+		 *
+		 * @var \WP_Term[] $series
+		 */
+		$series = wp_get_post_terms( $this->context->post->ID, ssp_series_taxonomy() );
 
 		foreach ( $series as $term ) {
-			/** @var \WP_Term $term */
-
 			$url = get_term_link( $term );
 
 			if ( is_wp_error( $url ) ) {
@@ -89,7 +93,7 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 			'@id'           => $this->context->canonical . '#/schema/podcast',
 			'url'           => $this->context->canonical,
 			'name'          => $this->context->title,
-			'datePublished' => date( 'Y-m-d', strtotime( $this->context->post->post_date ) ),
+			'datePublished' => gmdate( 'Y-m-d', strtotime( $this->context->post->post_date ) ),
 		);
 
 		if ( $description ) {
@@ -112,8 +116,8 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	/**
 	 * Gets a ISO 8601 duration compliant duration string.
 	 *
-	 * @param int    $episode_id
-	 * @param string $enclosure
+	 * @param int    $episode_id ID of the episode whose duration meta is read.
+	 * @param string $enclosure  Episode media URL, used to calculate the duration when no meta is stored.
 	 *
 	 * @return string
 	 */
@@ -126,29 +130,44 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 			}
 		}
 
-		preg_match( '/(\d\d:\d\d:\d\d)/', $duration, $matches );
+		$duration = trim( (string) $duration );
 
-		if ( empty( $matches ) ) {
+		// SSP stores durations unpadded (`0:27`, `1:13:38`), while hand-entered and
+		// Castos-synced values may be zero-padded — accept both, in either arity.
+		if ( ! preg_match( '/^\d+:\d{1,2}(:\d{1,2})?$/', $duration ) ) {
 			return '';
 		}
 
-		$time_parts = explode( ':', $duration );
+		$time_parts = array_map( 'intval', explode( ':', $duration ) );
 
-		$hours   = intval( $time_parts[0] );
-		$minutes = intval( $time_parts[1] );
-		$seconds = intval( $time_parts[2] );
-
-		if ( ( ! $minutes && $seconds ) || $seconds > 30 ) {
-			++$minutes;
+		if ( 2 === count( $time_parts ) ) {
+			array_unshift( $time_parts, 0 );
 		}
 
-		$time = 'P';
+		list( $hours, $minutes, $seconds ) = $time_parts;
+
+		// Rebuild from the elapsed total so components carry — a stored `0:99`
+		// becomes one minute and 39 seconds rather than 99 of them.
+		$total = $hours * HOUR_IN_SECONDS + $minutes * MINUTE_IN_SECONDS + $seconds;
+
+		if ( ! $total ) {
+			return '';
+		}
+
+		$hours   = (int) ( $total / HOUR_IN_SECONDS );
+		$minutes = (int) ( $total % HOUR_IN_SECONDS / MINUTE_IN_SECONDS );
+		$seconds = $total % MINUTE_IN_SECONDS;
+
+		$time = 'PT';
 
 		if ( $hours ) {
 			$time .= $hours . 'H';
 		}
 		if ( $minutes ) {
 			$time .= $minutes . 'M';
+		}
+		if ( $seconds ) {
+			$time .= $seconds . 'S';
 		}
 
 		return $time;
@@ -157,8 +176,8 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 	/**
 	 * Add the enclosure to the schema based on its type.
 	 *
-	 * @param string $enclosure
-	 * @param array  $schema
+	 * @param string $enclosure Episode media URL to expose as the media object's contentUrl.
+	 * @param array  $schema    Episode schema the media object is added to.
 	 *
 	 * @return array
 	 */
@@ -170,14 +189,14 @@ class PodcastEpisode extends Abstract_Schema_Piece {
 			'contentSize' => get_post_meta( $this->context->post->ID, 'filesize', true ),
 		);
 
-		if ( $type === 'audio' ) {
+		if ( 'audio' === $type ) {
 			$object['@type'] = 'AudioObject';
 			$schema['audio'] = $object;
 
 			return $schema;
 		}
 
-		if ( $type === 'video' ) {
+		if ( 'video' === $type ) {
 			$object['@type'] = 'VideoObject';
 			$schema['video'] = $object;
 

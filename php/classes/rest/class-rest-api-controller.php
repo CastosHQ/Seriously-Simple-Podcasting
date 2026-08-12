@@ -283,6 +283,29 @@ class Rest_Api_Controller {
 		);
 
 		/**
+		 * Duration of a Media Library audio file, as SSP calculates it.
+		 *
+		 * The episode editors call this when a file is selected instead of reading
+		 * WordPress's attachment metadata, which getID3 halves for some mono MP3s.
+		 */
+		register_rest_route(
+			'ssp/v1',
+			'/file-duration',
+			array(
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'get_attachment_duration' ),
+				'permission_callback' => array( $this, 'file_duration_permissions_check' ),
+				'args'                => array(
+					'attachment_id' => array(
+						'required'          => true,
+						'type'              => 'integer',
+						'sanitize_callback' => 'absint',
+					),
+				),
+			)
+		);
+
+		/**
 		 * Setting up custom route for the wp_audio_shortcode for a podcast
 		 */
 		register_rest_route(
@@ -375,6 +398,82 @@ class Rest_Api_Controller {
 				wp_set_current_user( $user_id );
 			}
 		}
+	}
+
+	/**
+	 * Restricts the file duration route to users who can browse the Media Library.
+	 *
+	 * `upload_files` is the capability behind the media frame both editors pick files
+	 * with, so this exposes nothing the caller could not already read off the attachment
+	 * itself. Gating on manage_podcast instead would lock out the Podcast Editor role,
+	 * which edits episodes and uploads files but never touches podcast settings.
+	 *
+	 * @since 3.17.0
+	 *
+	 * @return true|\WP_Error
+	 */
+	public function file_duration_permissions_check() {
+		if ( current_user_can( 'upload_files' ) ) {
+			return true;
+		}
+
+		return new \WP_Error(
+			'ssp_cannot_read_file_duration',
+			__( 'Sorry, you are not allowed to read episode file durations.', 'seriously-simple-podcasting' ),
+			array( 'status' => rest_authorization_required_code() )
+		);
+	}
+
+	/**
+	 * Calculates the duration of a Media Library audio attachment.
+	 *
+	 * The attachment is identified by ID rather than URL so the route can never be
+	 * pointed at a file of the caller's choosing.
+	 *
+	 * @since 3.17.0
+	 *
+	 * @param \WP_REST_Request $request Request object.
+	 *
+	 * @return \WP_REST_Response|\WP_Error
+	 */
+	public function get_attachment_duration( $request ) {
+		$attachment_id = (int) $request->get_param( 'attachment_id' );
+
+		// get_post( 0 ) returns the global post, so a malformed ID must never reach it.
+		$attachment = $attachment_id > 0 ? get_post( $attachment_id ) : null;
+
+		if ( ! $attachment || 'attachment' !== $attachment->post_type ) {
+			return new \WP_Error(
+				'ssp_attachment_not_found',
+				__( 'Attachment not found.', 'seriously-simple-podcasting' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		$mime_type = (string) $attachment->post_mime_type;
+
+		// Video is accepted too — episodes can be video, and getID3 reads the audio track.
+		if ( 0 !== strpos( $mime_type, 'audio/' ) && 0 !== strpos( $mime_type, 'video/' ) ) {
+			return new \WP_Error(
+				'ssp_attachment_not_playable',
+				__( 'This attachment is not an audio or video file.', 'seriously-simple-podcasting' ),
+				array( 'status' => 400 )
+			);
+		}
+
+		$url      = wp_get_attachment_url( $attachment->ID );
+		$duration = $url ? $this->episode_repository->get_file_duration( $url ) : false;
+
+		if ( ! $duration ) {
+			// The file could not be read — offloaded media, or a URL the path mapper
+			// cannot resolve. WordPress recorded getID3's reading at upload time while
+			// the file was still local, and the save path would fail here for the same
+			// reason, so the stored value is the best answer left.
+			$metadata = wp_get_attachment_metadata( $attachment->ID );
+			$duration = isset( $metadata['length_formatted'] ) ? $metadata['length_formatted'] : '';
+		}
+
+		return rest_ensure_response( array( 'duration' => $duration ? $duration : '' ) );
 	}
 
 	/**

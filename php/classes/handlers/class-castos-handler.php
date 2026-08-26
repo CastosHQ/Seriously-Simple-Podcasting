@@ -79,6 +79,14 @@ class Castos_Handler implements Service {
 	const TRANSIENT_PODCASTS = 'ssp_castos_podcasts';
 
 	/**
+	 * Castos error code returned when syncing a podcast that duplicates an
+	 * existing podcast in the account. Requires user confirmation to proceed.
+	 *
+	 * @const int
+	 */
+	const DUPLICATE_PODCAST_CODE = 4005;
+
+	/**
 	 * @var string
 	 */
 	protected $api_token;
@@ -288,11 +296,20 @@ class Castos_Handler implements Service {
 		}
 	}
 
-	public function trigger_podcast_sync( $series_id ) {
-		$this->logger->log( __METHOD__, compact( 'series_id' ) );
+	/**
+	 * @param int  $series_id
+	 * @param bool $confirm_duplicate Whether the user confirmed creating a podcast
+	 *                                that duplicates an existing one in their account.
+	 *
+	 * @return array|null
+	 */
+	public function trigger_podcast_sync( $series_id, $confirm_duplicate = false ) {
+		$this->logger->log( __METHOD__, compact( 'series_id', 'confirm_duplicate' ) );
 		$endpoint = sprintf( 'api/v2/ssp/podcast-sync/%d', intval( $series_id ) );
 
-		$res = $this->send_request( $endpoint, array(), 'POST' );
+		$args = $confirm_duplicate ? array( 'confirm_duplicate' => 1 ) : array();
+
+		$res = $this->send_request( $endpoint, $args, 'POST' );
 
 		return $res;
 	}
@@ -649,6 +666,22 @@ class Castos_Handler implements Service {
 
 		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 		$this->logger->log( 'Response Object', $response_object );
+
+		if ( isset( $response_object->code ) && self::DUPLICATE_PODCAST_CODE === (int) $response_object->code ) {
+			$existing_title = isset( $response_object->existing_podcast->title ) ? $response_object->existing_podcast->title : '';
+			$this->logger->log( 'Castos detected a duplicate podcast', $response_object );
+			$this->update_response( 'status', 'duplicate' );
+			$this->update_response( 'message', isset( $response_object->message ) ? $response_object->message : 'Duplicate podcast detected' );
+			$this->notifications_handler->add_flash_notice(
+				sprintf(
+					// translators: %s is the title of the existing Castos podcast.
+					__( 'This podcast was not synced to Castos because a podcast named "%s" already exists in your account. To sync it as a new podcast anyway, use the Sync feature in Podcasting > Settings > Hosting.', 'seriously-simple-podcasting' ),
+					$existing_title
+				)
+			);
+
+			return $this->response;
+		}
 
 		if ( empty( $response_object->status ) ) {
 			$this->logger->log( 'An error occurred uploading the series data to Castos', $response_object );

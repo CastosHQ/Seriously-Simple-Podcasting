@@ -15,7 +15,7 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	protected function tearDown(): void {
-		unset( $_POST['post_id'], $_POST['width'], $_POST['height'], $_REQUEST['nonce'], $_GET['api_token'] );
+		unset( $_POST['post_id'], $_POST['width'], $_POST['height'], $_REQUEST['nonce'], $_GET['api_token'], $_GET['podcasts'], $_GET['confirmed_podcasts'] );
 		parent::tearDown();
 	}
 
@@ -156,5 +156,92 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
 
 		return new Ajax_Handler( $castos_handler, $admin_notices_handler );
+	}
+
+	private function authorize_sync_request() {
+		$user_id = $this->factory()->user->create( array( 'role' => 'administrator' ) );
+		wp_set_current_user( $user_id );
+		$user = wp_get_current_user();
+		$user->add_cap( 'manage_podcast' );
+
+		$_REQUEST['nonce'] = wp_create_nonce( 'ss_podcasting_castos-hosting' );
+	}
+
+	/**
+	 * Test that sync_castos asks for confirmation when Castos reports a duplicate podcast.
+	 */
+	public function testSyncCastosRequestsConfirmationOnDuplicatePodcast() {
+		$this->authorize_sync_request();
+		$_GET['podcasts'] = array( '7' );
+
+		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
+		$castos_handler->expects( $this->once() )
+			->method( 'trigger_podcast_sync' )
+			->with( 7, false )
+			->willReturn( array(
+				'code'             => \SeriouslySimplePodcasting\Handlers\Castos_Handler::DUPLICATE_PODCAST_CODE,
+				'error'            => 'A podcast named "My Existing Podcast" already exists in your Castos account.',
+				'existing_podcast' => array(
+					'id'    => 42,
+					'title' => 'My Existing Podcast',
+				),
+			) );
+
+		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
+
+		$handler       = new Ajax_Handler( $castos_handler, $admin_notices_handler );
+		$json_response = $this->capture_json_response( array( $handler, 'sync_castos' ) );
+
+		$this->assertTrue( $json_response['success'] );
+		$this->assertSame( 'none', $json_response['data']['status'] );
+		$this->assertTrue( $json_response['data']['podcasts'][7]['needs_confirmation'] );
+		$this->assertStringContainsString( 'My Existing Podcast', $json_response['data']['podcasts'][7]['confirm_msg'] );
+	}
+
+	/**
+	 * Test that sync_castos passes the user's duplicate confirmation through to the Castos handler.
+	 */
+	public function testSyncCastosPassesDuplicateConfirmation() {
+		$this->authorize_sync_request();
+		$_GET['podcasts']           = array( '7' );
+		$_GET['confirmed_podcasts'] = array( '7' );
+
+		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
+		$castos_handler->expects( $this->once() )
+			->method( 'trigger_podcast_sync' )
+			->with( 7, true )
+			->willReturn( array( 'code' => 200 ) );
+
+		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
+
+		$handler       = new Ajax_Handler( $castos_handler, $admin_notices_handler );
+		$json_response = $this->capture_json_response( array( $handler, 'sync_castos' ) );
+
+		$this->assertTrue( $json_response['success'] );
+		$this->assertSame( 'syncing', $json_response['data']['status'] );
+		$this->assertSame( 'syncing', $json_response['data']['podcasts'][7]['status'] );
+	}
+
+	/**
+	 * Test that a normal sync without duplicates keeps the existing behavior.
+	 */
+	public function testSyncCastosStartsSyncWithoutDuplicates() {
+		$this->authorize_sync_request();
+		$_GET['podcasts'] = array( '7' );
+
+		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
+		$castos_handler->expects( $this->once() )
+			->method( 'trigger_podcast_sync' )
+			->with( 7, false )
+			->willReturn( array( 'code' => 200 ) );
+
+		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
+
+		$handler       = new Ajax_Handler( $castos_handler, $admin_notices_handler );
+		$json_response = $this->capture_json_response( array( $handler, 'sync_castos' ) );
+
+		$this->assertTrue( $json_response['success'] );
+		$this->assertSame( 'syncing', $json_response['data']['status'] );
+		$this->assertArrayNotHasKey( 'needs_confirmation', $json_response['data']['podcasts'][7] );
 	}
 }

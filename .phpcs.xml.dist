@@ -32,6 +32,7 @@
 		<properties>
 			<!-- Value: replace the function, class, and variable prefixes used. Add an element per prefix. -->
 			<property name="prefixes" type="array">
+				<element value="ssp_"/>
 				<element value="SeriouslySimplePodcasting"/>
 			</property>
 		</properties>

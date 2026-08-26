@@ -155,6 +155,7 @@ class Assets_Controller {
 				'jquery',
 				'jquery-ui-core',
 				'jquery-ui-datepicker',
+				'wp-api-fetch',
 			),
 			$this->version
 		);

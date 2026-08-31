@@ -5,6 +5,9 @@
  * @var array $post_types
  * @var array $series
  * */
+
+use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
+
 ?>
 
 <div class="ssp-settings ssp-settings-import">
@@ -33,18 +36,22 @@
 				</td>
 			</tr>
 		<?php } ?>
-		<?php if ( count( $series ) >= 1 ) { ?>
-			<tr>
-				<th scope="row"><?php esc_html_e( 'Podcast', 'seriously-simple-podcasting' ); ?></th>
-				<td>
-					<select id="import_series" name="import_series">
-						<?php foreach ( $series as $series_item ) { ?>
-							<option value="<?php echo $series_item->term_id; ?>"><?php echo $series_item->name; ?></option>
-						<?php } ?>
-					</select>
-				</td>
-			</tr>
-		<?php } ?>
+		<tr>
+			<th scope="row"><?php esc_html_e( 'Podcast', 'seriously-simple-podcasting' ); ?></th>
+			<td>
+				<select id="import_series" name="import_series">
+					<option value="<?php echo esc_attr( RSS_Import_Handler::CREATE_NEW_SERIES ); ?>">
+						<?php esc_html_e( 'Create new podcast', 'seriously-simple-podcasting' ); ?>
+					</option>
+					<?php foreach ( $series as $series_item ) { ?>
+						<option value="<?php echo esc_attr( $series_item->term_id ); ?>"><?php echo esc_html( $series_item->name ); ?></option>
+					<?php } ?>
+				</select>
+				<p class="description">
+					<?php esc_html_e( 'A new podcast is named after the imported feed. Choose an existing podcast to import the episodes into it instead.', 'seriously-simple-podcasting' ); ?>
+				</p>
+			</td>
+		</tr>
 		<tr>
 			<th scope="row"><?php esc_html_e( 'Import Podcast Data', 'seriously-simple-podcasting' ); ?></th>
 			<td>

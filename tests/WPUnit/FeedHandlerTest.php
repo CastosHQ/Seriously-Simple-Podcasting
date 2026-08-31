@@ -49,6 +49,33 @@ class FeedHandlerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
+	 * The feed's <podcast:guid> is the podcast's own GUID; the default podcast
+	 * keeps its legacy one, and a podcast with none gets one derived and persisted.
+	 */
+	public function testGetGuidUsesOwnGuidOrDerivesAndPersists() {
+		$legacy  = '9b1e7c34-2f5a-5d8e-b6c1-4a7f0e3d92aa';
+		$default = get_term( $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) ), ssp_series_taxonomy() );
+		$other   = get_term( $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) ), ssp_series_taxonomy() );
+
+		update_option( 'ss_podcasting_default_series', $default->term_id );
+		update_option( 'ss_podcasting_data_guid', $legacy );
+
+		$this->assertSame( $legacy, $this->feed_handler->get_guid( $default->slug ), 'Default podcast renders its legacy GUID' );
+		$this->assertFalse( get_option( 'ss_podcasting_data_guid_' . $default->term_id ), 'The legacy fallback is not copied into the suffixed option' );
+
+		$derived = $this->feed_handler->get_guid( $other->slug );
+
+		$this->assertNotSame( $legacy, $derived, 'Another podcast must not render the legacy GUID' );
+		$this->assertMatchesRegularExpression( '/^[0-9a-f-]{36}$/', $derived );
+		$this->assertSame( $derived, get_option( 'ss_podcasting_data_guid_' . $other->term_id ), 'A derived GUID is persisted' );
+		$this->assertSame( $derived, $this->feed_handler->get_guid( $other->slug ), 'And reused on the next render' );
+
+		delete_option( 'ss_podcasting_default_series' );
+		delete_option( 'ss_podcasting_data_guid' );
+		delete_option( 'ss_podcasting_data_guid_' . $other->term_id );
+	}
+
+	/**
 	 * Test that full datetime in date_recorded is used as-is for pubDate.
 	 */
 	public function testPubDateUsesFullDatetimeFromDateRecorded() {

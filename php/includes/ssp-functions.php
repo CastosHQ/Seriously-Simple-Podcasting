@@ -1401,6 +1401,28 @@ if ( ! function_exists( 'ssp_get_option' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ssp_get_podcast_guid' ) ) {
+	/**
+	 * Retrieves the podcast's own GUID, or an empty string if it has none.
+	 * Only the default podcast falls back to the legacy unsuffixed option.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int $series_id Series term ID; 0 for the legacy no-term podcast.
+	 *
+	 * @return string
+	 */
+	function ssp_get_podcast_guid( $series_id ) {
+		$guid = ssp_get_option( 'data_guid', '', $series_id );
+
+		if ( ! $guid && $series_id && ssp_get_default_series_id() === intval( $series_id ) ) {
+			$guid = get_option( 'ss_podcasting_data_guid', '' );
+		}
+
+		return (string) $guid;
+	}
+}
+
 /**
  * Get the SSP option
  */

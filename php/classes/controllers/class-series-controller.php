@@ -5,6 +5,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 // Exit if accessed directly.
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Walker;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
@@ -385,6 +386,12 @@ HTML;
 	 */
 	public function save_series_data_to_castos( $term_id ) {
 		if ( ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
+		// During an RSS import the podcast's real data and GUID don't exist yet;
+		// one push fires on import completion instead.
+		if ( RSS_Import_Handler::is_importing() ) {
 			return;
 		}
 

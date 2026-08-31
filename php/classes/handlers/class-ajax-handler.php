@@ -123,41 +123,24 @@ class Ajax_Handler {
 
 			$podcast_ids = $this->int_array_from_get( 'podcasts' );
 
-			// Podcasts the user already confirmed syncing despite a duplicate warning.
-			$confirmed_ids = $this->int_array_from_get( 'confirmed_podcasts' );
-
 			// Provide possible errors for translation purposes.
 			$msgs_map = array(
 				'Failed to connect to SSP API.' => __( 'Failed to connect to SSP API.', 'seriously-simple-podcasting' ),
 				'A sync is already in progress for this podcast.' => __( 'A sync is already in progress for this podcast.', 'seriously-simple-podcasting' ),
+				'This podcast is already connected to a different WordPress podcast in your Castos account.' => __( 'This podcast is already connected to a different WordPress podcast in your Castos account.', 'seriously-simple-podcasting' ),
 			);
 
 			$podcast_statuses = array();
 
-			$has_syncing    = false;
-			$has_errors     = false;
-			$has_duplicates = false;
+			$has_syncing = false;
+			$has_errors  = false;
 
 			foreach ( $podcast_ids as $podcast_id ) {
 				$podcast_status = array();
 
-				$response = $this->castos_handler->trigger_podcast_sync( $podcast_id, in_array( $podcast_id, $confirmed_ids, true ) );
+				$response = $this->castos_handler->trigger_podcast_sync( $podcast_id );
 
-				if ( isset( $response['code'] ) && Castos_Handler::DUPLICATE_PODCAST_CODE === (int) $response['code'] ) {
-					$existing_title = isset( $response['existing_podcast']['title'] ) ? $response['existing_podcast']['title'] : '';
-
-					$podcast_status['status']             = Sync_Status::SYNC_STATUS_NONE;
-					$podcast_status['title']              = __( 'Needs confirmation', 'seriously-simple-podcasting' );
-					$podcast_status['needs_confirmation'] = true;
-					$podcast_status['confirm_msg']        = sprintf(
-						// translators: %1$s is the existing Castos podcast title, %2$s is the WordPress podcast name.
-						__( 'A podcast named "%1$s" already exists in your Castos account. Are you sure you want to sync "%2$s" as a new podcast?', 'seriously-simple-podcasting' ),
-						$existing_title,
-						$this->get_podcast_name( $podcast_id )
-					);
-
-					$has_duplicates = true;
-				} elseif ( isset( $response['code'] ) && in_array( $response['code'], array( 200, 409 ) ) ) {
+				if ( isset( $response['code'] ) && in_array( $response['code'], array( 200, 409 ) ) ) {
 					$podcast_status['status'] = Sync_Status::SYNC_STATUS_SYNCING;
 					$podcast_status['title']  = __( 'Syncing', 'seriously-simple-podcasting' );
 					$has_syncing              = true;
@@ -194,17 +177,11 @@ class Ajax_Handler {
 				),
 				Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
 				Sync_Status::SYNC_STATUS_FAILED  => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
-				Sync_Status::SYNC_STATUS_NONE    => __( 'Podcast sync requires confirmation', 'seriously-simple-podcasting' ),
 			);
 
 			$results_status = ! $has_errors ?
 				Sync_Status::SYNC_STATUS_SYNCING :
 				( $has_syncing ? Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS : Sync_Status::SYNC_STATUS_FAILED );
-
-			// Nothing failed or started, but at least one podcast awaits duplicate confirmation.
-			if ( $has_duplicates && ! $has_syncing && ! $has_errors ) {
-				$results_status = Sync_Status::SYNC_STATUS_NONE;
-			}
 
 			$results = array(
 				'status'   => $results_status,
@@ -212,7 +189,7 @@ class Ajax_Handler {
 				'podcasts' => $podcast_statuses,
 			);
 
-			if ( in_array( $results['status'], array( Sync_Status::SYNC_STATUS_SYNCING, Sync_Status::SYNC_STATUS_NONE ), true ) ) {
+			if ( Sync_Status::SYNC_STATUS_SYNCING === $results['status'] ) {
 				wp_send_json_success( $results );
 			} else {
 				wp_send_json_error( $results );
@@ -223,11 +200,16 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * @param string $key
+	 * Reads an array of integers from the request query.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $key Query key to read.
 	 *
 	 * @return int[]
 	 */
 	protected function int_array_from_get( $key ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended, WordPress.Security.ValidatedSanitizedInput.InputNotSanitized -- callers verify the nonce via nonce_check(); every value is cast to int below.
 		$values = isset( $_GET[ $key ] ) ? (array) wp_unslash( $_GET[ $key ] ) : array();
 
 		return array_values( array_map( 'intval', $values ) );
@@ -357,7 +339,7 @@ class Ajax_Handler {
 			);
 		}
 
-		$rss_importer = new RSS_Import_Handler( $ssp_external_rss );
+		$rss_importer = new RSS_Import_Handler( $ssp_external_rss, $this->castos_handler );
 		$response     = $rss_importer->import_rss_feed();
 
 		wp_send_json( $response );

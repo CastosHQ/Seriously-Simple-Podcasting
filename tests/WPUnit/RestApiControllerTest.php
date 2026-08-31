@@ -19,6 +19,30 @@ class RestApiControllerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
+	 * The series `guid` REST field reports only the podcast's own GUID, and the
+	 * default podcast reports the same value through the REST field and the
+	 * Castos push payload.
+	 */
+	public function testSeriesGuidFieldMatchesPushPayload() {
+		$legacy  = '9b1e7c34-2f5a-5d8e-b6c1-4a7f0e3d92aa';
+		$default = $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) );
+		$other   = $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) );
+		$castos  = ssp_get_service( 'castos_handler' );
+
+		update_option( 'ss_podcasting_default_series', $default );
+		update_option( 'ss_podcasting_data_guid', $legacy );
+
+		$this->assertSame( '', $this->controller->series_get_field_value( array( 'id' => $other ), 'guid', null ) );
+		$this->assertArrayNotHasKey( 'guid', $castos->generate_series_data_for_castos( $other ) );
+
+		$this->assertSame( $legacy, $this->controller->series_get_field_value( array( 'id' => $default ), 'guid', null ) );
+		$this->assertSame( $legacy, $castos->generate_series_data_for_castos( $default )['guid'] );
+
+		delete_option( 'ss_podcasting_default_series' );
+		delete_option( 'ss_podcasting_data_guid' );
+	}
+
+	/**
 	 * Test that deprecated podcast_update endpoint returns deprecation response.
 	 */
 	public function testPodcastUpdateReturnsDeprecationResponse() {

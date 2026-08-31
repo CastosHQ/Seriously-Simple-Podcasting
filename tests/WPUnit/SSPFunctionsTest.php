@@ -15,6 +15,35 @@ class SSPFunctionsTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * @covers ssp_get_podcast_guid()
+     */
+    public function testSspGetPodcastGuidReportsOnlyOwnGuid()
+    {
+        $legacy  = '9b1e7c34-2f5a-5d8e-b6c1-4a7f0e3d92aa';
+        $own     = '5f0a1c2d-3e4b-5a6c-8d7e-9f0a1b2c3d4e';
+        $default = $this->factory()->term->create(['taxonomy' => ssp_series_taxonomy()]);
+        $other   = $this->factory()->term->create(['taxonomy' => ssp_series_taxonomy()]);
+
+        update_option('ss_podcasting_default_series', $default);
+        update_option('ss_podcasting_data_guid', $legacy);
+
+        $this->assertSame('', ssp_get_podcast_guid($other), 'A podcast without a GUID must not borrow the legacy one');
+        $this->assertSame($legacy, ssp_get_podcast_guid($default), 'Only the default podcast falls back to the legacy option');
+        $this->assertSame($legacy, ssp_get_podcast_guid(0), 'Series 0 is the legacy podcast itself');
+
+        update_option('ss_podcasting_data_guid_' . $other, $own);
+        update_option('ss_podcasting_data_guid_' . $default, $own);
+
+        $this->assertSame($own, ssp_get_podcast_guid($other));
+        $this->assertSame($own, ssp_get_podcast_guid($default), 'An own GUID wins over the legacy fallback');
+
+        delete_option('ss_podcasting_default_series');
+        delete_option('ss_podcasting_data_guid');
+        delete_option('ss_podcasting_data_guid_' . $other);
+        delete_option('ss_podcasting_data_guid_' . $default);
+    }
+
+    /**
      * @covers ssp_version_notice()
      */
     public function testSspVersionNotice()

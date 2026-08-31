@@ -602,12 +602,7 @@ class Feed_Handler implements Service {
 		$term_id = isset( $term->term_id ) ? $term->term_id : null;
 
 		$option     = $term_id ? 'ss_podcasting_data_guid_' . $term_id : 'ss_podcasting_data_guid';
-		$saved_guid = get_option( $option );
-
-		// Try to check the old default podcast option
-		if ( empty( $saved_guid ) && ( $term_id == ssp_get_default_series_id() ) ) {
-			$saved_guid = get_option( 'ss_podcasting_data_guid' );
-		}
+		$saved_guid = ssp_get_podcast_guid( (int) $term_id );
 
 		if ( empty( $saved_guid ) ) {
 			$url_data = parse_url( $feed_url );

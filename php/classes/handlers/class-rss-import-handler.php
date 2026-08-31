@@ -317,6 +317,11 @@ class RSS_Import_Handler {
 		} catch ( \Exception $e ) {
 			$this->logger->log( __METHOD__ . ' Error: ' . $e->getMessage() );
 
+			// Release the lock so a failed import doesn't keep suppressing series
+			// pushes for the rest of its TTL. Import data is left intact so the
+			// user can retry from where it stopped.
+			self::stop_importing();
+
 			return array(
 				'status'  => 'error',
 				'message' => $e->getMessage(),

@@ -287,6 +287,32 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * A feed request that fails releases the lock, so a failed import cannot keep
+     * dropping series pushes for the rest of the TTL.
+     */
+    public function testFailedImportReleasesTheLock()
+    {
+        $target = $this->create_series();
+
+        // Priority 20 so this runs after the setUp() interceptor and its WP_Error
+        // is the value wp_remote_get() actually receives.
+        add_filter('pre_http_request', [$this, 'fail_feed_request'], 20, 3);
+        $response = $this->run_import_chunk($target);
+        remove_filter('pre_http_request', [$this, 'fail_feed_request'], 20);
+
+        $this->assertSame('error', $response['status']);
+        $this->assertFalse(RSS_Import_Handler::is_importing(), 'A failed import must release the lock');
+    }
+
+    /**
+     * Fails the feed request only, leaving every other request to the main interceptor.
+     */
+    public function fail_feed_request($preempt, $args, $url)
+    {
+        return self::FEED_URL === $url ? new \WP_Error('http_request_failed', 'Connection refused') : $preempt;
+    }
+
+    /**
      * A feed whose GUID already belongs to another podcast is refused, naming
      * that podcast, and writes nothing to the target.
      */

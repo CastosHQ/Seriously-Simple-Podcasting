@@ -17,11 +17,18 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     private $push_bodies = [];
 
     /**
-     * Feed XML served for FEED_URL by the HTTP interceptor.
+     * Feed XML served for the current feed URL by the HTTP interceptor.
      *
      * @var string
      */
     private $feed_xml = '';
+
+    /**
+     * Feed URL the import runs against; varied by the URL-derived naming tests.
+     *
+     * @var string
+     */
+    private $feed_url = self::FEED_URL;
 
     protected function setUp(): void
     {
@@ -34,6 +41,7 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
 
         $this->push_bodies = [];
         $this->feed_xml    = $this->build_feed_xml();
+        $this->feed_url    = self::FEED_URL;
 
         add_filter('pre_http_request', [$this, 'intercept_http'], 10, 3);
     }
@@ -94,7 +102,7 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
      */
     public function intercept_http($preempt, $args, $url)
     {
-        if (self::FEED_URL === $url) {
+        if ($this->feed_url === $url) {
             return ['body' => $this->feed_xml, 'response' => ['code' => 200]];
         }
 
@@ -108,15 +116,19 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
-     * Builds a feed with the given number of items, optionally without a channel GUID.
+     * Builds a feed with the given number of items, optionally without a channel
+     * GUID and optionally without a channel title.
      */
-    private function build_feed_xml($items = 2, $with_guid = true)
+    private function build_feed_xml($items = 2, $with_guid = true, $title = 'Imported Show')
     {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:podcast="https://podcastindex.org/namespace/1.0">
 	<channel>
-		<title>Imported Show</title>
 		<description>A show imported from Castos.</description>';
+
+        if (null !== $title) {
+            $xml .= '<title>' . $title . '</title>';
+        }
 
         if ($with_guid) {
             $xml .= '<podcast:guid>' . self::FEED_GUID . '</podcast:guid>';
@@ -147,7 +159,7 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     private function configure_import($series_id)
     {
         $option = [
-            'import_rss_feed'  => self::FEED_URL,
+            'import_rss_feed'  => $this->feed_url,
             'import_post_type' => SSP_CPT_PODCAST,
             'import_series'    => $series_id,
         ];
@@ -174,6 +186,169 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         // Saving the token triggers Series_Controller::sync_series(), which pushes
         // every existing series — not the behaviour under test here.
         $this->push_bodies = [];
+    }
+    /**
+     * Returns podcasts with the given name.
+     */
+    private function find_series_by_name($name)
+    {
+        return get_terms([
+            'taxonomy'   => ssp_series_taxonomy(),
+            'name'       => $name,
+            'hide_empty' => false,
+        ]);
+    }
+
+    /**
+     * Creates a podcast from the feed title and reuses it for later import chunks.
+     */
+    public function testImportCreatesPodcastNamedFromFeedTitle()
+    {
+        $response = $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+
+        $this->assertSame('success', $response['status']);
+
+        $created = $this->find_series_by_name('Imported Show');
+        $this->assertCount(1, $created, 'The import must create a podcast named from the feed title');
+
+        $term = $created[0];
+        $this->assertSame('imported-show', $term->slug);
+
+        $option = get_option('ssp_external_rss');
+        $this->assertEquals(
+            $term->term_id,
+            $option['import_series'],
+            'The created term ID must replace the sentinel so chunked imports reuse it'
+        );
+
+        $episodes = get_posts(['post_type' => SSP_CPT_PODCAST, 'numberposts' => -1]);
+        $this->assertCount(2, $episodes);
+        $this->assertTrue(has_term($term->term_id, ssp_series_taxonomy(), $episodes[0]->ID));
+    }
+
+    /**
+     * Creates a separate, suffixed podcast when the name already exists.
+     */
+    public function testImportWithCollidingTitleCreatesSeparatePodcast()
+    {
+        $existing = $this->create_series('Imported Show');
+
+        $response = $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+
+        $this->assertSame('success', $response['status']);
+
+        $created = $this->find_series_by_name('Imported Show (2)');
+        $this->assertCount(1, $created, 'A colliding title must produce a suffixed podcast, not reuse the existing one');
+        $this->assertSame('imported-show-2', $created[0]->slug);
+        $this->assertNotEquals($existing, $created[0]->term_id);
+    }
+
+    /**
+     * Continues incrementing the suffix when multiple podcasts share a name.
+     */
+    public function testImportWithTwiceCollidingTitleKeepsCounting()
+    {
+        $this->create_series('Imported Show');
+        $this->create_series('Imported Show (2)');
+
+        $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+
+        $this->assertCount(1, $this->find_series_by_name('Imported Show (3)'));
+    }
+
+    /**
+     * Uses a meaningful URL path segment when the feed has no title.
+     */
+    public function testImportWithoutFeedTitleNamesPodcastFromUrlPath()
+    {
+        $this->feed_url = 'https://example.com/shows/my-great-show/rss';
+        $this->feed_xml = $this->build_feed_xml(1, true, null);
+
+        $response = $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+
+        $this->assertSame('success', $response['status']);
+        $this->assertCount(
+            1,
+            $this->find_series_by_name('My Great Show'),
+            'A generic trailing segment must be skipped in favour of the meaningful one'
+        );
+    }
+
+    /**
+     * Uses the URL host when the feed has no title or meaningful path segment.
+     */
+    public function testImportWithoutFeedTitleFallsBackToHost()
+    {
+        $this->feed_xml = $this->build_feed_xml(1, true, null);
+
+        $response = $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+
+        $this->assertSame('success', $response['status']);
+        $this->assertCount(1, $this->find_series_by_name('example.com'));
+    }
+
+    /**
+     * Covers the fallback that makes the imported podcast the default.
+     *
+     * Admin initialization normally creates a default before an import starts.
+     */
+    public function testCreateAndImportOnSiteWithoutDefaultPodcastPushesOnce()
+    {
+        $this->connect_to_castos();
+        $default_series = get_option('ss_podcasting_default_series');
+        delete_option('ss_podcasting_default_series');
+
+        $response = $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+
+        $this->assertTrue($response['is_finished']);
+
+        $created = $this->find_series_by_name('Imported Show');
+        $this->assertCount(1, $created);
+        $this->assertEquals(
+            $created[0]->term_id,
+            ssp_get_default_series_id(),
+            'The first podcast on the site must become the default'
+        );
+
+        $this->assertCount(1, $this->push_bodies, 'Exactly one push, after the import completed');
+        $this->assertEquals($created[0]->term_id, $this->push_bodies[0]['series_id']);
+        $this->assertSame(self::FEED_GUID, $this->push_bodies[0]['guid'], 'The push must carry the imported feed data');
+
+        update_option('ss_podcasting_default_series', $default_series);
+    }
+
+    /**
+     * Does not create a podcast when the duplicate-GUID check rejects an import.
+     */
+    public function testRefusedCreateNewImportLeavesNoOrphanPodcast()
+    {
+        $existing = $this->create_series('Already Imported Show');
+        update_option('ss_podcasting_data_guid_' . $existing, self::FEED_GUID);
+        $before = wp_count_terms(['taxonomy' => ssp_series_taxonomy(), 'hide_empty' => false]);
+
+        $response = $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+
+        $this->assertSame('error', $response['status']);
+        $this->assertCount(0, $this->find_series_by_name('Imported Show'), 'A refused import must create no podcast');
+        $this->assertEquals(
+            $before,
+            wp_count_terms(['taxonomy' => ssp_series_taxonomy(), 'hide_empty' => false]),
+            'A refused import must leave the podcast count untouched'
+        );
+    }
+
+    /**
+     * Treats a podcast with an edited slug as a name collision.
+     */
+    public function testCollisionIsDetectedWhenExistingPodcastHasAnEditedSlug()
+    {
+        $existing = $this->create_series('Imported Show');
+        wp_update_term($existing, ssp_series_taxonomy(), ['slug' => 'renamed-by-hand']);
+
+        $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+
+        $this->assertCount(1, $this->find_series_by_name('Imported Show'), 'The existing podcast must stay unique');
+        $this->assertCount(1, $this->find_series_by_name('Imported Show (2)'));
     }
 
     /**
@@ -526,4 +701,3 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         $this->assertEquals($wordpress_guid, ssp_episode_guid($episodes[0]->ID));
     }
 }
-

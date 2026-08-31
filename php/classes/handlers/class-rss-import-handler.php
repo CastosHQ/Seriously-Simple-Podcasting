@@ -29,6 +29,33 @@ class RSS_Import_Handler {
 	const RSS_IMPORT_DATA_KEY = 'ssp_rss_import_data';
 
 	/**
+	 * Form value used to create a new podcast.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @var string
+	 */
+	const CREATE_NEW_SERIES = 'ssp_create_new';
+
+	/**
+	 * URL path segments that are not suitable podcast names.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @var string[]
+	 */
+	const GENERIC_URL_SEGMENTS = array( 'rss', 'feed', 'feeds', 'podcast', 'feed.xml', 'rss.xml', 'index.xml', 'atom.xml' );
+
+	/**
+	 * Number of names to try before adding a random suffix.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @var int
+	 */
+	const MAX_NAME_ATTEMPTS = 50;
+
+	/**
 	 * Number of items to process per request.
 	 *
 	 * @var int
@@ -65,9 +92,9 @@ class RSS_Import_Handler {
 	private $post_type;
 
 	/**
-	 * Series term ID to import episodes to.
+	 * Target podcast ID, or CREATE_NEW_SERIES before a new podcast is created.
 	 *
-	 * @var int
+	 * @var int|string
 	 */
 	private $series;
 
@@ -122,7 +149,7 @@ class RSS_Import_Handler {
 	 *
 	 *     @type string $import_rss_feed  RSS feed URL to import from.
 	 *     @type string $import_post_type Post type to import episodes to.
-	 *     @type int    $import_series    Series term ID to import episodes to.
+	 *     @type int|string $import_series Target podcast ID, or CREATE_NEW_SERIES.
 	 * }
 	 * @param Castos_Handler $castos_handler Castos handler.
 	 */
@@ -285,6 +312,7 @@ class RSS_Import_Handler {
 				$this->load_rss_feed();
 				$this->check_lock_status();
 				$this->check_duplicate_guid();
+				$this->maybe_create_series();
 				$this->update_podcast_data();
 			}
 
@@ -327,6 +355,142 @@ class RSS_Import_Handler {
 				'message' => $e->getMessage(),
 			);
 		}
+	}
+
+	/**
+	 * Creates a podcast when the user selects "Create new podcast".
+	 *
+	 * Runs after the duplicate-GUID check so a failed import creates nothing.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 * @throws \Exception When the podcast could not be created.
+	 */
+	protected function maybe_create_series() {
+		if ( self::CREATE_NEW_SERIES !== $this->series ) {
+			return;
+		}
+
+		$series_id = $this->insert_series( $this->get_new_series_name() );
+
+		if ( ! $series_id ) {
+			self::reset_import_data();
+
+			// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown via alert(), not rendered as HTML.
+			throw new \Exception(
+				__( 'Could not create a podcast for this feed. Please create one manually and run the import again.', 'seriously-simple-podcasting' )
+			);
+			// phpcs:enable
+		}
+
+		$this->series = $series_id;
+
+		// Store the new podcast ID so later import chunks reuse it.
+		$ssp_external_rss                  = get_option( 'ssp_external_rss', array() );
+		$ssp_external_rss['import_series'] = $series_id;
+		update_option( 'ssp_external_rss', $ssp_external_rss );
+
+		// The first imported podcast must be the default so it can sync to Castos.
+		if ( ! ssp_get_default_series_id() ) {
+			ssp_update_option( 'default_series', $series_id );
+		}
+	}
+
+	/**
+	 * Creates a podcast with an available name and slug.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $name Podcast name taken from the feed.
+	 *
+	 * @return int|null Term ID, or null if every attempt was rejected.
+	 */
+	protected function insert_series( $name ) {
+		$taxonomy = ssp_series_taxonomy();
+		$name     = $this->find_free_series_name( $name );
+		$slug     = wp_unique_term_slug( sanitize_title( $name ), (object) compact( 'taxonomy' ) );
+
+		$res = wp_insert_term( $name, $taxonomy, compact( 'slug' ) );
+
+		if ( is_wp_error( $res ) ) {
+			$this->logger->log( __METHOD__ . ' Could not create podcast: ' . $res->get_error_message() );
+
+			return null;
+		}
+
+		return empty( $res['term_id'] ) ? null : (int) $res['term_id'];
+	}
+
+	/**
+	 * Returns an unused podcast name.
+	 *
+	 * Names are checked directly because hierarchical taxonomies allow duplicate
+	 * names when their slugs differ.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $name Podcast name taken from the feed.
+	 *
+	 * @return string
+	 */
+	protected function find_free_series_name( $name ) {
+		$taxonomy = ssp_series_taxonomy();
+
+		for ( $attempt = 1; $attempt <= self::MAX_NAME_ATTEMPTS; $attempt++ ) {
+			$candidate = ( 1 === $attempt ) ? $name : sprintf( '%s (%d)', $name, $attempt );
+
+			if ( ! term_exists( $candidate, $taxonomy ) ) {
+				return $candidate;
+			}
+		}
+
+		return sprintf( '%s (%s)', $name, wp_generate_password( 6, false ) );
+	}
+
+	/**
+	 * Returns the feed title, or a name derived from the feed URL.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return string
+	 */
+	protected function get_new_series_name() {
+		$title = isset( $this->feed_object->channel->title )
+			? trim( (string) $this->feed_object->channel->title )
+			: '';
+
+		if ( '' !== $title ) {
+			return $title;
+		}
+
+		return $this->get_series_name_from_url();
+	}
+
+	/**
+	 * Returns a name from the URL path, host, or a generic fallback.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return string
+	 */
+	protected function get_series_name_from_url() {
+		$parts    = wp_parse_url( $this->rss_feed );
+		$segments = array_filter( explode( '/', isset( $parts['path'] ) ? $parts['path'] : '' ) );
+
+		foreach ( array_reverse( $segments ) as $segment ) {
+			if ( in_array( strtolower( $segment ), self::GENERIC_URL_SEGMENTS, true ) ) {
+				continue;
+			}
+
+			return ucwords( str_replace( array( '-', '_' ), ' ', $segment ) );
+		}
+
+		if ( ! empty( $parts['host'] ) ) {
+			return $parts['host'];
+		}
+
+		return __( 'Imported Podcast', 'seriously-simple-podcasting' );
 	}
 
 	/**

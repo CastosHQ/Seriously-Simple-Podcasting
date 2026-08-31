@@ -83,6 +83,7 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     protected function tearDown(): void
     {
         remove_filter('pre_http_request', [$this, 'intercept_http']);
+        remove_filter('pre_http_request', [$this, 'fail_feed_request'], 20);
         RSS_Import_Handler::reset_import_data();
         delete_option('ss_podcasting_podmotor_account_api_token');
         parent::tearDown();
@@ -295,10 +296,10 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         $target = $this->create_series();
 
         // Priority 20 so this runs after the setUp() interceptor and its WP_Error
-        // is the value wp_remote_get() actually receives.
+        // is the value wp_remote_get() actually receives. Removed in tearDown(),
+        // so an unexpected Error escaping the import cannot leak it into other tests.
         add_filter('pre_http_request', [$this, 'fail_feed_request'], 20, 3);
         $response = $this->run_import_chunk($target);
-        remove_filter('pre_http_request', [$this, 'fail_feed_request'], 20);
 
         $this->assertSame('error', $response['status']);
         $this->assertFalse(RSS_Import_Handler::is_importing(), 'A failed import must release the lock');

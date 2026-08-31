@@ -36,6 +36,21 @@ class RSS_Import_Handler {
 	const ITEMS_PER_REQUEST = 3;
 
 	/**
+	 * Running-import lock: option storing the last request timestamp.
+	 * An option, not a transient, so a cache flush cannot lift it.
+	 *
+	 * @var string
+	 */
+	const IMPORTING_LOCK = 'ssp_rss_import_running';
+
+	/**
+	 * Lock lifetime after the last request; longer means the import was abandoned.
+	 *
+	 * @var int
+	 */
+	const IMPORTING_TTL = 10 * MINUTE_IN_SECONDS;
+
+	/**
 	 * RSS feed URL to import from.
 	 *
 	 * @var string
@@ -91,23 +106,32 @@ class RSS_Import_Handler {
 	 */
 	private $logger;
 
+	/**
+	 * Castos handler, used to push the imported podcast on completion.
+	 *
+	 * @var Castos_Handler
+	 */
+	private $castos_handler;
+
 
 	/**
 	 * RSS_Import_Handler constructor.
 	 *
-	 * @param array $ssp_external_rss {
+	 * @param array          $ssp_external_rss {
 	 *     RSS import configuration.
 	 *
 	 *     @type string $import_rss_feed  RSS feed URL to import from.
 	 *     @type string $import_post_type Post type to import episodes to.
 	 *     @type int    $import_series    Series term ID to import episodes to.
 	 * }
+	 * @param Castos_Handler $castos_handler Castos handler.
 	 */
-	public function __construct( $ssp_external_rss ) {
-		$this->rss_feed  = $ssp_external_rss['import_rss_feed'];
-		$this->post_type = $ssp_external_rss['import_post_type'];
-		$this->series    = $ssp_external_rss['import_series'];
-		$this->logger    = new Log_Helper();
+	public function __construct( $ssp_external_rss, $castos_handler ) {
+		$this->rss_feed       = $ssp_external_rss['import_rss_feed'];
+		$this->post_type      = $ssp_external_rss['import_post_type'];
+		$this->series         = $ssp_external_rss['import_series'];
+		$this->castos_handler = $castos_handler;
+		$this->logger         = new Log_Helper();
 	}
 
 	/**
@@ -132,6 +156,7 @@ class RSS_Import_Handler {
 	public static function reset_import_data() {
 		delete_option( 'ssp_external_rss' );
 		delete_option( self::RSS_IMPORT_DATA_KEY );
+		self::stop_importing();
 	}
 
 	/**
@@ -149,6 +174,44 @@ class RSS_Import_Handler {
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Whether an RSS import is actively running — an import request ran within
+	 * the last IMPORTING_TTL seconds and the import has not completed or been
+	 * reset since. Self-expiring, so an abandoned import cannot keep
+	 * suppressing Castos series pushes indefinitely.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return bool
+	 */
+	public static function is_importing() {
+		$locked_at = (int) get_option( self::IMPORTING_LOCK, 0 );
+
+		return $locked_at && ( time() - $locked_at ) < self::IMPORTING_TTL;
+	}
+
+	/**
+	 * Marks an import as running (or refreshes the lock on each chunk).
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 */
+	public static function start_importing() {
+		update_option( self::IMPORTING_LOCK, time(), false );
+	}
+
+	/**
+	 * Releases the running-import lock.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 */
+	public static function stop_importing() {
+		delete_option( self::IMPORTING_LOCK );
 	}
 
 	/**
@@ -214,11 +277,14 @@ class RSS_Import_Handler {
 		try {
 			set_time_limit( 0 );
 
+			self::start_importing();
+
 			$is_initial = ! $this->load_import_data();
 
 			if ( $is_initial ) {
 				$this->load_rss_feed();
 				$this->check_lock_status();
+				$this->check_duplicate_guid();
 				$this->update_podcast_data();
 			}
 
@@ -231,6 +297,9 @@ class RSS_Import_Handler {
 				$item = $this->feed_object->channel->item[ $i ];
 				$this->create_episode( $item );
 			}
+
+			$this->push_podcast_to_castos();
+			self::stop_importing();
 
 			$msg = '<h3>' . __( 'RSS Feed successfully imported.', 'seriously-simple-podcasting' ) . '</h3>';
 
@@ -339,6 +408,28 @@ class RSS_Import_Handler {
 	}
 
 	/**
+	 * Pushes the imported podcast to Castos once the feed's data and GUID are saved.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 */
+	protected function push_podcast_to_castos() {
+		if ( ! $this->series || ! ssp_is_connected_to_castos() ) {
+			return;
+		}
+
+		if ( ! ssp_get_default_series_id() ) {
+			return;
+		}
+
+		$series_data              = $this->castos_handler->generate_series_data_for_castos( $this->series );
+		$series_data['series_id'] = $this->series;
+
+		$this->castos_handler->update_podcast_data( $series_data );
+	}
+
+	/**
 	 * Get the podcast guid
 	 *
 	 * @return string|null
@@ -384,6 +475,42 @@ class RSS_Import_Handler {
 
 	protected function finish_import() {
 		update_option( 'ssp_external_rss', '' );
+	}
+
+	/**
+	 * Refuses the import when another podcast on this site already owns the feed's GUID.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 * @throws \Exception Names the podcast that owns the GUID.
+	 */
+	protected function check_duplicate_guid() {
+		$guid = $this->get_podcast_guid();
+
+		if ( ! $guid ) {
+			return;
+		}
+
+		foreach ( ssp_get_podcasts() as $podcast ) {
+			if ( (int) $podcast->term_id === (int) $this->series ) {
+				continue;
+			}
+
+			if ( ssp_get_podcast_guid( $podcast->term_id ) === $guid ) {
+				self::reset_import_data();
+
+				// phpcs:disable WordPress.Security.EscapeOutput.ExceptionNotEscaped -- shown via alert(), not rendered as HTML.
+				throw new \Exception(
+					sprintf(
+						// translators: %s is the podcast name.
+						__( 'This feed has already been imported into the podcast "%s". Importing it again would connect both podcasts to the same Castos show, so the import was cancelled.', 'seriously-simple-podcasting' ),
+						$podcast->name
+					)
+				);
+				// phpcs:enable
+			}
+		}
 	}
 
 	/**

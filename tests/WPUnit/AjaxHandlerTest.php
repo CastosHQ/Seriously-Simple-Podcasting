@@ -15,7 +15,7 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	protected function tearDown(): void {
-		unset( $_POST['post_id'], $_POST['width'], $_POST['height'], $_REQUEST['nonce'], $_GET['api_token'], $_GET['podcasts'], $_GET['confirmed_podcasts'] );
+		unset( $_POST['post_id'], $_POST['width'], $_POST['height'], $_REQUEST['nonce'], $_GET['api_token'], $_GET['podcasts'] );
 		parent::tearDown();
 	}
 
@@ -168,23 +168,22 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
-	 * Test that sync_castos asks for confirmation when Castos reports a duplicate podcast.
+	 * A sync Castos refuses (HTTP 409 with the refusal body code) surfaces as
+	 * failed with Castos's reason — never as in progress.
 	 */
-	public function testSyncCastosRequestsConfirmationOnDuplicatePodcast() {
+	public function testSyncCastosShowsRefusalAsFailed() {
 		$this->authorize_sync_request();
 		$_GET['podcasts'] = array( '7' );
+
+		$refusal_message = 'This podcast is already connected to a different WordPress podcast in your Castos account.';
 
 		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
 		$castos_handler->expects( $this->once() )
 			->method( 'trigger_podcast_sync' )
-			->with( 7, false )
+			->with( 7 )
 			->willReturn( array(
-				'code'             => \SeriouslySimplePodcasting\Handlers\Castos_Handler::DUPLICATE_PODCAST_CODE,
-				'error'            => 'A podcast named "My Existing Podcast" already exists in your Castos account.',
-				'existing_podcast' => array(
-					'id'    => 42,
-					'title' => 'My Existing Podcast',
-				),
+				'code'  => \SeriouslySimplePodcasting\Handlers\Castos_Handler::SYNC_REFUSED_CODE,
+				'error' => $refusal_message,
 			) );
 
 		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
@@ -192,25 +191,28 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 		$handler       = new Ajax_Handler( $castos_handler, $admin_notices_handler );
 		$json_response = $this->capture_json_response( array( $handler, 'sync_castos' ) );
 
-		$this->assertTrue( $json_response['success'] );
-		$this->assertSame( 'none', $json_response['data']['status'] );
-		$this->assertTrue( $json_response['data']['podcasts'][7]['needs_confirmation'] );
-		$this->assertStringContainsString( 'My Existing Podcast', $json_response['data']['podcasts'][7]['confirm_msg'] );
+		$this->assertFalse( $json_response['success'] );
+		$this->assertSame( 'failed', $json_response['data']['status'] );
+		$this->assertSame( 'failed', $json_response['data']['podcasts'][7]['status'] );
+		$this->assertStringContainsString( $refusal_message, $json_response['data']['podcasts'][7]['msg'] );
 	}
 
 	/**
-	 * Test that sync_castos passes the user's duplicate confirmation through to the Castos handler.
+	 * A plain 409 — no refusal code in the body — still means a sync is
+	 * already in progress and keeps reporting Syncing.
 	 */
-	public function testSyncCastosPassesDuplicateConfirmation() {
+	public function testSyncCastosShowsPlainConflictAsSyncing() {
 		$this->authorize_sync_request();
-		$_GET['podcasts']           = array( '7' );
-		$_GET['confirmed_podcasts'] = array( '7' );
+		$_GET['podcasts'] = array( '7' );
 
 		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
 		$castos_handler->expects( $this->once() )
 			->method( 'trigger_podcast_sync' )
-			->with( 7, true )
-			->willReturn( array( 'code' => 200 ) );
+			->with( 7 )
+			->willReturn( array(
+				'code'  => 409,
+				'error' => 'A sync is already in progress for this podcast.',
+			) );
 
 		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
 
@@ -223,16 +225,16 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
-	 * Test that a normal sync without duplicates keeps the existing behavior.
+	 * Test that an ordinary sync starts and reports the syncing status.
 	 */
-	public function testSyncCastosStartsSyncWithoutDuplicates() {
+	public function testSyncCastosStartsSync() {
 		$this->authorize_sync_request();
 		$_GET['podcasts'] = array( '7' );
 
 		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
 		$castos_handler->expects( $this->once() )
 			->method( 'trigger_podcast_sync' )
-			->with( 7, false )
+			->with( 7 )
 			->willReturn( array( 'code' => 200 ) );
 
 		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
@@ -242,6 +244,6 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 
 		$this->assertTrue( $json_response['success'] );
 		$this->assertSame( 'syncing', $json_response['data']['status'] );
-		$this->assertArrayNotHasKey( 'needs_confirmation', $json_response['data']['podcasts'][7] );
+		$this->assertSame( 'syncing', $json_response['data']['podcasts'][7]['status'] );
 	}
 }

@@ -142,6 +142,19 @@ class CPT_Podcast_Handler implements Service {
 
 			register_meta( 'post', $key, $args );
 		}
+
+		// Keep this out of custom_fields(): classic saves overwrite missing fields with ''.
+		// The original RSS GUID is set during import and must be preserved.
+		register_meta(
+			'post',
+			'ssp_original_guid',
+			array(
+				'type'         => 'string',
+				'description'  => __( 'The episode GUID captured from the imported RSS feed', 'seriously-simple-podcasting' ),
+				'single'       => true,
+				'show_in_rest' => true,
+			)
+		);
 	}
 
 

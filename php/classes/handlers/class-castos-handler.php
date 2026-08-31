@@ -79,12 +79,13 @@ class Castos_Handler implements Service {
 	const TRANSIENT_PODCASTS = 'ssp_castos_podcasts';
 
 	/**
-	 * Castos error code returned when syncing a podcast that duplicates an
-	 * existing podcast in the account. Requires user confirmation to proceed.
+	 * Response body code for a refused sync: the Castos podcast is already
+	 * connected to a different WordPress podcast. A 409 without it means
+	 * "sync already in progress".
 	 *
 	 * @const int
 	 */
-	const DUPLICATE_PODCAST_CODE = 4005;
+	const SYNC_REFUSED_CODE = 4006;
 
 	/**
 	 * @var string
@@ -297,19 +298,18 @@ class Castos_Handler implements Service {
 	}
 
 	/**
-	 * @param int  $series_id
-	 * @param bool $confirm_duplicate Whether the user confirmed creating a podcast
-	 *                                that duplicates an existing one in their account.
+	 * Asks Castos to start syncing the podcast; Castos then pulls the data
+	 * itself through the SSP REST API.
 	 *
-	 * @return array|null
+	 * @param int $series_id
+	 *
+	 * @return array|null Merged HTTP status and response body, or null on a transport error.
 	 */
-	public function trigger_podcast_sync( $series_id, $confirm_duplicate = false ) {
-		$this->logger->log( __METHOD__, compact( 'series_id', 'confirm_duplicate' ) );
+	public function trigger_podcast_sync( $series_id ) {
+		$this->logger->log( __METHOD__, compact( 'series_id' ) );
 		$endpoint = sprintf( 'api/v2/ssp/podcast-sync/%d', intval( $series_id ) );
 
-		$args = $confirm_duplicate ? array( 'confirm_duplicate' => 1 ) : array();
-
-		$res = $this->send_request( $endpoint, $args, 'POST' );
+		$res = $this->send_request( $endpoint, array(), 'POST' );
 
 		return $res;
 	}
@@ -667,22 +667,6 @@ class Castos_Handler implements Service {
 		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
 		$this->logger->log( 'Response Object', $response_object );
 
-		if ( isset( $response_object->code ) && self::DUPLICATE_PODCAST_CODE === (int) $response_object->code ) {
-			$existing_title = isset( $response_object->existing_podcast->title ) ? $response_object->existing_podcast->title : '';
-			$this->logger->log( 'Castos detected a duplicate podcast', $response_object );
-			$this->update_response( 'status', 'duplicate' );
-			$this->update_response( 'message', isset( $response_object->message ) ? $response_object->message : 'Duplicate podcast detected' );
-			$this->notifications_handler->add_flash_notice(
-				sprintf(
-					// translators: %s is the title of the existing Castos podcast.
-					__( 'This podcast was not synced to Castos because a podcast named "%s" already exists in your account. To sync it as a new podcast anyway, use the Sync feature in Podcasting > Settings > Hosting.', 'seriously-simple-podcasting' ),
-					$existing_title
-				)
-			);
-
-			return $this->response;
-		}
-
 		if ( empty( $response_object->status ) ) {
 			$this->logger->log( 'An error occurred uploading the series data to Castos', $response_object );
 			$this->update_response( 'message', 'An error occurred uploading the series data to Castos' );
@@ -748,13 +732,22 @@ class Castos_Handler implements Service {
 			return $this->response;
 		}
 
+		$podcasts = json_decode( wp_remote_retrieve_body( $app_response ), true );
+
+		// Any HTTP reply used to count as success, so an error page or a 5xx was
+		// cached as an empty podcasts list.
+		if ( 200 !== (int) wp_remote_retrieve_response_code( $app_response ) || ! isset( $podcasts['data']['podcast_list'] ) ) {
+			$this->update_response( 'message', 'Castos did not return a podcasts list.' );
+			$this->logger->log( 'Unexpected podcasts response', $app_response );
+
+			set_transient( self::TRANSIENT_PODCASTS, $this->response, MINUTE_IN_SECONDS );
+
+			return $this->response;
+		}
+
 		$this->update_response( 'status', 'success' );
 		$this->update_response( 'message', 'Successfully retrieved podcasts.' );
-
-		$podcasts      = isset( $app_response['body'] ) ? json_decode( $app_response['body'], true ) : array();
-		$podcasts_data = isset( $podcasts['data'] ) ? $podcasts['data'] : array();
-
-		$this->update_response( 'data', $podcasts_data );
+		$this->update_response( 'data', $podcasts['data'] );
 
 		set_transient( self::TRANSIENT_PODCASTS, $this->response, 5 * MINUTE_IN_SECONDS );
 
@@ -1232,7 +1225,7 @@ class Castos_Handler implements Service {
 		$podcast['itunes_category3'] = $this->get_castos_category( 3, $series_id );
 		$podcast['itunes']           = ssp_get_option( 'itunes_url', '', $series_id );
 		$podcast['google_play']      = ssp_get_option( 'google_play_url', '', $series_id );
-		$guid                        = ssp_get_option( 'data_guid', '', $series_id );
+		$guid                        = ssp_get_podcast_guid( $series_id );
 
 		if ( $guid ) {
 			$podcast['guid'] = $guid;

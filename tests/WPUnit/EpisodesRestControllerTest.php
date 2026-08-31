@@ -79,6 +79,42 @@ class EpisodesRestControllerTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertContains( $private, $ids, 'A privileged user with a valid nonce should see private episodes' );
 	}
 
+	/**
+	 * The episode GUID captured on import must be readable by Castos through
+	 * the episode payload's meta; an episode without one is unaffected.
+	 */
+	public function testEpisodePayloadExposesOriginalGuid() {
+		// The WP test case unregisters all meta keys in tearDown, so the plugin's
+		// init-time registration is gone by this test — re-run it.
+		ssp_get_service( 'cpt_podcast_handler' )->register_post_type();
+
+		$user     = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$imported = $this->create_episode( 'publish', $user );
+		$manual   = $this->create_episode( 'publish', $user );
+
+		update_post_meta( $imported, 'ssp_original_guid', 'https://example.com/?p=123' );
+
+		$request = new \WP_REST_Request( 'GET', '/ssp/v1/episodes' );
+		$request->set_param( 'per_page', 10 );
+		$request->set_param( 'page', 1 );
+
+		$items = array();
+		foreach ( (array) $this->make_controller()->get_items( $request )->get_data() as $item ) {
+			$items[ $item['id'] ] = $item;
+		}
+
+		$this->assertSame(
+			'https://example.com/?p=123',
+			isset( $items[ $imported ]['meta']['ssp_original_guid'] ) ? $items[ $imported ]['meta']['ssp_original_guid'] : null,
+			'Imported episode GUID must be exposed in the REST meta Castos pulls'
+		);
+		$this->assertSame(
+			'',
+			isset( $items[ $manual ]['meta']['ssp_original_guid'] ) ? $items[ $manual ]['meta']['ssp_original_guid'] : null,
+			'An episode without an imported GUID exposes the field as empty'
+		);
+	}
+
 	private function create_episode( $status, $author ) {
 		return self::factory()->post->create(
 			array(

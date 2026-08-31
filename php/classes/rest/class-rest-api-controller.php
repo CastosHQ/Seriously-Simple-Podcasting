@@ -653,6 +653,10 @@ class Rest_Api_Controller {
 			return 'on' === ssp_get_option( 'enable_campaigns', 'off', $series_id );
 		}
 
+		if ( 'guid' === $field_name ) {
+			return ssp_get_podcast_guid( $series_id );
+		}
+
 		$series_field_value = get_option( 'ss_podcasting_data_' . $field_name . '_' . $series_id, '' );
 		if ( $series_field_value ) {
 			$field_value = $series_field_value;

@@ -322,16 +322,18 @@ class EpisodeListShortcodeTest extends \Codeception\TestCase\WPTestCase
 	 */
 	public function testShortcodeIsRegistered()
 	{
-		$this->setExpectedIncorrectUsage( 'WP_Block_Type_Registry::register' );
-		$this->setExpectedIncorrectUsage( 'WP_Block_Bindings_Registry::register' );
-
 		$controller = new Shortcodes_Controller(
 			dirname( dirname( __DIR__ ) ) . '/seriously-simple-podcasting.php',
 			'3.15.0',
 			$this->presenter
 		);
 
-		@do_action( 'init' );
+		$this->assertNotFalse(
+			has_action( 'init', array( $controller, 'register_shortcodes' ) ),
+			'Shortcode registration should be hooked to init'
+		);
+
+		$controller->register_shortcodes();
 
 		global $shortcode_tags;
 		$this->assertArrayHasKey( 'ssp_episode_list', $shortcode_tags );

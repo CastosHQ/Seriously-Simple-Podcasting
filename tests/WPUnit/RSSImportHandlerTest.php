@@ -146,6 +146,66 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * Builds enclosure URL cases across media types, tracking prefixes, and query strings.
+     */
+    private function build_enclosure_url_cases()
+    {
+        $media_types = [
+            'mp3' => 'audio/mpeg',
+            'm4a' => 'audio/x-m4a',
+            'mp4' => 'video/mp4',
+        ];
+        $prefixes = [
+            'plain'     => 'https://episodes.example.com/audio/',
+            'path'      => 'https://chrt.fm/track/ABC123/episodes.example.com/audio/',
+            'nested'    => 'https://pdst.fm/e/https://episodes.example.com/audio/',
+            'extension' => 'https://dts.podtrac.com/redirect.mp3/episodes.example.com/audio/',
+        ];
+        $cases = [];
+
+        foreach ($media_types as $extension => $mime_type) {
+            foreach ($prefixes as $prefix_name => $prefix) {
+                foreach ([false, true] as $with_query) {
+                    $query_label = $with_query ? 'query' : 'no-query';
+                    $title       = sprintf('%s %s %s', $prefix_name, $extension, $query_label);
+                    $url         = $prefix . $prefix_name . '-' . $extension . '.' . $extension;
+
+                    if ($with_query) {
+                        $url .= '?token=' . $prefix_name . '-' . $extension;
+                    }
+
+                    $cases[$title] = [
+                        'url'  => $url,
+                        'type' => $mime_type,
+                    ];
+                }
+            }
+        }
+
+        return $cases;
+    }
+
+    /**
+     * Builds a feed containing the supplied enclosure URL cases.
+     */
+    private function build_enclosure_feed_xml($cases)
+    {
+        $xml   = '<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:podcast="https://podcastindex.org/namespace/1.0"><channel><title>Enclosure URL Test</title>';
+        $index = 0;
+
+        foreach ($cases as $title => $case) {
+            ++$index;
+            $xml .= '<item>
+			<title>' . esc_html($title) . '</title>
+			<guid isPermaLink="false">enclosure-case-' . $index . '</guid>
+			<enclosure url="' . esc_attr($case['url']) . '" length="1000" type="' . esc_attr($case['type']) . '"/>
+		</item>';
+        }
+
+        return $xml . '</channel></rss>';
+    }
+
+    /**
      * Creates a series term and returns its ID.
      */
     private function create_series($name = 'Test Series')
@@ -177,6 +237,43 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         $importer = new RSS_Import_Handler($this->configure_import($series_id), ssp_get_service('castos_handler'));
 
         return $importer->import_rss_feed();
+    }
+
+    /**
+     * Preserves every imported enclosure URL exactly as supplied by the feed.
+     */
+    public function testImportPreservesCompleteEnclosureUrls()
+    {
+        $cases          = $this->build_enclosure_url_cases();
+        $this->feed_xml = $this->build_enclosure_feed_xml($cases);
+        $series_id      = $this->create_series('Enclosure URL Test');
+
+        do {
+            $response = $this->run_import_chunk($series_id);
+            $this->assertSame('success', $response['status'], $response['message']);
+        } while (!$response['is_finished']);
+
+        $episodes = get_posts([
+            'post_type'   => SSP_CPT_PODCAST,
+            'numberposts' => -1,
+        ]);
+        $stored_urls = [];
+
+        foreach ($episodes as $episode) {
+            $stored_urls[$episode->post_title] = get_post_meta($episode->ID, 'audio_file', true);
+        }
+
+        $this->assertCount(count($cases), $stored_urls);
+        $expected_urls = [];
+
+        foreach ($cases as $title => $case) {
+            $expected_urls[$title] = $case['url'];
+        }
+
+        ksort($expected_urls);
+        ksort($stored_urls);
+
+        $this->assertSame($expected_urls, $stored_urls);
     }
 
     private function connect_to_castos()

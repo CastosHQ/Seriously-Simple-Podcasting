@@ -849,10 +849,6 @@ class RSS_Import_Handler {
 	 * @return void
 	 */
 	protected function save_enclosure( $post_id, $url ) {
-		// strips out any possible weirdness in the file url
-		$url = preg_replace( '/(?s:.*)(https?:\/\/(?:[\w\-\.]+[^#?\s]+)(?:\.mp3))(?s:.*)/', '$1', $url );
-
-		// Set the audio_file
 		add_post_meta( $post_id, 'audio_file', $url );
 	}
 

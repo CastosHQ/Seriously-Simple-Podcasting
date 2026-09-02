@@ -4,6 +4,7 @@
  * @var array $step_urls
  * @var string $podmotor_account_email
  * @var string $podmotor_account_api_token
+ * @var bool $imported
  * */
 ?>
 
@@ -29,13 +30,23 @@
 				</a>
 			</div>
 
-			<div class="ssp-onboarding__links-item">
-				<h2><?php _e( 'Creating your first episode', 'seriously-simple-podcasting' ); ?></h2>
-				<p><?php _e( 'Get started by creating your first episode with Seriously Simple Podcasting.', 'seriously-simple-podcasting' ); ?></p>
-				<a href="<?php echo admin_url('post-new.php?post_type=' . SSP_CPT_PODCAST) ?>" class="button">
-					<span><?php _e( 'Let\'s Start', 'seriously-simple-podcasting' ); ?></span>
-				</a>
-			</div>
+			<?php if ( $imported ) : ?>
+				<div class="ssp-onboarding__links-item">
+					<h2><?php esc_html_e( 'Your imported episodes', 'seriously-simple-podcasting' ); ?></h2>
+					<p><?php esc_html_e( 'Everything from your feed is now on this site. Take a look and publish your next episode when you\'re ready.', 'seriously-simple-podcasting' ); ?></p>
+					<a href="<?php echo esc_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST ) ); ?>" class="button">
+						<span><?php esc_html_e( 'View Episodes', 'seriously-simple-podcasting' ); ?></span>
+					</a>
+				</div>
+			<?php else : ?>
+				<div class="ssp-onboarding__links-item">
+					<h2><?php _e( 'Creating your first episode', 'seriously-simple-podcasting' ); ?></h2>
+					<p><?php _e( 'Get started by creating your first episode with Seriously Simple Podcasting.', 'seriously-simple-podcasting' ); ?></p>
+					<a href="<?php echo admin_url('post-new.php?post_type=' . SSP_CPT_PODCAST) ?>" class="button">
+						<span><?php _e( 'Let\'s Start', 'seriously-simple-podcasting' ); ?></span>
+					</a>
+				</div>
+			<?php endif; ?>
 		</div>
 	</div>
 	<div class="ssp-onboarding__skip">

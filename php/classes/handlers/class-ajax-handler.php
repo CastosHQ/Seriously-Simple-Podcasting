@@ -66,6 +66,10 @@ class Ajax_Handler {
 		// Add ajax action for importing external rss feed.
 		add_action( 'wp_ajax_import_external_rss_feed', array( $this, 'import_external_rss_feed' ) );
 
+		// Onboarding wizard: confirm a feed before importing it, then start the import.
+		add_action( 'wp_ajax_ssp_preview_rss_feed', array( $this, 'preview_rss_feed' ) );
+		add_action( 'wp_ajax_ssp_start_onboarding_import', array( $this, 'start_onboarding_import' ) );
+
 		// Add ajax action for getting external rss feed progress.
 		add_action( 'wp_ajax_get_external_rss_feed_progress', array( $this, 'get_external_rss_feed_progress' ) );
 
@@ -343,6 +347,69 @@ class Ajax_Handler {
 		$response     = $rss_importer->import_rss_feed();
 
 		wp_send_json( $response );
+	}
+
+	/**
+	 * Describes the feed behind the URL the user entered in the onboarding wizard,
+	 * so they can confirm it before anything is imported.
+	 *
+	 * @since 3.18.0
+	 */
+	public function preview_rss_feed() {
+		$this->import_security_check();
+
+		$handler = new Onboarding_Import_Handler();
+
+		$this->send_feed_result( $handler->preview( $this->get_requested_feed_url() ) );
+	}
+
+	/**
+	 * Resolves the target podcast and queues the confirmed feed for import.
+	 *
+	 * @since 3.18.0
+	 */
+	public function start_onboarding_import() {
+		$this->import_security_check();
+
+		$handler = new Onboarding_Import_Handler();
+
+		$this->send_feed_result( $handler->start( $this->get_requested_feed_url() ) );
+	}
+
+	/**
+	 * Returns the feed URL submitted with an onboarding import request.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return string
+	 */
+	protected function get_requested_feed_url() {
+		// Nonce is verified by import_security_check() before this runs.
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$feed_url = isset( $_REQUEST['feed_url'] ) ? esc_url_raw( wp_unslash( $_REQUEST['feed_url'] ) ) : '';
+
+		return $feed_url;
+	}
+
+	/**
+	 * Sends a feed summary, or the reason the feed cannot be imported, as JSON.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param array|\WP_Error $result Result from the onboarding import handler.
+	 */
+	protected function send_feed_result( $result ) {
+		if ( is_wp_error( $result ) ) {
+			wp_send_json(
+				array(
+					'status'  => 'error',
+					'code'    => $result->get_error_code(),
+					'message' => $result->get_error_message(),
+				)
+			);
+		}
+
+		wp_send_json( array_merge( array( 'status' => 'success' ), $result ) );
 	}
 
 	/**

@@ -568,7 +568,7 @@
 	&__settings-body {
 		padding: 25px;
 
-		input[type=text], textarea {
+		input[type=text], input[type=url], textarea {
 			display: block;
 			width: 100%;
 			margin: 10px 0 25px;
@@ -579,7 +579,7 @@
 			background: #F9FAFB;
 		}
 
-		input[type=text] {
+		input[type=text], input[type=url] {
 			height: 40px;
 		}
 	}
@@ -595,7 +595,7 @@
 			margin: 20px 0 0;
 		}
 
-		button[type=submit], .button {
+		button[type=submit], button[type=button], .button {
 			position: relative;
 			height: 50px;
 			border-radius: 6px;
@@ -928,6 +928,90 @@
 	.dashicons {
 		font-family: dashicons, 'Inter', sans-serif;
 	}
+
+	&__or {
+		display: flex;
+		align-items: center;
+		margin: 0 25px 18px;
+	}
+
+	&__or-line {
+		flex: 1;
+		height: 1px;
+		background: #E5E7EB;
+	}
+
+	&__or-text {
+		padding: 0 14px;
+		color: #9CA3AF;
+		font-size: 12px;
+		font-weight: 600;
+		text-transform: uppercase;
+		letter-spacing: 0.08em;
+	}
+
+	// The import offer is the card's final section, so it shares the bottom
+	// corners and sits flush with the card edges.
+	&__import-offer {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 24px;
+		padding: 25px;
+		background: #F9FAFB;
+		border-top: 1px solid #F3F4F6;
+		border-radius: 0 0 8px 8px;
+
+		h2 {
+			margin: 0 0 4px;
+		}
+
+		p {
+			margin: 0;
+			color: #6B7280;
+			font-size: 13px;
+			line-height: 1.5;
+		}
+
+		.button {
+			position: relative;
+			flex: none;
+			height: 50px;
+			line-height: 48px;
+			padding: 0 55px 0 24px;
+			border: 1px solid #E5E7EB;
+			border-radius: 6px;
+			background: #FFFFFF;
+			color: #3c434a;
+			font-size: 16px;
+			text-decoration: none;
+			transition: .3s;
+
+			&:hover, &:active, &:focus {
+				background: #FFFFFF;
+				border-color: $clr_red_400;
+				color: $clr_red_400;
+				box-shadow: none;
+			}
+
+			// This arrow appears on white, so its SVG uses the brand red directly.
+			&:after {
+				content: '';
+				display: block;
+				position: absolute;
+				width: 24px;
+				height: 24px;
+				right: 18px;
+				top: 12px;
+				background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 12H3M14 5L21 12L14 5ZM21 12L14 19L21 12Z' stroke='%23DF4E4F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+			}
+		}
+	}
+
+	&__import-offer-text {
+		flex: 1;
+	}
+
 }
 
 /* Hide the WP bars */
@@ -947,5 +1031,138 @@
 
 	.notice, .error {
 		display: none;
+	}
+}
+
+.ssp-onboarding-import {
+
+	&__error {
+		margin: 10px 0 0;
+		padding: 10px 14px;
+		border-left: 3px solid $clr_red_400;
+		background: #FDF2F2;
+		color: #8A1F1F;
+		font-size: 13px;
+	}
+
+	&__found {
+		display: flex;
+		gap: 20px;
+		align-items: flex-start;
+		padding: 20px;
+		background: #fff;
+		border: 1px solid #E5E7EB;
+		border-radius: 8px;
+	}
+
+	&__cover {
+		width: 96px;
+		height: 96px;
+		flex: none;
+		border-radius: 6px;
+		background: #F3F4F6;
+		overflow: hidden;
+
+		img {
+			width: 100%;
+			height: 100%;
+			object-fit: cover;
+			display: block;
+		}
+	}
+
+	&__details {
+		flex: 1;
+
+		h3 {
+			margin: 0 0 4px;
+			font-size: 18px;
+			font-weight: 600;
+		}
+
+		p {
+			margin: 0 0 10px;
+			color: #6B7280;
+			font-size: 13px;
+		}
+	}
+
+	&__count {
+		display: inline-block;
+		padding: 3px 10px;
+		border-radius: 12px;
+		background: #F3F4F6;
+		color: #4B5563;
+		font-size: 12px;
+	}
+
+	&__progress {
+		height: 10px;
+		border-radius: 5px;
+		background: #E5E7EB;
+		overflow: hidden;
+	}
+
+	&__progress-bar {
+		height: 100%;
+		width: 0;
+		background: $clr_red_400;
+		transition: width .3s;
+	}
+
+	&__progress-label {
+		margin: 12px 0 0;
+		color: #4B5563;
+	}
+
+	&__note {
+		margin: 6px 0 0;
+		color: #6B7280;
+		font-size: 12px;
+	}
+
+	// The feed URL has a hint below it, so remove the standard input margin.
+	.ssp-onboarding__settings-body input[type=url] {
+		margin-bottom: 0;
+
+		// Keep the example URL visually distinct from entered text.
+		&::placeholder {
+			color: $clr_gray_400;
+			font-weight: 400;
+			opacity: 1;
+		}
+	}
+
+	// Keep the secondary link visually distinct from the primary action.
+	.ssp-onboarding__submit {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+
+		.button.skip {
+			height: auto;
+			margin-right: 0;
+			padding: 0;
+			background: none;
+			font-size: 14px;
+
+			&:hover, &:focus {
+				background: none;
+				color: #4B5563;
+			}
+
+			&:after {
+				display: none;
+			}
+
+			span {
+				line-height: 1.5;
+
+				&:before {
+					content: '\2190';
+					margin-right: 8px;
+				}
+			}
+		}
 	}
 }

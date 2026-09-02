@@ -372,7 +372,7 @@ class RSS_Import_Handler {
 			return;
 		}
 
-		$series_id = $this->insert_series( $this->get_new_series_name() );
+		$series_id = self::insert_series( $this->get_new_series_name() );
 
 		if ( ! $series_id ) {
 			self::reset_import_data();
@@ -406,15 +406,16 @@ class RSS_Import_Handler {
 	 *
 	 * @return int|null Term ID, or null if every attempt was rejected.
 	 */
-	protected function insert_series( $name ) {
+	public static function insert_series( $name ) {
 		$taxonomy = ssp_series_taxonomy();
-		$name     = $this->find_free_series_name( $name );
+		$name     = self::find_free_series_name( $name );
 		$slug     = wp_unique_term_slug( sanitize_title( $name ), (object) compact( 'taxonomy' ) );
 
 		$res = wp_insert_term( $name, $taxonomy, compact( 'slug' ) );
 
 		if ( is_wp_error( $res ) ) {
-			$this->logger->log( __METHOD__ . ' Could not create podcast: ' . $res->get_error_message() );
+			$logger = new Log_Helper();
+			$logger->log( __METHOD__ . ' Could not create podcast: ' . $res->get_error_message() );
 
 			return null;
 		}
@@ -434,7 +435,7 @@ class RSS_Import_Handler {
 	 *
 	 * @return string
 	 */
-	protected function find_free_series_name( $name ) {
+	public static function find_free_series_name( $name ) {
 		$taxonomy = ssp_series_taxonomy();
 
 		for ( $attempt = 1; $attempt <= self::MAX_NAME_ATTEMPTS; $attempt++ ) {
@@ -456,15 +457,32 @@ class RSS_Import_Handler {
 	 * @return string
 	 */
 	protected function get_new_series_name() {
-		$title = isset( $this->feed_object->channel->title )
-			? trim( (string) $this->feed_object->channel->title )
+		return self::podcast_name_from_feed( $this->feed_object, $this->rss_feed );
+	}
+
+	/**
+	 * Returns the feed title, or a name derived from the feed URL.
+	 *
+	 * Shared with the onboarding wizard, which names its target podcast from the
+	 * feed before the import handler runs.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param \SimpleXMLElement|null $feed_object Parsed feed.
+	 * @param string                 $feed_url    Feed URL the podcast was imported from.
+	 *
+	 * @return string
+	 */
+	public static function podcast_name_from_feed( $feed_object, $feed_url ) {
+		$title = isset( $feed_object->channel->title )
+			? trim( (string) $feed_object->channel->title )
 			: '';
 
 		if ( '' !== $title ) {
 			return $title;
 		}
 
-		return $this->get_series_name_from_url();
+		return self::podcast_name_from_url( $feed_url );
 	}
 
 	/**
@@ -472,10 +490,12 @@ class RSS_Import_Handler {
 	 *
 	 * @since 3.18.0
 	 *
+	 * @param string $feed_url Feed URL.
+	 *
 	 * @return string
 	 */
-	protected function get_series_name_from_url() {
-		$parts    = wp_parse_url( $this->rss_feed );
+	public static function podcast_name_from_url( $feed_url ) {
+		$parts    = wp_parse_url( $feed_url );
 		$segments = array_filter( explode( '/', isset( $parts['path'] ) ? $parts['path'] : '' ) );
 
 		foreach ( array_reverse( $segments ) as $segment ) {

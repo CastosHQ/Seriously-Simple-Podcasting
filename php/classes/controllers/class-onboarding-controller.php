@@ -8,6 +8,8 @@
 namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\CPT_Podcast_Handler;
+use SeriouslySimplePodcasting\Handlers\Onboarding_Import_Handler;
+use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Roles_Handler;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
@@ -50,6 +52,13 @@ class Onboarding_Controller {
 	protected $settings_handler;
 
 	/**
+	 * Prepares and targets an import started from the wizard.
+	 *
+	 * @var Onboarding_Import_Handler
+	 */
+	protected $import_handler;
+
+	/**
 	 * Onboarding_Controller constructor.
 	 *
 	 * @param Renderer         $renderer         Renderer instance for rendering views.
@@ -58,6 +67,7 @@ class Onboarding_Controller {
 	public function __construct( $renderer, $settings_handler ) {
 		$this->renderer         = $renderer;
 		$this->settings_handler = $settings_handler;
+		$this->import_handler   = new Onboarding_Import_Handler();
 
 		$this->init_useful_variables();
 
@@ -104,7 +114,33 @@ class Onboarding_Controller {
 				),
 				$this->version
 			);
+			wp_localize_script(
+				'ssp-onboarding',
+				'sspOnboarding',
+				array( 'i18n' => $this->get_script_strings() )
+			);
 		}
+	}
+
+	/**
+	 * Returns the strings the import branch renders from JavaScript.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return string[]
+	 */
+	protected function get_script_strings() {
+		return array(
+			// translators: %d is the number of episodes found in the feed.
+			'episodesFound' => __( '%d episodes found', 'seriously-simple-podcasting' ),
+			'episodeFound'  => __( '1 episode found', 'seriously-simple-podcasting' ),
+			// translators: %1$d is the episode being imported, %2$d the total number of episodes.
+			'importingItem' => __( 'Importing episode %1$d of %2$d…', 'seriously-simple-podcasting' ),
+			'finishingUp'   => __( 'Finishing up…', 'seriously-simple-podcasting' ),
+			'checkFailed'   => __( 'We could not check that feed just now. Please try again.', 'seriously-simple-podcasting' ),
+			'startFailed'   => __( 'We could not start the import just now. Please try again.', 'seriously-simple-podcasting' ),
+			'importFailed'  => __( 'The import could not be reached. Check your connection and try again.', 'seriously-simple-podcasting' ),
+		);
 	}
 
 	public function register_pages() {
@@ -142,18 +178,43 @@ class Onboarding_Controller {
 	}
 
 	protected function maybe_update_feed_title() {
-		$default_series_id = ssp_get_default_series_id();
-		$title             = ssp_get_option( 'data_title', '', $default_series_id );
+		$series_id = $this->get_target_series_id();
+		$title     = ssp_get_option( 'data_title', '', $series_id );
 		if ( ! $title ) {
-			$title = $this->settings_handler->get_feed_title( ssp_get_default_series_id() );
+			$title = $this->settings_handler->get_feed_title( $series_id );
 			$title = $title ?: __( 'My First Show', 'seriously-simple-podcasting' );
-			ssp_update_option( 'data_title', $title, $default_series_id );
+			ssp_update_option( 'data_title', $title, $series_id );
 		}
 	}
 
 	public function step_1() {
-		$this->maybe_update_feed_title();
-		$this->render( $this->get_step_data( 1 ), 'onboarding/step-1' );
+		$import    = filter_input( INPUT_GET, 'import' );
+		$is_import = ! empty( $import );
+
+		// Leaving the import branch clears its target so later wizard steps use the
+		// site's default podcast again.
+		if ( '0' === $import ) {
+			Onboarding_Import_Handler::forget_target_series();
+			RSS_Import_Handler::reset_import_data();
+		}
+
+		// The import supplies the title, so do not save the usual placeholder.
+		if ( ! $is_import ) {
+			$this->maybe_update_feed_title();
+		}
+
+		$data = array(
+			'is_import'  => $is_import,
+			'import_url' => add_query_arg( 'import', 1, $this->get_step_url( 1 ) ),
+			'cancel_url' => add_query_arg( 'import', 0, $this->get_step_url( 1 ) ),
+			'ajax_url'   => admin_url( 'admin-ajax.php' ),
+			'ajax_nonce' => wp_create_nonce( 'ss_podcasting_import' ),
+		);
+
+		$this->render(
+			array_merge( $data, $this->get_step_data( 1 ) ),
+			'onboarding/step-1'
+		);
 	}
 
 	public function step_2() {
@@ -216,7 +277,9 @@ class Onboarding_Controller {
 			$step_urls[ $page_number ] = $this->get_step_url( $page_number );
 		}
 		$data['step_urls'] = $step_urls;
-		$series_id         = ( 4 === $step_number ) ? 0 : ssp_get_default_series_id();
+		$data['steps']     = $this->get_step_labels();
+		$data['imported']  = $this->has_imported_podcast();
+		$series_id         = ( 4 === $step_number ) ? 0 : $this->get_target_series_id();
 
 		foreach ( $this->get_step_fields( $step_number ) as $field_name ) {
 			$data[ $field_name ] = ssp_get_option( $field_name, '', $series_id );
@@ -263,26 +326,68 @@ class Onboarding_Controller {
 	 * @param int $step_number
 	 */
 	protected function save_step( $step_number ) {
-		$nonce = filter_input( INPUT_POST, 'nonce' );
+		$nonce = isset( $_POST['nonce'] ) ? sanitize_text_field( wp_unslash( $_POST['nonce'] ) ) : '';
 		if ( ! wp_verify_nonce( $nonce, 'ssp_onboarding_' . $step_number ) ) {
 			return;
 		}
 
-		$default_series_id = ssp_get_default_series_id();
+		$target_series_id = $this->get_target_series_id();
 
-		$series_id = ( 4 === $step_number ) ? 0 : $default_series_id;
+		$series_id = ( 4 === $step_number ) ? 0 : $target_series_id;
 		foreach ( $this->get_step_fields( $step_number ) as $field_id ) {
-			$val = filter_input( INPUT_POST, $field_id );
+			$val = isset( $_POST[ $field_id ] ) && is_scalar( $_POST[ $field_id ] )
+				? wp_strip_all_tags( wp_unslash( $_POST[ $field_id ] ) )
+				: '';
+
 			if ( $val ) {
-				$val = strip_tags( $val );
 				ssp_update_option( $field_id, $val, $series_id );
 			}
 		}
 
 		if ( 1 === $step_number ) {
-			$this->update_default_series_name( $default_series_id );
+			$this->update_series_name( $target_series_id );
 			ssp_add_option( 'series_slug', CPT_Podcast_Handler::DEFAULT_SERIES_SLUG );
 		}
+	}
+
+	/**
+	 * Returns the podcast the wizard is working on — the imported one after an
+	 * import, the site default otherwise.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return int
+	 */
+	protected function get_target_series_id() {
+		return $this->import_handler->get_target_series_id();
+	}
+
+	/**
+	 * Whether the wizard's podcast came from an RSS import.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return bool
+	 */
+	protected function has_imported_podcast() {
+		return (bool) get_option( Onboarding_Import_Handler::TARGET_SERIES_OPTION, 0 );
+	}
+
+	/**
+	 * Returns the step track labels, keyed by step number.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return string[]
+	 */
+	protected function get_step_labels() {
+		return array(
+			1 => __( 'Start', 'seriously-simple-podcasting' ),
+			2 => __( 'Cover', 'seriously-simple-podcasting' ),
+			3 => __( 'Categories', 'seriously-simple-podcasting' ),
+			4 => __( 'Hosting', 'seriously-simple-podcasting' ),
+			5 => __( 'Done!', 'seriously-simple-podcasting' ),
+		);
 	}
 
 	/**
@@ -290,7 +395,7 @@ class Onboarding_Controller {
 	 *
 	 * @return array|WP_Error
 	 */
-	protected function update_default_series_name( $series_id ) {
+	protected function update_series_name( $series_id ) {
 		$series = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
 		$name   = ssp_get_option( 'data_title', get_bloginfo( 'name' ), $series_id );
 		$slug   = wp_unique_term_slug( sanitize_title( $name ), $series );

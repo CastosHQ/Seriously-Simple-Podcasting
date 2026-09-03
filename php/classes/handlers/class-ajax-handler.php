@@ -385,8 +385,11 @@ class Ajax_Handler {
 	 */
 	protected function get_requested_feed_url() {
 		// Nonce is verified by import_security_check() before this runs.
-		// phpcs:ignore WordPress.Security.NonceVerification.Recommended
-		$feed_url = isset( $_REQUEST['feed_url'] ) ? esc_url_raw( wp_unslash( $_REQUEST['feed_url'] ) ) : '';
+		// phpcs:disable WordPress.Security.NonceVerification.Recommended
+		$feed_url = isset( $_REQUEST['feed_url'] ) && is_string( $_REQUEST['feed_url'] )
+			? esc_url_raw( wp_unslash( $_REQUEST['feed_url'] ) )
+			: '';
+		// phpcs:enable WordPress.Security.NonceVerification.Recommended
 
 		return $feed_url;
 	}
@@ -407,6 +410,8 @@ class Ajax_Handler {
 					'message' => $result->get_error_message(),
 				)
 			);
+
+			return;
 		}
 
 		wp_send_json( array_merge( array( 'status' => 'success' ), $result ) );

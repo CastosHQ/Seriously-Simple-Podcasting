@@ -371,7 +371,11 @@ class Onboarding_Controller {
 	 * @return bool
 	 */
 	protected function has_imported_podcast() {
-		return (bool) get_option( Onboarding_Import_Handler::TARGET_SERIES_OPTION, 0 );
+		$target = (int) get_option( Onboarding_Import_Handler::TARGET_SERIES_OPTION, 0 );
+
+		// A target that no longer resolves falls back to the default podcast, and
+		// the wizard must stop calling itself imported when it does.
+		return $target && $target === $this->get_target_series_id();
 	}
 
 	/**

@@ -120,6 +120,16 @@ class RSS_Import_Handler {
 	private $episodes_added = 0;
 
 	/**
+	 * How many feed items have been walked, successful or not.
+	 *
+	 * Separate from $episodes_added so an item that cannot be inserted still
+	 * advances the cursor; otherwise the chunk restarts on it forever.
+	 *
+	 * @var int
+	 */
+	private $import_offset = 0;
+
+	/**
 	 * Titles of successfully imported episodes.
 	 *
 	 * @var string[]
@@ -257,6 +267,9 @@ class RSS_Import_Handler {
 		$this->episodes_added    = $this->get_import_data( 'episodes_added' );
 		$this->episodes_imported = $this->get_import_data( 'episodes_imported' );
 
+		// Imports started before the cursor existed resume from what they imported.
+		$this->import_offset = (int) $this->get_import_data( 'import_offset', $this->episodes_added );
+
 		return true;
 	}
 
@@ -316,7 +329,7 @@ class RSS_Import_Handler {
 				$this->update_podcast_data();
 			}
 
-			$start_from = $this->episodes_added;
+			$start_from = $this->import_offset;
 
 			for ( $i = $start_from, $count = 0; $i < $this->episodes_count; $i++, $count++ ) {
 				if ( $count >= self::ITEMS_PER_REQUEST ) {
@@ -324,6 +337,9 @@ class RSS_Import_Handler {
 				}
 				$item = $this->feed_object->channel->item[ $i ];
 				$this->create_episode( $item );
+
+				$this->import_offset = $i + 1;
+				$this->update_import_data( 'import_offset', $this->import_offset );
 			}
 
 			$this->push_podcast_to_castos();

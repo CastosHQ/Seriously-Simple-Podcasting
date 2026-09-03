@@ -146,6 +146,8 @@ jQuery(document).ready(function($) {
 				$fetch = $import.find('.js-ssp-import-fetch'),
 				$start = $import.find('.js-ssp-import-start'),
 				$error = $import.find('.js-ssp-import-error'),
+				$coverEmpty = $import.find('.js-ssp-import-cover-empty'),
+				$coverNote = $import.find('.js-ssp-import-cover-note'),
 				$failure = $import.find('.js-ssp-import-failure'),
 				$bar = $import.find('.js-ssp-import-bar'),
 				$progress = $import.find('.js-ssp-import-progress'),
@@ -193,15 +195,41 @@ jQuery(document).ready(function($) {
 				showStage('failed');
 			}
 
+			/**
+			 * Shows the placeholder instead of the artwork, with an optional reason.
+			 * The next wizard step is Cover, so missing artwork is a prompt, not an error.
+			 */
+			function showCoverPlaceholder($image, message) {
+				$image.prop('hidden', true);
+				$coverEmpty.prop('hidden', false);
+				$coverNote.text(message || '').prop('hidden', !message);
+			}
+
 			function renderPreview(feed) {
 				var $image = $import.find('.js-ssp-import-image'),
 					meta = [feed.author, feed.host].filter(Boolean).join(' · ');
 
 				episodeCount = feed.episodes;
 
-				$image.prop('hidden', !feed.image);
+				$image.off('error load');
+
 				if (feed.image) {
-					$image.attr('src', feed.image).attr('alt', feed.title);
+					$coverEmpty.prop('hidden', true);
+					$coverNote.prop('hidden', true);
+
+					// The browser failing on the URL does not mean the server will:
+					// hotlink protection blocks one and not the other. Say only what
+					// we know, which is that the preview could not be shown.
+					$image.one('error', function () {
+						showCoverPlaceholder($image, i18n.coverFailed);
+					});
+					$image.one('load', function () {
+						$image.prop('hidden', false);
+					});
+
+					$image.prop('hidden', true).attr('src', feed.image).attr('alt', feed.title);
+				} else {
+					showCoverPlaceholder($image, i18n.noCoverArt);
 				}
 
 				$import.find('.js-ssp-import-title').text(feed.title);

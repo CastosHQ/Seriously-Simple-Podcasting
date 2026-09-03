@@ -2,9 +2,9 @@
 Contributors: PodcastMotor, psykro, zahardoc, simondowdles, hlashbrooke, whyisjake
 Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
-Tested up to: 7.0
+Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.17.0
+Stable tag: 3.18.0-alpha
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.18.0-alpha =
+2026-09-03
+[NEW] Added an onboarding option to import an existing podcast
+[NEW] Added an option to create a new podcast directly from an RSS import
+[UPDATE] Improved Castos sync support for podcasts imported from Castos
+[UPDATE] Imported episode media URLs now retain tracking prefixes and required query strings
+[UPDATE] Updated the onboarding wizard to use Castos brand colors
 
 = 3.17.0 =
 2026-08-12

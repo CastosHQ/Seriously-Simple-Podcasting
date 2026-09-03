@@ -727,13 +727,14 @@ class RSS_Import_Handler {
 
 		$post_data = $this->get_post_data( $item );
 
-		// Add the post
-		$post_id = wp_insert_post( $post_data );
+		// Add the post. Ask for a WP_Error: the default return of 0 is falsy but
+		// passes an is_wp_error() guard, which would carry post ID 0 downstream.
+		$post_id = wp_insert_post( $post_data, true );
 
 		/**
 		 * If an error occurring adding a post, continue the loop
 		 */
-		if ( is_wp_error( $post_id ) ) {
+		if ( is_wp_error( $post_id ) || ! $post_id ) {
 			$this->logger->log( __METHOD__ . ' Could not create episode!', compact( 'post_data' ) );
 
 			return;

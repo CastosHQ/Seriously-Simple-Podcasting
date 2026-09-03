@@ -22,7 +22,6 @@ class OnboardingControllerTest extends \Codeception\TestCase\WPTestCase
 
     protected function tearDown(): void
     {
-        Onboarding_Import_Handler::forget_target_series();
         $_POST = [];
         parent::tearDown();
     }
@@ -128,5 +127,30 @@ class OnboardingControllerTest extends \Codeception\TestCase\WPTestCase
 
         $this->assertCount(Onboarding_Controller::STEPS_NUMBER, $labels);
         $this->assertSame([1, 2, 3, 4, 5], array_keys($labels));
+    }
+
+    /**
+     * A target podcast that has been deleted stops counting as an import.
+     *
+     * get_target_series_id() falls back to the default podcast when the term is
+     * gone, so the imported flag has to fall back with it — otherwise the steps
+     * read the default podcast while still showing imported-podcast wording.
+     */
+    public function testDeletedTargetStopsCountingAsImported()
+    {
+        $default_id  = $this->create_series('My Site');
+        $imported_id = $this->create_series('The Audience Show');
+        ssp_update_option('default_series', $default_id);
+        $this->set_target_series($imported_id);
+
+        $this->assertTrue($this->call('has_imported_podcast'));
+
+        wp_delete_term($imported_id, ssp_series_taxonomy());
+
+        $this->assertSame($default_id, $this->call('get_target_series_id'));
+        $this->assertFalse(
+            $this->call('has_imported_podcast'),
+            'A target that no longer resolves must not leave the wizard in the imported state'
+        );
     }
 }

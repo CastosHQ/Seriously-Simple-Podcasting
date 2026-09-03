@@ -21,7 +21,7 @@
 		<?php $class = ( $k < $step_number ) ? 'completed' : ( $k === $step_number ? 'active' : '' ); ?>
 		<li class="ssp-onboarding__step<?php echo ' ' . $class ?>">
 			<?php if ( $k < $step_number ) : ?>
-				<a href="<?php echo $step_urls[ $k ] ?>"><span><?php echo esc_html( $name ) ?></span></a>
+				<a href="<?php echo esc_url( $step_urls[ $k ] ) ?>"><span><?php echo esc_html( $name ) ?></span></a>
 			<?php else: ?>
 				<span><?php echo esc_html( $name ) ?></span>
 			<?php endif ?>

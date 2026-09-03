@@ -12,7 +12,7 @@ Feature: Onboarding Wizard
 		Given I want to "Get to onboarding wizard when plugin is first activated"
 		When I activate the SSP plugin
 		Then I can see the Onboarding Wizard
-		And I can see that I am on the "Welcome" step of onboarding wizard
+		And I can see that I am on the "Start" step of onboarding wizard
 
 		Given I want to "Setup the first step of onboarding wizard"
 		When I fill the "Show name" with "Automated test show"
@@ -39,8 +39,8 @@ Feature: Onboarding Wizard
 		Then I can see "Business" selected as "Primary Category"
 		And I can see "Management" selected as "Primary Sub-Category"
 
-		Given I want to "Check that Welcome step was setup correctly"
-		When I go to step "Welcome"
+		Given I want to "Check that Start step was setup correctly"
+		When I go to step "Start"
 		Then I can see field "Show name" contains "Automated test show"
 		And I can see field "Show description" contains "This show is to test some SSP functionality"
 

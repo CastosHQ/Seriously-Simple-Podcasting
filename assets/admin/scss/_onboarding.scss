@@ -143,20 +143,20 @@
 
 		&.active span {
 			&:after {
-				background: url(../img/step-active.svg) no-repeat;
+				background: url(../img/step-active-purple.svg) no-repeat;
 			}
 		}
 
 		&.completed span {
 			&:after {
-				background: url(../img/step-completed.svg) no-repeat;
+				background: url(../img/step-completed-purple.svg) no-repeat;
 			}
 		}
 	}
 
 	&-step-2, &-step-3, &-step-4, &-step-5 {
 		.ssp-onboarding__steps::after {
-			background: $clr_red_400;
+			background: $clr_purple_600;
 			width: initial;
 		}
 	}
@@ -248,7 +248,7 @@
 						display: block;
 						width: 14px;
 						height: 10px;
-						background: url(../img/checkbox-red.svg) no-repeat;
+						background: url(../img/checkbox-purple.svg) no-repeat;
 					}
 				}
 			}
@@ -276,7 +276,7 @@
 					content: '';
 					width: 20px;
 					height: 16px;
-					background: url(../img/hosting-arrow.svg) no-repeat;
+					background: url(../img/hosting-arrow-purple.svg) no-repeat;
 					right: 17px;
 					top: 35px;
 				}
@@ -321,7 +321,7 @@
 				li {
 					&:hover {
 						svg path, svg rect {
-							fill: $clr_red_400;
+							fill: $clr_purple_600;
 						}
 					}
 				}
@@ -367,8 +367,8 @@
 				font-weight: 600;
 				font-size: 20px;
 				line-height: 28px;
-				background: $clr_red_400;
-				border: 3px solid $clr_red_200;
+				background: $clr_purple_600;
+				border: 3px solid $clr_purple_300;
 				border-radius: 6px;
 				color: $clr_white;
 				text-decoration: none;
@@ -379,7 +379,7 @@
 				text-align: center;
 
 				&:hover {
-					background: lighten($clr_red_400, 10%);
+					background: $clr_purple_700;
 					transition: 0.2s;
 				}
 			}
@@ -601,15 +601,23 @@
 			border-radius: 6px;
 			border: 0;
 			color: #FFFFFF;
-			background: $clr_red_400;
+			background: $clr_purple_600;
 			font-size: 18px;
 			padding: 0 55px 0 33px;
 			transition: .3s;
 			cursor: pointer;
 
 			&:hover, &:active, &:focus {
-				background: #DE7373;
+				background: $clr_purple_700;
 				color: #FFFFFF;
+			}
+
+			// WP core rings focused buttons in the admin theme colour (blue by default).
+			// Override with the brand ring instead of removing the focus indicator.
+			&:focus {
+				box-shadow: 0 0 0 3px $clr_purple_300;
+				border-color: transparent;
+				outline: 1px solid transparent;
 			}
 
 			&:after {
@@ -641,7 +649,7 @@
 				&:after {
 					filter: invert(46%) sepia(4%) saturate(1281%) hue-rotate(182deg) brightness(94%) contrast(84%);
 				}
-				&:hover {
+				&:hover, &:focus {
 					color: #6B7280;
 					background: #f0f0f1;
 				}
@@ -689,11 +697,11 @@
 			}
 
 			&.connecting {
-				background: #DE7373 !important;
+				background: $clr_purple_600 !important;
 				color: #FFFFFF !important;
 
 				&:hover, &:active, &:focus, &:disabled {
-					background: #DE7373;
+					background: $clr_purple_600;
 				}
 
 				&:after {
@@ -749,7 +757,7 @@
 	}
 
 	&__delete-image {
-		background: #F8E3E3;
+		background: $clr_purple_100;
 		border-radius: 50%;
 		height: 28px;
 		width: 28px;
@@ -762,7 +770,7 @@
 			display: block;
 			height: 1.5px;
 			width: 14px;
-			background: $clr_red_400;
+			background: $clr_purple_600;
 			position: absolute;
 			left: 7px;
 			top: 46%;
@@ -846,7 +854,7 @@
 				width: 30px;
 				height: 30px;
 				background: #FFF;
-				color: $clr_red_400;
+				color: $clr_purple_600;
 				font-size: 20px;
 				font-weight: 600;
 				border-radius: 50%;
@@ -989,12 +997,18 @@
 
 			&:hover, &:active, &:focus {
 				background: #FFFFFF;
-				border-color: $clr_red_400;
-				color: $clr_red_400;
+				border-color: $clr_purple_600;
+				color: $clr_purple_600;
 				box-shadow: none;
 			}
 
-			// This arrow appears on white, so its SVG uses the brand red directly.
+			// Restore a visible focus indicator — the rule above drops WP core's ring.
+			&:focus {
+				box-shadow: 0 0 0 3px $clr_purple_300;
+				outline: 1px solid transparent;
+			}
+
+			// This arrow appears on white, so its SVG uses the brand purple directly.
 			&:after {
 				content: '';
 				display: block;
@@ -1003,7 +1017,7 @@
 				height: 24px;
 				right: 18px;
 				top: 12px;
-				background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 12H3M14 5L21 12L14 5ZM21 12L14 19L21 12Z' stroke='%23DF4E4F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+				background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 12H3M14 5L21 12L14 5ZM21 12L14 19L21 12Z' stroke='%23853AED' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
 			}
 		}
 	}
@@ -1134,7 +1148,7 @@
 	&__progress-bar {
 		height: 100%;
 		width: 0;
-		background: $clr_red_400;
+		background: $clr_purple_600;
 		transition: width .3s;
 	}
 

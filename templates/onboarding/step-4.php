@@ -50,7 +50,7 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 				<a target="_blank" rel="noopener" href="<?php echo $trial_url; ?>">
 					<?php _e( 'Start Free Trial on Castos', 'seriously-simple-podcasting' ) ?>
 					<svg width="25" height="24" viewBox="0 0 25 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-						<path d="M21.5 12H3.5M14.5 5L21.5 12L14.5 5ZM21.5 12L14.5 19L21.5 12Z" stroke="#F3C2C2" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+						<path d="M21.5 12H3.5M14.5 5L21.5 12L14.5 5ZM21.5 12L14.5 19L21.5 12Z" stroke="#EFE9FE" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
 					</svg>
 				</a>
 			</div>

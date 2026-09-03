@@ -1159,13 +1159,13 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   z-index: 2;
 }
 .ssp-onboarding__step.active span:after {
-  background: url(../img/step-active.svg) no-repeat;
+  background: url(../img/step-active-purple.svg) no-repeat;
 }
 .ssp-onboarding__step.completed span:after {
-  background: url(../img/step-completed.svg) no-repeat;
+  background: url(../img/step-completed-purple.svg) no-repeat;
 }
 .ssp-onboarding-step-2 .ssp-onboarding__steps::after, .ssp-onboarding-step-3 .ssp-onboarding__steps::after, .ssp-onboarding-step-4 .ssp-onboarding__steps::after, .ssp-onboarding-step-5 .ssp-onboarding__steps::after {
-  background: #DF4E4F;
+  background: #853AED;
   width: initial;
 }
 .ssp-onboarding-step-2 .ssp-onboarding__steps::after {
@@ -1240,7 +1240,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   display: block;
   width: 14px;
   height: 10px;
-  background: url(../img/checkbox-red.svg) no-repeat;
+  background: url(../img/checkbox-purple.svg) no-repeat;
 }
 .ssp-onboarding-step-4__info-button {
   display: block;
@@ -1264,7 +1264,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   content: "";
   width: 20px;
   height: 16px;
-  background: url(../img/hosting-arrow.svg) no-repeat;
+  background: url(../img/hosting-arrow-purple.svg) no-repeat;
   right: 17px;
   top: 35px;
 }
@@ -1301,7 +1301,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   padding: 0 17px 0 24px;
 }
 .ssp-onboarding-step-4__info__links li:hover svg path, .ssp-onboarding-step-4__info__links li:hover svg rect {
-  fill: #DF4E4F;
+  fill: #853AED;
 }
 .ssp-onboarding-step-4__sync-img {
   display: flex;
@@ -1337,8 +1337,8 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   font-weight: 600;
   font-size: 20px;
   line-height: 28px;
-  background: #DF4E4F;
-  border: 3px solid #FFA5A5;
+  background: #853AED;
+  border: 3px solid #CEB5FD;
   border-radius: 6px;
   color: #FFFFFF;
   text-decoration: none;
@@ -1349,7 +1349,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   text-align: center;
 }
 .ssp-onboarding-step-4__start-trial a:hover {
-  background: rgb(90.5131813491%, 47.5260343372%, 47.82249742%);
+  background: #6C25D0;
   transition: 0.2s;
 }
 .ssp-onboarding-step-4__start-trial svg {
@@ -1538,15 +1538,20 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   border-radius: 6px;
   border: 0;
   color: #FFFFFF;
-  background: #DF4E4F;
+  background: #853AED;
   font-size: 18px;
   padding: 0 55px 0 33px;
   transition: 0.3s;
   cursor: pointer;
 }
 .ssp-onboarding__submit button[type=submit]:hover, .ssp-onboarding__submit button[type=submit]:active, .ssp-onboarding__submit button[type=submit]:focus, .ssp-onboarding__submit button[type=button]:hover, .ssp-onboarding__submit button[type=button]:active, .ssp-onboarding__submit button[type=button]:focus, .ssp-onboarding__submit .button:hover, .ssp-onboarding__submit .button:active, .ssp-onboarding__submit .button:focus {
-  background: #DE7373;
+  background: #6C25D0;
   color: #FFFFFF;
+}
+.ssp-onboarding__submit button[type=submit]:focus, .ssp-onboarding__submit button[type=button]:focus, .ssp-onboarding__submit .button:focus {
+  box-shadow: 0 0 0 3px #CEB5FD;
+  border-color: transparent;
+  outline: 1px solid transparent;
 }
 .ssp-onboarding__submit button[type=submit]:after, .ssp-onboarding__submit button[type=button]:after, .ssp-onboarding__submit .button:after {
   content: "";
@@ -1574,7 +1579,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 .ssp-onboarding__submit .button.skip:after {
   filter: invert(46%) sepia(4%) saturate(1281%) hue-rotate(182deg) brightness(94%) contrast(84%);
 }
-.ssp-onboarding__submit .button.skip:hover {
+.ssp-onboarding__submit .button.skip:hover, .ssp-onboarding__submit .button.skip:focus {
   color: #6B7280;
   background: #f0f0f1;
 }
@@ -1616,11 +1621,11 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   transition: none;
 }
 .ssp-onboarding__submit .castos-connect.connecting {
-  background: #DE7373 !important;
+  background: #853AED !important;
   color: #FFFFFF !important;
 }
 .ssp-onboarding__submit .castos-connect.connecting:hover, .ssp-onboarding__submit .castos-connect.connecting:active, .ssp-onboarding__submit .castos-connect.connecting:focus, .ssp-onboarding__submit .castos-connect.connecting:disabled {
-  background: #DE7373;
+  background: #853AED;
 }
 .ssp-onboarding__submit .castos-connect.connecting:after {
   width: 17px;
@@ -1669,7 +1674,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   margin: 0 16px 0 20px;
 }
 .ssp-onboarding__delete-image {
-  background: #F8E3E3;
+  background: #EFE9FE;
   border-radius: 50%;
   height: 28px;
   width: 28px;
@@ -1682,7 +1687,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   display: block;
   height: 1.5px;
   width: 14px;
-  background: #DF4E4F;
+  background: #853AED;
   position: absolute;
   left: 7px;
   top: 46%;
@@ -1755,7 +1760,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   width: 30px;
   height: 30px;
   background: #FFF;
-  color: #DF4E4F;
+  color: #853AED;
   font-size: 20px;
   font-weight: 600;
   border-radius: 50%;
@@ -1878,9 +1883,13 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 }
 .ssp-onboarding__import-offer .button:hover, .ssp-onboarding__import-offer .button:active, .ssp-onboarding__import-offer .button:focus {
   background: #FFFFFF;
-  border-color: #DF4E4F;
-  color: #DF4E4F;
+  border-color: #853AED;
+  color: #853AED;
   box-shadow: none;
+}
+.ssp-onboarding__import-offer .button:focus {
+  box-shadow: 0 0 0 3px #CEB5FD;
+  outline: 1px solid transparent;
 }
 .ssp-onboarding__import-offer .button:after {
   content: "";
@@ -1890,7 +1899,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   height: 24px;
   right: 18px;
   top: 12px;
-  background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 12H3M14 5L21 12L14 5ZM21 12L14 19L21 12Z' stroke='%23DF4E4F' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
+  background: url("data:image/svg+xml,%3Csvg width='24' height='24' viewBox='0 0 24 24' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M21 12H3M14 5L21 12L14 5ZM21 12L14 19L21 12Z' stroke='%23853AED' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat;
 }
 .ssp-onboarding__import-offer-text {
   flex: 1;
@@ -1942,6 +1951,27 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
   object-fit: cover;
   display: block;
 }
+.ssp-onboarding-import__cover img[hidden] {
+  display: none;
+}
+.ssp-onboarding-import__cover-empty {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+}
+.ssp-onboarding-import__cover-empty[hidden] {
+  display: none;
+}
+.ssp-onboarding-import__cover-empty:after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 40px;
+  background: url(../img/no-image.svg) no-repeat center center;
+  background-size: contain;
+}
 .ssp-onboarding-import__details {
   flex: 1;
 }
@@ -1972,7 +2002,7 @@ body.ssp-admin .select2-container--default .select2-selection--multiple .select2
 .ssp-onboarding-import__progress-bar {
   height: 100%;
   width: 0;
-  background: #DF4E4F;
+  background: #853AED;
   transition: width 0.3s;
 }
 .ssp-onboarding-import__progress-label {

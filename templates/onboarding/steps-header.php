@@ -6,7 +6,7 @@
  * */
 ?>
 <div class="ssp-onboarding__logo">
-	<img alt="Seriously Simple Podcasting" src="<?php echo SSP_PLUGIN_URL . '/assets/admin/img/logo.png'; ?>">
+	<img alt="Seriously Simple Podcasting" src="<?php echo SSP_PLUGIN_URL . '/assets/admin/img/logo-purple.svg'; ?>">
 	<div class="ssp-onboarding__logo-text">
 		<span class="ssp-onboarding__logo-title">
 			<?php _e( 'Seriously Simple Podcasting', 'seriously-simple-podcasting' ); ?>

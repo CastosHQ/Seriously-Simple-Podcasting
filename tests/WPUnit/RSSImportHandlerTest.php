@@ -797,4 +797,42 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         $wordpress_guid = get_the_guid($episodes[0]->ID);
         $this->assertEquals($wordpress_guid, ssp_episode_guid($episodes[0]->ID));
     }
+
+    /**
+     * Refuses a post ID of 0 and advances past the item that produced it.
+     *
+     * The chunk cursor used to be the successful-episode count, so an item that
+     * never incremented it restarted the same chunk on every request.
+     */
+    public function testImportAdvancesPastAnItemThatCannotBeInserted()
+    {
+        $this->feed_xml = $this->build_feed_xml(3);
+        $series_id      = $this->create_series('Insert Failure Test');
+
+        // Reject the first item only; wp_insert_post() then returns a WP_Error.
+        $reject_first = function ($maybe_empty, $postarr) {
+            return 0 === strpos($postarr['post_title'], 'Episode 1') ? true : $maybe_empty;
+        };
+        add_filter('wp_insert_post_empty_content', $reject_first, 10, 2);
+
+        $response = $this->run_import_chunk($series_id);
+
+        remove_filter('wp_insert_post_empty_content', $reject_first, 10);
+
+        $this->assertSame('success', $response['status']);
+
+        $this->assertSame(
+            3,
+            (int) RSS_Import_Handler::get_import_data('import_offset'),
+            'The cursor must pass all three items even though one could not be inserted'
+        );
+
+        $episodes = get_posts(['post_type' => SSP_CPT_PODCAST, 'numberposts' => -1]);
+        $this->assertCount(2, $episodes, 'The rejected item must not produce an episode');
+
+        $this->assertEmpty(
+            get_post_meta(0, 'ssp_original_guid', true),
+            'A failed insert must not write meta against post ID 0'
+        );
+    }
 }

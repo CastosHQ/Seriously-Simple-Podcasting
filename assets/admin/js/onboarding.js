@@ -135,6 +135,9 @@ jQuery(document).ready(function($) {
 				return;
 			}
 
+			// How many chunks may report no new episodes before the import is called stalled.
+			var MAX_STALLED_CHUNKS = 3;
+
 			var i18n = (window.sspOnboarding && window.sspOnboarding.i18n) || {},
 				ajaxUrl = $import.data('ajax-url'),
 				nonce = $import.data('nonce'),
@@ -232,6 +235,11 @@ jQuery(document).ready(function($) {
 				}, 2000);
 			}
 
+			// The chunk loop trusts the server to advance. If it ever stops doing so,
+			// stop asking rather than calling admin-ajax.php forever.
+			var stalledChunks = 0,
+				lastCount = -1;
+
 			function importChunk() {
 				request('import_external_rss_feed').done(function (response) {
 					if ('error' === response.status) {
@@ -240,6 +248,18 @@ jQuery(document).ready(function($) {
 					}
 
 					if (!response.is_finished) {
+						if (response.count === lastCount) {
+							stalledChunks++;
+						} else {
+							stalledChunks = 0;
+							lastCount = response.count;
+						}
+
+						if (stalledChunks >= MAX_STALLED_CHUNKS) {
+							fail(i18n.importStalled);
+							return;
+						}
+
 						importChunk();
 						return;
 					}
@@ -255,6 +275,8 @@ jQuery(document).ready(function($) {
 			}
 
 			function runImport() {
+				stalledChunks = 0;
+				lastCount = -1;
 				showStage('running');
 				setProgress(0);
 				pollProgress();

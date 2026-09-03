@@ -57,11 +57,13 @@
 			<div class="ssp-onboarding-import__found">
 				<div class="ssp-onboarding-import__cover">
 					<img class="js-ssp-import-image" src="" alt="" hidden>
+					<span class="ssp-onboarding-import__cover-empty js-ssp-import-cover-empty" aria-hidden="true" hidden></span>
 				</div>
 				<div class="ssp-onboarding-import__details">
 					<h3 class="js-ssp-import-title"></h3>
 					<p class="js-ssp-import-meta"></p>
 					<span class="ssp-onboarding-import__count js-ssp-import-count"></span>
+					<p class="ssp-onboarding-import__note js-ssp-import-cover-note" hidden></p>
 				</div>
 			</div>
 			<div class="ssp-onboarding__submit">

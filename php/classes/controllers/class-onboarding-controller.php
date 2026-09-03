@@ -141,6 +141,8 @@ class Onboarding_Controller {
 			'startFailed'   => __( 'We could not start the import just now. Please try again.', 'seriously-simple-podcasting' ),
 			'importFailed'  => __( 'The import could not be reached. Check your connection and try again.', 'seriously-simple-podcasting' ),
 			'importStalled' => __( 'The import stopped adding episodes. Retry to pick it up from where it stopped.', 'seriously-simple-podcasting' ),
+			'noCoverArt'    => __( 'This feed has no cover art. You can add one in the next step.', 'seriously-simple-podcasting' ),
+			'coverFailed'   => __( 'The cover art could not be previewed. We will still try to import it.', 'seriously-simple-podcasting' ),
 		);
 	}
 

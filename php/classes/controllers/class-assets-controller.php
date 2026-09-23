@@ -164,8 +164,18 @@ class Assets_Controller {
 		) );
 		wp_enqueue_script( 'ssp-admin' );
 
-		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
+		wp_register_script( 'ssp-settings', esc_url( $this->assets_url . 'js/settings' . $this->script_suffix . '.js' ), array( 'jquery', 'wp-i18n' ), $this->version );
+		wp_set_script_translations( 'ssp-settings', 'seriously-simple-podcasting' );
 		wp_enqueue_script( 'ssp-settings' );
+
+		wp_register_script( 'ssp-modal', esc_url( $this->assets_url . 'js/modal' . $this->script_suffix . '.js' ), array(), $this->version );
+
+		if ( 'podcast_page_podcast_settings' === $hook && 'castos-hosting' === filter_input( INPUT_GET, 'tab' ) ) {
+			wp_enqueue_script( 'ssp-castos-sync', esc_url( $this->assets_url . 'js/castos-sync' . $this->script_suffix . '.js' ), array( 'jquery', 'wp-i18n', 'ssp-modal' ), $this->version );
+			wp_set_script_translations( 'ssp-castos-sync', 'seriously-simple-podcasting' );
+		}
+
+		wp_register_script( 'ssp-series-guid', esc_url( $this->assets_url . 'js/series-guid' . $this->script_suffix . '.js' ), array( 'ssp-modal' ), $this->version );
 
 		wp_register_script( 'ssp-select2-js', esc_url( $this->assets_url . 'js/select2' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 		wp_enqueue_script( 'ssp-select2-js' );

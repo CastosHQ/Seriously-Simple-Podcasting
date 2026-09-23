@@ -111,7 +111,7 @@ jQuery(document).ready(function($) {
 	  initDisconnect = function () {
 		  var $disconnect = $('#disconnect_castos');
 		  $disconnect.on('click', function (event) {
-			  var $message = 'If you disconnect from Castos hosting you will no longer be able to upload media files to the Castos hosting platform. If you’re no longer a Castos customer your media files may no longer be available to your listeners.';
+			  var $message = __( 'If you disconnect from Castos hosting you will no longer be able to upload media files to the Castos hosting platform. If you’re no longer a Castos customer your media files may no longer be available to your listeners.', 'seriously-simple-podcasting' );
 			  var user_input = confirm($message);
 			  if (user_input === true) {
 				  $disconnect.addClass('loader');
@@ -146,76 +146,6 @@ jQuery(document).ready(function($) {
 		}
 	}
 
-	function initCastosSync() {
-		var $syncBtn = $('#trigger_sync'),
-			nonce = $("#podcast_settings_tab_nonce").val(),
-			syncClass = '.js-sync-podcast',
-			changeStatus = function ($el, status, title = '') {
-				var $statusEl = $el.closest(syncClass).find('.js-sync-status');
-				$statusEl.removeClass('synced_with_errors success none sending failed').addClass(status);
-				if(title){
-					$statusEl.find('span').html(title);
-				}
-			},
-			getCheckedPodcasts = function(){
-				return $(syncClass + ' input[type=checkbox]:checked');
-			},
-			getPodcastCheckboxes = function(){
-				return $(syncClass + ' input[type=checkbox]');
-			},
-			updateSyncBtn = function(){
-				$syncBtn.prop('disabled', getCheckedPodcasts().length === 0);
-			}
-
-		if (!$syncBtn.length) {
-			return false;
-		}
-		updateSyncBtn();
-
-		getPodcastCheckboxes().on('change', function(){
-			updateSyncBtn();
-		});
-
-		$syncBtn.on('click', function(){
-			$syncBtn.addClass('loader');
-
-			var $msg = $('.ssp-sync-msg'),
-				$checked = getCheckedPodcasts(),
-				podcasts = [];
-
-			if (!$msg.length) {
-				$msg = $('<span class="ssp-sync-msg"></span>');
-				$syncBtn.parent().append($msg);
-			}
-
-			$checked.each(function () {
-				podcasts.push($(this).val());
-			});
-
-			$.ajax({
-				method: "GET",
-				url: ajaxurl,
-				data: {
-					action: "sync_castos",
-					nonce: nonce,
-					podcasts: podcasts
-				}
-			}).done(function (response) {
-				var msg = '<div class="sync-overview">' + response.data.msg + '</div>';
-				$.each(response.data.podcasts, function (id, status) {
-					changeStatus($('#podcasts_sync_' + id), status.status, status.title);
-					msg += '<div class="sync-msg">' + status.msg + '</div>';
-				});
-
-				$syncBtn.removeClass('loader');
-				$msg.addClass(response.success ? 'success' : 'error');
-
-				$msg.html(msg);
-			});
-		});
-	}
-
 	initCastosAPICredentials();
 	initSubcategoryFiltration();
-	initCastosSync();
 });

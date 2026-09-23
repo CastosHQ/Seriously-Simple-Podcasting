@@ -37,17 +37,17 @@
 
 			<div class="ssp-admin-header__info-buttons">
 				<?php if ( $is_connected ) : ?>
-					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'podcasts' ); ?>">
+					<a class="ssp-admin-button" target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'podcasts' ); ?>">
 						<?php esc_html_e( 'Manage Account', 'seriously-simple-podcasting' ); ?>
 					</a>
-					<a target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'analytics' ); ?>">
+					<a class="ssp-admin-button" target="_blank" rel="noopener" href="<?php echo esc_url( SSP_CASTOS_APP_URL . 'analytics' ); ?>">
 						<?php esc_html_e( 'View Analytics', 'seriously-simple-podcasting' ); ?>
 					</a>
 				<?php else : ?>
-					<a target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/pricing?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
+					<a class="ssp-admin-button" target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/pricing?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
 						<?php esc_html_e( 'Upgrade', 'seriously-simple-podcasting' ); ?>
 					</a>
-					<a target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/podcast-analytics?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
+					<a class="ssp-admin-button" target="_blank" rel="noopener" href="<?php echo esc_url( 'https://castos.com/podcast-analytics?utm_source=ssp&utm_medium=view-stats&utm_campaign=header' ); ?>">
 						<?php esc_html_e( 'Start Analytics', 'seriously-simple-podcasting' ); ?>
 					</a>
 				<?php endif; ?>

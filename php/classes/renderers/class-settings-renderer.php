@@ -10,6 +10,7 @@ namespace SeriouslySimplePodcasting\Renderers;
 
 // Exit if accessed directly.
 use SeriouslySimplePodcasting\Entities\Sync_Status;
+use SeriouslySimplePodcasting\Repositories\Sync_Refusal_Repository;
 use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Traits\Singleton;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
@@ -119,7 +120,7 @@ class Settings_Renderer implements Service {
 				$html .= $this->render_importing_podcasts( $field );
 				break;
 			case 'podcasts_sync':
-				$html .= $this->render_sync_podcasts( $field, $data, $option_name );
+				$html .= $this->render_sync_series( $field, $data, $option_name );
 				break;
 			case 'single_select_page':
 				$html .= $this->render_single_select_page( $field, $data, $option_name );
@@ -403,7 +404,7 @@ class Settings_Renderer implements Service {
 	 *
 	 * @return string
 	 */
-	protected function render_sync_podcasts( $field, $data, $option_name ) {
+	protected function render_sync_series( $field, $data, $option_name ) {
 		$html = '';
 		if ( empty( $field['options'] ) ) {
 			return $html;
@@ -413,31 +414,127 @@ class Settings_Renderer implements Service {
 			return '<div class="ssp-sync-podcast api-error">' . __( 'Castos API error', 'seriously-simple-podcasting' ) . '</div>';
 		}
 
-		foreach ( $field['options'] as $podcast_id => $v ) {
-			$status = $data['statuses'][ $podcast_id ] ?? new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
-			
+		foreach ( $field['options'] as $series_id => $v ) {
+			$status  = $data['statuses'][ $series_id ] ?? new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
+			$refusal = isset( $data['sync_refusals'][ $series_id ] ) && is_array( $data['sync_refusals'][ $series_id ] )
+				? $data['sync_refusals'][ $series_id ]
+				: null;
+
 			/**
 			 * @var Sync_Status $status
 			 * */
-			$link = '';
-			if ( $podcast_id ) {
-				$podcast = get_term_by( 'term_id', $podcast_id, ssp_series_taxonomy() );
-				$link    = admin_url( sprintf( 'edit.php?series=%s&post_type=%s', $podcast->slug, $this->token ) );
-			}
 
-			$checkbox = '<div class="ssp-sync-podcast__checkbox"><label for="' . esc_attr( $field['id'] . '_' . $podcast_id ) .
+			$checkbox = '<div class="ssp-sync-podcast__checkbox"><label for="' . esc_attr( $field['id'] . '_' . $series_id ) .
 						'"><input type="checkbox" name="' . esc_attr( $option_name ) .
-						'[]" value="' . esc_attr( $podcast_id ) . '" id="' . esc_attr( $field['id'] . '_' . $podcast_id ) .
+						'[]" value="' . esc_attr( $series_id ) . '" id="' . esc_attr( $field['id'] . '_' . $series_id ) .
 						'" class="' . esc_attr( $this->get_field_class( $field ) ) . '" /> ' . $v . '</label></div>';
 
-			$classes       = 'js-sync-status ' . $status->status;
-			$is_full_label = true;
-			$label         = ssp_renderer()->fetch( 'settings/sync-label', compact( 'status', 'classes', 'link', 'is_full_label' ) );
+			$label = $this->render_sync_status_label( $series_id, $status, $refusal );
 
 			$html .= '<div class="ssp-sync-podcast js-sync-podcast">' . $checkbox . $label . '</div>';
 		}
 
 		return $html;
+	}
+
+	/**
+	 * Render a series sync status label.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int         $series_id  Series term ID.
+	 * @param Sync_Status $status     Sync status.
+	 * @param array|null  $refusal    Stored Castos refusal.
+	 *
+	 * @return string
+	 */
+	public function render_sync_status_label( $series_id, $status, $refusal = null ) {
+		$links   = $this->get_series_links( $series_id );
+		$classes = 'js-sync-status ' . $status->status;
+
+		if ( Sync_Refusal_Repository::needs_confirmation( $refusal ) ) {
+			return ssp_renderer()->fetch(
+				'settings/sync-refusal-label',
+				array(
+					'status'            => $status,
+					'classes'           => $classes,
+					'refusal_id'        => 'ssp-sync-refusal-' . absint( $series_id ),
+					'difference_labels' => Sync_Refusal_Repository::get_field_labels( (array) ( $refusal['differences'] ?? array() ) ),
+					'series_edit_link'  => $links['edit_link'],
+				)
+			);
+		}
+
+		if ( is_array( $refusal ) ) {
+			return ssp_renderer()->fetch(
+				'settings/sync-refusal-terminal',
+				array(
+					'status'       => $status,
+					'classes'      => $classes,
+					'reason'       => Sync_Refusal_Repository::get_refusal_reason( $refusal ),
+					'refusal_link' => $this->get_refusal_castos_link( $refusal ),
+				)
+			);
+		}
+
+		return ssp_renderer()->fetch(
+			'settings/sync-label',
+			array(
+				'status'        => $status,
+				'classes'       => $classes,
+				'link'          => $links['link'],
+				'is_full_label' => true,
+			)
+		);
+	}
+
+	/**
+	 * Get the series episodes and edit screen links.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int $series_id Series term ID.
+	 *
+	 * @return array Episodes list link and series edit link, each empty when unavailable.
+	 */
+	protected function get_series_links( $series_id ) {
+		$links = array(
+			'link'      => '',
+			'edit_link' => '',
+		);
+
+		if ( ! $series_id ) {
+			return $links;
+		}
+
+		$series = get_term_by( 'term_id', $series_id, ssp_series_taxonomy() );
+		if ( ! $series || is_wp_error( $series ) ) {
+			return $links;
+		}
+
+		$edit_link = get_edit_term_link( $series->term_id, ssp_series_taxonomy(), $this->token );
+
+		$links['link']      = admin_url( sprintf( 'edit.php?series=%s&post_type=%s', $series->slug, $this->token ) );
+		$links['edit_link'] = is_wp_error( $edit_link ) ? '' : $edit_link;
+
+		return $links;
+	}
+
+	/**
+	 * Get the link to the refused Castos podcast.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param array|null $refusal Stored Castos refusal.
+	 *
+	 * @return string Castos dashboard link, or an empty string when the refusal names no podcast.
+	 */
+	protected function get_refusal_castos_link( $refusal ) {
+		if ( empty( $refusal['podcast_id'] ) || 0 >= (int) $refusal['podcast_id'] ) {
+			return '';
+		}
+
+		return SSP_CASTOS_APP_URL . 'podcasts/' . absint( $refusal['podcast_id'] ) . '/edit/settings/overview';
 	}
 
 	/**

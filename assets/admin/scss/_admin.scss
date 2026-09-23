@@ -464,6 +464,11 @@ textarea#episode_embed_code {
 		line-height: 23px;
 	}
 
+	&[data-ssp-modal-open] {
+		cursor: pointer;
+		text-align: left;
+	}
+
 	a {
 		position: absolute;
 		width: 100%;
@@ -515,7 +520,7 @@ textarea#episode_embed_code {
 		}
 	}
 
-	&.failed, &.synced_with_errors {
+	&.failed, &.synced_with_errors, &.needs_confirmation {
 		background: var(--yellow-100, #FEF8D7);
 		color: #AF6A09;
 		border: 1px solid #e2cccc;
@@ -527,6 +532,20 @@ textarea#episode_embed_code {
 			height: 16px;
 			background-image: url(../img/status-failed.svg);
 		}
+	}
+}
+
+.ssp-sync-refusal {
+	margin-left: auto;
+	text-align: left;
+}
+
+.ssp-sync-refusal-terminal {
+	margin-left: auto;
+	text-align: right;
+
+	p {
+		margin: 8px 0;
 	}
 }
 

@@ -11,6 +11,7 @@ use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Repositories\Settings_Config;
+use SeriouslySimplePodcasting\Repositories\Sync_Refusal_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 /**
@@ -85,28 +86,37 @@ class Settings_Controller {
 	 * */
 	protected $episode_repository;
 
+	/**
+	 * Stores Castos sync refusals against podcast series terms.
+	 *
+	 * @var Sync_Refusal_Repository
+	 */
+	protected $sync_refusal_repository;
+
 
 	/**
 	 * Constructor
 	 *
-	 * @param Settings_Handler   $settings_handler
-	 * @param Settings_Renderer  $settings_renderer
-	 * @param Renderer           $renderer
-	 * @param Series_Handler     $series_handler
-	 * @param Castos_Handler     $castos_handler
-	 * @param Episode_Repository $episode_repository
+	 * @param Settings_Handler             $settings_handler
+	 * @param Settings_Renderer            $settings_renderer
+	 * @param Renderer                     $renderer
+	 * @param Series_Handler               $series_handler
+	 * @param Castos_Handler               $castos_handler
+	 * @param Episode_Repository           $episode_repository
+	 * @param Sync_Refusal_Repository      $sync_refusal_repository Sync refusal repository.
 	 */
-	public function __construct( $settings_handler, $settings_renderer, $renderer, $series_handler, $castos_handler, $episode_repository ) {
+	public function __construct( $settings_handler, $settings_renderer, $renderer, $series_handler, $castos_handler, $episode_repository, $sync_refusal_repository ) {
 		$this->init_useful_variables();
 
 		$this->settings_base = self::SETTINGS_BASE;
 
-		$this->settings_handler   = $settings_handler;
-		$this->settings_renderer  = $settings_renderer;
-		$this->renderer           = $renderer;
-		$this->series_handler     = $series_handler;
-		$this->castos_handler     = $castos_handler;
-		$this->episode_repository = $episode_repository;
+		$this->settings_handler        = $settings_handler;
+		$this->settings_renderer       = $settings_renderer;
+		$this->renderer                = $renderer;
+		$this->series_handler          = $series_handler;
+		$this->castos_handler          = $castos_handler;
+		$this->episode_repository      = $episode_repository;
+		$this->sync_refusal_repository = $sync_refusal_repository;
 
 		$this->register_hooks_and_filters();
 	}
@@ -177,42 +187,89 @@ class Settings_Controller {
 	 */
 	public function provide_podcasts_sync_status( $data, $args ) {
 		if ( isset( $args['field']['id'] ) && 'podcasts_sync' === $args['field']['id'] ) {
-			$data = (array) $data;
-			$res  = $this->castos_handler->get_podcasts();
-			if ( ! is_array( $res ) || empty( $res['status'] ) || 'success' !== $res['status'] || ! isset( $res['data'] ) ) {
+			$data        = (array) $data;
+			$status_data = $this->get_series_sync_statuses( array_keys( (array) $args['field']['options'] ) );
+			if ( null === $status_data ) {
 				$data['statuses'] = null;
 
 				return $data;
 			}
 
-			// First, prepare all SSP podcasts with a "none" status, and after, update them with the data retrieved from Castos.
-			$statuses = array();
-			foreach ( (array) $args['field']['options'] as $series_id => $v ) {
-				$statuses[ $series_id ] = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
-			}
-
-			$castos_podcasts = (array) $res['data']['podcast_list'];
-
-			// Update statuses with the data retrieved from Castos.
-			foreach ( $castos_podcasts as $podcast ) {
-				if ( ! isset( $podcast['series_id'] ) || ! array_key_exists( $podcast['series_id'], $statuses ) ) {
-					continue;
-				}
-
-				$status = $this->castos_handler->retrieve_sync_status_by_podcast_data( $podcast );
-
-				// If status is none, let's try to guess the sync status
-				if ( Sync_Status::SYNC_STATUS_NONE === $status->status ) {
-					$status = $this->guess_podcast_sync_status( $podcast );
-				}
-
-				$statuses[ $podcast['series_id'] ] = $status;
-			}
-
-			$data['statuses'] = $statuses;
+			$data['statuses']      = $status_data['statuses'];
+			$data['sync_refusals'] = $status_data['sync_refusals'];
 		}
 
 		return $data;
+	}
+
+	/**
+	 * Assemble Hosting sync statuses for the requested podcasts.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int[] $podcast_ids Series term IDs.
+	 * @param bool  $live        Whether to bypass the cached Castos response.
+	 *
+	 * @return array|null Statuses and sync refusals, or null when Castos is unavailable.
+	 * @throws \Exception
+	 */
+	public function get_series_sync_statuses( $series_ids, $live = false ) {
+		$res = $this->castos_handler->get_podcasts( $live );
+		if ( ! is_array( $res ) || empty( $res['status'] ) || 'success' !== $res['status'] || ! isset( $res['data'] ) ) {
+			return null;
+		}
+
+		// First, prepare all SSP podcasts with a "none" status, and after, update them with the data retrieved from Castos.
+		$statuses             = array();
+		$sync_refusals        = array();
+		$connected_series_ids = array();
+		foreach ( (array) $series_ids as $series_id ) {
+			$statuses[ $series_id ] = new Sync_Status( Sync_Status::SYNC_STATUS_NONE );
+		}
+
+		$castos_podcasts = (array) $res['data']['podcast_list'];
+
+		// Update statuses with the data retrieved from Castos.
+		foreach ( $castos_podcasts as $podcast ) {
+			if ( ! isset( $podcast['series_id'] ) || ! array_key_exists( $podcast['series_id'], $statuses ) ) {
+				continue;
+			}
+
+			// A Castos association wins the display; any stored refusal is hidden, not deleted.
+			$connected_series_ids[ $podcast['series_id'] ] = true;
+
+			$status = $this->castos_handler->retrieve_sync_status_by_podcast_data( $podcast );
+
+			// If status is none, let's try to guess the sync status.
+			if ( Sync_Status::SYNC_STATUS_NONE === $status->status ) {
+				$status = $this->guess_podcast_sync_status( $podcast );
+			}
+
+			$statuses[ $podcast['series_id'] ] = $status;
+		}
+
+		// Stored refusals override local status guesses when Castos has not connected the series.
+		foreach ( array_keys( $statuses ) as $series_id ) {
+			if ( isset( $connected_series_ids[ $series_id ] ) ) {
+				continue;
+			}
+
+			$refusal = $this->sync_refusal_repository->get( $series_id );
+			if ( null === $refusal ) {
+				continue;
+			}
+
+			$sync_refusals[ $series_id ] = $refusal;
+			$status                      = Sync_Refusal_Repository::CODE_DETAILS_DIFFER === ( $refusal['code'] ?? '' )
+				? Sync_Status::SYNC_STATUS_NEEDS_CONFIRMATION
+				: Sync_Status::SYNC_STATUS_FAILED;
+			$statuses[ $series_id ]      = new Sync_Status( $status );
+		}
+
+		return array(
+			'statuses'      => $statuses,
+			'sync_refusals' => $sync_refusals,
+		);
 	}
 
 	/**

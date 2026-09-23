@@ -3,11 +3,14 @@
 namespace Tests\WPUnit;
 
 use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
+use SeriouslySimplePodcasting\Repositories\Sync_Refusal_Repository;
 
 class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
 {
-    const FEED_URL  = 'https://example.com/feed.xml';
-    const FEED_GUID = '9b1e7c34-2f5a-5d8e-b6c1-4a7f0e3d92aa';
+    const FEED_URL          = 'https://example.com/feed.xml';
+    const FEED_GUID         = '9b1e7c34-2f5a-5d8e-b6c1-4a7f0e3d92aa';
+    const SECOND_FEED_URL   = 'https://example.com/second-feed.xml';
+    const SECOND_FEED_GUID  = '2a4f8d91-6c3e-5b7a-a1d9-8e0f4c2b6a35';
 
     /**
      * Bodies of requests sent to the Castos series/create endpoint.
@@ -15,6 +18,13 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
      * @var array
      */
     private $push_bodies = [];
+
+    /**
+     * Canned response for the Castos series/create endpoint.
+     *
+     * @var array|\WP_Error|null
+     */
+    private $push_reply;
 
     /**
      * Feed XML served for the current feed URL by the HTTP interceptor.
@@ -40,6 +50,10 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         @do_action('init');
 
         $this->push_bodies = [];
+        $this->push_reply  = [
+            'body'     => wp_json_encode(['status' => 'success']),
+            'response' => ['code' => 200],
+        ];
         $this->feed_xml    = $this->build_feed_xml();
         $this->feed_url    = self::FEED_URL;
 
@@ -109,7 +123,7 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         if (false !== strpos($url, 'api/v2/series/create')) {
             $this->push_bodies[] = $args['body'];
 
-            return ['body' => wp_json_encode(['status' => 'success']), 'response' => ['code' => 200]];
+            return $this->push_reply;
         }
 
         return ['body' => '', 'response' => ['code' => 200]];
@@ -119,7 +133,7 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
      * Builds a feed with the given number of items, optionally without a channel
      * GUID and optionally without a channel title.
      */
-    private function build_feed_xml($items = 2, $with_guid = true, $title = 'Imported Show')
+    private function build_feed_xml($items = 2, $with_guid = true, $title = 'Imported Show', $guid = self::FEED_GUID)
     {
         $xml = '<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:itunes="http://www.itunes.com/dtds/podcast-1.0.dtd" xmlns:podcast="https://podcastindex.org/namespace/1.0">
@@ -131,7 +145,7 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         }
 
         if ($with_guid) {
-            $xml .= '<podcast:guid>' . self::FEED_GUID . '</podcast:guid>';
+            $xml .= '<podcast:guid>' . $guid . '</podcast:guid>';
         }
 
         for ($i = 1; $i <= $items; $i++) {
@@ -211,6 +225,51 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     private function create_series($name = 'Test Series')
     {
         return $this->factory()->term->create(['taxonomy' => ssp_series_taxonomy(), 'name' => $name]);
+    }
+
+    private function refusal_repository()
+    {
+        return new Sync_Refusal_Repository();
+    }
+
+    private function set_push_reply($body, $status = 409)
+    {
+        $this->push_reply = [
+            'body'     => wp_json_encode($body),
+            'response' => ['code' => $status],
+        ];
+    }
+
+    /**
+     * Coded refusals returned by the Castos series/create endpoint.
+     *
+     * @return array[]
+     */
+    public function series_create_refusal_replies()
+    {
+        return [
+            'details differ' => [
+                [
+                    'success'     => false,
+                    'code'        => Sync_Refusal_Repository::CODE_DETAILS_DIFFER,
+                    'error'       => 'Update Seriously Simple Podcasting to the latest version to proceed.',
+                    'podcast_id'  => 1234,
+                    'differences' => [
+                        'podcast_title'       => 'The Castos title',
+                        'podcast_description' => 'The Castos description',
+                        'itunes_category1'   => 'Arts: Books',
+                    ],
+                ],
+            ],
+            'already in use' => [
+                [
+                    'success'    => false,
+                    'code'       => Sync_Refusal_Repository::CODE_ALREADY_IN_USE,
+                    'error'      => 'This GUID already belongs to another podcast in this account.',
+                    'podcast_id' => 5678,
+                ],
+            ],
+        ];
     }
 
     /**
@@ -479,6 +538,26 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * A podcast save reaches the shared series/create refusal recorder.
+     *
+     * @dataProvider series_create_refusal_replies
+     */
+    public function testSeriesSavePushRecordsRefusal($reply)
+    {
+        $series_id = $this->create_series('Push Refusal');
+        $this->connect_to_castos();
+        ssp_update_option('data_guid', 'guid-save', $series_id);
+        $this->set_push_reply($reply);
+
+        wp_update_term($series_id, ssp_series_taxonomy(), ['name' => 'Push Refusal Renamed']);
+
+        $this->assertCount(1, $this->push_bodies);
+        $this->assertSame('guid-save', $this->push_bodies[0]['guid']);
+        $refusal = $this->refusal_repository()->get($series_id);
+        $this->assertIsArray($refusal);
+    }
+
+    /**
      * A completed import writes the feed's GUID, fires exactly one push carrying
      * it, and lifts the push suppression.
      */
@@ -496,6 +575,27 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         $this->assertSame(self::FEED_GUID, $this->push_bodies[0]['guid']);
         $this->assertEquals($series_id, $this->push_bodies[0]['series_id']);
         $this->assertFalse(RSS_Import_Handler::is_importing(), 'Completion must lift the push suppression');
+    }
+
+    /**
+     * Import completion reaches the shared series/create refusal recorder.
+     *
+     * @dataProvider series_create_refusal_replies
+     */
+    public function testImportCompletionPushRecordsRefusal($reply)
+    {
+        $series_id = $this->create_series('Import Refusal');
+        $this->connect_to_castos();
+        $this->set_push_reply($reply);
+
+        $response = $this->run_import_chunk($series_id);
+
+        $this->assertSame('success', $response['status']);
+        $this->assertTrue($response['is_finished']);
+        $this->assertCount(1, $this->push_bodies);
+        $refusal = $this->refusal_repository()->get($series_id);
+        $this->assertIsArray($refusal);
+        $this->assertSame(self::FEED_GUID, $refusal['guid']);
     }
 
     /**
@@ -529,15 +629,23 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         $first  = $this->create_series();
         $second = $this->create_series('Second');
 
-        $this->run_import_chunk($first);
+        $first_response = $this->run_import_chunk($first);
+        $this->assertSame('success', $first_response['status']);
+        $this->assertTrue($first_response['is_finished']);
+        $this->assertSame(self::FEED_GUID, ssp_get_option('data_guid', '', $first));
         $this->assertCount(0, $this->push_bodies, 'Not connected: nothing to push to');
 
         $this->connect_to_castos();
         RSS_Import_Handler::reset_import_data();
         $default_series = get_option('ss_podcasting_default_series');
         delete_option('ss_podcasting_default_series');
+        $this->feed_url = self::SECOND_FEED_URL;
+        $this->feed_xml = $this->build_feed_xml(2, true, 'Second Imported Show', self::SECOND_FEED_GUID);
 
-        $this->run_import_chunk($second);
+        $second_response = $this->run_import_chunk($second);
+        $this->assertSame('success', $second_response['status']);
+        $this->assertTrue($second_response['is_finished']);
+        $this->assertSame(self::SECOND_FEED_GUID, ssp_get_option('data_guid', '', $second));
         $this->assertCount(0, $this->push_bodies, 'No default series yet: the default podcast is still being set up');
 
         update_option('ss_podcasting_default_series', $default_series);

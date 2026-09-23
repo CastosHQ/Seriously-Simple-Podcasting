@@ -35,6 +35,7 @@ use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\Repositories\Sync_Refusal_Repository;
 use SeriouslySimplePodcasting\Rest\Rest_Api_Controller;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
@@ -358,13 +359,12 @@ class App_Controller {
 
 		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->archive_page_handler, $this->renderer );
 
-		$this->castos_handler = new Castos_Handler( $this->feed_handler, $this->logger, $this->admin_notices_handler );
+		$sync_refusal_repository = new Sync_Refusal_Repository();
+		$this->castos_handler    = new Castos_Handler( $this->feed_handler, $this->logger, $this->admin_notices_handler, $sync_refusal_repository );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 
 		$this->widgets_controller = new Widgets_Controller( $this->file, $this->version );
-
-		$this->ajax_handler = new Ajax_Handler( $this->castos_handler, $this->admin_notices_handler );
 
 		$this->podping_handler = new Podping_Handler( $this->logger );
 
@@ -391,9 +391,17 @@ class App_Controller {
 				$this->renderer,
 				$this->series_handler,
 				$this->castos_handler,
-				$this->episode_repository
+				$this->episode_repository,
+				$sync_refusal_repository
 			);
-			$ssp_options  = new Options_Controller( $this->file, SSP_VERSION );
+			$this->ajax_handler = new Ajax_Handler(
+				$this->castos_handler,
+				$this->admin_notices_handler,
+				$this->settings_controller,
+				$sync_refusal_repository,
+				$this->feed_handler
+			);
+			$ssp_options = new Options_Controller( $this->file, SSP_VERSION );
 		}
 
 		$this->admin_controller              = new Admin_Controller( $this->renderer, $this->castos_handler );
@@ -409,7 +417,7 @@ class App_Controller {
 			$this->series_handler
 		);
 
-		$this->series_controller = new Series_Controller( $this->series_handler, $this->castos_handler, $this->settings_handler, $this->admin_notices_handler );
+		$this->series_controller = new Series_Controller( $this->series_handler, $this->castos_handler, $this->settings_handler, $this->admin_notices_handler, $sync_refusal_repository, $this->feed_handler );
 
 		$this->review_controller = new Review_Controller( $this->admin_notices_handler, $this->renderer );
 

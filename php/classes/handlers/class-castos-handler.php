@@ -20,6 +20,7 @@ use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Entities\Episode_File_Data;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Repositories\Sync_Refusal_Repository;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -79,15 +80,6 @@ class Castos_Handler implements Service {
 	const TRANSIENT_PODCASTS = 'ssp_castos_podcasts';
 
 	/**
-	 * Response body code for a refused sync: the Castos podcast is already
-	 * connected to a different WordPress podcast. A 409 without it means
-	 * "sync already in progress".
-	 *
-	 * @const int
-	 */
-	const SYNC_REFUSED_CODE = 4006;
-
-	/**
 	 * @var string
 	 */
 	protected $api_token;
@@ -116,6 +108,12 @@ class Castos_Handler implements Service {
 	 * */
 	protected $notifications_handler;
 
+	/**
+	 * Stores Castos sync refusals against podcast series terms.
+	 *
+	 * @var Sync_Refusal_Repository
+	 */
+	protected $sync_refusal_repository;
 
 	/**
 	 * @var Sync_Status[] $cached_podcast_statuses
@@ -134,11 +132,13 @@ class Castos_Handler implements Service {
 	 * @param Feed_Handler                $feed_handler
 	 * @param Log_Helper                  $log_helper
 	 * @param Admin_Notifications_Handler $notifications_handler
+	 * @param Sync_Refusal_Repository     $sync_refusal_repository Sync refusal repository.
 	 */
-	public function __construct( $feed_handler, $log_helper, $notifications_handler ) {
-		$this->feed_handler          = $feed_handler;
-		$this->logger                = $log_helper;
-		$this->notifications_handler = $notifications_handler;
+	public function __construct( $feed_handler, $log_helper, $notifications_handler, Sync_Refusal_Repository $sync_refusal_repository ) {
+		$this->feed_handler            = $feed_handler;
+		$this->logger                  = $log_helper;
+		$this->notifications_handler   = $notifications_handler;
+		$this->sync_refusal_repository = $sync_refusal_repository;
 
 		add_filter( 'http_request_args', array( $this, 'authorization_headers' ), 10, 2 );
 	}
@@ -301,17 +301,101 @@ class Castos_Handler implements Service {
 	 * Asks Castos to start syncing the podcast; Castos then pulls the data
 	 * itself through the SSP REST API.
 	 *
-	 * @param int $series_id
+	 * @param int         $series_id     Series term ID.
+	 * @param string|null $confirm_action Confirmation action.
 	 *
 	 * @return array|null Merged HTTP status and response body, or null on a transport error.
 	 */
-	public function trigger_podcast_sync( $series_id ) {
-		$this->logger->log( __METHOD__, compact( 'series_id' ) );
+	public function trigger_podcast_sync( $series_id, $confirm_action = null ) {
+		$this->logger->log( __METHOD__, compact( 'series_id', 'confirm_action' ) );
 		$endpoint = sprintf( 'api/v2/ssp/podcast-sync/%d', intval( $series_id ) );
+		$body     = Sync_Refusal_Repository::ACTION_CONNECT === $confirm_action
+			? array( 'confirm_action' => Sync_Refusal_Repository::ACTION_CONNECT )
+			: array();
 
-		$res = $this->send_request( $endpoint, array(), 'POST' );
+		$response = $this->send_request_with_status( $endpoint, $body, 'POST' );
+		if ( null === $response ) {
+			return null;
+		}
 
-		return $res;
+		$is_success = 200 === (int) $response['http_status'];
+
+		$this->handle_sync_refusal_response( $series_id, $response['body'], $is_success );
+
+		if ( $is_success ) {
+			$this->clear_podcasts_cache();
+		}
+
+		return array_merge( $response['http_response'], $response['body'] );
+	}
+
+	/**
+	 * Store or clear a refusal based on a Castos response pair.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int   $series_id  Series term ID.
+	 * @param array $body       Decoded Castos response body.
+	 * @param bool  $is_success Whether Castos accepted the request.
+	 *
+	 * @return void
+	 */
+	protected function handle_sync_refusal_response( $series_id, array $body, $is_success ): void {
+		if ( $is_success ) {
+			$this->sync_refusal_repository->clear( $series_id );
+
+			return;
+		}
+
+		$refusal = $this->build_sync_refusal( $series_id, $body );
+
+		if ( null !== $refusal ) {
+			$this->sync_refusal_repository->record( $series_id, $refusal );
+		}
+	}
+
+	/**
+	 * Build the refusal to store from a refused Castos response body.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int   $series_id Series term ID.
+	 * @param array $body      Decoded Castos response body.
+	 *
+	 * @return array|null Refusal data, or null when the response carries no refusal to store.
+	 */
+	protected function build_sync_refusal( $series_id, array $body ): ?array {
+		$code = isset( $body['code'] ) ? (string) $body['code'] : '';
+
+		if ( '' === $code ) {
+			return null;
+		}
+
+		$refusal_codes = array(
+			Sync_Refusal_Repository::CODE_DETAILS_DIFFER,
+			Sync_Refusal_Repository::CODE_ALREADY_IN_USE,
+		);
+		$is_known_code = in_array( $code, $refusal_codes, true );
+		$podcast_id    = isset( $body['podcast_id'] ) && is_numeric( $body['podcast_id'] ) ? (int) $body['podcast_id'] : 0;
+
+		// A known refusal is about a specific Castos podcast, so it is useless without one.
+		if ( $is_known_code && $podcast_id <= 0 ) {
+			return null;
+		}
+
+		$refusal = array(
+			'code'        => $code,
+			'podcast_id'  => $podcast_id,
+			'differences' => isset( $body['differences'] ) && is_array( $body['differences'] ) ? array_keys( $body['differences'] ) : array(),
+			'guid'        => ssp_get_podcast_guid( $series_id ),
+		);
+
+		// An unknown code has no SSP copy, so Castos's own error is shown instead.
+		if ( ! $is_known_code ) {
+			$refusal['error'] = isset( $body['error'] ) ? (string) $body['error'] : '';
+		}
+
+		return $refusal;
 	}
 
 	/**
@@ -664,11 +748,19 @@ class Castos_Handler implements Service {
 			return $this->response;
 		}
 
-		$response_object = json_decode( wp_remote_retrieve_body( $app_response ) );
-		$this->logger->log( 'Response Object', $response_object );
+		$response_body = json_decode( wp_remote_retrieve_body( $app_response ), true );
+		$response_body = is_array( $response_body ) ? $response_body : array();
+		$this->logger->log( 'Response Object', $response_body );
 
-		if ( empty( $response_object->status ) ) {
-			$this->logger->log( 'An error occurred uploading the series data to Castos', $response_object );
+		// Castos can answer 200 with a failure body, so the body decides success, not the status code.
+		$is_success = 200 === (int) wp_remote_retrieve_response_code( $app_response ) && ! empty( $response_body['status'] );
+
+		if ( isset( $podcast_data['series_id'] ) ) {
+			$this->handle_sync_refusal_response( $podcast_data['series_id'], $response_body, $is_success );
+		}
+
+		if ( empty( $response_body['status'] ) ) {
+			$this->logger->log( 'An error occurred uploading the series data to Castos', $response_body );
 			$this->update_response( 'message', 'An error occurred uploading the series data to Castos' );
 
 			return $this->response;
@@ -699,8 +791,15 @@ class Castos_Handler implements Service {
 		return $items;
 	}
 
-	public function get_podcasts() {
-		if ( $cache = get_transient( self::TRANSIENT_PODCASTS ) ) {
+	/**
+	 * Get the Castos podcast list, optionally bypassing its transient cache.
+	 *
+	 * @param bool $force_refresh Whether to fetch a live response from Castos.
+	 *
+	 * @return array
+	 */
+	public function get_podcasts( $force_refresh = false ) {
+		if ( ! $force_refresh && ( $cache = get_transient( self::TRANSIENT_PODCASTS ) ) ) {
 			return $cache;
 		}
 
@@ -749,7 +848,7 @@ class Castos_Handler implements Service {
 		$this->update_response( 'message', 'Successfully retrieved podcasts.' );
 		$this->update_response( 'data', $podcasts['data'] );
 
-		set_transient( self::TRANSIENT_PODCASTS, $this->response, 5 * MINUTE_IN_SECONDS );
+		set_transient( self::TRANSIENT_PODCASTS, $this->response, MINUTE_IN_SECONDS );
 
 		return $this->response;
 	}
@@ -1125,6 +1224,27 @@ class Castos_Handler implements Service {
 	 * @throws Exception
 	 */
 	protected function send_request( $api_url, $args = array(), $method = 'GET' ): ?array {
+		$response = $this->send_request_with_status( $api_url, $args, $method );
+		if ( null === $response ) {
+			return null;
+		}
+
+		return array_merge( $response['http_response'], $response['body'] );
+	}
+
+	/**
+	 * Sends a request to Castos and retains the decoded body and HTTP status.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $api_url API endpoint.
+	 * @param array  $args    Request arguments.
+	 * @param string $method  HTTP method.
+	 *
+	 * @return array|null Response body and HTTP response data, or null on transport error.
+	 * @throws Exception If Castos arguments are not set.
+	 */
+	protected function send_request_with_status( $api_url, $args = array(), $method = 'GET' ): ?array {
 		// If we already sent this request, return cached response.
 		$args_hash = md5( serialize( $args ) );
 		if ( isset( $this->cached_responses[ $method ][ $api_url ][ $args_hash ] ) ) {
@@ -1172,28 +1292,60 @@ class Castos_Handler implements Service {
 			return null;
 		}
 
-		$res = json_decode( wp_remote_retrieve_body( $app_response ), true );
-		$res = is_array( $res ) ? $res : array();
+		$body = json_decode( wp_remote_retrieve_body( $app_response ), true );
+		$body = is_array( $body ) ? $body : array();
 
-		if ( isset( $app_response['response'] ) && is_array( $app_response['response'] ) ) {
-			$res = array_merge( $app_response['response'], $res );
+		$http_response = isset( $app_response['response'] ) && is_array( $app_response['response'] ) ? $app_response['response'] : array();
+		$http_status   = isset( $http_response['code'] ) ? (int) $http_response['code'] : (int) wp_remote_retrieve_response_code( $app_response );
+		$response      = array_merge( $http_response, $body );
+
+		// If user disconnected on Castos side, disconnect it in SSP.
+		if ( isset( $response['code'], $response['message'] ) && 400 === (int) $response['code'] && strpos( $response['message'], 'disconnected' ) ) {
+			$this->disconnect( $response['message'] );
 		}
 
-		// If user disconnected on Castos side, disconnect it in SSP
-		if ( 400 === $res['code'] && isset( $res['message'] ) && strpos( $res['message'], 'disconnected' ) ) {
-			$this->disconnect( $res['message'] );
-		}
+		$response = array(
+			'body'          => $body,
+			'http_response' => $http_response,
+			'http_status'   => $http_status,
+		);
 
-		$this->cached_responses[ $method ][ $api_url ][ $args_hash ] = $res;
+		$this->cached_responses[ $method ][ $api_url ][ $args_hash ] = $response;
 
-		return $res;
+		return $response;
 	}
 
 	public function disconnect( $notification = '' ) {
+		$this->clear_sync_refusals();
 		$this->remove_api_credentials();
 
 		if ( $notification ) {
 			$this->notifications_handler->add_constant_notice( $notification, Admin_Notifications_Handler::WARNING, self::DISCONNECT_NOTICE_KEY );
+		}
+	}
+
+	/**
+	 * Clear refusals when the Castos account changes.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 */
+	protected function clear_sync_refusals(): void {
+		$series_ids = get_terms(
+			array(
+				'taxonomy'   => ssp_series_taxonomy(),
+				'hide_empty' => false,
+				'fields'     => 'ids',
+			)
+		);
+
+		if ( is_wp_error( $series_ids ) ) {
+			return;
+		}
+
+		foreach ( $series_ids as $series_id ) {
+			$this->sync_refusal_repository->clear( $series_id );
 		}
 	}
 

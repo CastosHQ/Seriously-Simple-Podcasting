@@ -19,6 +19,7 @@ class Sync_Status extends Abstract_Entity {
 	const SYNC_STATUS_SYNCED_WITH_ERRORS = 'synced_with_errors';
 	const SYNC_STATUS_FAILED             = 'failed';
 	const SYNC_STATUS_SYNCING            = 'syncing';
+	const SYNC_STATUS_NEEDS_CONFIRMATION = 'needs_confirmation';
 	const SYNC_STATUS_NONE               = 'none';
 
 	/**
@@ -67,6 +68,30 @@ class Sync_Status extends Abstract_Entity {
 
 
 	/**
+	 * Get the label tooltip for this status.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param bool $is_full_label Whether the label shows its title too.
+	 *
+	 * @return string
+	 */
+	public function get_tooltip( $is_full_label = false ) {
+		/* translators: %s: sync status title. */
+		$tooltip = sprintf( __( 'Sync status: %s', 'seriously-simple-podcasting' ), $this->title );
+
+		if ( $this->error ) {
+			$tooltip .= PHP_EOL . $this->error;
+		}
+
+		if ( $is_full_label ) {
+			$tooltip .= PHP_EOL . $this->message;
+		}
+
+		return $tooltip;
+	}
+
+	/**
 	 * Get all available sync statuses.
 	 *
 	 * @return array List of available sync statuses.
@@ -87,6 +112,11 @@ class Sync_Status extends Abstract_Entity {
 				'status'  => self::SYNC_STATUS_SYNCING,
 				'title'   => __( 'Syncing', 'seriously-simple-podcasting' ),
 				'message' => __( 'Sending your episode and details to your Castos account.', 'seriously-simple-podcasting' ),
+			),
+			self::SYNC_STATUS_NEEDS_CONFIRMATION => array(
+				'status'  => self::SYNC_STATUS_NEEDS_CONFIRMATION,
+				'title'   => __( 'Needs confirmation', 'seriously-simple-podcasting' ),
+				'message' => __( 'This podcast needs your confirmation before syncing.', 'seriously-simple-podcasting' ),
 			),
 			self::SYNC_STATUS_NONE               => array(
 				'status'  => self::SYNC_STATUS_NONE,

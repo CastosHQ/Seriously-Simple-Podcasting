@@ -9,7 +9,10 @@
 
 namespace SeriouslySimplePodcasting\Handlers;
 
+use SeriouslySimplePodcasting\Controllers\Settings_Controller;
 use SeriouslySimplePodcasting\Entities\Sync_Status;
+use SeriouslySimplePodcasting\Renderers\Settings_Renderer;
+use SeriouslySimplePodcasting\Repositories\Sync_Refusal_Repository;
 
 /**
  * Class Ajax_Handler
@@ -35,14 +38,41 @@ class Ajax_Handler {
 	protected $admin_notices_handler;
 
 	/**
+	 * Stores Castos sync refusals against podcast series terms.
+	 *
+	 * @var Sync_Refusal_Repository
+	 */
+	protected $sync_refusal_repository;
+
+	/**
+	 * Feed handler instance.
+	 *
+	 * @var Feed_Handler|null
+	 */
+	protected $feed_handler;
+
+	/**
+	 * Settings controller instance.
+	 *
+	 * @var Settings_Controller
+	 */
+	protected $settings_controller;
+
+	/**
 	 * Ajax_Handler constructor.
 	 *
-	 * @param Castos_Handler              $castos_handler
-	 * @param Admin_Notifications_Handler $admin_notices_handler
+	 * @param Castos_Handler              $castos_handler          Castos handler.
+	 * @param Admin_Notifications_Handler $admin_notices_handler   Admin notifications handler.
+	 * @param Settings_Controller         $settings_controller     Settings controller.
+	 * @param Sync_Refusal_Repository     $sync_refusal_repository Sync refusal repository.
+	 * @param Feed_Handler                $feed_handler            Feed handler.
 	 */
-	public function __construct( $castos_handler, $admin_notices_handler ) {
-		$this->castos_handler        = $castos_handler;
-		$this->admin_notices_handler = $admin_notices_handler;
+	public function __construct( $castos_handler, $admin_notices_handler, Settings_Controller $settings_controller, Sync_Refusal_Repository $sync_refusal_repository, Feed_Handler $feed_handler ) {
+		$this->castos_handler          = $castos_handler;
+		$this->admin_notices_handler   = $admin_notices_handler;
+		$this->settings_controller     = $settings_controller;
+		$this->sync_refusal_repository = $sync_refusal_repository;
+		$this->feed_handler            = $feed_handler;
 
 		$this->bootstrap();
 	}
@@ -78,9 +108,13 @@ class Ajax_Handler {
 
 		// Add ajax action to the Castos sync process.
 		add_action( 'wp_ajax_sync_castos', array( $this, 'sync_castos' ) );
+		add_action( 'wp_ajax_ssp_get_series_sync_statuses', array( $this, 'get_series_sync_statuses' ) );
 
 		// Ajax action to removing the constant notice.
 		add_action( 'wp_ajax_remove_constant_notice', array( $this, 'remove_constant_notice' ) );
+
+		// Ajax action to generate a podcast GUID.
+		add_action( 'wp_ajax_ssp_generate_series_guid', array( $this, 'generate_series_guid' ) );
 	}
 
 	/**
@@ -118,6 +152,53 @@ class Ajax_Handler {
 	}
 
 	/**
+	 * Generate a podcast's GUID from its feed URL.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 * @throws \Exception When the podcast GUID can not be generated or saved.
+	 */
+	public function generate_series_guid() {
+		try {
+			$this->nonce_check( 'ssp_generate_series_guid' );
+			$this->user_capability_check();
+
+			// phpcs:ignore WordPress.Security.NonceVerification.Missing -- The nonce is verified above.
+			$series_id = isset( $_POST['series_id'] ) && is_scalar( $_POST['series_id'] )
+				? absint( wp_unslash( $_POST['series_id'] ) )
+				: 0;
+			$term       = $series_id ? get_term( $series_id, ssp_series_taxonomy() ) : null;
+
+			if ( ! $term || is_wp_error( $term ) ) {
+				throw new \Exception( __( 'The podcast could not be found.', 'seriously-simple-podcasting' ) );
+			}
+
+			$is_podcast_connected_to_castos = ssp_is_connected_to_castos()
+				&& null !== $this->castos_handler->get_podcast_by_series( $series_id );
+			if ( $is_podcast_connected_to_castos ) {
+				throw new \Exception( __( 'This podcast is connected to Castos. The GUID can\'t be changed while connected.', 'seriously-simple-podcasting' ) );
+			}
+
+			$guid = $this->feed_handler->get_derived_guid( $term->slug );
+			if ( '' === $guid ) {
+				throw new \Exception( __( 'The podcast GUID could not be generated. Please try again.', 'seriously-simple-podcasting' ) );
+			}
+
+			$stored_guid = ssp_get_option( 'data_guid', '', $series_id );
+			if ( $guid !== $stored_guid && ! ssp_update_option( 'data_guid', $guid, $series_id ) ) {
+				throw new \Exception( __( 'The podcast GUID could not be saved. Please try again.', 'seriously-simple-podcasting' ) );
+			}
+
+			$this->sync_refusal_repository->clear( $series_id );
+
+			wp_send_json_success( array( 'guid' => $guid ) );
+		} catch ( \Exception $e ) {
+			$this->send_json_error( $e->getMessage() );
+		}
+	}
+
+	/**
 	 * Sync podcasts with Castos
 	 */
 	public function sync_castos() {
@@ -125,81 +206,238 @@ class Ajax_Handler {
 			$this->nonce_check( 'ss_podcasting_castos-hosting' );
 			$this->user_capability_check();
 
-			$podcast_ids = $this->int_array_from_get( 'podcasts' );
+			$series_ids    = $this->int_array_from_get( 'podcasts' );
+			$confirm_action = $this->confirm_action_from_get();
 
-			// Provide possible errors for translation purposes.
-			$msgs_map = array(
-				'Failed to connect to SSP API.' => __( 'Failed to connect to SSP API.', 'seriously-simple-podcasting' ),
-				'A sync is already in progress for this podcast.' => __( 'A sync is already in progress for this podcast.', 'seriously-simple-podcasting' ),
-				'This podcast is already connected to a different WordPress podcast in your Castos account.' => __( 'This podcast is already connected to a different WordPress podcast in your Castos account.', 'seriously-simple-podcasting' ),
-			);
-
-			$podcast_statuses = array();
-
-			$has_syncing = false;
-			$has_errors  = false;
-
-			foreach ( $podcast_ids as $podcast_id ) {
-				$podcast_status = array();
-
-				$response = $this->castos_handler->trigger_podcast_sync( $podcast_id );
-
-				if ( isset( $response['code'] ) && in_array( $response['code'], array( 200, 409 ) ) ) {
-					$podcast_status['status'] = Sync_Status::SYNC_STATUS_SYNCING;
-					$podcast_status['title']  = __( 'Syncing', 'seriously-simple-podcasting' );
-					$has_syncing              = true;
-				} else {
-					$podcast_status['status'] = Sync_Status::SYNC_STATUS_FAILED;
-					$podcast_status['title']  = __( 'Failed', 'seriously-simple-podcasting' );
-					$has_errors               = true;
-				}
-
-				do_action( 'ssp_triggered_podcast_sync', $podcast_id, $response, $podcast_status['status'] );
-
-				$msg = isset( $response['error'] ) ? $response['error'] : '';
-
-				// Try to translate the response message.
-				$msg = ( $msg && array_key_exists( $msg, $msgs_map ) ) ? $msgs_map[ $msg ] : $msg;
-
-				// If there is an error but got no error message, add the default one.
-				if ( Sync_Status::SYNC_STATUS_FAILED === $podcast_status['status'] && empty( $msg ) ) {
-					$msg = __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
-				}
-
-				$msg_template = _x( '%1$s: %2$s', 'podcast-sync-error-message', 'seriously-simple-podcasting' );
-
-				$podcast_status['msg'] = $msg ? sprintf( $msg_template, $this->get_podcast_name( $podcast_id ), $msg ) : '';
-
-				$podcast_statuses [ $podcast_id ] = $podcast_status;
+			$series_statuses = array();
+			foreach ( $series_ids as $series_id ) {
+				$series_statuses[ $series_id ] = $this->sync_series( $series_id, $confirm_action );
 			}
 
-			// We use SYNC_STATUS_ constants for both episode sync statuses and podcast sync statuses. Might be changed in the future.
-			$msgs = array(
-				Sync_Status::SYNC_STATUS_SYNCING => __(
-					'Seriously Simple Podcasting is updating episode data to your Castos account. You can refresh this page to view the updated status in a few minutes.',
-					'seriously-simple-podcasting'
-				),
-				Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
-				Sync_Status::SYNC_STATUS_FAILED  => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
-			);
-
-			$results_status = ! $has_errors ?
-				Sync_Status::SYNC_STATUS_SYNCING :
-				( $has_syncing ? Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS : Sync_Status::SYNC_STATUS_FAILED );
+			$status = $this->get_overall_sync_status( wp_list_pluck( $series_statuses, 'status' ) );
 
 			$results = array(
-				'status'   => $results_status,
-				'msg'      => $msgs[ $results_status ],
-				'podcasts' => $podcast_statuses,
+				'status'   => $status,
+				'msg'      => $this->get_overall_sync_message( $status ),
+				'podcasts' => $series_statuses,
 			);
 
-			if ( Sync_Status::SYNC_STATUS_SYNCING === $results['status'] ) {
+			if ( Sync_Status::SYNC_STATUS_SYNCING === $status ) {
 				wp_send_json_success( $results );
 			} else {
 				wp_send_json_error( $results );
 			}
 		} catch ( \Exception $e ) {
 			wp_send_json_error( $e->getMessage() );
+		}
+	}
+
+	/**
+	 * Trigger the sync of one podcast and build its status for the response.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int    $podcast_id     Podcast ID.
+	 * @param string $confirm_action Confirmation action to send to Castos.
+	 *
+	 * @return array Status, title, message and rendered status label.
+	 */
+	protected function sync_series( $series_id, $confirm_action ) {
+		$response      = $this->castos_handler->trigger_podcast_sync( $series_id, $confirm_action );
+		$response_code = is_array( $response ) && isset( $response['code'] ) ? $response['code'] : null;
+		$refusal       = $this->sync_refusal_repository->get( $series_id );
+		$status        = $this->resolve_sync_status( $response_code, $refusal );
+
+		do_action( 'ssp_triggered_podcast_sync', $series_id, $response, $status );
+
+		$msg          = $this->get_sync_message( $response, $response_code, $status );
+		$msg_template = _x( '%1$s: %2$s', 'podcast-sync-error-message', 'seriously-simple-podcasting' );
+
+		return array(
+			'status' => $status,
+			'title'  => $this->get_sync_status_title( $status ),
+			'msg'    => $msg ? sprintf( $msg_template, $this->get_podcast_name( $series_id ), $msg ) : '',
+			'html'   => Settings_Renderer::instance()->render_sync_status_label( $series_id, new Sync_Status( $status ), $refusal ),
+		);
+	}
+
+	/**
+	 * Resolve a podcast's sync status from its stored refusal and the Castos response code.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int|string|null $response_code Castos response code.
+	 * @param array|null      $refusal       Stored sync refusal, if any.
+	 *
+	 * @return string
+	 */
+	protected function resolve_sync_status( $response_code, $refusal ) {
+		if ( null !== $refusal ) {
+			$refusal_code = isset( $refusal['code'] ) ? $refusal['code'] : '';
+
+			return Sync_Refusal_Repository::CODE_DETAILS_DIFFER === $refusal_code
+				? Sync_Status::SYNC_STATUS_NEEDS_CONFIRMATION
+				: Sync_Status::SYNC_STATUS_FAILED;
+		}
+
+		if ( Sync_Refusal_Repository::CODE_DETAILS_DIFFER === $response_code ) {
+			return Sync_Status::SYNC_STATUS_NEEDS_CONFIRMATION;
+		}
+
+		if ( in_array( $response_code, array( 200, 409 ), true ) ) {
+			return Sync_Status::SYNC_STATUS_SYNCING;
+		}
+
+		return Sync_Status::SYNC_STATUS_FAILED;
+	}
+
+	/**
+	 * Get the label of a podcast sync status.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $status Sync status.
+	 *
+	 * @return string
+	 */
+	protected function get_sync_status_title( $status ) {
+		$titles = array(
+			Sync_Status::SYNC_STATUS_NEEDS_CONFIRMATION => __( 'Needs confirmation', 'seriously-simple-podcasting' ),
+			Sync_Status::SYNC_STATUS_SYNCING            => __( 'Syncing', 'seriously-simple-podcasting' ),
+			Sync_Status::SYNC_STATUS_FAILED             => __( 'Failed', 'seriously-simple-podcasting' ),
+		);
+
+		return isset( $titles[ $status ] ) ? $titles[ $status ] : $titles[ Sync_Status::SYNC_STATUS_FAILED ];
+	}
+
+	/**
+	 * Get the message explaining a podcast's sync result.
+	 *
+	 * Known response codes use translated SSP copy, and unknown ones fall back to Castos's error.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param array|mixed     $response      Castos response.
+	 * @param int|string|null $response_code Castos response code.
+	 * @param string          $status        Resolved sync status.
+	 *
+	 * @return string
+	 */
+	protected function get_sync_message( $response, $response_code, $status ) {
+		$msgs_map = array(
+			Sync_Refusal_Repository::CODE_DETAILS_DIFFER => Sync_Refusal_Repository::get_message( Sync_Refusal_Repository::CODE_DETAILS_DIFFER ),
+			Sync_Refusal_Repository::CODE_ALREADY_IN_USE => Sync_Refusal_Repository::get_message( Sync_Refusal_Repository::CODE_ALREADY_IN_USE ),
+		);
+
+		$legacy_msgs_map = array(
+			'A sync is already in progress for this podcast.' => __( 'A sync is already in progress for this podcast.', 'seriously-simple-podcasting' ),
+			'Failed to connect to SSP API.' => __( 'Failed to connect to SSP API.', 'seriously-simple-podcasting' ),
+		);
+
+		$msg = is_array( $response ) && isset( $response['error'] ) ? $response['error'] : '';
+
+		// Try to translate the response code, then preserve known legacy messages.
+		if ( isset( $msgs_map[ $response_code ] ) ) {
+			$msg = $msgs_map[ $response_code ];
+		} elseif ( isset( $legacy_msgs_map[ $msg ] ) ) {
+			$msg = $legacy_msgs_map[ $msg ];
+		} elseif ( ! empty( $response_code ) ) {
+			// Castos error text is inserted with .html() by castos-sync.js.
+			$msg = esc_html( $msg );
+		}
+
+		// If there is an error but got no error message, add the default one.
+		if ( Sync_Status::SYNC_STATUS_FAILED === $status && empty( $msg ) ) {
+			$msg = __( 'Could not trigger podcast sync', 'seriously-simple-podcasting' );
+		}
+
+		return $msg;
+	}
+
+	/**
+	 * Get the overall sync status of all synced podcasts.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string[] $statuses Sync status of each podcast.
+	 *
+	 * @return string
+	 */
+	protected function get_overall_sync_status( $statuses ) {
+		if ( in_array( Sync_Status::SYNC_STATUS_FAILED, $statuses, true ) ) {
+			return in_array( Sync_Status::SYNC_STATUS_SYNCING, $statuses, true )
+				? Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS
+				: Sync_Status::SYNC_STATUS_FAILED;
+		}
+
+		return in_array( Sync_Status::SYNC_STATUS_NEEDS_CONFIRMATION, $statuses, true )
+			? Sync_Status::SYNC_STATUS_NEEDS_CONFIRMATION
+			: Sync_Status::SYNC_STATUS_SYNCING;
+	}
+
+	/**
+	 * Get the message summarizing the sync of all podcasts.
+	 *
+	 * We use SYNC_STATUS_ constants for both episode sync statuses and podcast sync statuses. Might be changed in the future.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $status Overall sync status.
+	 *
+	 * @return string
+	 */
+	protected function get_overall_sync_message( $status ) {
+		$msgs = array(
+			Sync_Status::SYNC_STATUS_SYNCING            => __(
+				'Seriously Simple Podcasting is updating episode data to your Castos account. You can refresh this page to view the updated status in a few minutes.',
+				'seriously-simple-podcasting'
+			),
+			Sync_Status::SYNC_STATUS_SYNCED_WITH_ERRORS => __( 'Started the sync process with errors', 'seriously-simple-podcasting' ),
+			Sync_Status::SYNC_STATUS_FAILED             => __( 'Failed to start the sync process', 'seriously-simple-podcasting' ),
+			Sync_Status::SYNC_STATUS_NEEDS_CONFIRMATION => __( 'One or more podcasts need your confirmation before syncing.', 'seriously-simple-podcasting' ),
+		);
+
+		return isset( $msgs[ $status ] ) ? $msgs[ $status ] : $msgs[ Sync_Status::SYNC_STATUS_SYNCING ];
+	}
+
+	/**
+	 * Get the current Hosting sync status for each requested podcast.
+	 *
+	 * A live request bypasses the podcasts transient and refreshes it with the
+	 * response from Castos. Non-live requests use the current transient.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 * @throws \Exception When the sync statuses can not be retrieved.
+	 */
+	public function get_series_sync_statuses() {
+		try {
+			$this->nonce_check( 'ss_podcasting_castos-hosting' );
+			$this->user_capability_check();
+
+			$status_data = $this->settings_controller->get_series_sync_statuses(
+				$this->int_array_from_get( 'series' ),
+				$this->bool_from_get( 'live' )
+			);
+			if ( null === $status_data ) {
+				throw new \Exception( __( 'Could not retrieve podcast sync statuses.', 'seriously-simple-podcasting' ) );
+			}
+
+			$series_statuses = array();
+			foreach ( $status_data['statuses'] as $series_id => $status ) {
+				$refusal = isset( $status_data['sync_refusals'][ $series_id ] ) ? $status_data['sync_refusals'][ $series_id ] : null;
+
+				$series_statuses[ $series_id ] = array(
+					'status' => $status->status,
+					'title'  => $status->title,
+					'html'   => Settings_Renderer::instance()->render_sync_status_label( $series_id, $status, $refusal ),
+				);
+			}
+
+			wp_send_json_success( array( 'series' => $series_statuses ) );
+		} catch ( \Exception $e ) {
+			$this->send_json_error( $e->getMessage() );
 		}
 	}
 
@@ -217,6 +455,38 @@ class Ajax_Handler {
 		$values = isset( $_GET[ $key ] ) ? (array) wp_unslash( $_GET[ $key ] ) : array();
 
 		return array_values( array_map( 'intval', $values ) );
+	}
+
+	/**
+	 * Read a boolean flag from the request query.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $key Query key to read.
+	 *
+	 * @return bool
+	 */
+	protected function bool_from_get( $key ) {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- callers verify the nonce before reading the request.
+		$value = isset( $_GET[ $key ] ) && is_string( $_GET[ $key ] ) ? sanitize_text_field( wp_unslash( $_GET[ $key ] ) ) : '';
+
+		return '1' === $value;
+	}
+
+	/**
+	 * Read the one supported sync confirmation action.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return string|null
+	 */
+	protected function confirm_action_from_get() {
+		// phpcs:ignore WordPress.Security.NonceVerification.Recommended -- nonce is checked by sync_castos() before this method runs.
+		$action = isset( $_GET['confirm_action'] ) && is_string( $_GET['confirm_action'] )
+			? sanitize_text_field( wp_unslash( $_GET['confirm_action'] ) )
+			: '';
+
+		return Sync_Refusal_Repository::ACTION_CONNECT === $action ? Sync_Refusal_Repository::ACTION_CONNECT : null;
 	}
 
 	/**
@@ -317,7 +587,6 @@ class Ajax_Handler {
 			if ( false === $html ) {
 				throw new \Exception( 'Could not generate embed code.' );
 			}
-
 
 			wp_send_json_success( $html );
 		} catch ( \Exception $e ) {

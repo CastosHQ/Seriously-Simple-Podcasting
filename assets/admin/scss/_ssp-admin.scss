@@ -613,32 +613,46 @@ body.ssp-admin {
 			gap: 6px;
 
 			a {
-				display: flex;
-				font-family: Inter, sans-serif;
-				font-weight: 600;
-				font-size: 14px;
-				border-radius: 8px;
-				padding: 9px 17px;
-				background: $clr_purple_700;
 				color: $clr_white;
-				text-decoration: none;
-				transition: .3s;
-
-				@include smaller(xs) {
-					padding: 9px 10px;
-					font-size: 10px;
-				}
 
 				&:hover {
 					color: $clr_white;
-					background: lighten($clr_purple_700, 5%);
 				}
 			}
 		}
 	}
 
-	a:focus {
-		box-shadow: 0 0 0 2px $clr_purple_600;
+}
+
+.ssp-admin-button {
+	display: flex;
+	min-height: 0;
+	margin: 0;
+	padding: 9px 17px;
+	border: 0;
+	border-radius: 8px;
+	background: $clr_purple_700;
+	color: $clr_white;
+	cursor: pointer;
+	font-family: Inter, sans-serif;
+	font-size: 14px;
+	font-weight: 600;
+	line-height: normal;
+	text-decoration: none;
+	transition: .3s;
+
+	@include smaller(xs) {
+		padding: 9px 10px;
+		font-size: 10px;
 	}
 
+	&:hover {
+		background: lighten($clr_purple_700, 5%);
+		color: $clr_white;
+	}
+}
+
+.ssp-admin-header a:focus,
+.ssp-admin-button:focus {
+	box-shadow: 0 0 0 2px $clr_purple_600;
 }

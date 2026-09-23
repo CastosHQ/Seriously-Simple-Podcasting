@@ -1,4 +1,9 @@
 <?php
+/**
+ * Feed handler implementation.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Handlers;
 
@@ -33,18 +38,25 @@ class Feed_Handler implements Service {
 	const EPISODE_NAMESPACE_UUID = '6ba7b810-9dad-11d1-80b4-00c04fd430c8';
 
 	/**
+	 * Settings handler.
+	 *
 	 * @var Settings_Handler
-	 * */
+	 */
 	protected $settings_handler;
 
 	/**
+	 * Feed renderer.
+	 *
 	 * @var Renderer
-	 * */
+	 */
 	protected $renderer;
 
 
 	/**
 	 * Feed_Handler constructor.
+	 *
+	 * @param Settings_Handler $settings_handler Settings handler.
+	 * @param Renderer         $renderer         Feed renderer.
 	 */
 	public function __construct( $settings_handler, $renderer ) {
 		$this->settings_handler = $settings_handler;
@@ -53,7 +65,7 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Suppress all errors to make sure the feed is not broken
+	 * Suppress all errors to make sure the feed is not broken.
 	 *
 	 * @return void
 	 */
@@ -66,7 +78,9 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * @return bool
+	 * Determine whether the request can access a password-protected feed.
+	 *
+	 * @return bool Whether the request has access.
 	 */
 	public function has_password_protected_access() {
 		// Allow feed access by default.
@@ -139,9 +153,9 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Get series id
+	 * Get series id.
 	 *
-	 * @param string $series_slug
+	 * @param string $series_slug Series slug.
 	 *
 	 * @return int Series id.
 	 */
@@ -159,7 +173,7 @@ class Feed_Handler implements Service {
 	/**
 	 * Close access to password protected feed ( Podcast->Settings->Security ).
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 */
 	public function maybe_protect_unauthorized_access( $series_id ) {
 
@@ -188,7 +202,7 @@ class Feed_Handler implements Service {
 	/**
 	 * Close access to private feed ( Podcast->Settings->Feed details->Set Podcast To Private ).
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 */
 	public function maybe_protect_private_feed( $series_id ) {
 		if ( 'yes' !== ssp_get_option( 'is_podcast_private', '', $series_id ) ) {
@@ -204,8 +218,10 @@ class Feed_Handler implements Service {
 
 
 	/**
-	 * @param int    $series_id
-	 * @param string $description
+	 * Render the no-access response for a protected feed.
+	 *
+	 * @param int    $series_id  Series term ID.
+	 * @param string $description No-access description.
 	 */
 	public function render_feed_no_access( $series_id, $description ) {
 		header( 'HTTP/1.0 401 Unauthorized' );
@@ -219,6 +235,11 @@ class Feed_Handler implements Service {
 		exit;
 	}
 
+	/**
+	 * Render the not-found response for a feed.
+	 *
+	 * @return void
+	 */
 	public function render_feed_404() {
 		header( 'HTTP/1.0 404 Not Found' );
 
@@ -234,6 +255,8 @@ class Feed_Handler implements Service {
 
 	/**
 	 * If redirect is on, redirect user to the new url.
+	 *
+	 * @param int $series_id Series term ID.
 	 *
 	 * @return void
 	 */
@@ -258,25 +281,25 @@ class Feed_Handler implements Service {
 	 *
 	 * @since 3.8.1
 	 *
-	 * @param $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string New feed URL.
 	 */
 	public function get_new_feed_url( $series_id ) {
 		return ssp_get_option( 'new_feed_url', '', $series_id );
 	}
 
 	/**
-	 * Get excluded series
+	 * Get excluded series.
 	 *
-	 * @param $series_id
+	 * @param int $series_id Series term ID.
 	 *
 	 * @return array Array of excluded series slugs.
 	 */
 	public function get_excluded_series( $series_id ) {
 		$exclude_series = array();
 
-		if ( $series_id && $series_id != ssp_get_default_series_id() ) {
+		if ( $series_id && ssp_get_default_series_id() != $series_id ) {
 			return $exclude_series;
 		}
 
@@ -290,7 +313,7 @@ class Feed_Handler implements Service {
 		$default_series_id = ssp_get_default_series_id();
 
 		foreach ( $series as $feed ) {
-			if ( $default_series_id == $feed->term_id ) {
+			if ( $feed->term_id == $default_series_id ) {
 				continue;
 			}
 			$exclude_feed_option = get_option( 'ss_podcasting_exclude_feed_' . $feed->term_id, 'off' );
@@ -304,11 +327,11 @@ class Feed_Handler implements Service {
 
 
 	/**
-	 * Gets podcast title
+	 * Gets podcast title.
 	 *
-	 * @param $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Podcast title.
 	 */
 	public function get_podcast_title( $series_id ) {
 		$title = $this->settings_handler->get_feed_option( 'data_title', $series_id );
@@ -317,11 +340,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets podcast description
+	 * Gets podcast description.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Podcast description.
 	 */
 	public function get_podcast_description( $series_id ) {
 		$description = $this->settings_handler->get_feed_option( 'data_description', $series_id, get_bloginfo( 'description' ) );
@@ -332,11 +355,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets podcast language
+	 * Gets podcast language.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Podcast language.
 	 */
 	public function get_podcast_language( $series_id ) {
 		$language = $this->settings_handler->get_feed_option( 'data_language', $series_id, get_bloginfo( 'language' ) );
@@ -346,11 +369,11 @@ class Feed_Handler implements Service {
 
 
 	/**
-	 * Gets podcast copyright
+	 * Gets podcast copyright.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Podcast copyright.
 	 */
 	public function get_podcast_copyright( $series_id ) {
 		$default   = date( 'Y' ) . ' ' . get_bloginfo( 'name' );
@@ -360,11 +383,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Get podcast subtitle
+	 * Get podcast subtitle.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Podcast subtitle.
 	 */
 	public function get_podcast_subtitle( $series_id ) {
 		$subtitle = $this->settings_handler->get_feed_option( 'data_subtitle', $series_id, get_bloginfo( 'description' ) );
@@ -373,11 +396,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets podcast author
+	 * Gets podcast author.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Podcast author.
 	 */
 	public function get_podcast_author( $series_id ) {
 		$author = $this->settings_handler->get_feed_option( 'data_author', $series_id, get_bloginfo( 'name' ) );
@@ -386,11 +409,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets podcast owner name
+	 * Gets podcast owner name.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Podcast owner name.
 	 */
 	public function get_podcast_owner_name( $series_id ) {
 		$owner_name = $this->settings_handler->get_feed_option( 'data_owner_name', $series_id, get_bloginfo( 'name' ) );
@@ -399,11 +422,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets podcast owner email
+	 * Gets podcast owner email.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Podcast owner email.
 	 */
 	public function get_podcast_owner_email( $series_id ) {
 		$owner_email = $this->settings_handler->get_feed_option( 'data_owner_email', $series_id );
@@ -412,26 +435,26 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets explicit option
+	 * Gets explicit option.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return bool
+	 * @return bool Whether the podcast is explicit.
 	 */
 	public function is_explicit( $series_id ) {
 		$explicit_option = $this->settings_handler->get_feed_option( 'explicit', $series_id );
 
 		$explicit_option = apply_filters( 'ssp_feed_explicit', $explicit_option, $series_id );
 
-		return $explicit_option === 'on';
+		return 'on' === $explicit_option;
 	}
 
 	/**
-	 * Checks complete setting
+	 * Checks complete setting.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Complete setting value.
 	 */
 	public function get_complete( $series_id ) {
 		$complete_option = $this->settings_handler->get_feed_option( 'complete', $series_id );
@@ -443,11 +466,11 @@ class Feed_Handler implements Service {
 
 
 	/**
-	 * Gets feed image
+	 * Gets feed image.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Feed image URL.
 	 */
 	public function get_feed_image( $series_id ) {
 		$image = $this->settings_handler->get_feed_option( 'data_image', $series_id );
@@ -457,11 +480,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets turbo setting
+	 * Gets turbo setting.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Turbo setting.
 	 */
 	public function get_turbo( $series_id ) {
 		if ( $series_id ) {
@@ -480,24 +503,24 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets media prefix
+	 * Gets media prefix.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string
+	 * @return string Media prefix.
 	 *
-	 * @since 2.20.0 Do not carry over the media prefix to subsequent podcasts
+	 * @since 2.20.0 Do not carry over the media prefix to subsequent podcasts.
 	 */
 	public function get_media_prefix( $series_id ) {
 		return ssp_get_media_prefix( $series_id );
 	}
 
 	/**
-	 * Checks whether the current feed is in excerpt mode or not
+	 * Checks whether the current feed is in excerpt mode or not.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return bool
+	 * @return bool Whether excerpt mode is enabled.
 	 */
 	public function is_excerpt_mode( $series_id ) {
 
@@ -520,11 +543,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Checks whether the current feed is in excerpt mode or not
+	 * Checks whether the current feed is in excerpt mode or not.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string Yes|No
+	 * @return string Yes|No.
 	 */
 	public function get_locked( $series_id ) {
 		$locked = ssp_get_option( 'locked', 'on', $series_id );
@@ -537,9 +560,9 @@ class Feed_Handler implements Service {
 	 *
 	 * @since 3.13.0
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return bool
+	 * @return bool Whether the feed is blocked.
 	 */
 	public function is_blocked( $series_id ) {
 		$blocked = ssp_get_option( 'blocked', '', $series_id );
@@ -550,13 +573,13 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets funding settings
+	 * Gets funding settings.
 	 *
 	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#funding
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return array|null
+	 * @return array|null Funding settings.
 	 */
 	public function get_funding( $series_id ) {
 		if ( $series_id ) {
@@ -569,13 +592,13 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets podcast value settings ( recipient wallet address )
+	 * Gets podcast value settings ( recipient wallet address ).
 	 *
 	 * @see https://github.com/Podcastindex-org/podcast-namespace/blob/main/docs/1.0.md#value
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return array|null
+	 * @return array|null Podcast value settings.
 	 */
 	public function get_podcast_value( $series_id ) {
 		if ( $series_id ) {
@@ -588,11 +611,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets funding settings
+	 * Gets the podcast GUID.
 	 *
-	 * @param string $series_slug
+	 * @param string $series_slug Series slug.
 	 *
-	 * @return string
+	 * @return string Podcast GUID.
 	 */
 	public function get_guid( $series_slug ) {
 
@@ -643,24 +666,24 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets the variant of publication date type
+	 * Gets the variant of publication date type.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series term ID.
 	 *
-	 * @return string Either 'published' or 'recorded'
+	 * @return string Either 'published' or 'recorded'.
 	 */
 	public function get_pub_date_type( $series_id ) {
 		return ssp_get_option( 'publish_date', 'published', $series_id );
 	}
 
 	/**
-	 * Gets the feed query
+	 * Gets the feed query.
 	 *
-	 * @param string $series_slug
-	 * @param array  $exclude_series
-	 * @param string $pub_date_type
+	 * @param string $series_slug  Series slug.
+	 * @param array  $exclude_series Series slugs to exclude.
+	 * @param string $pub_date_type Publication date type.
 	 *
-	 * @return WP_Query
+	 * @return WP_Query Feed query.
 	 */
 	public function get_feed_query( $series_slug, $exclude_series, $pub_date_type ) {
 		$series_id = $this->get_series_id( $series_slug );
@@ -669,7 +692,7 @@ class Feed_Handler implements Service {
 		$args = ssp_episodes( $num_posts, $series_slug, true, 'feed', $exclude_series );
 
 		if ( 'recorded' === $pub_date_type ) {
-			$args['orderby']  = 'meta_value';
+			$args['orderby'] = 'meta_value';
 			$args['meta_key'] = 'date_recorded';
 		}
 
@@ -678,11 +701,11 @@ class Feed_Handler implements Service {
 
 
 	/**
-	 * Gets the feed link
+	 * Gets the feed link.
 	 *
-	 * @param string $podcast_series
+	 * @param int $podcast_id Podcast series term ID.
 	 *
-	 * @return string
+	 * @return string Feed link.
 	 */
 	public function get_feed_link( $podcast_id ) {
 		$link = get_term_link( $podcast_id, ssp_series_taxonomy() );
@@ -696,13 +719,13 @@ class Feed_Handler implements Service {
 
 
 	/**
-	 * Gets feed item description
+	 * Gets feed item description.
 	 *
-	 * @param int  $post_id
-	 * @param bool $is_excerpt_mode
-	 * @param int  $turbo_post_count
+	 * @param int  $post_id          Episode post ID.
+	 * @param bool $is_excerpt_mode  Whether to use excerpt mode.
+	 * @param int  $turbo_post_count Number of feed items processed.
 	 *
-	 * @return string
+	 * @return string Feed item description.
 	 */
 	public function get_feed_item_description( $post_id, $is_excerpt_mode, $turbo_post_count = 0 ) {
 		if ( $is_excerpt_mode ) {
@@ -724,9 +747,9 @@ class Feed_Handler implements Service {
 	/**
 	 * Get episode image (cover or featured image).
 	 *
-	 * @param $post_id
+	 * @param int $post_id Episode post ID.
 	 *
-	 * @return mixed|void
+	 * @return mixed|void Episode image URL.
 	 */
 	public function get_feed_item_image( $post_id ) {
 		$episode_image = ssp_frontend_controller()->get_episode_image_url( $post_id );
@@ -735,11 +758,11 @@ class Feed_Handler implements Service {
 
 	/**
 	 * Get feed item duration.
-	 * Episode duration (default to 0:00 to ensure there is always a value for this)
+	 * Episode duration (default to 0:00 to ensure there is always a value for this).
 	 *
-	 * @param $post_id
+	 * @param int $post_id Episode post ID.
 	 *
-	 * @return mixed|void
+	 * @return mixed|void Feed item duration.
 	 */
 	public function get_feed_item_duration( $post_id ) {
 		$duration = get_post_meta( $post_id, 'duration', true );
@@ -752,9 +775,9 @@ class Feed_Handler implements Service {
 	/**
 	 * Get feed item file size in bytes.
 	 *
-	 * @param $post_id
+	 * @param int $post_id Episode post ID.
 	 *
-	 * @return int
+	 * @return int Feed item file size.
 	 */
 	public function get_feed_item_file_size( $post_id ) {
 		$size = get_post_meta( $post_id, 'filesize_raw', true );
@@ -774,10 +797,10 @@ class Feed_Handler implements Service {
 	 * Get feed item mime type.
 	 * Default to MP3/MP4 to ensure there is always a value for this.
 	 *
-	 * @param $audio_file
-	 * @param $post_id
+	 * @param string $audio_file Audio file reference.
+	 * @param int    $post_id    Episode post ID.
 	 *
-	 * @return mixed|void
+	 * @return mixed|void Feed item MIME type.
 	 */
 	public function get_feed_item_mime_type( $audio_file, $post_id ) {
 
@@ -785,7 +808,7 @@ class Feed_Handler implements Service {
 		$mime_type     = $ss_podcasting->get_attachment_mimetype( $audio_file );
 		if ( ! $mime_type ) {
 
-			// Get the episode type (audio or video) to determine the appropriate default MIME type
+			// Get the episode type (audio or video) to determine the appropriate default MIME type.
 			$episode_type = $ss_podcasting->get_episode_type( $post_id );
 			switch ( $episode_type ) {
 				case 'audio':
@@ -804,10 +827,10 @@ class Feed_Handler implements Service {
 	 * Get feed item itunes summary.
 	 * iTunes summary excludes HTML and must be shorter than 4000 characters.
 	 *
-	 * @param $description
-	 * @param $post_id
+	 * @param string $description Episode description.
+	 * @param int    $post_id    Episode post ID.
 	 *
-	 * @return mixed|void
+	 * @return mixed|void Feed item summary.
 	 */
 	public function get_feed_item_itunes_summary( $description, $post_id ) {
 		$itunes_summary = wp_strip_all_tags( $description );
@@ -819,10 +842,10 @@ class Feed_Handler implements Service {
 	 * Get feed item Google Play description.
 	 * Google Play description is the same as iTunes summary, but must be shorter than 1000 characters.
 	 *
-	 * @param $description
-	 * @param $post_id
+	 * @param string $description Episode description.
+	 * @param int    $post_id    Episode post ID.
 	 *
-	 * @return mixed|void
+	 * @return mixed|void Google Play description.
 	 */
 	public function get_feed_item_google_play_description( $description, $post_id ) {
 		$gp_description = wp_strip_all_tags( $description );
@@ -834,10 +857,10 @@ class Feed_Handler implements Service {
 	 * Get feed item iTunes subtitle.
 	 * iTunes subtitle excludes HTML and must be shorter than 255 characters.
 	 *
-	 * @param $description
-	 * @param $post_id
+	 * @param string $description Episode description.
+	 * @param int    $post_id    Episode post ID.
 	 *
-	 * @return mixed|void
+	 * @return mixed|void iTunes subtitle.
 	 */
 	public function get_feed_item_itunes_subtitle( $description, $post_id ) {
 		$itunes_subtitle = wp_strip_all_tags( $description );
@@ -864,7 +887,7 @@ class Feed_Handler implements Service {
 	 * Get feed item publication date.
 	 *
 	 * @param string $pub_date_type 'published' or 'recorded'.
-	 * @param int    $post_id
+	 * @param int    $post_id        Episode post ID.
 	 *
 	 * @return string RFC 2822 formatted date string.
 	 */
@@ -885,9 +908,11 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * @param $post_id
+	 * Get the feed item's explicit flag.
 	 *
-	 * @return string
+	 * @param int $post_id Episode post ID.
+	 *
+	 * @return string Explicit flag.
 	 */
 	public function get_feed_item_explicit_flag( $post_id ) {
 		$ep_explicit = get_post_meta( $post_id, 'explicit', true );
@@ -895,10 +920,12 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * @param string $category
-	 * @param string $subcategory
+	 * Build a Castos category name.
 	 *
-	 * @return string
+	 * @param string $category    Parent category.
+	 * @param string $subcategory Child category.
+	 *
+	 * @return string Combined category name.
 	 */
 	public function get_castos_category_name( $category, $subcategory ) {
 		if ( $category && $subcategory ) {

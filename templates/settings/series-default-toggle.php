@@ -14,10 +14,10 @@
 			</p>
 		<?php else : ?>
 			<label class="ssp-toggle">
-				<input id="ssp_default_podcast" type="checkbox" name="ssp_default_podcast" value="1" />
+				<input id="ssp_default_series" type="checkbox" name="ssp_default_series" value="1" />
 				<span class="ssp-toggle__slider" aria-hidden="true"></span>
 			</label>
-			<label class="ssp-toggle__label" for="ssp_default_podcast">
+			<label class="ssp-toggle__label" for="ssp_default_series">
 				<?php esc_html_e( 'Set as default podcast', 'seriously-simple-podcasting' ); ?>
 			</label>
 		<?php endif; ?>

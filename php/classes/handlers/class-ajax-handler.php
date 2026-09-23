@@ -118,13 +118,14 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * Removes constant notice
+	 * Removes constant notice.
 	 *
 	 * @return void
+	 * @throws \Exception When the nonce is invalid.
 	 */
 	public function remove_constant_notice() {
 		try {
-			$id    = isset( $_POST['id'] ) ? sanitize_text_field( $_POST['id'] ) : '';
+			$id = isset( $_POST['id'] ) ? sanitize_text_field( $_POST['id'] ) : '';
 			$nonce = isset( $_POST['nonce'] ) ? $_POST['nonce'] : '';
 
 			if ( empty( $nonce ) || ! wp_verify_nonce( $nonce, 'notice-' . $id ) ) {
@@ -168,7 +169,7 @@ class Ajax_Handler {
 			$series_id = isset( $_POST['series_id'] ) && is_scalar( $_POST['series_id'] )
 				? absint( wp_unslash( $_POST['series_id'] ) )
 				: 0;
-			$term       = $series_id ? get_term( $series_id, ssp_series_taxonomy() ) : null;
+			$term = $series_id ? get_term( $series_id, ssp_series_taxonomy() ) : null;
 
 			if ( ! $term || is_wp_error( $term ) ) {
 				throw new \Exception( __( 'The podcast could not be found.', 'seriously-simple-podcasting' ) );
@@ -206,7 +207,7 @@ class Ajax_Handler {
 			$this->nonce_check( 'ss_podcasting_castos-hosting' );
 			$this->user_capability_check();
 
-			$series_ids    = $this->int_array_from_get( 'podcasts' );
+			$series_ids     = $this->int_array_from_get( 'podcasts' );
 			$confirm_action = $this->confirm_action_from_get();
 
 			$series_statuses = array();
@@ -237,7 +238,7 @@ class Ajax_Handler {
 	 *
 	 * @since 3.18.0
 	 *
-	 * @param int    $podcast_id     Podcast ID.
+	 * @param int    $series_id      Podcast ID.
 	 * @param string $confirm_action Confirmation action to send to Castos.
 	 *
 	 * @return array Status, title, message and rendered status label.
@@ -250,7 +251,8 @@ class Ajax_Handler {
 
 		do_action( 'ssp_triggered_podcast_sync', $series_id, $response, $status );
 
-		$msg          = $this->get_sync_message( $response, $response_code, $status );
+		$msg = $this->get_sync_message( $response, $response_code, $status );
+		// translators: %1$s is the podcast name and %2$s is the sync error message.
 		$msg_template = _x( '%1$s: %2$s', 'podcast-sync-error-message', 'seriously-simple-podcasting' );
 
 		return array(
@@ -490,7 +492,9 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * @param int $podcast_id
+	 * Gets the podcast name.
+	 *
+	 * @param int $podcast_id Podcast ID.
 	 *
 	 * @return string
 	 */
@@ -509,6 +513,11 @@ class Ajax_Handler {
 		return __( 'Error', 'seriously-simple-podcasting' );
 	}
 
+	/**
+	 * Disconnects the Castos account.
+	 *
+	 * @return void
+	 */
 	public function disconnect_castos() {
 		try {
 			$this->nonce_check( 'ss_podcasting_castos-hosting' );
@@ -525,7 +534,9 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * Validate the Seriously Simple Hosting api credentials
+	 * Validate the Seriously Simple Hosting api credentials.
+	 *
+	 * @throws \Exception When the credentials cannot be validated.
 	 */
 	public function connect_castos() {
 		try {
@@ -565,6 +576,7 @@ class Ajax_Handler {
 	 * Update the episode embed code via ajax
 	 *
 	 * @return void
+	 * @throws \Exception When the embed parameters are invalid or the embed cannot be generated.
 	 */
 	public function update_episode_embed_code() {
 		try {
@@ -719,12 +731,12 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * Throws exception if nonce is not valid
+	 * Throws exception if nonce is not valid.
 	 *
-	 * @param string $action
-	 * @param string $nonce_key
+	 * @param string $action    Nonce action.
+	 * @param string $nonce_key Request key containing the nonce.
 	 *
-	 * @throws \Exception
+	 * @throws \Exception When the nonce is invalid.
 	 */
 	protected function nonce_check( $action, $nonce_key = 'nonce' ) {
 		$nonce = isset( $_REQUEST[ $nonce_key ] ) ? $_REQUEST[ $nonce_key ] : '';
@@ -734,9 +746,9 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * Throws exception if user cannot manage podcast
+	 * Throws exception if user cannot manage podcast.
 	 *
-	 * @throws \Exception
+	 * @throws \Exception When the current user lacks the required capability.
 	 */
 	protected function user_capability_check() {
 		if ( ! current_user_can( 'manage_podcast' ) ) {
@@ -745,7 +757,9 @@ class Ajax_Handler {
 	}
 
 	/**
-	 * @param string $message
+	 * Sends a JSON error response.
+	 *
+	 * @param string $message Error message.
 	 */
 	protected function send_json_error( $message ) {
 		wp_send_json(

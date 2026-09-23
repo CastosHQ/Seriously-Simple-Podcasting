@@ -1,4 +1,9 @@
 <?php
+/**
+ * Settings handler.
+ *
+ * @package Seriously Simple Podcasting
+ */
 
 namespace SeriouslySimplePodcasting\Handlers;
 
@@ -63,7 +68,7 @@ class Settings_Handler implements Service {
 	public function get_general_settings() {
 		return new Settings_Config(
 			function () {
-				return $this->_get_general_settings();
+				return $this->get_general_settings_array();
 			}
 		);
 	}
@@ -73,8 +78,8 @@ class Settings_Handler implements Service {
 	 *
 	 * @return array General settings array.
 	 */
-	private function _get_general_settings() {
-		global $wp_post_types; // Todo: get rid of global here
+	private function get_general_settings_array() {
+		global $wp_post_types; // Todo: get rid of global here.
 
 		$post_type_options = array();
 
@@ -117,10 +122,10 @@ class Settings_Handler implements Service {
 	 * @return array Feed settings array.
 	 */
 	public function _get_feed_settings() {
-		// translators: placeholders are simply html tags to break up the content.
 		return array(
 			'title'       => __( 'Feed details', 'seriously-simple-podcasting' ),
 			'description' => sprintf(
+				// translators: %1$s, %2$s, %3$s, %4$s, and %5$s are HTML tags used to format the description.
 				__( 'This data will be used in the feed for your podcast so your listeners will know more about it before they subscribe. %1$sIt is recommended that you fill in as many fields as possible (that apply to your podcast), however, some fields are required to satisfy Podcast RSS validation requirements.%2$s%3$sTo learn more about Podcast RSS Feed requirements, %4$sclick here%5$s.', 'seriously-simple-podcasting' ),
 				'<br/><em>',
 				'</em>',
@@ -248,7 +253,7 @@ class Settings_Handler implements Service {
 	public function get_player_settings() {
 		return new Settings_Config(
 			function () {
-				return $this->_get_player_settings();
+				return $this->get_player_settings_array();
 			}
 		);
 	}
@@ -258,7 +263,7 @@ class Settings_Handler implements Service {
 	 *
 	 * @return array Player settings array.
 	 */
-	private function _get_player_settings() {
+	private function get_player_settings_array() {
 		$player_style             = ssp_get_option( 'player_style', 'larger' );
 		$is_meta_data_enabled     = $this->is_player_meta_data_enabled();
 		$is_custom_colors_enabled = $this->is_player_custom_colors_enabled();
@@ -304,7 +309,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @param string $id
+	 * Get a feed field by ID.
+	 *
+	 * @param string $id Feed field ID.
 	 *
 	 * @return array|null
 	 */
@@ -325,9 +332,9 @@ class Settings_Handler implements Service {
 	 *
 	 * Since version 3.0, we use the Default Series settings, that should replace the default feed settings
 	 *
-	 * @param string|array $field
-	 * @param int          $series_id
-	 * @param string       $default
+	 * @param string|array $field    Feed field ID or field configuration.
+	 * @param int          $series_id Series ID.
+	 * @param string       $default  Default value.
 	 *
 	 * @return string|null
 	 * @since 3.0.0
@@ -355,7 +362,7 @@ class Settings_Handler implements Service {
 			$data        = is_string( $description ) ? $description : null;
 		}
 
-		// For empty values, propagate some settings from the default feed
+		// For empty values, propagate some settings from the default feed.
 		if ( ! isset( $data ) ) {
 			$propagate_exclusions = array( 'exclude_feed', 'redirect_feed', 'blocked' );
 			$propagated_types     = array( 'checkbox', 'select' );
@@ -376,6 +383,8 @@ class Settings_Handler implements Service {
 	}
 
 	/**
+	 * Get the default series ID.
+	 *
 	 * @return int
 	 */
 	public function default_series_id() {
@@ -387,7 +396,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @param int $series_id
+	 * Get the feed title.
+	 *
+	 * @param int $series_id Series ID.
 	 *
 	 * @return string
 	 */
@@ -408,7 +419,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * @param int $series_id
+	 * Get the feed image.
+	 *
+	 * @param int $series_id Series ID.
 	 *
 	 * @return string
 	 */
@@ -418,7 +431,7 @@ class Settings_Handler implements Service {
 			$image = ssp_get_option( 'data_image', null, $series_id );
 		}
 
-		// If couldn't show the series feed image, try to use the series taxonomy image
+		// If couldn't show the series feed image, try to use the series taxonomy image.
 		if ( ! isset( $image ) || ! ssp_is_feed_image_valid( $image ) ) {
 			$image = ssp_get_podcast_image_src( get_term_by( 'id', $series_id, ssp_series_taxonomy() ), 'full' );
 		}
@@ -437,7 +450,9 @@ class Settings_Handler implements Service {
 
 
 	/**
-	 * @param int|null $podcast_id
+	 * Get feed fields.
+	 *
+	 * @param int|null $podcast_id Podcast term ID.
 	 *
 	 * @return array
 	 */
@@ -446,7 +461,7 @@ class Settings_Handler implements Service {
 			return $this->feed_fields;
 		}
 
-		$podcast_id       = $podcast_id ?: $this->get_current_series_id();
+		$podcast_id       = $podcast_id ? $podcast_id : $this->get_current_series_id();
 		$title            = ssp_get_option( 'data_title', '', $podcast_id );
 		$author           = ssp_get_option( 'data_author', '', $podcast_id );
 		$site_title       = get_bloginfo( 'name' );
@@ -487,9 +502,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * Encode feed password
+	 * Encode feed password.
 	 *
-	 * @param string $password User input
+	 * @param string $password User input.
 	 *
 	 * @return string           Encoded password
 	 */
@@ -506,9 +521,9 @@ class Settings_Handler implements Service {
 	}
 
 	/**
-	 * Validate protectino message
+	 * Validate protection message.
 	 *
-	 * @param string $message User input
+	 * @param string $message User input.
 	 *
 	 * @return string          Validated message
 	 */
@@ -536,7 +551,7 @@ class Settings_Handler implements Service {
 	/**
 	 * Builds the array of field settings for the subscribe links, based on the options stored in the options table.
 	 *
-	 * @param int $series_id
+	 * @param int $series_id Series ID.
 	 *
 	 * @return array
 	 */
@@ -567,13 +582,13 @@ class Settings_Handler implements Service {
 
 			$subscribe_field_options[] = array(
 				'id'          => $field_id,
-				// translators: %s: Service title eg iTunes
+				// translators: %s: Service title, e.g., iTunes.
 				'label'       => sprintf( __( '%s URL', 'seriously-simple-podcasting' ), $available_subscribe_options[ $option_key ] ),
-				// translators: %s: Service title eg iTunes
+				// translators: %s: Service title, e.g., iTunes.
 				'description' => sprintf( __( 'Your podcast\'s %s URL.', 'seriously-simple-podcasting' ), $available_subscribe_options[ $option_key ] ),
 				'type'        => 'text',
 				'default'     => $value,
-				// translators: %s: Service title eg iTunes
+				// translators: %s: Service title, e.g., iTunes.
 				'placeholder' => sprintf( __( '%s URL', 'seriously-simple-podcasting' ), $available_subscribe_options[ $option_key ] ),
 				'callback'    => 'esc_url_raw',
 				'class'       => 'regular-text',

@@ -5,11 +5,13 @@ namespace SeriouslySimplePodcasting\Controllers;
 // Exit if accessed directly.
 use SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler;
 use SeriouslySimplePodcasting\Handlers\Castos_Handler;
+use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Handlers\RSS_Import_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Handler;
 use SeriouslySimplePodcasting\Handlers\Series_Walker;
 use SeriouslySimplePodcasting\Handlers\Settings_Handler;
 use SeriouslySimplePodcasting\Repositories\Series_Repository;
+use SeriouslySimplePodcasting\Repositories\Sync_Refusal_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 if ( ! defined( 'ABSPATH' ) ) {
@@ -53,17 +55,31 @@ class Series_Controller {
 	private $series_repository;
 
 	/**
-	 * @param Series_Handler              $series_handler
-	 * @param Castos_Handler              $castos_handler
-	 * @param Settings_Handler            $settings_handler
-	 * @param Admin_Notifications_Handler $notice_handler
+	 * @var Sync_Refusal_Repository
 	 */
-	public function __construct( $series_handler, $castos_handler, $settings_handler, $notice_handler ) {
-		$this->series_handler    = $series_handler;
-		$this->castos_handler    = $castos_handler;
-		$this->settings_handler  = $settings_handler;
-		$this->notice_handler    = $notice_handler;
-		$this->series_repository = ssp_series_repository();
+	private $sync_refusal_repository;
+
+	/**
+	 * @var Feed_Handler
+	 */
+	private $feed_handler;
+
+	/**
+	 * @param Series_Handler               $series_handler
+	 * @param Castos_Handler               $castos_handler
+	 * @param Settings_Handler             $settings_handler
+	 * @param Admin_Notifications_Handler  $notice_handler
+	 * @param Sync_Refusal_Repository      $sync_refusal_repository
+	 * @param Feed_Handler                 $feed_handler
+	 */
+	public function __construct( $series_handler, $castos_handler, $settings_handler, $notice_handler, $sync_refusal_repository, $feed_handler ) {
+		$this->series_handler          = $series_handler;
+		$this->castos_handler          = $castos_handler;
+		$this->settings_handler        = $settings_handler;
+		$this->notice_handler          = $notice_handler;
+		$this->series_repository       = ssp_series_repository();
+		$this->sync_refusal_repository = $sync_refusal_repository;
+		$this->feed_handler            = $feed_handler;
 
 		$this->init_useful_variables();
 
@@ -71,7 +87,7 @@ class Series_Controller {
 
 		add_action( 'init', array( $this, 'register_taxonomy' ), 11 );
 		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
-		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_podcast_sync_status' ), 10, 3 );
+		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_series_sync_status' ), 10, 3 );
 
 		add_action( 'created_series', array( $this, 'save_series_meta' ), 10, 2 );
 		add_action( 'edited_series', array( $this, 'save_series_meta' ), 10, 2 );
@@ -85,6 +101,7 @@ class Series_Controller {
 		// Series term meta forms
 		add_action( 'series_add_form_fields', array( $this, 'add_series_term_meta_fields' ), 10, 2 );
 		add_action( 'series_edit_form_fields', array( $this, 'edit_series_term_meta_fields' ), 10, 2 );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_series_guid_scripts' ) );
 
 		// Exclude series feed from the default feed
 		add_action( 'create_series', array( $this, 'exclude_feed_from_default' ) );
@@ -172,8 +189,62 @@ class Series_Controller {
 	public function edit_series_term_meta_fields( $term, $taxonomy ) {
 		// Add series image edit/upload metabox.
 		$this->series_image_uploader( $taxonomy, 'UPDATE', $term );
-		$this->show_default_podcast_toggle( $term );
+		$this->show_default_series_toggle( $term );
 		$this->show_feed_info( $term );
+		$this->show_series_guid( $term );
+	}
+
+	/**
+	 * Renders the GUID at the end of the series term edit form.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param \WP_Term $term Series term.
+	 *
+	 * @return void
+	 */
+	protected function show_series_guid( $term ) {
+		$term_id                         = (int) $term->term_id;
+		$guid                            = ssp_get_podcast_guid( $term_id );
+		$derived_guid                    = $this->get_derived_series_guid( $term_id );
+		$is_series_connected_to_castos = ssp_is_connected_to_castos()
+			&& null !== $this->castos_handler->get_podcast_by_series( $term_id );
+		$show_generate_guid             = ! $is_series_connected_to_castos && $guid !== $derived_guid;
+		$modal_id                       = 'ssp-generate-series-guid-' . $term_id;
+		$series_id                      = $term_id;
+
+		ssp_renderer()->render(
+			'settings/series-guid-update',
+			compact( 'guid', 'derived_guid', 'is_series_connected_to_castos', 'show_generate_guid', 'modal_id', 'series_id' )
+		);
+	}
+
+	/**
+	 * Enqueue GUID scripts for series term edit screens.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $hook Current admin page hook.
+	 *
+	 * @return void
+	 */
+	public function enqueue_series_guid_scripts( $hook ) {
+		if ( 'term.php' !== $hook || ssp_series_taxonomy() !== filter_input( INPUT_GET, 'taxonomy' ) ) {
+			return;
+		}
+
+		wp_enqueue_script( 'ssp-series-guid' );
+		wp_localize_script(
+			'ssp-series-guid',
+			'ssp_series_guid',
+			array(
+				'ajax_url'      => admin_url( 'admin-ajax.php' ),
+				'nonce'         => wp_create_nonce( 'ssp_generate_series_guid' ),
+				'action'        => 'ssp_generate_series_guid',
+				'saved_message' => __( '✓ New GUID saved.', 'seriously-simple-podcasting' ),
+				'error_message' => __( 'The podcast GUID could not be saved. Please try again.', 'seriously-simple-podcasting' ),
+			)
+		);
 	}
 
 	/**
@@ -181,7 +252,7 @@ class Series_Controller {
 	 *
 	 * @param \WP_Term $term
 	 */
-	protected function show_default_podcast_toggle( $term ) {
+	protected function show_default_series_toggle( $term ) {
 		if ( ! current_user_can( 'manage_podcast' ) ) {
 			return;
 		}
@@ -189,7 +260,7 @@ class Series_Controller {
 		$is_default = (int) $term->term_id === ssp_get_default_series_id();
 
 		ssp_renderer()->render(
-			'settings/podcast-default-toggle',
+			'settings/series-default-toggle',
 			compact( 'is_default' )
 		);
 	}
@@ -355,7 +426,40 @@ HTML;
 	public function save_series_meta( $term_id, $tt_id ) {
 		$this->insert_update_series_meta( $term_id, $tt_id );
 		$this->maybe_set_default_series( $term_id );
+
 		$this->save_series_data_to_castos( $term_id );
+	}
+
+	/**
+	 * Derive this site's GUID for a series from its feed URL.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int $term_id Series term ID.
+	 *
+	 * @return string Derived GUID, or an empty string when the series is unavailable.
+	 */
+	protected function get_derived_series_guid( $term_id ) {
+		$term = get_term( $term_id, ssp_series_taxonomy() );
+		if ( ! $term || is_wp_error( $term ) ) {
+			return '';
+		}
+
+		return $this->feed_handler->get_derived_guid( $term->slug );
+	}
+
+	/**
+	 * Store a series own GUID option.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int    $term_id Series term ID.
+	 * @param string $guid    Derived GUID.
+	 *
+	 * @return bool
+	 */
+	protected function store_series_guid( $term_id, $guid ) {
+		return ssp_update_option( 'data_guid', $guid, $term_id );
 	}
 
 	/**
@@ -364,7 +468,7 @@ HTML;
 	 * @param int $term_id
 	 */
 	protected function maybe_set_default_series( $term_id ) {
-		if ( empty( $_POST['ssp_default_podcast'] ) ) {
+		if ( empty( $_POST['ssp_default_series'] ) ) {
 			return;
 		}
 
@@ -551,14 +655,14 @@ HTML;
 	}
 
 	/**
-	 * @param int    $podcast_id
+	 * @param int    $series_id
 	 * @param array  $response
 	 * @param string $status
 	 *
 	 * @return void
 	 */
-	public function update_podcast_sync_status( $podcast_id, $response, $status ) {
+	public function update_series_sync_status( $series_id, $response, $status ) {
 
-		$this->series_handler->update_sync_status( $podcast_id, $status );
+		$this->series_handler->update_sync_status( $series_id, $status );
 	}
 }

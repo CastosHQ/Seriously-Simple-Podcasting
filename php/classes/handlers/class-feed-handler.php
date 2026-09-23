@@ -597,23 +597,49 @@ class Feed_Handler implements Service {
 	public function get_guid( $series_slug ) {
 
 		$feed_url = ssp_get_feed_url( $series_slug );
-
-		$term    = get_term_by( 'slug', $series_slug, ssp_series_taxonomy() );
-		$term_id = isset( $term->term_id ) ? $term->term_id : null;
+		$term     = get_term_by( 'slug', $series_slug, ssp_series_taxonomy() );
+		$term_id  = isset( $term->term_id ) ? $term->term_id : null;
 
 		$option     = $term_id ? 'ss_podcasting_data_guid_' . $term_id : 'ss_podcasting_data_guid';
 		$saved_guid = ssp_get_podcast_guid( (int) $term_id );
 
 		if ( empty( $saved_guid ) ) {
-			$url_data = parse_url( $feed_url );
-			$url      = $url_data['host'] . rtrim( $url_data['path'], '/' );
-			$guid     = UUID_Handler::v5( self::PODCAST_NAMESPACE_UUID, $url );
+			$guid = $this->derive_guid_from_feed_url( $feed_url );
 			update_option( $option, $guid );
 		} else {
 			$guid = $saved_guid;
 		}
 
 		return $guid;
+	}
+
+	/**
+	 * Derive this site's podcast GUID from its feed URL without reading or storing it.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $series_slug Series slug.
+	 *
+	 * @return string Derived podcast GUID.
+	 */
+	public function get_derived_guid( $series_slug ) {
+		return $this->derive_guid_from_feed_url( ssp_get_feed_url( $series_slug ) );
+	}
+
+	/**
+	 * Derive a podcast GUID from a feed URL.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $feed_url Feed URL.
+	 *
+	 * @return string Derived podcast GUID.
+	 */
+	protected function derive_guid_from_feed_url( $feed_url ) {
+		$url_data = parse_url( $feed_url );
+		$url      = $url_data['host'] . rtrim( $url_data['path'], '/' );
+
+		return UUID_Handler::v5( self::PODCAST_NAMESPACE_UUID, $url );
 	}
 
 	/**

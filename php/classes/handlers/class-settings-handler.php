@@ -220,9 +220,11 @@ class Settings_Handler implements Service {
 			),
 			array_map(
 				function ( $i ) use ( $default_podcast_id ) {
+					$title = $this->get_feed_title( $i->term_id );
+
 					return $i->term_id === $default_podcast_id
-						? ssp_get_default_series_name( $i->name )
-						: $i->name;
+						? ssp_get_default_series_name( $title )
+						: $title;
 				},
 				$podcasts
 			)
@@ -390,11 +392,12 @@ class Settings_Handler implements Service {
 	 * @return string
 	 */
 	public function get_feed_title( $series_id ) {
-		$title = ssp_get_option( 'data_title', '', $series_id );
+		// A whitespace-only title would show as a blank name, so treat it as unset.
+		$title = trim( ssp_get_option( 'data_title', '', $series_id ) );
 		if ( ! $title ) {
 			$term = get_term_by( 'id', $series_id, ssp_series_taxonomy() );
 			if ( ! empty( $term->name ) ) {
-				$title = $term->name;
+				$title = trim( $term->name );
 			}
 		}
 		if ( ! $title ) {

@@ -28,6 +28,40 @@ class SettingsHandlerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
+	 * The Hosting list uses a podcast's feed title when one is stored.
+	 */
+	public function testGetPodcastsListUsesFeedTitle() {
+		$series_id = $this->factory()->term->create(
+			array(
+				'taxonomy' => ssp_series_taxonomy(),
+				'name'     => 'Podcast Term Name',
+			)
+		);
+		ssp_update_option( 'data_title', 'Imported Feed Title', $series_id );
+
+		$list = $this->callGetPodcastsList();
+
+		$this->assertSame( 'Imported Feed Title', $list[ $series_id ] );
+	}
+
+	/**
+	 * The Hosting list falls back to the term name when the feed title is empty.
+	 */
+	public function testGetPodcastsListFallsBackToTermName() {
+		$series_id = $this->factory()->term->create(
+			array(
+				'taxonomy' => ssp_series_taxonomy(),
+				'name'     => 'Podcast Term Fallback',
+			)
+		);
+		ssp_update_option( 'data_title', '', $series_id );
+
+		$list = $this->callGetPodcastsList();
+
+		$this->assertSame( 'Podcast Term Fallback', $list[ $series_id ] );
+	}
+
+	/**
 	 * Regression test: get_podcasts_list() must not mutate the WP_Term objects shared
 	 * with the wp_cache. Previously it did `$podcast->name = ssp_get_default_series_name(...)`,
 	 * which poisoned the cache so that render_feed_link() would call the same function again

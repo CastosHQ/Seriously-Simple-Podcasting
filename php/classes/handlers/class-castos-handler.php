@@ -161,6 +161,8 @@ class Castos_Handler implements Service {
 
 		$ssp_headers     = array(
 			'Authorization'    => 'Bearer ' . $this->api_token,
+			// Castos matches Origin against the domain stored when this site connected.
+			'Origin'           => home_url(),
 			'X-SSP-Website'    => home_url(),
 			'X-SSP-Version'    => SSP_VERSION,
 			'X-SSP-WP-Version' => get_bloginfo( 'version' ),
@@ -1299,9 +1301,9 @@ class Castos_Handler implements Service {
 		$http_status   = isset( $http_response['code'] ) ? (int) $http_response['code'] : (int) wp_remote_retrieve_response_code( $app_response );
 		$response      = array_merge( $http_response, $body );
 
-		// If user disconnected on Castos side, disconnect it in SSP.
+		// Castos already disconnected the account, so only the local side is left to clear.
 		if ( isset( $response['code'], $response['message'] ) && 400 === (int) $response['code'] && strpos( $response['message'], 'disconnected' ) ) {
-			$this->disconnect( $response['message'] );
+			$this->forget_castos( $response['message'] );
 		}
 
 		$response = array(
@@ -1316,12 +1318,47 @@ class Castos_Handler implements Service {
 	}
 
 	public function disconnect( $notification = '' ) {
+		$this->report_disconnect_to_castos();
+		$this->forget_castos( $notification );
+	}
+
+	/**
+	 * Drop this site's Castos connection locally.
+	 *
+	 * Used on its own only when Castos has already disconnected the account, so
+	 * reporting the disconnect back to it would be redundant.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $notification Notice to show the user.
+	 *
+	 * @return void
+	 */
+	protected function forget_castos( $notification = '' ) {
 		$this->clear_sync_refusals();
 		$this->remove_api_credentials();
 
 		if ( $notification ) {
 			$this->notifications_handler->add_constant_notice( $notification, Admin_Notifications_Handler::WARNING, self::DISCONNECT_NOTICE_KEY );
 		}
+	}
+
+	/**
+	 * Tell Castos this site is no longer connected.
+	 *
+	 * Best effort: the local disconnect must succeed even when Castos cannot be
+	 * reached, so a failure is logged and never surfaced to the user.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 */
+	protected function report_disconnect_to_castos(): void {
+		if ( ! $this->api_token() ) {
+			return;
+		}
+
+		$this->send_request( 'api/v2/ssp/connect', array(), 'DELETE' );
 	}
 
 	/**

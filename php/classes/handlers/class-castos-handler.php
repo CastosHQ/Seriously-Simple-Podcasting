@@ -1317,9 +1317,22 @@ class Castos_Handler implements Service {
 		return $response;
 	}
 
+	/**
+	 * Disconnect this site from Castos, on both sides.
+	 *
+	 * The local disconnect happens first, so an unreachable Castos cannot delay it.
+	 *
+	 * @since 3.5.0
+	 *
+	 * @param string $notification Notice to show the user.
+	 *
+	 * @return void
+	 */
 	public function disconnect( $notification = '' ) {
-		$this->report_disconnect_to_castos();
+		$token = $this->api_token();
+
 		$this->forget_castos( $notification );
+		$this->report_disconnect_to_castos( $token );
 	}
 
 	/**
@@ -1346,19 +1359,48 @@ class Castos_Handler implements Service {
 	/**
 	 * Tell Castos this site is no longer connected.
 	 *
-	 * Best effort: the local disconnect must succeed even when Castos cannot be
-	 * reached, so a failure is logged and never surfaced to the user.
+	 * Best effort: the local disconnect has already happened, so this request is
+	 * given a short timeout, is not waited on, and a failure is only logged.
 	 *
 	 * @since 3.18.0
 	 *
+	 * @param string $token API token captured before the local disconnect removed it.
+	 *
 	 * @return void
 	 */
-	protected function report_disconnect_to_castos(): void {
-		if ( ! $this->api_token() ) {
+	protected function report_disconnect_to_castos( $token ): void {
+		if ( ! $token ) {
 			return;
 		}
 
-		$this->send_request( 'api/v2/ssp/connect', array(), 'DELETE' );
+		$this->api_token = $token;
+
+		add_filter( 'http_request_args', array( $this, 'make_request_fire_and_forget' ), 20, 2 );
+
+		try {
+			$this->send_request( 'api/v2/ssp/connect', array(), 'DELETE' );
+		} finally {
+			remove_filter( 'http_request_args', array( $this, 'make_request_fire_and_forget' ), 20 );
+		}
+	}
+
+	/**
+	 * Stop a Castos request from being waited on.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param array  $args Request arguments.
+	 * @param string $url  Request URL.
+	 *
+	 * @return array
+	 */
+	public function make_request_fire_and_forget( $args, $url ) {
+		if ( false !== strpos( $url, SSP_CASTOS_APP_URL ) ) {
+			$args['timeout']  = 5;
+			$args['blocking'] = false;
+		}
+
+		return $args;
 	}
 
 	/**

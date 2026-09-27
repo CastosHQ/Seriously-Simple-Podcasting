@@ -1069,8 +1069,7 @@ class Settings_Controller {
 	 */
 	public function maybe_disconnect_from_castos( $new_value ) {
 		if ( 'on' === $new_value ) {
-			delete_option( $this->settings_base . 'podmotor_account_email' );
-			delete_option( $this->settings_base . 'podmotor_account_api_token' );
+			$this->castos_handler->disconnect();
 			delete_option( $this->settings_base . 'podmotor_account_id' );
 			delete_option( $this->settings_base . 'podmotor_disconnect' );
 		}

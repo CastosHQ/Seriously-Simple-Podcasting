@@ -342,6 +342,30 @@ class SettingsControllerTest extends \Codeception\TestCase\WPTestCase {
 	 * @param string   $sync_status      SSP status to return for the Castos report.
 	 * @param array    $details          Optional Castos podcast detail values.
 	 */
+	/**
+	 * The Disconnect setting goes through Castos_Handler::disconnect(), which
+	 * clears stored refusals, and still removes the account ID and the flag.
+	 */
+	public function testDisconnectSettingClearsRefusalsThroughCastosHandler() {
+		update_option( Settings_Controller::SETTINGS_BASE . 'podmotor_account_id', '42' );
+		update_option( Settings_Controller::SETTINGS_BASE . 'podmotor_disconnect', 'on' );
+
+		$this->castos_handler->expects( $this->once() )->method( 'disconnect' );
+
+		$this->assertNull( $this->settings_controller->maybe_disconnect_from_castos( 'on' ) );
+		$this->assertFalse( get_option( Settings_Controller::SETTINGS_BASE . 'podmotor_account_id' ) );
+		$this->assertFalse( get_option( Settings_Controller::SETTINGS_BASE . 'podmotor_disconnect' ) );
+	}
+
+	/**
+	 * Saving the settings without the Disconnect flag keeps the connection.
+	 */
+	public function testDisconnectSettingOffKeepsConnection() {
+		$this->castos_handler->expects( $this->never() )->method( 'disconnect' );
+
+		$this->settings_controller->maybe_disconnect_from_castos( '' );
+	}
+
 	private function configure_castos_podcast( $castos_series_id, $castos_status, $sync_status, $details = array() ) {
 		$podcast = array_merge(
 			array(

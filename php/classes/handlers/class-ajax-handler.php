@@ -274,6 +274,11 @@ class Ajax_Handler {
 	 * @return string
 	 */
 	protected function resolve_sync_status( $response_code, $refusal ) {
+		// No response means the request never reached Castos, so a stored refusal is still unanswered.
+		if ( null === $response_code ) {
+			return Sync_Status::SYNC_STATUS_FAILED;
+		}
+
 		if ( null !== $refusal ) {
 			$refusal_code = isset( $refusal['code'] ) ? $refusal['code'] : '';
 
@@ -523,7 +528,7 @@ class Ajax_Handler {
 			$this->nonce_check( 'ss_podcasting_castos-hosting' );
 			$this->user_capability_check();
 
-			$this->castos_handler->remove_api_credentials();
+			$this->castos_handler->disconnect();
 			$this->admin_notices_handler->add_flash_notice(
 				__( 'Castos account successfully disconnected.', 'seriously-simple-podcasting' )
 			);

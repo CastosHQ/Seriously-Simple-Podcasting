@@ -568,6 +568,71 @@ class AjaxHandlerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
+	 * A request that never reaches Castos reports Failed with the default
+	 * message, even when an unanswered refusal is stored.
+	 */
+	public function testSyncCastosReportsTransportFailureAsFailedWithStoredRefusal() {
+		$this->authorize_sync_request();
+		$series_name = 'Transport Failure Podcast';
+		$series_id   = $this->factory()->term->create(
+			array(
+				'taxonomy' => ssp_series_taxonomy(),
+				'name'     => $series_name,
+			)
+		);
+		$_GET['podcasts']       = array( $series_id );
+		$_GET['confirm_action'] = Sync_Refusal_Repository::ACTION_CONNECT;
+
+		$refusal_repository = new Sync_Refusal_Repository();
+		$refusal_repository->record(
+			$series_id,
+			array(
+				'code'        => Sync_Refusal_Repository::CODE_DETAILS_DIFFER,
+				'podcast_id'  => 1234,
+				'differences' => array( 'podcast_title' ),
+			)
+		);
+
+		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
+		$castos_handler->expects( $this->once() )
+			->method( 'trigger_podcast_sync' )
+			->with( $series_id, Sync_Refusal_Repository::ACTION_CONNECT )
+			->willReturn( null );
+
+		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
+
+		$handler       = new Ajax_Handler( $castos_handler, $admin_notices_handler, $this->createMock( Settings_Controller::class ), $refusal_repository, $this->createMock( Feed_Handler::class ) );
+		$json_response = $this->capture_json_response( array( $handler, 'sync_castos' ) );
+
+		$this->assertFalse( $json_response['success'] );
+		$this->assertSame( Sync_Status::SYNC_STATUS_FAILED, $json_response['data']['podcasts'][ $series_id ]['status'] );
+		$this->assertSame(
+			$series_name . ': Could not trigger podcast sync',
+			$json_response['data']['podcasts'][ $series_id ]['msg']
+		);
+		$this->assertNotNull( $refusal_repository->get( $series_id ) );
+	}
+
+	/**
+	 * Disconnecting through AJAX goes through Castos_Handler::disconnect(),
+	 * which clears stored refusals along with the credentials.
+	 */
+	public function testDisconnectCastosClearsRefusalsThroughCastosHandler() {
+		$this->authorize_sync_request();
+
+		$castos_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Castos_Handler::class );
+		$castos_handler->expects( $this->once() )->method( 'disconnect' );
+		$castos_handler->expects( $this->never() )->method( 'remove_api_credentials' );
+
+		$admin_notices_handler = $this->createMock( \SeriouslySimplePodcasting\Handlers\Admin_Notifications_Handler::class );
+
+		$handler       = new Ajax_Handler( $castos_handler, $admin_notices_handler, $this->createMock( Settings_Controller::class ), new Sync_Refusal_Repository(), $this->createMock( Feed_Handler::class ) );
+		$json_response = $this->capture_json_response( array( $handler, 'disconnect_castos' ) );
+
+		$this->assertTrue( $json_response['success'] );
+	}
+
+	/**
 	 * Test that an ordinary sync starts and reports the syncing status.
 	 */
 	public function testSyncCastosStartsSync() {

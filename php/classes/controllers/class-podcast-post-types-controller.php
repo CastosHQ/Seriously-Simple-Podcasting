@@ -402,6 +402,7 @@ class Podcast_Post_Types_Controller {
 						'transcript_file',
 						'ssp_guid',
 						'ssp_original_guid',
+						'ssp_episode_guid',
 					);
 
 					foreach ( $exclusions as $exclusion ) {
@@ -532,7 +533,7 @@ class Podcast_Post_Types_Controller {
 		if ( $enclosure ) {
 			$this->handle_enclosure_update( $post, $enclosure );
 
-			// Generate UUID-based GUID for new episodes (backward compatibility)
+			// Preserve the published GUID or generate one for a new episode.
 			$this->handle_guid( $post_id );
 		}
 
@@ -647,16 +648,14 @@ class Podcast_Post_Types_Controller {
 	}
 
 	/**
-	 * Handle GUID generation for new episodes if one doesn't exist
+	 * Stores the published GUID or generates one for a new episode.
 	 *
 	 * @param int $post_id Post ID.
 	 *
 	 * @return void
 	 */
 	public function handle_guid( $post_id ) {
-		// Check if GUID already exists (backward compatibility)
-		$existing_guid = get_post_meta( $post_id, 'ssp_guid', true );
-		if ( $existing_guid ) {
+		if ( get_post_meta( $post_id, 'ssp_episode_guid', true ) ) {
 			return;
 		}
 
@@ -665,12 +664,12 @@ class Podcast_Post_Types_Controller {
 			return;
 		}
 
-		$guid = ssp_generate_episode_guid( $episode );
-
-		if ( $guid ) {
-			// Save the GUID
-			update_post_meta( $post_id, 'ssp_guid', $guid );
+		if ( get_post_meta( $post_id, 'ssp_original_guid', true ) || get_post_meta( $post_id, 'ssp_guid', true ) ) {
+			$this->episode_repository->maybe_store_episode_guid( $post_id );
+			return;
 		}
+
+		$this->episode_repository->maybe_store_episode_guid( $post_id, ssp_generate_episode_guid( $episode ) );
 	}
 
 	/**

@@ -102,6 +102,99 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * A first feed render stores the legacy published value, never the stray native GUID.
+     */
+    public function testFeedStoresImportedOriginalWithoutWritingLegacyGuid()
+    {
+        $id = $this->createFeedEpisode();
+        update_post_meta($id, 'ssp_original_guid', 'feed-original');
+        update_post_meta($id, 'ssp_guid', 'stray-native');
+
+        $this->assertSame('feed-original', $this->feedGuidFor($id));
+        $this->assertSame('feed-original', get_post_meta($id, 'ssp_episode_guid', true));
+        $this->assertSame('stray-native', get_post_meta($id, 'ssp_guid', true));
+
+        update_post_meta($id, 'ssp_original_guid', 'changed-original');
+        $this->assertSame('feed-original', $this->feedGuidFor($id));
+    }
+
+    /**
+     * All legacy states publish the same GUID before and after the first feed render.
+     */
+    public function testFeedKeepsLegacyPublishedGuidForEveryFallback()
+    {
+        foreach (['original' => 'original-guid', 'native' => 'native-guid', 'post' => null] as $case => $guid) {
+            $id = $this->createFeedEpisode();
+            if ('original' === $case) {
+                update_post_meta($id, 'ssp_original_guid', $guid);
+                update_post_meta($id, 'ssp_guid', 'stray-guid');
+            } elseif ('native' === $case) {
+                update_post_meta($id, 'ssp_guid', $guid);
+            } else {
+                $guid = get_the_guid($id);
+            }
+
+            $this->assertSame($guid, ssp_episode_guid($id), $case . ' before storing');
+            $this->assertSame($guid, $this->feedGuidFor($id), $case . ' first render');
+            $this->assertSame($guid, get_post_meta($id, 'ssp_episode_guid', true), $case . ' stored');
+            $this->assertSame($guid, $this->feedGuidFor($id), $case . ' second render');
+            if ('post' === $case) {
+                $this->assertFalse(metadata_exists('post', $id, 'ssp_guid'));
+            }
+        }
+    }
+
+    /**
+     * Filtering only changes the output; storing retains the exact unfiltered bytes.
+     */
+    public function testFeedStoresUnfilteredGuidBytes()
+    {
+        $guids = [
+            'backslash'    => 'legacy\\backslash',
+            'single quote' => "legacy'quote",
+            'double quote' => 'legacy"quote',
+            'hex hash'     => 'd41d8cd98f00b204e9800998ecf8427e',
+            'digits only'  => '01234567890123456789',
+        ];
+        $filter = function ($value) { return 'filtered-' . $value; };
+        add_filter('ssp/episode/guid', $filter);
+        try {
+            foreach ($guids as $case => $guid) {
+                $id = $this->createFeedEpisode();
+                update_post_meta($id, 'ssp_original_guid', wp_slash($guid));
+                $this->assertSame('filtered-' . $guid, $this->feedGuidFor($id), $case . ' feed output');
+                $this->assertSame($guid, get_post_meta($id, 'ssp_episode_guid', true), $case . ' stored bytes');
+                $this->assertFalse(metadata_exists('post', $id, 'ssp_guid'), $case);
+            }
+        } finally {
+            remove_filter('ssp/episode/guid', $filter);
+        }
+    }
+
+    private function createFeedEpisode()
+    {
+        $id = $this->factory()->post->create([
+            'post_title' => 'GUID continuity ' . wp_generate_uuid4(),
+            'post_status' => 'publish',
+            'post_type' => SSP_CPT_PODCAST,
+        ]);
+        update_post_meta($id, 'audio_file', site_url('/episode.mp3'));
+        wp_set_object_terms($id, [ssp_get_default_series_id()], ssp_series_taxonomy());
+        return $id;
+    }
+
+    private function feedGuidFor($id)
+    {
+        $feed = $this->getFeedController()->get_podcast_feed(ssp_get_default_series_id());
+        $this->assertMatchesRegularExpression('/<item>.*?<guid isPermaLink="false">/s', $feed);
+        $item = get_post($id);
+        $this->assertNotFalse(strpos($feed, '<title>' . esc_html($item->post_title) . '</title>'));
+        $pattern = '/<item>.*?<title>' . preg_quote(esc_html($item->post_title), '/') . '<\/title>.*?<guid isPermaLink="false">(.*?)<\/guid>/s';
+        $this->assertSame(1, preg_match($pattern, $feed, $match));
+        return html_entity_decode($match[1], ENT_QUOTES | ENT_XML1, 'UTF-8');
+    }
+
+    /**
      * @return Feed_Controller
      */
     protected function getFeedController()

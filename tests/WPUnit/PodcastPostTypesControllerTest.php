@@ -463,6 +463,125 @@ class PodcastPostTypesControllerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * A meta-box save preserves the authoritative GUID, even when legacy keys differ.
+     */
+    public function testMetaBoxSaveKeepsExistingEpisodeGuid()
+    {
+        update_post_meta($this->post_id, 'ssp_episode_guid', 'kept-guid');
+        update_post_meta($this->post_id, 'ssp_original_guid', 'old-original');
+        update_post_meta($this->post_id, 'ssp_guid', 'old-native');
+        $this->saveEpisodeMetaBox();
+        $this->assertSame('kept-guid', get_post_meta($this->post_id, 'ssp_episode_guid', true));
+        $this->assertSame('old-native', get_post_meta($this->post_id, 'ssp_guid', true));
+    }
+
+    /**
+     * Legacy saves store the published priority with exact original GUID bytes.
+     */
+    public function testMetaBoxSaveStoresLegacyGuid()
+    {
+        $guids = [
+            'backslash'    => 'original\\guid',
+            'single quote' => "original'guid",
+            'double quote' => 'original"guid',
+            'hex hash'     => 'd41d8cd98f00b204e9800998ecf8427e',
+            'digits only'  => '01234567890123456789',
+        ];
+        foreach ($guids as $case => $original) {
+            $id = $this->factory()->post->create(['post_type' => SSP_CPT_PODCAST]);
+            update_post_meta($id, 'ssp_original_guid', wp_slash($original));
+            update_post_meta($id, 'ssp_guid', 'stray-guid');
+            $this->saveEpisodeMetaBox($id);
+            $this->assertSame($original, get_post_meta($id, 'ssp_episode_guid', true), $case . ' stored bytes');
+            $this->assertSame('stray-guid', get_post_meta($id, 'ssp_guid', true), $case);
+        }
+
+        $native = $this->factory()->post->create(['post_type' => SSP_CPT_PODCAST]);
+        update_post_meta($native, 'ssp_guid', 'native-legacy');
+        $this->saveEpisodeMetaBox($native);
+        $this->assertSame('native-legacy', get_post_meta($native, 'ssp_episode_guid', true));
+
+        $imported = $this->factory()->post->create(['post_type' => SSP_CPT_PODCAST]);
+        update_post_meta($imported, 'ssp_original_guid', 'original-only');
+        $this->saveEpisodeMetaBox($imported);
+        $this->assertSame('original-only', get_post_meta($imported, 'ssp_episode_guid', true));
+        $this->assertFalse(metadata_exists('post', $imported, 'ssp_guid'));
+    }
+
+    /**
+     * The save path stores the original, not a filtered presentation value.
+     */
+    public function testMetaBoxSaveStoresUnfilteredGuid()
+    {
+        update_post_meta($this->post_id, 'ssp_original_guid', 'raw-guid');
+        $filter = function ($guid) { return 'filtered-' . $guid; };
+        add_filter('ssp/episode/guid', $filter);
+        try {
+            $this->saveEpisodeMetaBox();
+            $this->assertSame('filtered-raw-guid', ssp_episode_guid($this->post_id));
+            $this->assertSame('raw-guid', get_post_meta($this->post_id, 'ssp_episode_guid', true));
+            $this->assertFalse(metadata_exists('post', $this->post_id, 'ssp_guid'));
+        } finally {
+            remove_filter('ssp/episode/guid', $filter);
+        }
+    }
+
+    /**
+     * A brand-new episode gets a stable UUIDv5, never an ssp_guid write.
+     */
+    public function testMetaBoxSaveGeneratesStableUuidV5()
+    {
+        $this->saveEpisodeMetaBox();
+        $guid = get_post_meta($this->post_id, 'ssp_episode_guid', true);
+        $this->assertMatchesRegularExpression('/^[0-9a-f]{8}-[0-9a-f]{4}-5[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i', $guid);
+        $this->assertFalse(metadata_exists('post', $this->post_id, 'ssp_guid'));
+        $this->saveEpisodeMetaBox();
+        $this->assertSame($guid, get_post_meta($this->post_id, 'ssp_episode_guid', true));
+    }
+
+    /**
+     * Duplicator completion removes the copied episode's identity.
+     */
+    public function testPostDuplicatorDoesNotCopyEpisodeGuid()
+    {
+        $this->controller->prevent_copy_meta();
+        $copy = $this->factory()->post->create(['post_type' => SSP_CPT_PODCAST]);
+        update_post_meta($copy, 'ssp_episode_guid', 'copied-guid');
+        do_action('mtphr_post_duplicator_created', $copy);
+        $this->assertFalse(metadata_exists('post', $copy, 'ssp_episode_guid'));
+    }
+
+    private function saveEpisodeMetaBox($post_id = null)
+    {
+        $post_id = $post_id ?: $this->post_id;
+        $previous_post = $_POST;
+        $previous_user = get_current_user_id();
+        wp_set_current_user($this->factory()->user->create(['role' => 'administrator']));
+        // Use the real controller and repository: this class's mocks omit custom fields
+        // and would make meta_box_save() skip the GUID path entirely.
+        $controller = ssp_app()->podcast_post_types_controller;
+        $this->assertArrayHasKey('audio_file', $controller->custom_fields());
+        $_POST = [
+            'post_type' => SSP_CPT_PODCAST,
+            'seriouslysimple_' . SSP_CPT_PODCAST . '_nonce' => wp_create_nonce(plugin_basename($controller->dir)),
+            'audio_file' => 'https://example.com/episode.mp3',
+            'duration' => '00:01:00',
+            'filesize' => '1 MB',
+            'filesize_raw' => '1048576',
+        ];
+        // Supply unchanged media metadata so the real repository needn't fetch a remote file.
+        foreach (['audio_file', 'duration', 'filesize', 'filesize_raw'] as $key) {
+            update_post_meta($post_id, $key, $_POST[$key]);
+        }
+        try {
+            $this->assertTrue($controller->meta_box_save($post_id, get_post($post_id)));
+        } finally {
+            $_POST = $previous_post;
+            wp_set_current_user($previous_user);
+        }
+    }
+
+    /**
      * Helper method to mock functions.
      *
      * @param string $function_name Function name to mock.

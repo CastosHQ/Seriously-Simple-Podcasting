@@ -74,6 +74,30 @@ class Episode_Repository implements Service {
 
 
 	/**
+	 * Stores an episode's resolved GUID if it has no authoritative GUID yet.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int               $post_id Episode post ID.
+	 * @param string|false|null $guid    GUID to store; null resolves the unfiltered published value.
+	 *
+	 * @return void
+	 */
+	public function maybe_store_episode_guid( $post_id, $guid = null ) {
+		if ( get_post_meta( $post_id, 'ssp_episode_guid', true ) ) {
+			return;
+		}
+
+		if ( null === $guid ) {
+			$guid = ssp_get_raw_episode_guid( $post_id );
+		}
+
+		if ( $guid ) {
+			update_post_meta( $post_id, 'ssp_episode_guid', wp_slash( $guid ) );
+		}
+	}
+
+	/**
 	 * Get scheduled episodes.
 	 *
 	 * @return \WP_Post[]

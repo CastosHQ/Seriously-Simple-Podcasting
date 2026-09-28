@@ -99,6 +99,8 @@ class Rest_Api_Controller {
 
 		add_action( 'rest_api_init', array( $this, 'create_api_series_fields' ) );
 
+		add_action( 'rest_api_init', array( $this, 'register_rest_episode_guid' ) );
+
 		add_action( 'rest_api_init', array( $this, 'register_rest_episode_images' ) );
 
 		add_action( 'rest_api_init', array( $this, 'register_rest_player_images' ) );
@@ -689,6 +691,32 @@ class Rest_Api_Controller {
 		return array(
 			'category'    => get_option( "ss_podcasting_data_{$base}_{$series_id}", '' ),
 			'subcategory' => get_option( "ss_podcasting_data_sub{$base}_{$series_id}", '' ),
+		);
+	}
+
+	/**
+	 * Exposes the published episode GUID without changing WordPress's core guid field.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return void
+	 */
+	public function register_rest_episode_guid() {
+		register_rest_field(
+			ssp_post_types(),
+			'ssp_episode_guid',
+			array(
+				'get_callback'    => function ( $episode ) {
+					return ssp_episode_guid( $episode['id'] );
+				},
+				'update_callback' => null,
+				'schema'          => array(
+					'description' => __( 'The published episode GUID.', 'seriously-simple-podcasting' ),
+					'type'        => 'string',
+					'context'     => array( 'view', 'edit' ),
+					'readonly'    => true,
+				),
+			)
 		);
 	}
 

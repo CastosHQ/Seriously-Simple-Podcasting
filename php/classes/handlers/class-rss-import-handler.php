@@ -743,9 +743,10 @@ class RSS_Import_Handler {
 		$this->save_enclosure( $post_id, $this->get_enclosure_url( $item ) );
 		$this->save_episode_image( $post_id, $this->get_image_url( $item ) );
 
-		// Save original GUID if it exists
+		// Keep the imported item's GUID as both its original and published GUID.
 		if ( ! empty( $post_data['original_guid'] ) ) {
 			update_post_meta( $post_id, 'ssp_original_guid', $post_data['original_guid'] );
+			update_post_meta( $post_id, 'ssp_episode_guid', $post_data['original_guid'] );
 		}
 
 		// Set the series, if it is available

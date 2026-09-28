@@ -745,8 +745,9 @@ class RSS_Import_Handler {
 
 		// Keep the imported item's GUID as both its original and published GUID.
 		if ( ! empty( $post_data['original_guid'] ) ) {
-			update_post_meta( $post_id, 'ssp_original_guid', $post_data['original_guid'] );
-			update_post_meta( $post_id, 'ssp_episode_guid', $post_data['original_guid'] );
+			$guid = wp_slash( $post_data['original_guid'] );
+			update_post_meta( $post_id, 'ssp_original_guid', $guid );
+			update_post_meta( $post_id, 'ssp_episode_guid', $guid );
 		}
 
 		// Set the series, if it is available

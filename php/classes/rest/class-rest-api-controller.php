@@ -223,14 +223,14 @@ class Rest_Api_Controller {
 
 		// Check default podcast privacy if no series
 		if ( empty( $terms ) && 'yes' === ssp_get_option( 'is_podcast_private' ) ) {
-			unset( $response->data['meta'] );
+			unset( $response->data['meta'], $response->data['ssp_episode_guid'] );
 			return $response;
 		}
 
 		// Check if any series is private
 		foreach ( $terms as $term ) {
 			if ( 'yes' === ssp_get_option( 'is_podcast_private', '', $term->term_id ) ) {
-				unset( $response->data['meta'] );
+				unset( $response->data['meta'], $response->data['ssp_episode_guid'] );
 				break;
 			}
 		}

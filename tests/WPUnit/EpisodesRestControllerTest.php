@@ -208,6 +208,121 @@ class EpisodesRestControllerTest extends \Codeception\TestCase\WPTestCase {
 		}
 	}
 
+	/**
+	 * Private podcast identity is hidden from public REST reads, not editors or Castos.
+	 */
+	public function testPrivatePodcastRestHidesGuidAndMetaOnlyFromAnonymousReaders() {
+		ssp_get_service( 'cpt_podcast_handler' )->register_post_type();
+		rest_get_server();
+		$editor = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$series = self::factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) );
+		$public_series = self::factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) );
+		$private_series = $this->create_episode( 'publish', $editor );
+		$private_default = $this->create_episode( 'publish', $editor );
+		$public = $this->create_episode( 'publish', $editor );
+		wp_set_object_terms( $private_series, array( $series ), ssp_series_taxonomy() );
+		wp_set_object_terms( $private_default, array(), ssp_series_taxonomy() );
+		$this->assertSame( array(), wp_get_post_terms( $private_default, ssp_series_taxonomy() ) );
+		wp_set_object_terms( $public, array( $public_series ), ssp_series_taxonomy() );
+		ssp_update_option( 'is_podcast_private', 'yes', $series );
+		ssp_update_option( 'is_podcast_private', 'yes' );
+		$guids = array(
+			$private_series  => 'private-series-guid',
+			$private_default => 'private-default-guid',
+			$public          => 'public-guid',
+		);
+		foreach ( $guids as $id => $guid ) {
+			update_post_meta( $id, 'ssp_episode_guid', $guid );
+			update_post_meta( $id, 'ssp_original_guid', 'original-' . $guid );
+		}
+		$type = get_post_type_object( SSP_CPT_PODCAST );
+		$base = $type->rest_base ?: SSP_CPT_PODCAST;
+		update_option( 'ss_podcasting_podmotor_account_api_token', 'private-guid-test-token' );
+
+		try {
+			foreach ( $guids as $id => $guid ) {
+				$route = '/wp/v2/' . $base . '/' . $id;
+				$this->reset_rest_privacy_auth_cache();
+				wp_set_current_user( 0 );
+				$anonymous = rest_do_request( new \WP_REST_Request( 'GET', $route ) );
+				$this->assertSame( 200, $anonymous->get_status(), $route );
+				$data = $anonymous->get_data();
+				if ( $public === $id ) {
+					$this->assertSame( $guid, $data['ssp_episode_guid'] );
+					$this->assertArrayHasKey( 'meta', $data );
+				} else {
+					$this->assertArrayNotHasKey( 'ssp_episode_guid', $data, $route );
+					$this->assertArrayNotHasKey( 'meta', $data, $route );
+				}
+
+				$this->reset_rest_privacy_auth_cache();
+				$ssp_route = $private_series === $id ? '/ssp/v1/podcasts/' . $series . '/episodes' : '/ssp/v1/episodes';
+				$ssp_request = new \WP_REST_Request( 'GET', $ssp_route );
+				$ssp_request->set_param( 'per_page', 20 );
+				$ssp_response = rest_do_request( $ssp_request );
+				$this->assertSame( 200, $ssp_response->get_status(), $ssp_route );
+				$found = wp_list_filter( $ssp_response->get_data(), array( 'id' => $id ) );
+				$this->assertCount( 1, $found, $ssp_route );
+				$ssp_data = reset( $found );
+				if ( $public === $id ) {
+					$this->assertSame( $guid, $ssp_data['ssp_episode_guid'] );
+					$this->assertArrayHasKey( 'meta', $ssp_data );
+				} else {
+					$this->assertArrayNotHasKey( 'ssp_episode_guid', $ssp_data, $ssp_route );
+					$this->assertArrayNotHasKey( 'meta', $ssp_data, $ssp_route );
+				}
+
+				$this->reset_rest_privacy_auth_cache();
+				wp_set_current_user( $editor );
+				$editor_request = new \WP_REST_Request( 'GET', $route );
+				$editor_request->set_header( 'X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
+				$editor_response = rest_do_request( $editor_request );
+				$this->assertSame( 200, $editor_response->get_status(), $route );
+				$this->assertSame( $guid, $editor_response->get_data()['ssp_episode_guid'] );
+				$this->assertArrayHasKey( 'meta', $editor_response->get_data() );
+
+				$this->reset_rest_privacy_auth_cache();
+				wp_set_current_user( 0 );
+				$timestamp = (string) time();
+				$nonce = bin2hex( random_bytes( 32 ) );
+				$path = rtrim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' ) . '/' . trim( rest_get_url_prefix(), '/' ) . $route;
+				$message = implode( "\n", array( 'GET', $path, '', wp_json_encode( array() ), $timestamp, $nonce ) );
+				$castos_request = new \WP_REST_Request( 'GET', $route );
+				$castos_request->set_header( 'X-Castos-Timestamp', $timestamp );
+				$castos_request->set_header( 'X-Castos-Nonce', $nonce );
+				$castos_request->set_header( 'X-Castos-Signature', hash_hmac( 'sha256', $message, 'private-guid-test-token' ) );
+				$castos_response = rest_do_request( $castos_request );
+				$this->assertSame( 200, $castos_response->get_status(), $route );
+				$this->assertSame( $guid, $castos_response->get_data()['ssp_episode_guid'] );
+				$this->assertArrayHasKey( 'meta', $castos_response->get_data() );
+			}
+		} finally {
+			delete_option( 'ss_podcasting_podmotor_account_api_token' );
+			ssp_update_option( 'is_podcast_private', 'no', $series );
+			ssp_update_option( 'is_podcast_private', 'no' );
+			wp_set_current_user( 0 );
+			$this->reset_rest_privacy_auth_cache();
+		}
+	}
+
+	/** Clears the request-scoped privacy filter state between simulated REST requests. */
+	private function reset_rest_privacy_auth_cache() {
+		global $wp_filter;
+		foreach ( $wp_filter[ 'rest_prepare_' . SSP_CPT_PODCAST ]->callbacks as $priority_callbacks ) {
+			foreach ( $priority_callbacks as $callback ) {
+				$function = $callback['function'];
+				if ( ! is_array( $function ) || 'maybe_hide_meta_for_private_podcast' !== $function[1] ) {
+					continue;
+				}
+				foreach ( array( 'cookie_authenticated' => false, 'castos_authenticated' => null ) as $name => $value ) {
+					$property = new \ReflectionProperty( $function[0], $name );
+					$property->setAccessible( true );
+					$property->setValue( $function[0], $value );
+				}
+			}
+		}
+	}
+
 	private function create_episode( $status, $author ) {
 		return self::factory()->post->create(
 			array(

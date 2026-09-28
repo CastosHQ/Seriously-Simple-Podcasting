@@ -863,6 +863,34 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * Import keeps slashes and quotes in both GUID keys and in the published feed.
+     */
+    public function testImportPreservesGuidWithBackslashAndQuoteInFeed()
+    {
+        $guid = 'import\\path"quote';
+        $this->feed_xml = str_replace(
+            'https://example.com/?p=1</guid>',
+            esc_html($guid) . '</guid>',
+            $this->build_feed_xml(1)
+        );
+        $series_id = $this->create_series('Escaped GUID');
+        $response = $this->run_import_chunk($series_id);
+
+        $this->assertSame('success', $response['status']);
+        $episodes = get_posts(['post_type' => SSP_CPT_PODCAST, 'numberposts' => -1]);
+        $this->assertCount(1, $episodes);
+        $id = $episodes[0]->ID;
+        $this->assertSame($guid, get_post_meta($id, 'ssp_original_guid', true));
+        $this->assertSame($guid, get_post_meta($id, 'ssp_episode_guid', true));
+
+        $feed_controller = new \ReflectionProperty(\SeriouslySimplePodcasting\Controllers\App_Controller::class, 'feed_controller');
+        $feed_controller->setAccessible(true);
+        $feed = $feed_controller->getValue(ssp_app())->get_podcast_feed($series_id);
+        $this->assertSame(1, preg_match('/<guid isPermaLink="false">(.*?)<\/guid>/', $feed, $match));
+        $this->assertSame($guid, html_entity_decode($match[1], ENT_QUOTES | ENT_XML1, 'UTF-8'));
+    }
+
+    /**
      * Test RSS import fallback when no GUID exists in feed item
      *
      * @since 3.13.1

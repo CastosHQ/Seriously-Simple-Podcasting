@@ -374,7 +374,7 @@ class App_Controller {
 
 		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler, $this->series_handler );
 
-		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer );
+		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer, $this->episode_repository );
 
 		$this->cron_controller = new Cron_Controller( $this->castos_handler, $this->episode_repository, $this->upgrade_handler );
 

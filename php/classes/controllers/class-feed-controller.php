@@ -9,6 +9,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 // Exit if accessed directly.
@@ -50,16 +51,25 @@ class Feed_Controller {
 	protected $renderer;
 
 	/**
+	 * Episode repository instance.
+	 *
+	 * @var Episode_Repository
+	 */
+	protected $episode_repository;
+
+	/**
 	 * Feed_Controller constructor.
 	 *
-	 * @param Feed_Handler $feed_handler Handler for feed operations.
-	 * @param Renderer     $renderer     Renderer instance for rendering views.
+	 * @param Feed_Handler       $feed_handler       Handler for feed operations.
+	 * @param Renderer           $renderer           Renderer instance for rendering views.
+	 * @param Episode_Repository $episode_repository Repository for episode data.
 	 */
-	public function __construct( $feed_handler, $renderer ) {
+	public function __construct( $feed_handler, $renderer, $episode_repository ) {
 		$this->init_useful_variables();
 
-		$this->feed_handler = $feed_handler;
-		$this->renderer     = $renderer;
+		$this->feed_handler       = $feed_handler;
+		$this->renderer           = $renderer;
+		$this->episode_repository = $episode_repository;
 
 		$this->bootstrap();
 	}
@@ -407,6 +417,8 @@ class Feed_Controller {
 			),
 			$post_id
 		);
+
+		$this->episode_repository->maybe_store_episode_guid( $post_id );
 
 		return $this->renderer->fetch( $feed_item_path, $args );
 	}

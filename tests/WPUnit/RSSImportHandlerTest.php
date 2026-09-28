@@ -833,10 +833,33 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
 
         $this->assertEquals('original-guid-12345', $episode_1_guid);
         $this->assertEquals('original-guid-67890', $episode_2_guid);
+        $this->assertSame('original-guid-12345', get_post_meta($episodes[0]->ID, 'ssp_episode_guid', true));
+        $this->assertSame('original-guid-67890', get_post_meta($episodes[1]->ID, 'ssp_episode_guid', true));
+        $this->assertFalse(metadata_exists('post', $episodes[0]->ID, 'ssp_guid'));
 
         // Verify that ssp_episode_guid() returns the original GUID
         $this->assertEquals('original-guid-12345', ssp_episode_guid($episodes[0]->ID));
         $this->assertEquals('original-guid-67890', ssp_episode_guid($episodes[1]->ID));
+    }
+
+    /**
+     * Importing trims the item's GUID before storing it in both identity keys.
+     */
+    public function testImportStoresTrimmedEpisodeGuid()
+    {
+        $this->feed_xml = str_replace(
+            'https://example.com/?p=1</guid>',
+            '  https://example.com/?p=1  </guid>',
+            $this->build_feed_xml(1)
+        );
+        $response = $this->run_import_chunk($this->create_series('Trimmed GUID'));
+        $this->assertSame('success', $response['status']);
+
+        $episodes = get_posts(['post_type' => SSP_CPT_PODCAST, 'numberposts' => -1]);
+        $this->assertCount(1, $episodes);
+        $id = $episodes[0]->ID;
+        $this->assertSame('https://example.com/?p=1', get_post_meta($id, 'ssp_episode_guid', true));
+        $this->assertSame('https://example.com/?p=1', get_post_meta($id, 'ssp_original_guid', true));
     }
 
     /**

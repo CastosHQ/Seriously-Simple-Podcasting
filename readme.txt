@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.18.0-alpha
+Stable tag: 3.18.0-alpha.2
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,16 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.18.0-alpha.2 =
+2026-09-29
+[UPDATE] Imported and new episodes now store their published GUID in the same field. Imported originals remain on record.
+[NEW] When podcast details differ during sync, show which fields would change before connecting to Castos
+[NEW] Let users generate a new GUID when a podcast's GUID is not based on its current feed URL
+[UPDATE] Hosting sync lists feed titles instead of podcast names
+[UPDATE] Hosting sync statuses refresh automatically while syncing
+[UPDATE] Disconnecting in WordPress now immediately sends Castos a disconnect request
+[FIX] RSS import now preserves backslashes in episode GUIDs
 
 = 3.18.0-alpha =
 2026-09-03

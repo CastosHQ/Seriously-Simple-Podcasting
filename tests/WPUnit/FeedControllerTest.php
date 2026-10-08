@@ -102,6 +102,39 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * Rendering by ID keeps the stored series identity when slug queries miss.
+     */
+    public function testSeriesFeedByIdKeepsStoredGuidWhenSlugLookupMisses()
+    {
+        $slug = 'slug-hidden-series-feed';
+        $series_id = $this->factory()->term->create([
+            'taxonomy' => ssp_series_taxonomy(),
+            'name' => 'Slug Hidden Series Feed',
+            'slug' => $slug,
+        ]);
+        $guid = '9b1e7c34-2f5a-5d8e-b6c1-4a7f0e3d92aa';
+        update_option('ss_podcasting_data_guid_' . $series_id, $guid);
+        delete_option('ss_podcasting_data_guid');
+
+        $hide_slug = function ($clauses, $taxonomies, $args) use ($slug) {
+            if (in_array(ssp_series_taxonomy(), $taxonomies, true) && !empty($args['slug']) && in_array($slug, (array) $args['slug'], true)) {
+                $clauses['where'] .= ' AND 1 = 0';
+            }
+            return $clauses;
+        };
+        add_filter('terms_clauses', $hide_slug, 10, 3);
+        try {
+            $this->assertFalse(get_term_by('slug', $slug, ssp_series_taxonomy()), 'The filter must hide the series from slug queries only.');
+            $feed = $this->getFeedController()->get_podcast_feed($series_id);
+
+            $this->assertStringContainsString('<podcast:guid>' . $guid . '</podcast:guid>', $feed);
+            $this->assertFalse(get_option('ss_podcasting_data_guid'), 'Rendering a named series must not write the unsuffixed GUID option.');
+        } finally {
+            remove_filter('terms_clauses', $hide_slug, 10);
+        }
+    }
+
+    /**
      * A first feed render stores the legacy published value, never the stray native GUID.
      */
     public function testFeedStoresImportedOriginalWithoutWritingLegacyGuid()

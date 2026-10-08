@@ -248,7 +248,7 @@ class Feed_Controller {
 
 		$podcast_value = $this->feed_handler->get_podcast_value( $series_id );
 
-		$guid = $this->feed_handler->get_guid( $series_slug );
+		$guid = $this->feed_handler->ensure_stored_guid( $series_slug, (int) $series_id );
 
 		$pub_date_type = $this->feed_handler->get_pub_date_type( $series_id );
 

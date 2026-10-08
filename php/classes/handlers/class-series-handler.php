@@ -374,6 +374,8 @@ class Series_Handler implements Service {
 	}
 
 	/**
+	 * Return the existing default series or create one and assign its settings.
+	 *
 	 * @return int|null
 	 */
 	protected function create_default_series() {

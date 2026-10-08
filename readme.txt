@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.18.0-alpha.2
+Stable tag: 3.18.0-alpha.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.18.0-alpha.3 =
+2026-10-08
+[FIX] Podcasts now get their GUID when they are created, not when their feed is first viewed
+[FIX] Fixed podcasts on sites using plain permalinks being given the same GUID
 
 = 3.18.0-alpha.2 =
 2026-09-29

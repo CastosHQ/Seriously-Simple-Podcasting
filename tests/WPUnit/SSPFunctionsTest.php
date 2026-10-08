@@ -24,6 +24,10 @@ class SSPFunctionsTest extends \Codeception\TestCase\WPTestCase
         $default = $this->factory()->term->create(['taxonomy' => ssp_series_taxonomy()]);
         $other   = $this->factory()->term->create(['taxonomy' => ssp_series_taxonomy()]);
 
+        // Model existing series whose feeds never stored a GUID before this update.
+        delete_option('ss_podcasting_data_guid_' . $default);
+        delete_option('ss_podcasting_data_guid_' . $other);
+
         update_option('ss_podcasting_default_series', $default);
         update_option('ss_podcasting_data_guid', $legacy);
 

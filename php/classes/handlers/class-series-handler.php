@@ -74,6 +74,13 @@ class Series_Handler implements Service {
 	protected $default_series_id;
 
 	/**
+	 * Whether this handler is creating the default series term.
+	 *
+	 * @var bool
+	 */
+	protected $creating_default_series = false;
+
+	/**
 	 * Series_Handler constructor.
 	 *
 	 * @param Admin_Notifications_Handler $notices_handler     Admin notifications handler instance.
@@ -323,6 +330,17 @@ class Series_Handler implements Service {
 	}
 
 	/**
+	 * Report whether the default series term is being created.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return bool
+	 */
+	public function is_creating_default_series() {
+		return $this->creating_default_series;
+	}
+
+	/**
 	 * @return int
 	 */
 	public function default_series_id() {
@@ -370,7 +388,13 @@ class Series_Handler implements Service {
 		$old_default_title = ssp_get_option( 'data_title' );
 		$title             = $old_default_title ?: get_bloginfo( 'name' );
 		$title             = $title ?: __( 'The First Podcast', 'seriously-simple-podcasting' );
-		$series_id         = $this->create_default_series_term( $title );
+
+		$this->creating_default_series = true;
+		try {
+			$series_id = $this->create_default_series_term( $title );
+		} finally {
+			$this->creating_default_series = false;
+		}
 
 		if ( $series_id ) {
 			// Copy settings only for existing users

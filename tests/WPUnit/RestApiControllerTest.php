@@ -29,6 +29,10 @@ class RestApiControllerTest extends \Codeception\TestCase\WPTestCase {
 		$other   = $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) );
 		$castos  = ssp_get_service( 'castos_handler' );
 
+		// Model pre-update series: one has only a legacy GUID, the other has none.
+		delete_option( 'ss_podcasting_data_guid_' . $default );
+		delete_option( 'ss_podcasting_data_guid_' . $other );
+
 		update_option( 'ss_podcasting_default_series', $default );
 		update_option( 'ss_podcasting_data_guid', $legacy );
 

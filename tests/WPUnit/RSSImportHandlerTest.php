@@ -578,6 +578,41 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * A podcast born during import must acquire the feed's identity, never a local one.
+     */
+    public function testImportCreatedPodcastKeepsFeedGuidInsteadOfDerivedGuid()
+    {
+        $creation_state = null;
+        $observe_creation = function ($series_id) use (&$creation_state) {
+            $creation_state = [
+                'series_id'    => $series_id,
+                'is_importing' => RSS_Import_Handler::is_importing(),
+                'guid'         => get_option('ss_podcasting_data_guid_' . $series_id),
+            ];
+        };
+        add_action('created_series', $observe_creation, 999);
+
+        try {
+            $response = $this->run_import_chunk(RSS_Import_Handler::CREATE_NEW_SERIES);
+        } finally {
+            remove_action('created_series', $observe_creation, 999);
+        }
+
+        $this->assertSame('success', $response['status']);
+        $this->assertTrue($response['is_finished']);
+        $created = $this->find_series_by_name('Imported Show');
+        $this->assertCount(1, $created);
+        $term = $created[0];
+
+        $this->assertSame(
+            ['series_id' => $term->term_id, 'is_importing' => true, 'guid' => false],
+            $creation_state,
+            'Creation during import must not provision a derived GUID before the feed is saved'
+        );
+        $this->assertSame(self::FEED_GUID, get_option('ss_podcasting_data_guid_' . $term->term_id));
+    }
+
+    /**
      * Import completion reaches the shared series/create refusal recorder.
      *
      * @dataProvider series_create_refusal_replies
@@ -702,6 +737,8 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         $target   = $this->create_series();
         $existing = $this->create_series('Already Imported Show');
         update_option('ss_podcasting_data_guid_' . $existing, self::FEED_GUID);
+        // The refusal must not write to a pre-update target with no GUID.
+        delete_option('ss_podcasting_data_guid_' . $target);
 
         $response = $this->run_import_chunk($target);
 
@@ -718,6 +755,8 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
     public function testImportRefusedWhenGuidMatchesDefaultPodcastLegacyOption()
     {
         $target = $this->create_series();
+        // Model an existing default whose identity lives only in the legacy option.
+        delete_option('ss_podcasting_data_guid_' . ssp_get_default_series_id());
         update_option('ss_podcasting_data_guid', self::FEED_GUID);
         $default_name = get_term(ssp_get_default_series_id(), ssp_series_taxonomy())->name;
 
@@ -751,6 +790,8 @@ class RSSImportHandlerTest extends \Codeception\TestCase\WPTestCase
         $this->feed_xml = $this->build_feed_xml(1, false);
         $target         = $this->create_series();
         $this->create_series('Other');
+        // Retain coverage of a pre-update target that has no stored identity.
+        delete_option('ss_podcasting_data_guid_' . $target);
 
         $response = $this->run_import_chunk($target);
 

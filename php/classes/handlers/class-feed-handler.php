@@ -611,20 +611,35 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets the podcast GUID.
+	 * Get the podcast GUID, storing it when none resolves.
 	 *
 	 * @param string $series_slug Series slug.
 	 *
 	 * @return string Podcast GUID.
 	 */
 	public function get_guid( $series_slug ) {
+		return $this->ensure_stored_guid( $series_slug );
+	}
 
+	/**
+	 * Resolve the podcast GUID, storing a derived GUID only when none resolves.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string   $series_slug Series slug.
+	 * @param int|null $series_id   Resolved series term ID; null to look up by slug.
+	 *
+	 * @return string Podcast GUID.
+	 */
+	public function ensure_stored_guid( $series_slug, $series_id = null ) {
 		$feed_url = ssp_get_feed_url( $series_slug );
-		$term     = get_term_by( 'slug', $series_slug, ssp_series_taxonomy() );
-		$term_id  = isset( $term->term_id ) ? $term->term_id : null;
+		if ( null === $series_id ) {
+			$term      = get_term_by( 'slug', $series_slug, ssp_series_taxonomy() );
+			$series_id = isset( $term->term_id ) ? $term->term_id : null;
+		}
 
-		$option     = $term_id ? 'ss_podcasting_data_guid_' . $term_id : 'ss_podcasting_data_guid';
-		$saved_guid = ssp_get_podcast_guid( (int) $term_id );
+		$option     = $series_id ? 'ss_podcasting_data_guid_' . $series_id : 'ss_podcasting_data_guid';
+		$saved_guid = ssp_get_podcast_guid( (int) $series_id );
 
 		if ( empty( $saved_guid ) ) {
 			$guid = $this->derive_guid_from_feed_url( $feed_url );
@@ -661,6 +676,13 @@ class Feed_Handler implements Service {
 	protected function derive_guid_from_feed_url( $feed_url ) {
 		$url_data = parse_url( $feed_url );
 		$url      = $url_data['host'] . rtrim( $url_data['path'], '/' );
+
+		if ( ! empty( $url_data['query'] ) ) {
+			parse_str( $url_data['query'], $query_args );
+			if ( ! empty( $query_args['podcast_series'] ) && is_string( $query_args['podcast_series'] ) ) {
+				$url .= '?podcast_series=' . rtrim( $query_args['podcast_series'], '/' );
+			}
+		}
 
 		return UUID_Handler::v5( self::PODCAST_NAMESPACE_UUID, $url );
 	}

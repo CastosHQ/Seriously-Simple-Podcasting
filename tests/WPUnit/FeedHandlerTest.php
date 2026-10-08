@@ -3,6 +3,7 @@
 namespace Tests\WPUnit;
 
 use SeriouslySimplePodcasting\Handlers\Feed_Handler;
+use SeriouslySimplePodcasting\Handlers\UUID_Handler;
 
 class FeedHandlerTest extends \Codeception\TestCase\WPTestCase {
 
@@ -57,6 +58,10 @@ class FeedHandlerTest extends \Codeception\TestCase\WPTestCase {
 		$default = get_term( $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) ), ssp_series_taxonomy() );
 		$other   = get_term( $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy() ) ), ssp_series_taxonomy() );
 
+		// Model pre-update series to retain coverage of legacy fallback and lazy storage.
+		delete_option( 'ss_podcasting_data_guid_' . $default->term_id );
+		delete_option( 'ss_podcasting_data_guid_' . $other->term_id );
+
 		update_option( 'ss_podcasting_default_series', $default->term_id );
 		update_option( 'ss_podcasting_data_guid', $legacy );
 
@@ -73,6 +78,54 @@ class FeedHandlerTest extends \Codeception\TestCase\WPTestCase {
 		delete_option( 'ss_podcasting_default_series' );
 		delete_option( 'ss_podcasting_data_guid' );
 		delete_option( 'ss_podcasting_data_guid_' . $other->term_id );
+	}
+
+	public function testPlainPermalinkNamedSeriesDeriveDistinctGuidsIncludingDefault() {
+		update_option( 'home', 'https://guid.example.test' );
+		update_option( 'permalink_structure', '' );
+		$default = get_term( $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy(), 'slug' => 'plain-default' ) ), ssp_series_taxonomy() );
+		$other   = get_term( $this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy(), 'slug' => 'plain-other' ) ), ssp_series_taxonomy() );
+
+		$default_guid = $this->feed_handler->get_derived_guid( $default->slug );
+		$other_guid   = $this->feed_handler->get_derived_guid( $other->slug );
+		$legacy_guid  = $this->feed_handler->get_derived_guid( '' );
+
+		// Only the named-series query value joins the host, without a trailing slash.
+		$expected_default = UUID_Handler::v5( Feed_Handler::PODCAST_NAMESPACE_UUID, 'guid.example.test?podcast_series=plain-default' );
+		$expected_other   = UUID_Handler::v5( Feed_Handler::PODCAST_NAMESPACE_UUID, 'guid.example.test?podcast_series=plain-other' );
+		$this->assertSame( 'https://guid.example.test/?feed=podcast&podcast_series=plain-other/', ssp_get_feed_url( $other->slug ) );
+		$this->assertSame( $expected_default, $default_guid );
+		$this->assertSame( $expected_other, $other_guid );
+		$this->assertNotSame( $default_guid, $other_guid );
+		$this->assertNotSame( $legacy_guid, $default_guid, 'A named default feed must not derive from the no-series feed' );
+		$this->assertNotSame( $legacy_guid, $other_guid );
+	}
+
+	public function testPlainPermalinkNoSeriesDerivationKeepsHostOnlyGuid() {
+		update_option( 'home', 'https://guid.example.test' );
+		update_option( 'permalink_structure', '' );
+		$expected = UUID_Handler::v5( Feed_Handler::PODCAST_NAMESPACE_UUID, 'guid.example.test' );
+
+		parse_str( wp_parse_url( ssp_get_feed_url( '' ), PHP_URL_QUERY ), $query );
+		$this->assertSame( 'podcast', rtrim( $query['feed'], '/' ) );
+		$this->assertArrayNotHasKey( 'podcast_series', $query );
+		$this->assertSame( $expected, $this->feed_handler->get_derived_guid( '' ) );
+		$this->assertSame( $expected, $this->feed_handler->get_derived_guid( 'default' ) );
+	}
+
+	public function testPrettyPermalinkDerivationKeepsPreviousGuids() {
+		update_option( 'home', 'https://guid.example.test/site' );
+		update_option( 'permalink_structure', '/%postname%/' );
+
+		// Explicit pre-change host + path inputs, without a scheme or trailing slash.
+		$expected_default = UUID_Handler::v5( Feed_Handler::PODCAST_NAMESPACE_UUID, 'guid.example.test/site/feed/podcast' );
+		$expected_first   = UUID_Handler::v5( Feed_Handler::PODCAST_NAMESPACE_UUID, 'guid.example.test/site/feed/podcast/pretty-first' );
+		$expected_second  = UUID_Handler::v5( Feed_Handler::PODCAST_NAMESPACE_UUID, 'guid.example.test/site/feed/podcast/pretty-second' );
+
+		$this->assertSame( $expected_default, $this->feed_handler->get_derived_guid( '' ) );
+		$this->assertSame( $expected_default, $this->feed_handler->get_derived_guid( 'default' ) );
+		$this->assertSame( $expected_first, $this->feed_handler->get_derived_guid( 'pretty-first' ) );
+		$this->assertSame( $expected_second, $this->feed_handler->get_derived_guid( 'pretty-second' ) );
 	}
 
 	/**

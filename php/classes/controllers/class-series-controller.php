@@ -89,6 +89,7 @@ class Series_Controller {
 		add_filter( "{$taxonomy}_row_actions", array( $this, 'add_term_actions' ), 10, 2 );
 		add_action( 'ssp_triggered_podcast_sync', array( $this, 'update_series_sync_status' ), 10, 3 );
 
+		add_action( 'created_series', array( $this, 'maybe_store_series_guid' ), 5 );
 		add_action( 'created_series', array( $this, 'save_series_meta' ), 10, 2 );
 		add_action( 'edited_series', array( $this, 'save_series_meta' ), 10, 2 );
 
@@ -431,6 +432,49 @@ HTML;
 	}
 
 	/**
+	 * Store a newly created series GUID before its first Castos push.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int $term_id Series term ID.
+	 */
+	public function maybe_store_series_guid( $term_id ) {
+		if ( RSS_Import_Handler::is_importing() ) {
+			return;
+		}
+
+		if ( $this->series_handler->is_creating_default_series() ) {
+			$this->adopt_legacy_guid( $term_id );
+		}
+
+		$term = get_term( $term_id, ssp_series_taxonomy() );
+		if ( ! $term || is_wp_error( $term ) ) {
+			return;
+		}
+
+		$this->feed_handler->ensure_stored_guid( $term->slug, (int) $term->term_id );
+	}
+
+	/**
+	 * Store the legacy GUID as the new default series' own GUID.
+	 *
+	 * The default series ID is assigned only after its term is created, so the
+	 * legacy GUID can't resolve for it yet and a derived GUID would shadow it.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int $term_id Default series term ID.
+	 */
+	protected function adopt_legacy_guid( $term_id ) {
+		$legacy_guid = get_option( 'ss_podcasting_data_guid', '' );
+		if ( ! $legacy_guid || ssp_get_podcast_guid( $term_id ) ) {
+			return;
+		}
+
+		ssp_update_option( 'data_guid', $legacy_guid, $term_id );
+	}
+
+	/**
 	 * Derive this site's GUID for a series from its feed URL.
 	 *
 	 * @since 3.18.0
@@ -446,20 +490,6 @@ HTML;
 		}
 
 		return $this->feed_handler->get_derived_guid( $term->slug );
-	}
-
-	/**
-	 * Store a series own GUID option.
-	 *
-	 * @since 3.18.0
-	 *
-	 * @param int    $term_id Series term ID.
-	 * @param string $guid    Derived GUID.
-	 *
-	 * @return bool
-	 */
-	protected function store_series_guid( $term_id, $guid ) {
-		return ssp_update_option( 'data_guid', $guid, $term_id );
 	}
 
 	/**

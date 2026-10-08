@@ -65,6 +65,8 @@ class Series_Controller {
 	private $feed_handler;
 
 	/**
+	 * Initialize series services and register taxonomy management hooks.
+	 *
 	 * @param Series_Handler               $series_handler
 	 * @param Castos_Handler               $castos_handler
 	 * @param Settings_Handler             $settings_handler
@@ -436,18 +438,18 @@ HTML;
 	 *
 	 * @since 3.18.0
 	 *
-	 * @param int $term_id Series term ID.
+	 * @param int $series_id Series term ID.
 	 */
-	public function maybe_store_series_guid( $term_id ) {
+	public function maybe_store_series_guid( $series_id ) {
 		if ( RSS_Import_Handler::is_importing() ) {
 			return;
 		}
 
 		if ( $this->series_handler->is_creating_default_series() ) {
-			$this->adopt_legacy_guid( $term_id );
+			$this->adopt_legacy_guid( $series_id );
 		}
 
-		$term = get_term( $term_id, ssp_series_taxonomy() );
+		$term = get_term( $series_id, ssp_series_taxonomy() );
 		if ( ! $term || is_wp_error( $term ) ) {
 			return;
 		}
@@ -463,15 +465,15 @@ HTML;
 	 *
 	 * @since 3.18.0
 	 *
-	 * @param int $term_id Default series term ID.
+	 * @param int $series_id Default series term ID.
 	 */
-	protected function adopt_legacy_guid( $term_id ) {
+	protected function adopt_legacy_guid( $series_id ) {
 		$legacy_guid = get_option( 'ss_podcasting_data_guid', '' );
-		if ( ! $legacy_guid || ssp_get_podcast_guid( $term_id ) ) {
+		if ( ! $legacy_guid || ssp_get_podcast_guid( $series_id ) ) {
 			return;
 		}
 
-		ssp_update_option( 'data_guid', $legacy_guid, $term_id );
+		ssp_update_option( 'data_guid', $legacy_guid, $series_id );
 	}
 
 	/**
@@ -479,12 +481,12 @@ HTML;
 	 *
 	 * @since 3.18.0
 	 *
-	 * @param int $term_id Series term ID.
+	 * @param int $series_id Series term ID.
 	 *
 	 * @return string Derived GUID, or an empty string when the series is unavailable.
 	 */
-	protected function get_derived_series_guid( $term_id ) {
-		$term = get_term( $term_id, ssp_series_taxonomy() );
+	protected function get_derived_series_guid( $series_id ) {
+		$term = get_term( $series_id, ssp_series_taxonomy() );
 		if ( ! $term || is_wp_error( $term ) ) {
 			return '';
 		}

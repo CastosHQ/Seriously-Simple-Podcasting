@@ -4,26 +4,23 @@ Community made patches, localisations, bug reports and contributions are always 
 
 When contributing please ensure you follow the guidelines below so that we can keep on top of things.
 
-__Note:__
+## Bug Reports and Support
 
-GitLab is for *bug reports and contributions only* - if you have a support question don't post here. Use [the plugin's support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting/) instead for general support, but make sure to read through the [documentation](https://support.castos.com/) first.
+Report bugs and ask support questions on [the plugin's support forum](https://wordpress.org/support/plugin/seriously-simple-podcasting/), but make sure to read through the [documentation](https://support.castos.com/) first.
 
-## Getting Started
-
-* Make sure you have a [GitLab account](https://gitlab.com/users/sign_up)
-* Submit a ticket for your issue, assuming one does not already exist.
-  * Clearly describe the issue including steps to reproduce when it is a bug.
-  * Make sure you fill in the earliest version that you know has the issue.
+* Clearly describe the issue including steps to reproduce when it is a bug.
+* Make sure you fill in the earliest version that you know has the issue.
 
 ## Making Changes
 
-* [Fork](https://docs.gitlab.com/ee/user/project/repository/forking_workflow.html#creating-a-fork) the repository on GitLab.
+* Make sure you have a [GitHub account](https://github.com/signup)
+* [Fork](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/working-with-forks/fork-a-repo) the [repository](https://github.com/CastosHQ/Seriously-Simple-Podcasting) on GitHub.
 * Clone the forked repository to your local development environment
 * Run `npm install`, which will install any npm and composer dependencies, as well as build any block editor assets
 * Define the `SCRIPT_DEBUG` constant in your wp-config.php to use the development versions of any JavaScript and CSS assets
 * Make the changes to your forked repository.
   * **Ensure you stick to the [WordPress Coding Standards](http://make.wordpress.org/core/handbook/coding-standards/) for all languages.**
-* When committing, reference your issue (#1234) and include a note about the fix.
+* When committing, include a note about the change, and link the related support forum topic if there is one.
 * Push the changes to your fork and submit a pull request on the *develop* branch of the Seriously Simple Podcasting repository.
 * Please **don't** modify the changelog - this will be maintained by the Seriously Simple Podcasting developers.
 
@@ -35,9 +32,9 @@ Translations for Seriously Simple Podcasting are managed directly on WordPress.o
 
 # Additional Resources
 
-* [General GitLab documentation](https://docs.gitlab.com/)
-* [GitLab merge request documentation](https://docs.gitlab.com/ee/user/project/merge_requests/)
+* [General GitHub documentation](https://docs.github.com/)
+* [GitHub pull request documentation](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests)
 * [Seriously Simple Podcasting Docs](https://castos.com/seriously-simple-podcasting/)
-* [Seriously Simple Podcasting Support](http://wordpress.org/support/plugin/seriously-simple-podcasting)
+* [Seriously Simple Podcasting Support](https://wordpress.org/support/plugin/seriously-simple-podcasting/)
 
-If you enjoy using Seriously Simple Podcasting and find value in the plugin then please [leave a review](https://wordpress.org/support/view/plugin-reviews/seriously-simple-podcasting?rate=5#postform) to help promote continued development.
+If you enjoy using Seriously Simple Podcasting and find value in the plugin then please [leave a review](https://wordpress.org/support/plugin/seriously-simple-podcasting/reviews/#new-post) to help promote continued development.

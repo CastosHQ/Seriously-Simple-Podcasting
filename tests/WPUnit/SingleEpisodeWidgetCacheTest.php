@@ -137,6 +137,15 @@ class SingleEpisodeWidgetCacheTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertTrue( ssp_has_episodes() );
 	}
 
+	public function test_ssp_episode_ids_drops_permanently_deleted_episode() {
+		$episode_id = $this->create_episode( '2026-01-01 10:00:00' );
+		ssp_episode_ids();
+
+		wp_delete_post( $episode_id, true );
+
+		$this->assertNotContains( $episode_id, array_map( 'intval', ssp_episode_ids() ) );
+	}
+
 	/* -------------------------------------------------------------------------
 	 * Single Episode widget
 	 * ---------------------------------------------------------------------- */

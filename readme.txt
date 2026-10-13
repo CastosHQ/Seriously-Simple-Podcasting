@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.18.0-alpha.3
+Stable tag: 3.18.0-alpha.4
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -164,6 +164,10 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.18.0-alpha.4 =
+2026-10-13
+[FIX] Fixed the Single Episode widget showing an outdated episode and the plain player with object caching
 
 = 3.18.0-alpha.3 =
 2026-10-08

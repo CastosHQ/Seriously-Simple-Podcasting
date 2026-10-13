@@ -850,21 +850,6 @@ class App_Controller {
 	}
 
 	/**
-	 * Clear the cache on post save.
-	 *
-	 * @param int    $id POST ID
-	 * @param object $post WordPress Post Object
-	 *
-	 * @return void
-	 */
-	public function invalidate_cache( $id, $post ) {
-		if ( in_array( $post->post_type, ssp_post_types( true ) ) ) {
-			wp_cache_delete( 'episodes', 'ssp' );
-			wp_cache_delete( 'episode_ids', 'ssp' );
-		}
-	}
-
-	/**
 	 * Ignore podcast import
 	 */
 	public function ignore_importing_existing_podcasts() {

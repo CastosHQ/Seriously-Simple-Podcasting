@@ -74,10 +74,6 @@ class Single_Episode extends WP_Widget {
 		parent::__construct( 'single-podcast-episode', $this->widget_title, $widget_ops );
 
 		$this->alt_option_name = 'widget_single_episode';
-
-		add_action( 'save_post', array( $this, 'flush_widget_cache' ) );
-		add_action( 'deleted_post', array( $this, 'flush_widget_cache' ) );
-		add_action( 'switch_theme', array( $this, 'flush_widget_cache' ) );
 	} // End __construct()
 
 	/**
@@ -88,26 +84,6 @@ class Single_Episode extends WP_Widget {
 	 */
 	public function widget( $args, $instance ) {
 		global $ss_podcasting;
-
-		$cache = array();
-		if ( ! $this->is_preview() ) {
-			$cache = wp_cache_get( 'widget_single_episode', 'widget' );
-		}
-
-		if ( ! is_array( $cache ) ) {
-			$cache = array();
-		}
-
-		if ( ! isset( $args['widget_id'] ) ) {
-			$args['widget_id'] = $this->id;
-		}
-
-		if ( isset( $cache[ $args['widget_id'] ] ) ) {
-			echo $cache[ $args['widget_id'] ];
-			return;
-		}
-
-		ob_start();
 
 		$episode_id = $instance['episode_id'];
 
@@ -174,13 +150,6 @@ class Single_Episode extends WP_Widget {
 		echo $html;
 
 		echo $args['after_widget'];
-
-		if ( ! $this->is_preview() ) {
-			$cache[ $args['widget_id'] ] = ob_get_flush();
-			wp_cache_set( 'widget_single_episode', $cache, 'widget' );
-		} else {
-			ob_end_flush();
-		}
 	}
 
 	/**
@@ -200,16 +169,8 @@ class Single_Episode extends WP_Widget {
 		$instance['show_content'] = isset( $new_instance['show_content'] ) ? (bool) $new_instance['show_content'] : false;
 		$instance['show_player']  = isset( $new_instance['show_player'] ) ? (bool) $new_instance['show_player'] : false;
 		$instance['show_details'] = isset( $new_instance['show_details'] ) ? (bool) $new_instance['show_details'] : false;
-		$this->flush_widget_cache();
 
 		return $instance;
-	}
-
-	/**
-	 * Flush widget cache.
-	 */
-	public function flush_widget_cache() {
-		wp_cache_delete( 'widget_single_episode', 'widget' );
 	}
 
 	/**

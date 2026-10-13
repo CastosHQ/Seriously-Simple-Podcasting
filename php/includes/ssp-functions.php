@@ -530,21 +530,7 @@ if ( ! function_exists( 'ssp_episodes' ) ) {
 			return $args;
 		}
 
-		// Todo: investigate if cache works correctly. For example, for different $n.
-		// Todo: Also, can it lead to the fatal errors if there are too many $posts?
-		// Todo: Should we remove or improve the cache here?
-		// Do we have anything in the cache here?
-		$key   = 'episodes_' . $series;
-		$group = 'ssp';
-		$posts = wp_cache_get( $key, $group );
-
-		// If nothing in cache then fetch episodes again and store in cache.
-		if ( false === $posts ) {
-			$posts = get_posts( $args );
-			wp_cache_add( $key, $posts, $group, HOUR_IN_SECONDS * 12 );
-		}
-
-		return $posts;
+		return get_posts( $args );
 	}
 }
 
@@ -1558,11 +1544,29 @@ if ( ! function_exists( 'ssp_series_slug' ) ) {
 			return $slug;
 		}
 
-		$is_existing_user = count( ssp_episodes() ) > 0;
-
-		$slug = $is_existing_user ? ssp_series_taxonomy() : CPT_Podcast_Handler::DEFAULT_SERIES_SLUG;
+		$slug = ssp_has_episodes() ? ssp_series_taxonomy() : CPT_Podcast_Handler::DEFAULT_SERIES_SLUG;
 
 		return apply_filters( 'ssp_series_slug', $slug );
+	}
+}
+
+if ( ! function_exists( 'ssp_has_episodes' ) ) {
+	/**
+	 * Checks whether at least one published episode exists, fetching a single ID only.
+	 *
+	 * @return bool
+	 * @since 3.18.0
+	 */
+	function ssp_has_episodes() {
+		$args = ssp_episodes( 1, '', true );
+
+		if ( ! $args ) {
+			return false;
+		}
+
+		$args['fields'] = 'ids';
+
+		return (bool) get_posts( $args );
 	}
 }
 

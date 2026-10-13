@@ -108,8 +108,8 @@ class Podcast_Post_Types_Controller {
 		add_action( 'save_post', array( $this, 'meta_box_save' ), 10, 2 );
 
 		// Clear the episode IDs cache when an episode changes or is deleted.
-		add_action( 'save_post', array( $this, 'invalidate_cache' ) );
-		add_action( 'before_delete_post', array( $this, 'invalidate_cache' ) );
+		add_action( 'save_post', array( $this, 'invalidate_cache' ), 10, 2 );
+		add_action( 'after_delete_post', array( $this, 'invalidate_cache' ), 10, 2 );
 
 		// Update podcast details to Castos when a post is updated or saved
 		add_action( 'save_post', array( $this, 'sync_episode' ), 20, 2 );
@@ -1117,12 +1117,13 @@ class Podcast_Post_Types_Controller {
 	/**
 	 * Clears the cached episode IDs when an episode is saved or deleted.
 	 *
-	 * @param int $id Post ID.
+	 * @param int           $id   Post ID.
+	 * @param \WP_Post|null $post Post object. Required after deletion, when the ID no longer resolves.
 	 *
 	 * @return void
 	 */
-	public function invalidate_cache( $id ) {
-		if ( in_array( get_post_type( $id ), ssp_post_types( true ), true ) ) {
+	public function invalidate_cache( $id, $post = null ) {
+		if ( in_array( get_post_type( $post ?? $id ), ssp_post_types( true ), true ) ) {
 			wp_cache_delete( 'episode_ids', 'ssp' );
 		}
 	}

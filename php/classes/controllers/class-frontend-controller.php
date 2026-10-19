@@ -1062,7 +1062,7 @@ class Frontend_Controller {
 	/**
 	 * Checks if the current user has access to the specified episode for file download
 	 *
-	 * Validates episode existence, post type, post status, and user permissions.
+	 * Validates episode existence and post type, then the shared episode access check.
 	 * Returns false if access is denied (error response is handled internally).
 	 *
 	 * @param int            $episode_id Episode ID to check.
@@ -1086,35 +1086,10 @@ class Frontend_Controller {
 			wp_die( esc_html__( 'Episode not found.', 'seriously-simple-podcasting' ), '', array( 'response' => 404 ) );
 		}
 
-		// Check post status and user authorization
-		$post_status_obj = get_post_status_object( $episode->post_status );
-
-		// Use WordPress's built-in permission system which handles author checks and capabilities
-		if ( 'private' === $episode->post_status ) {
-			// For private posts, check if user can read this specific post
-			// This handles: author check, read_private_posts capability, etc.
-			if ( ! current_user_can( 'read_post', $episode_id ) ) {
-				// User not authorized - return 403 Forbidden
-				status_header( 403 );
-				nocache_headers();
-				wp_die( esc_html__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ), '', array( 'response' => 403 ) );
-			}
-		} elseif ( 'draft' === $episode->post_status || 'pending' === $episode->post_status ) {
-			// Check if user can edit the post
-			if ( ! current_user_can( 'edit_post', $episode_id ) ) {
-				// User not authorized - return 403 Forbidden
-				status_header( 403 );
-				nocache_headers();
-				wp_die( esc_html__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ), '', array( 'response' => 403 ) );
-			}
-		} elseif ( ! $post_status_obj || ! $post_status_obj->public ) {
-			// Reject other non-public statuses
-			if ( ! current_user_can( 'read_post', $episode_id ) ) {
-				// User not authorized - return 403 Forbidden
-				status_header( 403 );
-				nocache_headers();
-				wp_die( esc_html__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ), '', array( 'response' => 403 ) );
-			}
+		if ( ! ssp_can_access_episode( $episode ) ) {
+			status_header( 403 );
+			nocache_headers();
+			wp_die( esc_html__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ), '', array( 'response' => 403 ) );
 		}
 
 		return true;
@@ -2003,7 +1978,8 @@ class Frontend_Controller {
 		// Get episode object
 		$episode = get_post( $episode_id );
 
-		if ( ! $episode || is_wp_error( $episode ) ) {
+		// Render only podcast episodes the viewer may access, never arbitrary posts.
+		if ( ! ssp_can_access_episode( $episode ) ) {
 			return '';
 		}
 

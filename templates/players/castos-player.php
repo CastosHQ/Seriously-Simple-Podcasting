@@ -197,7 +197,7 @@
 						</div>
 						<div class="playlist__item__details">
 							<h2 class="playlist__episode-title" data-podcast="<?php echo esc_attr( $item['podcast_title'] ); ?>"><?php echo wp_kses_post( $item['title'] ) ?></h2>
-							<p><?php echo $item['date'] . ' • ' . $item['duration']; ?></p>
+							<p><?php echo esc_html( $item['date'] . ' • ' . $item['duration'] ); ?></p>
 							<p class="playlist__episode-description"><?php echo wp_kses_post( $item['excerpt'] ); ?></p>
 						</div>
 						<audio preload="none" class="clip clip-<?php echo esc_attr( $item['episode_id'] ) ?>">

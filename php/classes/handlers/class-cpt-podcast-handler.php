@@ -119,29 +119,42 @@ class CPT_Podcast_Handler implements Service {
 	}
 
 	/**
-	 * Registers podcast meta fields
+	 * Registers podcast meta fields for every episode post type.
+	 *
+	 * The post types are not verified, so types registered later on `init` still get the meta.
 	 * */
 	protected function register_meta() {
-		global $wp_version;
-
-		// The enhanced register_meta function is only available for WordPress 4.6+
-		if ( version_compare( $wp_version, '4.6', '<' ) ) {
-			return;
-		}
-
 		// Get all custom fields (including filesize_raw).
 		$fields = $this->custom_fields();
 
-		foreach ( $fields as $key => $data ) {
-			$args = array(
-				'type'         => 'string',
-				'description'  => isset( $data['meta_description'] ) ? $data['meta_description'] : '',
-				'single'       => true,
-				'show_in_rest' => true,
-			);
+		foreach ( ssp_post_types( true, false ) as $post_type ) {
+			foreach ( $fields as $key => $data ) {
+				$args = array(
+					'object_subtype' => $post_type,
+					'type'           => 'string',
+					'description'    => isset( $data['meta_description'] ) ? $data['meta_description'] : '',
+					'single'         => true,
+					'show_in_rest'   => true,
+					'auth_callback'  => array( $this, 'can_edit_episode_meta' ),
+				);
 
-			register_meta( 'post', $key, $args );
+				register_meta( 'post', $key, $args );
+			}
 		}
+	}
+
+	/**
+	 * Allows an episode meta write only for users who can edit the episode.
+	 *
+	 * @param bool   $allowed   Whether the user can add the meta. Unused.
+	 * @param string $meta_key  The meta key. Unused.
+	 * @param int    $object_id The episode ID.
+	 * @param int    $user_id   The user ID.
+	 *
+	 * @return bool
+	 */
+	public function can_edit_episode_meta( $allowed, $meta_key, $object_id, $user_id ) {
+		return user_can( $user_id, 'edit_post', $object_id );
 	}
 
 

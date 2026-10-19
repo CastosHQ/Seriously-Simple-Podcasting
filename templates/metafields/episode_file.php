@@ -3,7 +3,8 @@
  * @var string $k
  * @var array $v
  * @var string $data
- * @var bool $is_castos
+ * @var bool $show_castos_uploader
+ * @var bool $show_media_uploader
  * @var \SeriouslySimplePodcasting\Entities\Castos_File_Data $file_data
  * */
 ?>
@@ -15,7 +16,7 @@
  </div>
 
 
-<?php if ( $is_castos ) : ?>
+<?php if ( $show_castos_uploader ) : ?>
 	<div id="ssp_upload_notification"><?php
 	_e( 'An error has occurred with the file upload functionality. Please check your site for any plugin or theme conflicts.',
 	'seriously-simple-podcasting' ) ?></div>
@@ -27,13 +28,13 @@
 	?>" value="<?php echo esc_attr( $data )
 	?>" />
 
-	<?php if ( $is_castos ) : ?>
+	<?php if ( $show_castos_uploader ) : ?>
 		<div id="ssp_upload_container" style="display: inline;">
 			<button class="button" id="ssp_select_file" class="ssp_select_file" type="button"><?php
 				_e( 'Select file', 'seriously-simple-podcasting' )
 				?></button>
 		</div>
-	<?php else : ?>
+	<?php elseif ( $show_media_uploader ) : ?>
 		<input type="button" class="button ssp-upload-file upload_<?php echo esc_attr( $k )
 		?>_button" value="<?php _e( 'Upload File', 'seriously-simple-podcasting' )
 		?>" data-uploader_title="<?php _e( 'Choose a file', 'seriously-simple-podcasting' )

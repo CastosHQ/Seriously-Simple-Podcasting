@@ -146,12 +146,12 @@ class Castos_Handler implements Service {
 	 * @return mixed
 	 */
 	public function authorization_headers( $args, $url ) {
-		if ( false === strpos( $url, SSP_CASTOS_APP_URL ) ) {
+		if ( ! $this->is_castos_url( $url ) ) {
 			return $args;
 		}
 
 		$ssp_headers     = array(
-			'Authorization'    => 'Bearer ' . $this->api_token,
+			'Authorization'    => 'Bearer ' . $this->api_token(),
 			'X-SSP-Website'    => home_url(),
 			'X-SSP-Version'    => SSP_VERSION,
 			'X-SSP-WP-Version' => get_bloginfo( 'version' ),
@@ -159,6 +159,48 @@ class Castos_Handler implements Service {
 		$args['headers'] = array_merge( $ssp_headers, $args['headers'] );
 
 		return $args;
+	}
+
+	/**
+	 * Checks whether a URL matches the configured Castos origin.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param string $url Request URL.
+	 *
+	 * @return bool
+	 */
+	protected function is_castos_url( $url ) {
+		$castos_origin = $this->get_url_origin( SSP_CASTOS_APP_URL );
+
+		return '' !== $castos_origin && $castos_origin === $this->get_url_origin( $url );
+	}
+
+	/**
+	 * Gets the lowercase HTTP(S) origin, including its effective port.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param string $url URL to parse.
+	 *
+	 * @return string Origin in scheme://host:port format, or an empty string for invalid URLs.
+	 */
+	protected function get_url_origin( $url ) {
+		$parsed_url = wp_parse_url( $url );
+
+		if ( empty( $parsed_url['scheme'] ) || empty( $parsed_url['host'] ) ) {
+			return '';
+		}
+
+		$scheme = strtolower( $parsed_url['scheme'] );
+		if ( ! in_array( $scheme, array( 'http', 'https' ), true ) ) {
+			return '';
+		}
+
+		$default_port = 'https' === $scheme ? 443 : 80;
+		$port         = isset( $parsed_url['port'] ) ? $parsed_url['port'] : $default_port;
+
+		return $scheme . '://' . strtolower( $parsed_url['host'] ) . ':' . $port;
 	}
 
 	/**

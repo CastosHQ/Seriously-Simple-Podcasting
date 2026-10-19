@@ -17,6 +17,7 @@ use SeriouslySimplePodcasting\Interfaces\Service;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Repositories\Series_Repository;
+use SeriouslySimplePodcasting\Rest\Episodes_Rest_Controller;
 
 // Exit if accessed directly.
 if ( ! defined( 'ABSPATH' ) ) {
@@ -2008,6 +2009,117 @@ if ( ! function_exists( 'ssp_series_passthrough_required' ) ) {
 	}
 }
 
+if ( ! function_exists( 'ssp_can_access_episode' ) ) {
+	/**
+	 * Checks whether the current request may access an episode's media and body text.
+	 *
+	 * Users who can edit the episode and Castos-authenticated REST requests always pass.
+	 * Everyone else needs a published (or readable) episode that is not password-blocked;
+	 * visitors who entered the episode password pass through the password cookie. A
+	 * password-protected episode restored to a public feed is not password-blocked,
+	 * because the feed already publishes its media.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param int|\WP_Post          $episode Episode ID or post object.
+	 * @param \WP_REST_Request|null $request REST request, to recognize Castos-authenticated requests.
+	 *
+	 * @return bool
+	 */
+	function ssp_can_access_episode( $episode, $request = null ) {
+		$episode = get_post( $episode );
+
+		if ( ! $episode instanceof WP_Post || ! in_array( $episode->post_type, ssp_post_types(), true ) ) {
+			return false;
+		}
+
+		if ( current_user_can( 'edit_post', $episode->ID ) ) {
+			return true;
+		}
+
+		if ( $request instanceof WP_REST_Request && Episodes_Rest_Controller::is_castos_authenticated( $request ) ) {
+			return true;
+		}
+
+		$is_password_blocked = post_password_required( $episode )
+			&& ! ssp_episode_feed_includes_password_protected( $episode->ID );
+
+		$can_access = ( 'publish' === $episode->post_status || current_user_can( 'read_post', $episode->ID ) )
+			&& ! $is_password_blocked;
+
+		/**
+		 * Filters whether a visitor may access an episode's media and body text.
+		 *
+		 * Not applied to users who can edit the episode or to Castos-authenticated requests.
+		 *
+		 * @since 3.17.1
+		 *
+		 * @param bool                  $can_access Whether access is allowed.
+		 * @param \WP_Post              $episode    Episode post object.
+		 * @param \WP_REST_Request|null $request    REST request, if any.
+		 */
+		return (bool) apply_filters( 'ssp_can_access_episode', $can_access, $episode, $request );
+	}
+}
+
+if ( ! function_exists( 'ssp_feed_includes_password_protected' ) ) {
+	/**
+	 * Checks whether a series feed includes password-protected episodes.
+	 *
+	 * They are excluded by default, because the feed would publish their media to anyone.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param int $series_id Series term ID.
+	 *
+	 * @return bool
+	 */
+	function ssp_feed_includes_password_protected( $series_id ) {
+		/**
+		 * Filters whether password-protected episodes appear in a series feed.
+		 *
+		 * Returning true restores them to the SSP feed and core's series feed. Their media is
+		 * then public, so the access check no longer requires the password and feed enclosures
+		 * that point to the download route keep working.
+		 *
+		 * @since 3.17.1
+		 *
+		 * @param bool $include   Whether to include password-protected episodes. Default false.
+		 * @param int  $series_id Series term ID.
+		 */
+		return (bool) apply_filters( 'ssp_feed_include_password_protected', false, (int) $series_id );
+	}
+}
+
+if ( ! function_exists( 'ssp_episode_feed_includes_password_protected' ) ) {
+	/**
+	 * Checks whether any feed the episode appears in includes password-protected episodes.
+	 *
+	 * Besides its own series feeds, an episode can appear in the default series feed,
+	 * which lists episodes of every series it does not exclude.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param int $episode_id Episode ID.
+	 *
+	 * @return bool
+	 */
+	function ssp_episode_feed_includes_password_protected( $episode_id ) {
+		$series_ids = wp_get_post_terms( $episode_id, ssp_series_taxonomy(), array( 'fields' => 'ids' ) );
+
+		$series_ids   = is_wp_error( $series_ids ) ? array() : $series_ids;
+		$series_ids[] = ssp_get_default_series_id();
+
+		foreach ( $series_ids as $series_id ) {
+			if ( ssp_feed_includes_password_protected( $series_id ) ) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+}
+
 
 if ( ! function_exists( 'ssp_iso_duration' ) ) {
 	/**
@@ -2175,5 +2287,22 @@ if ( ! function_exists( 'ssp_generate_episode_guid' ) ) {
 			\SeriouslySimplePodcasting\Handlers\Feed_Handler::EPISODE_NAMESPACE_UUID,
 			$episode_data
 		);
+	}
+}
+
+if ( ! function_exists( 'ssp_esc_cdata' ) ) {
+	/**
+	 * Escapes text for output inside a CDATA section.
+	 *
+	 * Splits every `]]>` across two CDATA sections, so the text cannot close the section early.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param string $text Text printed inside `<![CDATA[ ... ]]>`.
+	 *
+	 * @return string
+	 */
+	function ssp_esc_cdata( $text ) {
+		return str_replace( ']]>', ']]]]><![CDATA[>', (string) $text );
 	}
 }

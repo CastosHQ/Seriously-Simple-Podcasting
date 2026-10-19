@@ -647,6 +647,10 @@ class Feed_Handler implements Service {
 
 		$args = ssp_episodes( $num_posts, $series_slug, true, 'feed', $exclude_series );
 
+		if ( ! ssp_feed_includes_password_protected( $series_id ) ) {
+			$args['has_password'] = false;
+		}
+
 		if ( 'recorded' === $pub_date_type ) {
 			$args['orderby']  = 'meta_value';
 			$args['meta_key'] = 'date_recorded';

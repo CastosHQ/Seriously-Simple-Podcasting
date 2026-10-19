@@ -46,13 +46,6 @@ class Rest_Api_Controller {
 	private $cookie_authenticated = false;
 
 	/**
-	 * Whether Castos authentication is valid for current request.
-	 *
-	 * @var bool|null
-	 */
-	private $castos_authenticated = null;
-
-	/**
 	 * Gets the default podcast data.
 	 *
 	 * @return array Podcast data array.
@@ -190,7 +183,7 @@ class Rest_Api_Controller {
 	}
 
 	/**
-	 * Conditionally hides meta field if episode belongs to a private podcast series.
+	 * Conditionally hides meta field if the episode is inaccessible or belongs to a private podcast series.
 	 *
 	 * Works for both custom SSP endpoints and WordPress core REST API endpoints.
 	 *
@@ -207,13 +200,14 @@ class Rest_Api_Controller {
 			$this->cookie_authenticated = true;
 		}
 
-		// Check if request has valid Castos authentication (only once per request)
-		if ( null === $this->castos_authenticated ) {
-			$this->castos_authenticated = true === Episodes_Rest_Controller::validate_castos_authentication( $request, array() );
+		// If Castos-authenticated or user has edit permission, show meta.
+		if ( Episodes_Rest_Controller::is_castos_authenticated( $request ) || current_user_can( 'edit_post', $post->ID ) ) {
+			return $response;
 		}
 
-		// If Castos-authenticated or user has edit permission, show meta
-		if ( $this->castos_authenticated || current_user_can( 'edit_post', $post->ID ) ) {
+		// Meta holds the media URLs, so it is hidden whenever the episode is inaccessible.
+		if ( ! ssp_can_access_episode( $post, $request ) ) {
+			unset( $response->data['meta'] );
 			return $response;
 		}
 
@@ -504,13 +498,15 @@ class Rest_Api_Controller {
 	/**
 	 * Gets the podcast audio player code from wp_audio_shortcode, or null if ssp_podcast_id is not a valid podcast
 	 *
+	 * @param \WP_REST_Request $request Full data about the request.
+	 *
 	 * @return array|\WP_Error $podcast Podcast data or error
 	 */
-	public function get_episode_audio_player() {
+	public function get_episode_audio_player( $request = null ) {
 		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_DEFAULT ) : '' );
 
 		// Validate and authorize episode access
-		$authorization_check = $this->check_episode_access( $podcast_id );
+		$authorization_check = $this->check_episode_access( $podcast_id, $request );
 		if ( is_wp_error( $authorization_check ) ) {
 			return $authorization_check;
 		}
@@ -531,11 +527,12 @@ class Rest_Api_Controller {
 	/**
 	 * Checks if the current user has access to the specified episode
 	 *
-	 * @param int|string $episode_id Episode ID to check
+	 * @param int|string            $episode_id Episode ID to check.
+	 * @param \WP_REST_Request|null $request    REST request, to recognize Castos-authenticated requests.
 	 *
 	 * @return true|\WP_Error True if access allowed, WP_Error if access denied
 	 */
-	protected function check_episode_access( $episode_id ) {
+	protected function check_episode_access( $episode_id, $request = null ) {
 
 		$this->authenticate_user_from_cookie();
 
@@ -570,38 +567,12 @@ class Rest_Api_Controller {
 			);
 		}
 
-		// Check post status and user authorization
-		$post_status_obj = get_post_status_object( $episode->post_status );
-
-		// Use WordPress's built-in permission system which handles author checks and capabilities
-		if ( 'private' === $episode->post_status ) {
-			// For private posts, check if user can read this specific post
-			// This handles: author check, read_private_posts capability, etc.
-			if ( ! current_user_can( 'read_post', $episode_id ) ) {
-				return new \WP_Error(
-					'rest_forbidden',
-					__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ),
-					array( 'status' => rest_authorization_required_code() )
-				);
-			}
-		} elseif ( 'draft' === $episode->post_status || 'pending' === $episode->post_status ) {
-			// Check if user can edit the post
-			if ( ! current_user_can( 'edit_post', $episode_id ) ) {
-				return new \WP_Error(
-					'rest_forbidden',
-					__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ),
-					array( 'status' => rest_authorization_required_code() )
-				);
-			}
-		} elseif ( ! $post_status_obj || ! $post_status_obj->public ) {
-			// Reject other non-public statuses
-			if ( ! current_user_can( 'read_post', $episode_id ) ) {
-				return new \WP_Error(
-					'rest_forbidden',
-					__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ),
-					array( 'status' => rest_authorization_required_code() )
-				);
-			}
+		if ( ! ssp_can_access_episode( $episode, $request ) ) {
+			return new \WP_Error(
+				'rest_forbidden',
+				__( 'Sorry, you are not allowed to access this episode.', 'seriously-simple-podcasting' ),
+				array( 'status' => rest_authorization_required_code() )
+			);
 		}
 
 		return true;
@@ -830,7 +801,7 @@ class Rest_Api_Controller {
 	 * return tring
 	 */
 	public function get_rest_audio_download_link( $object, $field_name, $request ) {
-		if ( ! empty( $object['meta']['audio_file'] ) ) {
+		if ( ! empty( $object['meta']['audio_file'] ) && ssp_can_access_episode( $object['id'], $request ) ) {
 			return $this->episode_repository->get_episode_download_link( $object['id'] );
 		}
 
@@ -848,7 +819,7 @@ class Rest_Api_Controller {
 	 * @return string
 	 */
 	public function get_rest_audio_player_link( $object, $field_name, $request ) {
-		if ( ! empty( $object['meta']['audio_file'] ) ) {
+		if ( ! empty( $object['meta']['audio_file'] ) && ssp_can_access_episode( $object['id'], $request ) ) {
 			return $this->episode_repository->get_passthrough_url( $object['id'] );
 		}
 
@@ -865,7 +836,7 @@ class Rest_Api_Controller {
 	 * @return bool|string|void
 	 */
 	public function get_rest_audio_player( $object, $field_name, $request ) {
-		if ( ! empty( $object['meta']['audio_file'] ) ) {
+		if ( ! empty( $object['meta']['audio_file'] ) && ssp_can_access_episode( $object['id'], $request ) ) {
 			$player_style = get_option( 'ss_podcasting_player_style', 'standard' );
 			if ( empty( $player_style ) ) {
 				$player_style = 'standard';

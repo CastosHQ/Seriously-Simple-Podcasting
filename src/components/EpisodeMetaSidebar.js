@@ -71,6 +71,7 @@ const EpisodeMetaSidebar = () => {
 	const isItunesEnabled = sspAdmin.isItunesEnabled;
 
 	const isCastosUser = sspAdmin.isCastosUser;
+	const showCastosUploader = isCastosUser && sspAdmin.canUploadFiles;
 
 	const syncStatusAttr = isCastosUser ? editor.getEditedPostAttribute('episode_data')?.syncStatus : null;
 
@@ -302,13 +303,13 @@ const EpisodeMetaSidebar = () => {
 						<div className="ssp-sidebar-field-section">
 							<h3>{ __('Episode File', 'seriously-simple-podcasting') }</h3>
 
-							{ ! isCastosUser && <FileUploader
+							{ ! showCastosUploader && <FileUploader
 								audioUrl={ audioFile }
 								onChangeUrl={ ( value ) => handleFieldChange('audio_file', value, true) }
 								onSelectAudio={ ( media ) => handleAudioUpdate( media ) }
 							/>
 							}
-							{ isCastosUser && <CastosUploader
+							{ showCastosUploader && <CastosUploader
 								audioUrl={ audioFile }
 								onChangeUrl={ ( value ) => handleFieldChange('audio_file', value, true) }
 								fileName={ getFilename() }

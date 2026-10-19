@@ -28,59 +28,59 @@
 ?>
 
 <item>
-	<title><?php echo $title; ?></title>
+	<title><?php echo esc_xml( $title ); ?></title>
 	<link><?php the_permalink_rss(); ?></link>
-	<pubDate><?php echo $pub_date; ?></pubDate>
-	<dc:creator><![CDATA[<?php echo $author; ?>]]></dc:creator>
+	<pubDate><?php echo esc_xml( $pub_date ); ?></pubDate>
+	<dc:creator><![CDATA[<?php echo ssp_esc_cdata( $author ); ?>]]></dc:creator>
 	<guid isPermaLink="false"><?php echo esc_xml( ssp_episode_guid() ); ?></guid>
-	<description><![CDATA[<?php echo $description; ?>]]></description>
-	<itunes:subtitle><![CDATA[<?php echo $itunes_subtitle; ?>]]></itunes:subtitle>
+	<description><![CDATA[<?php echo ssp_esc_cdata( $description ); ?>]]></description>
+	<itunes:subtitle><![CDATA[<?php echo ssp_esc_cdata( $itunes_subtitle ); ?>]]></itunes:subtitle>
 <?php
 
 if ( $itunes_episode_type ) : ?>
-	<itunes:episodeType><?php echo $itunes_episode_type; ?></itunes:episodeType>
+	<itunes:episodeType><?php echo esc_xml( $itunes_episode_type ); ?></itunes:episodeType>
 <?php endif;
 
 if ( $itunes_title ): ?>
-	<itunes:title><![CDATA[<?php echo $itunes_title; ?>]]></itunes:title>
+	<itunes:title><![CDATA[<?php echo ssp_esc_cdata( $itunes_title ); ?>]]></itunes:title>
 <?php endif;
 
 if ( $itunes_episode_number ): ?>
-	<itunes:episode><?php echo $itunes_episode_number; ?></itunes:episode>
+	<itunes:episode><?php echo esc_xml( $itunes_episode_number ); ?></itunes:episode>
 <?php endif;
 
 if ( $itunes_season_number ): ?>
-	<itunes:season><?php echo $itunes_season_number; ?></itunes:season>
+	<itunes:season><?php echo esc_xml( $itunes_season_number ); ?></itunes:season>
 <?php endif;
 
 if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) : ?>
-	<content:encoded><![CDATA[<?php echo $description; ?>]]></content:encoded>
+	<content:encoded><![CDATA[<?php echo ssp_esc_cdata( $description ); ?>]]></content:encoded>
 <?php endif;
 
 ?>
-	<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo esc_attr( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
+	<enclosure url="<?php echo esc_url( $enclosure ); ?>" length="<?php echo absint( $size ); ?>" type="<?php echo esc_attr( $mime_type ); ?>"></enclosure>
 <?php
 
 if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) : ?>
-	<itunes:summary><![CDATA[<?php echo $itunes_summary; ?>]]></itunes:summary>
+	<itunes:summary><![CDATA[<?php echo ssp_esc_cdata( $itunes_summary ); ?>]]></itunes:summary>
 <?php endif;
 
 if ( $episode_image ) : ?>
 	<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
 	<ssp:image>
 		<ssp:url><?php echo esc_url( $episode_image ); ?></ssp:url>
-		<ssp:title><?php echo esc_attr( $title ); ?></ssp:title>
+		<ssp:title><?php echo esc_xml( $title ); ?></ssp:title>
 	</ssp:image>
 <?php endif;
 
 ?>
-	<itunes:explicit><?php echo esc_html( $itunes_explicit_flag ); ?></itunes:explicit>
-	<itunes:block><?php echo esc_html( $block_flag ); ?></itunes:block>
-	<itunes:duration><?php echo esc_html( $duration ); ?></itunes:duration>
-	<itunes:author><![CDATA[<?php echo $author; ?>]]></itunes:author><?php
+	<itunes:explicit><?php echo esc_xml( $itunes_explicit_flag ); ?></itunes:explicit>
+	<itunes:block><?php echo esc_xml( $block_flag ); ?></itunes:block>
+	<itunes:duration><?php echo esc_xml( $duration ); ?></itunes:duration>
+	<itunes:author><![CDATA[<?php echo ssp_esc_cdata( $author ); ?>]]></itunes:author><?php
 
 if ( ! $turbo_post_count ) : ?>
-	<googleplay:description><![CDATA[<?php echo $gp_description; ?>]]></googleplay:description>
+	<googleplay:description><![CDATA[<?php echo ssp_esc_cdata( $gp_description ); ?>]]></googleplay:description>
 <?php endif;
 
 if ( $episode_image ) : ?>
@@ -88,8 +88,8 @@ if ( $episode_image ) : ?>
 <?php endif;
 
 ?>
-	<googleplay:explicit><?php echo esc_html( $googleplay_explicit_flag ); ?></googleplay:explicit>
-	<googleplay:block><?php echo esc_html( $block_flag ); ?></googleplay:block>
+	<googleplay:explicit><?php echo esc_xml( $googleplay_explicit_flag ); ?></googleplay:explicit>
+	<googleplay:block><?php echo esc_xml( $block_flag ); ?></googleplay:block>
 <?php
 
 if ( $transcript_url && $transcript_mime ) : ?>

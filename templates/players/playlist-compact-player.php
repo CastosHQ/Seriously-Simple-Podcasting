@@ -9,14 +9,17 @@
  * @var array $data
  * @var string $class
  **/
+
+// The media tag is a literal, never the passed type.
+$media_tag = 'video' === $safe_type ? 'video' : 'audio';
 ?>
 
-<div class="wp-playlist wp-<?php echo $safe_type ?>-playlist wp-playlist-<?php echo $safe_style ?> <?php echo esc_attr( $class ) ?>">
-	<<?php echo $safe_type ?> controls="controls" preload="none" width="<?php echo (int) $width; ?>"<?php
-	if ( 'video' === $safe_type ):
+<div class="wp-playlist wp-<?php echo esc_attr( $media_tag ) ?>-playlist wp-playlist-<?php echo esc_attr( $safe_style ) ?> <?php echo esc_attr( $class ) ?>">
+	<<?php echo esc_html( $media_tag ); ?> controls="controls" preload="none" width="<?php echo (int) $width; ?>"<?php
+	if ( 'video' === $media_tag ):
 		echo ' height="', (int) $height, '"';
 	endif; ?>>
-</<?php echo $safe_type ?>>
+</<?php echo esc_html( $media_tag ); ?>>
 
 
 <?php	if ( 'audio' === $data['type'] ) : ?>

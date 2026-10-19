@@ -185,9 +185,11 @@ class Assets_Controller {
 			global $post;
 			if ( in_array( $post->post_type, ssp_post_types(), true ) ) {
 				wp_enqueue_script( 'plupload-all' );
-				$upload_credentials = ssp_setup_upload_credentials();
 				wp_register_script( 'ssp-fileupload', esc_url( $this->assets_url . 'js/fileupload' . $this->script_suffix . '.js' ), array(), $this->version );
-				wp_localize_script( 'ssp-fileupload', 'upload_credentials', $upload_credentials );
+				if ( current_user_can( 'upload_files' ) ) {
+					$upload_credentials = ssp_setup_upload_credentials();
+					wp_localize_script( 'ssp-fileupload', 'upload_credentials', $upload_credentials );
+				}
 				wp_enqueue_script( 'ssp-fileupload' );
 				wp_register_script( 'jquery-peekabar', esc_url( $this->assets_url . 'js/jquery.peekabar' . $this->script_suffix . '.js' ), array( 'jquery' ), $this->version );
 				wp_enqueue_script( 'jquery-peekabar' );

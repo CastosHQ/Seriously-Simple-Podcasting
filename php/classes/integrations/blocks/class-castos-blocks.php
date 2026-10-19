@@ -113,6 +113,7 @@ class Castos_Blocks {
 			array(
 				'sspPostTypes'    => ssp_post_types( true, false ),
 				'isCastosUser'    => ssp_is_connected_to_castos(),
+				'canUploadFiles'  => current_user_can( 'upload_files' ),
 				'isItunesEnabled' => $itunes_enabled,
 				// The editor fetches podcasts itself, so registration stays free of term queries.
 				// It needs the route to fetch them from; the labels arrive ready to display.

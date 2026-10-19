@@ -589,6 +589,52 @@ class Episode_Repository implements Service {
 	}
 
 	/**
+	 * Resolves the episode a player plays.
+	 *
+	 * Outside an episode, such as on a page or in a template editor, the current episode
+	 * falls back to the latest one.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param int|string $id Episode ID, 0 or '' for the current episode, -1 for the latest.
+	 *
+	 * @return int
+	 */
+	public function get_player_episode_id( $id ) {
+		if ( $this->is_current_player_episode( $id ) ) {
+			global $post;
+
+			$allowed_post_types = array_merge( ssp_post_types(), array( 'auto_draft' ) );
+
+			if ( empty( $post ) || ! in_array( $post->post_type, $allowed_post_types, true ) ) {
+				// Possibly it's a page, or a Gutenberg template editor.
+				return $this->get_latest_episode_id();
+			}
+
+			return $post->ID;
+		}
+
+		if ( in_array( $id, array( -1, '-1' ), true ) ) {
+			return $this->get_latest_episode_id();
+		}
+
+		return (int) $id;
+	}
+
+	/**
+	 * Checks whether a player episode ID means the current episode.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param int|string $id Episode ID.
+	 *
+	 * @return bool
+	 */
+	private function is_current_player_episode( $id ) {
+		return in_array( $id, array( 0, '0', '' ), true );
+	}
+
+	/**
 	 * Sets up the template data for the HTML5 player, based on the episode id passed.
 	 *
 	 * @param int      $id Episode id, 0 for current, -1 for latest
@@ -602,25 +648,15 @@ class Episode_Repository implements Service {
 			$show_subscribe_button = 'on' === get_option( 'ss_podcasting_subscribe_button_enabled', 'on' );
 			$show_share_button     = 'on' === get_option( 'ss_podcasting_share_button_enabled', 'on' );
 
-			if ( '0' == $id || '' === $id ) {
+			$is_current_episode = $this->is_current_player_episode( $id );
+			$id                 = $this->get_player_episode_id( $id );
+
+			if ( $is_current_episode ) {
 				global $post;
-
-				$allowed_post_types = array_merge( ssp_post_types(), array( 'auto_draft' ) );
-
-				if ( empty( $post ) || ! in_array( $post->post_type, $allowed_post_types ) ) {
-					// Possibly it's a page, or a Gutenberg template editor
-					$id = $this->get_latest_episode_id();
-				} else {
-					$id = $post->ID;
-				}
 
 				if ( $post && 'Auto Draft' === $post->post_title ) {
 					$post->post_title = __( 'Current Episode', 'seriously-simple-podcasting' );
 				}
-			}
-
-			if ( '-1' == $id ) {
-				$id = $this->get_latest_episode_id();
 			}
 
 			$audio_file = $this->get_enclosure( $id );

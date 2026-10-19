@@ -23,10 +23,13 @@ class EpisodesRestControllerCastosAuthTest extends \Codeception\TestCase\WPTestC
 	protected function setUp(): void {
 		parent::setUp();
 		update_option( 'ss_podcasting_podmotor_account_api_token', self::TOKEN );
+		rest_get_server();
 	}
 
 	protected function tearDown(): void {
 		delete_option( 'ss_podcasting_podmotor_account_api_token' );
+		wp_set_current_user( 0 );
+		$GLOBALS['wp_rest_server'] = null;
 		parent::tearDown();
 	}
 
@@ -43,6 +46,121 @@ class EpisodesRestControllerCastosAuthTest extends \Codeception\TestCase\WPTestC
 		$request = $this->action_bound_request( 'GET', '/ssp/v1/episodes', array(), time(), $this->nonce() );
 
 		$this->assertTrue( Episodes_Rest_Controller::validate_castos_authentication( $request, array() ) );
+	}
+
+	/** A Castos-authenticated edit-context collection includes every returned episode. */
+	public function test_action_bound_get_collection_edit_context_receives_every_episode() {
+		$author_id = self::factory()->user->create( array( 'role' => 'author' ) );
+		$published_password = 'castos-published-episode-password';
+		$published_id       = self::factory()->post->create(
+			array(
+				'post_type'     => SSP_CPT_PODCAST,
+				'post_status'   => 'publish',
+				'post_author'   => $author_id,
+				'post_password' => $published_password,
+				'post_title'    => 'Published raw title',
+				'post_content'  => 'Published raw content',
+				'post_excerpt'  => 'Published raw excerpt',
+			)
+		);
+		$private_id = self::factory()->post->create(
+			array(
+				'post_type'   => SSP_CPT_PODCAST,
+				'post_status' => 'private',
+				'post_author' => $author_id,
+				'post_title'  => 'Private raw title',
+			)
+		);
+		$query = array(
+			'context'  => 'edit',
+			'per_page' => 10,
+			'page'     => 1,
+		);
+
+		wp_set_current_user( 0 );
+		$request  = $this->action_bound_request( 'GET', '/ssp/v1/episodes', array(), time(), $this->nonce(), $query );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$items = $this->get_items_by_id( $response );
+		$this->assertArrayHasKey( $published_id, $items );
+		$this->assertArrayHasKey( $private_id, $items );
+		$this->assertSame( $published_password, $items[ $published_id ]['password'] );
+		$this->assertSame( 'private', $items[ $private_id ]['status'] );
+		$this->assertSame( 'Private raw title', $items[ $private_id ]['title']['raw'] );
+		$this->assertSame( 'Published raw title', $items[ $published_id ]['title']['raw'] );
+		$this->assertSame( 'Published raw content', $items[ $published_id ]['content']['raw'] );
+		$this->assertSame( 'Published raw excerpt', $items[ $published_id ]['excerpt']['raw'] );
+	}
+
+	/** An explicit published status restricts a Castos-authenticated collection. */
+	public function test_action_bound_get_collection_with_publish_status_excludes_private_episodes() {
+		$published_id = self::factory()->post->create( array( 'post_type' => SSP_CPT_PODCAST, 'post_status' => 'publish' ) );
+		$private_id   = self::factory()->post->create( array( 'post_type' => SSP_CPT_PODCAST, 'post_status' => 'private' ) );
+		$query        = array( 'context' => 'edit', 'status' => 'publish' );
+
+		wp_set_current_user( 0 );
+		$request  = $this->action_bound_request( 'GET', '/ssp/v1/episodes', array(), time(), $this->nonce(), $query );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$items = $this->get_items_by_id( $response );
+		$this->assertArrayHasKey( $published_id, $items );
+		$this->assertArrayNotHasKey( $private_id, $items );
+	}
+
+	/** A non-Castos editor still defaults to published episodes during REST dispatch. */
+	public function test_editor_get_collection_without_status_excludes_private_episodes() {
+		$editor_id    = self::factory()->user->create( array( 'role' => 'editor' ) );
+		$published_id = self::factory()->post->create( array( 'post_type' => SSP_CPT_PODCAST, 'post_status' => 'publish' ) );
+		$private_id   = self::factory()->post->create( array( 'post_type' => SSP_CPT_PODCAST, 'post_status' => 'private' ) );
+
+		wp_set_current_user( $editor_id );
+		$request = new \WP_REST_Request( 'GET', '/ssp/v1/episodes' );
+		$request->set_query_params( array( 'context' => 'edit' ) );
+		$request->set_header( 'X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$items = $this->get_items_by_id( $response );
+		$this->assertArrayHasKey( $published_id, $items );
+		$this->assertArrayNotHasKey( $private_id, $items );
+	}
+
+	/** An editor with a valid REST nonce can explicitly request private episodes. */
+	public function test_editor_get_collection_with_private_status_receives_private_episode() {
+		$editor_id    = self::factory()->user->create( array( 'role' => 'editor' ) );
+		$published_id = self::factory()->post->create( array( 'post_type' => SSP_CPT_PODCAST, 'post_status' => 'publish' ) );
+		$private_id   = self::factory()->post->create( array( 'post_type' => SSP_CPT_PODCAST, 'post_status' => 'private' ) );
+
+		wp_set_current_user( $editor_id );
+		$request = new \WP_REST_Request( 'GET', '/ssp/v1/episodes' );
+		$request->set_query_params( array( 'status' => 'private' ) );
+		$request->set_header( 'X-WP-Nonce', wp_create_nonce( 'wp_rest' ) );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$items = $this->get_items_by_id( $response );
+		$this->assertArrayHasKey( $private_id, $items );
+		$this->assertArrayNotHasKey( $published_id, $items );
+	}
+
+	/** An anonymous caller cannot explicitly request private episodes. */
+	public function test_anonymous_get_collection_with_private_status_is_rejected_without_episodes() {
+		self::factory()->post->create( array( 'post_type' => SSP_CPT_PODCAST, 'post_status' => 'publish' ) );
+		self::factory()->post->create( array( 'post_type' => SSP_CPT_PODCAST, 'post_status' => 'private' ) );
+
+		wp_set_current_user( 0 );
+		$request = new \WP_REST_Request( 'GET', '/ssp/v1/episodes' );
+		$request->set_query_params( array( 'status' => 'private' ) );
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 400, $response->get_status() );
+		$data = $response->get_data();
+		$this->assertSame( 'rest_invalid_param', $data['code'] );
+		$this->assertSame( 'rest_forbidden_status', $data['data']['details']['status']['code'] );
+		$this->assertSame( 401, $data['data']['details']['status']['data']['status'] );
+		$this->assertSame( array(), $this->get_items_by_id( $response ) );
 	}
 
 	/** Signature is bound to the HTTP method — a method mismatch is rejected. */
@@ -184,6 +302,18 @@ class EpisodesRestControllerCastosAuthTest extends \Codeception\TestCase\WPTestC
 		);
 
 		$this->assertSame( $expected, hash_hmac( 'sha256', $message, self::TOKEN ) );
+	}
+
+	private function get_items_by_id( $response ) {
+		$items = array();
+
+		foreach ( (array) $response->get_data() as $item ) {
+			if ( isset( $item['id'] ) ) {
+				$items[ $item['id'] ] = $item;
+			}
+		}
+
+		return $items;
 	}
 
 	private function nonce() {

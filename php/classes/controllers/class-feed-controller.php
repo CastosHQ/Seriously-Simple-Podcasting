@@ -79,6 +79,32 @@ class Feed_Controller {
 
 		// Fix WP core bug - redirect canonical
 		add_filter( 'redirect_canonical', array( $this, 'fix_canonical_feed_url' ) );
+
+		// Keep password-protected episodes out of core's series feed. Core already omits their enclosures.
+		add_action( 'pre_get_posts', array( $this, 'exclude_password_protected_from_series_feed' ) );
+	}
+
+	/**
+	 * Excludes password-protected episodes from core's series feed.
+	 *
+	 * @since 3.17.1
+	 * @see ssp_feed_includes_password_protected()
+	 *
+	 * @param \WP_Query $query The query.
+	 *
+	 * @return void
+	 */
+	public function exclude_password_protected_from_series_feed( $query ) {
+		if ( ! $query->is_main_query() || ! $query->is_feed() || ! $query->is_tax( ssp_series_taxonomy() ) ) {
+			return;
+		}
+
+		$series = $query->get_queried_object();
+		if ( $series instanceof \WP_Term && ssp_feed_includes_password_protected( $series->term_id ) ) {
+			return;
+		}
+
+		$query->set( 'has_password', false );
 	}
 
 	/**

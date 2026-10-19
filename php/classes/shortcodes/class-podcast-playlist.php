@@ -29,6 +29,9 @@ class Podcast_Playlist implements Shortcode {
 	const DEFAULT_WIDTH  = 640;
 	const DEFAULT_HEIGHT = 360;
 
+	const ALLOWED_TYPES  = array( 'audio', 'video' );
+	const ALLOWED_STYLES = array( 'light', 'dark' );
+
 	/**
 	 * Frontend controller instance.
 	 *
@@ -129,6 +132,9 @@ class Podcast_Playlist implements Shortcode {
 			$params['include'] = $params['episodes'];
 		}
 
+		$default_style = get_option( 'ss_podcasting_player_mode', 'light' );
+		$default_style = $this->allowed_value( $default_style, self::ALLOWED_STYLES, 'light' );
+
 		// Parse shortcode attributes
 		$atts = shortcode_atts(
 			array(
@@ -139,7 +145,7 @@ class Podcast_Playlist implements Shortcode {
 				'orderby'      => 'menu_order ID',
 				'include'      => '',
 				'exclude'      => '',
-				'style'        => get_option( 'ss_podcasting_player_mode', 'light' ),
+				'style'        => $default_style,
 				'player_style' => 'standard',
 				'tracklist'    => true,
 				'tracknumbers' => true,
@@ -152,6 +158,10 @@ class Podcast_Playlist implements Shortcode {
 			'podcast_playlist'
 		);
 
+		// Type and style select markup, so only known values are allowed.
+		$atts['type']  = $this->allowed_value( $atts['type'], self::ALLOWED_TYPES, 'audio' );
+		$atts['style'] = $this->allowed_value( $atts['style'], self::ALLOWED_STYLES, $default_style );
+
 		// Included posts must be passed as an array
 		if ( $atts['include'] ) {
 			$atts['include'] = explode( ',', $atts['include'] );
@@ -163,6 +173,23 @@ class Podcast_Playlist implements Shortcode {
 		}
 
 		return $atts;
+	}
+
+	/**
+	 * Returns the value lowercased if it is allowed, otherwise the fallback.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param mixed    $value    Value to check.
+	 * @param string[] $allowed  Allowed lowercase values.
+	 * @param string   $fallback Value to use when not allowed.
+	 *
+	 * @return string
+	 */
+	protected function allowed_value( $value, $allowed, $fallback ) {
+		$value = is_string( $value ) ? strtolower( trim( $value ) ) : '';
+
+		return in_array( $value, $allowed, true ) ? $value : $fallback;
 	}
 
 	/**

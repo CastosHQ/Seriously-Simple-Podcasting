@@ -6,6 +6,7 @@ modules:
         - Asserts
     config:
         WPLoader:
+            configFile: tests/Support/wpunit-http.php
             wpRootFolder: "%TEST_WP_ROOT%"
             dbName: "%TEST_DB_NAME%"
             dbHost: "%TEST_DB_HOST%"

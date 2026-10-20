@@ -6,11 +6,27 @@ use SeriouslySimplePodcasting\Rest\Episodes_Rest_Controller;
 
 class EpisodesRestControllerTest extends \Codeception\TestCase\WPTestCase {
 
+	private $had_use_post_types_option;
+
+	private $original_use_post_types_option;
+
 	protected function setUp(): void {
 		parent::setUp();
+		wp_cache_flush();
+
+		$this->original_use_post_types_option = get_option( 'ss_podcasting_use_post_types' );
+		$this->had_use_post_types_option      = false !== $this->original_use_post_types_option;
+		update_option( 'ss_podcasting_use_post_types', array() );
+		wp_cache_flush();
 	}
 
 	protected function tearDown(): void {
+		if ( $this->had_use_post_types_option ) {
+			update_option( 'ss_podcasting_use_post_types', $this->original_use_post_types_option );
+		} else {
+			delete_option( 'ss_podcasting_use_post_types' );
+		}
+
 		unset( $_COOKIE[ LOGGED_IN_COOKIE ] );
 		wp_set_current_user( 0 );
 		parent::tearDown();
@@ -61,9 +77,9 @@ class EpisodesRestControllerTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
-	 * A privileged user with a valid REST nonce still sees private episodes (no editor regression).
+	 * A privileged user with a valid REST nonce defaults to published episodes.
 	 */
-	public function testGetItemsWithValidNonceShowsPrivateEpisodes() {
+	public function testGetItemsWithValidNonceDefaultsToPublishedEpisodes() {
 		$user = self::factory()->user->create( array( 'role' => 'administrator' ) );
 		// A valid nonce is bound to the resolved user, exactly as core keeps the cookie user
 		// when @wordpress/api-fetch sends X-WP-Nonce.
@@ -76,7 +92,7 @@ class EpisodesRestControllerTest extends \Codeception\TestCase\WPTestCase {
 		$ids = $this->get_items_ids( array( 'X-WP-Nonce' => $nonce ) );
 
 		$this->assertContains( $publish, $ids );
-		$this->assertContains( $private, $ids, 'A privileged user with a valid nonce should see private episodes' );
+		$this->assertNotContains( $private, $ids, 'A privileged user without an explicit status should only see published episodes' );
 	}
 
 	/**
@@ -314,36 +330,199 @@ class EpisodesRestControllerTest extends \Codeception\TestCase\WPTestCase {
 				if ( ! is_array( $function ) || 'maybe_hide_meta_for_private_podcast' !== $function[1] ) {
 					continue;
 				}
-				foreach ( array( 'cookie_authenticated' => false, 'castos_authenticated' => null ) as $name => $value ) {
-					$property = new \ReflectionProperty( $function[0], $name );
-					$property->setAccessible( true );
-					$property->setValue( $function[0], $value );
-				}
+				$property = new \ReflectionProperty( $function[0], 'cookie_authenticated' );
+				$property->setAccessible( true );
+				$property->setValue( $function[0], false );
 			}
 		}
+
+		$property = new \ReflectionProperty( Episodes_Rest_Controller::class, 'castos_authenticated_request' );
+		$property->setAccessible( true );
+		$property->setValue( null, null );
 	}
 
-	private function create_episode( $status, $author ) {
-		return self::factory()->post->create(
+	public function testAnonymousEditContextIsRefusedWithoutSensitiveFields() {
+		wp_set_current_user( 0 );
+
+		$response = $this->get_items_response( array( 'context' => 'edit' ) );
+
+		$this->assertInstanceOf( '\\WP_Error', $response );
+		$this->assertSame( 401, $response->get_error_data()['status'] );
+	}
+
+	public function testContributorCannotRequestNativePodcastEditContext() {
+		$this->assertNativePodcastEditContextIsRefusedForRole( 'contributor' );
+	}
+
+	public function testAuthorCannotRequestNativePodcastEditContext() {
+		$this->assertNativePodcastEditContextIsRefusedForRole( 'author' );
+	}
+
+	public function testAuthorEditContextIncludesOwnPostAndOmitsAnotherAuthorsProtectedPost() {
+		$author_id = self::factory()->user->create( array( 'role' => 'author' ) );
+		$other_id  = self::factory()->user->create( array( 'role' => 'author' ) );
+		$password  = 'another-authors-protected-password';
+
+		update_option( 'ss_podcasting_use_post_types', array( 'post' ) );
+
+		$own_post_id = $this->create_episode(
+			'publish',
+			$author_id,
 			array(
-				'post_type'   => SSP_CPT_PODCAST,
-				'post_status' => $status,
-				'post_author' => $author,
+				'post_type'    => 'post',
+				'post_title'   => 'Authors raw title',
+				'post_content' => 'Authors raw content',
+				'post_excerpt' => 'Authors raw excerpt',
+			)
+		);
+		$other_post_id = $this->create_episode(
+			'publish',
+			$other_id,
+			array(
+				'post_type'     => 'post',
+				'post_password' => $password,
+				'post_title'    => 'Other authors raw title',
+				'post_content'  => 'Other authors raw content',
+				'post_excerpt'  => 'Other authors raw excerpt',
+			)
+		);
+
+		wp_set_current_user( $author_id );
+		$response = $this->get_items_response( array( 'context' => 'edit' ) );
+
+		$this->assertInstanceOf( '\\WP_REST_Response', $response );
+		$items = $this->get_items_by_id( $response );
+		$this->assertArrayHasKey( $own_post_id, $items );
+		$this->assertArrayNotHasKey( $other_post_id, $items );
+		$this->assertSame( 'Authors raw title', $items[ $own_post_id ]['title']['raw'] );
+		$this->assertSame( 'Authors raw content', $items[ $own_post_id ]['content']['raw'] );
+		$this->assertSame( 'Authors raw excerpt', $items[ $own_post_id ]['excerpt']['raw'] );
+		$this->assertStringNotContainsString( $password, wp_json_encode( $response->get_data() ) );
+	}
+
+	public function testEditorReceivesEditContextWithPasswordAndRawFields() {
+		$editor_id = self::factory()->user->create( array( 'role' => 'editor' ) );
+		$author_id = self::factory()->user->create( array( 'role' => 'author' ) );
+		$password  = 'editors-protected-episode-password';
+		$episode_id = $this->create_episode(
+			'publish',
+			$author_id,
+			array(
+				'post_password' => $password,
+				'post_title'    => 'Editors raw title',
+				'post_content'  => 'Editors raw content',
+				'post_excerpt'  => 'Editors raw excerpt',
+			)
+		);
+
+		wp_set_current_user( $editor_id );
+		$response = $this->get_items_response( array( 'context' => 'edit' ) );
+
+		$this->assertInstanceOf( '\\WP_REST_Response', $response );
+		$items = $this->get_items_by_id( $response );
+		$this->assertArrayHasKey( $episode_id, $items );
+		$this->assertSame( $password, $items[ $episode_id ]['password'] );
+		$this->assertSame( 'Editors raw title', $items[ $episode_id ]['title']['raw'] );
+		$this->assertSame( 'Editors raw content', $items[ $episode_id ]['content']['raw'] );
+		$this->assertSame( 'Editors raw excerpt', $items[ $episode_id ]['excerpt']['raw'] );
+	}
+
+	public function testAnonymousViewContextStillListsPublishedEpisodesWithoutPasswords() {
+		$owner_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$password = 'anonymous-view-context-password';
+		$regular_id = $this->create_episode( 'publish', $owner_id );
+		$protected_id = $this->create_episode(
+			'publish',
+			$owner_id,
+			array(
+				'post_password' => $password,
+				'post_title'    => 'Protected view title',
+			)
+		);
+		wp_set_current_user( 0 );
+
+		// No context parameter is supplied; the collection defaults to view context.
+		$response = $this->get_items_response();
+
+		$this->assertInstanceOf( '\\WP_REST_Response', $response );
+		$items = $this->get_items_by_id( $response );
+		$this->assertArrayHasKey( $regular_id, $items );
+		$this->assertArrayHasKey( $protected_id, $items );
+		$this->assertSame( 'publish', $items[ $protected_id ]['status'] );
+		$this->assertArrayNotHasKey( 'password', $items[ $protected_id ] );
+		$this->assertStringNotContainsString( $password, wp_json_encode( $response->get_data() ) );
+	}
+
+	private function assertNativePodcastEditContextIsRefusedForRole( $role ) {
+		$owner_id = self::factory()->user->create( array( 'role' => 'administrator' ) );
+		$user_id  = self::factory()->user->create( array( 'role' => $role ) );
+		$this->create_episode( 'publish', $owner_id );
+
+		wp_set_current_user( $user_id );
+		$native_post_types_filter = static function ( $post_types ) {
+			return array( SSP_CPT_PODCAST );
+		};
+		add_filter( 'ssp_podcast_post_types', $native_post_types_filter, PHP_INT_MAX );
+
+		try {
+			$controller = $this->make_controller();
+		} finally {
+			remove_filter( 'ssp_podcast_post_types', $native_post_types_filter, PHP_INT_MAX );
+		}
+
+		$this->assertSame(
+			array( SSP_CPT_PODCAST ),
+			$controller->post_types,
+			'Controller should use only the native podcast post type.'
+		);
+
+		$response = $this->get_items_response(
+			array( 'context' => 'edit' ),
+			array(),
+			$controller
+		);
+
+		$this->assertInstanceOf( '\\WP_Error', $response );
+		$this->assertSame( 403, $response->get_error_data()['status'] );
+	}
+
+	private function create_episode( $status, $author, $overrides = array() ) {
+		return self::factory()->post->create(
+			array_merge(
+				array(
+					'post_type'   => SSP_CPT_PODCAST,
+					'post_status' => $status,
+					'post_author' => $author,
+				),
+				$overrides
 			)
 		);
 	}
 
-	/** Calls get_items() with the given headers and returns the listed episode IDs. */
-	private function get_items_ids( $headers = array() ) {
+	/** Calls get_items() with the given params, headers, and optional controller. */
+	private function get_items_response( $params = array(), $headers = array(), $controller = null ) {
 		$request = new \WP_REST_Request( 'GET', '/ssp/v1/episodes' );
 		$request->set_param( 'per_page', 10 );
 		$request->set_param( 'page', 1 );
+
+		foreach ( $params as $key => $value ) {
+			$request->set_param( $key, $value );
+		}
 
 		foreach ( $headers as $key => $value ) {
 			$request->set_header( $key, $value );
 		}
 
-		$response = $this->make_controller()->get_items( $request );
+		if ( null === $controller ) {
+			$controller = $this->make_controller();
+		}
+
+		return $controller->get_items( $request );
+	}
+
+	/** Calls get_items() with the given headers and returns the listed episode IDs. */
+	private function get_items_ids( $headers = array() ) {
+		$response = $this->get_items_response( array(), $headers );
 
 		$ids = array();
 		foreach ( (array) $response->get_data() as $item ) {
@@ -425,6 +604,18 @@ class EpisodesRestControllerTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertArrayNotHasKey( 'nopaging', $result );
 		$this->assertArrayNotHasKey( 'has_password', $result );
 		$this->assertArrayNotHasKey( 'suppress_filters', $result );
+	}
+
+	private function get_items_by_id( $response ) {
+		$items = array();
+
+		foreach ( (array) $response->get_data() as $item ) {
+			if ( isset( $item['id'] ) ) {
+				$items[ $item['id'] ] = $item;
+			}
+		}
+
+		return $items;
 	}
 
 	private function make_controller() {

@@ -776,13 +776,15 @@ class Podcast_Post_Types_Controller {
 						break;
 
 					case 'episode_file':
-						$is_castos = ssp_is_connected_to_castos();
-						$file_data = new Castos_File_Data(
+						$can_upload_files     = current_user_can( 'upload_files' );
+						$show_castos_uploader = ssp_is_connected_to_castos() && $can_upload_files;
+						$show_media_uploader  = $can_upload_files && ! $show_castos_uploader;
+						$file_data            = new Castos_File_Data(
 							json_decode( get_post_meta( $post_id, 'castos_file_data', true ), true )
 						);
-						$html     .= $renderer->fetch(
+						$html                .= $renderer->fetch(
 							'metafields/episode_file',
-							compact( 'k', 'v', 'data', 'is_castos', 'file_data' )
+							compact( 'k', 'v', 'data', 'show_castos_uploader', 'show_media_uploader', 'file_data' )
 						);
 						break;
 

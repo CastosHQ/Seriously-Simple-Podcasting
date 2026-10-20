@@ -52,6 +52,14 @@
 			</property>
 		</properties>
 	</rule>
+	<rule ref="WordPress.Security.EscapeOutput">
+		<properties>
+			<!-- ssp_esc_cdata() escapes text for a CDATA section in the RSS feed. -->
+			<property name="customEscapingFunctions" type="array">
+				<element value="ssp_esc_cdata"/>
+			</property>
+		</properties>
+	</rule>
 	<rule ref="WordPress.WhiteSpace.ControlStructureSpacing">
 		<properties>
 			<property name="blank_line_check" value="true"/>

@@ -137,6 +137,19 @@ class Players_Controller {
 			wp_send_json_error( array( 'message' => 'Failed to retrieve episodes' ) );
 		}
 
+		return $this->prepare_playlist_items( $episodes );
+	}
+
+	/**
+	 * Prepares escaped playlist items for the AJAX response.
+	 *
+	 * @since 3.17.1
+	 *
+	 * @param \WP_Post[] $episodes Episodes to list.
+	 *
+	 * @return array
+	 */
+	protected function prepare_playlist_items( $episodes ) {
 		$items        = array();
 		$allowed_keys = array(
 			'episode_id',
@@ -161,6 +174,12 @@ class Players_Controller {
 
 			// Filter to allowed keys and escape output
 			$filtered_data = array_intersect_key( $player_data, array_flip( $allowed_keys ) );
+
+			// Inaccessible episodes stay listed, without their media and body text.
+			if ( ! ssp_can_access_episode( $episode ) ) {
+				$filtered_data['audio_file'] = '';
+				$filtered_data['excerpt']    = '';
+			}
 
 			// Escape all string values
 			foreach ( $filtered_data as $key => $value ) {
@@ -190,7 +209,14 @@ class Players_Controller {
 	 * @return string
 	 */
 	public function render_html_player( $episode_id, $skip_empty_audio = true, $context = 'block', $args = array() ) {
+		// Check the episode that plays: for the current episode outside an episode, that is the latest one.
+		$playing_episode_id = $this->episode_repository->get_player_episode_id( $episode_id );
+		if ( $playing_episode_id && ! ssp_can_access_episode( $playing_episode_id ) ) {
+			return '';
+		}
+
 		$template_data = $this->episode_repository->get_player_data( $episode_id, null, false );
+
 		if ( isset( $args['className'] ) ) {
 			$template_data['class'] .= ' ' . $args['className'];
 		}
@@ -571,6 +597,11 @@ class Players_Controller {
 	 * @return string
 	 */
 	public function render_media_player( $id, $context = 'block' ) {
+		// An empty ID means the current post, as in media_player().
+		if ( ! ssp_can_access_episode( get_post( $id ) ) ) {
+			return '';
+		}
+
 		$template_data = $this->media_player( $id );
 
 		$player = $this->renderer->fetch( 'players/media-player', $template_data );
@@ -633,27 +664,27 @@ class Players_Controller {
 			switch ( $key ) {
 				case 'link':
 					if ( 'on' === get_option( 'ss_podcasting_download_file_enabled', 'on' ) ) {
-						$podcast_display .= $sep . '<a href="' . esc_url( $data ) . '" title="' . get_the_title() . ' " class="podcast-meta-download">' . __( 'Download file', 'seriously-simple-podcasting' ) . '</a>';
+						$podcast_display .= $sep . '<a href="' . esc_url( $data ) . '" title="' . esc_attr( get_the_title() ) . ' " class="podcast-meta-download">' . __( 'Download file', 'seriously-simple-podcasting' ) . '</a>';
 					}
 					break;
 
 				case 'new_window':
 					if ( isset( $meta['link'] ) && 'on' === get_option( 'ss_podcasting_play_in_new_window_enabled', 'on' ) ) {
 						$play_link        = add_query_arg( 'ref', 'new_window', $meta['link'] );
-						$podcast_display .= $sep . '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . get_the_title() . ' " class="podcast-meta-new-window">' . __( 'Play in new window', 'seriously-simple-podcasting' ) . '</a>';
+						$podcast_display .= $sep . '<a href="' . esc_url( $play_link ) . '" target="_blank" title="' . esc_attr( get_the_title() ) . ' " class="podcast-meta-new-window">' . __( 'Play in new window', 'seriously-simple-podcasting' ) . '</a>';
 					}
 
 					break;
 
 				case 'duration':
 					if ( 'on' === get_option( 'ss_podcasting_duration_enabled', 'on' ) ) {
-						$podcast_display .= $sep . '<span class="podcast-meta-duration">' . __( 'Duration', 'seriously-simple-podcasting' ) . ': ' . $data . '</span>';
+						$podcast_display .= $sep . '<span class="podcast-meta-duration">' . __( 'Duration', 'seriously-simple-podcasting' ) . ': ' . esc_html( $data ) . '</span>';
 					}
 					break;
 
 				case 'date_recorded':
 					if ( 'on' === get_option( 'ss_podcasting_date_recorded_enabled', 'on' ) ) {
-						$podcast_display .= $sep . '<span class="podcast-meta-date">' . __( 'Recorded on', 'seriously-simple-podcasting' ) . ' ' . date_i18n( get_option( 'date_format' ), strtotime( $data ) ) . '</span>';
+						$podcast_display .= $sep . '<span class="podcast-meta-date">' . __( 'Recorded on', 'seriously-simple-podcasting' ) . ' ' . esc_html( date_i18n( get_option( 'date_format' ), strtotime( $data ) ) ) . '</span>';
 					}
 					break;
 
@@ -718,7 +749,7 @@ class Players_Controller {
 				);
 				$subscribe_display .= wp_kses( $data['url'], $allowed_tags );
 			} else {
-				$subscribe_display .= '<a href="' . esc_url( $data['url'] ) . '" target="_blank" title="' . $data['label'] . '" class="podcast-meta-itunes">' . $data['label'] . '</a>';
+				$subscribe_display .= '<a href="' . esc_url( $data['url'] ) . '" target="_blank" title="' . esc_attr( $data['label'] ) . '" class="podcast-meta-itunes">' . esc_html( $data['label'] ) . '</a>';
 			}
 		}
 

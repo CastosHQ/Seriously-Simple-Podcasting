@@ -192,6 +192,11 @@ You can find complete user and developer documentation (along with the FAQs) on 
 [UPDATE] Imported episode media URLs now retain tracking prefixes and required query strings
 [UPDATE] Updated the onboarding wizard to use Castos brand colors
 
+= 3.17.1 =
+2026-10-19
+[FIX] Fixed private episodes missing from Castos syncs
+[FIX] Security improvements
+
 = 3.17.0 =
 2026-08-12
 [FIX] Podcast feeds no longer fail to generate on shows with a large number of episodes

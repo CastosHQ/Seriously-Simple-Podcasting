@@ -98,6 +98,38 @@ class Episode_Repository implements Service {
 	}
 
 	/**
+	 * Stores the published GUID or generates one for a new episode.
+	 *
+	 * An episode already on Castos is published, so it keeps its legacy GUID
+	 * (the WordPress post GUID when it has no GUID meta) instead of a new one.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int $post_id Episode post ID.
+	 *
+	 * @return void
+	 */
+	public function ensure_episode_guid( $post_id ) {
+		if ( get_post_meta( $post_id, 'ssp_episode_guid', true ) ) {
+			return;
+		}
+
+		$episode = get_post( $post_id );
+		if ( ! $episode ) {
+			return;
+		}
+
+		if ( get_post_meta( $post_id, 'ssp_original_guid', true )
+			|| get_post_meta( $post_id, 'ssp_guid', true )
+			|| get_post_meta( $post_id, 'podmotor_episode_id', true ) ) {
+			$this->maybe_store_episode_guid( $post_id );
+			return;
+		}
+
+		$this->maybe_store_episode_guid( $post_id, ssp_generate_episode_guid( $episode ) );
+	}
+
+	/**
 	 * Get scheduled episodes.
 	 *
 	 * @return \WP_Post[]

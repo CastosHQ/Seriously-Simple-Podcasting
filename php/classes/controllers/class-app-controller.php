@@ -360,7 +360,7 @@ class App_Controller {
 		$this->admin_notices_handler = new Admin_Notifications_Handler( $this->archive_page_handler, $this->renderer );
 
 		$sync_refusal_repository = new Sync_Refusal_Repository();
-		$this->castos_handler    = new Castos_Handler( $this->feed_handler, $this->logger, $this->admin_notices_handler, $sync_refusal_repository );
+		$this->castos_handler    = new Castos_Handler( $this->feed_handler, $this->logger, $this->admin_notices_handler, $sync_refusal_repository, $this->episode_repository );
 
 		$this->onboarding_controller = new Onboarding_Controller( $this->renderer, $this->settings_handler );
 

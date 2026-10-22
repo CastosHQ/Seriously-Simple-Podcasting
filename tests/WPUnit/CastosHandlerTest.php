@@ -42,12 +42,21 @@ class CastosHandlerTest extends \Codeception\TestCase\WPTestCase {
 	 */
 	private $series_reply;
 
+	/**
+	 * The last episode create/update request intercepted by the HTTP test seam.
+	 *
+	 * @var array|null
+	 */
+	private $episode_request;
+
 	protected function setUp(): void {
 		parent::setUp();
 
 		$this->castos_handler = ssp_get_service( 'castos_handler' );
 		$this->castos_handler->clear_podcasts_cache();
 		$this->sync_request    = null;
+		$this->episode_request = null;
+		ssp_app()->get_service( 'cpt_podcast_handler' )->register_post_type();
 		update_option( 'ss_podcasting_podmotor_account_api_token', 'test-token' );
 
 		add_filter( 'pre_http_request', array( $this, 'reply_to_castos_request' ), 10, 3 );
@@ -78,7 +87,174 @@ class CastosHandlerTest extends \Codeception\TestCase\WPTestCase {
 			return $this->series_reply;
 		}
 
+		if ( false !== strpos( $url, 'api/v2/posts/create' ) || false !== strpos( $url, 'api/v2/posts/update' ) ) {
+			$this->episode_request = array(
+				'url'  => $url,
+				'args' => $args,
+				'body' => json_decode( $args['body'], true ),
+			);
+
+			return array(
+				'response' => array( 'code' => 200 ),
+				'body'     => wp_json_encode( array( 'status' => 'success', 'data' => array( 'id' => 99 ) ) ),
+				'headers'  => array(),
+				'cookies'  => array(),
+			);
+		}
+
 		return $preempt;
+	}
+
+	/**
+	 * Creates a pushable episode (title and Castos file id set).
+	 *
+	 * @param array $meta Extra post meta.
+	 *
+	 * @return \WP_Post
+	 */
+	private function create_pushable_episode( $meta = array() ) {
+		$post_id = $this->factory()->post->create(
+			array(
+				'post_type'   => 'podcast',
+				'post_title'  => 'GUID push episode',
+				'post_status' => 'publish',
+			)
+		);
+		update_post_meta( $post_id, 'podmotor_file_id', 123 );
+		foreach ( $meta as $key => $value ) {
+			update_post_meta( $post_id, $key, $value );
+		}
+
+		return get_post( $post_id );
+	}
+
+	public function return_empty_string() {
+		return '';
+	}
+
+	public function return_false() {
+		return false;
+	}
+
+	public function return_array() {
+		return array( 'x' );
+	}
+
+	public function testPushSendsEpisodeGuidOnUpdate() {
+		$post = $this->create_pushable_episode( array( 'podmotor_episode_id' => 55 ) );
+
+		$this->castos_handler->upload_episode_to_castos( $post );
+
+		$this->assertStringContainsString( 'api/v2/posts/update', $this->episode_request['url'] );
+		$this->assertSame( ssp_episode_guid( $post->ID ), $this->episode_request['body']['ssp_episode_guid'] );
+	}
+
+	public function testPushSendsAndStoresImportedOriginalGuid() {
+		$guid = 'https://old.example.com/?p=77';
+		$post = $this->create_pushable_episode( array( 'ssp_original_guid' => $guid ) );
+
+		$this->castos_handler->upload_episode_to_castos( $post );
+
+		$this->assertSame( $guid, $this->episode_request['body']['ssp_episode_guid'] );
+		$this->assertSame( $guid, get_post_meta( $post->ID, 'ssp_episode_guid', true ) );
+	}
+
+	public function testPushDoesNotEscapeAmpersandInGuid() {
+		$guid = 'https://example.com/?p=1&x=2';
+		$post = $this->create_pushable_episode( array( 'ssp_episode_guid' => $guid ) );
+
+		$this->castos_handler->upload_episode_to_castos( $post );
+
+		$this->assertSame( $guid, $this->episode_request['body']['ssp_episode_guid'] );
+	}
+
+	/**
+	 * @dataProvider invalid_guid_filters
+	 */
+	public function testPushOmitsGuidWhenFilteredToNonString( $callback ) {
+		$post = $this->create_pushable_episode();
+		add_filter( 'ssp/episode/guid', array( $this, $callback ) );
+
+		try {
+			$this->castos_handler->upload_episode_to_castos( $post );
+		} finally {
+			remove_filter( 'ssp/episode/guid', array( $this, $callback ) );
+		}
+
+		$this->assertIsArray( $this->episode_request );
+		$this->assertArrayNotHasKey( 'ssp_episode_guid', $this->episode_request['body'] );
+	}
+
+	public function invalid_guid_filters() {
+		return array(
+			'empty string' => array( 'return_empty_string' ),
+			'false'        => array( 'return_false' ),
+			'array'        => array( 'return_array' ),
+		);
+	}
+
+	public function testPushGeneratesAndStoresGuidForNewEpisode() {
+		$post = $this->create_pushable_episode();
+		$this->assertSame( '', (string) get_post_meta( $post->ID, 'ssp_episode_guid', true ) );
+
+		$this->castos_handler->upload_episode_to_castos( $post );
+
+		$this->assertStringContainsString( 'api/v2/posts/create', $this->episode_request['url'] );
+		$expected = ssp_generate_episode_guid( $post );
+		$this->assertNotEmpty( $expected );
+		$this->assertSame( $expected, get_post_meta( $post->ID, 'ssp_episode_guid', true ) );
+		$this->assertSame( $expected, $this->episode_request['body']['ssp_episode_guid'] );
+	}
+
+	public function testPushStoresAndSendsPostGuidForExistingCastosEpisode() {
+		$post     = $this->create_pushable_episode( array( 'podmotor_episode_id' => 55 ) );
+		$expected = $post->guid;
+
+		$this->castos_handler->upload_episode_to_castos( $post );
+
+		$this->assertSame( $expected, get_post_meta( $post->ID, 'ssp_episode_guid', true ) );
+		$this->assertSame( $expected, $this->episode_request['body']['ssp_episode_guid'] );
+	}
+
+	public function testPushKeepsAlreadyStoredGuid() {
+		$guid = 'stored-guid-1';
+		$post = $this->create_pushable_episode(
+			array(
+				'ssp_episode_guid'  => $guid,
+				'ssp_original_guid' => 'https://other.example.com/?p=5',
+			)
+		);
+
+		$this->castos_handler->upload_episode_to_castos( $post );
+
+		$this->assertSame( $guid, get_post_meta( $post->ID, 'ssp_episode_guid', true ) );
+		$this->assertSame( $guid, $this->episode_request['body']['ssp_episode_guid'] );
+	}
+
+	public function testPushSendsFilteredGuid() {
+		$post     = $this->create_pushable_episode();
+		$callback = function () {
+			return 'filtered-guid-123';
+		};
+		add_filter( 'ssp/episode/guid', $callback );
+
+		try {
+			$this->castos_handler->upload_episode_to_castos( $post );
+		} finally {
+			remove_filter( 'ssp/episode/guid', $callback );
+		}
+
+		$this->assertSame( 'filtered-guid-123', $this->episode_request['body']['ssp_episode_guid'] );
+	}
+
+	public function testPushKeepsLegacySspGuid() {
+		$guid = 'legacy-ssp-guid-1';
+		$post = $this->create_pushable_episode( array( 'ssp_guid' => $guid ) );
+
+		$this->castos_handler->upload_episode_to_castos( $post );
+
+		$this->assertSame( $guid, $this->episode_request['body']['ssp_episode_guid'] );
+		$this->assertSame( $guid, get_post_meta( $post->ID, 'ssp_episode_guid', true ) );
 	}
 
 	private function create_series() {

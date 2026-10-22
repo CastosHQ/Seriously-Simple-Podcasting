@@ -656,21 +656,7 @@ class Podcast_Post_Types_Controller {
 	 * @return void
 	 */
 	public function handle_guid( $post_id ) {
-		if ( get_post_meta( $post_id, 'ssp_episode_guid', true ) ) {
-			return;
-		}
-
-		$episode = get_post( $post_id );
-		if ( ! $episode ) {
-			return;
-		}
-
-		if ( get_post_meta( $post_id, 'ssp_original_guid', true ) || get_post_meta( $post_id, 'ssp_guid', true ) ) {
-			$this->episode_repository->maybe_store_episode_guid( $post_id );
-			return;
-		}
-
-		$this->episode_repository->maybe_store_episode_guid( $post_id, ssp_generate_episode_guid( $episode ) );
+		$this->episode_repository->ensure_episode_guid( $post_id );
 	}
 
 	/**

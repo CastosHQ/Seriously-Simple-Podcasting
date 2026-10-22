@@ -61,7 +61,8 @@ class CastosTokenExposureTest extends \Codeception\TestCase\WPTestCase {
 			ssp_get_service( 'feed_handler' ),
 			new Log_Helper(),
 			ssp_get_service( 'admin_notices_handler' ),
-			new Sync_Refusal_Repository()
+			new Sync_Refusal_Repository(),
+			ssp_get_service( 'episode_repository' )
 		);
 	}
 

@@ -20,6 +20,7 @@ use SeriouslySimplePodcasting\Entities\Sync_Status;
 use SeriouslySimplePodcasting\Entities\Episode_File_Data;
 use SeriouslySimplePodcasting\Helpers\Log_Helper;
 use SeriouslySimplePodcasting\Interfaces\Service;
+use SeriouslySimplePodcasting\Repositories\Episode_Repository;
 use SeriouslySimplePodcasting\Repositories\Sync_Refusal_Repository;
 
 // Exit if accessed directly.
@@ -116,6 +117,13 @@ class Castos_Handler implements Service {
 	protected $sync_refusal_repository;
 
 	/**
+	 * Stores episode GUIDs before episodes are pushed.
+	 *
+	 * @var Episode_Repository
+	 */
+	protected $episode_repository;
+
+	/**
 	 * @var Sync_Status[] $cached_podcast_statuses
 	 * */
 	protected $cached_podcast_statuses;
@@ -133,12 +141,14 @@ class Castos_Handler implements Service {
 	 * @param Log_Helper                  $log_helper
 	 * @param Admin_Notifications_Handler $notifications_handler
 	 * @param Sync_Refusal_Repository     $sync_refusal_repository Sync refusal repository.
+	 * @param Episode_Repository          $episode_repository      Episode repository.
 	 */
-	public function __construct( $feed_handler, $log_helper, $notifications_handler, Sync_Refusal_Repository $sync_refusal_repository ) {
+	public function __construct( $feed_handler, $log_helper, $notifications_handler, Sync_Refusal_Repository $sync_refusal_repository, Episode_Repository $episode_repository ) {
 		$this->feed_handler            = $feed_handler;
 		$this->logger                  = $log_helper;
 		$this->notifications_handler   = $notifications_handler;
 		$this->sync_refusal_repository = $sync_refusal_repository;
+		$this->episode_repository      = $episode_repository;
 
 		add_filter( 'http_request_args', array( $this, 'authorization_headers' ), 10, 2 );
 	}
@@ -534,6 +544,12 @@ class Castos_Handler implements Service {
 
 			if ( ! empty( $podmotor_episode_id ) ) {
 				$post_body['id'] = $podmotor_episode_id;
+			}
+
+			$this->episode_repository->ensure_episode_guid( $post->ID );
+			$episode_guid = ssp_episode_guid( $post->ID );
+			if ( is_string( $episode_guid ) && '' !== $episode_guid ) {
+				$post_body['ssp_episode_guid'] = $episode_guid;
 			}
 
 			$this->logger->log( 'API URL', $api_url );

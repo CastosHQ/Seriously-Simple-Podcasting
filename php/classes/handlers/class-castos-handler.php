@@ -151,6 +151,9 @@ class Castos_Handler implements Service {
 		$this->episode_repository      = $episode_repository;
 
 		add_filter( 'http_request_args', array( $this, 'authorization_headers' ), 10, 2 );
+		add_action( 'add_option_' . self::API_TOKEN_OPTION, array( $this, 'refresh_active_token' ), 1, 0 );
+		add_action( 'update_option_' . self::API_TOKEN_OPTION, array( $this, 'refresh_active_token' ), 1, 0 );
+		add_action( 'delete_option_' . self::API_TOKEN_OPTION, array( $this, 'refresh_active_token' ), 1, 0 );
 	}
 
 
@@ -257,7 +260,9 @@ class Castos_Handler implements Service {
 
 	public function remove_api_credentials() {
 		delete_option( self::API_EMAIL_OPTION ); // Not used since 3.5.0
-		delete_option( self::API_TOKEN_OPTION );
+		if ( ! delete_option( self::API_TOKEN_OPTION ) ) {
+			$this->refresh_active_token();
+		}
 	}
 
 	/**
@@ -330,7 +335,33 @@ class Castos_Handler implements Service {
 	}
 
 	public function set_token( $token ) {
-		update_option( self::API_TOKEN_OPTION, $token );
+		if ( ! update_option( self::API_TOKEN_OPTION, $token ) ) {
+			// An unchanged or failed update does not dispatch the option hook.
+			$this->refresh_active_token();
+		}
+	}
+
+	/**
+	 * Refresh credentials before other option hooks can make Castos requests.
+	 *
+	 * @return void
+	 */
+	public function refresh_active_token() {
+		$this->change_active_token( get_option( self::API_TOKEN_OPTION, '' ) );
+	}
+
+	/**
+	 * Switch the active credentials and discard data cached for the previous account.
+	 *
+	 * @param string $token Active API token.
+	 * @return void
+	 */
+	protected function change_active_token( $token ) {
+		$this->api_token               = $token;
+		$this->cached_podcast_statuses = array();
+		$this->cached_responses        = array();
+		$this->clear_podcasts_cache();
+		delete_transient( 'ssp_castos_api_email' );
 	}
 
 
@@ -859,6 +890,13 @@ class Castos_Handler implements Service {
 	 * @return array
 	 */
 	public function get_podcasts( $force_refresh = false ) {
+		if ( empty( $this->api_token() ) ) {
+			$this->setup_default_response();
+			$this->update_response( 'message', 'Castos arguments not set' );
+
+			return $this->response;
+		}
+
 		if ( ! $force_refresh && ( $cache = get_transient( self::TRANSIENT_PODCASTS ) ) ) {
 			return $cache;
 		}
@@ -1370,7 +1408,9 @@ class Castos_Handler implements Service {
 			'http_status'   => $http_status,
 		);
 
-		$this->cached_responses[ $method ][ $api_url ][ $args_hash ] = $response;
+		if ( ! empty( $this->api_token() ) ) {
+			$this->cached_responses[ $method ][ $api_url ][ $args_hash ] = $response;
+		}
 
 		return $response;
 	}
@@ -1439,6 +1479,7 @@ class Castos_Handler implements Service {
 			$this->send_request( 'api/v2/ssp/connect', array(), 'DELETE' );
 		} finally {
 			remove_filter( 'http_request_args', array( $this, 'make_request_fire_and_forget' ), 20 );
+			$this->change_active_token( '' );
 		}
 	}
 

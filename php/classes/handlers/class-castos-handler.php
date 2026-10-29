@@ -81,6 +81,13 @@ class Castos_Handler implements Service {
 	const TRANSIENT_PODCASTS = 'ssp_castos_podcasts';
 
 	/**
+	 * Transient name for storing the Castos account email.
+	 *
+	 * @const string
+	 */
+	const TRANSIENT_API_EMAIL = 'ssp_castos_api_email';
+
+	/**
 	 * @var string
 	 */
 	protected $api_token;
@@ -316,7 +323,7 @@ class Castos_Handler implements Service {
 		try {
 			$this->logger->log( __METHOD__ );
 
-			$cache_key = 'ssp_castos_api_email';
+			$cache_key = self::TRANSIENT_API_EMAIL;
 
 			if ( $email = get_transient( $cache_key ) ) {
 				return $email;
@@ -361,7 +368,7 @@ class Castos_Handler implements Service {
 		$this->cached_podcast_statuses = array();
 		$this->cached_responses        = array();
 		$this->clear_podcasts_cache();
-		delete_transient( 'ssp_castos_api_email' );
+		delete_transient( self::TRANSIENT_API_EMAIL );
 	}
 
 

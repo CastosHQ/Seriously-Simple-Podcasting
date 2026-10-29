@@ -136,11 +136,15 @@ class CastosConnectCredentialsTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( $token, $request['args']['body']['token'] );
 	}
 
-	public function testFreshConnectAuthenticatesEverySynchronousSeriesPush() {
-		$this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy(), 'name' => 'Connect series one' ) );
-		$this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy(), 'name' => 'Connect series two' ) );
+	private function create_series_and_get_ids( $name_prefix ) {
+		$this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy(), 'name' => $name_prefix . ' series one' ) );
+		$this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy(), 'name' => $name_prefix . ' series two' ) );
 		wp_cache_delete( 'ssp_podcasts_' . ssp_series_taxonomy() . '_' . md5( serialize( array( 'hide_empty' => false ) ) ), 'ssp' );
-		$series_ids = wp_list_pluck( ssp_get_podcasts(), 'term_id' );
+		return wp_list_pluck( ssp_get_podcasts(), 'term_id' );
+	}
+
+	public function testFreshConnectAuthenticatesEverySynchronousSeriesPush() {
+		$series_ids = $this->create_series_and_get_ids( 'Connect' );
 		$this->assertGreaterThanOrEqual( 2, count( $series_ids ) );
 		$this->handler->authorization_headers( array( 'headers' => array() ), SSP_CASTOS_APP_URL );
 
@@ -176,10 +180,7 @@ class CastosConnectCredentialsTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	public function testDirectFirstTokenAddAuthenticatesSynchronousSeriesPushes() {
-		$this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy(), 'name' => 'Direct add series one' ) );
-		$this->factory()->term->create( array( 'taxonomy' => ssp_series_taxonomy(), 'name' => 'Direct add series two' ) );
-		wp_cache_delete( 'ssp_podcasts_' . ssp_series_taxonomy() . '_' . md5( serialize( array( 'hide_empty' => false ) ) ), 'ssp' );
-		$series_ids = wp_list_pluck( ssp_get_podcasts(), 'term_id' );
+		$series_ids = $this->create_series_and_get_ids( 'Direct add' );
 		$this->assertGreaterThanOrEqual( 2, count( $series_ids ) );
 		$this->assertFalse( get_option( self::TOKEN_OPTION ) );
 		$headers = $this->handler->authorization_headers( array( 'headers' => array() ), SSP_CASTOS_APP_URL );

@@ -28,6 +28,7 @@ class Options_Handler implements Service {
 		'acast'            => 'Acast',
 		'amazon'           => 'Amazon',
 		'anchor'           => 'Anchor',
+		'antennapod'       => 'AntennaPod',
 		'audible'          => 'Audible',
 		'apple_podcasts'   => 'Apple Podcasts',
 		'blubrry'          => 'Blubrry',

@@ -34,7 +34,7 @@ class FeedStylesheetTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/** @dataProvider feed_types */
-	public function testStylesheetIsAbsentByDefault( $type ) {
+	public function testStylesheetIsAbsent( $type ) {
 		$feed = $this->render_feed( $type );
 
 		$this->assertStringNotContainsString( '<?xml-stylesheet', $feed );

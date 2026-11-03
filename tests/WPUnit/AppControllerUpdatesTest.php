@@ -183,6 +183,57 @@ class AppControllerUpdatesTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertContains( 'administrator', $author->roles );
 	}
 
+	public function testFreshInstallUsesCustomRoleManagerAsArchivePageAuthor(): void {
+		delete_option( 'ssp_version' );
+		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
+		foreach ( get_users() as $user ) {
+			if ( in_array( 'administrator', $user->roles, true ) || user_can( $user, 'manage_options' ) ) {
+				$user->set_role( 'subscriber' );
+				$user->remove_cap( 'manage_options' );
+			}
+		}
+		add_role( 'ssp_test_manager', 'SSP Test Manager', array( 'read' => true, 'manage_options' => true ) );
+		try {
+			$manager_id = $this->factory()->user->create( array( 'role' => 'ssp_test_manager' ) );
+			wp_set_current_user( 0 );
+
+			ssp_app()->maybe_run_plugin_updates();
+
+			$page_id = (int) get_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
+			$this->assertGreaterThan( 0, $page_id );
+			$page = get_post( $page_id );
+			$this->assertInstanceOf( \WP_Post::class, $page );
+			$this->assertSame( $manager_id, (int) $page->post_author );
+		} finally {
+			remove_role( 'ssp_test_manager' );
+		}
+	}
+
+	public function testFreshInstallSkipsAdministratorDeniedManageOptionsAsArchivePageAuthor(): void {
+		delete_option( 'ssp_version' );
+		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
+		foreach ( get_users() as $user ) {
+			if ( in_array( 'administrator', $user->roles, true ) || user_can( $user, 'manage_options' ) ) {
+				$user->set_role( 'subscriber' );
+				$user->remove_cap( 'manage_options' );
+			}
+		}
+		$denied_id = $this->factory()->user->create( array( 'role' => 'administrator', 'user_login' => 'ssp_admin_a' ) );
+		$allowed_id = $this->factory()->user->create( array( 'role' => 'administrator', 'user_login' => 'ssp_admin_b' ) );
+		$denied = get_userdata( $denied_id );
+		$denied->add_cap( 'manage_options', false );
+		wp_set_current_user( 0 );
+
+		ssp_app()->maybe_run_plugin_updates();
+
+		$page_id = (int) get_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );
+		$this->assertGreaterThan( 0, $page_id );
+		$page = get_post( $page_id );
+		$this->assertInstanceOf( \WP_Post::class, $page );
+		$this->assertNotSame( $denied_id, (int) $page->post_author );
+		$this->assertSame( $allowed_id, (int) $page->post_author );
+	}
+
 	public function testFreshInstallWithoutLoggedInUserUsesAdministratorInsteadOfUserOne(): void {
 		delete_option( 'ssp_version' );
 		delete_option( Archive_Page_Handler::OPTION_PODCAST_PAGE_ID );

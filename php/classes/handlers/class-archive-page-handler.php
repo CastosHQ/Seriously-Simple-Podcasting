@@ -144,12 +144,13 @@ class Archive_Page_Handler implements Service {
 
 		$users = get_users(
 			array(
-				'role'        => 'administrator',
+				'capability'  => 'manage_options',
 				'fields'      => 'ID',
 				'number'      => 10,
 				'count_total' => false,
 			)
 		);
+		// The query ignores per-user denials, and WordPress before 5.9 ignores the capability argument.
 		foreach ( $users as $user_id ) {
 			if ( user_can( $user_id, 'manage_options' ) ) {
 				return (int) $user_id;

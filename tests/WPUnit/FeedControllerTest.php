@@ -106,6 +106,7 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
             $this->assertStringContainsString($test_part, $feed);
         }
         $this->assertStringNotContainsString('<?xml-stylesheet', $feed);
+        $this->assertStringNotContainsString('<ssp:image', $feed);
     }
 
     /**

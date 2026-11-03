@@ -67,10 +67,6 @@ if ( ! isset( $turbo_post_count ) || $turbo_post_count <= 10 ) : ?>
 
 if ( $episode_image ) : ?>
 	<itunes:image href="<?php echo esc_url( $episode_image ); ?>"></itunes:image>
-	<ssp:image>
-		<ssp:url><?php echo esc_url( $episode_image ); ?></ssp:url>
-		<ssp:title><?php echo esc_xml( $title ); ?></ssp:title>
-	</ssp:image>
 <?php endif;
 
 ?>

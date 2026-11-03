@@ -514,6 +514,10 @@
 	mask-image: url('images/player/images/brands/anchor.svg');
 	-webkit-mask-image: url('images/player/images/brands/anchor.svg');
 }
+.castos-player .subscribe-icons .antennapod span {
+	mask-image: url('images/player/images/brands/antennapod.svg');
+	-webkit-mask-image: url('images/player/images/brands/antennapod.svg');
+}
 .castos-player .subscribe-icons .blubrry span {
 	mask-image: url('images/player/images/brands/blubrry.svg');
 	-webkit-mask-image: url('images/player/images/brands/blubrry.svg');

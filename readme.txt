@@ -167,6 +167,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 3.18.0 =
 2026-11-02
+[NEW] Added AntennaPod as a distribution option.
 [UPDATE] Removed the RSS feed stylesheet and its ssp_enable_rss_stylesheet and ssp_rss_stylesheet filters because browsers are dropping XSLT support.
 [UPDATE] New sites start with Apple Podcasts and Spotify as distribution options.
 [FIX] Network-activated subsites now receive a podcast archive page on fresh installs.

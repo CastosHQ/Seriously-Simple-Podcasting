@@ -18,6 +18,8 @@ use SeriouslySimplePodcasting\Repositories\Episode_Repository;
  */
 class Upgrade_Handler implements Service {
 
+	const XSLT_NOTICE_KEY = 'rss_stylesheet_deprecation';
+
 	/**
 	 * Episode repository instance.
 	 *
@@ -40,16 +42,25 @@ class Upgrade_Handler implements Service {
 	protected $series_handler;
 
 	/**
+	 * Admin notifications handler.
+	 *
+	 * @var Admin_Notifications_Handler
+	 */
+	protected $notifications_handler;
+
+	/**
 	 * Upgrade_Handler constructor.
 	 *
-	 * @param Episode_Repository $episode_repository Episode repository instance.
-	 * @param Castos_Handler     $castos_handler     Castos handler instance.
-	 * @param Series_Handler     $series_handler     Series handler instance.
+	 * @param Episode_Repository          $episode_repository    Episode repository instance.
+	 * @param Castos_Handler              $castos_handler        Castos handler instance.
+	 * @param Series_Handler              $series_handler        Series handler instance.
+	 * @param Admin_Notifications_Handler $notifications_handler Admin notifications handler instance.
 	 */
-	public function __construct( $episode_repository, $castos_handler, $series_handler ) {
-		$this->episode_repository = $episode_repository;
-		$this->castos_handler     = $castos_handler;
-		$this->series_handler     = $series_handler;
+	public function __construct( $episode_repository, $castos_handler, $series_handler, $notifications_handler ) {
+		$this->episode_repository    = $episode_repository;
+		$this->castos_handler        = $castos_handler;
+		$this->series_handler        = $series_handler;
+		$this->notifications_handler = $notifications_handler;
 	}
 
 	/**
@@ -111,6 +122,27 @@ class Upgrade_Handler implements Service {
 			// ssp_db_version is defunct after DB_Migration_Controller was removed in 3.16.2.
 			delete_option( 'ssp_db_version' );
 		}
+
+		if ( version_compare( $previous_version, '3.18.0', '<' ) ) {
+			$this->enable_xslt_notice();
+		}
+	}
+
+	/**
+	 * Enables the RSS stylesheet upgrade notice.
+	 *
+	 * @since 3.18.0
+	 * @return void
+	 */
+	public function enable_xslt_notice() {
+		$notice = sprintf(
+			/* translators: %s: Seriously Simple Podcasting notice heading. */
+			esc_html__( "%s Browsers are ending support for styled RSS feeds, so we've removed the stylesheet from your feed. Opening your feed in a browser will now show raw XML. This is normal, and Apple Podcasts, Spotify, and other directories aren't affected. No action needed.", 'seriously-simple-podcasting' ),
+			'<strong>' . esc_html__( 'Seriously Simple Podcasting:', 'seriously-simple-podcasting' ) . '</strong>'
+		);
+		$notice .= ' <a href="' . esc_url( 'https://wordpress.org/support/topic/rss-feed-stylesheet-being-deprecated/' ) . '">' . esc_html__( 'Learn more', 'seriously-simple-podcasting' ) . '</a>';
+
+		$this->notifications_handler->add_constant_notice( $notice, Admin_Notifications_Handler::WARNING, self::XSLT_NOTICE_KEY );
 	}
 
 	/**

@@ -278,7 +278,8 @@ class Feed_Controller {
 
 		$pub_date_type = $this->feed_handler->get_pub_date_type( $series_id );
 
-		$stylesheet_url = $this->feed_handler->get_stylesheet_url();
+		// Keep older theme feed templates from encountering an undefined variable.
+		$stylesheet_url = '';
 
 		$qry = $this->feed_handler->get_feed_query( $series_slug, $exclude_series, $pub_date_type );
 

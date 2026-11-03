@@ -167,8 +167,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 = 3.18.0 =
 2026-11-02
-[UPDATE] Disabled the RSS feed stylesheet by default because browsers are dropping XSLT support. Restore it with add_filter( 'ssp_enable_rss_stylesheet', '__return_true' ).
-[UPDATE] Custom stylesheet URLs set with the ssp_rss_stylesheet filter also require ssp_enable_rss_stylesheet to return true.
+[UPDATE] Removed the RSS feed stylesheet because browsers are dropping XSLT support.
 [UPDATE] New sites start with Apple Podcasts and Spotify as distribution options.
 [FIX] Network-activated subsites now receive a podcast archive page on fresh installs.
 

@@ -105,10 +105,15 @@ class Archive_Page_Handler implements Service {
 	 * @return int Page ID, or 0 on failure.
 	 */
 	public function create_page( $page_id_option, $slug, $page_title, $page_content ) {
+		$author_id = $this->find_page_author();
+		if ( ! $author_id ) {
+			return 0;
+		}
+
 		$page_id = wp_insert_post( array(
 			'post_status'    => 'publish',
 			'post_type'      => 'page',
-			'post_author'    => get_current_user_id() ?: 1,
+			'post_author'    => $author_id,
 			'post_name'      => $slug,
 			'post_title'     => $page_title,
 			'post_content'   => $page_content,
@@ -122,6 +127,45 @@ class Archive_Page_Handler implements Service {
 		update_option( $page_id_option, (int) $page_id );
 
 		return (int) $page_id;
+	}
+
+	/**
+	 * Finds a site manager to author a newly created page.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return int User ID, or 0 if no eligible user was found.
+	 */
+	protected function find_page_author() {
+		$current_user_id = get_current_user_id();
+		if ( $current_user_id && user_can( $current_user_id, 'manage_options' ) ) {
+			return $current_user_id;
+		}
+
+		$users = get_users(
+			array(
+				'role'        => 'administrator',
+				'fields'      => 'ID',
+				'number'      => 10,
+				'count_total' => false,
+			)
+		);
+		foreach ( $users as $user_id ) {
+			if ( user_can( $user_id, 'manage_options' ) ) {
+				return (int) $user_id;
+			}
+		}
+
+		if ( is_multisite() ) {
+			foreach ( array_slice( get_super_admins(), 0, 10 ) as $login ) {
+				$user = get_user_by( 'login', $login );
+				if ( $user && user_can( $user, 'manage_options' ) ) {
+					return (int) $user->ID;
+				}
+			}
+		}
+
+		return 0;
 	}
 
 	/**

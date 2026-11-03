@@ -6,13 +6,20 @@ use SeriouslySimplePodcasting\Controllers\Feed_Controller;
 
 class FeedControllerTest extends \Codeception\TestCase\WPTestCase
 {
+    private $server_backup;
+
     protected function setUp(): void
     {
         parent::setUp();
+        $this->server_backup = $_SERVER;
+        $_SERVER['REQUEST_URI'] = '/';
+        ssp_app()->get_service('cpt_podcast_handler')->register_post_type();
+        ssp_app()->series_controller->register_taxonomy();
     }
 
     protected function tearDown(): void
     {
+        $_SERVER = $this->server_backup;
         parent::tearDown();
     }
 
@@ -41,7 +48,6 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
 
         $test_parts = [
             '<?xml version="1.0" encoding="UTF-8"?>',
-            sprintf('<?xml-stylesheet type="text/xsl" href="%s/wp-content/plugins/seriously-simple-podcasting/templates/feed-stylesheet.xsl?v=2"?>', $site_url),
             '<rss version="2.0"',
             'xmlns:content="http://purl.org/rss/1.0/modules/content/"',
             'xmlns:wfw="http://wellformedweb.org/CommentAPI/"',
@@ -99,6 +105,7 @@ class FeedControllerTest extends \Codeception\TestCase\WPTestCase
         foreach ($test_parts as $test_part) {
             $this->assertStringContainsString($test_part, $feed);
         }
+        $this->assertStringNotContainsString('<?xml-stylesheet', $feed);
     }
 
     /**

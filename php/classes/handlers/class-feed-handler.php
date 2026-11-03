@@ -530,12 +530,13 @@ class Feed_Handler implements Service {
 	}
 
 	/**
-	 * Gets stylesheet url
+	 * Gets the stylesheet URL when enabled via the ssp_enable_rss_stylesheet filter.
 	 *
-	 * @return string
+	 * @return string Stylesheet URL, or an empty string when disabled.
 	 */
 	public function get_stylesheet_url() {
-		if ( ! apply_filters( 'ssp_enable_rss_stylesheet', true ) ) {
+		$enabled = apply_filters( 'ssp_enable_rss_stylesheet', false );
+		if ( ! $enabled ) {
 			return '';
 		}
 

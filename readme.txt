@@ -156,7 +156,7 @@ You can find complete user and developer documentation (along with the FAQs) on 
 7. Customize the embedded media player settings to match your brand colors and pick the preferred location.
 8. Example of the HTML5 player within a podcast post from Rolf Pott's podcast, Deviate.
 9. Example of HTML5 player with a collection page featuring every episode from Rolf Pott's podcast, Deviate.
-10. Example of a styled RSS feed when viewed in a browser.
+10. Configure the Recent Episodes widget.
 11. Automatically sync Castos accounts with Seriously Simple Podcasting in a few clicks.
 12. Import RSS feeds from any podcast hosting provider using Seriously Simple Podcasting.
 13. Customize on which post type to enable podcasting features.
@@ -164,6 +164,13 @@ You can find complete user and developer documentation (along with the FAQs) on 
 15. View podcast episodes in the At A Glance widget on the main WordPress dashboard.
 
 == Changelog ==
+
+= 3.18.0 =
+2026-11-02
+[UPDATE] Disabled the RSS feed stylesheet by default because browsers are dropping XSLT support. Restore it with add_filter( 'ssp_enable_rss_stylesheet', '__return_true' ).
+[UPDATE] Custom stylesheet URLs set with the ssp_rss_stylesheet filter also require ssp_enable_rss_stylesheet to return true.
+[UPDATE] New sites start with Apple Podcasts and Spotify as distribution options.
+[FIX] Network-activated subsites now receive a podcast archive page on fresh installs.
 
 = 3.18.0-alpha.4 =
 2026-10-13

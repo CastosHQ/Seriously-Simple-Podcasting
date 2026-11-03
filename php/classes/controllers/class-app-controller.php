@@ -372,7 +372,7 @@ class App_Controller {
 
 		$this->series_handler = new Series_Handler( $this->admin_notices_handler, $this->roles_handler, $this->castos_handler, $this->settings_handler, $this->episode_repository );
 
-		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler, $this->series_handler );
+		$this->upgrade_handler = new Upgrade_Handler( $this->episode_repository, $this->castos_handler, $this->series_handler, $this->admin_notices_handler );
 
 		$this->feed_controller = new Feed_Controller( $this->feed_handler, $this->renderer, $this->episode_repository );
 
@@ -802,17 +802,21 @@ class App_Controller {
 	 */
 	public function maybe_run_plugin_updates() {
 
-		$previous_version = get_option( 'ssp_version', '1.0' );
+		$previous_version = get_option( 'ssp_version' );
 
 		if ( $previous_version != SSP_VERSION ) {
 			// always just check if the directory is ok
 			ssp_get_upload_directory( false );
 
-			update_option( 'ssp_version', SSP_VERSION );
-			$this->upgrade_handler->run_upgrades( $previous_version );
-
-			// Flush permalinks
-			$this->activate();
+			if ( false === $previous_version ) {
+				add_option( 'ss_podcasting_subscribe_options', array( 'apple_podcasts', 'spotify' ) );
+				$this->activate();
+				update_option( 'ssp_version', SSP_VERSION );
+			} else {
+				update_option( 'ssp_version', SSP_VERSION );
+				$this->upgrade_handler->run_upgrades( $previous_version );
+				$this->activate();
+			}
 		}
 	}
 

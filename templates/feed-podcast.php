@@ -63,6 +63,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 // Use `echo` for first line to prevent any extra characters at start of document
 echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?>' . "\n";
 
+// Keep xmlns:ssp for custom item templates that still output ssp:image.
 ?>
 <rss version="2.0"
 	 xmlns:content="http://purl.org/rss/1.0/modules/content/"

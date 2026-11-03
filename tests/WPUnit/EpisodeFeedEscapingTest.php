@@ -166,7 +166,11 @@ class EpisodeFeedEscapingTest extends \Codeception\TestCase\WPTestCase {
 		$xpath = $this->assert_single_episode_feed( $feed, $episode_id );
 
 		$this->assertSame( 'Jane’s Rock & Roll', $xpath->evaluate( 'string(/rss/channel/item/title)' ) );
-		$this->assertSame( 'Jane’s Rock & Roll', $xpath->evaluate( 'string(/rss/channel/item/ssp:image/ssp:title)' ) );
+		$this->assertCount( 0, $xpath->query( '/rss/channel/item/ssp:image' ) );
+		$this->assertCount( 1, $xpath->query( '/rss/channel/item/itunes:image' ) );
+		$this->assertSame( 'https://example.com/cover.jpg', $xpath->evaluate( 'string(/rss/channel/item/itunes:image/@href)' ) );
+		$this->assertCount( 1, $xpath->query( '/rss/channel/item/googleplay:image' ) );
+		$this->assertSame( 'https://example.com/cover.jpg', $xpath->evaluate( 'string(/rss/channel/item/googleplay:image/@href)' ) );
 		$this->assertStringContainsString( '<title>Jane&#8217;s Rock &#038; Roll</title>', $feed );
 
 		$expected = array(
@@ -183,6 +187,26 @@ class EpisodeFeedEscapingTest extends \Codeception\TestCase\WPTestCase {
 		foreach ( $expected as $tag => $value ) {
 			$this->assertSame( $value, $xpath->evaluate( 'string(/rss/channel/item/' . $tag . ')' ), $tag );
 		}
+	}
+
+	public function testLegacyCustomItemWithSspImageProducesValidFeed() {
+		$this->create_episode();
+		$template = static function () {
+			return dirname( __DIR__ ) . '/Support/fixtures/legacy-theme/feed-item.php';
+		};
+		add_filter( 'ssp_feed_item_path', $template );
+		try {
+			$feed = $this->render_feed();
+		} finally {
+			remove_filter( 'ssp_feed_item_path', $template );
+		}
+
+		$document = $this->parse_xml( $feed );
+		$this->assertSame( 'https://castos.com/seriously-simple-podcasting/namespace/1.0', $document->documentElement->lookupNamespaceURI( 'ssp' ) );
+		$xpath = new \DOMXPath( $document );
+		$xpath->registerNamespace( 'ssp', 'https://castos.com/seriously-simple-podcasting/namespace/1.0' );
+		$this->assertCount( 1, $xpath->query( '/rss/channel/item[title="Legacy custom item"]/ssp:image' ) );
+		$this->assertSame( 'Legacy artwork', $xpath->evaluate( 'string(/rss/channel/item/ssp:image/ssp:title)' ) );
 	}
 
 	/**

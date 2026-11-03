@@ -9,7 +9,6 @@
  * Moved the data preparation to the feed controller
  * @see \SeriouslySimplePodcasting\Controllers\Feed_Controller::get_podcast_feed()
  *
- * @var $stylesheet_url
  * @var $title
  * @var $podcast_series
  * @var $description
@@ -63,11 +62,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 // Use `echo` for first line to prevent any extra characters at start of document
 echo '<?xml version="1.0" encoding="' . get_option( 'blog_charset' ) . '"?>' . "\n";
-
-// Include RSS stylesheet
-if ( $stylesheet_url ) {
-	echo '<?xml-stylesheet type="text/xsl" href="' . esc_url( $stylesheet_url ) . '"?>';
-}
 
 ?>
 <rss version="2.0"

@@ -226,10 +226,9 @@ class Feed_Handler implements Service {
 	public function render_feed_no_access( $series_id, $description ) {
 		header( 'HTTP/1.0 401 Unauthorized' );
 
-		$stylesheet_url = $this->get_stylesheet_url();
-		$title          = esc_html( $this->get_podcast_title( $series_id ) );
-		$args           = apply_filters( 'ssp_feed_no_access_args', compact( 'stylesheet_url', 'title', 'description' ), $series_id );
-		$path           = apply_filters( 'ssp_feed_no_access_path', 'feed/feed-no-access', $series_id );
+		$title = esc_html( $this->get_podcast_title( $series_id ) );
+		$args  = apply_filters( 'ssp_feed_no_access_args', compact( 'title', 'description' ), $series_id );
+		$path  = apply_filters( 'ssp_feed_no_access_path', 'feed/feed-no-access', $series_id );
 
 		$this->renderer->render( $path, $args );
 		exit;
@@ -243,11 +242,10 @@ class Feed_Handler implements Service {
 	public function render_feed_404() {
 		header( 'HTTP/1.0 404 Not Found' );
 
-		$stylesheet_url = $this->get_stylesheet_url();
-		$title          = apply_filters( 'ssp_feed_404_title', __( 'Podcast feed does not exist', 'seriously-simple-podcasting' ) );
-		$description    = apply_filters( 'ssp_feed_404_description', __( 'Please check the podcast feed URL', 'seriously-simple-podcasting' ) );
-		$args           = apply_filters( 'ssp_feed_404_args', compact( 'stylesheet_url', 'title', 'description' ) );
-		$path           = apply_filters( 'ssp_feed_404_path', 'feed/feed-no-access' );
+		$title       = apply_filters( 'ssp_feed_404_title', __( 'Podcast feed does not exist', 'seriously-simple-podcasting' ) );
+		$description = apply_filters( 'ssp_feed_404_description', __( 'Please check the podcast feed URL', 'seriously-simple-podcasting' ) );
+		$args        = apply_filters( 'ssp_feed_404_args', compact( 'title', 'description' ) );
+		$path        = apply_filters( 'ssp_feed_404_path', 'feed/feed-no-access' );
 
 		$this->renderer->render( $path, $args );
 		exit;
@@ -527,20 +525,6 @@ class Feed_Handler implements Service {
 		$description_mode = ssp_get_option( 'episode_description', 'excerpt', $series_id );
 
 		return 'excerpt' === $description_mode;
-	}
-
-	/**
-	 * Gets the stylesheet URL when enabled via the ssp_enable_rss_stylesheet filter.
-	 *
-	 * @return string Stylesheet URL, or an empty string when disabled.
-	 */
-	public function get_stylesheet_url() {
-		$enabled = apply_filters( 'ssp_enable_rss_stylesheet', false );
-		if ( ! $enabled ) {
-			return '';
-		}
-
-		return apply_filters( 'ssp_rss_stylesheet', $this->template_url . 'feed-stylesheet.xsl?v=2' );
 	}
 
 	/**

@@ -4,7 +4,7 @@ Tags: podcast, audio, itunes, podcasting, playlist
 Requires at least: 5.3
 Tested up to: 7.1
 Requires PHP: 7.4
-Stable tag: 3.18.0-alpha.4
+Stable tag: 3.18.0-alpha.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -165,12 +165,14 @@ You can find complete user and developer documentation (along with the FAQs) on 
 
 == Changelog ==
 
-= 3.18.0 =
-2026-11-02
+= 3.18.0-alpha.5 =
+2026-11-04
 [NEW] Added AntennaPod as a distribution option.
 [UPDATE] Removed the RSS feed stylesheet and its ssp_enable_rss_stylesheet and ssp_rss_stylesheet filters because browsers are dropping XSLT support.
 [UPDATE] New sites start with Apple Podcasts and Spotify as distribution options.
+[UPDATE] Episodes now send their GUID to Castos every time they sync, so Castos can publish the same GUID as your feed.
 [FIX] Network-activated subsites now receive a podcast archive page on fresh installs.
+[FIX] Connecting to Castos now takes effect immediately: podcasts sync on fresh installs and the Hosting tab shows current sync statuses.
 
 = 3.18.0-alpha.4 =
 2026-10-13

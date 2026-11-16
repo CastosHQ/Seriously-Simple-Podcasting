@@ -258,8 +258,16 @@ class Podcast_Playlist implements Shortcode {
 				}
 			}
 
-			// Allow dynamic filtering of track data
-			$track = apply_filters( 'ssp_podcast_playlist_track_data', $track, $episode );
+			// Filter changes are discarded when the episode is inaccessible.
+			$original_track = $track;
+			$track          = apply_filters( 'ssp_podcast_playlist_track_data', $track, $episode );
+
+			if ( ! ssp_can_access_episode( $episode ) ) {
+				$track                = $original_track;
+				$track['src']         = '';
+				$track['title']       = $episode->post_title;
+				$track['description'] = '';
+			}
 
 			$tracks[] = $track;
 		}

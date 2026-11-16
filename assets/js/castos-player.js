@@ -195,6 +195,9 @@ docReady(function() {
 				currentActiveItem.removeAttribute('aria-selected');
 
 				let	nextItem = currentActiveItem.nextElementSibling;
+				while (nextItem && !nextItem.querySelector('audio source[src]:not([src=""])')) {
+					nextItem = nextItem.nextElementSibling;
+				}
 				if (nextItem) {
 					let event = document.createEvent('HTMLEvents');
 					event.initEvent('click', true, false);

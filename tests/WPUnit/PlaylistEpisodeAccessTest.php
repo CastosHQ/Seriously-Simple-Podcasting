@@ -72,12 +72,21 @@ class PlaylistEpisodeAccessTest extends \Codeception\TestCase\WPTestCase {
 			$this->assertStringContainsString( self::TITLE, $output );
 			if ( 'compact' === $style ) {
 				$this->assertStringContainsString( '"title":' . wp_json_encode( self::TITLE ), $output );
+				$this->assertSame( 1, preg_match( '~<noscript>(.*?)</noscript>~s', $output, $noscript ) );
+				preg_match_all( '~<li>(.*?)</li>~s', $noscript[1], $items );
+				$this->assertCount( 2, $items[1] );
+				$this->assertContains( esc_html( self::TITLE ), $items[1] );
+				$this->assertContains( self::PUBLIC_AUDIO, $items[1] );
+				$this->assertNotContains( '', array_map( 'trim', $items[1] ) );
 			}
 			$this->assertStringContainsString( self::PUBLIC_AUDIO, $output );
 			$this->assertStringNotContainsString( self::PROTECTED_AUDIO, $output );
 			$this->assertStringNotContainsString( substr( wp_json_encode( self::PROTECTED_AUDIO ), 1, -1 ), $output );
 			$this->assertStringNotContainsString( self::EXCERPT, $output );
 			$this->assertStringNotContainsString( self::BODY, $output );
+		}
+		if ( 'standard' === $style ) {
+			$this->assertDoesNotMatchRegularExpression( '~<a\b[^>]*\bclass="share-icon download"~s', $outputs[1] );
 		}
 	}
 

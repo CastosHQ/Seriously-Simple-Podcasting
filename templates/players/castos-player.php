@@ -153,10 +153,11 @@
 							   target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="<?php esc_attr_e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Share on Twitter', 'seriously-simple-podcasting' ) ?>">
 								<span></span>
 							</a>
-							<a href="<?php echo esc_url( $audio_file ) ?>"
-							   target="_blank" rel="noopener noreferrer" class="share-icon download" title="<?php esc_attr_e( 'Download', 'seriously-simple-podcasting' ) ?>" aria-label="<?php esc_attr_e( 'Download', 'seriously-simple-podcasting' ) ?>" download>
-								<span></span>
-							</a>
+							<?php if ( ! empty( $audio_file ) ) : ?>
+								<a href="<?php echo esc_url( $audio_file ); ?>" target="_blank" rel="noopener noreferrer" class="share-icon download" title="<?php esc_attr_e( 'Download', 'seriously-simple-podcasting' ); ?>" aria-label="<?php esc_attr_e( 'Download', 'seriously-simple-podcasting' ); ?>" download>
+									<span></span>
+								</a>
+							<?php endif; ?>
 						</div>
 					</div>
 					<div class="player-panel-row">

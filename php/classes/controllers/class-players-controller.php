@@ -175,11 +175,7 @@ class Players_Controller {
 			// Filter to allowed keys and escape output
 			$filtered_data = array_intersect_key( $player_data, array_flip( $allowed_keys ) );
 
-			// Inaccessible episodes stay listed, without their media and body text.
-			if ( ! ssp_can_access_episode( $episode ) ) {
-				$filtered_data['audio_file'] = '';
-				$filtered_data['excerpt']    = '';
-			}
+			$filtered_data = $this->strip_inaccessible_playlist_item( $filtered_data, $episode );
 
 			// Escape all string values
 			foreach ( $filtered_data as $key => $value ) {
@@ -199,6 +195,24 @@ class Players_Controller {
 		return $items;
 	}
 
+
+	/**
+	 * Removes media and excerpt data when an episode is inaccessible.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param array    $data    Player data.
+	 * @param \WP_Post $episode Episode to check.
+	 * @return array
+	 */
+	protected function strip_inaccessible_playlist_item( $data, $episode ) {
+		if ( ! ssp_can_access_episode( $episode ) ) {
+			$data['audio_file'] = '';
+			$data['excerpt']    = '';
+		}
+
+		return $data;
+	}
 
 	/**
 	 * Renders the HTML5 player, based on the attributes sent to the method
@@ -364,6 +378,7 @@ class Players_Controller {
 		$this->enqueue_player_assets();
 
 		$template_data = $this->episode_repository->get_player_data( $episodes[0]->ID, get_post() );
+		$template_data = $this->strip_inaccessible_playlist_item( $template_data, $episodes[0] );
 
 		global $wp;
 		$template_data['current_url'] = home_url( $wp->request );
@@ -375,7 +390,8 @@ class Players_Controller {
 		}
 
 		foreach ( $episodes as $episode ) {
-			$template_data['playlist'][] = $this->episode_repository->get_player_data( $episode->ID );
+			$item                        = $this->episode_repository->get_player_data( $episode->ID );
+			$template_data['playlist'][] = $this->strip_inaccessible_playlist_item( $item, $episode );
 		}
 
 		return $this->renderer->fetch( 'players/castos-player', $template_data );

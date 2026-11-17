@@ -55,6 +55,7 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
         $site_url = site_url();
 
         $this->assertStringContainsString('Warning: the player will not be shown', $html_player_content);
+        $this->assertStringNotContainsString('class="share-icon download"', $html_player_content);
 
         $player_parts = [
             'class="castos-player dark-mode',
@@ -121,7 +122,6 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
                 $episode->post_title
             ),
             'target="_blank" rel="noopener noreferrer" class="share-icon twitter" title="Share on Twitter" aria-label="Share on Twitter">',
-            'target="_blank" rel="noopener noreferrer" class="share-icon download" title="Download" aria-label="Download" download>',
             '<div class="title">',
             'Link',
             sprintf('<input value="%s" class="input-link input-link-%d" title="Episode URL" readonly />', $permalink, $episode_id),

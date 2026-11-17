@@ -354,6 +354,16 @@ class EpisodeAccessTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( 'Protected episode', $items[1]['title'] );
 	}
 
+	public function test_playlist_items_keep_media_and_excerpt_after_password_entry() {
+		$this->enter_password( self::PASSWORD );
+
+		$items = $this->playlist_items( array( get_post( $this->protected_id ), get_post( $this->public_id ) ) );
+
+		$this->assertCount( 2, $items );
+		$this->assertSame( self::AUDIO, $items[0]['audio_file'] );
+		$this->assertStringContainsString( 'Episode excerpt', $items[0]['excerpt'] );
+	}
+
 	/* Feeds */
 
 	public function test_ssp_feed_excludes_password_protected_episode() {

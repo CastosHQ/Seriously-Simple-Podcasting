@@ -321,6 +321,98 @@ class SeriesControllerTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( $existing_guid, get_option( 'ss_podcasting_data_guid_' . $series_id ) );
 	}
 
+	/**
+	 * Parses the image column markup and returns its img element.
+	 *
+	 * @param string $html Column HTML.
+	 *
+	 * @return \DOMElement
+	 */
+	private function get_column_image( $html ) {
+		$dom = new \DOMDocument();
+		libxml_use_internal_errors( true );
+		$dom->loadHTML( '<?xml encoding="UTF-8">' . $html );
+		libxml_clear_errors();
+
+		$images = $dom->getElementsByTagName( 'img' );
+		$this->assertSame( 1, $images->length, 'The column holds exactly one image' );
+
+		return $images->item( 0 );
+	}
+
+	/**
+	 * The series image column prints the series name escaped in the id attribute.
+	 */
+	public function testSeriesImageColumnEscapesName() {
+		global $wpdb;
+
+		$name      = 'x" data-x="1" title="<b>y</b>';
+		$series_id = $this->create_series( 'Placeholder Name' );
+		// Store the name as is, so the column sees the quotes and markup.
+		$wpdb->update( $wpdb->terms, array( 'name' => $name ), array( 'term_id' => $series_id ) ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
+		clean_term_cache( $series_id, ssp_series_taxonomy() );
+
+		$html = ssp_app()->series_controller->add_series_columns( '', 'series_image', $series_id );
+
+		$this->assertStringNotContainsString( '" data-x=', $html );
+		$this->assertStringNotContainsString( '<b>', $html );
+
+		$image = $this->get_column_image( $html );
+		$this->assertSame( $name . '_image_preview', $image->getAttribute( 'id' ) );
+		$this->assertFalse( $image->hasAttribute( 'data-x' ) );
+		$this->assertFalse( $image->hasAttribute( 'title' ) );
+	}
+
+	/**
+	 * The series image column prints the image source escaped as a URL.
+	 */
+	public function testSeriesImageColumnEscapesImageUrl() {
+		$series_id = $this->create_series( 'Image Url Show' );
+		update_term_meta( $series_id, SSP_CPT_PODCAST . '_series_image_settings', 123 );
+		$quoted_src = function () {
+			return array( 'https://example.com/cover.jpg" data-x="1"><b>y</b>', 100, 100, false );
+		};
+		add_filter( 'wp_get_attachment_image_src', $quoted_src );
+
+		try {
+			$html = ssp_app()->series_controller->add_series_columns( '', 'series_image', $series_id );
+		} finally {
+			remove_filter( 'wp_get_attachment_image_src', $quoted_src );
+		}
+
+		$this->assertStringNotContainsString( '<b>', $html );
+
+		$image = $this->get_column_image( $html );
+		$this->assertFalse( $image->hasAttribute( 'data-x' ) );
+		$this->assertStringStartsWith( 'https://example.com/cover.jpg', $image->getAttribute( 'src' ) );
+		$this->assertStringNotContainsString( '<', $image->getAttribute( 'src' ) );
+		$this->assertStringNotContainsString( '"', $image->getAttribute( 'src' ) );
+	}
+
+	/**
+	 * The series image column prints an ordinary name and image source unchanged.
+	 */
+	public function testSeriesImageColumnKeepsOrdinaryValues() {
+		$series_id = $this->create_series( 'My Podcast' );
+		update_term_meta( $series_id, SSP_CPT_PODCAST . '_series_image_settings', 123 );
+		$cover = function () {
+			return array( 'https://example.com/cover.jpg', 100, 100, false );
+		};
+		add_filter( 'wp_get_attachment_image_src', $cover );
+
+		try {
+			$html = ssp_app()->series_controller->add_series_columns( '', 'series_image', $series_id );
+		} finally {
+			remove_filter( 'wp_get_attachment_image_src', $cover );
+		}
+
+		$this->assertStringContainsString( '<img id="My Podcast_image_preview" src="https://example.com/cover.jpg" width="auto" height="auto" style="max-width:50px;" />', $html );
+
+		$image = $this->get_column_image( $html );
+		$this->assertSame( 'My Podcast_image_preview', $image->getAttribute( 'id' ) );
+		$this->assertSame( 'https://example.com/cover.jpg', $image->getAttribute( 'src' ) );
+	}
+
 	public static function permalink_cases() {
 		return array(
 			'plain permalinks'  => array( '' ),

@@ -851,34 +851,6 @@ if ( ! function_exists( 'ssp_get_external_rss_being_imported' ) ) {
 	}
 }
 
-if ( ! function_exists( 'ssp_download_remote_file' ) ) {
-	/**
-	 * Takes an external file and downloads it to the server
-	 *
-	 * @param string $remote_file
-	 * @param string $extension_override override the default extension
-	 *
-	 * @return bool|mixed file_path.
-	 */
-	function ssp_download_remote_file( $remote_file = '', $extension_override = '' ) {
-
-		$response = false;
-		if ( ! empty( $remote_file ) ) {
-			$remote_file_info = pathinfo( $remote_file );
-			$file_path        = ssp_get_upload_directory() . $remote_file_info['basename'];
-			if ( ! empty( $extension_override ) ) {
-				$file_path = $file_path . '.' . $extension_override;
-			}
-			$complete = ssp_download_file( $remote_file, $file_path );
-			if ( $complete ) {
-				$response = $file_path;
-			}
-		}
-
-		return $response;
-	}
-}
-
 if ( ! function_exists( 'ssp_download_file' ) ) {
 	/**
 	 * Download external file in chunks
@@ -886,9 +858,13 @@ if ( ! function_exists( 'ssp_download_file' ) ) {
 	 * @param $file_source
 	 * @param $file_target
 	 *
+	 * @deprecated 3.18.0
+	 *
 	 * @return bool
 	 */
 	function ssp_download_file( $file_source, $file_target ) {
+		_deprecated_function( __FUNCTION__, '3.18.0' );
+
 		$rh = fopen( $file_source, 'rb' );
 		$wh = fopen( $file_target, 'wb' );
 		if ( ! $rh || ! $wh ) {

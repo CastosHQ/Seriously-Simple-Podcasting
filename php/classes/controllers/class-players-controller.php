@@ -10,6 +10,7 @@ namespace SeriouslySimplePodcasting\Controllers;
 use SeriouslySimplePodcasting\Handlers\Options_Handler;
 use SeriouslySimplePodcasting\Renderers\Renderer;
 use SeriouslySimplePodcasting\Repositories\Episode_Repository;
+use SeriouslySimplePodcasting\ShortCodes\Podcast_Playlist;
 use SeriouslySimplePodcasting\Traits\Useful_Variables;
 
 // Exit if accessed directly.
@@ -130,6 +131,8 @@ class Players_Controller {
 		if ( ! wp_verify_nonce( $nonce, 'ssp_castos_player_' . $player_id ) ) {
 			wp_send_json_error( array( 'message' => 'Security check failed' ) );
 		}
+
+		$atts = Podcast_Playlist::get_query_atts( $atts );
 
 		// Get episodes with validated parameters
 		$episodes = $this->episode_repository->get_episodes( array_merge( $atts, compact( 'page' ) ) );

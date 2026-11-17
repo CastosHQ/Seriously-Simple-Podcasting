@@ -392,6 +392,7 @@ abstract class Abstract_Integrator {
 		foreach ( $user_ids as $user_id ) {
 			if ( empty( $users_data[ $user_id ] ) ) {
 				$this->logger->log( __METHOD__ . ' Error: could not get user by id: ' . $user_id );
+				continue;
 			}
 			$subscribers[] = array(
 				'name'  => $users_data[ $user_id ]['display_name'],
@@ -424,6 +425,7 @@ abstract class Abstract_Integrator {
 		foreach ( $user_ids as $user_id ) {
 			if ( empty( $user_data[ $user_id ] ) ) {
 				$this->logger->log( __METHOD__ . ' Error: could not get user by id: ' . $user_id );
+				continue;
 			}
 			$emails[] = $user_data[ $user_id ]['user_email'];
 		}
@@ -441,6 +443,12 @@ abstract class Abstract_Integrator {
 	 * @return array
 	 */
 	protected function get_users_data( $user_ids ) {
+		$user_ids = array_filter( array_map( 'absint', $user_ids ) );
+
+		if ( empty( $user_ids ) ) {
+			return array();
+		}
+
 		global $wpdb;
 		$query = sprintf(
 			'SELECT `ID`, `user_email`, `display_name` FROM %s WHERE `ID` IN(%s)',

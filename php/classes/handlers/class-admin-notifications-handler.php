@@ -546,6 +546,10 @@ class Admin_Notifications_Handler implements Service {
 		if ( empty( $post_type ) || SSP_CPT_PODCAST !== $post_type ) {
 			return;
 		}
+		// only show this to users who can dismiss it.
+		if ( ! current_user_can( 'manage_podcast' ) ) {
+			return;
+		}
 		// only show this is elementor is installed
 		if ( ! ssp_is_elementor_ok() ) {
 			return;
@@ -575,7 +579,12 @@ class Admin_Notifications_Handler implements Service {
 			esc_url( admin_url( 'edit.php?post_type=' . SSP_CPT_PODCAST . '&page=podcast_settings&tab=extensions' ) )
 		);
 
-		$ignore_message_url  = add_query_arg( array( 'ssp_disable_elementor_template_notice' => 'true' ) );
+		$ignore_message_url  = add_query_arg(
+			array(
+				'ssp_disable_elementor_template_notice' => 'true',
+				'nonce'                                 => wp_create_nonce( 'ssp_disable_elementor_template_notice' ),
+			)
+		);
 		$ignore_message_link = sprintf(
 			wp_kses(
 			// translators: Placeholder is the url to dismiss the message

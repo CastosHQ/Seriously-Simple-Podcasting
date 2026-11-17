@@ -20,7 +20,7 @@ $ssp_episode_repository = ssp_episode_repository();
 <div class="elementor-section elementor-section-boxed">
 	<style>
 		:root {
-			--ssp-recent-episodes-columns: <?php echo $columns; ?>
+			--ssp-recent-episodes-columns: <?php echo absint( $columns ); ?>
 		}
 	</style>
 	<div class="elementor-container">
@@ -54,7 +54,7 @@ $ssp_episode_repository = ssp_episode_repository();
 							}
 						?>
 
-						<p class="ssp-recent-episode-post__date"><?php echo $date; ?></p>
+						<p class="ssp-recent-episode-post__date"><?php echo esc_html( $date ); ?></p>
 						<?php endif; ?>
 						<?php if ( $show_episode_excerpt ) : ?>
 						<p class="ssp-recent-episode-post__excerpt"><?php echo wp_kses_post( $episode->post_excerpt ) ?></p>
@@ -63,7 +63,7 @@ $ssp_episode_repository = ssp_episode_repository();
 
 						<?php if ( $show_read_more ) : ?>
 						<a href="<?php echo esc_url( get_the_permalink( $episode->ID ) ); ?>"
-						   title="<?php echo esc_attr( $episode->post_title ) ?>" class="view-episode"><?php echo $read_more_text; ?></a>
+							title="<?php echo esc_attr( $episode->post_title ); ?>" class="view-episode"><?php echo wp_kses_post( $read_more_text ); ?></a>
 						<?php endif; ?>
 					</div>
 				<?php } ?>

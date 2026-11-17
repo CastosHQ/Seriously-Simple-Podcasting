@@ -399,9 +399,10 @@ class Series_Controller {
 				break;
 			case 'series_image':
 				$series      = get_term( $term_id, ssp_series_taxonomy() );
-				$source      = $this->get_series_image_src( $series );
+				$preview_id  = esc_attr( $series->name . '_image_preview' );
+				$source      = esc_url( $this->get_series_image_src( $series ) );
 				$column_data = <<<HTML
-<img id="{$series->name}_image_preview" src="{$source}" width="auto" height="auto" style="max-width:50px;" />
+<img id="{$preview_id}" src="{$source}" width="auto" height="auto" style="max-width:50px;" />
 HTML;
 				break;
 			case 'series_id':

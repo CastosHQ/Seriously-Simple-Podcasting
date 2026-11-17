@@ -9,8 +9,7 @@
 <div id="ssp-sidebar">
 	<div class="sidebar-content">
 		<?php echo $img; ?>
-		<form action="https://www.getdrip.com/forms/38739479/submissions" method="post"
-			  data-drip-embedded-form="38739479">
+		<form action="https://castos.com/api/ssp-coupon" method="post">
 			<h3 data-drip-attribute="headline"><?php _e( 'Castos Hosting Discount - Get 20% off', 'seriously-simple-podcasting' ); ?></h3>
 			<p data-drip-attribute="description"><?php
 				_e( 'Drop in your name and email and we’ll send you a coupon for 20% off your subscription to Castos Podcast Hosting.',

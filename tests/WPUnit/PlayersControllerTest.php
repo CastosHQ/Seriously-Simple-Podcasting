@@ -210,7 +210,7 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
 
         $noscript = $this->noscriptMarkup($html);
 
-        $this->assertStringContainsString('<li>https://example.com/audio/episode.mp3?a=1&#038;b=2</li>', $noscript);
+        $this->assertStringContainsString('<li>https://example.com/audio/episode.mp3?a=1&amp;b=2</li>', $noscript);
         $this->assertSame(1, preg_match('#<li>(.*?)</li>#', $noscript, $matches));
         $this->assertSame($url, html_entity_decode($matches[1]));
     }

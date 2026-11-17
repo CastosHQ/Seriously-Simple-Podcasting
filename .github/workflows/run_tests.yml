@@ -87,8 +87,6 @@ jobs:
           echo "SITE_USER=autotest" >> .env.testing
           echo "SITE_USER_PASS=password" >> .env.testing
           echo "PODCAST_GUID=dd94465b-580a-501c-a892-caf224d23d7a" >> .env.testing
-          sudo apt-get update -qq
-          sudo env DEBIAN_FRONTEND=noninteractive apt-get install -qq mysql-client default-libmysqlclient-dev
           gzip -d tests/seed.sql.gz && wp db import tests/seed.sql --allow-root
           wp core update-db --allow-root
           wp theme activate twentytwentyfour --allow-root

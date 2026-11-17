@@ -319,7 +319,8 @@ class Settings_Controller {
 				$default = empty( $color_setting['default'] ) ? '' : $color_setting['default'];
 
 				$value = ssp_get_option( $color_setting['id'], $default );
-				if ( $value ) {
+				$type  = empty( $color_setting['type'] ) ? '' : $color_setting['type'];
+				if ( $this->is_valid_player_css_value( $value, $type ) ) {
 					foreach ( (array) $color_setting['css_var'] as $var ) {
 						$css .= sprintf( '%s:%s;', $var, $value );
 					}
@@ -328,6 +329,88 @@ class Settings_Controller {
 		}
 
 		return sprintf( ':root {%s}', $css );
+	}
+
+	/**
+	 * Checks that a player style value matches its setting type.
+	 *
+	 * A `color` setting takes a color and a `number` setting takes an opacity.
+	 * A setting with another type, which the `ssp_player_color_settings` filter
+	 * can add, takes either.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param mixed  $value Saved setting value.
+	 * @param string $type  Setting type.
+	 *
+	 * @return bool
+	 */
+	protected function is_valid_player_css_value( $value, $type = '' ) {
+		if ( ! is_string( $value ) && ! is_int( $value ) && ! is_float( $value ) ) {
+			return false;
+		}
+
+		if ( 'color' === $type ) {
+			return $this->is_valid_css_color( (string) $value );
+		}
+
+		if ( 'number' === $type ) {
+			return $this->is_valid_opacity( $value );
+		}
+
+		return $this->is_valid_css_color( (string) $value ) || $this->is_valid_opacity( $value );
+	}
+
+	/**
+	 * Checks that a value is a hex color (3, 4, 6 or 8 digits) or an rgb()/rgba() color.
+	 *
+	 * Comma-separated channels must be all numbers or all percentages.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param string $value Color value.
+	 *
+	 * @return bool
+	 */
+	protected function is_valid_css_color( $value ) {
+		if ( preg_match( '/^#([0-9a-f]{3,4}|[0-9a-f]{6}|[0-9a-f]{8})$/i', $value ) ) {
+			return true;
+		}
+
+		$number  = '(\d{1,3}(\.\d+)?|\.\d+)';
+		$channel = $number . '%?';
+		$alpha   = '(\d*\.)?\d+%?';
+
+		$comma = '(%1$s\s*,\s*%1$s\s*,\s*%1$s)';
+		$comma = sprintf( $comma, $number ) . '|' . sprintf( $comma, $number . '%' );
+
+		$pattern = sprintf(
+			'/^rgba?\(\s*((%1$s)\s*(,\s*%3$s\s*)?|%2$s\s+%2$s\s+%2$s\s*(\/\s*%3$s\s*)?)\)$/i',
+			$comma,
+			$channel,
+			$alpha
+		);
+
+		return (bool) preg_match( $pattern, $value );
+	}
+
+	/**
+	 * Checks that a value is a number from 0 to 1.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param mixed $value Opacity value.
+	 *
+	 * @return bool
+	 */
+	protected function is_valid_opacity( $value ) {
+		if ( ! is_numeric( $value ) ) {
+			return false;
+		}
+
+		$opacity = (float) $value;
+
+		return $opacity >= 0 && $opacity <= 1;
 	}
 
 	protected function get_dynamic_style_path() {

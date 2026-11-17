@@ -441,6 +441,12 @@ abstract class Abstract_Integrator {
 	 * @return array
 	 */
 	protected function get_users_data( $user_ids ) {
+		$user_ids = array_filter( array_map( 'absint', $user_ids ) );
+
+		if ( empty( $user_ids ) ) {
+			return array();
+		}
+
 		global $wpdb;
 		$query = sprintf(
 			'SELECT `ID`, `user_email`, `display_name` FROM %s WHERE `ID` IN(%s)',

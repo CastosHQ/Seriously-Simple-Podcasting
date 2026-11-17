@@ -46,6 +46,15 @@ class Episode_Repository implements Service {
 	const META_SYNC_ERROR = 'ssp_sync_episode_error';
 
 	/**
+	 * Default maximum number of episodes a playlist returns per page (filter `ssp_podcast_playlist_max_limit`).
+	 *
+	 * @since 3.18.0
+	 *
+	 * @var int
+	 */
+	const MAX_PLAYLIST_LIMIT = 100;
+
+	/**
 	 * Feed handler instance.
 	 *
 	 * @var Feed_Handler
@@ -211,14 +220,14 @@ class Episode_Repository implements Service {
 	 * @return Failed_Sync_Episode[]
 	 */
 	public function get_failed_sync_episodes() {
-		$episode_ids = ssp_episode_ids();
+		$episode_ids = array_filter( array_map( 'absint', ssp_episode_ids() ) );
 
 		if ( empty( $episode_ids ) ) {
 			return array();
 		}
 
 		$episode_ids = implode( ',', $episode_ids );
-		$domain      = parse_url( $this->site_url, PHP_URL_HOST );
+		$domain      = (string) parse_url( $this->site_url, PHP_URL_HOST );
 
 		$query = "SELECT pm.post_id,
        					pm.meta_value AS `audio_file`,
@@ -229,10 +238,11 @@ class Episode_Repository implements Service {
          			LEFT JOIN {$this->db->postmeta} as pm3 ON pm.post_id = pm3.post_id AND pm3.meta_key = 'podmotor_episode_id'
 					WHERE pm.post_id IN ( $episode_ids ) AND pm.meta_key = 'audio_file'
 					GROUP BY pm.post_id, podmotor_file_id
-					HAVING audio_file > '' AND audio_file NOT LIKE '%$domain%' AND
+					HAVING audio_file > '' AND audio_file NOT LIKE %s AND
 					       ( podmotor_file_id IS NULL OR podmotor_file_id = '' OR
 					       podmotor_episode_id IS NULL OR podmotor_episode_id = '' )
 					ORDER BY pm.post_id";
+		$query = $this->db->prepare( $query, '%' . $this->db->esc_like( $domain ) . '%' );
 
 		$res = $this->db->get_results( $query );
 
@@ -295,6 +305,50 @@ class Episode_Repository implements Service {
 	}
 
 	/**
+	 * Gets the number of episodes per playlist page, from 1 to the playlist maximum.
+	 *
+	 * A limit of zero or below falls back to 10, or to the playlist maximum when that is lower.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param mixed $limit Requested limit.
+	 *
+	 * @return int
+	 */
+	protected function get_playlist_limit( $limit ) {
+		$limit = (int) $limit;
+
+		if ( $limit <= 0 ) {
+			$limit = 10;
+		}
+
+		return min( $limit, $this->get_playlist_max_limit() );
+	}
+
+	/**
+	 * Gets the maximum number of episodes a playlist returns per page.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @return int
+	 */
+	protected function get_playlist_max_limit() {
+		/**
+		 * Filters the maximum number of episodes a playlist returns per page.
+		 *
+		 * A value that is not a whole number of 1 or more is ignored and the default is used.
+		 *
+		 * @since 3.18.0
+		 *
+		 * @param int $max_limit Maximum number of episodes per page. Default 100.
+		 */
+		$max_limit = apply_filters( 'ssp_podcast_playlist_max_limit', self::MAX_PLAYLIST_LIMIT );
+		$max_limit = is_bool( $max_limit ) ? false : filter_var( $max_limit, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) );
+
+		return false === $max_limit ? self::MAX_PLAYLIST_LIMIT : $max_limit;
+	}
+
+	/**
 	 * @param array $atts
 	 *
 	 * @return int[]|\WP_Post[]
@@ -307,12 +361,12 @@ class Episode_Repository implements Service {
 		$query_args = array(
 			'post_status'         => 'publish',
 			'post_type'           => $podcast_post_types,
-			'posts_per_page'      => (int) $atts['limit'] > 0 ? $atts['limit'] : 10,
+			'posts_per_page'      => $this->get_playlist_limit( $atts['limit'] ),
 			'order'               => $atts['order'],
 			'orderby'             => $atts['orderby'],
 			'ignore_sticky_posts' => true,
-			'post__in'            => $atts['include'],
-			'post__not_in'        => $atts['exclude'],
+			'post__in'            => is_array( $atts['include'] ) ? $atts['include'] : array(),
+			'post__not_in'        => is_array( $atts['exclude'] ) ? $atts['exclude'] : array(),
 			'paged'               => $atts['page'] > 0 ? $atts['page'] : 1,
 		);
 
@@ -326,7 +380,7 @@ class Episode_Repository implements Service {
 		);
 
 		// Limit query to episodes in defined series only
-		if ( $atts['series'] ) {
+		if ( $atts['series'] && is_string( $atts['series'] ) ) {
 			$series_arr = strpos( $atts['series'], ',' ) ? explode( ',', $atts['series'] ) : (array) $atts['series'];
 
 			foreach ( $series_arr as $series ) {

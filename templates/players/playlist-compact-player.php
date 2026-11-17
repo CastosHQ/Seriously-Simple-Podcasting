@@ -33,7 +33,7 @@ $media_tag = 'video' === $safe_type ? 'video' : 'audio';
 	<ol>
 		<?php
 		foreach ( $data['tracks'] as $track ) {
-			printf( '<li>%s</li>', $track['src'] );
+			printf( '<li>%s</li>', esc_url( $track['src'] ) );
 		}
 		?>
 	</ol>

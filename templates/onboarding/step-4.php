@@ -82,13 +82,13 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 					</a>
 				</div>
 			</div>
-			<form class="ssp-onboarding__settings-body" action="<?php echo $step_urls[ $step_number + 1 ] ?>" method="post">
+			<form class="ssp-onboarding__settings-body" action="<?php echo esc_url( $step_urls[ $step_number + 1 ] ); ?>" method="post">
 				<div class="ssp-onboarding__settings-item">
 					<h2><?php _e( 'Castos API Token', 'seriously-simple-podcasting' ); ?></h2>
 					<label for="podmotor_account_api_token" class="description">
 						<?php _e( 'Available from your Castos account dashboard.', 'seriously-simple-podcasting' ); ?>
 					</label>
-					<input id="podmotor_account_api_token" type="text" class="js-onboarding-castos-connect-field" name="podmotor_account_api_token" value="<?php echo $podmotor_account_api_token ?>" <?php disabled( !! $podmotor_account_api_token ) ?>>
+					<input id="podmotor_account_api_token" type="text" class="js-onboarding-castos-connect-field" name="podmotor_account_api_token" value="<?php echo esc_attr( $podmotor_account_api_token ); ?>" <?php disabled( (bool) $podmotor_account_api_token ); ?>>
 				</div>
 
 				<div class="ssp-onboarding__submit">
@@ -105,7 +105,7 @@ $trial_url = 'https://app.castos.com/register?utm_source=ssp&utm_medium=onboardi
 		</div>
 	</div>
 	<div class="ssp-onboarding-step-4__skip-step">
-		<a href="<?php echo $step_urls[ 5 ] ?>"><?php _e( 'Skip Step', 'seriously-simple-podcasting' ); ?></a>
+		<a href="<?php echo esc_url( $step_urls[5] ); ?>"><?php esc_html_e( 'Skip Step', 'seriously-simple-podcasting' ); ?></a>
 	</div>
 	<?php include __DIR__ . '/steps-footer.php'; ?>
 </div>

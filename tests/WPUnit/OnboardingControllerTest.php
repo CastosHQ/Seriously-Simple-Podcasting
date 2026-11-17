@@ -153,4 +153,110 @@ class OnboardingControllerTest extends \Codeception\TestCase\WPTestCase
             'A target that no longer resolves must not leave the wizard in the imported state'
         );
     }
+
+    /**
+     * Renders step 4 with the given stored API token and returns the HTML.
+     *
+     * @param string $token Stored Castos API token.
+     *
+     * @return string
+     */
+    private function render_step_4($token)
+    {
+        $filter = function () use ($token) {
+            return $token;
+        };
+        add_filter('pre_option_ss_podcasting_podmotor_account_api_token', $filter);
+
+        ob_start();
+        try {
+            $this->controller->step_4();
+        } finally {
+            $html = ob_get_clean();
+            remove_filter('pre_option_ss_podcasting_podmotor_account_api_token', $filter);
+        }
+
+        return $html;
+    }
+
+    /**
+     * Parses an HTML string into a DOM document.
+     *
+     * @param string $html HTML markup.
+     *
+     * @return \DOMDocument
+     */
+    private function parse_html($html)
+    {
+        $dom = new \DOMDocument();
+        libxml_use_internal_errors(true);
+        $dom->loadHTML('<?xml encoding="UTF-8">' . $html);
+        libxml_clear_errors();
+
+        return $dom;
+    }
+
+    /**
+     * A token containing quotes and markup stays inside the input's value.
+     */
+    public function testTokenFieldEscapesValue()
+    {
+        $token = 'x" data-x="1" title="<b>y</b>';
+
+        $html = $this->render_step_4($token);
+
+        $this->assertStringNotContainsString('" data-x=', $html);
+
+        $input = $this->parse_html($html)->getElementById('podmotor_account_api_token');
+        $this->assertNotNull($input);
+        $this->assertSame($token, $input->getAttribute('value'));
+        $this->assertFalse($input->hasAttribute('data-x'));
+        $this->assertFalse($input->hasAttribute('title'));
+    }
+
+    /**
+     * An ordinary token is printed as is.
+     */
+    public function testTokenFieldKeepsOrdinaryValue()
+    {
+        $html = $this->render_step_4('abc123');
+
+        $this->assertStringContainsString('name="podmotor_account_api_token" value="abc123"', $html);
+
+        $dom   = $this->parse_html($html);
+        $input = $dom->getElementById('podmotor_account_api_token');
+        $this->assertSame('abc123', $input->getAttribute('value'));
+
+        $form = (new \DOMXPath($dom))->query('//form[contains(@class, "ssp-onboarding__settings-body")]')->item(0);
+        $this->assertSame($this->call('get_step_url', [5]), $form->getAttribute('action'));
+    }
+
+    /**
+     * The form action prints the step URL escaped as a URL.
+     */
+    public function testFormActionEscapesUrl()
+    {
+        $filter = function ($url) {
+            if (false !== strpos($url, 'ssp-onboarding-5')) {
+                return 'https://example.com/wp-admin/admin.php?page=x" data-x="1';
+            }
+
+            return $url;
+        };
+        add_filter('admin_url', $filter);
+
+        try {
+            $html = $this->render_step_4('');
+        } finally {
+            remove_filter('admin_url', $filter);
+        }
+
+        $this->assertStringNotContainsString('" data-x=', $html);
+
+        $form = (new \DOMXPath($this->parse_html($html)))->query('//form[contains(@class, "ssp-onboarding__settings-body")]')->item(0);
+        $this->assertNotNull($form);
+        $this->assertFalse($form->hasAttribute('data-x'));
+        $this->assertStringNotContainsString('"', $form->getAttribute('action'));
+        $this->assertStringStartsWith('https://example.com/wp-admin/admin.php?page=x', $form->getAttribute('action'));
+    }
 }

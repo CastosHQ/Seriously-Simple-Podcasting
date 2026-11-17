@@ -526,7 +526,7 @@ class App_Controller {
 			// Dismiss the categories update screen
 			add_action( 'admin_init', array( $this, 'dismiss_categories_update' ) );
 
-			// Dismiss the categories update screen
+			// Dismiss the Elementor templates notice.
 			add_action( 'admin_init', array( $this, 'disable_elementor_template_notice' ) );
 
 			// process the import form submission
@@ -992,11 +992,18 @@ class App_Controller {
 	 * Dismiss Elementor templates message when user clicks 'Dismiss' link
 	 */
 	public function disable_elementor_template_notice() {
-		// Check if the ssp_disable_elementor_template_notice variable exists
-		$ssp_disable_elementor_template_notice = ( isset( $_GET['ssp_disable_elementor_template_notice'] ) ? sanitize_text_field( $_GET['ssp_disable_elementor_template_notice'] ) : '' );
-		if ( empty( $ssp_disable_elementor_template_notice ) ) {
+		// Only dismiss for a valid link and a user who can manage the plugin settings.
+		$ssp_disable_elementor_template_notice = ( isset( $_GET['ssp_disable_elementor_template_notice'] ) ? sanitize_text_field( wp_unslash( $_GET['ssp_disable_elementor_template_notice'] ) ) : '' );
+		$nonce                                 = ( isset( $_GET['nonce'] ) ? sanitize_text_field( wp_unslash( $_GET['nonce'] ) ) : '' );
+
+		if (
+			empty( $ssp_disable_elementor_template_notice ) ||
+			! wp_verify_nonce( $nonce, 'ssp_disable_elementor_template_notice' ) ||
+			! current_user_can( 'manage_podcast' )
+		) {
 			return;
 		}
+
 		update_option( 'ss_podcasting_elementor_templates_disabled', 'true' );
 	}
 }

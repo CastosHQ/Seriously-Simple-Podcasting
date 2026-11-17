@@ -59,7 +59,7 @@ class EpisodeAccessTest extends \Codeception\TestCase\WPTestCase {
 	protected function tearDown(): void {
 		// go_to() rewrites the request URI, which later feed tests read for the self link.
 		$_SERVER = $this->server_backup;
-		unset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ], $_GET['ssp_podcast_id'] );
+		unset( $_COOKIE[ 'wp-postpass_' . COOKIEHASH ] );
 		delete_option( 'ss_podcasting_podmotor_account_api_token' );
 		delete_option( Settings_Controller::SETTINGS_BASE . 'is_podcast_private_' . $this->series_id );
 		update_option( Settings_Controller::SETTINGS_BASE . 'default_series', $this->default_series_backup );
@@ -286,27 +286,60 @@ class EpisodeAccessTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	public function test_audio_player_endpoint_refuses_password_protected_episode() {
-		$_GET['ssp_podcast_id'] = (string) $this->protected_id;
-
-		$response = rest_do_request( new \WP_REST_Request( 'GET', '/ssp/v1/audio_player' ) );
+		$response = rest_do_request( $this->audio_player_request( (string) $this->protected_id ) );
 
 		$this->assertSame( 401, $response->get_status() );
 	}
 
 	public function test_audio_player_endpoint_serves_password_protected_episode_to_castos() {
-		$_GET['ssp_podcast_id'] = (string) $this->protected_id;
-
-		$response = rest_do_request( $this->castos_request( '/ssp/v1/audio_player' ) );
+		$response = rest_do_request( $this->castos_request( '/ssp/v1/audio_player', array( 'ssp_podcast_id' => (string) $this->protected_id ) ) );
 
 		$this->assertSame( 200, $response->get_status() );
 	}
 
 	public function test_audio_player_endpoint_serves_published_episode() {
-		$_GET['ssp_podcast_id'] = (string) $this->public_id;
-
-		$response = rest_do_request( new \WP_REST_Request( 'GET', '/ssp/v1/audio_player' ) );
+		$response = rest_do_request( $this->audio_player_request( (string) $this->public_id ) );
 
 		$this->assertSame( 200, $response->get_status() );
+	}
+
+	/**
+	 * @dataProvider invalid_podcast_id_provider
+	 */
+	public function test_audio_player_endpoint_rejects_invalid_podcast_id( $podcast_id ) {
+		$response = rest_do_request( $this->audio_player_request( $podcast_id ) );
+
+		$this->assertSame( 400, $response->get_status() );
+		$this->assertSame( 'rest_invalid_episode_id', $response->as_error()->get_error_code() );
+	}
+
+	public function test_audio_player_endpoint_returns_integer_id_for_string_podcast_id() {
+		$response = rest_do_request( $this->audio_player_request( (string) $this->public_id ) );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( $this->public_id, $response->get_data()['id'] );
+	}
+
+	public function test_audio_player_endpoint_uses_episode_id_from_query_string() {
+		$request = $this->audio_player_request( (string) $this->public_id );
+		$request->set_header( 'Content-Type', 'application/json' );
+		$request->set_body( wp_json_encode( array( 'ssp_podcast_id' => (string) $this->protected_id ) ) );
+
+		$response = rest_do_request( $request );
+
+		$this->assertSame( 200, $response->get_status() );
+		$this->assertSame( $this->public_id, $response->get_data()['id'] );
+	}
+
+	public function invalid_podcast_id_provider() {
+		return array(
+			'zero'             => array( '0' ),
+			'negative'         => array( '-5' ),
+			'trailing letters' => array( '12abc' ),
+			'missing'          => array( null ),
+			'empty string'     => array( '' ),
+			'array'            => array( array( '1' ) ),
+		);
 	}
 
 	/* Playlist AJAX */
@@ -437,15 +470,29 @@ class EpisodeAccessTest extends \Codeception\TestCase\WPTestCase {
 		return $property->getValue( ssp_app() );
 	}
 
+	/** Builds an audio player request for the given podcast ID (no ID param when null). */
+	private function audio_player_request( $podcast_id ) {
+		$request = new \WP_REST_Request( 'GET', '/ssp/v1/audio_player' );
+
+		if ( null !== $podcast_id ) {
+			$request->set_query_params( array( 'ssp_podcast_id' => $podcast_id ) );
+		}
+
+		return $request;
+	}
+
 	/** Builds a GET request with a valid Castos action-bound signature (see EpisodesRestControllerCastosAuthTest). */
-	private function castos_request( $route ) {
+	private function castos_request( $route, $query = array() ) {
 		$timestamp = time();
 		$nonce     = bin2hex( random_bytes( 32 ) );
 		$home_path = rtrim( (string) wp_parse_url( home_url(), PHP_URL_PATH ), '/' );
 		$path      = $home_path . '/' . trim( rest_get_url_prefix(), '/' ) . $route;
-		$message   = implode( "\n", array( 'GET', $path, '', json_encode( array() ), $timestamp, $nonce ) );
+		ksort( $query );
+		$canonical = empty( $query ) ? '' : http_build_query( $query, '', '&', PHP_QUERY_RFC3986 );
+		$message   = implode( "\n", array( 'GET', $path, $canonical, json_encode( array() ), $timestamp, $nonce ) );
 
 		$request = new \WP_REST_Request( 'GET', $route );
+		$request->set_query_params( $query );
 		$request->set_header( 'Content-Type', 'application/json' );
 		$request->set_body( json_encode( array() ) );
 		$request->set_header( 'X-Castos-Signature', hash_hmac( 'sha256', $message, self::TOKEN ) );

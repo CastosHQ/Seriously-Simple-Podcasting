@@ -138,6 +138,84 @@ class PlayersControllerTest extends \Codeception\TestCase\WPTestCase
     }
 
     /**
+     * Renders the compact playlist player template for the given tracks.
+     *
+     * @param array $tracks Playlist tracks.
+     *
+     * @return string
+     */
+    protected function renderCompactPlaylist($tracks)
+    {
+        $renderer   = new Renderer();
+        $safe_style = 'light';
+        $safe_type  = 'audio';
+        $width      = 640;
+        $height     = 360;
+        $class      = '';
+        $data       = [
+            'type'         => 'audio',
+            'tracklist'    => true,
+            'tracknumbers' => true,
+            'images'       => true,
+            'artists'      => false,
+            'tracks'       => $tracks,
+        ];
+
+        return $renderer->fetch(
+            'players/playlist-compact-player',
+            compact('safe_style', 'safe_type', 'data', 'width', 'height', 'class')
+        );
+    }
+
+    /**
+     * Returns the markup inside the noscript element.
+     *
+     * @param string $html Player HTML.
+     *
+     * @return string
+     */
+    protected function noscriptMarkup($html)
+    {
+        $this->assertSame(1, preg_match('#<noscript>(.*?)</noscript>#s', $html, $matches));
+
+        return $matches[1];
+    }
+
+    /**
+     * A track URL containing quotes and markup stays plain text in the list.
+     */
+    public function testCompactPlaylistNoscriptEscapesTrackUrl()
+    {
+        $html = $this->renderCompactPlaylist([
+            ['src' => 'https://example.com/a.mp3<b>y</b>'],
+            ['src' => 'https://example.com/b.mp3" data-x="1'],
+        ]);
+
+        $noscript = $this->noscriptMarkup($html);
+
+        $this->assertStringNotContainsString('<b>y</b>', $noscript);
+        $this->assertStringNotContainsString('<b>', $noscript);
+        $this->assertStringNotContainsString('" data-x=', $noscript);
+        $this->assertStringNotContainsString('"', $noscript);
+        $this->assertSame(2, preg_match_all('#<li>[^<>]*</li>#', $noscript));
+    }
+
+    /**
+     * An ordinary track URL is listed unchanged, with the ampersand HTML-encoded.
+     */
+    public function testCompactPlaylistNoscriptKeepsOrdinaryTrackUrl()
+    {
+        $url  = 'https://example.com/audio/episode.mp3?a=1&b=2';
+        $html = $this->renderCompactPlaylist([['src' => $url]]);
+
+        $noscript = $this->noscriptMarkup($html);
+
+        $this->assertStringContainsString('<li>https://example.com/audio/episode.mp3?a=1&#038;b=2</li>', $noscript);
+        $this->assertSame(1, preg_match('#<li>(.*?)</li>#', $noscript, $matches));
+        $this->assertSame($url, html_entity_decode($matches[1]));
+    }
+
+    /**
      * @return Episode_Repository
      */
     protected function episodeRepository()

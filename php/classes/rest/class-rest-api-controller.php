@@ -505,9 +505,10 @@ class Rest_Api_Controller {
 	 * @return array|\WP_Error $podcast Podcast data or error
 	 */
 	public function get_episode_audio_player( $request = null ) {
-		$podcast_id = ( isset( $_GET['ssp_podcast_id'] ) ? filter_var( $_GET['ssp_podcast_id'], FILTER_DEFAULT ) : '' );
+		$query      = $request ? $request->get_query_params() : array();
+		$podcast_id = isset( $query['ssp_podcast_id'] ) ? $this->get_positive_int( $query['ssp_podcast_id'] ) : 0;
 
-		// Validate and authorize episode access
+		// Validate and authorize episode access.
 		$authorization_check = $this->check_episode_access( $podcast_id, $request );
 		if ( is_wp_error( $authorization_check ) ) {
 			return $authorization_check;
@@ -524,6 +525,21 @@ class Rest_Api_Controller {
 			'file'         => $file,
 			'audio_player' => wp_audio_shortcode( $params ),
 		);
+	}
+
+	/**
+	 * Gets a positive integer from a request value, or 0 if it is not one.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param mixed $value Request value.
+	 *
+	 * @return int
+	 */
+	protected function get_positive_int( $value ) {
+		$int = filter_var( $value, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) );
+
+		return false === $int ? 0 : $int;
 	}
 
 	/**

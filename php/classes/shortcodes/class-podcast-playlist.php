@@ -33,6 +33,25 @@ class Podcast_Playlist implements Shortcode {
 	const ALLOWED_STYLES = array( 'light', 'dark' );
 
 	/**
+	 * Episode query attributes and their defaults.
+	 *
+	 * These are the attributes the episode query reads; the playlist AJAX request accepts only these.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @var array
+	 */
+	const QUERY_DEFAULTS = array(
+		'series'  => '',
+		'tag'     => '',
+		'order'   => 'ASC',
+		'orderby' => 'menu_order ID',
+		'include' => '',
+		'exclude' => '',
+		'limit'   => 10,
+	);
+
+	/**
 	 * Frontend controller instance.
 	 *
 	 * @var Frontend_Controller
@@ -52,6 +71,21 @@ class Podcast_Playlist implements Shortcode {
 	 * @var int
 	 */
 	protected $theme_height;
+
+	/**
+	 * Gets the episode query attributes from a list of playlist attributes.
+	 *
+	 * Keeps only the keys in QUERY_DEFAULTS and fills in missing ones with their defaults.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param array $atts Playlist attributes.
+	 *
+	 * @return array
+	 */
+	public static function get_query_atts( $atts ) {
+		return array_merge( self::QUERY_DEFAULTS, array_intersect_key( (array) $atts, self::QUERY_DEFAULTS ) );
+	}
 
 	/**
 	 * Shortcode function to display podcast playlist (copied and modified from wp-includes/media.php)
@@ -137,22 +171,18 @@ class Podcast_Playlist implements Shortcode {
 
 		// Parse shortcode attributes
 		$atts = shortcode_atts(
-			array(
-				'type'         => 'audio',
-				'series'       => '',
-				'tag'          => '',
-				'order'        => 'ASC',
-				'orderby'      => 'menu_order ID',
-				'include'      => '',
-				'exclude'      => '',
-				'style'        => $default_style,
-				'player_style' => 'standard',
-				'tracklist'    => true,
-				'tracknumbers' => true,
-				'images'       => true,
-				'limit'        => 10,
-				'page'         => 1,
-				'class'        => '',
+			array_merge(
+				array( 'type' => 'audio' ),
+				self::QUERY_DEFAULTS,
+				array(
+					'style'        => $default_style,
+					'player_style' => 'standard',
+					'tracklist'    => true,
+					'tracknumbers' => true,
+					'images'       => true,
+					'page'         => 1,
+					'class'        => '',
+				)
 			),
 			$params,
 			'podcast_playlist'

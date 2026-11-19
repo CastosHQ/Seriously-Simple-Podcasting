@@ -100,12 +100,14 @@ class Series_Handler implements Service {
 	}
 
 	/**
-	 * Register taxonomies
+	 * Registers the series taxonomy and podcast tags for every podcast post type.
+	 *
+	 * The post types are not verified, so types registered later on `init` still get the taxonomy.
 	 *
 	 * @return void
 	 */
 	public function register_taxonomy() {
-		$podcast_post_types = ssp_post_types();
+		$podcast_post_types = ssp_post_types( true, false );
 
 		$args = $this->get_series_args();
 		$this->register_series_taxonomy( $podcast_post_types, $args );

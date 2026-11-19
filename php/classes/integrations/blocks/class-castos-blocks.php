@@ -112,6 +112,8 @@ class Castos_Blocks {
 			'sspAdmin',
 			array(
 				'sspPostTypes'    => ssp_post_types( true, false ),
+				'seriesTaxonomy'  => ssp_series_taxonomy(),
+				'seriesRestBase'  => $this->get_series_rest_base(),
 				'isCastosUser'    => ssp_is_connected_to_castos(),
 				'canUploadFiles'  => current_user_can( 'upload_files' ),
 				'isItunesEnabled' => $itunes_enabled,
@@ -145,9 +147,21 @@ class Castos_Blocks {
 	protected function get_series_rest_route() {
 		$taxonomy  = get_taxonomy( ssp_series_taxonomy() );
 		$namespace = $taxonomy && ! empty( $taxonomy->rest_namespace ) ? $taxonomy->rest_namespace : 'wp/v2';
-		$base      = $taxonomy && ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : ssp_series_taxonomy();
 
-		return sprintf( '/%s/%s', $namespace, $base );
+		return sprintf( '/%s/%s', $namespace, $this->get_series_rest_base() );
+	}
+
+	/**
+	 * Resolves the REST base of the series taxonomy.
+	 *
+	 * Posts expose their podcast terms under this key, which can differ from the taxonomy name.
+	 *
+	 * @return string
+	 */
+	protected function get_series_rest_base() {
+		$taxonomy = get_taxonomy( ssp_series_taxonomy() );
+
+		return $taxonomy && ! empty( $taxonomy->rest_base ) ? $taxonomy->rest_base : ssp_series_taxonomy();
 	}
 
 	/**

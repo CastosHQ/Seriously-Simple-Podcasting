@@ -215,6 +215,41 @@ class BlockRegistrationQueryTest extends \Codeception\TestCase\WPTestCase {
 	}
 
 	/**
+	 * The editor needs the taxonomy name and the post's REST field separately.
+	 */
+	public function test_editor_data_uses_taxonomy_name_and_rest_base() {
+		$original = get_taxonomy( 'series' );
+		$filter   = static function () {
+			return 'ssp898_custom';
+		};
+
+		try {
+			ssp_app()->series_controller->register_taxonomy();
+			$data = $this->localized_editor_data();
+			$this->assertIsString( $data );
+			$this->assertStringContainsString( '"seriesTaxonomy":"series"', $data );
+			$this->assertStringContainsString( '"seriesRestBase":"series"', $data );
+
+			add_filter( 'ssp_series_taxonomy', $filter );
+			ssp_app()->series_controller->register_taxonomy();
+			$data = $this->localized_editor_data();
+			$this->assertIsString( $data );
+			$this->assertStringContainsString( '"seriesTaxonomy":"ssp898_custom"', $data );
+			$this->assertStringContainsString( '"seriesRestBase":"series"', $data );
+		} finally {
+			remove_filter( 'ssp_series_taxonomy', $filter );
+			if ( taxonomy_exists( 'ssp898_custom' ) ) {
+				unregister_taxonomy( 'ssp898_custom' );
+			}
+			if ( $original ) {
+				register_taxonomy( 'series', $original->object_type, get_object_vars( $original ) );
+			} elseif ( taxonomy_exists( 'series' ) ) {
+				unregister_taxonomy( 'series' );
+			}
+		}
+	}
+
+	/**
 	 * A taxonomy filtered onto its own REST namespace must still be reachable.
 	 *
 	 * `rest_namespace` and `rest_base` both come from `ssp_register_taxonomy_args`, so neither can

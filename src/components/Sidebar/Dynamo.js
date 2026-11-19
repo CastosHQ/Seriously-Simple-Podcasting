@@ -5,12 +5,13 @@ import Promo from './Promo';
 
 const Dynamo = () => {
 	const postId = useSelect(( select ) => select('core/editor').getCurrentPostId());
-	const taxonomySlug = 'series';
+	const taxonomySlug = sspAdmin.seriesTaxonomy;
 
-	// Get the selected series IDs
+	// Posts expose their series under the taxonomy's REST base, not its name.
+	// The field is missing when the taxonomy isn't attached to the post type.
 	const selectedSeries = useSelect(( select ) =>
-		select('core/editor').getEditedPostAttribute(taxonomySlug),
-	);
+		select('core/editor').getEditedPostAttribute(sspAdmin.seriesRestBase),
+	) ?? [];
 
 	// Get all series terms
 	const seriesTerms = useSelect(( select ) =>

@@ -786,9 +786,7 @@ class Episode_Repository implements Service {
 			$episode_duration = get_post_meta( $id, 'duration', true );
 			$current_url      = get_permalink( $current_post->ID );
 
-			if ( ssp_episode_passthrough_required( $id ) ) {
-				$audio_file = $this->get_passthrough_url( $id );
-			}
+			$audio_file      = $this->get_player_url( $id, $audio_file );
 			$album_art       = $this->get_album_art( $id, 'thumbnail' );
 			$podcast_title   = $this->get_podcast_title( $id );
 			$feed_url        = $this->get_feed_url( $id );
@@ -829,6 +827,23 @@ class Episode_Repository implements Service {
 		$format    = apply_filters( 'ssp_date_format', $format );
 
 		return date( $format, $timestamp );
+	}
+
+	/**
+	 * Get the media URL used by episode players.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int         $episode_id Episode ID.
+	 * @param string|null $enclosure  Previously retrieved enclosure, if available.
+	 * @return string
+	 */
+	public function get_player_url( $episode_id, $enclosure = null ) {
+		if ( ssp_episode_passthrough_required( $episode_id ) ) {
+			return $this->get_passthrough_url( $episode_id );
+		}
+
+		return null === $enclosure ? $this->get_enclosure( $episode_id ) : $enclosure;
 	}
 
 	/**

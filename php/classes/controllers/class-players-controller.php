@@ -592,9 +592,7 @@ class Players_Controller {
 		 */
 		$episode = get_post( $id );
 
-		$src_file = ssp_episode_passthrough_required( $id ) ?
-			$this->episode_repository->get_passthrough_url( $id ) :
-			$this->episode_repository->get_enclosure( $id );
+		$src_file = $this->episode_repository->get_player_url( $id );
 
 		$params = array(
 			'src'     => $src_file,

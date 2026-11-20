@@ -6,7 +6,6 @@
  *
  * @var \SeriouslySimplePodcasting\Repositories\Episode_Repository $episode_repository
  * @var \SeriouslySimplePodcasting\Controllers\Players_Controller $players_controller
- * @var string   $permalink_structure
  * @var string   $player_style
  * @var WP_Query $episodes_query
  * @var bool     $show_player
@@ -82,7 +81,7 @@
 
 			$player = '';
 			if ( ! empty( $show_player ) ) {
-				$file   = $permalink_structure ? $episode_repository->get_episode_download_link( $episode->ID ) : $episode_repository->get_enclosure( $episode->ID );
+				$file   = $episode_repository->get_player_url( $episode->ID );
 				$player = $players_controller->load_media_player( $file, $episode->ID, $player_style );
 			}
 

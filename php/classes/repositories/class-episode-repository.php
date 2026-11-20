@@ -786,9 +786,7 @@ class Episode_Repository implements Service {
 			$episode_duration = get_post_meta( $id, 'duration', true );
 			$current_url      = get_permalink( $current_post->ID );
 
-			if ( ssp_episode_passthrough_required( $id ) ) {
-				$audio_file = $this->get_passthrough_url( $id );
-			}
+			$audio_file      = $this->get_player_url( $id, $audio_file );
 			$album_art       = $this->get_album_art( $id, 'thumbnail' );
 			$podcast_title   = $this->get_podcast_title( $id );
 			$feed_url        = $this->get_feed_url( $id );
@@ -829,6 +827,54 @@ class Episode_Repository implements Service {
 		$format    = apply_filters( 'ssp_date_format', $format );
 
 		return date( $format, $timestamp );
+	}
+
+	/**
+	 * Get the media URL used by episode players.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int         $episode_id Episode ID.
+	 * @param string|null $enclosure  Previously retrieved enclosure, if available.
+	 * @return string
+	 */
+	public function get_player_url( $episode_id, $enclosure = null ) {
+		if ( ssp_episode_passthrough_required( $episode_id ) ) {
+			return $this->add_video_extension_arg( $episode_id, $this->get_passthrough_url( $episode_id ) );
+		}
+
+		return null === $enclosure ? $this->get_enclosure( $episode_id ) : $enclosure;
+	}
+
+	/**
+	 * Add the video file extension to a plain-permalink passthrough URL.
+	 *
+	 * WordPress renders a video player only when the source URL ends in a video extension,
+	 * which the `?podcast_episode=` passthrough URL doesn't have.
+	 *
+	 * @since 3.18.0
+	 *
+	 * @param int    $episode_id      Episode ID.
+	 * @param string $passthrough_url Passthrough URL for the episode.
+	 * @return string
+	 */
+	private function add_video_extension_arg( $episode_id, $passthrough_url ) {
+		if ( ! $passthrough_url || get_option( 'permalink_structure' ) || 'video' !== $this->get_episode_type( $episode_id ) ) {
+			return $passthrough_url;
+		}
+
+		$path      = wp_parse_url( $this->get_enclosure( $episode_id ), PHP_URL_PATH );
+		$file_type = wp_check_filetype( $path ? $path : '', wp_get_mime_types() );
+		$extension = strtolower( (string) $file_type['ext'] );
+
+		if ( ! in_array( $extension, wp_get_video_extensions(), true ) ) {
+			return $passthrough_url;
+		}
+
+		// The download link is HTML-escaped; decode it so add_query_arg() can parse its query.
+		$passthrough_url = html_entity_decode( $passthrough_url, ENT_QUOTES, 'UTF-8' );
+
+		return add_query_arg( 'ssp_video_file', 'video.' . $extension, $passthrough_url );
 	}
 
 	/**

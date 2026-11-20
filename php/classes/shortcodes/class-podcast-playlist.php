@@ -228,15 +228,9 @@ class Podcast_Playlist implements Shortcode {
 	 * @return array
 	 */
 	protected function get_tracks( $episodes, $atts ) {
-		$tracks                 = array();
-		$is_permalink_structure = get_option( 'permalink_structure' );
+		$tracks = array();
 		foreach ( $episodes as $episode ) {
-			if ( $is_permalink_structure ) {
-				$url = $this->ss_podcasting->get_episode_download_link( $episode->ID );
-				$url = str_replace( 'podcast-download', 'podcast-player', $url );
-			} else {
-				$url = $this->ss_podcasting->get_enclosure( $episode->ID );
-			}
+			$url = $this->ss_podcasting->episode_repository->get_player_url( $episode->ID );
 
 			// Get episode file type
 			$ftype = wp_check_filetype( $url, wp_get_mime_types() );
@@ -299,7 +293,8 @@ class Podcast_Playlist implements Shortcode {
 				$track['description'] = '';
 			}
 
-			$tracks[] = $track;
+			$track['src'] = esc_url_raw( $track['src'] );
+			$tracks[]     = $track;
 		}
 
 		return $tracks;

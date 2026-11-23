@@ -830,7 +830,7 @@ class Episode_Repository implements Service {
 	}
 
 	/**
-	 * Get the media URL used by episode players.
+	 * Get the unescaped media URL used by episode players.
 	 *
 	 * @since 3.18.0
 	 *
@@ -840,7 +840,10 @@ class Episode_Repository implements Service {
 	 */
 	public function get_player_url( $episode_id, $enclosure = null ) {
 		if ( ssp_episode_passthrough_required( $episode_id ) ) {
-			return $this->add_video_extension_arg( $episode_id, $this->get_passthrough_url( $episode_id ) );
+			// The download link is HTML-escaped; players escape the URL on output.
+			$passthrough_url = html_entity_decode( $this->get_passthrough_url( $episode_id ), ENT_QUOTES, 'UTF-8' );
+
+			return $this->add_video_extension_arg( $episode_id, $passthrough_url );
 		}
 
 		return null === $enclosure ? $this->get_enclosure( $episode_id ) : $enclosure;
@@ -870,9 +873,6 @@ class Episode_Repository implements Service {
 		if ( ! in_array( $extension, wp_get_video_extensions(), true ) ) {
 			return $passthrough_url;
 		}
-
-		// The download link is HTML-escaped; decode it so add_query_arg() can parse its query.
-		$passthrough_url = html_entity_decode( $passthrough_url, ENT_QUOTES, 'UTF-8' );
 
 		return add_query_arg( 'ssp_video_file', 'video.' . $extension, $passthrough_url );
 	}

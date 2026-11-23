@@ -10,6 +10,7 @@ class CompactPlaylistPassthroughTest extends \Codeception\TestCase\WPTestCase {
 
 	private $episode_id;
 	private $passthrough_filter;
+	private $referrer_filter;
 	private $cookies;
 	private $permalink_structure;
 
@@ -41,6 +42,9 @@ class CompactPlaylistPassthroughTest extends \Codeception\TestCase\WPTestCase {
 	protected function tearDown(): void {
 		if ( $this->passthrough_filter ) {
 			remove_filter( 'ssp_episode_passthrough_required', $this->passthrough_filter );
+		}
+		if ( $this->referrer_filter ) {
+			remove_filter( 'ssp_download_referrer', $this->referrer_filter );
 		}
 		global $wp_rewrite;
 		$wp_rewrite->set_permalink_structure( $this->permalink_structure );
@@ -75,6 +79,21 @@ class CompactPlaylistPassthroughTest extends \Codeception\TestCase\WPTestCase {
 
 		$this->assertCount( 1, $tracks );
 		$this->assertSame( $expected, $tracks[0]['src'] );
+	}
+
+	public function test_compact_playlist_preserves_referrer_with_plain_permalink_passthrough() {
+		$this->enable_plain_passthrough_with_referrer();
+		$tracks = $this->compact_tracks( $this->render_playlist( 'compact' ) );
+
+		$this->assertCount( 1, $tracks );
+		$this->assertSame( home_url( '/?podcast_episode=' . $this->episode_id . '&ref=test' ), $tracks[0]['src'] );
+	}
+
+	public function test_player_url_is_unescaped_with_plain_permalink_passthrough_and_referrer() {
+		$this->enable_plain_passthrough_with_referrer();
+		$url = ssp_get_service( 'episode_repository' )->get_player_url( $this->episode_id );
+
+		$this->assertSame( home_url( '/?podcast_episode=' . $this->episode_id . '&ref=test' ), $url );
 	}
 
 	public function test_compact_track_rejects_javascript_url_in_json_and_noscript() {
@@ -131,6 +150,16 @@ class CompactPlaylistPassthroughTest extends \Codeception\TestCase\WPTestCase {
 		$this->assertSame( 1, preg_match( '~<source\b[^>]*\bsrc="([^"]*)"~i', $single, $source ) );
 		$single_url = html_entity_decode( $source[1] );
 		$this->assertMatchesRegularExpression( '~^' . preg_quote( $expected, '~' ) . '\\?_=\d+$~', $single_url );
+	}
+
+	private function enable_plain_passthrough_with_referrer() {
+		global $wp_rewrite;
+		$wp_rewrite->set_permalink_structure( '' );
+		$this->set_passthrough_required( true );
+		$this->referrer_filter = static function () {
+			return 'test';
+		};
+		add_filter( 'ssp_download_referrer', $this->referrer_filter );
 	}
 
 	private function set_passthrough_required( $required ) {

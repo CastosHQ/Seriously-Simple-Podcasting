@@ -1609,7 +1609,10 @@ if ( ! function_exists( 'ssp_player' ) ) {
 			$post_id = $post->ID;
 		}
 
-		return ssp_frontend_controller()->audio_player( '', $post_id );
+		$frontend = ssp_frontend_controller();
+		$file     = $frontend->episode_repository->get_player_url( $post_id );
+
+		return $frontend->audio_player( $file, $post_id );
 	}
 }
 

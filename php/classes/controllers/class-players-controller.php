@@ -540,7 +540,7 @@ class Players_Controller {
 			$type = 'audio';
 		}
 
-		// Switch to podcast player URL
+		// Switch to podcast player URL.
 		$src_file = str_replace( 'podcast-download', 'podcast-player', $src_file );
 
 		// Set up parameters for media player
@@ -549,12 +549,11 @@ class Players_Controller {
 			'preload' => 'none',
 		);
 
-		/**
-		 * If the media file is of type video
-		 *
-		 * @todo is this necessary in the case of the HTML5 player?
-		 */
 		if ( 'video' === $type ) {
+			if ( ! ssp_can_access_episode( get_post( $episode_id ) ) ) {
+				return '';
+			}
+
 			// Use featured image as video poster
 			if ( $episode_id && has_post_thumbnail( $episode_id ) ) {
 				$poster = wp_get_attachment_url( get_post_thumbnail_id( $episode_id ) );
@@ -592,9 +591,7 @@ class Players_Controller {
 		 */
 		$episode = get_post( $id );
 
-		$src_file = ssp_episode_passthrough_required( $id ) ?
-			$this->episode_repository->get_passthrough_url( $id ) :
-			$this->episode_repository->get_enclosure( $id );
+		$src_file = $this->episode_repository->get_player_url( $id );
 
 		$params = array(
 			'src'     => $src_file,

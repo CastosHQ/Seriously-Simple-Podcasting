@@ -49,10 +49,7 @@ class Player implements Shortcode {
 		}
 
 		$episode_id = $current_post->ID;
-		$file       = $frontent_controller->get_enclosure( $episode_id );
-		if ( get_option( 'permalink_structure' ) ) {
-			$file = $frontent_controller->get_episode_download_link( $episode_id );
-		}
+		$file       = $frontent_controller->episode_repository->get_player_url( $episode_id );
 
 		$player_style = (string) get_option( 'ss_podcasting_player_style', 'standard' );
 

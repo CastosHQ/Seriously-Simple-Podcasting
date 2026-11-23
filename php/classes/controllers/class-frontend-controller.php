@@ -450,6 +450,7 @@ class Frontend_Controller {
 			$show_player = apply_filters( 'ssp_show_media_player', $show_player, $context );
 
 			if ( $show_player ) {
+				$file    = $this->episode_repository->get_player_url( $episode_id, $file );
 				$player .= '<div class="podcast_player">' . $this->load_media_player( $file, $episode_id, $player_style, $context ) . '</div>';
 			}
 		}
@@ -2006,10 +2007,7 @@ class Frontend_Controller {
 					break;
 
 				case 'player':
-					$file = $this->get_enclosure( $episode_id );
-					if ( get_option( 'permalink_structure' ) ) {
-						$file = $this->get_episode_download_link( $episode_id );
-					}
+					$file = $this->episode_repository->get_player_url( $episode_id );
 
 					$html .= '<div id="podcast_player_' . esc_attr( $episode_id ) . '" class="podcast_player">' . $this->media_player( $file, $episode_id, $style, 'podcast_episode' ) . '</div>' . "\n";
 					break;
